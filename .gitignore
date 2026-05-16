@@ -1,29 +1,78 @@
-target/
+# OpenClinica Git Ignore
+# ======================
+
+# Build output
+/target/
+*/target/
+
+# Maven
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 pom.xml.next
 release.properties
+dependency-reduced-pom.xml
+
+# IDE - Eclipse
 .classpath
 .project
 .settings/
+
+# IDE - IntelliJ IDEA
 .idea/
-OpenClinica.iml
-web/src/main/resources/datainfo.properties
-core/*.iml
-web/*.iml
-ws/*.iml
+*.iml
+*.ipr
+*.iws
+/out/
+
+# IDE - NetBeans
+nb-configuration.xml
+nbactions.xml
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 core/.DS_Store
 web/.DS_Store
 ws/.DS_Store
 
-# git
+# Git merge artifacts
 *.orig
-/ws/*.iml
-/web/OpenClinica-web.iml
-/core/OpenClinica-core.iml
-/core/OpenClinica-core.iml
 
-# netbeans
-nb-configuration.xml
+# Application configuration (environment-specific)
+web/src/main/resources/datainfo.properties
+core/src/main/resources/datainfo.properties
+ws/src/main/resources/datainfo.properties
+
+# Release packages (binary distributions)
+/Release/
+*.war
+*.ear
+*.zip
+*.tar.gz
+
+# AI/Agent working directories
+.sisyphus/
+
+# Local development files
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# Test outputs
+/test-output/
+/surefire-reports/
+/failsafe-reports/
+
+# Node.js (for future frontend)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
