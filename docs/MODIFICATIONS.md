@@ -98,6 +98,68 @@
 
 ## 计划中的修改
 
+### Phase R0-R9: 随机化模块 (Randomization) - 第 33-96 周
+
+基于 [openclinica_randomization_module_implementation_plan.md](../openclinica_randomization_module_implementation_plan.md) 实现临床试验随机化功能。
+
+**参考项目:**
+- [imi-ms/RandIMI](https://github.com/imi-ms/RandIMI) - Java 随机化平台
+- [ttscience/unbiased](https://github.com/ttscience/unbiased) - R 随机化 API
+
+**第一版范围 (v1.0 - M7, 第 33-40 周):**
+- 预生成随机化表导入 (PREGENERATED_LIST)
+- 分层区组随机化 (STRATIFIED_PERMUTED_BLOCK)
+- 盲法权限控制 (Blinding)
+- 完整审计日志 (Audit)
+- 紧急揭盲 (Emergency Unblinding)
+
+**模块结构:**
+```
+backend/oc-randomization/
+├── randomization-domain/          # 领域层
+├── randomization-application/     # 应用层
+├── randomization-infrastructure/  # 基础设施层
+└── randomization-api/             # API 层
+```
+
+**核心领域:**
+- RandomizationPlan - 随机化计划
+- RandomizationArm - 治疗臂
+- StratificationFactor - 分层因素
+- AllocationList/AllocationSlot - 随机化表/分配槽
+- RandomizationAssignment - 受试者随机化结果
+- EmergencyUnblinding - 紧急揭盲
+
+**数据库表:**
+- `rand_randomization_plan`
+- `rand_randomization_arm`
+- `rand_stratification_factor`
+- `rand_randomization_stratum`
+- `rand_allocation_list`
+- `rand_allocation_slot`
+- `rand_randomization_assignment`
+- `rand_emergency_unblinding`
+
+**前端集成:**
+- Study 页面新增 Randomization tab
+- Subject 页面新增随机化状态面板
+- 独立的随机化计划管理页面
+- 紧急揭盲专用页面
+
+**实施阶段:**
+- **Phase R0** (第 33-34 周): 需求与协议映射
+- **Phase R1** (第 35-36 周): 领域模型与数据库
+- **Phase R2** (第 37 周): 计划管理 API
+- **Phase R3** (第 38 周): Allocation List 导入
+- **Phase R4** (第 39 周): 执行随机化
+- **Phase R5** (第 40 周): 前端管理页面
+
+**后续版本:**
+- v1.1 (M11, 第 77-84 周): 系统内生成随机化表
+- v1.2 (M12, 第 85-96 周): Minimization 算法
+
+---
+
 ### Phase 0: 基线建立 (第 1-2 周)
 
 - [ ] 固定当前 Git commit

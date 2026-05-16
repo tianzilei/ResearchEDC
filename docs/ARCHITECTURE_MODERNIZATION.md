@@ -428,6 +428,16 @@ Administration (系统管理)
 ├── CodeList                      # 代码列表
 ├── Localization                  # 本地化
 └── NotificationTemplate          # 通知模板
+
+Randomization (随机化)
+├── RandomizationPlan             # 随机化计划
+├── RandomizationArm              # 治疗臂
+├── StratificationFactor          # 分层因素
+├── RandomizationStratum          # 分层定义
+├── AllocationList                # 随机化表
+├── AllocationSlot                # 分配槽
+├── RandomizationAssignment       # 受试者随机化结果
+└── EmergencyUnblinding           # 紧急揭盲
 ```
 
 ---
@@ -707,7 +717,253 @@ CREATE TABLE ocm_electronic_signature (
 
 ---
 
-## 11. 里程碑路线图
+## 11. 随机化模块 (Randomization)
+
+### 11.1 模块概述
+
+随机化模块是 OpenClinica 现代化重构的关键功能扩展，参考 RandIMI 和 unbiased 项目设计，实现临床试验受试者随机分配功能。
+
+**第一版范围:**
+- 预生成随机化表导入
+- 分层区组随机化
+- 盲法权限控制
+- 完整审计日志
+- 紧急揭盲
+
+**技术定位:**
+- 内嵌模块化单体设计，边界清晰便于后续拆分为独立服务
+- 深度集成 Study、Site、Subject、Audit 体系
+- 支持 PostgreSQL 行级锁保证并发安全
+
+### 11.2 模块结构
+
+```text
+backend/oc-randomization/
+├── randomization-domain/
+│   ├── model/
+│   │   ├── RandomizationPlan.java
+│   │   ├── RandomizationArm.java
+│   │   ├── StratificationFactor.java
+│   │   ├── RandomizationStratum.java
+│   │   ├── AllocationList.java
+│   │   ├── AllocationSlot.java
+│   │   ├── RandomizationAssignment.java
+│   │   └── EmergencyUnblinding.java
+│   ├── value/
+│   │   ├── RandomizationMethod.java
+│   │   ├── BlindingMode.java
+│   │   ├── PlanStatus.java
+│   │   ├── StratumKey.java
+│   │   └── AllocationRatio.java
+│   ├── service/
+│   │   ├── RandomizationPolicy.java
+│   │   ├── StratumKeyResolver.java
+│   │   └── AllocationConcealmentPolicy.java
+│   └── event/
+│       ├── RandomizationExecutedEvent.java
+│       ├── RandomizationPlanActivatedEvent.java
+│       └── EmergencyUnblindingEvent.java
+│
+├── randomization-application/
+│   ├── command/
+│   │   ├── CreateRandomizationPlanCommand.java
+│   │   ├── ImportAllocationListCommand.java
+│   │   ├── ActivateRandomizationPlanCommand.java
+│   │   ├── RandomizeSubjectCommand.java
+│   │   └── EmergencyUnblindCommand.java
+│   ├── query/
+│   │   ├── GetRandomizationPlanQuery.java
+│   │   ├── GetSubjectAssignmentQuery.java
+│   │   ├── GetBalanceReportQuery.java
+│   │   └── GetRandomizationAuditQuery.java
+│   ├── service/
+│   │   ├── RandomizationPlanService.java
+│   │   ├── AllocationListImportService.java
+│   │   ├── RandomizationExecutionService.java
+│   │   ├── EmergencyUnblindingService.java
+│   │   └── RandomizationReportService.java
+│   └── port/
+│       ├── RandomizationPlanRepository.java
+│       ├── AllocationSlotRepository.java
+│       ├── RandomizationAssignmentRepository.java
+│       ├── SubjectGateway.java
+│       ├── StudyGateway.java
+│       ├── AuditGateway.java
+│       └── CryptoGateway.java
+│
+├── randomization-infrastructure/
+│   ├── persistence/
+│   │   ├── JpaRandomizationPlanRepository.java
+│   │   ├── JpaAllocationSlotRepository.java
+│   │   ├── JpaRandomizationAssignmentRepository.java
+│   │   └── entity/
+│   ├── migration/
+│   │   └── liquibase/
+│   ├── crypto/
+│   │   ├── AesGcmCryptoGateway.java
+│   │   └── KeyResolver.java
+│   ├── import/
+│   │   ├── CsvAllocationListParser.java
+│   │   └── XlsxAllocationListParser.java
+│   └── algorithm/
+│       ├── SimpleRandomizationAlgorithm.java
+│       ├── PermutedBlockAlgorithm.java
+│       ├── StratifiedPermutedBlockAlgorithm.java
+│       └── PocockMinimizationAlgorithm.java
+│
+└── randomization-api/
+    ├── controller/
+    │   ├── RandomizationPlanController.java
+    │   ├── SubjectRandomizationController.java
+    │   ├── RandomizationReportController.java
+    │   └── EmergencyUnblindingController.java
+    ├── dto/
+    └── mapper/
+```
+
+### 11.3 核心功能
+
+**支持的随机化方法:**
+
+| 方法 | 阶段 | 说明 |
+|------|------|------|
+| PREGENERATED_LIST | v1.0 | 预生成随机化表导入（推荐） |
+| STRATIFIED_PERMUTED_BLOCK | v1.0 | 分层区组随机化 |
+| SIMPLE_RANDOMIZATION | v1.0 | 简单随机化（可选） |
+| PERMUTED_BLOCK_GENERATOR | v1.1 | 系统内生成区组随机化表 |
+| MINIMIZATION_POCOCK | v1.2 | Pocock 最小化随机化 |
+
+**盲法模式:**
+
+| 模式 | 可见性控制 |
+|------|-----------|
+| OPEN_LABEL | 所有角色可见真实治疗组 |
+| SINGLE_BLIND | 研究者盲态，受试者可见 |
+| DOUBLE_BLIND | 研究者和受试者均盲态 |
+
+**权限矩阵:**
+
+| 角色 | 计划管理 | 执行随机化 | 查看盲态结果 | 查看非盲信息 | 紧急揭盲 |
+|------|---------|-----------|-------------|-------------|---------|
+| System Admin | 配置 | ❌ | ✅ | ❌ | ❌ |
+| Study Manager | 查看 | ❌ | ✅ | ❌ | ❌ |
+| Statistician | 创建/导入 | ❌ | ✅ | ✅ | ❌ |
+| Randomization Manager | 批准/激活 | ❌ | ✅ | ✅ | ❌ |
+| Site Investigator | 查看 | ✅ | ✅ | ❌ | ❌ |
+| Pharmacist | 查看 | ❌ | ✅ | ✅ | 审批 |
+| Emergency Unblinder | ❌ | ❌ | ✅ | 可揭盲 | 执行 |
+
+### 11.4 数据模型
+
+**核心表结构:**
+
+```sql
+-- 随机化计划表
+CREATE TABLE rand_randomization_plan (
+    id BIGSERIAL PRIMARY KEY,
+    study_id BIGINT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(100) NOT NULL,
+    method VARCHAR(64) NOT NULL,
+    blinding_mode VARCHAR(64) NOT NULL,
+    allocation_ratio_json JSONB NOT NULL,
+    stratification_schema_json JSONB,
+    status VARCHAR(64) NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1,
+    random_seed_encrypted TEXT,
+    created_by BIGINT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL,
+    CONSTRAINT uq_rand_plan_study_code UNIQUE (study_id, code)
+);
+
+-- 分配槽表（行级锁关键表）
+CREATE TABLE rand_allocation_slot (
+    id BIGSERIAL PRIMARY KEY,
+    plan_id BIGINT NOT NULL REFERENCES rand_randomization_plan(id),
+    stratum_key VARCHAR(500) NOT NULL,
+    sequence_no INTEGER NOT NULL,
+    arm_code_encrypted TEXT NOT NULL,
+    blinded_label VARCHAR(255),
+    status VARCHAR(64) NOT NULL DEFAULT 'AVAILABLE',
+    used_by_subject_id BIGINT,
+    used_at TIMESTAMPTZ,
+    CONSTRAINT uq_rand_slot_sequence UNIQUE (plan_id, stratum_key, sequence_no)
+);
+
+-- 随机化结果表
+CREATE TABLE rand_randomization_assignment (
+    id BIGSERIAL PRIMARY KEY,
+    study_id BIGINT NOT NULL,
+    subject_id BIGINT NOT NULL,
+    plan_id BIGINT NOT NULL REFERENCES rand_randomization_plan(id),
+    allocation_slot_id BIGINT NOT NULL REFERENCES rand_allocation_slot(id),
+    randomization_no VARCHAR(100) NOT NULL,
+    stratum_key VARCHAR(500) NOT NULL,
+    blinded_label VARCHAR(255),
+    arm_code_encrypted TEXT NOT NULL,
+    randomized_by BIGINT NOT NULL,
+    randomized_at TIMESTAMPTZ NOT NULL,
+    CONSTRAINT uq_rand_assignment_subject UNIQUE (plan_id, subject_id),
+    CONSTRAINT uq_rand_assignment_slot UNIQUE (allocation_slot_id)
+);
+```
+
+### 11.5 API 端点
+
+```text
+POST   /api/v1/studies/{studyId}/randomization/plans
+GET    /api/v1/studies/{studyId}/randomization/plans
+GET    /api/v1/randomization/plans/{planId}
+POST   /api/v1/randomization/plans/{planId}/activate
+
+POST   /api/v1/randomization/plans/{planId}/allocation-lists/import
+GET    /api/v1/randomization/allocation-lists/{listId}/validation-report
+
+POST   /api/v1/subjects/{subjectId}/randomize
+GET    /api/v1/subjects/{subjectId}/randomization
+
+POST   /api/v1/randomization/assignments/{assignmentId}/emergency-unblind
+
+GET    /api/v1/studies/{studyId}/randomization/balance
+GET    /api/v1/studies/{studyId}/randomization/audit
+```
+
+### 11.6 前端集成
+
+```text
+frontend/web-app/src/features/randomization/
+├── api/
+├── pages/
+│   ├── RandomizationPlanListPage.tsx
+│   ├── RandomizationPlanDetailPage.tsx
+│   ├── AllocationListImportPage.tsx
+│   ├── RandomizationBalancePage.tsx
+│   ├── SubjectRandomizationPanel.tsx
+│   └── EmergencyUnblindingPage.tsx
+├── components/
+└── hooks/
+```
+
+Study 页面新增 Randomization tab:
+```text
+Study Detail
+├── Overview
+├── Sites
+├── Subjects
+├── Events
+├── CRFs
+├── Randomization          <-- 新增
+│   ├── Plans
+│   ├── Allocation Lists
+│   ├── Assignments
+│   ├── Balance
+│   └── Audit
+└── Export
+```
+
+---
+
+## 12. 里程碑路线图
 
 | 里程碑 | 时间 | 目标 |
 |--------|------|------|
@@ -718,16 +974,20 @@ CREATE TABLE ocm_electronic_signature (
 | M4 | 第 14-18 周 | 权限、用户、审计基础 |
 | M5 | 第 19-25 周 | Study/Site/Subject/Event 写功能 |
 | M6 | 第 26-32 周 | 导出任务、ODM/CSV、后台任务 |
-| M7 | 第 33-40 周 | CRF schema、动态表单预览 |
-| M8 | 第 41-52 周 | **CRF 数据录入迁移** |
-| M9 | 第 53-64 周 | **双录入、Query、电子签名** |
-| M10 | 第 65 周+ | SOAP 废弃、旧页面清理 |
+| M7 | 第 33-40 周 | **随机化模块 v1.0** - 预生成表、分层区组、盲法、审计 |
+| M8 | 第 41-52 周 | CRF schema、动态表单预览 |
+| M9 | 第 53-64 周 | **CRF 数据录入迁移** |
+| M10 | 第 65-76 周 | **双录入、Query、电子签名** |
+| M11 | 第 77-84 周 | **随机化模块 v1.1** - 系统生成随机化表 |
+| M12 | 第 85-96 周 | **随机化模块 v1.2** - Minimization 算法 |
+| M13 | 第 97 周+ | SOAP 废弃、旧页面清理 |
 
 ---
 
-## 12. 参考文档
+## 13. 参考文档
 
 - [openclinica_modernization_refactor_plan.md](../openclinica_modernization_refactor_plan.md) - 完整重构计划
+- [openclinica_randomization_module_implementation_plan.md](../openclinica_randomization_module_implementation_plan.md) - 随机化模块详细实现计划
 - [MODIFICATIONS.md](./MODIFICATIONS.md) - 修改记录
 - [AGENTS.md](../AGENTS.md) - 项目知识库
 - [README.md](../README.md) - 技术架构文档

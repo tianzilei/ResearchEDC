@@ -220,6 +220,8 @@ openclinica-modern/
 │   │   └── 审计、电子签名、数据变更历史
 │   ├── oc-export/
 │   │   └── ODM、CSV、Excel、后台导出任务
+│   ├── oc-randomization/
+│   │   └── 随机化计划、分层区组、盲法、紧急揭盲
 │   ├── oc-rule-engine/
 │   │   └── 规则表达式、校验、自动计算
 │   ├── oc-legacy-adapter/
@@ -373,6 +375,16 @@ Administration
 - CodeList
 - Localization
 - NotificationTemplate
+
+Randomization
+- RandomizationPlan
+- RandomizationArm
+- StratificationFactor
+- RandomizationStratum
+- AllocationList
+- AllocationSlot
+- RandomizationAssignment
+- EmergencyUnblinding
 ```
 
 ---
