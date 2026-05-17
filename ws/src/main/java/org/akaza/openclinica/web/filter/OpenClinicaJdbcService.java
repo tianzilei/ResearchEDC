@@ -3,7 +3,7 @@ package org.akaza.openclinica.web.filter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.MappingSqlQuery;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
@@ -69,7 +69,7 @@ public class OpenClinicaJdbcService extends JdbcDaoImpl {
             boolean enabled = rs.getBoolean(3);
             boolean nonLocked = rs.getBoolean(4);
             UserDetails user = new User(username, password, enabled, true, true, nonLocked,
-                    Arrays.asList(new GrantedAuthority[] { new GrantedAuthorityImpl("HOLDER") }));
+                    Arrays.asList(new GrantedAuthority[] { new SimpleGrantedAuthority("HOLDER") }));
 
             return user;
         }

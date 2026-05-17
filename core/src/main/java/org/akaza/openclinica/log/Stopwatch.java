@@ -25,7 +25,7 @@ public class Stopwatch {
 
     private final String name;
 
-    private final org.apache.commons.lang.time.StopWatch stopwatch = new org.apache.commons.lang.time.StopWatch();
+    private final org.apache.commons.lang3.time.StopWatch stopwatch = new org.apache.commons.lang3.time.StopWatch();
 
     public static Stopwatch createAndStart(String name) {
         Stopwatch result = new Stopwatch(name);

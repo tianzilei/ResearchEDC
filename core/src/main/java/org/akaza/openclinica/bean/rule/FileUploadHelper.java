@@ -9,21 +9,24 @@ package org.akaza.openclinica.bean.rule;
 
 import org.akaza.openclinica.exception.OpenClinicaSystemException;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUpload;
+import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadBase.FileSizeLimitExceededException;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.RequestContext;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import jakarta.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class FileUploadHelper {
 
@@ -44,7 +47,7 @@ public class FileUploadHelper {
     public List<File> returnFiles(HttpServletRequest request, ServletContext context) {
 
         // Check that we have a file upload request
-        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        boolean isMultipart = FileUploadBase.isMultipartContent(new JakartaServletRequestContext(request));
         return isMultipart ? getFiles(request, context, null) : new ArrayList<File>();
     }
 
@@ -52,7 +55,7 @@ public class FileUploadHelper {
 
         // Check that we have a file upload request
         this.fileRenamePolicy = fileRenamePolicy;
-        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        boolean isMultipart = FileUploadBase.isMultipartContent(new JakartaServletRequestContext(request));
         return isMultipart ? getFiles(request, context, null) : new ArrayList<File>();
     }
 
@@ -60,14 +63,14 @@ public class FileUploadHelper {
 
         // Check that we have a file upload request
         this.fileRenamePolicy = fileRenamePolicy;
-        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        boolean isMultipart = FileUploadBase.isMultipartContent(new JakartaServletRequestContext(request));
         return isMultipart ? getFiles(request, context, createDirectoryIfDoesntExist(dirToSaveUploadedFileIn)) : new ArrayList<File>();
     }
 
     public List<File> returnFiles(HttpServletRequest request, ServletContext context, String dirToSaveUploadedFileIn) {
 
         // Check that we have a file upload request
-        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        boolean isMultipart = FileUploadBase.isMultipartContent(new JakartaServletRequestContext(request));
         return isMultipart ? getFiles(request, context, createDirectoryIfDoesntExist(dirToSaveUploadedFileIn)) : new ArrayList<File>();
     }
 
@@ -81,12 +84,12 @@ public class FileUploadHelper {
         // Create a factory for disk-based file items
         DiskFileItemFactory factory = new DiskFileItemFactory();
 
-        // Create a new file upload handler
-        ServletFileUpload upload = new ServletFileUpload(factory);
+        // Create a new file upload handler (using non-servlet FileUpload to avoid javax.servlet dependency)
+        FileUpload upload = new FileUpload(factory);
         upload.setFileSizeMax(getFileProperties().getFileSizeMax());
         try {
-            // Parse the request
-            List<FileItem> items = upload.parseRequest(request);
+            // Parse the request using the generic RequestContext API
+            List<FileItem> items = upload.parseRequest(new JakartaServletRequestContext(request));
             // Process the uploaded items
 
             Iterator<FileItem> iter = items.iterator();

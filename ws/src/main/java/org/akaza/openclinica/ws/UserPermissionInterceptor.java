@@ -51,8 +51,12 @@ public class UserPermissionInterceptor implements EndpointInterceptor {
     }
 
     public boolean handleFault(MessageContext messageContext, Object endpoint) throws Exception {
-        // TODO Auto-generated method stub
         return true;
+    }
+
+    @Override
+    public void afterCompletion(MessageContext messageContext, Object endpoint, Exception ex) {
+        // no-op
     }
 
 }

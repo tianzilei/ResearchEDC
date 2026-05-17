@@ -16,6 +16,10 @@ package org.akaza.openclinica.ws;
  * limitations under the License.
  */
 
+import org.apache.wss4j.common.ext.WSPasswordCallback;
+import org.apache.wss4j.common.ext.WSSecurityException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,41 +27,24 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Assert;
-import org.springframework.ws.soap.security.callback.AbstractCallbackHandler;
-import org.springframework.ws.soap.security.callback.CleanupCallback;
-
-import com.sun.xml.wss.impl.callback.PasswordValidationCallback;
-
-import java.io.IOException;
 
 import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
+import java.io.IOException;
 
 /**
- * Callback handler that validates a certificate uses an Spring Security <code>AuthenticationManager</code>. Logic based
- * on Spring Security's <code>BasicProcessingFilter</code>.
- * <p/>
- * This handler requires an Spring Security <code>AuthenticationManager</code> to operate. It can be set using the
- * <code>authenticationManager</code> property. An Spring Security <code>UsernamePasswordAuthenticationToken</code> is
- * created with the username as principal and password as credentials.
- * <p/>
- * This class only handles <code>PasswordValidationCallback</code>s that contain a
- * <code>PlainTextPasswordRequest</code>, and throws an <code>UnsupportedCallbackException</code> for others.
- *
- * @author Arjen Poutsma
- * @see org.springframework.security.providers.UsernamePasswordAuthenticationToken
- * @see com.sun.xml.wss.impl.callback.PasswordValidationCallback
- * @see com.sun.xml.wss.impl.callback.PasswordValidationCallback.PlainTextPasswordRequest
- * @see org.springframework.security.ui.basicauth.BasicProcessingFilter
- * @since 1.5.0
+ * Callback handler that validates a password using Spring Security's AuthenticationManager.
+ * Uses WSS4J's WSPasswordCallback instead of the legacy Sun XWSS API.
  */
-public class SpringPlainTextPasswordValidationCallbackHandler extends AbstractCallbackHandler implements InitializingBean {
+public class SpringPlainTextPasswordValidationCallbackHandler implements CallbackHandler, InitializingBean {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private AuthenticationManager authenticationManager;
 
     private boolean ignoreFailure = false;
 
-    /** Sets the Spring Security authentication manager. Required. */
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
@@ -66,52 +53,37 @@ public class SpringPlainTextPasswordValidationCallbackHandler extends AbstractCa
         this.ignoreFailure = ignoreFailure;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(authenticationManager, "authenticationManager is required");
     }
 
-    /**
-     * Handles <code>PasswordValidationCallback</code>s that contain a <code>PlainTextPasswordRequest</code>, and throws
-     * an <code>UnsupportedCallbackException</code> for others.
-     *
-     * @throws javax.security.auth.callback.UnsupportedCallbackException
-     *          when the callback is not supported
-     */
     @Override
-    protected void handleInternal(Callback callback) throws IOException, UnsupportedCallbackException {
-        if (callback instanceof PasswordValidationCallback) {
-            PasswordValidationCallback validationCallback = (PasswordValidationCallback) callback;
-            if (validationCallback.getRequest() instanceof PasswordValidationCallback.PlainTextPasswordRequest) {
-                validationCallback.setValidator(new SpringSecurityPlainTextPasswordValidator());
+    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        for (Callback callback : callbacks) {
+            if (callback instanceof WSPasswordCallback) {
+                WSPasswordCallback pwCallback = (WSPasswordCallback) callback;
+                try {
+                    Authentication authResult = authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(pwCallback.getIdentifier(), pwCallback.getPassword()));
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Authentication success: " + authResult.toString());
+                    }
+                    SecurityContextHolder.getContext().setAuthentication(authResult);
+                    pwCallback.setKey(pwCallback.getPassword() != null ? pwCallback.getPassword().getBytes() : null);
+                } catch (AuthenticationException failed) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Authentication request for user '" + pwCallback.getIdentifier() + "' failed: " + failed.toString());
+                    }
+                    SecurityContextHolder.clearContext();
+                    if (!ignoreFailure) {
+                        throw failed;
+                    }
+                }
                 return;
-            }
-        } else if (callback instanceof CleanupCallback) {
-            SecurityContextHolder.clearContext();
-            return;
-        }
-        throw new UnsupportedCallbackException(callback);
-    }
-
-    private class SpringSecurityPlainTextPasswordValidator implements PasswordValidationCallback.PasswordValidator {
-
-        public boolean validate(PasswordValidationCallback.Request request) throws PasswordValidationCallback.PasswordValidationException {
-            PasswordValidationCallback.PlainTextPasswordRequest plainTextRequest = (PasswordValidationCallback.PlainTextPasswordRequest) request;
-            try {
-                Authentication authResult =
-                    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(plainTextRequest.getUsername(), plainTextRequest.getPassword()));
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Authentication success: " + authResult.toString());
-                }
-                SecurityContextHolder.getContext().setAuthentication(authResult);
-                return true;
-            } catch (AuthenticationException failed) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Authentication request for user '" + plainTextRequest.getUsername() + "' failed: " + failed.toString());
-                }
-                SecurityContextHolder.clearContext();
-                return ignoreFailure;
+            } else {
+                throw new UnsupportedCallbackException(callback);
             }
         }
     }
-
 }
