@@ -43,7 +43,7 @@ import org.akaza.openclinica.dao.core.CoreResources;
 import org.akaza.openclinica.domain.rule.RulesPostImportContainer;
 import org.akaza.openclinica.exception.OpenClinicaSystemException;
 import org.akaza.openclinica.logic.odmExport.MetadataUnit;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.castor.xml.XMLConfiguration;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.mapping.MappingException;

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 import javax.sql.DataSource;
 
 public class EmailActionProcessor implements ActionProcessor {

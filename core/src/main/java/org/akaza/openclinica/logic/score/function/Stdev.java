@@ -8,7 +8,7 @@
 
 package org.akaza.openclinica.logic.score.function;
 
-import org.apache.commons.math.stat.descriptive.moment.StandardDeviation;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
 public class Stdev extends AbstractFunction {
     public Stdev() {

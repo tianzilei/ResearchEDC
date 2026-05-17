@@ -1,27 +1,33 @@
 package org.akaza.openclinica.core;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class OpenClinicaPasswordEncoder implements PasswordEncoder {
 
-    PasswordEncoder currentPasswordEncoder;
-    PasswordEncoder oldPasswordEncoder;
+    private PasswordEncoder currentPasswordEncoder;
+    private PasswordEncoder oldPasswordEncoder;
 
     public OpenClinicaPasswordEncoder() {
     }
 
-    public String encodePassword(String rawPass, Object salt) throws DataAccessException {
-        return currentPasswordEncoder.encodePassword(rawPass, salt);
+    @Override
+    public String encode(CharSequence rawPassword) {
+        return currentPasswordEncoder.encode(rawPassword);
     }
 
-    public boolean isPasswordValid(String encPass, String rawPass, Object salt) throws DataAccessException {
-
+    @Override
+    public boolean matches(CharSequence rawPassword, String encodedPassword) {
         boolean result = false;
-        if (currentPasswordEncoder.isPasswordValid(encPass, rawPass, salt) || oldPasswordEncoder.isPasswordValid(encPass, rawPass, salt)) {
+        if (currentPasswordEncoder.matches(rawPassword, encodedPassword) || 
+            oldPasswordEncoder.matches(rawPassword, encodedPassword)) {
             result = true;
         }
         return result;
+    }
+
+    @Override
+    public boolean upgradeEncoding(String encodedPassword) {
+        return currentPasswordEncoder.upgradeEncoding(encodedPassword);
     }
 
     public PasswordEncoder getCurrentPasswordEncoder() {
@@ -39,5 +45,4 @@ public class OpenClinicaPasswordEncoder implements PasswordEncoder {
     public void setOldPasswordEncoder(PasswordEncoder oldPasswordEncoder) {
         this.oldPasswordEncoder = oldPasswordEncoder;
     }
-
 }

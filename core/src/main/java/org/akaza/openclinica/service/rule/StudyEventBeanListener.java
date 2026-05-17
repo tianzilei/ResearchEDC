@@ -14,7 +14,7 @@ import org.akaza.openclinica.patterns.ocobserver.Listener;
 import org.akaza.openclinica.patterns.ocobserver.Observer;
 import org.akaza.openclinica.patterns.ocobserver.StudyEventBeanContainer;
 import org.akaza.openclinica.service.rule.expression.ExpressionService;
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;

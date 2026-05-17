@@ -8,7 +8,7 @@
 
 package org.akaza.openclinica.logic.score.function;
 
-import org.apache.commons.math.stat.StatUtils;
+import org.apache.commons.math3.stat.StatUtils;
 
 public class Max extends AbstractFunction {
     public Max() {

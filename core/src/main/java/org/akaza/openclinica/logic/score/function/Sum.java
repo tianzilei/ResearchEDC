@@ -1,6 +1,6 @@
 package org.akaza.openclinica.logic.score.function;
 
-import org.apache.commons.math.stat.StatUtils;
+import org.apache.commons.math3.stat.StatUtils;
 
 public class Sum extends AbstractFunction {
     public Sum() {

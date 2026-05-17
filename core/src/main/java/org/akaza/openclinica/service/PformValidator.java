@@ -2,7 +2,7 @@ package org.akaza.openclinica.service;
 
 import java.text.MessageFormat;
 
-import javax.validation.Validation;
+import jakarta.validation.Validation;
 
 import org.akaza.openclinica.bean.core.NumericComparisonOperator;
 import org.akaza.openclinica.domain.rule.action.InsertActionBean;

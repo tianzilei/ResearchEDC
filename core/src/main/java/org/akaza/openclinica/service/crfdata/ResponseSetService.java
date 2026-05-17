@@ -27,7 +27,7 @@ import org.akaza.openclinica.domain.xform.dto.Select1;
 import org.akaza.openclinica.domain.xform.dto.Upload;
 import org.akaza.openclinica.domain.xform.dto.UserControl;
 import org.akaza.openclinica.validator.xform.ResponseSetValidator;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,20 +2,19 @@ package org.akaza.openclinica.templates;
 
 import org.akaza.openclinica.dao.core.SQLFactory;
 import org.akaza.openclinica.i18n.util.ResourceBundleProvider;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.DataSourceBasedDBTestCase;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import java.io.File;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -110,7 +109,7 @@ public abstract class HibernateOcDbTestCase extends DataSourceBasedDBTestCase {
 
     @Override
     protected IDataSet getDataSet() throws Exception {
-        return new FlatXmlDataSet(HibernateOcDbTestCase.class.getResourceAsStream(getTestDataFilePath()));
+        return new FlatXmlDataSetBuilder().build(HibernateOcDbTestCase.class.getResourceAsStream(getTestDataFilePath()));
     }
 
     @Override
@@ -193,21 +192,21 @@ public abstract class HibernateOcDbTestCase extends DataSourceBasedDBTestCase {
     public String getDbName() {
         return dbName;
     }
-  @Override
-  public void tearDown(){
-    
-      try {
-      
-        transactionManager.commit( transactionManager.getTransaction(new DefaultTransactionDefinition()));
-        super.tearDown();
-      //  transactionManager = null;
-       if(ds!=null)
-        ds.getConnection().close();
-       // getDataSource().getConnection().close();
-    } catch (Exception e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-    }
+   @Override
+   public void tearDown(){
+     
+       try {
+         // Rollback any pending transaction to keep test isolation
+         TransactionStatus txStatus = transactionManager.getTransaction(new DefaultTransactionDefinition());
+         if (!txStatus.isCompleted()) {
+             transactionManager.rollback(txStatus);
+         }
+         super.tearDown();
+        if(ds!=null)
+         ds.getConnection().close();
+     } catch (Exception e) {
+         e.printStackTrace();
+     }
 
-  }
+   }
 }

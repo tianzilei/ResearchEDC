@@ -42,7 +42,7 @@ public class Median extends AbstractFunction {
         }
 
         if (values != null && values.length > 0) {
-            double v = (new org.apache.commons.math.stat.descriptive.rank.Median()).evaluate(values);
+            double v = (new org.apache.commons.math3.stat.descriptive.rank.Median()).evaluate(values);
             value = Double.toString(v);
         } else {
             value = "";

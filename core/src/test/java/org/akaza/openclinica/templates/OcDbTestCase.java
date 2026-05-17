@@ -2,10 +2,10 @@ package org.akaza.openclinica.templates;
 
 import org.akaza.openclinica.dao.core.SQLFactory;
 import org.akaza.openclinica.i18n.util.ResourceBundleProvider;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.DataSourceBasedDBTestCase;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -53,7 +53,7 @@ public abstract class OcDbTestCase extends DataSourceBasedDBTestCase {
 
     @Override
     protected IDataSet getDataSet() throws Exception {
-        return new FlatXmlDataSet(OcDbTestCase.class.getResourceAsStream(getTestDataFilePath()));
+        return new FlatXmlDataSetBuilder().build(OcDbTestCase.class.getResourceAsStream(getTestDataFilePath()));
     }
 
     @Override

@@ -8,14 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.akaza.openclinica.bean.core.EntityBean;
 import org.akaza.openclinica.bean.managestudy.DiscrepancyNoteBean;
 import org.akaza.openclinica.service.DiscrepancyNoteThread;
 import org.akaza.openclinica.service.DiscrepancyNoteUtil;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.web.util.HtmlUtils;
 
 import com.lowagie.text.BadElementException;
@@ -23,6 +23,7 @@ import com.lowagie.text.Cell;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
+import com.lowagie.text.alignment.HorizontalAlignment;
 import com.lowagie.text.Font;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Paragraph;
@@ -639,7 +640,7 @@ public class DownloadDiscrepancyNote implements DownLoadBean{
               new Font(Font.HELVETICA, 14, Font.BOLD, new Color(0, 0, 0)));
             Cell cell = new Cell(para);
             cell.setHeader(true);
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            cell.setHorizontalAlignment(HorizontalAlignment.LEFT);
             cell.setColspan(2);
             table.addCell(cell);
             table.endHeaders();

@@ -2,8 +2,8 @@ package org.akaza.openclinica.service.pmanage;
 
 import java.util.Date;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -12,10 +12,10 @@ import org.akaza.openclinica.bean.login.UserAccountBean;
 import org.akaza.openclinica.core.EmailEngine;
 import org.akaza.openclinica.dao.core.CoreResources;
 import org.akaza.openclinica.exception.OpenClinicaSystemException;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.client.CommonsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -43,7 +43,7 @@ public class RandomizationRegistrar {
     public SeRandomizationDTO getRandomizationDTOObject(String studyOid) {
         String ocUrl = CoreResources.getField("sysURL.base") + "rest2/openrosa/" + studyOid;
         String randomizationUrl = CoreResources.getField("moduleManager") + "/app/rest/oc/se_randomizations?studyoid=" + studyOid + "&instanceurl=" + ocUrl;
-        CommonsClientHttpRequestFactory requestFactory = new CommonsClientHttpRequestFactory();
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
 
         requestFactory.setReadTimeout(RANDOMIZATION_READ_TIMEOUT);
         RestTemplate rest = new RestTemplate(requestFactory);
@@ -119,7 +119,7 @@ public class RandomizationRegistrar {
             seRandomizationDTO.setStudyName(studyName);
             seRandomizationDTO.setOpenClinicaVersion(CoreResources.getField("OpenClinica.version"));
 
-        CommonsClientHttpRequestFactory requestFactory = new CommonsClientHttpRequestFactory();
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setReadTimeout(RANDOMIZATION_READ_TIMEOUT);
         RestTemplate rest = new RestTemplate(requestFactory);
 

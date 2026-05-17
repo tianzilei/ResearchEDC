@@ -801,16 +801,16 @@ public class NewCRFBean extends Object implements java.io.Serializable {
     
     public void setPreparedStatementParameter(PreparedStatement s, int parameterIndex, SqlParameter sp) {
         logger.debug("===>>>SqlParameter value: " + sp.getValue());
-    	JDBCType type = sp.getType();
+    	org.akaza.openclinica.bean.admin.JDBCType type = sp.getType();
     	try {	
 	    	if(type == null) {	    	
-					s.setString(parameterIndex, sp.getValue());				
+					s.setObject(parameterIndex, sp.getValue());				
 	    	}
 	    	else if(type.equals(JDBCType.INTEGER)) {
 	    		s.setInt(parameterIndex, Integer.parseInt(sp.getValue()));
 	    	}
 	    	else {
-	    		s.setString(parameterIndex, sp.getValue());	
+	    		s.setObject(parameterIndex, sp.getValue());	
 	    	}
     	} catch (Exception e) {
 				// TODO Auto-generated catch block
