@@ -20,6 +20,10 @@ COPY app/pom.xml ./app/
 # Download dependencies (cached layer unless POM changes)
 RUN mvn dependency:go-offline -DskipTests -pl core,web -am --quiet || true
 
+# Install proprietary ODM dependency (not in public repos)
+COPY lib/openclinica-odm-2.2.jar lib/openclinica-odm-2.2.pom ./lib/
+RUN mvn install:install-file -Dfile=lib/openclinica-odm-2.2.jar -DpomFile=lib/openclinica-odm-2.2.pom -q
+
 # Copy source (app/ NOT needed — only core + web are built)
 COPY core/ ./core/
 COPY web/ ./web/
