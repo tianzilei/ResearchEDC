@@ -1,0 +1,41 @@
+# Git
+.git
+.gitignore
+
+# Build artifacts
+**/target/
+**/build/
+
+# Dependencies
+frontend/node_modules/
+**/node_modules/
+**/.pnpm-store/
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/.venv/
+**/venv/
+**/.pytest_cache/
+questionnaire-service/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation (not needed for build)
+*.md
+AGENTS.md
+MODIFICATIONS.md
+PLAN.md
+
+# Deploy configs
+deploy/
+scripts/
