@@ -4,76 +4,72 @@
     xmlns:p="http://www.springframework.org/schema/p"
     xmlns:util="http://www.springframework.org/schema/util"
     xmlns:security="http://www.springframework.org/schema/security"
-    xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                           https://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/util
-                           http://www.springframework.org/schema/util/spring-util-3.2.xsd
+                           https://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/security
-                           http://www.springframework.org/schema/security/spring-security-3.2.xsd
-                           http://www.springframework.org/schema/security/oauth2 
-                           http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
+                           https://www.springframework.org/schema/security/spring-security.xsd">
 
+    <!-- Public URLs - no security required -->
+    <security:http pattern="/pages/login/login" security="none"/>
+    <security:http pattern="/SystemStatus" security="none"/>
+    <security:http pattern="/RssReader" security="none"/>
+    <security:http pattern="/RequestPassword" security="none"/>
+    <security:http pattern="/RequestAccount" security="none"/>
+    <security:http pattern="/includes/**" security="none"/>
+    <security:http pattern="/images/**" security="none"/>
+    <security:http pattern="/help/**" security="none"/>
+    <security:http pattern="/ws/**" security="none"/>
+    <security:http pattern="/Contact" security="none"/>
+    <security:http pattern="/rest2/openrosa/**" security="none"/>
+    <security:http pattern="/pages/odmk/**" security="none"/>
+    <security:http pattern="/pages/openrosa/**" security="none"/>
+    <security:http pattern="/pages/accounts/**" security="none"/>
+    <security:http pattern="/pages/itemdata/**" security="none"/>
+    <security:http pattern="/pages/auth/api/v1/studies/**" security="none"/>
+    <security:http pattern="/pages/odmss/**" security="none"/>
+    <security:http pattern="/pages/healthcheck/**" security="none"/>
+    <security:http pattern="/pages/api/v1/anonymousform/**" security="none"/>
+    <security:http pattern="/pages/api/v2/anonymousform/**" security="none"/>
+    <security:http pattern="/pages/api/v1/editform/**" security="none"/>
+    <security:http pattern="/pages/auth/api/v1/discrepancynote/**" security="none"/>
+    <security:http pattern="/pages/auth/api/v1/forms/migrate/**" security="none"/>
+    <security:http pattern="/pages/api/v1/forms/migrate/**" security="none"/>
+    <security:http pattern="/pages/auth/api/**" security="none"/>
+    <security:http pattern="/pages/auth/api/v1/system/**" security="none"/>
 
-        <security:http pattern="/pages/login/login" security="none"/>
-        <security:http pattern="/SystemStatus" security="none"/>
-        <security:http pattern="/RssReader" security="none"/>
-        <security:http pattern="/RequestPassword" security="none"/>
-        <security:http pattern="/RequestAccount" security="none"/>
-        <security:http pattern="/includes/**" security="none"/>
-        <security:http pattern="/images/**" security="none"/>
-        <security:http pattern="/help/**" security="none"/>
-        <security:http pattern="/ws/**" security="none"/>
-        <security:http pattern="/Contact" security="none"/>
-        <security:http pattern="/rest2/openrosa/**" security="none"/>
-        <security:http pattern="/pages/odmk/**" security="none"/>
-        <security:http pattern="/pages/openrosa/**" security="none"/>
-        <security:http pattern="/pages/accounts/**" security="none"/>
-        <security:http pattern="/pages/itemdata/**" security="none"/>
-        <security:http pattern="/pages/auth/api/v1/studies/**" security="none"/>
-        <security:http pattern="/pages/odmss/**" security="none"/>
-        <security:http pattern="/pages/healthcheck/**" security="none"/>
-        <security:http pattern="/pages/api/v1/anonymousform/**" security="none"/>
-        <security:http pattern="/pages/api/v2/anonymousform/**" security="none"/>
-        <security:http pattern="/pages/api/v1/editform/**" security="none"/>
-        <security:http pattern="/pages/auth/api/v1/discrepancynote/**" security="none"/>
-        <security:http pattern="/pages/auth/api/v1/forms/migrate/**" security="none"/>
-        <security:http pattern="/pages/api/v1/forms/migrate/**" security="none"/>
-        <security:http pattern="/pages/auth/api/**" security="none"/>
-        <security:http pattern="/pages/auth/api/v1/system/**" security="none"/>
-
+    <!-- Main HTTP Security Configuration -->
     <security:http access-denied-page="/accounts/denied.htm" entry-point-ref="authenticationProcessingFilterEntryPoint">
 
-    <security:anonymous />
+        <security:anonymous />
 
-    <!--
-    <security:form-login login-page="/pages/login/login" authentication-failure-url="/pages/login/login?action=errorLogin"
-      default-target-url='/MainMenu' always-use-default-target='true' />
-     -->
-    <security:intercept-url pattern="/**" access="ROLE_USER" />
-    <security:custom-filter position="FORM_LOGIN_FILTER" ref="myFilter" />
-    <!--  <security:custom-filter position="LOGOUT_FILTER" ref="logoutFilter" /> -->
-    <security:custom-filter position="CONCURRENT_SESSION_FILTER" ref="concurrencyFilter" />
-    <security:session-management session-authentication-strategy-ref="sas"/>
-    <security:logout logout-success-url="/MainMenu" logout-url="/j_spring_security_logout" />
-    
-  </security:http>  
- 
+        <!-- Authorization rules -->
+        <security:intercept-url pattern="/**" access="ROLE_USER" />
 
+        <!-- Custom filters -->
+        <security:custom-filter ref="myFilter" position="FORM_LOGIN_FILTER" />
+        <security:custom-filter ref="concurrencyFilter" position="CONCURRENT_SESSION_FILTER" />
+
+        <!-- Session management -->
+        <security:session-management session-authentication-strategy-ref="sas"/>
+
+        <!-- Logout configuration -->
+        <security:logout logout-success-url="/MainMenu" logout-url="/j_spring_security_logout" />
+
+    </security:http>
+
+    <!-- Authentication Entry Point -->
     <bean id="authenticationProcessingFilterEntryPoint"
           class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
-        <property name="loginFormUrl" value="/pages/login/login"/>
-        <property name="forceHttps" value="false"/>
+        <constructor-arg value="/pages/login/login"/>
     </bean>
-    
+
+    <!-- Custom Authentication Filter -->
     <bean id="myFilter" class="org.akaza.openclinica.web.filter.OpenClinicaUsernamePasswordAuthenticationFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="authenticationFailureHandler" ref="failureHandler" />
         <property name="authenticationSuccessHandler" ref="successHandler" />
-        <!-- 
-        <property name="authenticationFailureUrl" value="/pages/login/login?action=errorLogin"/>
-        <property name="defaultTargetUrl" value="/MainMenu"/>
-         -->
         <property name="auditUserLoginDao" ref="auditUserLoginDao"/>
         <property name="configurationDao" ref="configurationDao"/>
         <property name="dataSource" ref="dataSource"/>
@@ -81,120 +77,76 @@
         <property name="sessionAuthenticationStrategy" ref="sas"/>
         <property name="crfLocker" ref="crfLocker"/>
     </bean>
-    
-    <bean id="successHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler" >
-        <property name="defaultTargetUrl" value="/MainMenu" /> <!-- which is the default value -->
+
+    <!-- Success Handler -->
+    <bean id="successHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+        <property name="defaultTargetUrl" value="/MainMenu" />
     </bean>
-    
-    <bean id="failureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler" >
+
+    <!-- Failure Handler -->
+    <bean id="failureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
         <property name="defaultFailureUrl" value="/pages/login/login?action=errorLogin" />
         <property name="exceptionMappings">
-            <props>
-                <prop key="org.springframework.security.authentication.LockedException">/pages/login/login?action=errorLocked</prop>
-            </props>
+            <map>
+                <entry key="org.springframework.security.authentication.LockedException" value="/pages/login/login?action=errorLocked"/>
+            </map>
         </property>
     </bean>
-    
-     <bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
-        <property name="sessionRegistry" ref="sessionRegistry" />
-        <property name="expiredUrl" value="/MainMenu" />
-        <property name="logoutHandlers">
-            <list>
-               <ref bean="openClinicaLogoutHandler"/>
-            </list>
-        </property>
-     </bean>
-     
-     <bean id="sessionRegistry" class="org.akaza.openclinica.web.filter.OpenClinicaSessionRegistryImpl">
+
+    <!-- Concurrent Session Filter -->
+    <bean id="concurrencyFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
+        <constructor-arg ref="sessionRegistry" />
+        <constructor-arg value="/MainMenu" />
+    </bean>
+
+    <!-- Session Registry -->
+    <bean id="sessionRegistry" class="org.akaza.openclinica.web.filter.OpenClinicaSessionRegistryImpl">
         <property name="auditUserLoginDao" ref="auditUserLoginDao"/>
         <property name="dataSource" ref="dataSource"/>
-         <property name="crfLocker" ref="crfLocker" />
-     </bean>
-    
-    
-   
-    <bean id="sas" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy">
-        <constructor-arg name="sessionRegistry" ref="sessionRegistry" />
+        <property name="crfLocker" ref="crfLocker" />
+    </bean>
+
+    <!-- Session Authentication Strategy -->
+    <bean id="sas" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
+        <constructor-arg ref="sessionRegistry" />
         <property name="maximumSessions" value="1" />
     </bean>
 
-    
+    <!-- Logout Handler -->
     <bean id="openClinicaLogoutHandler" class="org.akaza.openclinica.web.filter.OpenClinicaSecurityContextLogoutHandler">
         <property name="auditUserLoginDao" ref="auditUserLoginDao"/>
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="tokenServices"
-          class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
-        <property name="tokenStore" ref="tokenStore" />
-        <property name="supportRefreshToken" value="true" />
-        <property name="accessTokenValiditySeconds" value="120" />
-        <property name="clientDetailsService" ref="clientDetails" />
+    <!-- REST Resources -->
+    <bean id="metadataCollectorResource" class="org.akaza.openclinica.web.restful.MetadataCollectorResource">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="ruleSetRuleDao" ref="ruleSetRuleDao"/>
+        <property name="coreResources" ref="coreResources"/>
+        <property name="studyDaoHib" ref="studyDaoDomain"/>
     </bean>
 
-    <!--We have used JDBC tokenstore to store the tokens, we can use In Memory token store for development purpose -->
-    <bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.store.JdbcTokenStore">
-        <constructor-arg ref="dataSource" />
+    <bean id="odmMetadataRestResource" class="org.akaza.openclinica.web.restful.ODMMetadataRestResource">
+        <property name="metadataCollectorResource" ref="metadataCollectorResource"/>
     </bean>
 
-    <bean id="defaultOAuth2RequestFactory" class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
-        <constructor-arg>
-            <ref bean="clientDetails"/>
-        </constructor-arg>
+    <bean id="clinicalDataCollectorResource" class="org.akaza.openclinica.web.restful.ClinicalDataCollectorResource">
+        <property name="generateClinicalDataService" ref="generateClinicalDataService"/>
     </bean>
 
-    <bean id="userApprovalHandler"
-          class="org.springframework.security.oauth2.provider.approval.TokenStoreUserApprovalHandler">
-        <property name="tokenStore" ref="tokenStore"/>
-        <property name="requestFactory" ref="defaultOAuth2RequestFactory" />
-        <property name="clientDetailsService" ref="clientDetails" />
+    <bean id="odmClinicalDataRestResource" class="org.akaza.openclinica.web.restful.ODMClinicaDataResource">
+        <property name="clinicalDataCollectorResource" ref="clinicalDataCollectorResource"/>
+        <property name="metadataCollectorResource" ref="metadataCollectorResource"/>
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <!-- Token management -->
-    <oauth:authorization-server client-details-service-ref="clientDetails" token-services-ref="tokenServices"
-                                user-approval-handler-ref="userApprovalHandler">
-        <oauth:authorization-code/>
-        <oauth:implicit/>
-        <oauth:refresh-token/>
-        <oauth:client-credentials/>
-        <oauth:password/>
-    </oauth:authorization-server>
+    <bean id="openRosaServices" class="org.akaza.openclinica.web.pform.OpenRosaServices">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="coreResources" ref="coreResources"/>
+        <property name="ruleActionPropertyDao" ref="ruleActionPropertyDao"/>
+        <property name="openRosaSubmissionController" ref="openRosaSubmissionController" />
+    </bean>
 
-    <!-- Client Definition -->
-    <!-- https://stackoverflow.com/questions/41817798/spring-security-oauth2-post-restriction -->
-    <oauth:client-details-service id="clientDetails">
-        <oauth:client client-id="my-trusted-client" authorized-grant-types="password,authorization_code,refresh_token"/>
-        <oauth:client client-id="my-less-trusted-client" authorized-grant-types="authorization_code"/>
-        <oauth:client client-id="designer" authorized-grant-types="authorization_code,refresh_token"/>
-    </oauth:client-details-service>
-    
-    
-    	<bean id="metadataCollectorResource" class="org.akaza.openclinica.web.restful.MetadataCollectorResource" name="metadataCollectorResource">
-<property name="dataSource" ref="dataSource"></property>
-<property name="ruleSetRuleDao" ref="ruleSetRuleDao"/>
-<property name="coreResources" ref="coreResources"/>
-<property name = "studyDaoHib" ref = "studyDaoDomain"/>
-</bean>
-<bean id="odmMetadataRestResource" class="org.akaza.openclinica.web.restful.ODMMetadataRestResource">
-	<property name="metadataCollectorResource" ref="metadataCollectorResource"/>
-</bean>
-<bean id="clinicalDataCollectorResource" class="org.akaza.openclinica.web.restful.ClinicalDataCollectorResource">
-<property name = "generateClinicalDataService" ref = "generateClinicalDataService"></property>
-</bean>
-<bean id="odmClinicalDataRestResource" class="org.akaza.openclinica.web.restful.ODMClinicaDataResource">
-	<property name="clinicalDataCollectorResource" ref="clinicalDataCollectorResource"/>
-	<property name="metadataCollectorResource" ref="metadataCollectorResource"/>
-    <property name="dataSource" ref="dataSource"/>
-</bean>
-<bean id="openRosaServices" class="org.akaza.openclinica.web.pform.OpenRosaServices">
-    <property name="dataSource" ref="dataSource"></property>
-    <property name="coreResources" ref="coreResources"/>
-    <property name="ruleActionPropertyDao" ref="ruleActionPropertyDao"/>
-    <property name="openRosaSubmissionController" ref="openRosaSubmissionController" />
-</bean>
-
-<bean id="openRosaSubmissionController" class="org.akaza.openclinica.controller.openrosa.OpenRosaSubmissionController" autowire="byName">
-</bean>
-
+    <bean id="openRosaSubmissionController" class="org.akaza.openclinica.controller.openrosa.OpenRosaSubmissionController" autowire="byName"/>
 
 </beans>

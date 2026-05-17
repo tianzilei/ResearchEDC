@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import org.akaza.openclinica.i18n.util.ResourceBundleProvider;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class ReportLog {
 

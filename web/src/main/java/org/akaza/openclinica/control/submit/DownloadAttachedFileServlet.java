@@ -23,7 +23,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import javax.servlet.ServletOutputStream;
+import jakarta.servlet.ServletOutputStream;
 
 /**
  * @author ywang (Dec., 2008)

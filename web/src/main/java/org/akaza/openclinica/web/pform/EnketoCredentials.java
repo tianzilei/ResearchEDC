@@ -2,7 +2,7 @@ package org.akaza.openclinica.web.pform;
 
 import org.akaza.openclinica.dao.core.CoreResources;
 import org.akaza.openclinica.service.pmanage.Authorization;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;

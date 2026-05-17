@@ -20,7 +20,7 @@ import org.akaza.openclinica.dao.submit.SectionDAO;
 import org.akaza.openclinica.view.form.FormBeanUtil;
 import org.akaza.openclinica.view.form.ViewPersistanceHandler;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * This class handles the responsibility for generating a List of

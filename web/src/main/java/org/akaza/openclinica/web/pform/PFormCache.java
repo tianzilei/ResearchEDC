@@ -1,10 +1,11 @@
 package org.akaza.openclinica.web.pform;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
-import javax.servlet.ServletContext;
-
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import jakarta.servlet.ServletContext;
 
 public class PFormCache {
     
@@ -100,8 +101,7 @@ public class PFormCache {
         contextMap.put("crfVersionOID", crfVersionOID);
         
         String hashString = studySubjectOID + "." + studyEventDefinitionID + "." + studyEventOrdinal + "." + crfVersionOID;
-        ShaPasswordEncoder encoder = new ShaPasswordEncoder(256);
-        String hashOutput = encoder.encodePassword(hashString,null);
+        String hashOutput = sha256Hash(hashString);
         subjectContextCache.put(hashOutput, contextMap);
         return hashOutput;
     }
@@ -115,10 +115,27 @@ public class PFormCache {
         contextMap.put("studyEventOrdinal", "1");
         
         String hashString = studyOID + "." + crfVersionOID;
-        ShaPasswordEncoder encoder = new ShaPasswordEncoder(256);
-        String hashOutput = encoder.encodePassword(hashString,null);
+        String hashOutput = sha256Hash(hashString);
         subjectContextCache.put(hashOutput, contextMap);
         return hashOutput;
+    }
+
+    private String sha256Hash(String input) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 algorithm not available", e);
+        }
     }
 
 }

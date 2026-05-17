@@ -4,9 +4,9 @@ import org.jmesa.core.CoreContext;
 import org.jmesa.view.AbstractViewExporter;
 import org.jmesa.view.View;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * @since 2.0

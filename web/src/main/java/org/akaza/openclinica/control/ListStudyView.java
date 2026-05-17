@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.akaza.openclinica.i18n.util.ResourceBundleProvider;
 import org.jmesa.view.component.Column;

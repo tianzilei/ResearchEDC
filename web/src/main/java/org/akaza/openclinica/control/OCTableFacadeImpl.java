@@ -8,8 +8,8 @@ import org.jmesa.view.View;
 import org.jmesa.view.csv.CsvViewExporter;
 import org.jmesa.view.excel.ExcelViewExporter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class OCTableFacadeImpl extends TableFacadeImpl {
 

@@ -35,7 +35,7 @@ import org.akaza.openclinica.web.InsufficientPermissionException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.w3c.dom.Document;

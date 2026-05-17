@@ -24,13 +24,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import javax.naming.Context;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.akaza.openclinica.bean.extract.ExtractPropertyBean;
 import org.akaza.openclinica.bean.login.UserAccountBean;
@@ -1150,7 +1150,7 @@ public class SystemController {
 */
     	String query = "select * from pg_roles where rolname= ? ";
     	PreparedStatement ps =conn.prepareStatement(query);
-    	ps.setString(1, username);
+    	ps.setParameter(1, username);
     	ResultSet resultSet = ps.executeQuery();
     	
         while (resultSet.next()) {

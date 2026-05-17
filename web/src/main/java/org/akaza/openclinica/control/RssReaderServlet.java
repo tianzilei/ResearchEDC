@@ -1,7 +1,7 @@
 package org.akaza.openclinica.control;
 
 import org.akaza.openclinica.web.SQLInitServlet;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jmesa.view.html.HtmlBuilder;
 
 import com.sun.syndication.feed.synd.SyndEntryImpl;
@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class RssReaderServlet extends HttpServlet {
 

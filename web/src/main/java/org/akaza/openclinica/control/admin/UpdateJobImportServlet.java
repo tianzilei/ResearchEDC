@@ -18,7 +18,7 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.impl.StdScheduler;
-import org.springframework.scheduling.quartz.JobDetailBean;
+import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -140,7 +140,7 @@ public class UpdateJobImportServlet extends SecureController {
                 Date startDate = trigger.getStartTime();
                 trigger = triggerService.generateImportTrigger(fp, sm.getUserBean(), study, startDate, LocaleResolver.getLocale(request).getLanguage());
                 // scheduler = getScheduler();
-                JobDetailBean jobDetailBean = new JobDetailBean();
+                JobDetailBean jobDetailBean = new JobDetailFactoryBean();
                 jobDetailBean.setGroup(TRIGGER_IMPORT_GROUP);
                 jobDetailBean.setName(trigger.getName());
                 jobDetailBean.setJobClass(org.akaza.openclinica.web.job.ImportStatefulJob.class);

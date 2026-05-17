@@ -48,7 +48,7 @@ import org.akaza.openclinica.web.pform.dto.UserControl;
 import org.akaza.openclinica.web.pform.widget.Widget;
 import org.akaza.openclinica.web.pform.widget.WidgetFactory;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;

@@ -1,18 +1,20 @@
 package org.akaza.openclinica.web.pform;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
 public class EnketoAPI {
@@ -101,8 +103,7 @@ public class EnketoAPI {
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             String hashString = ecid + "." + String.valueOf(cal.getTimeInMillis());
-            ShaPasswordEncoder encoder = new ShaPasswordEncoder(256);
-            String instanceId = encoder.encodePassword(hashString,null);
+            String instanceId = sha256Hash(hashString);
 
             URL eURL = new URL(enketoURL + "/api/v1/instance/iframe");
             String userPasswdCombo = new String(Base64.encodeBase64((token + ":").getBytes()));
@@ -125,6 +126,24 @@ public class EnketoAPI {
             logger.error(ExceptionUtils.getStackTrace(e));
         }
         return null;
+    }
+
+    private String sha256Hash(String input) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 algorithm not available", e);
+        }
     }
 
 }
