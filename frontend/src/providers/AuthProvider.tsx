@@ -73,8 +73,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(null);
   }, []);
 
-  const getAccessToken = useCallback(async (): Promise<string | null> => {
-    return sessionStorage.getItem("oc_access_token");
+  const getAccessToken = useCallback((): Promise<string | null> => {
+    return Promise.resolve(sessionStorage.getItem("oc_access_token"));
   }, []);
 
   return (

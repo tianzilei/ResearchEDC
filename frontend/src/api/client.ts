@@ -56,10 +56,10 @@ class ApiClient {
 
     if (!response.ok) {
       const errorBody = await response.text().catch(() => "");
-      const error: ApiError = {
+      const error: ApiError & Error = Object.assign(new Error(errorBody || response.statusText), {
         status: response.status,
         message: errorBody || response.statusText,
-      };
+      });
       throw error;
     }
 
