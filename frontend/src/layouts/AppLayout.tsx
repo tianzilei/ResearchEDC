@@ -95,14 +95,23 @@ export default function AppLayout() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "0 24px",
-          height: 56,
-          lineHeight: "56px",
+          padding: "0 28px",
+          height: 60,
+          lineHeight: "60px",
+          borderBottom: "1px solid rgba(212,168,84,0.25)",
         }}
       >
         <Space size="middle">
-          <MedicineBoxOutlined style={{ fontSize: 24, color: "#fff" }} />
-          <span style={{ color: "#fff", fontSize: 18, fontWeight: 600 }}>
+          <MedicineBoxOutlined style={{ fontSize: 22, color: "#099A87" }} />
+          <span
+            style={{
+              color: "#F8F5F0",
+              fontSize: 17,
+              fontWeight: 500,
+              fontFamily: "'DM Sans', sans-serif",
+              letterSpacing: "0.02em",
+            }}
+          >
             OpenClinica
           </span>
           <StudySwitcher />
@@ -110,12 +119,16 @@ export default function AppLayout() {
         <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
           <Button
             type="text"
-            style={{ color: "rgba(255,255,255,0.85)", height: 56 }}
+            style={{
+              color: "rgba(248,245,240,0.8)",
+              height: 60,
+              fontFamily: "'DM Sans', sans-serif",
+            }}
           >
             <Space>
-              <UserOutlined />
+              <UserOutlined style={{ color: "#D4A854" }} />
               {user?.name ?? "User"}
-              <DownOutlined />
+              <DownOutlined style={{ fontSize: 10 }} />
             </Space>
           </Button>
         </Dropdown>
@@ -123,7 +136,10 @@ export default function AppLayout() {
       <Layout>
         <Sider
           width={220}
-          style={{ background: token.colorBgContainer }}
+          style={{
+            background: token.colorBgContainer,
+            borderRight: "1px solid #EDE8E0",
+          }}
           breakpoint="lg"
           collapsedWidth={0}
         >
@@ -134,12 +150,28 @@ export default function AppLayout() {
             onClick={({ key }) => {
               navigate(key);
             }}
-            style={{ height: "100%", borderRight: 0, paddingTop: 8 }}
+            style={{
+              height: "100%",
+              borderRight: 0,
+              paddingTop: 12,
+              paddingBottom: 12,
+              transition: "background 0.2s",
+            }}
           />
         </Sider>
-        <Content style={{ padding: 24, background: token.colorBgLayout }}>
+        <Content
+          style={{
+            padding: 28,
+            background: token.colorBgLayout,
+            backgroundImage:
+              "radial-gradient(circle, #D9D4CA 0.8px, transparent 0.8px)",
+            backgroundSize: "24px 24px",
+          }}
+        >
           <Suspense fallback={<SkeletonPage />}>
-            <Outlet />
+            <div className="animate-in" style={{ animationDuration: "0.45s" }}>
+              <Outlet />
+            </div>
           </Suspense>
         </Content>
       </Layout>
