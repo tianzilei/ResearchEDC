@@ -23,7 +23,9 @@
             <column name="seed" type="BIGINT"/>
             <column name="min_block_size" type="INT"/>
             <column name="max_block_size" type="INT"/>
-            <column name="created_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
             <column name="updated_date" type="TIMESTAMP"/>
             <column name="created_by" type="INT"/>
             <column name="updated_by" type="INT"/>
@@ -116,7 +118,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="stratum_path" type="VARCHAR(512)"/>
-            <column name="created_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <addForeignKeyConstraint baseTableName="randomization_block" baseColumnNames="scheme_id"
                                  constraintName="fk_r_block_scheme" referencedTableName="randomization_scheme"
@@ -142,7 +146,9 @@
             <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE">
                 <constraints nullable="false"/>
             </column>
-            <column name="assigned_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="assigned_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
             <column name="assigned_by" type="INT"/>
         </createTable>
         <addForeignKeyConstraint baseTableName="randomization_assignment" baseColumnNames="scheme_id"
@@ -170,7 +176,9 @@
             <column name="requested_by" type="INT">
                 <constraints nullable="false"/>
             </column>
-            <column name="requested_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="requested_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
             <column name="reason" type="VARCHAR(2000)"/>
             <column name="status" type="VARCHAR(20)" defaultValue="PENDING">
                 <constraints nullable="false"/>
@@ -199,7 +207,7 @@
             <column name="old_value" type="VARCHAR(4000)"/>
             <column name="new_value" type="VARCHAR(4000)"/>
             <column name="performed_by" type="INT"/>
-            <column name="performed_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="performed_date" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="details" type="VARCHAR(4000)"/>

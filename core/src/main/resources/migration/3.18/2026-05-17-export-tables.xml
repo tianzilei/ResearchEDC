@@ -19,7 +19,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="requested_by" type="INT"/>
-            <column name="requested_date" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="requested_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
             <column name="completed_date" type="TIMESTAMP"/>
             <column name="file_path" type="VARCHAR(1000)"/>
             <column name="file_size" type="BIGINT"/>
