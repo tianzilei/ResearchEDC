@@ -6,7 +6,43 @@
 
 ---
 
-## 2026-05-17 — 测试修复与质量提升 (第二轮)
+## 2026-05-17 — Questionnaire Service 完整实施
+
+- **新增模块:** `questionnaire-service/` — Python FastAPI 问卷微服务
+- **原因:** 根据 `questionnaire_python_backend_roadmap.md` 计划完整实现
+
+### Python 后端 (FastAPI) — 71 个文件
+- **7 个 SQLAlchemy ORM 模型**: template / version / assignment / response / answer / audit_log / export_job
+- **9 个 Pydantic v2 schema**: 完整请求/响应校验
+- **6 个 Repository**: 泛型 BaseRepository + 各实体专用 repo
+- **7 个 Service**: template / version / assignment / response / token / audit / export
+- **评分引擎**: BaseScorer ABC + ScorerRegistry + ISI/GAD-7/PHQ-9/ESS 四个量表 (31 个测试)
+- **8 个 API 路由模块**: 模板 CRUD、版本管理、分配、public 填写、回复审核、导出、审计日志、事件 webhook
+- **Keycloak 集成**: JWT 认证 + 角色权限校验 (8 角色 × 18 权限)
+- **Celery 异步任务**: 导出 + 过期 token 自动清理
+- **MinIO 存储**: 导出文件上传到对象存储
+- **事件 Webhook**: `randomization-completed` 和 `visit-started` 端点用于 Java 后端联动
+- **Docker Compose**: API + Worker + PostgreSQL + Redis + MinIO
+- **数据库迁移**: Alembic 初始迁移 (7 张表)
+
+### 前端 (React 19) — 8 个新页面
+- **`/q/fill/:token`** — 受试者问卷填写 (SurveyJS 渲染 + 草稿/提交)
+- **`/app/questionnaires/templates`** — 模板 CRUD 管理
+- **`/app/questionnaires/templates/:id/versions`** — 版本编辑 + Builder/JSON/Preview 三 Tab
+- **`/app/questionnaires/assignments`** — 访视分配管理 + 批量创建
+- **`/app/questionnaires/responses`** — 回复审核 + 锁定 + 更正
+- **`/app/questionnaires/my-tasks`** — 受试者任务列表 (进度/待办/过期)
+- **`/app/questionnaires/export`** — 导出任务管理
+- **`QuestionnaireBuilder` 组件** — 可视化问卷编辑器 (题型选择/选项编辑/实时预览/JSON导入导出)
+
+### 验证
+- Python `pytest`: ✅ 31/31 passed
+- TypeScript `typecheck`: ✅ 0 errors
+- `pnpm build`: ✅ (chunk size warning 非阻断)
+- E2E API (模板 → 版本 → 发布 → 分配): ✅ 全部 HTTP 200/201
+- Docker Compose (PostgreSQL + Redis): ✅ 启动/迁移/停止正常
+
+---
 
 - **模块:** core, web, frontend
 - **原因:** PLAN.md 各项完成，全面测试与质量提升

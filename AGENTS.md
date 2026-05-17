@@ -9,29 +9,44 @@ OpenClinica is an open-source Electronic Data Capture (EDC) and Clinical Data Ma
 
 New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/static/`. Backend modular monolith with Spring Modulith at `org.akaza.openclinica.module.*`.
 
-**当前状态:** `mvn clean compile` ✅ | `mvn clean package -DskipTests` ✅ | `mvn test` 11/11 pass ✅ | Frontend TypeScript 0 errors ✅ | ESLint 0 errors ✅
+**当前状态:** `mvn clean compile` ✅ | `mvn clean package -DskipTests` ✅ | `mvn test` 11/11 pass ✅ | Frontend TypeScript 0 errors ✅ | ESLint 0 errors ✅ | **Questionnaire Service** `pytest` 31/31 ✅ | Docker Compose ✅ | E2E API ✅
+
+**新增模块:** `questionnaire-service/` — Python FastAPI 问卷服务，独立于 Java 后端部署。提供 SurveyJS 问卷渲染、评分引擎（ISI/GAD-7/PHQ-9/ESS）、访视分配、审计追踪、数据导出。前端集成在 `frontend/src/pages/questionnaire/`，共 8 个页面 + 1 个可视化 Builder 组件。
 
 ## STRUCTURE
 
 ```
 ./
-├── app/            # Spring Boot modular monolith entry point (WAR)
-│   └── module/     # Spring Modulith modules (randomization, export, crf, notification, identity)
-├── core/           # Domain logic, DAOs, services, Hibernate entities
-├── frontend/       # React 19 + TypeScript SPA (pnpm workspace)
-├── web/            # Web UI (JSP), servlets, controllers, REST endpoints  
-├── ws/             # SOAP web services, study/subject/event endpoints
-├── deploy/         # Docker Compose, Nginx, scripts
-├── docker/         # Dockerfiles
-├── scripts/        # Build, deploy, release scripts
-├── pom.xml         # Maven parent - Spring 6.1.5, Hibernate 6.4.4, Java 21
-└── AGENTS.md
+├── app/                     # Spring Boot modular monolith entry point (WAR)
+│   └── module/              # Spring Modulith modules (randomization, export, crf, notification, identity)
+├── core/                    # Domain logic, DAOs, services, Hibernate entities
+├── frontend/                # React 19 + TypeScript SPA (pnpm workspace)
+├── questionnaire-service/   # Python FastAPI 问卷微服务 (独立部署)
+│   ├── apps/api/            # FastAPI 后端：models, services, scoring, API routers, Celery workers
+│   ├── infra/               # Docker Compose (PostgreSQL, Redis, MinIO)
+│   └── packages/            # SurveyJS 问卷 schema (ISI, GAD-7, PHQ-9, ESS)
+├── web/                     # Web UI (JSP), servlets, controllers, REST endpoints  
+├── ws/                      # SOAP web services, study/subject/event endpoints
+├── deploy/                  # Docker Compose, Nginx, scripts
+├── docker/                  # Dockerfiles
+├── scripts/                 # Build, deploy, release scripts
+├── pom.xml                  # Maven parent - Spring 6.1.5, Hibernate 6.4.4, Java 21
+├── AGENTS.md
+├── MODIFICATIONS.md
+└── PLAN.md
 ```
 
 ## WHERE TO LOOK
 
 | Task | Location | Notes |
 |------|----------|-------|
+| **Questionnaire Service (Python)** | `questionnaire-service/apps/api/` | FastAPI + SQLAlchemy + Pydantic v2 |
+| Questionnaire models | `questionnaire-service/apps/api/app/models/` | 7 SQLAlchemy ORM models |
+| Scoring engine | `questionnaire-service/apps/api/app/scoring/` | ISI/GAD-7/PHQ-9/ESS scorers |
+| API routers | `questionnaire-service/apps/api/app/api/v1/routers/` | 8 router modules (admin + public + events) |
+| SurveyJS schemas | `questionnaire-service/packages/questionnaire-schemas/` | Built-in questionnaire JSON files |
+| Frontend questionnaire pages | `frontend/src/pages/questionnaire/` | 8 pages + 1 Builder component |
+| Frontend Builder | `frontend/src/components/questionnaire-builder/` | Visual SurveyJS JSON editor |
 | Spring Modulith modules | `app/src/main/java/org/akaza/openclinica/module/` | `@ApplicationModule` annotated packages |
 | SPA fallback config | `app/src/main/java/org/akaza/openclinica/config/WebMvcConfig.java` | `/app/**` → React index.html |
 | App config | `app/src/main/resources/application.yml` | Spring Boot profiles |
@@ -135,26 +150,35 @@ Tests live in `core/src/test` (17 files), `web/src/test` (2 files), and `app/src
 - **Modulith Modules:** `@ApplicationModule` with `allowedDependencies` for boundary enforcement
 - **Frontend Permission Matrix:** `ROLE_PERMISSIONS` maps 8 study roles to 18 permissions
 
+## Questionnaire Service Conventions
+
+### Backend (Python/FastAPI)
+- **Framework:** FastAPI + SQLAlchemy 2.x async + Pydantic v2
+- **Database:** PostgreSQL via asyncpg + Alembic migrations (separate from Java DB)
+- **Pattern:** Repository → Service → Router (3-layer)
+- **Models:** SQLAlchemy ORM with `Mapped`/`mapped_column` style, UUID primary keys
+- **Scoring:** `BaseScorer` ABC + `ScorerRegistry` + per-scale Python scorers
+- **Auth:** Keycloak OIDC JWT validation for admin routes; token-based for public routes
+- **Queue:** Celery for async exports + reminder tasks (Redis broker)
+- **Export:** Pandas/Polars for CSV/XLSX/JSON in long/wide/score/delta formats
+
+### Frontend (React) — SurveyJS Pages
+- **Fill page:** `/q/fill/:token` — public, no auth, SurveyJS render + draft/submit
+- **Admin pages:** Under `/app/questionnaires/*` with Keycloak auth
+- **Builder:** `QuestionnaireBuilder` component with question list, property editor, live preview
+- **Pattern:** Same as main frontend — `apiClient`, `useAppQuery`/`useAppMutation`
+
 ## COMMANDS
 
 ```bash
-# === Backend ===
-# Compile all modules
+# === Backend (Java) ===
 mvn clean compile -DskipTests
-
-# Package with tests
 mvn clean package
-
-# Package without tests
 mvn clean package -DskipTests
-
-# Run Modulith verification only
 mvn test -pl app -am -Dtest=ModulithVerificationTest -DfailIfNoTests=false
-
-# Run all tests (requires PostgreSQL)
 mvn test
 
-# === Frontend ===
+# === Frontend (React) ===
 cd frontend
 pnpm install           # Install dependencies
 pnpm dev               # Dev server at localhost:5173
@@ -162,26 +186,42 @@ pnpm build             # Production build → app/src/main/resources/static/
 pnpm lint              # ESLint check
 pnpm typecheck         # TypeScript check
 
+# === Questionnaire Service (Python) ===
+cd questionnaire-service/apps/api
+pip install -r <(grep -v "^#" pyproject.toml | grep -oP '"[^"]+"' | tr -d '"')  # Optional
+python -m pytest app/tests/ -v              # Run 31 unit tests
+PYTHONPATH="$PWD" alembic upgrade head       # Run DB migrations
+PYTHONPATH="$PWD" uvicorn app.main:app       # Dev server at localhost:8000
+
+# Docker Compose (questionnaire infra)
+cd questionnaire-service/infra
+docker compose up -d                        # Start PostgreSQL + Redis + MinIO
+docker compose down                         # Stop all
+
 # === Full Pipeline ===
-# Build everything (frontend + backend)
+# 1. Build Java backend
 cd frontend && pnpm build && cd ..
 mvn clean compile -DskipTests
-
-# === Docker ===
-docker compose -f deploy/compose/docker-compose.dev.yml up --build
+# 2. Start questionnaire infra
+cd questionnaire-service/infra && docker compose up -d
+cd ../apps/api && PYTHONPATH="$PWD" alembic upgrade head
+# 3. Run questionnaire tests
+python -m pytest app/tests/ -v
 ```
 
 ## NOTES
 
 - **Database:** Supports Oracle and PostgreSQL - test queries exist in `core/src/main/resources/queries/`
-- **Security:** Spring Security 3.2 with LDAP support, role-based access control
-- **Routing:** New frontend at `/app/*`, legacy JSP at `/legacy/*` via Nginx
+- **Security:** Spring Security 3.2 with LDAP support, role-based access control; Keycloak for new SPA
+- **Routing:** New frontend at `/app/*`, legacy JSP at `/legacy/*` via Nginx, questionnaire at `/q/*`
 - **Modulith:** Only `org.akaza.openclinica.module.*` is verified; legacy packages are excluded
 - **Scheduling:** Quartz jobs for data export and imports
 - **Version:** Currently 3.18-SNAPSHOT (pom.xml)
+- **Questionnaire Service:** Python FastAPI, separate deployment from Java. API at port 8000, Docker Compose at `questionnaire-service/infra/`
 
 ## SUBMODULE REFERENCES
 
 - [core/AGENTS.md](./core/AGENTS.md) - Domain logic and data access
 - [web/AGENTS.md](./web/AGENTS.md) - Web UI and controllers
 - [ws/AGENTS.md](./ws/AGENTS.md) - SOAP web services
+- `questionnaire-service/` - Python FastAPI questionnaire service (see its internal docs)

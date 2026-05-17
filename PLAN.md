@@ -3,26 +3,30 @@
 > 核心依赖现代化（Java 21 / Spring 6 / Hibernate 6 / Jakarta EE 10）已完成。
 > 前端基线工程（React 19 / TypeScript / Vite）已完成。
 > 模块化单体重构（Spring Modulith）已启动。
+> **问卷微服务（Python FastAPI）已上线**，详见 `questionnaire-service/`。
 
 ---
 
 ## 一、当前状态
 
-| 模块 | 文件数 | 编译状态 | 测试状态 |
-|------|--------|---------|---------|
-| core | 736 | ✅ `mvn clean compile` 通过 | ✅ 8 tests pass (纯单元 + DBUnit 初始化) |
-| web | 481 | ✅ `mvn clean compile` 通过 | ✅ 3 tests pass |
-| ws | 57 | ✅ `mvn clean compile` 通过 | — |
-| app | 6 + 10 (Modulith) | ✅ `mvn clean package` 通过 | ✅ ModulithVerificationTest pass |
-| frontend | ~30 (源文件) | ✅ `pnpm build` 通过 | ✅ TypeScript strict 0 errors, ESLint 0 errors |
+| 模块 | 文件数 | 编译/检查状态 | 测试状态 |
+|------|--------|-------------|---------|
+| core | 736 | ✅ `mvn clean compile` | ✅ 8 tests pass |
+| web | 481 | ✅ `mvn clean compile` | ✅ 3 tests pass |
+| ws | 57 | ✅ `mvn clean compile` | — |
+| app | 6 + 10 (Modulith) | ✅ `mvn clean package` | ✅ ModulithVerificationTest |
+| frontend | ~30 (源文件) | ✅ `pnpm build`, `tsc --noEmit` | ✅ TypeScript 0 errors, ESLint 0 errors |
+| **questionnaire-service** | **71 (Python)** | **✅ `pytest`** | **✅ 31/31 tests + E2E** |
 
-**后端构建:** `mvn clean compile -DskipTests` ✅  
+**后端构建 (Java):** `mvn clean compile -DskipTests` ✅  
 **后端打包:** `mvn clean package -DskipTests` ✅ (产出: `app/target/OpenClinica.war`)  
 **前端构建:** `cd frontend && pnpm build` ✅  
 **前端类型检查:** `npx tsc --noEmit` ✅  
 **前端 lint:** `npx eslint .` ✅ 0 errors  
 **Modulith 验证:** `mvn test -pl app -am -Dtest=ModulithVerificationTest` ✅  
-**全量测试:** `mvn test` ✅ (core 8 + web 3 = 11 tests, all pass)
+**全量测试 (Java):** `mvn test` ✅ (core 8 + web 3 = 11 tests, all pass)  
+**问卷服务测试 (Python):** `cd questionnaire-service/apps/api && python -m pytest` ✅ (31/31)  
+**问卷 E2E:** Docker Compose 启动 → Alembic migrate → API 测试 ✅
 
 ---
 
@@ -119,6 +123,8 @@ Milestone 8: CRF 元数据与表单引擎 ✅
 Milestone 9: 性能优化与可观测性 ✅
   ↓
 Milestone 10: 后续升级评估 ✅
+  ↓
+Milestone 11: 问卷微服务 (SurveyJS + FastAPI + 评分引擎) ✅
 ```
 
 ---
@@ -407,6 +413,28 @@ randomization_audit_log
 | Subject 列表 P95 | < 1000ms | < 500ms |
 | CRF 保存 P95 | < 1000ms | < 800ms |
 | 随机化分配 P95 | < 500ms | < 300ms |
+
+---
+
+### Milestone 11：问卷微服务 (Python FastAPI) ✅
+
+基于 `questionnaire_python_backend_roadmap.md` 完整实现的 Clinical Questionnaire Service。
+
+**后端 (Python/FastAPI) — 71 文件:**
+- 7 表 SQLAlchemy ORM + Alembic 迁移
+- 6 个 Repository + 7 个 Service + 8 个 API Router
+- 评分引擎 (ISI/GAD-7/PHQ-9/ESS, 31 测试)
+- Keycloak JWT 验证 + RBAC
+- Celery 异步导出 + MinIO 存储
+- 事件 webhook (randomization-completed, visit-started)
+
+**前端 (React 19) — 8 个新页面:**
+- 受试者填写页 (`/q/fill/:token`)
+- 模板 CRUD / 版本编辑 (含可视化 Builder)
+- 分配管理 / 回复审核 / 导出任务 / 受试者任务列表
+- QuestionnaireBuilder 组件 (题型选择 / 选项编辑 / 实时预览 / JSON 导入导出)
+
+**验证:** 31/31 pytest | TypeScript 0 errors | Docker Compose + PostgreSQL + Redis | E2E API
 
 ---
 
