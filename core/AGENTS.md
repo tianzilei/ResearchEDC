@@ -3,6 +3,8 @@
 **Module:** Core business logic, DAOs, services, and Hibernate entities  
 **Files:** ~736 Java files  
 
+> **Modulith 迁移状态:** core 模块的包 (`bean`, `dao`, `domain`, `service`, `logic` 等) 是遗留代码。新模块应创建在 `app/` 模块的 `org.akaza.openclinica.module.<name>` 包下，逐步从 core 提取到对应的 Modulith 模块中。提取顺序: notification ✅ → export → audit → randomization → subject → study/site → crf/data-capture。
+
 ## STRUCTURE
 
 ```

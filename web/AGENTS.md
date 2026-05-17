@@ -3,6 +3,9 @@
 **Module:** Web interface, JSP pages, servlets, REST controllers  
 **Files:** ~481 Java files, ~419 JSP files  
 
+> **前端共存:** 新 React SPA 运行于 `/app/*` 路径，旧 JSP 继续运行于 `/legacy/*`（通过 Nginx 路由）。
+> 新前端代码位于 `frontend/src/`，与 web 模块无关。REST 控制器仍在此模块中供新旧前端共用。
+
 ## STRUCTURE
 
 ```
