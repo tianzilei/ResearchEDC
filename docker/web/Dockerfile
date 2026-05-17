@@ -15,11 +15,12 @@ COPY pom.xml ./
 COPY core/pom.xml ./core/
 COPY web/pom.xml ./web/
 COPY ws/pom.xml ./ws/
+COPY app/pom.xml ./app/
 
 # Download dependencies (cached layer unless POM changes)
 RUN mvn dependency:go-offline -DskipTests -pl core,web -am --quiet || true
 
-# Copy source
+# Copy source (app/ NOT needed — only core + web are built)
 COPY core/ ./core/
 COPY web/ ./web/
 

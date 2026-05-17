@@ -13,12 +13,14 @@ WORKDIR /build
 # Copy parent POM first for dependency caching
 COPY pom.xml ./
 COPY core/pom.xml ./core/
+COPY web/pom.xml ./web/
 COPY ws/pom.xml ./ws/
+COPY app/pom.xml ./app/
 
 # Download dependencies (cached layer unless POM changes)
 RUN mvn dependency:go-offline -DskipTests -pl ws -am --quiet || true
 
-# Copy source
+# Copy source (only needed modules)
 COPY core/ ./core/
 COPY ws/ ./ws/
 
