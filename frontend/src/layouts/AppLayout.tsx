@@ -13,6 +13,9 @@ import {
   AuditOutlined,
   SettingOutlined,
   DownOutlined,
+  FormOutlined,
+  LinkOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "@/providers/AuthProvider";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -40,6 +43,19 @@ function useMenuItems(): MenuProps["items"] {
   if (has("crf:design")) {
     items.push({ key: "/app/crfs", icon: <FileTextOutlined />, label: "CRFs" });
   }
+  if (has("crf:design")) {
+    items.push({
+      key: "questionnaires",
+      icon: <FormOutlined />,
+      label: "Questionnaires",
+      children: [
+        { key: "/app/questionnaires/templates", icon: <FileTextOutlined />, label: "Templates" },
+        { key: "/app/questionnaires/assignments", icon: <LinkOutlined />, label: "Assignments" },
+        { key: "/app/questionnaires/responses", icon: <CheckCircleOutlined />, label: "Responses" },
+        { key: "/app/questionnaires/export", icon: <ExportOutlined />, label: "Export" },
+      ],
+    } satisfies NonNullable<MenuProps["items"]>[number]);
+  }
   if (has("data:export")) {
     items.push({ key: "/app/data-export", icon: <ExportOutlined />, label: "Data Export" });
   }
@@ -63,10 +79,16 @@ export default function AppLayout() {
   const { token } = antTheme.useToken();
   const menuItems = useMenuItems();
 
+  const defaultOpenKeys = location.pathname.startsWith("/app/questionnaires")
+    ? ["questionnaires"]
+    : [];
+
   const selectedKey = (() => {
-    if (location.pathname.startsWith("/app/randomization")) return "/app/randomization";
+    const path = location.pathname;
+    if (path.startsWith("/app/randomization")) return "/app/randomization";
+    if (path.startsWith("/app/questionnaires")) return "/app/questionnaires/templates";
     return ((menuItems ?? []) as { key: string }[]).find(
-      (item) => item.key !== "/app/dashboard" && location.pathname.startsWith(item.key),
+      (item) => item.key !== "/app/dashboard" && path.startsWith(item.key),
     )?.key ?? "/app/dashboard";
   })();
 
@@ -146,6 +168,7 @@ export default function AppLayout() {
           <Menu
             mode="inline"
             selectedKeys={[selectedKey]}
+            defaultOpenKeys={defaultOpenKeys}
             items={menuItems}
             onClick={({ key }) => {
               navigate(key);

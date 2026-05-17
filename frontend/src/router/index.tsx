@@ -15,6 +15,14 @@ const ExportCenter = lazy(() => import("@/pages/export/ExportCenter"));
 const CrfList = lazy(() => import("@/pages/crf/CrfList"));
 const CrfPreview = lazy(() => import("@/pages/crf/CrfPreview"));
 
+const QuestionnaireTemplates = lazy(() => import("@/pages/questionnaire/QuestionnaireTemplates"));
+const QuestionnaireVersionEditor = lazy(() => import("@/pages/questionnaire/QuestionnaireVersionEditor"));
+const QuestionnaireAssignments = lazy(() => import("@/pages/questionnaire/QuestionnaireAssignments"));
+const QuestionnaireResponses = lazy(() => import("@/pages/questionnaire/QuestionnaireResponses"));
+const QuestionnaireExport = lazy(() => import("@/pages/questionnaire/QuestionnaireExport"));
+const QuestionnaireFill = lazy(() => import("@/pages/questionnaire/QuestionnaireFill"));
+const QuestionnaireMyTasks = lazy(() => import("@/pages/questionnaire/QuestionnaireMyTasks"));
+
 const router = createBrowserRouter([
   {
     path: "/app",
@@ -61,6 +69,30 @@ const router = createBrowserRouter([
         element: <CrfPreview />,
       },
       {
+        path: "questionnaires/templates",
+        element: <QuestionnaireTemplates />,
+      },
+      {
+        path: "questionnaires/templates/:templateId/versions",
+        element: <QuestionnaireVersionEditor />,
+      },
+      {
+        path: "questionnaires/assignments",
+        element: <QuestionnaireAssignments />,
+      },
+      {
+        path: "questionnaires/responses",
+        element: <QuestionnaireResponses />,
+      },
+      {
+        path: "questionnaires/my-tasks",
+        element: <QuestionnaireMyTasks />,
+      },
+      {
+        path: "questionnaires/export",
+        element: <QuestionnaireExport />,
+      },
+      {
         path: "audit-log",
         element: <AuditViewer />,
       },
@@ -73,6 +105,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/q/fill/:token",
+    element: <QuestionnaireFill />,
   },
   {
     path: "/error",
