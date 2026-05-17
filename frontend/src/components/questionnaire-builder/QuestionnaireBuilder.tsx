@@ -25,6 +25,7 @@ import {
 import { Model } from "survey-core";
 import { Survey } from "survey-react-ui";
 import "survey-core/survey-core.min.css";
+import { useTranslation } from "react-i18next";
 
 const { Sider, Content } = Layout;
 const { Text } = Typography;
@@ -52,14 +53,14 @@ export interface SurveyDef {
 }
 
 const QUESTION_TYPES = [
-  { value: "radiogroup", label: "Radio Group (Single Select)" },
-  { value: "checkbox", label: "Checkbox (Multi Select)" },
-  { value: "dropdown", label: "Dropdown" },
-  { value: "text", label: "Single Line Text" },
-  { value: "comment", label: "Multi Line Text" },
-  { value: "rating", label: "Rating / Scale" },
-  { value: "boolean", label: "Yes / No" },
-  { value: "expression", label: "Calculated Value" },
+  { value: "radiogroup", label: "builder.questionTypes.radiogroup" },
+  { value: "checkbox", label: "builder.questionTypes.checkbox" },
+  { value: "dropdown", label: "builder.questionTypes.dropdown" },
+  { value: "text", label: "builder.questionTypes.text" },
+  { value: "comment", label: "builder.questionTypes.comment" },
+  { value: "rating", label: "builder.questionTypes.rating" },
+  { value: "boolean", label: "builder.questionTypes.boolean" },
+  { value: "expression", label: "builder.questionTypes.expression" },
 ];
 
 let questionCounter = 0;
@@ -169,6 +170,7 @@ interface Props {
 }
 
 export default function QuestionnaireBuilder({ value, onChange }: Props) {
+  const { t } = useTranslation();
   const initial = useMemo(() => {
     questionCounter = 0;
     pageCounter = 0;
@@ -205,7 +207,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
 
   function addPage() {
     const newPage = createDefaultPage();
-    newPage.title = `Page ${survey.pages.length + 1}`;
+    newPage.title = `${t("builder.pageDefaultTitle")} ${survey.pages.length + 1}`;
     notifyChange({ ...survey, pages: [...survey.pages, newPage] });
     setSelectedPageIdx(survey.pages.length);
     setSelectedQIdx(null);
@@ -213,7 +215,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
 
   function deletePage(idx: number) {
     if (survey.pages.length <= 1) {
-      message.warning("Must have at least one page");
+      message.warning(t("builder.minOnePage"));
       return;
     }
     const pages = survey.pages.filter((_, i) => i !== idx);
@@ -280,17 +282,17 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
       notifyChange(imported);
       setImportModalOpen(false);
       setImportJson("");
-      message.success("Questionnaire imported");
+      message.success(t("builder.importSuccess"));
     } catch {
-      message.error("Invalid SurveyJS JSON");
+      message.error(t("builder.invalidJson"));
     }
   }
 
   function handleExport() {
     const json = JSON.stringify(surveyJSJson, null, 2);
     navigator.clipboard.writeText(json).then(
-      () => message.success("JSON copied to clipboard"),
-      () => message.error("Failed to copy"),
+      () => message.success(t("builder.exportSuccess")),
+      () => message.error(t("builder.exportFailed")),
     );
   }
 
@@ -301,7 +303,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
 
   const questionTypeActions = QUESTION_TYPES.map((qt) => ({
     key: qt.value,
-    label: qt.label,
+    label: t(qt.label),
     onClick: () => addQuestion(qt.value),
   }));
 
@@ -309,7 +311,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
     <Layout style={{ minHeight: 500, background: "#fff" }}>
       <Sider width={280} theme="light" style={{ borderRight: "1px solid #f0f0f0", overflow: "auto", padding: 12 }}>
         <Space direction="vertical" style={{ width: "100%" }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: "#888", marginBottom: 4 }}>PAGES</div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: "#888", marginBottom: 4 }}>{t("builder.pages")}</div>
           {survey.pages.map((page, pi) => (
             <div key={page.name}>
               <div
@@ -328,7 +330,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                 }}
               >
                 <Text strong style={{ fontSize: 13 }}>
-                  {page.title || `Page ${pi + 1}`}
+                  {page.title || `${t("builder.pageDefaultTitle")} ${pi + 1}`}
                 </Text>
                 <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => deletePage(pi)} />
               </div>
@@ -336,7 +338,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                 <div style={{ paddingLeft: 16, marginTop: 4 }}>
                   {page.elements.length === 0 && (
                     <Text type="secondary" style={{ fontSize: 11, display: "block", padding: "4px 0" }}>
-                      No questions yet
+                      {t("builder.noQuestions")}
                     </Text>
                   )}
                   {page.elements.map((q, qi) => (
@@ -358,7 +360,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                       <Space size={4}>
                         <Text code style={{ fontSize: 10 }}>{q.name}</Text>
                         <Text ellipsis style={{ maxWidth: 100, fontSize: 12 }}>
-                          {q.title || "untitled"}
+                          {q.title || t("builder.untitled")}
                         </Text>
                       </Space>
                       <Space size={2}>
@@ -370,7 +372,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                   ))}
                   <Dropdown menu={{ items: questionTypeActions }} trigger={["click"]}>
                     <Button size="small" type="dashed" icon={<PlusOutlined />} style={{ width: "100%", marginTop: 8 }}>
-                      Add Question
+                      {t("builder.addQuestion")}
                     </Button>
                   </Dropdown>
                 </div>
@@ -378,7 +380,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
             </div>
           ))}
           <Button size="small" icon={<FileAddOutlined />} onClick={addPage} block>
-            Add Page
+            {t("builder.addPage")}
           </Button>
         </Space>
       </Sider>
@@ -389,30 +391,30 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
             <Text strong>Question: {selectedQ.name}</Text>
 
             <div>
-              <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>Question Type</Text>
+              <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>{t("builder.questionType")}</Text>
               <Select
                 value={selectedQ.type}
                 onChange={(v) => updateQuestion(selectedQIdx!, { type: v, choices: v !== selectedQ.type ? defaultChoices(v) : selectedQ.choices })}
                 style={{ width: "100%" }}
-                options={QUESTION_TYPES}
+                options={QUESTION_TYPES.map((qt) => ({ ...qt, label: t(qt.label) }))}
               />
             </div>
 
             <div>
-              <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>Title</Text>
+              <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>{t("builder.title")}</Text>
               <Input value={selectedQ.title} onChange={(e) => updateQuestion(selectedQIdx!, { title: e.target.value })} />
             </div>
 
             <div>
               <Space>
                 <Switch checked={selectedQ.isRequired} onChange={(v) => updateQuestion(selectedQIdx!, { isRequired: v })} />
-                <Text style={{ fontSize: 12 }}>Required</Text>
+                <Text style={{ fontSize: 12 }}>{t("builder.required")}</Text>
               </Space>
             </div>
 
             {["radiogroup", "checkbox", "dropdown"].includes(selectedQ.type) && (
               <div>
-                <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>Choices</Text>
+                <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>{t("builder.choices")}</Text>
                 {selectedQ.choices.map((choice, ci) => (
                   <Space key={ci} style={{ display: "flex", marginBottom: 4 }}>
                     <Input
@@ -426,7 +428,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                         });
                       }}
                       style={{ width: 60 }}
-                      placeholder="value"
+                      placeholder={t("builder.value")}
                     />
                     <Input
                       size="small"
@@ -438,7 +440,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                           ),
                         });
                       }}
-                      placeholder="label"
+                      placeholder={t("builder.label")}
                     />
                     <Button
                       type="text"
@@ -457,11 +459,11 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                   type="dashed"
                   icon={<PlusOutlined />}
                   onClick={() => {
-                    const c = [...selectedQ.choices, { value: String(selectedQ.choices.length + 1), text: `Option ${selectedQ.choices.length + 1}` }];
+                    const c = [...selectedQ.choices, { value: String(selectedQ.choices.length + 1), text: `${t("builder.option")} ${selectedQ.choices.length + 1}` }];
                     updateQuestion(selectedQIdx!, { choices: c });
                   }}
                 >
-                  Add Choice
+                  {t("builder.addChoice")}
                 </Button>
               </div>
             )}
@@ -469,29 +471,29 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
             {selectedQ.type === "rating" && (
               <div>
                 <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>
-                  Rate scale: 1-5 (configure in SurveyJS JSON for custom ranges)
+                  {t("builder.rateScale")}
                 </Text>
               </div>
             )}
 
             <div>
-              <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>Visible When (SurveyJS expression)</Text>
+              <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>{t("builder.visibleWhen")}</Text>
               <Input
                 value={selectedQ.visibleIf}
                 onChange={(e) => updateQuestion(selectedQIdx!, { visibleIf: e.target.value })}
-                placeholder='e.g., {Q_01} = 1'
+                placeholder={t("builder.visibleWhenPlaceholder")}
               />
             </div>
           </Space>
         ) : currentPage ? (
           <Space direction="vertical" style={{ width: "100%" }}>
-            <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>Survey Title</Text>
+            <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>{t("builder.surveyTitle")}</Text>
             <Input value={survey.title} onChange={(e) => updateTitle(e.target.value)} />
 
-            <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>Description</Text>
+            <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>{t("builder.description")}</Text>
             <Input value={survey.description} onChange={(e) => updateDescription(e.target.value)} />
 
-            <Empty description="Select a question or add one from the left panel" />
+            <Empty description={t("builder.selectQuestion")} />
           </Space>
         ) : null}
       </Content>
@@ -499,20 +501,20 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
       <div style={{ padding: 12, borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between" }}>
         <Space>
           <Button icon={<EyeOutlined />} onClick={() => setShowPreview(!showPreview)}>
-            {showPreview ? "Hide Preview" : "Show Preview"}
+            {showPreview ? t("builder.hidePreview") : t("builder.showPreview")}
           </Button>
           <Button icon={<ImportOutlined />} onClick={() => setImportModalOpen(true)}>
-            Import JSON
+            {t("builder.importJson")}
           </Button>
           <Button icon={<ExportOutlined />} onClick={handleExport}>
-            Export JSON
+            {t("builder.exportJson")}
           </Button>
         </Space>
       </div>
 
       {showPreview && (
         <div style={{ padding: 16, borderTop: "1px solid #f0f0f0", background: "#fafafa" }}>
-          <Text strong style={{ display: "block", marginBottom: 8 }}>Live Preview</Text>
+          <Text strong style={{ display: "block", marginBottom: 8 }}>{t("builder.livePreview")}</Text>
           <div style={{ maxWidth: 600, margin: "0 auto" }}>
             <Survey model={previewModel} />
           </div>
@@ -520,7 +522,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
       )}
 
       <Modal
-        title="Import SurveyJS JSON"
+        title={t("builder.importModalTitle")}
         open={importModalOpen}
         onCancel={() => { setImportModalOpen(false); setImportJson(""); }}
         onOk={handleImport}
@@ -529,7 +531,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
           rows={12}
           value={importJson}
           onChange={(e) => setImportJson(e.target.value)}
-          placeholder="Paste SurveyJS JSON here..."
+          placeholder={t("builder.importPlaceholder")}
           style={{ fontFamily: "monospace", fontSize: 12 }}
         />
       </Modal>

@@ -4,6 +4,7 @@ import { SaveOutlined, LoadingOutlined, CheckCircleOutlined, ExclamationCircleOu
 import { FormField, type FormItemConfig } from "@/components/form-engine/FormField";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { isFieldDisabled, type FormStatusConfig, type FormRecordStatus } from "@/components/form-engine/FormStatus";
+import { useTranslation } from "react-i18next";
 
 const { Text } = Typography;
 
@@ -24,6 +25,7 @@ export function DataEntryForm({
   onSave,
   enableAutoSave = true,
 }: DataEntryFormProps) {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
   const [formValues, setFormValues] = useState(initialValues ?? {});
@@ -62,22 +64,22 @@ export function DataEntryForm({
   const fieldsDisabled = useMemo(() => isFieldDisabled(statusConfig), [statusConfig]);
 
   const statusTag = useMemo(() => {
-    if (saving) return { icon: <LoadingOutlined />, text: "Saving...", color: "rgba(0,0,0,0.45)" };
-    if (manualSaveStatus === "saved") return { icon: <CheckCircleOutlined />, text: "Saved", color: "#52c41a" };
-    if (manualSaveStatus === "error") return { icon: <ExclamationCircleOutlined />, text: "Save failed", color: "#ff4d4f" };
+    if (saving) return { icon: <LoadingOutlined />, text: t("form.saving"), color: "rgba(0,0,0,0.45)" };
+    if (manualSaveStatus === "saved") return { icon: <CheckCircleOutlined />, text: t("form.saved"), color: "#52c41a" };
+    if (manualSaveStatus === "error") return { icon: <ExclamationCircleOutlined />, text: t("form.saveFailed"), color: "#ff4d4f" };
     return null;
   }, [saving, manualSaveStatus]);
 
   return (
     <div>
       {statusConfig.status === "LOCKED" && (
-        <Alert message="This form is locked and cannot be edited." type="warning" showIcon style={{ marginBottom: 16 }} />
+        <Alert message={t("form.lockedAlert")} type="warning" showIcon style={{ marginBottom: 16 }} />
       )}
       {statusConfig.status === "FROZEN" && (
-        <Alert message="This form is frozen for review. Changes are not permitted." type="info" showIcon style={{ marginBottom: 16 }} />
+        <Alert message={t("form.frozenAlert")} type="info" showIcon style={{ marginBottom: 16 }} />
       )}
       {statusConfig.status === "SIGNED" && (
-        <Alert message="This form has been electronically signed and is read-only." type="success" showIcon style={{ marginBottom: 16 }} />
+        <Alert message={t("form.signedAlert")} type="success" showIcon style={{ marginBottom: 16 }} />
       )}
 
       <Form
@@ -109,7 +111,7 @@ export function DataEntryForm({
             loading={saving}
             disabled={fieldsDisabled}
           >
-            Save
+            {t("form.save")}
           </Button>
           {statusTag && (
             <Text style={{ color: statusTag.color }}>

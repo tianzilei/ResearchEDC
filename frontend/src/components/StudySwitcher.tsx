@@ -3,10 +3,12 @@ import { Select, Typography, Space } from "antd";
 import { MedicineBoxOutlined, HomeOutlined } from "@ant-design/icons";
 import { useStudies, useCurrentStudy } from "@/hooks/useStudies";
 import type { Study } from "@/types/study";
+import { useTranslation } from "react-i18next";
 
 const { Text } = Typography;
 
 export default function StudySwitcher() {
+  const { t } = useTranslation();
   const { data: studies } = useStudies();
   const { currentStudy, setCurrentStudy } = useCurrentStudy();
   const [open, setOpen] = useState(false);
@@ -24,7 +26,7 @@ export default function StudySwitcher() {
     <Select
       showSearch
       value={currentStudy ? currentStudy.name : undefined}
-      placeholder="Select a study..."
+      placeholder={t("layout.selectStudy")}
       open={open}
       onDropdownVisibleChange={setOpen}
       onChange={handleChange}
