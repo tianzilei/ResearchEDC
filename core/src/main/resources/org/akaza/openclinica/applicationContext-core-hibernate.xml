@@ -47,10 +47,13 @@
                 <prop key="hibernate.format_sql">true</prop>
                 <prop key="hibernate.dialect">${hibernate.dialect}</prop>
                 <prop key="hibernate.generate_statistics">true</prop>
-                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
-                <prop key="hibernate.cache.use_query_cache">true</prop>
-                <prop key="hibernate.cache.use_second_level_cache">true</prop>
-                <prop key="hibernate.cache.provider_configuration_file_resource_path">/ehcache.xml</prop>
+                <!-- Second-level cache disabled for Hibernate 6 compatibility.
+                     EhCacheRegionFactory was removed in Hibernate 6.
+                     Re-enable with JCache (JSR-107) + Ehcache 3 when needed:
+                     <prop key="hibernate.cache.region.factory_class">jcache</prop>
+                     <prop key="hibernate.javax.cache.provider">org.ehcache.jsr107.EhcacheCachingProvider</prop> -->
+                <prop key="hibernate.cache.use_query_cache">false</prop>
+                <prop key="hibernate.cache.use_second_level_cache">false</prop>
                 <prop key="hibernate.physical_naming_strategy">org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy</prop>
                 <prop key="hibernate.id.new_generator_mappings">true</prop>
                 <!-- Uncommenting the following line allows better logging of Hibernate errors for debugging purposes. Must be commented out for production use. -->
