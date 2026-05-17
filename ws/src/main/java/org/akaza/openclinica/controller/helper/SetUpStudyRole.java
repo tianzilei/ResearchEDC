@@ -12,7 +12,7 @@ import org.akaza.openclinica.view.StudyInfoPanel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;

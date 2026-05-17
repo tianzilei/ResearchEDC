@@ -4,10 +4,10 @@
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:security="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/util 
-                           http://www.springframework.org/schema/util/spring-util-2.5.xsd
-                           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd">
+                           http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<security:http auto-config="true"
 		access-denied-page="/accounts/denied.htm">

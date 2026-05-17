@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import javax.sql.DataSource;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 

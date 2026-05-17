@@ -62,7 +62,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.sql.DataSource;
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
