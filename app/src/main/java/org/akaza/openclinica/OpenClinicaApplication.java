@@ -23,7 +23,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     "org.akaza.openclinica.domain",
     "org.akaza.openclinica.ws",
     "org.akaza.openclinica.web",
-    "org.akaza.openclinica.config"
+    "org.akaza.openclinica.config",
+    "org.akaza.openclinica.module"
 })
 @EntityScan(basePackages = {
     "org.akaza.openclinica.domain"
