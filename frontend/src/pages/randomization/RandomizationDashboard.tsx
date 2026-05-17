@@ -38,8 +38,8 @@ export default function RandomizationDashboard() {
       const values = await form.validateFields();
       const arms: ArmDTO[] = values.arms?.map((a: any, i: number) => ({
         name: a.name,
-        displayName: a.displayName || a.name,
-        ratio: a.ratio || 1,
+        displayName: a.displayName ?? a.name,
+        ratio: a.ratio ?? 1,
         orderNumber: i + 1,
       })) ?? [{ name: "Control", ratio: 1, orderNumber: 1 }, { name: "Treatment", ratio: 1, orderNumber: 2 }];
 

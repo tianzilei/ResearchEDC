@@ -57,7 +57,7 @@ export default function AuditViewer() {
   return (
     <div>
       <Space style={{ marginBottom: 16 }}>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(`/app/randomization/schemes/${schemeId}`)}>Back</Button>
+        <Button icon={<ArrowLeftOutlined />} onClick={() => { navigate(`/app/randomization/schemes/${schemeId}`); }}>Back</Button>
       </Space>
 
       <Title level={4}><AuditOutlined /> Audit Log</Title>
