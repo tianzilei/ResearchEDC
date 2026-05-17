@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, List, Tag, Typography, Space, Button, Empty, Alert, Progress, message } from "antd";
 import {
   FileTextOutlined,
@@ -27,19 +28,20 @@ interface Assignment {
   created_at: string;
 }
 
-const statusConfig: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
-  pending: { color: "default", icon: <ClockCircleOutlined />, label: "Pending" },
-  in_progress: { color: "processing", icon: <FileTextOutlined />, label: "In Progress" },
-  submitted: { color: "success", icon: <CheckCircleOutlined />, label: "Completed" },
-  reviewed: { color: "cyan", icon: <CheckCircleOutlined />, label: "Reviewed" },
-  locked: { color: "purple", icon: <CheckCircleOutlined />, label: "Finalized" },
-  expired: { color: "warning", icon: <CloseCircleOutlined />, label: "Expired" },
-  withdrawn: { color: "error", icon: <CloseCircleOutlined />, label: "Withdrawn" },
-};
-
 export default function QuestionnaireMyTasks() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  const statusConfig: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
+    pending: { color: "default", icon: <ClockCircleOutlined />, label: t("tasks.pending") },
+    in_progress: { color: "processing", icon: <FileTextOutlined />, label: "In Progress" },
+    submitted: { color: "success", icon: <CheckCircleOutlined />, label: t("tasks.completed") },
+    reviewed: { color: "cyan", icon: <CheckCircleOutlined />, label: "Reviewed" },
+    locked: { color: "purple", icon: <CheckCircleOutlined />, label: "Finalized" },
+    expired: { color: "warning", icon: <CloseCircleOutlined />, label: "Expired" },
+    withdrawn: { color: "error", icon: <CloseCircleOutlined />, label: "Withdrawn" },
+  };
   const subjectId = user?.sub;
 
   const { data: assignments, isLoading } = useAppQuery<Assignment[]>({
@@ -53,7 +55,7 @@ export default function QuestionnaireMyTasks() {
 
   if (isLoading) return <SkeletonPage />;
   if (!subjectId) {
-    return <Alert message="Please log in to view your tasks" type="info" showIcon />;
+    return <Alert message={t("tasks.loginRequired")} type="info" showIcon />;
   }
 
   const pendingTasks = (assignments ?? []).filter(
@@ -73,7 +75,7 @@ export default function QuestionnaireMyTasks() {
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 16px" }}>
       <Title level={3}>
-        <FileTextOutlined /> My Questionnaires
+        <FileTextOutlined /> {t("questionnaire.myTasks")}
       </Title>
 
       <Card size="small" style={{ marginBottom: 24 }}>
@@ -83,7 +85,7 @@ export default function QuestionnaireMyTasks() {
               {pendingTasks.length}
             </Text>
             <div>
-              <Text type="secondary">Pending</Text>
+              <Text type="secondary">{t("tasks.pending")}</Text>
             </div>
           </div>
           <div style={{ textAlign: "center" }}>
@@ -91,7 +93,7 @@ export default function QuestionnaireMyTasks() {
               {completed}
             </Text>
             <div>
-              <Text type="secondary">Completed</Text>
+              <Text type="secondary">{t("tasks.completed")}</Text>
             </div>
           </div>
           <div style={{ textAlign: "center" }}>
@@ -103,7 +105,7 @@ export default function QuestionnaireMyTasks() {
       {pendingTasks.length > 0 && (
         <>
           <Title level={5} style={{ marginTop: 0 }}>
-            <ClockCircleOutlined /> To Complete
+            <ClockCircleOutlined /> {t("tasks.toComplete")}
           </Title>
           <List
             dataSource={pendingTasks}
@@ -116,13 +118,13 @@ export default function QuestionnaireMyTasks() {
                     icon={<RightOutlined />}
                     onClick={() => {
                       if (item.has_token) {
-                        message.info("Please use your questionnaire link to fill this");
+                        message.info(t("tasks.useLink"));
                       } else {
                         navigate(`/app/questionnaires/responses`);
                       }
                     }}
                   >
-                    Fill
+                    {t("tasks.fill")}
                   </Button>,
                 ]}
               >
@@ -139,12 +141,12 @@ export default function QuestionnaireMyTasks() {
                     <Space>
                       {item.due_at && (
                         <Text type="warning" style={{ fontSize: 12 }}>
-                          <CalendarOutlined /> Due: {new Date(item.due_at).toLocaleDateString()}
+                          <CalendarOutlined /> {t("tasks.dueLabel")}: {new Date(item.due_at).toLocaleDateString()}
                         </Text>
                       )}
                       {item.token_expires_at && (
                         <Text type="secondary" style={{ fontSize: 12 }}>
-                          Token expires: {new Date(item.token_expires_at).toLocaleDateString()}
+                          {t("tasks.tokenExpires")}: {new Date(item.token_expires_at).toLocaleDateString()}
                         </Text>
                       )}
                     </Space>
@@ -159,7 +161,7 @@ export default function QuestionnaireMyTasks() {
       {completedTasks.length > 0 && (
         <>
           <Title level={5} style={{ marginTop: 24 }}>
-            <CheckCircleOutlined /> Completed
+            <CheckCircleOutlined /> {t("tasks.completed")}
           </Title>
           <List
             dataSource={completedTasks}
@@ -176,7 +178,7 @@ export default function QuestionnaireMyTasks() {
                   }
                   description={
                     <Text style={{ fontSize: 12 }} type="secondary">
-                      Submitted
+                      {t("tasks.submitted")}
                     </Text>
                   }
                 />
@@ -189,7 +191,7 @@ export default function QuestionnaireMyTasks() {
       {expiredTasks.length > 0 && (
         <>
           <Title level={5} style={{ marginTop: 24, color: "#faad14" }}>
-            <CloseCircleOutlined /> Expired / Withdrawn
+            <CloseCircleOutlined /> {t("tasks.expiredWithdrawn")}
           </Title>
           <List
             dataSource={expiredTasks}
@@ -212,7 +214,7 @@ export default function QuestionnaireMyTasks() {
       )}
 
       {(assignments ?? []).length === 0 && (
-        <Empty description="No questionnaires assigned yet" />
+        <Empty description={t("tasks.empty")} />
       )}
     </div>
   );

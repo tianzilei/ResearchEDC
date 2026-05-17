@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   Table,
@@ -62,6 +63,7 @@ function useVersions(templateId: string) {
 }
 
 export default function QuestionnaireVersionEditor() {
+  const { t } = useTranslation();
   const { templateId } = useParams<{ templateId: string }>();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -84,7 +86,7 @@ export default function QuestionnaireVersionEditor() {
       ),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["questionnaire-versions", templateId] });
-      message.success("Version created");
+      message.success(t("version.created"));
       setCreateOpen(false);
       form.resetFields();
       setSurveyJson("");
@@ -97,7 +99,7 @@ export default function QuestionnaireVersionEditor() {
       apiClient.patch(`/api/v1/questionnaires/versions/${id}`, data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["questionnaire-versions", templateId] });
-      message.success("Version updated");
+      message.success(t("version.updated"));
       setEditVersionId(null);
       setEditJson(null);
     },
@@ -110,7 +112,7 @@ export default function QuestionnaireVersionEditor() {
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["questionnaire-versions", templateId] });
-      message.success("Version published");
+      message.success(t("version.published"));
     },
   });
 
@@ -119,7 +121,7 @@ export default function QuestionnaireVersionEditor() {
       apiClient.post(`/api/v1/questionnaires/versions/${id}/retire`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["questionnaire-versions", templateId] });
-      message.success("Version retired");
+      message.success(t("version.retired"));
     },
   });
 
@@ -156,28 +158,28 @@ export default function QuestionnaireVersionEditor() {
   };
 
   const columns = [
-    { title: "Version", dataIndex: "version_no", key: "version_no" },
+    { title: t("version.column.version"), dataIndex: "version_no", key: "version_no" },
     {
-      title: "Language",
+      title: t("version.column.language"),
       dataIndex: "language",
       key: "language",
       render: (l: string) => <Tag>{l}</Tag>,
     },
     {
-      title: "Status",
+      title: t("version.column.status"),
       dataIndex: "status",
       key: "status",
       render: (s: string) => <Tag color={statusColor[s]}>{s}</Tag>,
     },
     {
-      title: "Published",
+      title: t("version.column.published"),
       dataIndex: "published_at",
       key: "published_at",
       render: (d: string | null) =>
         d ? new Date(d).toLocaleDateString() : "-",
     },
     {
-      title: "Schema Hash",
+      title: t("version.column.schemaHash"),
       dataIndex: "schema_hash",
       key: "schema_hash",
       render: (h: string) => (
@@ -187,12 +189,12 @@ export default function QuestionnaireVersionEditor() {
       ),
     },
     {
-      title: "Actions",
+      title: t("version.column.actions"),
       key: "actions",
       render: (_: unknown, r: Version) => (
         <Space>
           <Button size="small" icon={<EyeOutlined />} onClick={() => handlePreview(r)}>
-            Preview
+            {t("version.action.preview")}
           </Button>
           {r.status === "draft" && (
             <>
@@ -201,7 +203,7 @@ export default function QuestionnaireVersionEditor() {
                 icon={<EditOutlined />}
                 onClick={() => handleOpenBuilder(r)}
               >
-                Edit
+                {t("version.action.edit")}
               </Button>
               <Button
                 size="small"
@@ -209,7 +211,7 @@ export default function QuestionnaireVersionEditor() {
                 icon={<CheckCircleOutlined />}
                 onClick={() => publishVersion.mutate(r.id)}
               >
-                Publish
+                {t("version.action.publish")}
               </Button>
             </>
           )}
@@ -219,7 +221,7 @@ export default function QuestionnaireVersionEditor() {
               icon={<StopOutlined />}
               onClick={() => retireVersion.mutate(r.id)}
             >
-              Retire
+              {t("version.action.retire")}
             </Button>
           )}
         </Space>
@@ -232,10 +234,10 @@ export default function QuestionnaireVersionEditor() {
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
         <Space>
           <Button onClick={() => navigate("/app/questionnaires/templates")}>
-            Back
+            {t("version.back")}
           </Button>
           <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
-            <CodeOutlined /> Version Management
+            <CodeOutlined /> {t("version.management")}
           </Title>
         </Space>
         <Button
@@ -243,7 +245,7 @@ export default function QuestionnaireVersionEditor() {
           icon={<FileAddOutlined />}
           onClick={() => setCreateOpen(true)}
         >
-          New Version
+          {t("version.new")}
         </Button>
       </Space>
 
@@ -253,12 +255,12 @@ export default function QuestionnaireVersionEditor() {
           columns={columns}
           rowKey="id"
           pagination={false}
-          locale={{ emptyText: <Empty description="No versions yet" /> }}
+          locale={{ emptyText: <Empty description={t("version.empty")} /> }}
         />
       </Card>
 
       <Modal
-        title="Create New Version"
+        title={t("version.create")}
         open={createOpen}
         width={900}
         onCancel={() => {
@@ -278,7 +280,7 @@ export default function QuestionnaireVersionEditor() {
               try { return JSON.parse(surveyJson); } catch { return null; }
             })();
             if (!schema?.pages) {
-              message.error("Please build the questionnaire first");
+              message.error(t("version.buildFirst"));
               return;
             }
             createVersion.mutate({
@@ -289,19 +291,19 @@ export default function QuestionnaireVersionEditor() {
         >
           <Form.Item
             name="version_no"
-            label="Version Number"
+            label={t("version.form.versionNo")}
             rules={[{ required: true }]}
           >
-            <Input placeholder="e.g., 1.0.0" />
+            <Input placeholder={t("version.form.versionNoPlaceholder")} />
           </Form.Item>
-          <Form.Item label="Questionnaire Content" required>
+          <Form.Item label={t("version.form.content")} required>
             <Tabs
               activeKey={editMode}
               onChange={(k) => setEditMode(k as "builder" | "json")}
               items={[
                 {
                   key: "builder",
-                  label: <span><BuildOutlined /> Visual Builder</span>,
+                  label: <span><BuildOutlined /> {t("version.form.builder")}</span>,
                   children: (
                     <div style={{ border: "1px solid #d9d9d9", borderRadius: 6, overflow: "hidden" }}>
                       <QuestionnaireBuilder value={builderJson} onChange={setBuilderJson} />
@@ -310,13 +312,13 @@ export default function QuestionnaireVersionEditor() {
                 },
                 {
                   key: "json",
-                  label: <span><CodeOutlined /> JSON Editor</span>,
+                  label: <span><CodeOutlined /> {t("version.form.jsonEditor")}</span>,
                   children: (
                     <TextArea
                       rows={16}
                       value={surveyJson}
                       onChange={(e) => setSurveyJson(e.target.value)}
-                      placeholder="Paste SurveyJS JSON here..."
+                      placeholder={t("version.form.jsonPlaceholder")}
                       style={{ fontFamily: "monospace", fontSize: 12 }}
                     />
                   ),
@@ -324,15 +326,15 @@ export default function QuestionnaireVersionEditor() {
               ]}
             />
           </Form.Item>
-          <Form.Item name="language" label="Language" initialValue="zh-CN">
-            <Input placeholder="zh-CN" />
+          <Form.Item name="language" label={t("version.form.language")} initialValue="zh-CN">
+            <Input placeholder={t("version.form.languagePlaceholder")} />
           </Form.Item>
         </Form>
       </Modal>
 
       {/* Edit Version Modal */}
       <Modal
-        title="Edit Version"
+        title={t("version.edit")}
         open={!!editVersionId}
         width={900}
         onCancel={() => {
@@ -357,7 +359,7 @@ export default function QuestionnaireVersionEditor() {
               },
               {
                 key: "preview",
-                label: <span><EyeOutlined /> Preview</span>,
+                label: <span><EyeOutlined /> {t("version.preview")}</span>,
                 children: (
                   <div style={{ maxWidth: 600, margin: "0 auto", padding: 16 }}>
                     <Survey model={new Model(editJson)} />
@@ -370,7 +372,7 @@ export default function QuestionnaireVersionEditor() {
       </Modal>
 
       <Modal
-        title={`Preview: ${previewVersion?.version_no ?? ""}`}
+        title={t("version.preview") + ": " + (previewVersion?.version_no ?? "")}
         open={previewOpen}
         onCancel={() => {
           setPreviewOpen(false);

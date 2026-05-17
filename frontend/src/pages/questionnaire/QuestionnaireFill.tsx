@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Model } from "survey-core";
 import { Survey } from "survey-react-ui";
@@ -20,6 +21,7 @@ interface QuestionnaireInfo {
 }
 
 export default function QuestionnaireFill() {
+  const { t } = useTranslation();
   const { token } = useParams<{ token: string }>();
   const [info, setInfo] = useState<QuestionnaireInfo | null>(null);
   const [survey, setSurvey] = useState<Model | null>(null);
@@ -33,7 +35,7 @@ export default function QuestionnaireFill() {
 
   useEffect(() => {
     if (!token) {
-      setError("Invalid questionnaire link");
+      setError(t("fill.invalidLink"));
       setLoading(false);
       return;
     }
@@ -48,7 +50,7 @@ export default function QuestionnaireFill() {
         setLoading(false);
       })
       .catch((err: unknown) => {
-        setError(err instanceof Error ? err.message : "Failed to load questionnaire");
+        setError(err instanceof Error ? err.message : t("fill.loadFailed"));
         setLoading(false);
       });
   }, [token, questionnaireBaseUrl]);
@@ -67,9 +69,9 @@ export default function QuestionnaireFill() {
         },
       );
       setSubmitted(true);
-      message.success("Questionnaire submitted successfully");
+      message.success(t("fill.submittedSuccess"));
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to submit";
+      const errorMessage = err instanceof Error ? err.message : t("fill.failedToSubmit");
       message.error(errorMessage);
     } finally {
       setSubmitting(false);
@@ -87,9 +89,9 @@ export default function QuestionnaireFill() {
           response: responseData,
         },
       );
-      message.success("Draft saved");
+      message.success(t("fill.draftSaved"));
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to save draft";
+      const errorMessage = err instanceof Error ? err.message : t("fill.failedToSaveDraft");
       message.error(errorMessage);
     }
   };
@@ -97,7 +99,7 @@ export default function QuestionnaireFill() {
   if (loading) {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
-        <Spin size="large" tip="Loading questionnaire..." />
+        <Spin size="large" tip={t("fill.loading")} />
       </div>
     );
   }
@@ -106,7 +108,7 @@ export default function QuestionnaireFill() {
     return (
       <div style={{ maxWidth: 600, margin: "80px auto", padding: 24 }}>
         <Alert
-          message="Unable to Load Questionnaire"
+          message={t("fill.error")}
           description={error}
           type="error"
           showIcon
@@ -120,11 +122,10 @@ export default function QuestionnaireFill() {
       <div style={{ maxWidth: 600, margin: "80px auto", padding: 24, textAlign: "center" }}>
         <CheckCircleOutlined style={{ fontSize: 64, color: "#52c41a" }} />
         <Title level={3} style={{ marginTop: 16 }}>
-          Questionnaire Submitted
+          {t("fill.submitted")}
         </Title>
         <Text type="secondary">
-          Thank you for completing the {info?.questionnaire_name}. Your responses
-          have been recorded.
+          {t("fill.thankYou")} {info?.questionnaire_name}. {t("fill.responsesRecorded")}
         </Text>
       </div>
     );
@@ -137,10 +138,10 @@ export default function QuestionnaireFill() {
           {info?.questionnaire_name}
         </Title>
         <Space>
-          <Text type="secondary">Version: {info?.version_no}</Text>
+          <Text type="secondary">{t("fill.version")}: {info?.version_no}</Text>
           {info?.due_at && (
             <Text type="warning">
-              <ClockCircleOutlined /> Due: {new Date(info.due_at).toLocaleDateString()}
+              <ClockCircleOutlined /> {t("fill.due")}: {new Date(info.due_at).toLocaleDateString()}
             </Text>
           )}
         </Space>
@@ -162,7 +163,7 @@ export default function QuestionnaireFill() {
       <div style={{ marginTop: 24, textAlign: "center" }}>
         <Space size="middle">
           <Button size="large" onClick={handleSaveDraft} disabled={submitting}>
-            Save Draft
+            {t("fill.saveDraft")}
           </Button>
           <Button
             type="primary"
@@ -171,7 +172,7 @@ export default function QuestionnaireFill() {
             loading={submitting}
             disabled={!survey}
           >
-            Submit
+            {t("fill.submit")}
           </Button>
         </Space>
       </div>

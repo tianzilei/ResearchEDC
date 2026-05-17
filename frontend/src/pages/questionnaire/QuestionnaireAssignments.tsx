@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   Table,
@@ -85,6 +86,7 @@ function useTemplates() {
 }
 
 export default function QuestionnaireAssignments() {
+  const { t } = useTranslation();
   const { currentStudy } = useCurrentStudy();
   const studyId = currentStudy?.id ?? 0;
   const qc = useQueryClient();
@@ -108,7 +110,7 @@ export default function QuestionnaireAssignments() {
       apiClient.post<Assignment>("/api/v1/questionnaires/assignments", body),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["questionnaire-assignments"] });
-      message.success("Assignment created");
+      message.success(t("assignment.created"));
       setCreateOpen(false);
       form.resetFields();
     },
@@ -122,7 +124,7 @@ export default function QuestionnaireAssignments() {
 
   const columns = [
     {
-      title: "Subject ID",
+      title: t("assignment.column.subjectId"),
       dataIndex: "subject_id",
       key: "subject_id",
       render: (id: string) => (
@@ -132,7 +134,7 @@ export default function QuestionnaireAssignments() {
       ),
     },
     {
-      title: "Version",
+      title: t("assignment.column.version"),
       dataIndex: "questionnaire_version_id",
       key: "questionnaire_version_id",
       render: (id: string) => (
@@ -140,13 +142,13 @@ export default function QuestionnaireAssignments() {
       ),
     },
     {
-      title: "Status",
+      title: t("assignment.column.status"),
       dataIndex: "status",
       key: "status",
       render: (s: string) => <Tag color={statusColors[s]}>{s}</Tag>,
     },
     {
-      title: "Due",
+      title: t("assignment.column.due"),
       dataIndex: "due_at",
       key: "due_at",
       render: (d: string | null) =>
@@ -160,14 +162,14 @@ export default function QuestionnaireAssignments() {
         ),
     },
     {
-      title: "Token",
+      title: t("assignment.column.token"),
       dataIndex: "has_token",
       key: "has_token",
-      render: (t: boolean) =>
-        t ? <Tag color="blue">Issued</Tag> : <Tag>None</Tag>,
+      render: (hasTok: boolean) =>
+        hasTok ? <Tag color="blue">{t("assignment.token.issued")}</Tag> : <Tag>{t("assignment.token.none")}</Tag>,
     },
     {
-      title: "Created",
+      title: t("assignment.column.created"),
       dataIndex: "created_at",
       key: "created_at",
       render: (d: string) => new Date(d).toLocaleDateString(),
@@ -178,10 +180,10 @@ export default function QuestionnaireAssignments() {
     <div>
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
         <Title level={4} style={{ marginTop: 0 }}>
-          <LinkOutlined /> Questionnaire Assignments
+          <LinkOutlined /> {t("questionnaire.assignments")}
         </Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-          New Assignment
+          {t("assignment.new")}
         </Button>
       </Space>
 
@@ -191,12 +193,12 @@ export default function QuestionnaireAssignments() {
           columns={columns}
           rowKey="id"
           pagination={{ pageSize: 20 }}
-          locale={{ emptyText: <Empty description="No assignments yet" /> }}
+          locale={{ emptyText: <Empty description={t("assignment.empty")} /> }}
         />
       </Card>
 
       <Modal
-        title="Create Assignment"
+        title={t("assignment.create")}
         open={createOpen}
         onCancel={() => {
           setCreateOpen(false);
@@ -217,9 +219,9 @@ export default function QuestionnaireAssignments() {
             });
           }}
         >
-          <Form.Item name="questionnaire_version_id" label="Questionnaire Version" rules={[{ required: true }]}>
+          <Form.Item name="questionnaire_version_id" label={t("assignment.version")} rules={[{ required: true }]}>
             <Select
-              placeholder="Select a template first"
+              placeholder={t("assignment.selectTemplate")}
               onSelect={(val: string) => setSelectedTemplateId(val)}
             >
               {(templates ?? []).map((t) => (
@@ -230,8 +232,8 @@ export default function QuestionnaireAssignments() {
             </Select>
           </Form.Item>
           {publishedVersions.length > 0 && (
-            <Form.Item label="Available Published Versions">
-              <Select placeholder="Select version">
+            <Form.Item label={t("assignment.availableVersions")}>
+              <Select placeholder={t("assignment.selectVersion")}>
                 {publishedVersions.map((v) => (
                   <Select.Option key={v.id} value={v.id}>
                     {v.version_no}
@@ -240,7 +242,7 @@ export default function QuestionnaireAssignments() {
               </Select>
             </Form.Item>
           )}
-          <Form.Item name="due_at" label="Due Date">
+          <Form.Item name="due_at" label={t("assignment.dueDate")}>
             <DatePicker style={{ width: "100%" }} />
           </Form.Item>
         </Form>

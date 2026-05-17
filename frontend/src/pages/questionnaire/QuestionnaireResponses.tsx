@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   Table,
@@ -60,6 +61,7 @@ function useResponses(studyId: number) {
 }
 
 export default function QuestionnaireResponses() {
+  const { t } = useTranslation();
   const { currentStudy } = useCurrentStudy();
   const studyId = currentStudy?.id ?? 0;
   const qc = useQueryClient();
@@ -74,7 +76,7 @@ export default function QuestionnaireResponses() {
       apiClient.post(`/api/v1/questionnaires/responses/${id}/review`, data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["questionnaire-responses"] });
-      message.success("Response reviewed");
+      message.success(t("response.reviewed"));
     },
   });
 
@@ -83,7 +85,7 @@ export default function QuestionnaireResponses() {
       apiClient.post(`/api/v1/questionnaires/responses/${id}/lock`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["questionnaire-responses"] });
-      message.success("Response locked");
+      message.success(t("response.locked"));
     },
   });
 
@@ -95,7 +97,7 @@ export default function QuestionnaireResponses() {
       ),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["questionnaire-responses"] });
-      message.success("Correction applied");
+      message.success(t("response.correctionApplied"));
       setCorrectionReason("");
       setCorrectionData("");
       setDetailOpen(false);
@@ -112,7 +114,7 @@ export default function QuestionnaireResponses() {
 
   const columns = [
     {
-      title: "Subject",
+      title: t("response.column.subject"),
       dataIndex: "subject_id",
       key: "subject_id",
       render: (id: string) => (
@@ -122,27 +124,27 @@ export default function QuestionnaireResponses() {
       ),
     },
     {
-      title: "Status",
+      title: t("response.column.status"),
       dataIndex: "status",
       key: "status",
       render: (s: string) => <Tag color={statusColors[s]}>{s}</Tag>,
     },
     {
-      title: "Score",
+      title: t("response.column.score"),
       dataIndex: "total_score",
       key: "total_score",
       render: (s: number | null) =>
         s !== null ? <Text strong>{s}</Text> : "-",
     },
     {
-      title: "Submitted",
+      title: t("response.column.submitted"),
       dataIndex: "submitted_at",
       key: "submitted_at",
       render: (d: string | null) =>
         d ? new Date(d).toLocaleString() : "-",
     },
     {
-      title: "Actions",
+      title: t("response.column.actions"),
       key: "actions",
       render: (_: unknown, r: Response) => (
         <Space>
@@ -151,7 +153,7 @@ export default function QuestionnaireResponses() {
             icon={<EyeOutlined />}
             onClick={() => handleViewDetail(r)}
           >
-            View
+            {t("response.action.view")}
           </Button>
           {r.status === "submitted" && (
             <Button
@@ -164,7 +166,7 @@ export default function QuestionnaireResponses() {
                 })
               }
             >
-              Review
+              {t("response.action.review")}
             </Button>
           )}
           {r.status === "reviewed" && (
@@ -173,7 +175,7 @@ export default function QuestionnaireResponses() {
               icon={<LockOutlined />}
               onClick={() => lockResponse.mutate(r.id)}
             >
-              Lock
+              {t("response.action.lock")}
             </Button>
           )}
         </Space>
@@ -185,7 +187,7 @@ export default function QuestionnaireResponses() {
     <div>
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
         <Title level={4} style={{ marginTop: 0 }}>
-          <FileTextOutlined /> Questionnaire Responses
+          <FileTextOutlined /> {t("response.title")}
         </Title>
       </Space>
 
@@ -195,12 +197,12 @@ export default function QuestionnaireResponses() {
           columns={columns}
           rowKey="id"
           pagination={{ pageSize: 20 }}
-          locale={{ emptyText: <Empty description="No responses yet" /> }}
+          locale={{ emptyText: <Empty description={t("response.empty")} /> }}
         />
       </Card>
 
       <Modal
-        title="Response Detail"
+        title={t("response.detail")}
         open={detailOpen}
         onCancel={() => setDetailOpen(false)}
         width={800}
@@ -221,7 +223,7 @@ export default function QuestionnaireResponses() {
                     })
                   }
                 >
-                  Apply Correction
+                  {t("response.action.applyCorrection")}
                 </Button>,
               ]
             : null
@@ -230,27 +232,27 @@ export default function QuestionnaireResponses() {
         {detailResponse && (
           <>
             <Descriptions column={2} size="small" bordered>
-              <Descriptions.Item label="Status">
+              <Descriptions.Item label={t("response.detail.status")}>
                 <Tag color={statusColors[detailResponse.status]}>
                   {detailResponse.status}
                 </Tag>
               </Descriptions.Item>
-              <Descriptions.Item label="Total Score">
+              <Descriptions.Item label={t("response.detail.totalScore")}>
                 {detailResponse.total_score ?? "-"}
               </Descriptions.Item>
-              <Descriptions.Item label="Submitted">
+              <Descriptions.Item label={t("response.detail.submitted")}>
                 {detailResponse.submitted_at
                   ? new Date(detailResponse.submitted_at).toLocaleString()
                   : "-"}
               </Descriptions.Item>
-              <Descriptions.Item label="Subject ID">
+              <Descriptions.Item label={t("response.detail.subjectId")}>
                 {detailResponse.subject_id}
               </Descriptions.Item>
             </Descriptions>
 
             {detailResponse.score_json && (
               <Card
-                title="Score Details"
+                title={t("response.detail.scoreDetails")}
                 size="small"
                 style={{ marginTop: 16 }}
               >
@@ -260,7 +262,7 @@ export default function QuestionnaireResponses() {
               </Card>
             )}
 
-            <Card title="Response Data" size="small" style={{ marginTop: 16 }}>
+            <Card title={t("response.detail.responseData")} size="small" style={{ marginTop: 16 }}>
               <pre style={{ fontSize: 12, maxHeight: 300, overflow: "auto" }}>
                 {JSON.stringify(detailResponse.raw_response_json, null, 2)}
               </pre>
@@ -269,20 +271,20 @@ export default function QuestionnaireResponses() {
             {detailResponse.status === "locked" && (
               <>
                 <Alert
-                  message="This response is locked. Corrections require a reason."
+                  message={t("response.lockedAlert")}
                   type="warning"
                   showIcon
                   style={{ marginTop: 16 }}
                 />
                 <TextArea
-                  placeholder="Reason for correction (required)"
+                  placeholder={t("response.correctionReasonPlaceholder")}
                   value={correctionReason}
                   onChange={(e) => setCorrectionReason(e.target.value)}
                   rows={2}
                   style={{ marginTop: 8 }}
                 />
                 <TextArea
-                  placeholder="Correction data (JSON)"
+                  placeholder={t("response.correctionDataPlaceholder")}
                   value={correctionData}
                   onChange={(e) => setCorrectionData(e.target.value)}
                   rows={6}

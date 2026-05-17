@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   Table,
@@ -53,9 +54,9 @@ const FORMAT_OPTIONS = [
 ];
 
 const LAYOUT_OPTIONS = [
-  { value: "wide", label: "Wide (one row per subject, one column per item)" },
-  { value: "long", label: "Long (one row per item per subject)" },
-  { value: "score", label: "Score Only (total scores per questionnaire)" },
+  { value: "wide" },
+  { value: "long" },
+  { value: "score" },
 ];
 
 function useExportJobs(studyId: number) {
@@ -68,6 +69,7 @@ function useExportJobs(studyId: number) {
 }
 
 export default function QuestionnaireExport() {
+  const { t } = useTranslation();
   const { currentStudy } = useCurrentStudy();
   const studyId = currentStudy?.id ?? 0;
   const qc = useQueryClient();
@@ -82,7 +84,7 @@ export default function QuestionnaireExport() {
       apiClient.post<ExportJob>("/api/v1/questionnaires/export", body),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["questionnaire-export-jobs"] });
-      message.success("Export job created");
+      message.success(t("qexport.created"));
       setExportOpen(false);
     },
   });
@@ -91,44 +93,44 @@ export default function QuestionnaireExport() {
 
   const columns = [
     {
-      title: "Format",
+      title: t("qexport.column.format"),
       dataIndex: "export_format",
       key: "export_format",
       render: (f: string) => <Tag>{f.toUpperCase()}</Tag>,
     },
     {
-      title: "Layout",
+      title: t("qexport.column.layout"),
       dataIndex: "export_type",
       key: "export_type",
       render: (t: string) => <Tag color="blue">{t}</Tag>,
     },
     {
-      title: "Status",
+      title: t("qexport.column.status"),
       dataIndex: "status",
       key: "status",
       render: (s: string) => <Tag color={statusColors[s]}>{s}</Tag>,
     },
     {
-      title: "Requested",
+      title: t("qexport.column.requested"),
       dataIndex: "created_at",
       key: "created_at",
       render: (d: string) => new Date(d).toLocaleString(),
     },
     {
-      title: "Completed",
+      title: t("qexport.column.completed"),
       dataIndex: "finished_at",
       key: "finished_at",
       render: (d: string | null) =>
         d ? new Date(d).toLocaleString() : "-",
     },
     {
-      title: "Actions",
+      title: t("qexport.column.actions"),
       key: "actions",
       render: (_: unknown, r: ExportJob) => (
         <Space>
           {r.status === "completed" && r.file_path && (
             <Button size="small" icon={<DownloadOutlined />} type="link">
-              Download
+              {t("qexport.action.download")}
             </Button>
           )}
           {r.status === "failed" && (
@@ -139,7 +141,7 @@ export default function QuestionnaireExport() {
                 createExport.mutate(r.query_params);
               }}
             >
-              Retry
+              {t("qexport.action.retry")}
             </Button>
           )}
         </Space>
@@ -151,14 +153,14 @@ export default function QuestionnaireExport() {
     <div>
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
         <Title level={4} style={{ marginTop: 0 }}>
-          <ExportOutlined /> Questionnaire Export
+          <ExportOutlined /> {t("qexport.title")}
         </Title>
         <Button
           type="primary"
           icon={<ExportOutlined />}
           onClick={() => setExportOpen(true)}
         >
-          New Export
+          {t("qexport.new")}
         </Button>
       </Space>
 
@@ -168,12 +170,12 @@ export default function QuestionnaireExport() {
           columns={columns}
           rowKey="id"
           pagination={{ pageSize: 10 }}
-          locale={{ emptyText: <Empty description="No export jobs yet" /> }}
+          locale={{ emptyText: <Empty description={t("qexport.empty")} /> }}
         />
       </Card>
 
       <Modal
-        title="Create Questionnaire Export"
+        title={t("qexport.create")}
         open={exportOpen}
         onCancel={() => setExportOpen(false)}
         onOk={() =>
@@ -190,7 +192,7 @@ export default function QuestionnaireExport() {
       >
         <Space direction="vertical" style={{ width: "100%" }}>
           <div>
-            <Text strong>Export Format</Text>
+            <Text strong>{t("qexport.format")}</Text>
             <Select
               value={exportFormat}
               onChange={setExportFormat}
@@ -204,7 +206,7 @@ export default function QuestionnaireExport() {
             </Select>
           </div>
           <div>
-            <Text strong>Layout</Text>
+            <Text strong>{t("qexport.layout")}</Text>
             <Select
               value={layout}
               onChange={setLayout}
@@ -212,7 +214,7 @@ export default function QuestionnaireExport() {
             >
               {LAYOUT_OPTIONS.map((o) => (
                 <Select.Option key={o.value} value={o.value}>
-                  {o.label}
+                  {t("qexport.layout." + o.value)}
                 </Select.Option>
               ))}
             </Select>
@@ -222,7 +224,7 @@ export default function QuestionnaireExport() {
               checked={includeScores}
               onChange={(e) => setIncludeScores(e.target.checked)}
             >
-              Include calculated scores
+                {t("qexport.includeScores")}
             </Checkbox>
           </div>
         </Space>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   Table,
@@ -60,6 +61,7 @@ function useTemplates(studyId: number) {
 }
 
 export default function QuestionnaireTemplates() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { currentStudy } = useCurrentStudy();
   const studyId = currentStudy?.id ?? 0;
@@ -73,7 +75,7 @@ export default function QuestionnaireTemplates() {
       apiClient.post<Template>("/api/v1/questionnaires/templates", body),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["questionnaire-templates"] });
-      message.success("Template created");
+      message.success(t("questionnaire.template.created"));
       setModalOpen(false);
       form.resetFields();
     },
@@ -83,21 +85,21 @@ export default function QuestionnaireTemplates() {
 
   const columns = [
     {
-      title: "Code",
+      title: t("questionnaire.template.column.code"),
       dataIndex: "code",
       key: "code",
       render: (code: string) => <Tag color="blue">{code}</Tag>,
     },
-    { title: "Name", dataIndex: "name", key: "name" },
+    { title: t("questionnaire.template.column.name"), dataIndex: "name", key: "name" },
     {
-      title: "Category",
+      title: t("questionnaire.template.column.category"),
       dataIndex: "category",
       key: "category",
       render: (cat: string | null) =>
         cat ? <Tag color={categoryColors[cat] ?? "default"}>{cat}</Tag> : "-",
     },
     {
-      title: "Status",
+      title: t("questionnaire.template.column.status"),
       dataIndex: "status",
       key: "status",
       render: (s: string) => (
@@ -105,13 +107,13 @@ export default function QuestionnaireTemplates() {
       ),
     },
     {
-      title: "Updated",
+      title: t("questionnaire.template.column.updated"),
       dataIndex: "updated_at",
       key: "updated_at",
       render: (d: string) => (d ? new Date(d).toLocaleDateString() : "-"),
     },
     {
-      title: "Actions",
+      title: t("questionnaire.template.column.actions"),
       key: "actions",
       render: (_: unknown, r: Template) => (
         <Button
@@ -119,7 +121,7 @@ export default function QuestionnaireTemplates() {
           icon={<EyeOutlined />}
           onClick={() => navigate(`/app/questionnaires/templates/${r.id}/versions`)}
         >
-          Versions
+          {t("questionnaire.template.action.versions")}
         </Button>
       ),
     },
@@ -129,10 +131,10 @@ export default function QuestionnaireTemplates() {
     <div>
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
         <Title level={4} style={{ marginTop: 0 }}>
-          <FileTextOutlined /> Questionnaire Templates
+          <FileTextOutlined /> {t("questionnaire.templates")}
         </Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>
-          New Template
+          {t("questionnaire.template.new")}
         </Button>
       </Space>
 
@@ -142,12 +144,12 @@ export default function QuestionnaireTemplates() {
           columns={columns}
           rowKey="id"
           pagination={{ pageSize: 20 }}
-          locale={{ emptyText: <Empty description="No templates yet" /> }}
+          locale={{ emptyText: <Empty description={t("questionnaire.template.empty")} /> }}
         />
       </Card>
 
       <Modal
-        title="Create Questionnaire Template"
+        title={t("questionnaire.template.create")}
         open={modalOpen}
         onCancel={() => setModalOpen(false)}
         onOk={() => form.submit()}
@@ -163,22 +165,22 @@ export default function QuestionnaireTemplates() {
             });
           }}
         >
-          <Form.Item name="code" label="Code" rules={[{ required: true }]}>
-            <Input placeholder="e.g., ISI, GAD7, PHQ9" />
+          <Form.Item name="code" label={t("questionnaire.template.code")} rules={[{ required: true }]}>
+            <Input placeholder={t("questionnaire.template.codePlaceholder")} />
           </Form.Item>
-          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-            <Input placeholder="e.g., Insomnia Severity Index" />
+          <Form.Item name="name" label={t("questionnaire.template.name")} rules={[{ required: true }]}>
+            <Input placeholder={t("questionnaire.template.namePlaceholder")} />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label={t("questionnaire.template.description")}>
             <Input.TextArea rows={3} />
           </Form.Item>
-          <Form.Item name="category" label="Category">
+          <Form.Item name="category" label={t("questionnaire.template.category")}>
             <Select allowClear>
-              <Select.Option value="SLEEP">Sleep</Select.Option>
-              <Select.Option value="ANXIETY">Anxiety</Select.Option>
-              <Select.Option value="DEPRESSION">Depression</Select.Option>
-              <Select.Option value="SAFETY">Safety</Select.Option>
-              <Select.Option value="QUALITY_OF_LIFE">Quality of Life</Select.Option>
+              <Select.Option value="SLEEP">{t("questionnaire.template.category.sleep")}</Select.Option>
+              <Select.Option value="ANXIETY">{t("questionnaire.template.category.anxiety")}</Select.Option>
+              <Select.Option value="DEPRESSION">{t("questionnaire.template.category.depression")}</Select.Option>
+              <Select.Option value="SAFETY">{t("questionnaire.template.category.safety")}</Select.Option>
+              <Select.Option value="QUALITY_OF_LIFE">{t("questionnaire.template.category.qualityOfLife")}</Select.Option>
             </Select>
           </Form.Item>
         </Form>
