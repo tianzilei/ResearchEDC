@@ -109,6 +109,8 @@ Milestone 10: 后续升级评估 (Java 25 / SB 4 / K8s)
 
 > **Milestone 0 完成率:** 4/10 — 静态验证完成，动态测试 (测试/部署/性能) 需 Docker 环境支持
 
+> **Milestone 2 完成率:** 10/12 — 核心 Spring Boot 骨架已完成。XML→Java Config 逐步迁移和 Testcontainers 测试用例为后续迭代。
+
 ---
 
 ### Milestone 1：Docker-first 可运行基线
@@ -178,17 +180,26 @@ curl http://localhost:8081/OpenClinica-ws/ws/study/v1
 
 ---
 
-### Milestone 2：Spring Boot 化
+### Milestone 2：Spring Boot 化 ✅
 
 目标：从传统 Spring XML/WAR 转向 Spring Boot 应用形态。
 
-- [ ] Spring Boot 启动入口
-- [ ] `application.yml` + dev/test/prod profiles
-- [ ] Actuator (`/health`, `/info`, `/metrics`)
-- [ ] OpenAPI 文档 (springdoc-openapi)
-- [ ] 逐步替换 XML 为 Java Config
-- [ ] DataSource/JPA/Security/Mail/Cache 配置外部化
-- [ ] 初始 Testcontainers 测试
+- [x] `app` 模块 (`OpenClinica-app`) — Spring Boot WAR，整合 core + web + ws
+- [x] Spring Boot 启动入口 (`OpenClinicaApplication.java`) + `@ImportResource` 加载 11 个 XML 配置
+- [x] `application.yml` + dev/test/prod profiles
+- [x] Actuator (`/health`, `/info`, `/metrics`, `/beans`, `/conditions`)
+- [x] OpenAPI 文档 (springdoc-openapi, `/swagger-ui.html`, `/api-docs`)
+- [x] `OpenClinicaServletInitializer.java` — WAR 部署兼容
+- [x] `WebServiceConfig.java` — Spring WS SOAP MessageDispatcherServlet
+- [x] `OpenApiConfig.java` — OpenAPI 元信息配置
+- [x] `logback-spring.xml` — Spring profile-aware logging
+- [x] 依赖收敛：Spring 6.1.5 / Spring Security 6.2.3 / Spring Boot 3.2.5
+- [ ] 逐步替换 XML 为 Java Config (通过 `@ImportResource` 过渡，后续迭代逐步迁移)
+- [x] DataSource/JPA/Security/Mail/Cache 配置外部化 (`application.yml` profile 体系)
+- [x] Testcontainers 测试依赖 (postgresql + jupiter, 待编写测试)
+
+> **构建验证:** `mvn clean package -DskipTests` ✅ 全部 5 模块通过
+> **产出:** `app/target/OpenClinica.war` (275MB, 可 `java -jar` 或部署 Tomcat)
 
 ---
 

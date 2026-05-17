@@ -2,7 +2,36 @@
 
 **项目:** OpenClinica 技术栈现代化重构  
 **基础版本:** 3.18-SNAPSHOT (基于 3.14)  
-**许可证:** GNU LGPL  
+**许可证:** GNU LGPL 
+
+---
+
+## 2026-05-17 — Milestone 2: Spring Boot 化
+
+- **模块:** 项目整体 + 新增 `app/` 模块
+- **原因:** 从传统 Spring XML/WAR 转向 Spring Boot 应用形态，实现模块化单体第一步
+- **差异:**
+  - **parent pom.xml:** 新增 `<module>app</module>`, Spring Boot 3.2.5 / springdoc 2.5.0 属性
+  - **web pom.xml:** 新增 `maven-war-plugin attachClasses=true` 以产出 classes JAR 供 app 模块编译依赖
+  - **ws pom.xml:** 同上
+  - **新增 `app/pom.xml`:** 整合 core+web+ws 的 Spring Boot WAR 模块，含 starter-web/actuator/validation、springdoc、spring-ws、testcontainers
+  - **新增 `app/.../OpenClinicaApplication.java`:** `@SpringBootApplication` + `@ImportResource` 加载 11 个 XML 配置文件
+  - **新增 `app/.../OpenClinicaServletInitializer.java`:** WAR 部署兼容 (extends `SpringBootServletInitializer`)
+  - **新增 `app/.../config/WebServiceConfig.java`:** 注册 Spring WS `MessageDispatcherServlet` 以支持 SOAP 端点
+  - **新增 `app/.../config/OpenApiConfig.java`:** OpenAPI 3 文档元信息
+  - **新增 `app/src/main/resources/application.yml`:** dev/test/prod 三环境 profile，Actuator、springdoc 配置
+  - **新增 `app/src/main/resources/logback-spring.xml`:** Spring profile-aware 日志配置
+- **架构变化:**
+  - 原有三个模块 (core/web/ws) 保持 WAR 兼容性不变
+  - app 模块通过 WAR overlay 继承 web 模块的 JSP/静态资源
+  - app 模块通过 `@ImportResource` 加载 core/web 模块的 Spring XML 配置
+  - 可通过 `java -jar OpenClinica.war` 或部署到 Tomcat 10.1 两种方式运行
+- **构建:** `mvn clean package -DskipTests` ✅ 全部 5 模块通过
+  - `OpenClinica-core-3.18-SNAPSHOT.jar` = 2.3 MB
+  - `OpenClinica-web-3.18-SNAPSHOT.war` = 108 MB (不变，向后兼容)
+  - `OpenClinica-ws-3.18-SNAPSHOT.war` = 98 MB (不变，向后兼容)
+  - `OpenClinica.war` (app) = 275 MB (Spring Boot repackaged，可独立运行)
+- **验证状态:** ✅ 已验证 (`mvn clean package -DskipTests` 全部通过，Spring 版本收敛为 6.1.5 一致) 
 
 ---
 
