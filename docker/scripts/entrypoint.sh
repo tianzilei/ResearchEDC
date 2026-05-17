@@ -107,7 +107,9 @@ EOF
 
 # Also place a copy in the classpath for Spring context loading
 # (CoreResources also looks for classpath:datainfo.properties)
-cp "${CONFIG_DIR}/datainfo.properties" "${CATALINA_HOME}/webapps/ROOT/WEB-INF/classes/datainfo.properties" 2>/dev/null || true
+WEBAPP_CLASSES="${CATALINA_HOME}/webapps/ROOT/WEB-INF/classes"
+mkdir -p "${WEBAPP_CLASSES}" 2>/dev/null || true
+cp "${CONFIG_DIR}/datainfo.properties" "${WEBAPP_CLASSES}/datainfo.properties" 2>/dev/null || true
 
 echo "[entrypoint] Generated datainfo.properties:"
 echo "  DB:     ${OC_DB_TYPE}://${OC_DB_HOST}:${OC_DB_PORT}/${OC_DB_NAME}"
