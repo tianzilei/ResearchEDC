@@ -15,7 +15,7 @@
 | web | 481 | ✅ `mvn clean compile` | ✅ 3 tests pass |
 | ws | 57 | ✅ `mvn clean compile` | — |
 | app | 6 + 10 (Modulith) | ✅ `mvn clean package` | ✅ ModulithVerificationTest |
-| frontend | ~30 (源文件) | ✅ `pnpm build`, `tsc --noEmit` | ✅ TypeScript 0 errors, ESLint 0 errors |
+| frontend | 43 (源文件) | ✅ `pnpm build`, `tsc --noEmit` | ✅ TypeScript 0 errors, ESLint 0 errors |
 | **questionnaire-service** | **71 (Python)** | **✅ `pytest`** | **✅ 31/31 tests + E2E** |
 
 **后端构建 (Java):** `mvn clean compile -DskipTests` ✅  
@@ -494,7 +494,33 @@ CI/CD:   GitHub Actions + Docker build + Compose smoke test
 
 ---
 
-## 十、本次更新 (2026-05-17)
+## 十、本次更新 (2026-05-18)
+
+### 前端 "Precision Clinical" 设计重构
+
+- **配色体系精修**: Jade teal (`#099A87`) 主色 + warm brass (`#D4A854`) 点缀 + deep slate (`#0F1A2E`) 基底 + warm paper (`#F8F5F0`) 表面色，所有色值向更深的 teal 和更温润的 brass 偏移
+- **排版升级**: Sora (标题) + DM Sans (正文) Google Fonts，引入 refined font scale
+- **Ant Design 主题增强**: 全面自定义 Layout / Menu / Card / Table / Button / Input / Modal / Tag 组件样式，增大 border-radius、优化阴影层级
+- **全局 CSS**: 新增 glass panel 工具类 (backdrop-filter blur)、扩展 dot-grid 纹理密度、增加 `fadeInUp`/`fadeInScale`/`staggerItem` 等动画变体
+- **AppLayout 重构**: Header 底部 brass 装饰边框、用户头像徽章、主内容区 max-width 居中布局
+- **Dashboard 重设计**: 问候 + 头像区域、四色统计卡片 (jade/brass/sky/coral) 含 SVG 图标、活动时间线 (纵向 timeline + 状态圆点)、SVG 环形图 (受试者状态分布)、快捷操作卡片组
+- **ErrorPage/NotFound**: 深色 navy dot-grid 背景布局，品牌一致性定制
+- **SkeletonCard**: 同步更新匹配新 Dashboard 布局
+- **修复**: QuestionnaireBuilder 和 QuestionnaireVersionEditor 中的 lint 问题自动修复
+
+### Docker 构建优化
+
+- **Maven cache mount**: docker/app/Dockerfile 三层 `mvn` 命令添加 `--mount=type=cache,target=/root/.m2`，利用 Docker BuildKit 缓存加速重复构建
+- **前端构建路径修复**: `COPY --from=frontend-build` 路径从 `/build/frontend/app/...` 修正为 `/build/app/...`（3 阶段构建中间产物路径对齐）
+- **CI 环境变量**: `pnpm install` 添加 `CI=true` 环境变量，抑制 pnpm 交互式提示
+- **.dockerignore**: 新增项目根 `.dockerignore` 文件，排除 `.git`、`node_modules`、`target`、`questionnaire-service`、`deploy`、`scripts` 等构建无关目录
+
+### 文档清理
+
+- 移除 `questionnaire_python_backend_roadmap.md`（已实现，不再需要路线图文档）
+- 移除 `deploy/tls/README.md`（内容已整合到 Nginx 配置注释中）
+- 移除 `deploy/compose/initdb/README.md`（内容已整合到 database 初始化脚本中）
+- 更新 README.md、PLAN.md、MODIFICATIONS.md 反映上述变更
 
 ### 测试体系
 

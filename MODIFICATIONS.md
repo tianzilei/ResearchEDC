@@ -6,6 +6,40 @@
 
 ---
 
+## 2026-05-18 — 前端 Precision Clinical 重构 + Docker 构建优化
+
+- **模块:** frontend, docker, docs
+- **原因:** UI 设计系统升级与 Docker 构建加速
+
+### 前端设计重构 (57 文件, +1525/-535 行)
+- **配色体系精修**: Jade teal (`#099A87`) → deeper teals, warm brass (`#D4A854`) 点缀, deep slate (`#0F1A2E`) 基底, warm paper (`#F8F5F0`) 表面色
+- **排版**: Sora (标题) + DM Sans (正文) Google Fonts
+- **Ant Design 主题增强**: Layout / Menu / Card / Table / Button / Input / Modal / Tag 全面定制 (radius, shadow, color)
+- **全局 CSS 扩展**: glass panel utility、dot-grid 纹理密度提升、多动画变体 (fadeInUp/fadeInScale/staggerItem)
+- **AppLayout**: brass 装饰边框 header、用户头像徽章、max-width 居中内容区
+- **Dashboard 重设计**: 问候头像区域、四色统计卡片 (jade/brass/sky/coral)、活动时间线、SVG 环形图、快捷操作卡片
+- **ErrorPage/NotFound**: 深色 dot-grid 背景品牌定制页
+- **SkeletonCard**: 对齐新 Dashboard 布局
+
+### Docker 构建优化
+- **Maven cache mount**: 三层 `mvn` 命令添加 `--mount=type=cache,target=/root/.m2` (BuildKit 缓存加速)
+- **前端构建路径修正**: `COPY --from=frontend-build` 路径对齐
+- **CI 环境变量**: `CI=true pnpm install` 抑制交互提示
+- **.dockerignore**: 新增根目录忽略规则 (排除 git/node_modules/target/questionnaire-service 等)
+
+### 文档清理
+- 移除 `questionnaire_python_backend_roadmap.md`（已实现）
+- 移除 `deploy/tls/README.md`（内容整合到 Nginx 配置）
+- 移除 `deploy/compose/initdb/README.md`（内容整合到数据库脚本）
+- 更新 README.md、PLAN.md 反映上述变更
+
+### 构建验证
+- `mvn clean compile -DskipTests`: ✅ BUILD SUCCESS (6.0s)
+- `pnpm typecheck`: ✅ 0 errors
+- `pnpm lint`: ✅ 0 errors
+
+---
+
 ## 2026-05-17 — Questionnaire Service 完整实施
 
 - **新增模块:** `questionnaire-service/` — Python FastAPI 问卷微服务
