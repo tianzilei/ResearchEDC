@@ -12,6 +12,7 @@
 		<module>core</module>
 		<module>web</module>
 		<module>ws</module>
+		<module>app</module>
 	</modules>
 
 	<properties>
@@ -34,6 +35,10 @@
 		<jackson.version>2.17.0</jackson.version>
 		<java.version>21</java.version>
 		<db.test>localhost</db.test>
+
+		<!-- Spring Boot & ecosystem (for app module) -->
+		<spring-boot.version>3.2.5</spring-boot.version>
+		<springdoc-openapi.version>2.5.0</springdoc-openapi.version>
 	</properties>
 	<profiles>
 		<profile>
