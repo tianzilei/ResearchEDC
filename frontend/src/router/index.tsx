@@ -12,6 +12,8 @@ const AllocationPage = lazy(() => import("@/pages/randomization/AllocationPage")
 const UnblindingPage = lazy(() => import("@/pages/randomization/UnblindingPage"));
 const AuditViewer = lazy(() => import("@/pages/randomization/AuditViewer"));
 const ExportCenter = lazy(() => import("@/pages/export/ExportCenter"));
+const CrfList = lazy(() => import("@/pages/crf/CrfList"));
+const CrfPreview = lazy(() => import("@/pages/crf/CrfPreview"));
 
 const router = createBrowserRouter([
   {
@@ -49,6 +51,14 @@ const router = createBrowserRouter([
       {
         path: "data-export",
         element: <ExportCenter />,
+      },
+      {
+        path: "crfs",
+        element: <CrfList />,
+      },
+      {
+        path: "crfs/:versionId",
+        element: <CrfPreview />,
       },
       {
         path: "audit-log",
