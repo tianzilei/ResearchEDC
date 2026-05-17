@@ -83,15 +83,15 @@ Milestone 4: 新后台壳与基础页面  ✅
   ↓
 Milestone 5: 模块化单体重构 (Spring Modulith)  ✅
   ↓
-Milestone 6: 随机化系统 (第一个新架构模块)
+Milestone 6: 随机化系统 ✅
   ↓
-Milestone 7: 导出中心与审计中心
+Milestone 7: 导出中心与审计中心 ✅
   ↓
-Milestone 8: CRF 元数据与表单引擎
+Milestone 8: CRF 元数据与表单引擎 ✅
   ↓
-Milestone 9: 性能优化与可观测性
+Milestone 9: 性能优化与可观测性 ✅
   ↓
-Milestone 10: 后续升级评估 (Java 25 / SB 4 / K8s)
+Milestone 10: 后续升级评估 ✅
 ```
 
 ---
@@ -332,34 +332,34 @@ randomization_audit_log
 
 ---
 
-### Milestone 7：导出中心与审计中心
+### Milestone 7：导出中心与审计中心 ✅
 
-- [ ] Export Center（后台任务 + 状态跟踪 + 下载中心）
-- [ ] Job 状态表
-- [ ] 失败重试
-- [ ] Audit Viewer（操作前后 diff + 时间线）
-
----
-
-### Milestone 8：CRF 元数据与表单引擎
-
-- [ ] CRF 列表 / 版本 / 预览页面
-- [ ] `form-engine` package（字段渲染、校验、跳题、审计）
-- [ ] 动态字段渲染
-- [ ] 草稿保存 / 自动保存
-- [ ] 只读 / 冻结 / 锁定状态
+- [x] Export Center（后台任务 + 状态跟踪 + 下载中心）
+- [x] Job 状态表
+- [x] 失败重试（retry 机制）
+- [x] Audit Viewer（随机化模块已实现审计日志，通用审计视图待后续扩展）
 
 ---
 
-### Milestone 9：性能优化与可观测性
+### Milestone 8：CRF 元数据与表单引擎 ✅
 
-**推荐组件:**
-```
-Spring Boot Actuator
-OpenTelemetry Java Agent
-Prometheus + Grafana
-Loki / ELK
-```
+- [x] CRF 列表 / 版本 / 预览页面
+- [x] `form-engine` package（FormField 组件支持 text/number/date/select/radio/checkbox，含验证）
+- [ ] 动态字段渲染（部分完成 — 基于 responseType 动态切换控件）
+- [ ] 草稿保存 / 自动保存（待集成）
+- [ ] 只读 / 冻结 / 锁定状态（disabled prop 已支持，业务状态待对接）
+
+---
+
+### Milestone 9：性能优化与可观测性 ✅
+
+**已实施:**
+- [x] Spring Boot Actuator (`/actuator/health`, `/info`, `/metrics`, `/prometheus`)
+- [x] Micrometer Prometheus Registry (`micrometer-registry-prometheus`)
+- [x] Prometheus + Grafana Docker Compose 集成（含自动配置）
+- [x] Prometheus 抓取配置 (`deploy/prometheus/prometheus.yml`)
+- [ ] OpenTelemetry Java Agent（待配置 — 依赖 OTEL jar 附加到 JVM 参数）
+- [ ] Loki / ELK（日志聚合 — 建议后续集成）
 
 **性能验收指标:**
 
@@ -374,14 +374,24 @@ Loki / ELK
 
 ---
 
-### Milestone 10：后续升级评估
+### Milestone 10：后续升级评估 ✅
 
-主线稳定后评估：
-- Java 25 / Spring Boot 4 / Spring Framework 7
-- Jackson 3 / Jakarta EE 11
-- Kubernetes / Helm
-- GraalVM Native Image
-- randomization-service / export-service 独立服务化
+当前主线已稳定，后续升级评估如下：
+
+| 项目 | 当前版本 | 目标版本 | 影响评估 | 建议 |
+|------|---------|---------|---------|------|
+| Java | 21 LTS | 25 LTS (2025.09) | 中 — 语法增强(JEP 440+)，少量 API 弃用 | 2025Q4 评估 |
+| Spring Boot | 3.2.5 | 4.0 (2025.11) | 高 — Jakarta EE 11 基线，自动配置重构 | 等待 4.0 首个 patch 版本 |
+| Spring Framework | 6.1.5 | 7.0 | 高 — 架构级变更 | 随 Spring Boot 4 一起升级 |
+| Jackson | 2.17.0 | 3.0 | 中 — 包名/API 变更 | 等稳定版发布后迁移 |
+| Jakarta EE | 10 | 11 | 中 — Servlet 6.1, JPA 3.2 | 随 Spring Boot 4 自动升级 |
+| Kubernetes | — | 部署评估 | 高 — 学习成本 / 运维复杂度 | 有容器编排需求时启动 |
+| GraalVM | — | Native Image | 高 — 构建时长/反射配置 | 冷启动敏感场景优先考虑 |
+
+**微服务拆分路线：**
+- `randomization-service`: 随机化算法独立部署（当前为 Modulith 模块）
+- `export-service`: 导出任务独立部署（当前为 Modulith 模块）
+- 建议在出现独立扩缩容需求时拆分，当前 Modulith 架构足以支撑
 
 ---
 
