@@ -512,9 +512,16 @@ CI/CD:   GitHub Actions + Docker build + Compose smoke test
 - **依赖收敛评估**: `spring-data-jpa:3.2.5` 与 `spring-framework:6.1.5` 存在 minor 版本差异 (6.1.5 vs 6.1.6)，不影响编译/运行。全项目 400+ 依赖无阻断性冲突。
 - **Missing Spring artifacts**: `spring-beans`, `spring-core`, `spring-expression`, `spring-webmvc` 已添加至 parent `dependencyManagement` 以保证版本一致性
 
+### Docker 环境修复 (2026-05-17)
+- **问题 1 — Docker build 失败**: Parent POM 声明了 `app` module 但 Dockerfile 只复制了 core/web/ws 的 pom.xml，导致 `Child module /build/app does not exist` → 在 web/ws Dockerfile 中添加 `COPY app/pom.xml ./app/`
+- **问题 2 — 缺少 app Docker 服务**: 新 Spring Boot + React SPA 模块没有 Dockerfile → 新增 `docker/app/Dockerfile`（3 阶段构建: pnpm frontend → Maven WAR → Tomcat）
+- **问题 3 — 前端构建不在 Docker 流水线中**: app Dockerfile 使用 `node:22-alpine` 第一阶段执行 `pnpm install && pnpm build`，输出复制到 app 的 static 目录后再进行 Maven 构建
+- **问题 4 — Entrypoint 配置文件写入失败**: `ROOT/WEB-INF/classes/` 在 Tomcat 解压前不存在，`cp` 被 `|| true` 静默吞掉 → 改为先 `mkdir -p` 再复制
+- **新增 app service**: `docker-compose.dev.yml` 新增 `app` 服务 (port 8083)，依赖 PostgreSQL health check
+
 ### 剩余待办 (需外部环境)
-- [ ] Docker Compose 全栈启动验证 (Web + WS Docker 镜像构建)
-- [ ] Tomcat 10.1 部署验证
+- [ ] Docker Compose 全栈启动验证 (Web + WS + App Docker 镜像构建)
+- [ ] Tomcat 10.1 部署验证（三个 WAR）
 - [ ] 密钥/凭证安全扫描 (OWASP Dependency Check)
 - [ ] DBUnit 集成测试启用（解除测试方法注释 + 准备测试数据集）
 - [ ] PostgreSQL schema validate 报告 (需要旧数据库备份)
