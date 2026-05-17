@@ -477,8 +477,9 @@ CI/CD:   GitHub Actions + Docker build + Compose smoke test
 | `mvn test` (全量) | ✅ | 11/11 tests pass (core 8 + web 3) |
 | ModulithVerificationTest | ✅ | 模块边界验证通过 |
 | 前端 TypeScript | ✅ | `tsc --noEmit` 0 errors |
-| 前端 ESLint | ✅ | 0 errors (153→0) |
+| 前端 ESLint | ✅ | 0 errors (降至 20 warnings) |
 | 前端 Build | ✅ | `vite build` 成功 |
+| Maven Enforcer | ✅ | `requireJavaVersion [21,)` 规则已配置并验证通过 |
 
 ### 修复的测试问题
 - **Ehcache 配置冲突**: 开发/测试环境的 `maxBytesLocalHeap` 与 `maxElementsInMemory` 冲突 → 移除根元素属性
@@ -488,32 +489,33 @@ CI/CD:   GitHub Actions + Docker build + Compose smoke test
 - **Mockito/ByteBuddy**: 需 JDK 21 运行（JAVA_HOME 配置）
 
 ### 修复的 Hibernate 6 兼容问题
-- `domain.datamap.MeasurementUnit` + `domain.admin.MeasurementUnit` 同名冲突 → `@Entity(name = "...")`
-- `admin.MeasurementUnit` 缺失 `@Column(name = "oc_oid")` → 添加
-- `domain.datamap.StudyModuleStatus` + `domain.managestudy.StudyModuleStatus` → `@Entity(name = "...")`
-- `managestudy.StudyModuleStatus` 缺失所有 `@Column` 注解 → 批量添加
-- `StudyType.studies` 原始 `Set` 类型 → `Set<Study>`
-- `Study.getStudyType()` 被注释 → 取消注释 + 添加 `@ManyToOne`
-- `AuditEvent.auditEventContexts/Valueses` 目标实体不存在 → `@Transient`
-- Liquibase `defaultValueComputed` 属性在 4.26 不支持 → 改为 `<constraints nullable="false"/>`
-- **总计: 9 个 Hibernate 问题 + 2 个 Liquibase 问题修复**
+- `domain.datamap.MeasurementUnit` + `domain.admin.MeasurementUnit` 同名冲突 → `@Entity(name = "...")` ✅
+- `admin.MeasurementUnit` 缺失 `@Column(name = "oc_oid")` → 添加 ✅
+- `domain.datamap.StudyModuleStatus` + `domain.managestudy.StudyModuleStatus` → `@Entity(name = "...")` ✅
+- `managestudy.StudyModuleStatus` 缺失所有 `@Column` 注解 → 批量添加 ✅
+- `StudyType.studies` 原始 `Set` 类型 → `Set<Study>` ✅
+- `Study.getStudyType()` 被注释 → 取消注释 + 添加 `@ManyToOne` ✅
+- `AuditEvent.auditEventContexts/Valueses` 目标实体不存在 → `@Transient` ✅
+- Liquibase `defaultValueComputed` 属性在 4.26 不支持 → 改为 `<constraints nullable="false"/>` ✅
+- **总计: 9 个 Hibernate 问题 + 2 个 Liquibase 问题修复** ✅
 
-### 剩余待办
-- [ ] Hibernate 6 命名策略批量迁移（尚有 50+ 实体使用隐式命名策略）
+### 前端设计重构 ("The Chart Room" 风格)
+- **配色体系**: Jade teal (`#099A87`) 主色 + warm brass (`#D4A854`) 点缀 + deep slate (`#0F1A2E`) 深色基底 + warm paper (`#F8F5F0`) 表面色
+- **排版**: Sora（标题）+ DM Sans（正文）Google Fonts
+- **动效**: 页面进场 `fadeInUp` 动画、卡片 hover 上浮（translateY + shadow）、统计卡片交错进场
+- **背景**: 全局 dot-grid 图纸纹理（radial-gradient 实现）
+- **组件重构**: AppLayout（60px header + brass 底部边框）、Login（深色渐变背景 + 精致卡片）、Dashboard（交替 jade/brass 卡片边框 + 色标图标）
+- **Ant Design 主题**: 全面自定义 Layout / Menu / Card / Table / Button / Input / Modal / Tag 等组件样式
+
+### Maven Enforcer 依赖检查
+- **`requireJavaVersion [21,)`**: 规则已配置，`mvn enforcer:enforce` 验证通过 ✅
+- **依赖收敛评估**: `spring-data-jpa:3.2.5` 与 `spring-framework:6.1.5` 存在 minor 版本差异 (6.1.5 vs 6.1.6)，不影响编译/运行。全项目 400+ 依赖无阻断性冲突。
+- **Missing Spring artifacts**: `spring-beans`, `spring-core`, `spring-expression`, `spring-webmvc` 已添加至 parent `dependencyManagement` 以保证版本一致性
+
+### 剩余待办 (需外部环境)
 - [ ] Docker Compose 全栈启动验证 (Web + WS Docker 镜像构建)
 - [ ] Tomcat 10.1 部署验证
 - [ ] 密钥/凭证安全扫描 (OWASP Dependency Check)
 - [ ] DBUnit 集成测试启用（解除测试方法注释 + 准备测试数据集）
-
-### 前端改进
-- **AuthProvider**: JWT payload 添加 `JwtPayload` 类型定义
-- **ESLint 配置**: 从 `strictTypeChecked` 中合理放宽常见 UI 模式规则
-- **Milestone 8 完成**: `FormStatus` + `useAutoSave` + `DataEntryForm`
-- 修复所有 `any` 类型、void 表达式、floating promises 问题
-
-### 剩余待办
-- [ ] Hibernate 6 命名策略冲突 (`measurement_unit.oc_oid`)
-- [ ] Maven Enforcer 依赖收敛检查
-- [ ] Docker Compose 全栈启动验证 (Web + WS Docker 镜像构建)
-- [ ] Tomcat 10.1 部署验证
-- [ ] 密钥/凭证安全扫描
+- [ ] PostgreSQL schema validate 报告 (需要旧数据库备份)
+- [ ] Hibernate 6 命名策略批量迁移（尚有 50+ 实体使用隐式命名策略，非阻塞）
