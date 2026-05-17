@@ -1,0 +1,72 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: oc-test-postgres
+    restart: unless-stopped
+    ports:
+      - "${OC_DB_PORT:-5433}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-openclinica}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-openclinica_test}
+      POSTGRES_DB: ${POSTGRES_DB:-openclinica_test}
+    volumes:
+      - oc-test-postgres-data:/var/lib/postgresql/data
+      - ../compose/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-openclinica} -d ${POSTGRES_DB:-openclinica_test}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging: *default-logging
+
+  web:
+    build:
+      context: ../..
+      dockerfile: docker/web/Dockerfile
+      target: build
+    image: openclinica-web-test:latest
+    container_name: oc-test-web
+    restart: "no"
+    environment:
+      OC_DB_HOST: postgres
+      OC_DB_PORT: "5432"
+      OC_DB_NAME: ${OC_DB_NAME:-openclinica_test}
+      OC_DB_USER: ${OC_DB_USER:-openclinica}
+      OC_DB_PASS: ${OC_DB_PASS:-openclinica_test}
+      OC_SYS_URL: http://localhost:8080/MainMenu
+      OC_ADMIN_EMAIL: test@example.com
+      OC_LOG_LEVEL: debug
+      OC_MAIL_HOST: mailhog
+      OC_MAIL_PORT: "1025"
+      OC_HIBERNATE_DDL_AUTO: validate
+      OC_COLLECT_STATS: "false"
+      OC_WEBAPP_NAME: "ROOT"
+    volumes:
+      - oc-test-data:/opt/openclinica/data
+      - oc-test-logs:/opt/openclinica/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: oc-test-mailhog
+    restart: "no"
+    ports:
+      - "${OC_MAILHOG_HTTP_PORT:-8026}:8025"
+    logging: *default-logging
+
+volumes:
+  oc-test-postgres-data:
+    driver: local
+  oc-test-data:
+    driver: local
+  oc-test-logs:
+    driver: local
