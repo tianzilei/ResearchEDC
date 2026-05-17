@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, Table, Tag, Button, Space, Typography, Modal, Select, Input, message, Empty, Progress } from "antd";
 import { ExportOutlined, ReloadOutlined, StopOutlined, DownloadOutlined } from "@ant-design/icons";
 import { Alert } from "antd";
@@ -37,6 +38,7 @@ function useExportJobs(studyId: number) {
 }
 
 export default function ExportCenter() {
+  const { t } = useTranslation();
   const { currentStudy } = useCurrentStudy();
   const studyId = currentStudy?.id ?? 0;
   const qc = useQueryClient();
@@ -47,7 +49,7 @@ export default function ExportCenter() {
 
   const createJob = useAppMutation<ExportJob, any>({
     mutationFn: (body) => apiClient.post<ExportJob>(`/api/v1/exports`, body),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["exports", studyId] }); message.success("Export job created"); setModalOpen(false); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["exports", studyId] }); message.success(t("export.created")); setModalOpen(false); },
   });
 
   const cancelJob = useAppMutation<void, number>({
@@ -60,15 +62,15 @@ export default function ExportCenter() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["exports", studyId] }),
   });
 
-  if (!currentStudy) return <Alert message="Please select a study" type="info" showIcon />;
+  if (!currentStudy) return <Alert message={t("export.selectStudy")} type="info" showIcon />;
   if (isLoading) return <SkeletonPage />;
 
   const columns = [
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Format", dataIndex: "exportFormat", key: "exportFormat",
+    { title: t("export.column.name"), dataIndex: "name", key: "name" },
+    { title: t("export.column.format"), dataIndex: "exportFormat", key: "exportFormat",
       render: (f: string) => <Tag>{f}</Tag>,
     },
-    { title: "Status", dataIndex: "status", key: "status",
+    { title: t("export.column.status"), dataIndex: "status", key: "status",
       render: (s: string) => (
         <Space>
           <Tag color={statusColors[s]}>{s}</Tag>
@@ -76,24 +78,24 @@ export default function ExportCenter() {
         </Space>
       ),
     },
-    { title: "Requested", dataIndex: "requestedDate", key: "requestedDate",
+    { title: t("export.column.requested"), dataIndex: "requestedDate", key: "requestedDate",
       render: (d: string) => d ? new Date(d).toLocaleString() : "-",
     },
-    { title: "Size", dataIndex: "fileSize", key: "fileSize",
+    { title: t("export.column.size"), dataIndex: "fileSize", key: "fileSize",
       render: (s: number) => s ? `${(s / 1024).toFixed(1)} KB` : "-",
     },
     {
-      title: "Actions", key: "actions",
+      title: t("export.column.actions"), key: "actions",
       render: (_: any, r: ExportJob) => (
         <Space>
           {r.status === "COMPLETED" && r.filePath && (
-            <Button size="small" icon={<DownloadOutlined />} type="link">Download</Button>
+            <Button size="small" icon={<DownloadOutlined />} type="link">{t("export.action.download")}</Button>
           )}
           {(r.status === "PENDING" || r.status === "RUNNING") && (
-            <Button size="small" icon={<StopOutlined />} onClick={() => cancelJob.mutate(r.id)}>Cancel</Button>
+            <Button size="small" icon={<StopOutlined />} onClick={() => cancelJob.mutate(r.id)}>{t("export.action.cancel")}</Button>
           )}
           {r.status === "FAILED" && (
-            <Button size="small" icon={<ReloadOutlined />} onClick={() => retryJob.mutate(r.id)}>Retry</Button>
+            <Button size="small" icon={<ReloadOutlined />} onClick={() => retryJob.mutate(r.id)}>{t("export.action.retry")}</Button>
           )}
         </Space>
       ),
@@ -103,22 +105,22 @@ export default function ExportCenter() {
   return (
     <div>
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
-        <Title level={4} style={{ marginTop: 0 }}><ExportOutlined /> Export Center</Title>
-        <Button type="primary" icon={<ExportOutlined />} onClick={() => setModalOpen(true)}>New Export</Button>
+        <Title level={4} style={{ marginTop: 0 }}><ExportOutlined /> {t("export.title")}</Title>
+        <Button type="primary" icon={<ExportOutlined />} onClick={() => setModalOpen(true)}>{t("export.newExport")}</Button>
       </Space>
 
       <Card style={{ marginTop: 16 }}>
         <Table dataSource={jobs ?? []} columns={columns} rowKey="id" pagination={{ pageSize: 10 }}
-          locale={{ emptyText: <Empty description="No export jobs. Create one to start." /> }} />
+          locale={{ emptyText: <Empty description={t("export.empty")} /> }} />
       </Card>
 
-      <Modal title="Create Export Job" open={modalOpen} onCancel={() => setModalOpen(false)}
+      <Modal title={t("export.modal.title")} open={modalOpen} onCancel={() => setModalOpen(false)}
         onOk={() => createJob.mutate({ studyId, name, exportFormat: format, requestedBy: 0 })}
         confirmLoading={createJob.isPending}>
         <Space direction="vertical" style={{ width: "100%" }}>
-          <label>Job Name</label>
-          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., Full Study Export" />
-          <label>Export Format</label>
+          <label>{t("export.modal.jobName")}</label>
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("export.modal.jobNamePlaceholder")} />
+          <label>{t("export.modal.format")}</label>
           <Select value={format} onChange={setFormat} style={{ width: "100%" }}>
             <Select.Option value="ODM_XML">ODM XML</Select.Option>
             <Select.Option value="CSV">CSV</Select.Option>

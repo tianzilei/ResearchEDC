@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, Table, Tag, Typography, Empty } from "antd";
 import { FileTextOutlined } from "@ant-design/icons";
 import { useAppQuery } from "@/hooks/useQuery";
@@ -25,33 +26,34 @@ function useCrfs() {
 }
 
 export default function CrfList() {
+  const { t } = useTranslation();
   const { data: crfs, isLoading } = useCrfs();
   const navigate = useNavigate();
 
   if (isLoading) return <SkeletonPage />;
 
   const columns = [
-    { title: "Name", dataIndex: "name", key: "name",
+    { title: t("crf.column.name"), dataIndex: "name", key: "name",
       render: (name: string, r: CrfSummary) => (
         <a onClick={() => { navigate(`/app/crfs/${r.crfId}`); }}>{name}</a>
       ),
     },
-    { title: "OID", dataIndex: "ocOid", key: "ocOid" },
-    { title: "Status", dataIndex: "status", key: "status",
+    { title: t("crf.column.oid"), dataIndex: "ocOid", key: "ocOid" },
+    { title: t("crf.column.status"), dataIndex: "status", key: "status",
       render: (s: string) => <Tag>{s}</Tag>,
     },
-    { title: "Versions", dataIndex: "versionCount", key: "versionCount" },
-    { title: "Created", dataIndex: "dateCreated", key: "dateCreated",
+    { title: t("crf.column.versions"), dataIndex: "versionCount", key: "versionCount" },
+    { title: t("crf.column.created"), dataIndex: "dateCreated", key: "dateCreated",
       render: (d: string) => d ? new Date(d).toLocaleDateString() : "-",
     },
   ];
 
   return (
     <div>
-      <Title level={4} style={{ marginTop: 0 }}><FileTextOutlined /> CRF Library</Title>
+      <Title level={4} style={{ marginTop: 0 }}><FileTextOutlined /> {t("crf.library")}</Title>
       <Card style={{ marginTop: 16 }}>
         <Table dataSource={crfs ?? []} columns={columns} rowKey="crfId" pagination={false}
-          locale={{ emptyText: <Empty description="No CRFs found" /> }} />
+          locale={{ emptyText: <Empty description={t("crf.empty")} /> }} />
       </Card>
     </div>
   );
