@@ -25,6 +25,7 @@ spring:
       prefix: /WEB-INF/jsp/
       suffix: .jsp
     static-path-pattern: /static/**
+    static-path-pattern: /static/**
 
   # Servlet multipart configuration
   servlet:
