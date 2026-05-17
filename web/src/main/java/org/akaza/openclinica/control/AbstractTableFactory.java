@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.akaza.openclinica.i18n.core.LocaleResolver;
+import org.akaza.openclinica.web.JakartaWebContext;
 import org.jmesa.facade.TableFacade;
 import org.jmesa.facade.TableFacadeImpl;
 import org.jmesa.limit.ExportType;
@@ -48,7 +49,9 @@ public abstract class AbstractTableFactory {
     }
 
     public TableFacade getTableFacadeImpl(HttpServletRequest request, HttpServletResponse response) {
-        return new TableFacadeImpl(getTableName(), request);
+        TableFacadeImpl tableFacade = new TableFacadeImpl(getTableName(), (javax.servlet.http.HttpServletRequest) null);
+        tableFacade.setWebContext(new JakartaWebContext(request));
+        return tableFacade;
     }
 
     public abstract void setDataAndLimitVariables(TableFacade tableFacade);
@@ -131,7 +134,7 @@ public abstract class AbstractTableFactory {
     }
 
     public void configureTableFacade(HttpServletResponse response, TableFacade tableFacade) {
-        tableFacade.setExportTypes(response, getExportTypes());
+        tableFacade.setExportTypes(getExportTypes());
     }
 
     public int[] getMaxRowIncrements() {

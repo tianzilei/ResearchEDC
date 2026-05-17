@@ -1150,7 +1150,7 @@ public class SystemController {
 */
     	String query = "select * from pg_roles where rolname= ? ";
     	PreparedStatement ps =conn.prepareStatement(query);
-    	ps.setParameter(1, username);
+    	ps.setString(1, username);
     	ResultSet resultSet = ps.executeQuery();
     	
         while (resultSet.next()) {

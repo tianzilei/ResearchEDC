@@ -18,6 +18,7 @@ import org.akaza.openclinica.web.table.scheduledjobs.ScheduledJobTableFactory;
 import org.akaza.openclinica.web.table.scheduledjobs.ScheduledJobs;
 import org.akaza.openclinica.web.table.sdv.SDVUtil;
 import org.jmesa.facade.TableFacade;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -27,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.quartz.JobDetailBean;
+import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -200,7 +201,6 @@ public class ScheduledJobController {
         newTrigger.setJobName(theJobName);
         newTrigger.setJobGroup(theJobGroupName);
         newTrigger.setJobDataMap(oldTrigger.getJobDataMap());
-        newTrigger.setVolatility(false);
         newTrigger.setRepeatCount(oldTrigger.getRepeatCount());
         newTrigger.setRepeatInterval(oldTrigger.getRepeatInterval());
         newTrigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT);
@@ -220,16 +220,16 @@ public class ScheduledJobController {
         else if(triggerGroupName.equals(XsltTriggerService.TRIGGER_GROUP_NAME))
         {
 
-            JobDetailBean jobDetailBean = new JobDetailBean();
+            JobDetailFactoryBean jobDetailBean = new JobDetailFactoryBean();
             jobDetailBean.setGroup(XsltTriggerService.TRIGGER_GROUP_NAME);
             jobDetailBean.setName(newTrigger.getName());
             jobDetailBean.setJobClass(org.akaza.openclinica.job.XsltStatefulJob.class);
             jobDetailBean.setJobDataMap(newTrigger.getJobDataMap());
             jobDetailBean.setDurability(true); // need durability?
-            jobDetailBean.setVolatility(false);
+            jobDetailBean.afterPropertiesSet();
 
            scheduler.deleteJob(theJobName, theJobGroupName);
-           scheduler.scheduleJob(jobDetailBean, newTrigger);
+           scheduler.scheduleJob(jobDetailBean.getObject(), newTrigger);
            pageMessages.add("The Job "+theJobName+"  has been rescheduled");
         }
 

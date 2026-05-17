@@ -4,14 +4,15 @@ import org.akaza.openclinica.web.SQLInitServlet;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jmesa.view.html.HtmlBuilder;
 
-import com.sun.syndication.feed.synd.SyndEntryImpl;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.fetcher.FeedFetcher;
-import com.sun.syndication.fetcher.FetcherException;
-import com.sun.syndication.fetcher.impl.FeedFetcherCache;
-import com.sun.syndication.fetcher.impl.HashMapFeedInfoCache;
-import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
-import com.sun.syndication.io.FeedException;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndEntryImpl;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.fetcher.FeedFetcher;
+import com.rometools.fetcher.FetcherException;
+import com.rometools.fetcher.impl.FeedFetcherCache;
+import com.rometools.fetcher.impl.HashMapFeedInfoCache;
+import com.rometools.fetcher.impl.HttpURLFeedFetcher;
+import com.rometools.rome.io.FeedException;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -94,10 +95,10 @@ public class RssReaderServlet extends HttpServlet {
     String feedHtml(SyndFeed feed) {
         HtmlBuilder htmlBuilder = new HtmlBuilder();
         htmlBuilder.h1().close().append(resword.getString("news")).h1End().ul().close();
-        List<SyndEntryImpl> theFeeds = feed.getEntries();
+        List<SyndEntry> theFeeds = feed.getEntries();
 
         for (int i = 0; i < (theFeeds.size() >= 4 ? 4 : theFeeds.size()); i++) {
-            SyndEntryImpl syndFeed = theFeeds.get(i);
+            SyndEntry syndFeed = theFeeds.get(i);
             String description = null;
 
             if (syndFeed.getDescription().getValue().length() > 50) {
@@ -112,7 +113,7 @@ public class RssReaderServlet extends HttpServlet {
             SimpleDateFormat sdf = new SimpleDateFormat(resformat.getString("mid_date_format"));
             String theDate = sdf.format(syndFeed.getPublishedDate());
             htmlBuilder.li().close().a().href(syndFeed.getLink()).append(" target=\"_blank\"").close().append(
-                    theDate + " - " + StringEscapeUtils.escapeHtml(syndFeed.getTitle()) + " - " + description).aEnd().liEnd();
+                    theDate + " - " + syndFeed.getTitle().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;") + " - " + description).aEnd().liEnd();
 
         }
         if (rssMore != null && rssMore.length() > 0) {

@@ -2,6 +2,7 @@ package org.akaza.openclinica.controller;
 
 import static org.jmesa.facade.TableFacadeFactory.createTableFacade;
 
+import org.akaza.openclinica.web.JakartaWebContext;
 import org.akaza.openclinica.bean.core.Role;
 import org.akaza.openclinica.bean.login.StudyUserRoleBean;
 import org.akaza.openclinica.bean.login.UserAccountBean;
@@ -513,7 +514,7 @@ public class SDVController {
             totalRowCount = items.size();
         }
 
-        TableFacade tableFacade = createTableFacade("sdv", request);
+        TableFacade tableFacade = createTableFacade("sdv", new JakartaWebContext(request));
         //The default display for the JMesa Limit select widget is 1,50,100 rows
         //We'll change this if the subject has more than one row, and have the last choice
         //set to the total row count

@@ -11,6 +11,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,7 +175,8 @@ public void setMetadataCollectorResource(
 	 */
   @GET
   @Path("/html/print/{studyOID}/{eventOID}/{formVersionOID}")
-  public Viewable getPrintCRFController(
+  @Produces(MediaType.TEXT_HTML)
+  public Response getPrintCRFController(
     @Context HttpServletRequest request,
     @Context HttpServletResponse response,
     @PathParam("studyOID") String studyOID,
@@ -184,7 +186,8 @@ public void setMetadataCollectorResource(
       request.setAttribute("studyOID", studyOID);
       request.setAttribute("eventOID", eventOID);
       request.setAttribute("formVersionOID", formVersionOID);
-      return new Viewable("/WEB-INF/jsp/printcrf.jsp", null);
+      request.getRequestDispatcher("/WEB-INF/jsp/printcrf.jsp").forward(request, response);
+      return Response.ok().build();
   }
 
 

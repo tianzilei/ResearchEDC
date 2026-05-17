@@ -6,6 +6,7 @@ package org.akaza.openclinica.control.core;
 import java.io.IOException;
 import java.security.Principal;
 
+import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
@@ -21,7 +22,7 @@ import org.slf4j.MDC;
  * @author pgawade
  *
  */
-public class OCServletFilter implements javax.servlet.Filter {
+public class OCServletFilter implements Filter {
 
     public static final String USER_BEAN_NAME = "userBean";
 

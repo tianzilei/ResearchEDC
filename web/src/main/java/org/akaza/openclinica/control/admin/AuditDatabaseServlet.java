@@ -17,6 +17,7 @@ import org.akaza.openclinica.domain.technicaladmin.DatabaseChangeLogBean;
 import org.akaza.openclinica.i18n.core.LocaleResolver;
 import org.akaza.openclinica.view.Page;
 import org.akaza.openclinica.web.InsufficientPermissionException;
+import org.akaza.openclinica.web.JakartaWebContext;
 import org.jmesa.facade.TableFacade;
 import org.jmesa.view.editor.DateCellEditor;
 import org.jmesa.view.html.component.HtmlColumn;
@@ -69,7 +70,7 @@ public class AuditDatabaseServlet extends SecureController {
     private String renderAuditDatabaseTable(List<DatabaseChangeLogBean> databaseChangeLogs) {
 
         // Collection<StudyRowContainer> items = getStudyRows(studyBeans);
-        TableFacade tableFacade = createTableFacade("databaseChangeLogs", request);
+        TableFacade tableFacade = createTableFacade("databaseChangeLogs", new JakartaWebContext(request));
         tableFacade.setColumnProperties("id", "author", "fileName", "dataExecuted", "md5Sum", "description", "comments", "tag", "liquibase");
 
         tableFacade.setItems(databaseChangeLogs);

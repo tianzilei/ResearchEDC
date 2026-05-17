@@ -1,8 +1,9 @@
 package org.akaza.openclinica.control;
 
 import org.jmesa.core.CoreContext;
-import org.jmesa.view.AbstractViewExporter;
+import org.jmesa.core.CoreContextSupport;
 import org.jmesa.view.View;
+import org.jmesa.view.ViewExporter;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,36 +13,57 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 2.0
  * @author Jeff Johnston
  */
-public class XmlViewExporter extends AbstractViewExporter {
+public class XmlViewExporter implements ViewExporter, CoreContextSupport {
 
     private final HttpServletRequest request;
+    private HttpServletResponse response;
+    private View view;
+    private CoreContext coreContext;
 
     public XmlViewExporter(View view, CoreContext coreContext, HttpServletRequest request, HttpServletResponse response) {
-        super(view, coreContext, response, null);
+        this.view = view;
+        this.coreContext = coreContext;
         this.request = request;
+        this.response = response;
     }
 
     public XmlViewExporter(View view, CoreContext coreContext, HttpServletRequest request, HttpServletResponse response, String fileName) {
-        super(view, coreContext, response, fileName);
+        this.view = view;
+        this.coreContext = coreContext;
         this.request = request;
+        this.response = response;
     }
 
     public void export() throws Exception {
-        //responseHeaders(getResponse());
-        //String viewData = (String) getView().render();
-        //byte[] contents = (viewData).getBytes();
-        //getResponse().getOutputStream().write(contents);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("DownloadRuleSetXml?ruleSetRuleIds=" + (String) getView().render());
-        dispatcher.forward(request, getResponse());
+        RequestDispatcher dispatcher = request.getRequestDispatcher("DownloadRuleSetXml?ruleSetRuleIds=" + (String) view.render());
+        dispatcher.forward(request, response);
     }
 
-    @Override
     public String getContextType() {
         return "text/plain";
     }
 
-    @Override
     public String getExtensionName() {
         return "txt";
+    }
+
+    @Override
+    public View getView() {
+        return view;
+    }
+
+    @Override
+    public void setView(View view) {
+        this.view = view;
+    }
+
+    @Override
+    public CoreContext getCoreContext() {
+        return coreContext;
+    }
+
+    @Override
+    public void setCoreContext(CoreContext coreContext) {
+        this.coreContext = coreContext;
     }
 }

@@ -73,7 +73,7 @@ public class ExampleSpringJob extends QuartzJobBean {
     private DataSource dataSource;
     private GenerateExtractFileService generateFileService;
     private UserAccountBean userBean;
-    private JobDetailBean jobDetailBean;
+    private JobDetailFactoryBean jobDetailFactoryBean;
     private CoreResources coreResources;
     private RuleSetRuleDao ruleSetRuleDao;
 

@@ -28,7 +28,7 @@ public class AlertTag extends SimpleTagSupport {
         List<String> messages = (ArrayList) context.findAttribute("pageMessages");
         if(messages != null){
             for(String message : messages){
-                builder.append(StringEscapeUtils.escapeHtml(message));
+                builder.append(message.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
                 builder.append("<br />");
             }
 

@@ -22,19 +22,19 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.StreamingOutput;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HEAD;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
+import jakarta.ws.rs.core.StreamingOutput;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -405,17 +405,17 @@ public class OpenRosaServices {
         ResponseEntity<String> responseEntity = openRosaSubmissionController.doSubmission(request, response, studyOID, context);
         if (responseEntity == null) {
             LOGGER.debug("Null response from OpenRosaSubmissionController.");
-            return builder.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build();
+            return builder.status(jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build();
         } else if (responseEntity.getStatusCode().equals(org.springframework.http.HttpStatus.CREATED)) {
             LOGGER.debug("Successful OpenRosa submission");
             builder.entity("<OpenRosaResponse xmlns=\"http://openrosa.org/http/response\">" + "<message>success</message>" + "</OpenRosaResponse>");
-            return builder.status(javax.ws.rs.core.Response.Status.CREATED).build();
+            return builder.status(jakarta.ws.rs.core.Response.Status.CREATED).build();
         } else if (responseEntity.getStatusCode().equals(org.springframework.http.HttpStatus.NOT_ACCEPTABLE)) {
             LOGGER.debug("Failed OpenRosa submission");
-            return builder.status(javax.ws.rs.core.Response.Status.NOT_ACCEPTABLE).build();
+            return builder.status(jakarta.ws.rs.core.Response.Status.NOT_ACCEPTABLE).build();
         } else {
             LOGGER.debug("Failed OpenRosa submission with unhandled error");
-            return builder.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build();
+            return builder.status(jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -456,10 +456,10 @@ public class OpenRosaServices {
 
         if (maxSubmissionSizeInt < 1) {
             logger.error("pformMaxSubmissionSize does not contain an integer value greater than 0.");
-            return builder.status(javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build();
+            return builder.status(jakarta.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR).build();
         } else {
             builder = builder.header("X-OpenRosa-Accept-Content-Length", maxSubmissionSizeInt);
-            return builder.status(javax.ws.rs.core.Response.Status.ACCEPTED).build();
+            return builder.status(jakarta.ws.rs.core.Response.Status.ACCEPTED).build();
         }
     }
 

@@ -1,12 +1,13 @@
 package org.akaza.openclinica.control;
 
 import org.akaza.openclinica.exception.OpenClinicaSystemException;
+import org.akaza.openclinica.web.JakartaWebContext;
 import org.jmesa.core.CoreContext;
 import org.jmesa.facade.TableFacadeImpl;
 import org.jmesa.limit.ExportType;
+import org.jmesa.web.WebContext;
 import org.jmesa.view.View;
 import org.jmesa.view.csv.CsvViewExporter;
-import org.jmesa.view.excel.ExcelViewExporter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,10 +19,11 @@ public class OCTableFacadeImpl extends TableFacadeImpl {
     private final String fileName;
 
     public OCTableFacadeImpl(String id, HttpServletRequest request, HttpServletResponse response, String fileName) {
-        super(id, request);
+        super(id, (javax.servlet.http.HttpServletRequest) null);
         this.response = response;
         this.fileName = fileName + System.currentTimeMillis();
         this.request = request;
+        setWebContext(new JakartaWebContext(request));
     }
 
     @Override
@@ -41,10 +43,10 @@ public class OCTableFacadeImpl extends TableFacadeImpl {
             CoreContext cc = getCoreContext();
 
             if (exportType == ExportType.CSV) {
-//                new OCCsvViewExporter(view, cc, response, fileName).export();
-                 new CsvViewExporter(view, cc, response, fileName + ".txt").export();
+                new OCCsvViewExporter(view, cc, response, fileName).export();
+//                 new CsvViewExporter(view, cc, response, fileName + ".txt").export();
             } else if (exportType == ExportType.EXCEL) {
-                new ExcelViewExporter(view, cc, response, fileName + ".xls").export();
+                super.renderExport(exportType, view);
             } else if (exportType == ExportType.PDF) {
                 new XmlViewExporter(view, cc, request, response).export();
             } else {

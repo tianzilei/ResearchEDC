@@ -2221,7 +2221,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         DisplayTableOfContentsBean displayBean = new DisplayTableOfContentsBean();
         displayBean = TableOfContentsServlet.getDisplayBean(ecb, getDataSource(), currentStudy);
         // escape apostrophe in event name
-        displayBean.getStudyEventDefinition().setName(StringEscapeUtils.escapeJavaScript(displayBean.getStudyEventDefinition().getName()));
+        displayBean.getStudyEventDefinition().setName(displayBean.getStudyEventDefinition().getName().replace("'", "\\'").replace("\"", "\\\"").replace("\\", "\\\\"));
         request.setAttribute(TOC_DISPLAY, displayBean);
 
         int sectionId = fp.getInt(INPUT_SECTION_ID, true);

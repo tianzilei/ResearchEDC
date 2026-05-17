@@ -8,6 +8,7 @@ package org.akaza.openclinica.control.admin;
 
 import static org.jmesa.facade.TableFacadeFactory.createTableFacade;
 
+import org.akaza.openclinica.web.JakartaWebContext;
 import org.akaza.openclinica.bean.admin.CRFBean;
 import org.akaza.openclinica.bean.core.Role;
 import org.akaza.openclinica.bean.managestudy.StudyBean;
@@ -181,7 +182,7 @@ public class ViewCRFServlet extends SecureController {
     private String renderStudiesTable(List<StudyBean> studyBeans) {
 
         Collection<StudyRowContainer> items = getStudyRows(studyBeans);
-        TableFacade tableFacade = createTableFacade("studies", request);
+        TableFacade tableFacade = createTableFacade("studies", new JakartaWebContext(request));
         tableFacade.setColumnProperties("name", "uniqueProtocolid", "actions");
 
         tableFacade.setItems(items);

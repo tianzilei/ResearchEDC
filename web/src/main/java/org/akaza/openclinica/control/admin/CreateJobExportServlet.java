@@ -28,10 +28,11 @@ import org.akaza.openclinica.view.Page;
 import org.akaza.openclinica.web.InsufficientPermissionException;
 import org.akaza.openclinica.web.SQLInitServlet;
 import org.akaza.openclinica.web.job.TriggerService;
+import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdScheduler;
-import org.springframework.scheduling.quartz.JobDetailBean;
+import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 
 /**
  *
@@ -242,17 +243,18 @@ public class CreateJobExportServlet extends SecureController {
                 trigger.getJobDataMap().put(XsltTriggerService.JOB_NAME, jobName);
 				trigger.getJobDataMap().put("job_type", "exportJob");
 
-                JobDetailBean jobDetailBean = new JobDetailBean();
+                JobDetailFactoryBean jobDetailBean = new JobDetailFactoryBean();
                 jobDetailBean.setGroup(xsltService.getTriggerGroupNameForExportJobs());
                 jobDetailBean.setName(trigger.getName());
                 jobDetailBean.setJobClass(org.akaza.openclinica.job.XsltStatefulJob.class);
                 jobDetailBean.setJobDataMap(trigger.getJobDataMap());
                 jobDetailBean.setDurability(true); // need durability?
-                jobDetailBean.setVolatility(false);
+                jobDetailBean.afterPropertiesSet();
 
                 // set to the scheduler
                 try {
-                    Date dateStart = scheduler.scheduleJob(jobDetailBean, trigger);
+                    JobDetail jobDetail = jobDetailBean.getObject();
+                    Date dateStart = scheduler.scheduleJob(jobDetail, trigger);
                     logger.info("== found job date: " + dateStart.toString());
                     // set a success message here
                 } catch (SchedulerException se) {

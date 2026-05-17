@@ -14,6 +14,7 @@ import org.akaza.openclinica.web.SQLInitServlet;
 import org.akaza.openclinica.web.job.ImportSpringJob;
 import org.akaza.openclinica.web.job.TriggerService;
 import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
@@ -140,17 +141,18 @@ public class UpdateJobImportServlet extends SecureController {
                 Date startDate = trigger.getStartTime();
                 trigger = triggerService.generateImportTrigger(fp, sm.getUserBean(), study, startDate, LocaleResolver.getLocale(request).getLanguage());
                 // scheduler = getScheduler();
-                JobDetailBean jobDetailBean = new JobDetailFactoryBean();
+                JobDetailFactoryBean jobDetailBean = new JobDetailFactoryBean();
                 jobDetailBean.setGroup(TRIGGER_IMPORT_GROUP);
                 jobDetailBean.setName(trigger.getName());
                 jobDetailBean.setJobClass(org.akaza.openclinica.web.job.ImportStatefulJob.class);
                 jobDetailBean.setJobDataMap(trigger.getJobDataMap());
                 jobDetailBean.setDurability(true); // need durability?
-                jobDetailBean.setVolatility(false);
+                jobDetailBean.afterPropertiesSet();
 
                 try {
                     scheduler.deleteJob(triggerName, TRIGGER_IMPORT_GROUP);
-                    Date dateStart = scheduler.scheduleJob(jobDetailBean, trigger);
+                    JobDetail jobDetail = jobDetailBean.getObject();
+                    Date dateStart = scheduler.scheduleJob(jobDetail, trigger);
 
                     addPageMessage("Your job has been successfully modified.");
                     forwardPage(Page.VIEW_IMPORT_JOB_SERVLET);

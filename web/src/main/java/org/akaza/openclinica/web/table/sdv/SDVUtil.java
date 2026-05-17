@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import org.akaza.openclinica.web.JakartaWebContext;
 import org.akaza.openclinica.bean.admin.CRFBean;
 import org.akaza.openclinica.bean.core.DataEntryStage;
 import org.akaza.openclinica.bean.core.Status;
@@ -555,7 +556,7 @@ public class SDVUtil {
      * if(items != null && items.size() > 0) {
      * totalRowCount = items.size();
      * }
-     * TableFacade tableFacade = createTableFacade("sdv", request);
+     * TableFacade tableFacade = createTableFacade("sdv", new JakartaWebContext(request));
      * tableFacade.setStateAttr("restore");
      * 
      * String[] allColumns = new String[]{"studySubjectId","personId","secondaryId",
@@ -621,7 +622,7 @@ public class SDVUtil {
         // boolean showMoreLink = Boolean.parseBoolean(request.getAttribute("showMoreLink").toString());//commented by
         // Jamuna, throwing null pointer exception
         boolean showMoreLink = Boolean.parseBoolean(request.getAttribute("showMoreLink") == null ? "false" : request.getAttribute("showMoreLink").toString());
-        TableFacade tableFacade = createTableFacade("sdv", request);
+        TableFacade tableFacade = createTableFacade("sdv", new JakartaWebContext(request));
         tableFacade.setStateAttr("sdv_restore");
         resformat = ResourceBundleProvider.getFormatBundle(LocaleResolver.getLocale(request));
         this.pathPrefix = pathPrefix;
@@ -705,7 +706,7 @@ public class SDVUtil {
 
     public String renderSubjectsTableWithLimit(HttpServletRequest request, int studyId, int studySubjectId) {
 
-        TableFacade tableFacade = createTableFacade("sdv", request);
+        TableFacade tableFacade = createTableFacade("sdv", new JakartaWebContext(request));
         tableFacade.setStateAttr("restore");
 
         /*
@@ -1222,7 +1223,7 @@ public class SDVUtil {
             totalRowCount = items.size();
         }
 
-        TableFacade tableFacade = createTableFacade("sdv", request);
+        TableFacade tableFacade = createTableFacade("sdv", new JakartaWebContext(request));
         // The default display for the JMesa Limit select widget is 1,50,100 rows
         // We'll change this if the subject has more than one row, and have the last choice
         // set to the total row count

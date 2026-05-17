@@ -3,14 +3,15 @@ package org.akaza.openclinica.web.restful;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -28,8 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import com.sun.jersey.api.view.Viewable;
 
 /***
  * * Rest service for ODM clinical data usage
@@ -163,7 +162,8 @@ public class ODMClinicaDataResource {
 	 */
 	@GET
 	@Path("/html/print/{studyOID}/{studySubjectIdentifier}/{eventOID}/{formVersionOID}")
-	public Viewable getPrintCRFController(@Context HttpServletRequest request,
+	@Produces(MediaType.TEXT_HTML)
+	public Response getPrintCRFController(@Context HttpServletRequest request,
 			@Context HttpServletResponse response,
 			@PathParam("studyOID") String studyOID,
 			@PathParam("studySubjectIdentifier") String studySubjectIdentifier,
@@ -178,7 +178,8 @@ public class ODMClinicaDataResource {
 		request.setAttribute("formVersionOID", formVersionOID);
 		request.setAttribute("includeAudits", includeAudits);
 		request.setAttribute("includeDNs", includeDns);
-		return new Viewable("/WEB-INF/jsp/printcrf.jsp", null);
+		request.getRequestDispatcher("/WEB-INF/jsp/printcrf.jsp").forward(request, response);
+		return Response.ok().build();
 	}
 
 

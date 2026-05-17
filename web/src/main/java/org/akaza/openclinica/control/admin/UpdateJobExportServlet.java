@@ -31,6 +31,7 @@ import org.akaza.openclinica.web.SQLInitServlet;
 import org.akaza.openclinica.web.job.ExampleSpringJob;
 import org.akaza.openclinica.web.job.TriggerService;
 import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
@@ -222,17 +223,18 @@ public class UpdateJobExportServlet extends SecureController {
                 trigger.getJobDataMap().put(XsltTriggerService.EXPORT_FORMAT_ID, exportFormatId);
                 trigger.getJobDataMap().put(XsltTriggerService.JOB_NAME, jobName);
 
-                JobDetailBean jobDetailBean = new JobDetailBean();
+                JobDetailFactoryBean jobDetailBean = new JobDetailFactoryBean();
                 jobDetailBean.setGroup(xsltService.TRIGGER_GROUP_NAME);
                 jobDetailBean.setName(trigger.getName());
                 jobDetailBean.setJobClass(org.akaza.openclinica.job.XsltStatefulJob.class);
                 jobDetailBean.setJobDataMap(trigger.getJobDataMap());
                 jobDetailBean.setDurability(true); // need durability?
-                jobDetailBean.setVolatility(false);
+                jobDetailBean.afterPropertiesSet();
                 try {
                     // scheduler.unscheduleJob(triggerName, "DEFAULT");
                     scheduler.deleteJob(triggerName, XsltTriggerService.TRIGGER_GROUP_NAME);
-                    Date dataStart = scheduler.scheduleJob(jobDetailBean, trigger);
+                    JobDetail jobDetail = jobDetailBean.getObject();
+                    Date dataStart = scheduler.scheduleJob(jobDetail, trigger);
                     // Date dateStart = scheduler.rescheduleJob(triggerName,
                     // "DEFAULT", trigger);
                     // scheduler.rescheduleJob(triggerName, groupName,

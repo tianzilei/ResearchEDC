@@ -45,10 +45,11 @@ import org.akaza.openclinica.web.SQLInitServlet;
 import org.akaza.openclinica.web.bean.ArchivedDatasetFileRow;
 import org.akaza.openclinica.web.bean.EntityBeanTable;
 import org.akaza.openclinica.web.job.XalanTriggerService;
+import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdScheduler;
-import org.springframework.scheduling.quartz.JobDetailBean;
+import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 
 /**
  * Take a dataset and show it in different formats,<BR/> Detect whether or not
@@ -237,16 +238,17 @@ public class ExportDatasetServlet extends SecureController {
                             generalFileDir + "output.sql", db.getId());
                     scheduler = getScheduler();
 
-                    JobDetailBean jobDetailBean = new JobDetailBean();
+                    JobDetailFactoryBean jobDetailBean = new JobDetailFactoryBean();
                     jobDetailBean.setGroup(xts.TRIGGER_GROUP_NAME);
                     jobDetailBean.setName(simpleTrigger.getName());
                     jobDetailBean.setJobClass(org.akaza.openclinica.web.job.XalanStatefulJob.class);
                     jobDetailBean.setJobDataMap(simpleTrigger.getJobDataMap());
                     jobDetailBean.setDurability(true); // need durability?
-                    jobDetailBean.setVolatility(false);
+                    jobDetailBean.afterPropertiesSet();
 
                     try {
-                        Date dateStart = scheduler.scheduleJob(jobDetailBean, simpleTrigger);
+                        JobDetail jobDetail = jobDetailBean.getObject();
+                        Date dateStart = scheduler.scheduleJob(jobDetail, simpleTrigger);
                         logger.info("== found job date: " + dateStart.toString());
                     } catch (SchedulerException se) {
                         se.printStackTrace();

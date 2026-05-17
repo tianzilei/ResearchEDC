@@ -13,10 +13,11 @@ import org.akaza.openclinica.web.InsufficientPermissionException;
 import org.akaza.openclinica.web.SQLInitServlet;
 import org.akaza.openclinica.web.job.ImportSpringJob;
 import org.akaza.openclinica.web.job.TriggerService;
+import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.StdScheduler;
-import org.springframework.scheduling.quartz.JobDetailBean;
+import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -146,17 +147,18 @@ public class CreateJobImportServlet extends SecureController {
                 SimpleTrigger trigger = triggerService.generateImportTrigger(fp, sm.getUserBean(), studyBean, LocaleResolver.getLocale(request).getLanguage());
 
                 // SimpleTrigger trigger = new SimpleTrigger();
-                JobDetailBean jobDetailBean = new JobDetailBean();
+                JobDetailFactoryBean jobDetailBean = new JobDetailFactoryBean();
                 jobDetailBean.setGroup(IMPORT_TRIGGER);
                 jobDetailBean.setName(trigger.getName());
                 jobDetailBean.setJobClass(org.akaza.openclinica.web.job.ImportStatefulJob.class);
                 jobDetailBean.setJobDataMap(trigger.getJobDataMap());
                 jobDetailBean.setDurability(true); // need durability?
-                jobDetailBean.setVolatility(false);
+                jobDetailBean.afterPropertiesSet();
 
                 // set to the scheduler
                 try {
-                    Date dateStart = scheduler.scheduleJob(jobDetailBean, trigger);
+                    JobDetail jobDetail = jobDetailBean.getObject();
+                    Date dateStart = scheduler.scheduleJob(jobDetail, trigger);
                     logger.debug("== found job date: " + dateStart.toString());
                     // set a success message here
                     addPageMessage("You have successfully created a new job: " + trigger.getName() + " which is now set to run at the time you specified.");

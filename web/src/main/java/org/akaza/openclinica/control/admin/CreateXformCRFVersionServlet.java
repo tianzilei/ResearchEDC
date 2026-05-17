@@ -33,8 +33,9 @@ import org.akaza.openclinica.service.crfdata.XformMetaDataService;
 import org.akaza.openclinica.view.Page;
 import org.akaza.openclinica.web.InsufficientPermissionException;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.akaza.openclinica.bean.rule.JakartaServletRequestContext;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
@@ -59,8 +60,8 @@ public class CreateXformCRFVersionServlet extends SecureController {
         
         // Retrieve submission data from multipart request
         DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        List<FileItem> items = upload.parseRequest(request);
+        FileUpload upload = new FileUpload(factory);
+        List<FileItem> items = upload.parseRequest(new JakartaServletRequestContext(request));
         String submittedCrfName = retrieveFormFieldValue(items, "crfName");
         String submittedCrfVersionName = retrieveFormFieldValue(items, "versionName");
         String submittedCrfVersionDescription = retrieveFormFieldValue(items, "versionDescription");
