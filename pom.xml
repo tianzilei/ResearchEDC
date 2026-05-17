@@ -324,6 +324,26 @@
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
 			<version>${spring.security.version}</version>
@@ -609,19 +629,19 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
+				<configuration>
+					<rules>
+						<requireJavaVersion>
+							<version>[21,)</version>
+						</requireJavaVersion>
+					</rules>
+				</configuration>
 				<executions>
 					<execution>
 						<id>enforce</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
-						<configuration>
-							<rules>
-								<requireJavaVersion>
-									<version>[21,)</version>
-								</requireJavaVersion>
-							</rules>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
