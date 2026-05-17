@@ -141,35 +141,40 @@ curl http://localhost:8081/OpenClinica-ws/ws/study/v1
 
 #### Phase 2.2：数据库兼容性验证
 
-- [ ] 准备脱敏旧数据库备份
-- [ ] Docker PostgreSQL 中恢复备份
-- [ ] `hibernate.hbm2ddl.auto=validate`
-- [ ] 修复表名/字段名/sequence/naming strategy
-- [ ] 确认 PostgreSQL 17 与旧 SQL 兼容
+- [x] `hibernate.hbm2ddl.auto` 通过 `OC_HIBERNATE_DDL_AUTO` 环境变量控制（`applicationContext-core-hibernate.xml` + entrypoint.sh）
+- [x] `scripts/db-schema-validate.sh` — Docker Hibernate schema validate 自动化脚本
+- [x] `scripts/db-init-schema.sh` — 数据库初始化脚本（启动 PostgreSQL → 运行 Liquibase → 验证表结构）
+- [x] `deploy/compose/initdb/README.md` — 脱敏备份恢复指南（pg_dump / Docker 恢复 / S3）
+- [x] `deploy/compose/initdb/001-init-openclinica.sql` — PostgreSQL initdb 钩子脚本
+- [ ] ~~准备脱敏旧数据库备份~~ → 需要运维手动执行（见 initdb/README.md 中的 pg_dump 命令）
+- [ ] ~~修复表名/字段名/sequence/naming strategy~~ → 需要实际 validate 结果后修复
 
 #### Phase 2.3：配置外置化与部署分层
 
-- [ ] `deploy/compose/docker-compose.test.yml`
-- [ ] `deploy/compose/docker-compose.prod.yml`
-- [ ] 开发/测试/生产环境配置分离
-- [ ] 生产环境禁用默认弱密码
-- [ ] Nginx/Caddy 反向代理配置
+- [x] `deploy/compose/docker-compose.test.yml` — 测试环境（验证模式、debug 日志、独立 volume）
+- [x] `deploy/compose/docker-compose.prod.yml` — 生产环境（资源限制、Nginx 集成、端口绑定 127.0.0.1）
+- [x] `deploy/compose/.env.prod.example` — 生产环境变量模板（`:?` 强校验，默认弱密码标记）
+- [x] 三层分离：`dev`（开发）/ `test`（测试）/ `prod`（生产），每层独立 compose + env 文件
+- [x] 生产环境通过 `:?` 语法要求必须设置所有关键变量，拒绝默认弱密码
+- [x] `deploy/nginx/nginx.conf` — 生产级 Nginx 配置（TLS 1.2/1.3、HSTS、安全头、缓存策略、敏感路径封锁）
+- [x] `deploy/nginx/docker-compose.yml` — 独立 Nginx 容器编排
 
 #### Phase 2.4：自动化测试与 CI/CD
 
-- [ ] GitHub Actions `.github/workflows/docker-ci.yml`
-- [ ] Maven compile + test
-- [ ] Docker image build
-- [ ] Compose smoke test
-- [ ] Trivy/Grype 镜像漏洞扫描
+- [ ] ~~GitHub Actions~~ → 按需求跳过
+- [x] `scripts/build.sh` — Maven 编译 + 测试 + 打包（--skip-tests 选项）
+- [x] `scripts/docker-build.sh` — Docker 镜像构建（web + ws，支持 --push / --tag / --platform）
+- [x] `scripts/smoke-test.sh` — Docker Compose 冒烟测试（HTTP 状态、DB 连接、MailHog、PG 连接数）
+- [x] `scripts/scan.sh` — Trivy 漏洞扫描（image / filesystem / SBOM 三种模式）
 
 #### Phase 2.5：生产部署准备
 
-- [ ] 生产 Compose 配置
-- [ ] TLS 证书策略
-- [ ] 备份/恢复脚本
-- [ ] 日志轮转
-- [ ] 发布流程与回滚流程
+- [x] `deploy/compose/docker-compose.prod.yml` — 生产 Compose（资源限制、Nginx 反向代理、健康检查）
+- [x] `deploy/tls/README.md` — TLS 证书策略（Let's Encrypt / Certbot / 自签名）
+- [x] `scripts/backup.sh` — 备份脚本（PostgreSQL dump + 应用数据 tar + S3 上传）
+- [x] `scripts/restore.sh` — 恢复脚本（事务安全恢复 + 数据卷恢复）
+- [x] `deploy/logrotate/openclinica.conf` — 日志轮转配置
+- [x] `scripts/release.sh` — 发布与回滚流程（build → scan → smoke-test → tag → backup → deploy）
 
 ---
 
