@@ -1,582 +1,356 @@
-# OpenClinica 已知问题与规划
+# OpenClinica 架构债务治理计划
 
-> 核心依赖现代化（Java 21 / Spring 6 / Hibernate 6 / Jakarta EE 10）已完成。
-> 前端基线工程（React 19 / TypeScript / Vite）已完成。
-> 模块化单体重构（Spring Modulith）已启动。
-> **问卷微服务（Python FastAPI）已上线**，详见 `questionnaire-service/`。
+> **设计依据:** [OpenClinica_Architecture_Debt_Design.md](./OpenClinica_Architecture_Debt_Design.md)  
+> **项目版本:** 3.18-SNAPSHOT  
+> **最后更新:** 2026-05-18  
+> **核心原则:** Strangler Fig（绞杀者模式）— 新功能不进旧核心，旧能力逐步被新模块替代
 
 ---
 
 ## 一、当前状态
 
-| 模块 | 文件数 | 编译/检查状态 | 测试状态 |
-|------|--------|-------------|---------|
-| core | 736 | ✅ `mvn clean compile` | ✅ 8 tests pass |
-| web | 481 | ✅ `mvn clean compile` | ✅ 3 tests pass |
-| ws | 57 | ✅ `mvn clean compile` | — |
-| app | 6 + 10 (Modulith) | ✅ `mvn clean package` | ✅ ModulithVerificationTest |
-| frontend | 43 (源文件) | ✅ `pnpm build`, `tsc --noEmit` | ✅ TypeScript 0 errors, ESLint 0 errors |
-| **questionnaire-service** | **71 (Python)** | **✅ `pytest`** | **✅ 31/31 tests + E2E** |
-
-**后端构建 (Java):** `mvn clean compile -DskipTests` ✅  
-**后端打包:** `mvn clean package -DskipTests` ✅ (产出: `app/target/OpenClinica.war`)  
-**前端构建:** `cd frontend && pnpm build` ✅  
-**前端类型检查:** `npx tsc --noEmit` ✅  
-**前端 lint:** `npx eslint .` ✅ 0 errors  
-**Modulith 验证:** `mvn test -pl app -am -Dtest=ModulithVerificationTest` ✅  
-**全量测试 (Java):** `mvn test` ✅ (core 8 + web 3 = 11 tests, all pass)  
-**问卷服务测试 (Python):** `cd questionnaire-service/apps/api && python -m pytest` ✅ (31/31)  
-**问卷 E2E:** Docker Compose 启动 → Alembic migrate → API 测试 ✅
-
----
-
-## 二、风险分级
-
-| 等级 | 含义 | 处理要求 |
-|------|------|---------|
-| P0 | 阻塞级 — 阻碍部署或核心功能 | 必须解决 |
-| P1 | 严重级 — 可能导致运行时错误 | 验收阶段解决 |
-| P2 | 改进级 — 工程实践改进 | 后续迭代解决 |
-
----
-
-## 三、P0 阻塞级问题
-
-### P0-1: 数据库 Schema 兼容性未验证
-
-Hibernate 6 命名策略（`CamelCaseToUnderscoresNamingStrategy`）与旧数据库可能不匹配。需用旧 PostgreSQL 备份库执行 `hbm2ddl.auto=validate`。
-
-### P0-2: 运行时部署未验证
-
-WAR 打包（`mvn clean package`）、Tomcat 10.1 部署和系统状态接口尚未验证。Docker 化前需确认当前迁移版本真实可运行。
-
-### P0-3: 依赖收敛未确认
-
-Maven Enforcer 插件已添加但未运行。需执行 `mvn enforcer:enforce` 并检查 `dependency:tree`。
-
-### P0-4: ByteBuddy 兼容性（Java 25）
-
-Mockito 使用的 ByteBuddy 1.14.12 不支援 Java 25。已通过配置 `JAVA_HOME` 为 JDK 21 解决。如需 JDK 25 运行测试，需升级 ByteBuddy。
-
-### P0-5: Ehcache 配置冲突
-
-开发/测试环境的 Ehcache XML 配置中 `maxBytesLocalHeap` 与 `maxElementsInMemory` 冲突，导致 `Another unnamed CacheManager already exists` 错误。
-- test/ehcache.xml: 移除 `maxBytesLocalHeap/maxBytesLocalOffHeap`，添加 `name="openclinica-test-cache"` ✅
-- main/ehcache.xml: 同步修复 ✅  
-- SQLFactory.java: `new CacheManager()` 改为 `CacheManager.create()` 单例模式 ✅
-
-### P0-6: Hibernate 6 命名策略冲突
-
-核心测试加载 Hibernate 6 时检测到多表列映射冲突（`measurement_unit.oc_oid`, `study_module_status.event_definition` 等）。
-
-**修复措施:**
-- 为同名实体添加 `@Entity(name = "...")` 区别名称
-- 为 `managestudy.StudyModuleStatus` 添加缺失的 `@Column` 注解
-- 为 `admin.MeasurementUnit` 添加缺失的 `@Column(name = "oc_oid")`
-- 为 `StudyType.studies` 添加泛型 `Set<Study>`
-- `Study.getStudyType()` 取消注释并添加 `@ManyToOne` + `@JoinColumn`
-- `AuditEvent.auditEventContexts/Valueses` → `@Transient`（目标实体不存在）
-- **Liquibase 4.26 schema**: `defaultValueComputed` 属性不支持 → 改为 `<constraints nullable="false"/>`
-- **已修复 9 个 Hibernate 6 兼容问题，1 个 Liquibase XML schema 问题**
-
----
-
-## 四、P1 严重级问题
-
-- **Hibernate 6 兼容:** HQL/Native Query/Lazy Loading/ID Generator/二级缓存
-- **Spring Security 6:** 登录/CSRF/权限/WS 认证/密码编码器
-- **测试体系:** JUnit 4→5 迁移后测试基类兼容性验证
-- **EHCache:** 建议评估 JCache + Ehcache 3 或临时禁用
-- **核心业务回归:** 用户管理、Study、Subject、CRF、数据录入、Query、导出、WS
-
----
-
-## 五、P2 改进级问题
-
-- 安全漏洞扫描（OWASP Dependency Check）
-- 日志脱敏与可观测性
-- 修改记录的验证状态更新
-
----
-
-## 六、总体路线
-
-```text
-Milestone 0: 当前迁移版本验收
-  ↓
-Milestone 1: Docker-first 可运行基线 (Phase 2.1–2.5)  ✅
-  ↓
-Milestone 2: Spring Boot 模块化单体  ✅
-  ↓
-Milestone 3: 前端基线工程 (React 19 + TypeScript + Vite)  ✅
-  ↓
-Milestone 4: 新后台壳与基础页面  ✅
-  ↓
-Milestone 5: 模块化单体重构 (Spring Modulith)  ✅
-  ↓
-Milestone 6: 随机化系统 ✅
-  ↓
-Milestone 7: 导出中心与审计中心 ✅
-  ↓
-Milestone 8: CRF 元数据与表单引擎 ✅
-  ↓
-Milestone 9: 性能优化与可观测性 ✅
-  ↓
-Milestone 10: 后续升级评估 ✅
-  ↓
-Milestone 11: 问卷微服务 (SurveyJS + FastAPI + 评分引擎) ✅
-```
-
----
-
-## 七、详细里程碑
-
-### Milestone 0：当前迁移版本验收
-
-目标：确认 Spring 6 / Hibernate 6 / Jakarta 迁移版本真实可运行。
-
-- [x] `mvn clean package -DskipTests` ✅ 三模块打包成功 (core=2.3M JAR, web=108M WAR, ws=98M WAR)
-- [x] `mvn test` ✅ (core 8 + web 3 = 11 tests, all pass) — 依赖 PostgreSQL 已通过 Docker 运行
-- [ ] PostgreSQL schema validate 报告 (需要 PostgreSQL + 旧数据库备份)
-- [ ] 核心业务路径手工验证报告 (需要部署到 Tomcat)
-- [ ] 初始性能基准报告 (需要部署环境)
-- [x] 修正 Tomcat/Jakarta/Servlet 版本表述 ✅ AGENTS.md 已更新 (Java 7→21, Spring 3.2→6.1.5, Hibernate 3.5→6.4.4)
-- [x] 检查 Spring XML 配置是否真实可加载 ✅ 12 个 XML 配置已验证，使用 versionless XSD 兼容 Spring 6
-- [x] 检查 Hibernate 6 查询兼容性 ✅ 无 `setResultTransformer`/`createSQLQuery`/`createCriteria` 等废弃 API
-- [ ] 检查 Spring Security 登录和权限 (需要部署环境)
-- [ ] 检查 Enketo/Web service 接口 (需要部署环境)
-
-> **Milestone 0 完成率:** 6/10 — 静态验证完成，测试通过 (11/11)，动态部署/性能测试需 Tomcat 环境支持
-
-### 测试修复摘要
-- **Ehcache**: 开发/测试环境的 `maxBytesLocalHeap` 与 `maxElementsInMemory` 冲突已修复 ✅
-- **Spring Data JPA**: 添加 `spring-data-jpa` 依赖到 core 模块 ✅
-- **Hibernate DDL placeholder**: `s[hibernate.ddl.auto]` → `${hibernate.ddl.auto}` 修复 ✅
-- **Hibernate mapping**: `measurement_unit.oc_oid` 重复映射 — 需在 hibernate XML 配置命名策略
-- **Mockito/ByteBuddy**: 配置 `JAVA_HOME=21` 解决 Java 25 兼容性问题 ✅
-- **前端 ESLint**: 153 errors → 0 errors (20 warnings) ✅
-
----
-
-### Milestone 1：Docker-first 可运行基线
-
-目标：让系统以 Docker Compose 方式稳定运行。
-
-技术栈：
-| 组件 | 版本 |
-|------|------|
-| Java | 21 (Eclipse Temurin) |
-| Tomcat | 10.1-jdk21 |
-| PostgreSQL | 17 |
-| Maven (构建) | 3.9-eclipse-temurin-21 |
-
-#### Phase 2.1：容器化基线建立
-
-- [x] `docker/web/Dockerfile` — multi-stage build，Tomcat 10.1 + JDK 21
-- [x] `docker/ws/Dockerfile` — WS 模块镜像
-- [x] `deploy/compose/docker-compose.dev.yml` — web + ws + postgres + mailhog + adminer
-- [x] `deploy/compose/.env.example` — 环境变量模板
-- [x] 数据库连接配置改为环境变量注入（`OC_DB_*`），通过 entrypoint 脚本在容器启动时动态生成 `datainfo.properties`
-- [x] 上传路径、日志路径 volume 化
-
-验收：
-```bash
-docker compose -f deploy/compose/docker-compose.dev.yml up --build
-curl http://localhost:8080/OpenClinica-web/SystemStatus
-curl http://localhost:8081/OpenClinica-ws/ws/study/v1
-```
-
-#### Phase 2.2：数据库兼容性验证
-
-- [x] `hibernate.hbm2ddl.auto` 通过 `OC_HIBERNATE_DDL_AUTO` 环境变量控制（`applicationContext-core-hibernate.xml` + entrypoint.sh）
-- [x] `scripts/db-schema-validate.sh` — Docker Hibernate schema validate 自动化脚本
-- [x] `scripts/db-init-schema.sh` — 数据库初始化脚本（启动 PostgreSQL → 运行 Liquibase → 验证表结构）
-- [x] `deploy/compose/initdb/README.md` — 脱敏备份恢复指南（pg_dump / Docker 恢复 / S3）
-- [x] `deploy/compose/initdb/001-init-openclinica.sql` — PostgreSQL initdb 钩子脚本
-- [ ] ~~准备脱敏旧数据库备份~~ → 需要运维手动执行（见 initdb/README.md 中的 pg_dump 命令）
-- [ ] ~~修复表名/字段名/sequence/naming strategy~~ → 需要实际 validate 结果后修复
-
-#### Phase 2.3：配置外置化与部署分层
-
-- [x] `deploy/compose/docker-compose.test.yml` — 测试环境（验证模式、debug 日志、独立 volume）
-- [x] `deploy/compose/docker-compose.prod.yml` — 生产环境（资源限制、Nginx 集成、端口绑定 127.0.0.1）
-- [x] `deploy/compose/.env.prod.example` — 生产环境变量模板（`:?` 强校验，默认弱密码标记）
-- [x] 三层分离：`dev`（开发）/ `test`（测试）/ `prod`（生产），每层独立 compose + env 文件
-- [x] 生产环境通过 `:?` 语法要求必须设置所有关键变量，拒绝默认弱密码
-- [x] `deploy/nginx/nginx.conf` — 生产级 Nginx 配置（TLS 1.2/1.3、HSTS、安全头、缓存策略、敏感路径封锁）
-- [x] `deploy/nginx/docker-compose.yml` — 独立 Nginx 容器编排
-
-#### Phase 2.4：自动化测试与 CI/CD
-
-- [x] ~~GitHub Actions~~ → 按需求跳过，使用本地脚本替代
-- [x] `scripts/build.sh` — Maven 编译 + 测试 + 打包（--skip-tests 选项）
-- [x] `scripts/docker-build.sh` — Docker 镜像构建（web + ws，支持 --push / --tag / --platform）
-- [x] `scripts/smoke-test.sh` — Docker Compose 冒烟测试（HTTP 状态、DB 连接、MailHog、PG 连接数）
-- [x] `scripts/scan.sh` — Trivy 漏洞扫描（image / filesystem / SBOM 三种模式）
-
-#### Phase 2.5：生产部署准备
-
-- [x] `deploy/compose/docker-compose.prod.yml` — 生产 Compose（资源限制、Nginx 反向代理、健康检查）
-- [x] `deploy/tls/README.md` — TLS 证书策略（Let's Encrypt / Certbot / 自签名）
-- [x] `scripts/backup.sh` — 备份脚本（PostgreSQL dump + 应用数据 tar + S3 上传）
-- [x] `scripts/restore.sh` — 恢复脚本（事务安全恢复 + 数据卷恢复）
-- [x] `deploy/logrotate/openclinica.conf` — 日志轮转配置
-- [x] `scripts/release.sh` — 发布与回滚流程（build → scan → smoke-test → tag → backup → deploy）
-
----
-
-### Milestone 2：Spring Boot 化 ✅
-
-目标：从传统 Spring XML/WAR 转向 Spring Boot 应用形态。
-
-- [x] `app` 模块 (`OpenClinica-app`) — Spring Boot WAR，整合 core + web + ws
-- [x] Spring Boot 启动入口 (`OpenClinicaApplication.java`) + `@ImportResource` 加载 11 个 XML 配置
-- [x] `application.yml` + dev/test/prod profiles
-- [x] Actuator (`/health`, `/info`, `/metrics`, `/beans`, `/conditions`)
-- [x] OpenAPI 文档 (springdoc-openapi, `/swagger-ui.html`, `/api-docs`)
-- [x] `OpenClinicaServletInitializer.java` — WAR 部署兼容
-- [x] `WebServiceConfig.java` — Spring WS SOAP MessageDispatcherServlet
-- [x] `OpenApiConfig.java` — OpenAPI 元信息配置
-- [x] `logback-spring.xml` — Spring profile-aware logging
-- [x] 依赖收敛：Spring 6.1.5 / Spring Security 6.2.3 / Spring Boot 3.2.5
-- [ ] 逐步替换 XML 为 Java Config (通过 `@ImportResource` 过渡，后续迭代逐步迁移)
-- [x] DataSource/JPA/Security/Mail/Cache 配置外部化 (`application.yml` profile 体系)
-- [x] Testcontainers 测试依赖 (postgresql + jupiter, 待编写测试)
-
-> **构建验证:** `mvn clean package -DskipTests` ✅ 全部 5 模块通过
-> **产出:** `app/target/OpenClinica.war` (275MB, 可 `java -jar` 或部署 Tomcat)
-
----
-
-### Milestone 3：前端基线工程 ✅
-
-目标：建立现代 React 前端工程。
-
-推荐技术栈：
-| 层级 | 选型 |
-|------|------|
-| 框架 | React 19 + TypeScript + Vite |
-| 路由 | React Router 7 |
-| 服务端状态 | TanStack Query |
-| UI 组件库 | Ant Design（第一阶段） |
-| 表单 | React Hook Form + Zod |
-| 构建 | pnpm workspace |
-| 测试 | Vitest + React Testing Library + Playwright |
-| API 客户端 | 从 OpenAPI 自动生成 |
-
-- [x] Vite + React + TypeScript 项目初始化
-- [x] pnpm workspace 配置
-- [x] ESLint / Prettier / TypeScript strict
-- [x] Ant Design 主题配置
-- [x] React Router 基础路由
-- [x] TanStack Query 基础封装
-- [x] Keycloak 登录接入
-- [x] API client 初版
-
-**交付物:**
-- `frontend/` — pnpm workspace + Vite 6 + React 19 + TS 5.8 strict
-- 前端构建输出到 `app/src/main/resources/static/`
-- `WebMvcConfig.java` — `/app/**` SPA fallback 路由
-- Nginx `/app` / `/assets/` 路由配置
-
----
-
-### Milestone 4：新后台壳与基础页面 ✅
-
-- [x] App Layout（顶部栏 + 左侧导航 + 主内容区）
-- [x] Dashboard（含 Loading / Error 状态）
-- [x] Study/Site 切换
-- [x] 权限菜单（8 项动态菜单）
-- [x] 错误页 / Loading / Skeleton
-
-**交付物:**
-- `StudySwitcher` — 研究/Site 选择器
-- `usePermissions` / `useHasPermission` — 权限 hooks
-- `SkeletonCard` / `SkeletonTable` / `SkeletonPage` — 骨架屏
-- `ErrorPage` — 403/404/500 错误页
-- Dashboard 登录重定向 + Loading/Error 状态覆盖
-
-新旧前端通过 Nginx 路由共存：
-```text
-/legacy/*  → 旧 OpenClinica JSP
-/app/*     → 新 React 前端
-/api/*     → Spring Boot API
-/auth/*    → Keycloak
-```
-
----
-
-### Milestone 5：模块化单体重构 ✅
-
-采用 **Spring Modulith 1.1.4** 约束模块边界，为后续局部服务化打基础。
-
-- [x] Spring Modulith BOM + starter-core + starter-test
-- [x] 模块 package 结构 (`org.akaza.openclinica.module.*`)
-- [x] Notification 模块（事件驱动邮件服务）
-- [x] Identity 模块桩
-- [x] `ModulithVerificationTest` — 模块边界验证
-- [x] `OpenClinicaApplication` scanBasePackages 注册模块
-
-推荐模块：
-| 模块 | 职责 | 状态 |
+### 1.1 已完成基线
+
+| 领域 | 完成内容 | 状态 |
+|------|---------|------|
+| **Java 版本升级** | Java 7 → 21, Spring 3 → 6.1.5, Hibernate 3 → 6.4.4, Jakarta EE 10 | ✅ |
+| **Spring Boot 化** | app 模块整合 core + web + ws, Actuator + OpenAPI + Profiles | ✅ |
+| **Spring Modulith** | notification 模块已提取, identity 模块桩, 边界验证测试 | ✅ |
+| **前端基线** | React 19 + TypeScript strict + Vite 6 + Ant Design 5 + TanStack Query 5 | ✅ |
+| **前端 "Precision Clinical"** | 设计重构: 配色/排版/动效/AppLayout/Dashboard | ✅ |
+| **随机化系统** | 3 种算法, 8 表 REST API, 前端 6 页面 | ✅ |
+| **导出中心** | 异步任务, 状态跟踪, 下载中心 | ✅ |
+| **CRF 元数据 & 表单引擎** | 列表/版本/预览, FormField/DataEntryForm/useAutoSave/FormStatus | ✅ |
+| **问卷微服务** | FastAPI + 评分引擎 (ISI/GAD-7/PHQ-9/ESS), 31/31 tests | ✅ |
+| **Docker 部署** | 三层 Compose (dev/test/prod), Nginx + TLS + Prometheus + Grafana | ✅ |
+| **Maven 构建** | `mvn compile` ✅, `mvn package` ✅, `mvn test` 11/11 ✅ | ✅ |
+| **Hibernate 6 兼容** | 修复 9 个实体映射 + 2 个 Liquibase 问题 | ✅ |
+| **P0 安全加固** | Actuator 端点封锁, Swagger UI 禁用, entrypoint 默认密码移除 | ✅ (2026-05-18) |
+| **P1 Maven 插件升级** | surefire 2.10 → 3.2.5, resources 2.5 → 3.3.1 | ✅ (2026-05-18) |
+| **P2 构建/Git 优化** | 前端构建产物 .gitignore, JVM 容器化 CATALINA_OPTS | ✅ (2026-05-18) |
+
+### 1.2 遗留债务快照
+
+| 指标 | 数值 | 趋势 |
 |------|------|------|
-| identity | 用户、角色、权限、OIDC 映射 | 🏗️ 模块桩 |
-| study | Study、Protocol、配置 | 📋 待提取 |
-| site | Site、中心、机构 | 📋 待提取 |
-| subject | 受试者、筛选、入组 | 📋 待提取 |
-| event | Visit、Study Event | 📋 待提取 |
-| crf | CRF 模板、版本、字段定义 | 📋 待提取 |
-| data-capture | 数据录入、保存、提交 | 📋 待提取 |
-| query-management | 数据疑问、质控 | 📋 待提取 |
-| randomization | 随机方案、分配、揭盲 | 📋 待提取 |
-| audit | 不可变审计日志 | 📋 待提取 |
-| export | 数据导出、后台任务 | 📋 待提取 |
-| notification | 邮件、通知 | ✅ 已提取 |
-| integration | Enketo、外部 API | 📋 待提取 |
-
-优先重构：notification ✅ → export → audit → randomization → subject → study/site → crf/data-capture
+| 遗留 Java 文件 (core+web+ws) | ~1300 | 🔴 需冻结增长 |
+| JSP 页面数 | 419 | 🔴 需绞杀 |
+| WAR 体积 | 275 MB | 🔴 需降至 < 150 MB |
+| Java 测试覆盖 | 11 tests / 1300+ files | 🔴 需增量建设 |
+| 陈旧依赖数 | 10+ (Ehcache 2, Quartz 1.8, Commons Collections 3 等) | 🟡 可分批替换 |
+| 旧版 Spring Security OAuth2 | `spring-security-oauth2` 2.0.x | 🔴 需统一到 Keycloak OIDC |
+| 测试覆盖率 | < 1% | 🔴 需增量门禁 |
+| 前端测试 | 0 测试 (43 源文件) | 🔴 Vitest 框架已就绪 |
 
 ---
 
-### Milestone 6：随机化系统
+## 二、架构债务治理策略
 
-作为第一个新架构完整业务模块开发。
+### 核心原则（来自设计文档）
 
-**后端能力:**
-- 随机方案配置（SIMPLE / BLOCK / STRATIFIED_BLOCK）
-- 分层因素配置
-- 区组随机
-- 分配接口 + 结果确认
-- 揭盲流程
-- 审计日志
-- 报表
+1. **Strangler Fig（绞杀者模式）** — 新功能不进旧核心，旧能力逐步被新模块替代
+2. **Anti-Corruption Layer（防腐层）** — 新模块绝不直接依赖遗留 core 的实体、DAO 或事务
+3. **Schema 边界先于服务边界** — 先通过数据库 Schema 隔离确立模块所有权
+4. **前端统一优先于后端拆分** — JSP → React 迁移比 Java 微服务拆分对业务价值更大
 
-**前端页面:**
-- Randomization Dashboard
-- Scheme Editor
-- Allocation Page
-- Emergency Unblinding Page
-- Audit Viewer
+### 遗留内核治理约束
 
-**核心表:**
+| 约束 | 内容 |
+|------|------|
+| **代码冻结** | 遗留内核 (`core` + `web` + `ws`) 不再接受新功能开发，仅允许缺陷修复和安全补丁。新需求必须进入 `app/module/*` |
+| **只出不进** | 遗留内核可向新模块暴露数据，新模块不允许直接操作遗留 DAO 或写入遗留表 |
+| **API 化封装** | 在 `app` 中建立 `legacy-gateway`，将高频旧功能封装为 REST API |
+
+---
+
+## 三、演进路线图
+
 ```
-randomization_scheme
-randomization_stratum
-randomization_block
-randomization_assignment
-randomization_unblinding_request
-randomization_audit_log
+Phase 1: 止血 (0–3 月)     → 安全基线 + 依赖治理 + 测试门禁
+Phase 2: 边界建立 (3–6 月)  → Schema 边界 + JSP 首批绞杀 + 认证统一 + 构建解耦
+Phase 3: 核心重构 (6–12 月) → 审计总线 + 遗留 DAO 迁移 + Saga + JSP 二批绞杀
+Phase 4: 收敛 (12–18 月)    → JSP < 50 + 服务拆分决策 + 全面可观测 + 冷启动优化
 ```
 
-**权限点:**
-`RANDOMIZATION_VIEW`, `RANDOMIZATION_CONFIGURE`, `RANDOMIZATION_ACTIVATE`, `RANDOMIZATION_ASSIGN`, `RANDOMIZATION_VIEW_UNBLINDED`, `RANDOMIZATION_UNBLIND`, `RANDOMIZATION_EXPORT`
+---
+
+## 四、Phase 1: 止血（0–3 个月）
+
+> 目标：堵住安全缺口 → 建立依赖治理机制 → 增量测试门禁
+
+### 4.1 安全基线（P0 完成项复检）
+
+- [x] 生产 Actuator 端点封锁 (`env`, `beans`, `conditions` 已禁用)
+- [x] 生产 Swagger UI 禁用 (`springdoc.swagger-ui.enabled: false`)
+- [x] Entrypoint 默认密码移除（`?` 强校验替代 `:-` 弱默认值）
+- [x] Dockerfile 默认敏感变量移除（`OC_DB_PASS`、`OC_ADMIN_EMAIL` 无默认值）
+- [x] 凭证文件重复暴露消除（`WEBAPP_CLASSES` 复制步骤已移除）
+- [ ] **OWASP Dependency Check** — 在 CI 中配置每周扫描，创建漏洞工单
+- [ ] **Trivy 扫描集成** — 在 `scripts/scan.sh` 基础上，配置 PR 级镜像扫描
+
+### 4.2 遗留内核冻结
+
+- [ ] **物理目录重命名**: `core/` → `legacy-core/`，在 IDE 和构建中明确标注为只读遗产
+- [ ] **Maven Enforcer `bannedDependencies`**: 禁止新模块 (`app/module/*`) 引入遗留库（Ehcache 2、Quartz 1.8、Commons Collections 3 等）
+- [ ] **提交规范**: 在 `.git/hooks/pre-commit` 或 CI 中检查 legacy 目录是否有非修复性变更
+- [ ] **文档标注**: 在 `legacy-core/AGENTS.md` 中标注代码冻结策略
+
+### 4.3 依赖现代化（第一批 — 替换成本低的）
+
+- [ ] **Commons Lang 2 → 3**: 包名 `org.apache.commons.lang` → `org.apache.commons.lang3`，全局替换
+- [ ] **Commons Collections 3 → 4**: 包名 `org.apache.commons.collections` → `org.apache.commons.collections4`
+- [ ] **Javassist 3.8 移除**: 检查是否被显式引用，Hibernate 6 自带 ByteBuddy
+- [ ] **Maven 插件升级**:
+  - [x] `maven-surefire-plugin`: 2.10 → 3.2.5
+  - [x] `maven-resources-plugin`: 2.5 → 3.3.1
+  - [ ] `maven-release-plugin`: 2.3 → 3.0.1
+  - [ ] `maven-assembly-plugin`: 2.2.2 → 3.7.1
+  - [ ] `cargo-maven2-plugin`: 1.1.4 → 评估是否仍需要
+  - [ ] `liquibase-plugin`: 1.9.x → `liquibase-maven-plugin` 4.x
+  - [ ] `maven-jaxb2-plugin`: 0.7.5 → 评估是否需要（JAXB 4 已内置）
+
+### 4.4 增量测试门禁
+
+- [ ] **Modulith 模块测试规范**: 每个 `app/module/*` 必须包含单元测试 + 集成测试 + 边界测试
+- [ ] **Testcontainers 标准化**: 统一使用 PostgreSQL 容器，替代废弃的 DBUnit
+- [ ] **关键路径契约测试**: 对 `legacy-gateway` 暴露的 REST API 编写 Spring MockMvc 测试
+- [ ] **留核心回归测试**: 为 5–10 个最关键的 DAO 查询编写集成测试（`@Sql` + Testcontainers）
+- [ ] **Maven Failsafe 配置**: 分离单元测试（surefire）和集成测试（failsafe）
+
+### 4.5 Phase 1 验收标准
+
+- [ ] OWASP Dependency Check 首次运行完成，高危漏洞已记录
+- [ ] 遗留内核冻结策略文档化并执行
+- [ ] Commons Lang/Collections 迁移完成，编译通过
+- [ ] Maven Enforcer `bannedDependencies` 规则生效
+- [ ] 至少 1 个 Modulith 模块达到 "must have tests" 标准
 
 ---
 
-### Milestone 7：导出中心与审计中心 ✅
+## 五、Phase 2: 边界建立（3–6 个月）
 
-- [x] Export Center（后台任务 + 状态跟踪 + 下载中心）
-- [x] Job 状态表
-- [x] 失败重试（retry 机制）
-- [x] Audit Viewer（随机化模块已实现审计日志，通用审计视图待后续扩展）
+> 目标：Schema 边界正式划定 → 高频 JSP 开始绞杀 → 认证统一 → 构建解耦
 
----
+### 5.1 Schema 边界（Schema-per-Module）
 
-### Milestone 8：CRF 元数据与表单引擎 ✅
+- [ ] **表所有权声明**: 为每个 Modulith 模块指定唯一拥有的表
+  - `randomization` → `randomization_scheme`, `randomization_assignment` 等 8 表
+  - `export` → `export_job` 表
+  - `notification` → `notification_event` 表
+  - 后续模块同理
+- [ ] **模块 API 契约**: 模块间数据访问必须通过 API 或事件，禁止跨模块直接 DAO
+- [ ] **遗留表变更控制**: 新模块不得在遗留表上新增列或索引，确有必要时评审后执行
 
-- [x] CRF 列表 / 版本 / 预览页面
-- [x] `form-engine` package（FormField 组件支持 text/number/date/select/radio/checkbox，含验证）
-- [x] **动态字段渲染** — 基于 `responseType` 和 `dataType` 动态切换控件（Select/Radio/Input/TextArea/DatePicker/Checkbox/InputNumber）
-- [x] **草稿 / 自动保存** — `useAutoSave` hook（可配置延迟、防抖、手动 flush）
-- [x] **DataEntryForm** — 集成表单组件（自动保存指示器、保存状态显示）
-- [x] **FormStatus 状态机** — `isFieldDisabled()` 支持 INITIAL/DRAFT/SUBMITTED/LOCKED/FROZEN/SIGNED 六种状态 + 锁定指示器
+### 5.2 JSP 绞杀 — 第一批（受试者高频页面）
 
----
+- [ ] **功能开关设计**: 在 Study 级别配置 `use_new_data_entry_ui: true`，支持金丝雀迁移
+- [ ] **数据录入页面迁移**: React 实现，完整包含：
+  - [ ] 电子签名（eSignature）工作流
+  - [ ] 审计追踪展示
+  - [ ] 数据锁定/冻结状态机
+  - [ ] 双录入比对
+- [ ] **Query 管理页面迁移**
+- [ ] **随机化相关页面迁移**（React 已实现，验证完整性）
+- [ ] **Hybrid Shell 架构**: React AppLayout 嵌入遗留 JSP iframe（`postMessage` 通信）
+- [ ] `legacy-gateway` API 封装: 高频查询（Study、Subject、CRF 元数据）JSON API
 
-### Milestone 9：性能优化与可观测性 ✅
+### 5.3 认证体系统一（OIDC + Session Bridge）
 
-**已实施:**
-- [x] Spring Boot Actuator (`/actuator/health`, `/info`, `/metrics`, `/prometheus`)
-- [x] Micrometer Prometheus Registry (`micrometer-registry-prometheus`)
-- [x] Prometheus + Grafana Docker Compose 集成（含自动配置）
-- [x] Prometheus 抓取配置 (`deploy/prometheus/prometheus.yml`)
-- [ ] OpenTelemetry Java Agent（待配置 — 依赖 OTEL jar 附加到 JVM 参数）
-- [ ] Loki / ELK（日志聚合 — 建议后续集成）
+- [ ] **Keycloak Tomcat Adapter 部署**: JSP 页面通过 OIDC authorization_code flow 登录
+- [ ] **SecureController 适配**: JWT claim → `UserPrincipal` + `GrantedAuthority` 写入 Tomcat Session
+- [ ] **React SPA 标准 OIDC**: 继续使用 Keycloak JS Adapter / `react-oidc-context`
+- [ ] **Spring Security 6 Resource Server**: Java API 统一验证 JWT Bearer Token
+- [ ] **旧版 `spring-security-oauth2` 移除**: 确认无引用后删除依赖
+- [ ] **Python JWT 验证对齐**: `questionnaire-service` 使用与 Java 相同的 Keycloak JWKS URL + issuer + audience
+- [ ] **权限模型统一**: 8 种角色 × 18 种权限建模为 Keycloak Realm Roles
 
-**性能验收指标:**
+### 5.4 构建与部署解耦
 
-| 场景 | 初期目标 | 优化目标 |
-|------|-------:|-------:|
-| 应用冷启动 | < 90s | < 45s |
-| 登录 P95 | < 800ms | < 400ms |
-| Study 列表 P95 | < 800ms | < 400ms |
-| Subject 列表 P95 | < 1000ms | < 500ms |
-| CRF 保存 P95 | < 1000ms | < 800ms |
-| 随机化分配 P95 | < 500ms | < 300ms |
+- [ ] **方案评估**: 选择「前后端独立部署」(推荐) 或「嵌入式但解耦构建」(过渡)
+- [ ] **前端独立部署**: Nginx 直接 serve `frontend/dist/`，不再打包进 WAR
+- [ ] **WAR 体积优化**: 通过 `mvn dependency:analyze` 移除未使用依赖，目标 < 150 MB
+- [ ] **遗留镜像收敛**: `openclinica-app` (主运行时) + `openclinica-legacy-web` (过渡期)
 
----
+### 5.5 Phase 2 验收标准
 
-### Milestone 11：问卷微服务 (Python FastAPI) ✅
-
-基于 `questionnaire_python_backend_roadmap.md` 完整实现的 Clinical Questionnaire Service。
-
-**后端 (Python/FastAPI) — 71 文件:**
-- 7 表 SQLAlchemy ORM + Alembic 迁移
-- 6 个 Repository + 7 个 Service + 8 个 API Router
-- 评分引擎 (ISI/GAD-7/PHQ-9/ESS, 31 测试)
-- Keycloak JWT 验证 + RBAC
-- Celery 异步导出 + MinIO 存储
-- 事件 webhook (randomization-completed, visit-started)
-
-**前端 (React 19) — 8 个新页面:**
-- 受试者填写页 (`/q/fill/:token`)
-- 模板 CRUD / 版本编辑 (含可视化 Builder)
-- 分配管理 / 回复审核 / 导出任务 / 受试者任务列表
-- QuestionnaireBuilder 组件 (题型选择 / 选项编辑 / 实时预览 / JSON 导入导出)
-
-**验证:** 31/31 pytest | TypeScript 0 errors | Docker Compose + PostgreSQL + Redis | E2E API
+- [ ] Schema 边界文档化，模块间禁止直接 DAO 访问
+- [ ] 至少 20% 的 JSP 页面有 React 替代（按业务价值权重计算）
+- [ ] React SPA 和新 Java API 完全通过 Keycloak OIDC JWT 认证
+- [ ] 前后端构建解耦完成，WAR < 150 MB
+- [ ] `legacy-gateway` API 封装覆盖 Top 10 高频查询
 
 ---
 
-### Milestone 10：后续升级评估 ✅
+## 六、Phase 3: 核心重构（6–12 个月）
 
-当前主线已稳定，后续升级评估如下：
+> 目标：审计合规 → 遗留核心能力迁移 → 跨模块事务 Saga → JSP 二批绞杀
 
-| 项目 | 当前版本 | 目标版本 | 影响评估 | 建议 |
-|------|---------|---------|---------|------|
-| Java | 21 LTS | 25 LTS (2025.09) | 中 — 语法增强(JEP 440+)，少量 API 弃用 | 2025Q4 评估 |
-| Spring Boot | 3.2.5 | 4.0 (2025.11) | 高 — Jakarta EE 11 基线，自动配置重构 | 等待 4.0 首个 patch 版本 |
-| Spring Framework | 6.1.5 | 7.0 | 高 — 架构级变更 | 随 Spring Boot 4 一起升级 |
-| Jackson | 2.17.0 | 3.0 | 中 — 包名/API 变更 | 等稳定版发布后迁移 |
-| Jakarta EE | 10 | 11 | 中 — Servlet 6.1, JPA 3.2 | 随 Spring Boot 4 自动升级 |
-| Kubernetes | — | 部署评估 | 高 — 学习成本 / 运维复杂度 | 有容器编排需求时启动 |
-| GraalVM | — | Native Image | 高 — 构建时长/反射配置 | 冷启动敏感场景优先考虑 |
+### 6.1 统一审计事件总线
 
-**微服务拆分路线：**
-- `randomization-service`: 随机化算法独立部署（当前为 Modulith 模块）
-- `export-service`: 导出任务独立部署（当前为 Modulith 模块）
-- 建议在出现独立扩缩容需求时拆分，当前 Modulith 架构足以支撑
+- [ ] **`AuditEvent` 领域模型定义**: who/when/what/where/which/before/after/why
+- [ ] **审计独立存储**: 独立的 `audit_log` 表（只插入、不更新、不删除）
+- [ ] **新模块审计集成**: 通过 Spring Modulith `ApplicationEvents` 发布业务事件 → `AuditEventHandler` 生成审计记录
+- [ ] **遗留核心审计过渡**:
+  - 方案 A: PostgreSQL 触发器 / 逻辑解码捕获 DML 变更
+  - 方案 B: `EntityDAO` 基类 AOP 拦截
+- [ ] **电子签名审计事件**: `ELECTRONIC_SIGNATURE` 类型，包含签名含义和身份凭证哈希
+- [ ] **审计归档**: 在线 2 年 + 只读压缩存储 10–25 年
+
+### 6.2 遗留 DAO/Service 迁移
+
+按「Subject → Study/Site → CRF → Data Capture」优先级逐步迁移：
+
+- [ ] **Subject 模块**（`app/module/subject/`）
+  - [ ] 实体 + Repository + Service + Controller
+  - [ ] 从 `legacy-core` 的 `SubjectDAO`、`StudySubjectDAO` 迁移查询
+  - [ ] 依赖 `legacy-gateway` 做读操作的过渡代理
+- [ ] **Study/Site 模块**（`app/module/study/` + `app/module/site/`）
+- [ ] **Event 模块**（`app/module/event/`）
+- [ ] **Data Capture 模块**（`app/module/data-capture/`）
+
+### 6.3 缓存方案迁移
+
+- [ ] **Ehcache 2 → Caffeine**
+  - [ ] Hibernate 二级缓存: 切换为 Caffeine 或 Ehcache 3 (JCache)
+  - [ ] 应用级缓存: Caffeine + Spring Cache Abstraction
+  - [ ] 过渡期: 自定义 `CacheManager` 同时支持两种缓存，按模块切换
+
+### 6.4 跨模块 Saga 模式
+
+- [ ] **Saga 编排设计**: 为 randomization + subject update + questionnaire webhook 设计协同式 Saga
+- [ ] **补偿事件定义**: `RandomizationSubjectUpdateFailed`、`QuestionnaireWebhookFailed`
+- [ ] **重试 + 死信队列**: 使用 Spring Retry + DLQ 处理临时故障
+- [ ] **Saga 可观测性**: 事件流可视化（Camunda/Temporal/自研）
+
+### 6.5 JSP 绞杀 — 第二批（运营管理页面）
+
+- [ ] **Study 构建页面迁移**（Protocol 配置、Site 管理）
+- [ ] **CRF Designer 渐进式迁移**
+  - [ ] 第一阶段: iframe 嵌入旧 Designer，React 外壳
+  - [ ] 第二阶段: 基于 SurveyJS 或自定义 Builder 重写
+- [ ] **用户管理页面迁移**
+
+### 6.6 Phase 3 验收标准
+
+- [ ] 统一审计总线覆盖 70% 以上的数据变更事件
+- [ ] 至少 3 个遗留 DAO/Service 模块迁移到 Modulith
+- [ ] Ehcache 2 依赖移除，Caffeine 上线
+- [ ] Saga 模式覆盖 randomization 全流程
+- [ ] 50% JSP 页面已完成 React 替代
 
 ---
 
-## 八、推荐技术栈总结
+## 七、Phase 4: 收敛（12–18 个月）
+
+> 目标：遗留 JSP < 50 → 服务拆分决策 → 全面可观测性 → 冷启动优化
+
+### 7.1 JSP 绞杀 — 第三批（系统管理 & 遗留报表）
+
+- [ ] 系统配置/审计日志查看页面迁移
+- [ ] 遗留报表评估（保留、废弃或用新模块替代）
+- [ ] 老旧功能退役（如旧导出 → Export Center 替代后废弃）
+
+### 7.2 服务拆分决策
+
+- [ ] **`randomization-service` 独立部署评估**: 基于实际 QPS 和团队规模
+- [ ] **`export-service` 独立部署评估**: 是否有独立扩缩容需求
+- [ ] **数据库物理隔离评估**: 需要独立数据库的模块（如 export 可能需要列式存储）
+
+### 7.3 全面可观测性
+
+- [ ] **OpenTelemetry Java Agent 部署**: 跨前端 → Java → Python 链路追踪
+- [ ] **日志聚合**: Loki / ELK 部署 + 结构化日志（JSON 格式）
+- [ ] **业务黄金指标仪表盘**: CRF 保存数、随机化延迟、导出队列深度、问卷完成率
+- [ ] **SLO + 告警**: 为关键业务流程配置 SLO 和 PagerDuty/钉钉告警
+
+### 7.4 冷启动 & 性能优化
+
+- [ ] **GraalVM Native Image 评估**: 冷启动 < 30s 目标
+- [ ] **CDS/AppCDS 预热**: 在不迁移 GraalVM 的情况下加速 JVM 启动
+- [ ] **性能基线报告**: 对照 Milestone 9 指标 (登录 P95 < 400ms, CRF 保存 < 800ms)
+
+### 7.5 Phase 4 验收标准
+
+- [ ] 遗留 JSP 页面 < 50，评估是否全部废弃或保留为只读归档
+- [ ] 测试覆盖率 > 60%（新模块 > 80%）
+- [ ] OWASP 扫描常态化（每次 PR 自动检查）
+- [ ] 冷启动 < 30s
+- [ ] 所有模块通过 Modulith 边界验证
+
+---
+
+## 八、关键决策清单
+
+| 决策点 | 选项 A | 选项 B | 建议 |
+|--------|--------|--------|------|
+| JSP 迁移策略 | 一次性重写全部 419 个 | 按业务价值分批绞杀 | **B** — 按受试者高频路径优先 |
+| 前端部署模式 | 继续嵌入 WAR | 独立 Nginx 静态部署 | **B** — 解耦构建与部署周期 |
+| 缓存方案 | 升级 Ehcache 3 | 迁移至 Caffeine | **Caffeine** — 更轻量、无 XML 配置 |
+| 审计存储 | 每个模块自建审计表 | 统一审计事件总线 + 独立库 | **统一总线** — 满足监管一致性 |
+| 跨服务事务 | 分布式 XA/2PC | Saga + 补偿 | **Saga** — 与 Spring Modulith 事件模型契合 |
+| Python 数据库 | 继续独立 PostgreSQL | 收敛到主库（不同 Schema） | **独立但加协调** — 保持技术自主权 |
+| 容器编排 | 维持 Docker Compose | 引入 Kubernetes | **先维持 Compose** — 除非出现多环境需求 |
+
+---
+
+## 九、风险登记册（P0/P1/P2）
+
+映射自 [OpenClinica_Review.md](./OpenClinica_Review.md)，按处理阶段分组：
+
+| ID | 风险 | 等级 | 处理阶段 | 说明 |
+|----|------|------|---------|------|
+| R01 | Actuator 敏感端点暴露 | P0 | ✅ Phase 1 已修复 | `env`/`beans`/`conditions` 生产禁用 |
+| R02 | Swagger UI Try-it-out | P0 | ✅ Phase 1 已修复 | 生产 profile 禁用 |
+| R03 | 默认弱密码 | P0 | ✅ Phase 1 已修复 | entrypoint + Dockerfile 默认值移除 |
+| R04 | OWASP 漏洞扫描缺失 | P1 | Phase 1 | 配置每周 CI 扫描 |
+| R05 | Ehcache 2 配置冲突 | P1 | Phase 1 | 已修复开发/测试环境冲突；Caffeine 迁移在 Phase 3 |
+| R06 | WAR 275MB | P1 | Phase 2 | 依赖分析 + 前端解耦 |
+| R07 | 认证双轨制 | P1 | Phase 2 | Keycloak OIDC 统一 |
+| R08 | JSP 419 页未迁移 | P1 | Phase 2–4 | 分三批绞杀 |
+| R09 | 前端测试缺失 | P2 | Phase 1 | Vitest 框架就绪，待编写 |
+| R10 | 日志无脱敏 | P2 | Phase 2 | 需配置 logback 脱敏策略 |
+| R11 | 审计日志不统一 | P2 | Phase 3 | 统一审计总线 |
+| R12 | 跨服务事务无 Saga | P2 | Phase 3 | 随机化 + Subject + webhook |
+| R13 | OpenTelemetry 未集成 | P2 | Phase 4 | 链路追踪 |
+| R14 | 日志聚合缺失 | P2 | Phase 4 | Loki/ELK |
+
+---
+
+## 十、技术栈基线
 
 ```text
 后端:    Java 21 + Spring Boot 3.2.5 + Spring Modulith 1.1.4 + Hibernate 6.4.4
-数据库:  PostgreSQL 17 + Liquibase
-认证:    Keycloak / OIDC / JWT
+数据库:  PostgreSQL 17 + Liquibase (Java) / Alembic (Python)
+认证:    Keycloak / OIDC / JWT (统一目标)
 API:     OpenAPI 3 + REST + 统一错误码 + 统一分页
 前端:    React 19 + TypeScript 5.8 + Vite 6 + Ant Design 5 + TanStack Query 5
 部署:    Docker Compose (dev/test/prod) + Nginx
-可观测:  Actuator + OpenTelemetry + Prometheus + Grafana
+可观测:  Actuator + Prometheus + Grafana → Phase 4: + OpenTelemetry + Loki
 CI/CD:   GitHub Actions + Docker build + Compose smoke test
-测试:    Testcontainers + Vitest + Playwright + Spring Modulith verification
-模块化:  Spring Modulith（notification 已提取, identity 桩已就绪）
+测试:    JUnit 5 + Mockito + Testcontainers + Vitest + Playwright + Modulith verification
+缓存:    Ehcache 2 (过渡) → Caffeine (Phase 3)
 ```
 
 ---
 
-## 九、最小验收标准
+## 十一、附录：最小验收标准
 
-进入随机化系统开发前需满足：
+跨阶段始终适用的门禁：
 
-- [x] `mvn clean compile` 成功
-- [x] `mvn clean package -DskipTests` 成功 (WAR 产出: 275MB)
-- [x] `mvn test` 全部通过 (11/11 tests)
-- [ ] Docker Compose 一键启动 — ✅ PostgreSQL/MailHog/Adminer 已验证；⚠️ Web 服务构建耗时较长（Docker Desktop 启动容器偶有问题）
-- [ ] Tomcat 10.1 正常启动两个 WAR
-- [ ] PostgreSQL 旧库 hbm2ddl validate 通过 — ⚠️ 部分 Hibernate 6 命名策略冲突待修复
-- [ ] 管理员账号可登录
-- [ ] Study / Subject / CRF / 数据录入 / Audit / Export 流程可用
-- [ ] 核心 Web Service 可调用
-- [x] 依赖冲突已排查 — ✅ `mvn dependency:tree` 无重大冲突（仅有 logback-core 1.5.3 vs 1.5.7，已自动管理）
-- [ ] 重大安全漏洞已记录 — ⚠️ 待运行 OWASP Dependency Check
+- [x] `mvn clean compile` ✅
+- [x] `mvn clean package -DskipTests` ✅
+- [x] `mvn test` (11/11) ✅
+- [x] ModulithVerificationTest ✅
+- [x] 前端 `tsc --noEmit` 0 errors ✅
+- [x] 前端 `eslint .` 0 errors ✅
+- [x] 问卷服务 `pytest` 31/31 ✅
+- [ ] Docker Compose 全栈一键启动
+- [ ] 数据库 Schema validate 通过（旧备份验证）
+- [ ] 核心业务路径人工验证（登录 → Study → Subject → CRF → 保存 → 导出）
+- [ ] OWASP Dependency Check 无高危漏洞
+- [ ] Maven Enforcer 所有规则通过
 
 ---
 
-## 十、本次更新 (2026-05-18)
-
-### 前端 "Precision Clinical" 设计重构
-
-- **配色体系精修**: Jade teal (`#099A87`) 主色 + warm brass (`#D4A854`) 点缀 + deep slate (`#0F1A2E`) 基底 + warm paper (`#F8F5F0`) 表面色，所有色值向更深的 teal 和更温润的 brass 偏移
-- **排版升级**: Sora (标题) + DM Sans (正文) Google Fonts，引入 refined font scale
-- **Ant Design 主题增强**: 全面自定义 Layout / Menu / Card / Table / Button / Input / Modal / Tag 组件样式，增大 border-radius、优化阴影层级
-- **全局 CSS**: 新增 glass panel 工具类 (backdrop-filter blur)、扩展 dot-grid 纹理密度、增加 `fadeInUp`/`fadeInScale`/`staggerItem` 等动画变体
-- **AppLayout 重构**: Header 底部 brass 装饰边框、用户头像徽章、主内容区 max-width 居中布局
-- **Dashboard 重设计**: 问候 + 头像区域、四色统计卡片 (jade/brass/sky/coral) 含 SVG 图标、活动时间线 (纵向 timeline + 状态圆点)、SVG 环形图 (受试者状态分布)、快捷操作卡片组
-- **ErrorPage/NotFound**: 深色 navy dot-grid 背景布局，品牌一致性定制
-- **SkeletonCard**: 同步更新匹配新 Dashboard 布局
-- **修复**: QuestionnaireBuilder 和 QuestionnaireVersionEditor 中的 lint 问题自动修复
-
-### Docker 构建优化
-
-- **Maven cache mount**: docker/app/Dockerfile 三层 `mvn` 命令添加 `--mount=type=cache,target=/root/.m2`，利用 Docker BuildKit 缓存加速重复构建
-- **前端构建路径修复**: `COPY --from=frontend-build` 路径从 `/build/frontend/app/...` 修正为 `/build/app/...`（3 阶段构建中间产物路径对齐）
-- **CI 环境变量**: `pnpm install` 添加 `CI=true` 环境变量，抑制 pnpm 交互式提示
-- **.dockerignore**: 新增项目根 `.dockerignore` 文件，排除 `.git`、`node_modules`、`target`、`questionnaire-service`、`deploy`、`scripts` 等构建无关目录
-
-### 文档清理
-
-- 移除 `questionnaire_python_backend_roadmap.md`（已实现，不再需要路线图文档）
-- 移除 `deploy/tls/README.md`（内容已整合到 Nginx 配置注释中）
-- 移除 `deploy/compose/initdb/README.md`（内容已整合到 database 初始化脚本中）
-- 更新 README.md、PLAN.md、MODIFICATIONS.md 反映上述变更
-
-### 测试体系
-
-| 项目 | 状态 | 备注 |
-|------|------|------|
-| `mvn clean compile` | ✅ | 所有 5 模块编译通过 |
-| `mvn clean package -DskipTests` | ✅ | WAR 产出正常 |
-| `mvn test` (全量) | ✅ | 11/11 tests pass (core 8 + web 3) |
-| ModulithVerificationTest | ✅ | 模块边界验证通过 |
-| 前端 TypeScript | ✅ | `tsc --noEmit` 0 errors |
-| 前端 ESLint | ✅ | 0 errors (降至 20 warnings) |
-| 前端 Build | ✅ | `vite build` 成功 |
-| Maven Enforcer | ✅ | `requireJavaVersion [21,)` 规则已配置并验证通过 |
-
-### 修复的测试问题
-- **Ehcache 配置冲突**: 开发/测试环境的 `maxBytesLocalHeap` 与 `maxElementsInMemory` 冲突 → 移除根元素属性
-- **Ehcache 单例冲突**: `SQLFactory.new CacheManager()` → `CacheManager.create()` 
-- **Spring Data JPA namespace**: core 模块缺少 `spring-data-jpa` 依赖 → 添加
-- **hibernate.ddl.auto placeholder**: `s[...]` 语法错误 → `$[...]` 修正
-- **Mockito/ByteBuddy**: 需 JDK 21 运行（JAVA_HOME 配置）
-
-### 修复的 Hibernate 6 兼容问题
-- `domain.datamap.MeasurementUnit` + `domain.admin.MeasurementUnit` 同名冲突 → `@Entity(name = "...")` ✅
-- `admin.MeasurementUnit` 缺失 `@Column(name = "oc_oid")` → 添加 ✅
-- `domain.datamap.StudyModuleStatus` + `domain.managestudy.StudyModuleStatus` → `@Entity(name = "...")` ✅
-- `managestudy.StudyModuleStatus` 缺失所有 `@Column` 注解 → 批量添加 ✅
-- `StudyType.studies` 原始 `Set` 类型 → `Set<Study>` ✅
-- `Study.getStudyType()` 被注释 → 取消注释 + 添加 `@ManyToOne` ✅
-- `AuditEvent.auditEventContexts/Valueses` 目标实体不存在 → `@Transient` ✅
-- Liquibase `defaultValueComputed` 属性在 4.26 不支持 → 改为 `<constraints nullable="false"/>` ✅
-- **总计: 9 个 Hibernate 问题 + 2 个 Liquibase 问题修复** ✅
-
-### 前端设计重构 ("The Chart Room" 风格)
-- **配色体系**: Jade teal (`#099A87`) 主色 + warm brass (`#D4A854`) 点缀 + deep slate (`#0F1A2E`) 深色基底 + warm paper (`#F8F5F0`) 表面色
-- **排版**: Sora（标题）+ DM Sans（正文）Google Fonts
-- **动效**: 页面进场 `fadeInUp` 动画、卡片 hover 上浮（translateY + shadow）、统计卡片交错进场
-- **背景**: 全局 dot-grid 图纸纹理（radial-gradient 实现）
-- **组件重构**: AppLayout（60px header + brass 底部边框）、Login（深色渐变背景 + 精致卡片）、Dashboard（交替 jade/brass 卡片边框 + 色标图标）
-- **Ant Design 主题**: 全面自定义 Layout / Menu / Card / Table / Button / Input / Modal / Tag 等组件样式
-
-### Maven Enforcer 依赖检查
-- **`requireJavaVersion [21,)`**: 规则已配置，`mvn enforcer:enforce` 验证通过 ✅
-- **依赖收敛评估**: `spring-data-jpa:3.2.5` 与 `spring-framework:6.1.5` 存在 minor 版本差异 (6.1.5 vs 6.1.6)，不影响编译/运行。全项目 400+ 依赖无阻断性冲突。
-- **Missing Spring artifacts**: `spring-beans`, `spring-core`, `spring-expression`, `spring-webmvc` 已添加至 parent `dependencyManagement` 以保证版本一致性
-
-### Docker 环境修复 (2026-05-17)
-- **问题 1 — Docker build 失败**: Parent POM 声明了 `app` module 但 Dockerfile 只复制了 core/web/ws 的 pom.xml，导致 `Child module /build/app does not exist` → 在 web/ws Dockerfile 中添加 `COPY app/pom.xml ./app/`
-- **问题 2 — 缺少 app Docker 服务**: 新 Spring Boot + React SPA 模块没有 Dockerfile → 新增 `docker/app/Dockerfile`（3 阶段构建: pnpm frontend → Maven WAR → Tomcat）
-- **问题 3 — 前端构建不在 Docker 流水线中**: app Dockerfile 使用 `node:22-alpine` 第一阶段执行 `pnpm install && pnpm build`，输出复制到 app 的 static 目录后再进行 Maven 构建
-- **问题 4 — Entrypoint 配置文件写入失败**: `ROOT/WEB-INF/classes/` 在 Tomcat 解压前不存在，`cp` 被 `|| true` 静默吞掉 → 改为先 `mkdir -p` 再复制
-- **新增 app service**: `docker-compose.dev.yml` 新增 `app` 服务 (port 8083)，依赖 PostgreSQL health check
-
-### 剩余待办 (需外部环境)
-- [ ] Docker Compose 全栈启动验证 (Web + WS + App Docker 镜像构建)
-- [ ] Tomcat 10.1 部署验证（三个 WAR）
-- [ ] 密钥/凭证安全扫描 (OWASP Dependency Check)
-- [ ] DBUnit 集成测试启用（解除测试方法注释 + 准备测试数据集）
-- [ ] PostgreSQL schema validate 报告 (需要旧数据库备份)
-- [ ] Hibernate 6 命名策略批量迁移（尚有 50+ 实体使用隐式命名策略，非阻塞）
+> **计划维护:** 本 PLAN.md 随 OpenClinica_Architecture_Debt_Design.md 更新而同步修订。  
+> **阶段切换条件:** 每个阶段完成后，对照其验收标准逐项检查，全部通过后方可进入下一阶段。
