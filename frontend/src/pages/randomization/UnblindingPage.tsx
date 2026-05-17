@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Table, Tag, Button, Modal, Input, message, Space, Select, Empty, InputNumber } from "antd";
 import { ArrowLeftOutlined, EyeOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { useUnblindingRequests, useRequestUnblinding } from "@/hooks/useRandomization";
 import { SkeletonPage } from "@/components/SkeletonCard";
 import { apiClient } from "@/api/client";
@@ -11,6 +12,7 @@ import type { UnblindingRequestDTO, UnblindingStatus } from "@/types/randomizati
 const { TextArea } = Input;
 
 export default function UnblindingPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const schemeId = Number(id);
   const { data: requests, isLoading, refetch } = useUnblindingRequests(schemeId);
@@ -25,18 +27,18 @@ export default function UnblindingPage() {
 
   const handleRequest = async () => {
     if (!assignmentId) {
-      message.error("Please enter an assignment ID");
+      message.error(t("unbliding.enterAssignmentId"));
       return;
     }
     try {
       await requestUnblinding.mutateAsync({ assignmentId, reason });
-      message.success("Unblinding request submitted");
+      message.success(t("unblinding.submitted"));
       setRequestModalVisible(false);
       setAssignmentId(undefined);
       setReason("");
       refetch();
     } catch (e: any) {
-      message.error(e?.message ?? "Failed");
+      message.error(e?.message ?? t("unblinding.failed"));
     }
   };
 
@@ -64,27 +66,27 @@ export default function UnblindingPage() {
   };
 
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Subject Assignment", dataIndex: "assignmentId", key: "assignmentId" },
-    { title: "Arm", dataIndex: "armName", key: "armName",
+    { title: t("unblinding.column.id"), dataIndex: "id", key: "id" },
+    { title: t("unblinding.column.assignment"), dataIndex: "assignmentId", key: "assignmentId" },
+    { title: t("unblinding.column.arm"), dataIndex: "armName", key: "armName",
       render: (name: string) => name ? <Tag color="blue">{name}</Tag> : "-",
     },
-    { title: "Reason", dataIndex: "reason", key: "reason",
+    { title: t("unblinding.column.reason"), dataIndex: "reason", key: "reason",
       render: (r: string) => r?.substring(0, 50) ?? "-",
     },
-    { title: "Status", dataIndex: "status", key: "status",
+    { title: t("unblinding.column.status"), dataIndex: "status", key: "status",
       render: (s: string) => <Tag color={statusColors[s]}>{s}</Tag>,
     },
-    { title: "Requested", dataIndex: "requestedDate", key: "requestedDate",
+    { title: t("unblinding.column.requested"), dataIndex: "requestedDate", key: "requestedDate",
       render: (d: string) => d ? new Date(d).toLocaleString() : "-",
     },
     {
-      title: "Actions", key: "actions",
+      title: t("unblinding.column.actions"), key: "actions",
       render: (_: any, record: UnblindingRequestDTO) => (
         <Space>
           {record.status === "PENDING" && (
             <Button size="small" type="primary" onClick={() => setReviewTarget(record)}>
-              Review
+              {t("unblinding.review")}
             </Button>
           )}
         </Space>
@@ -99,8 +101,8 @@ export default function UnblindingPage() {
       </Space>
 
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
-        <span style={{ fontSize: 18, fontWeight: 600 }}><EyeOutlined /> Unblinding Requests</span>
-        <Button onClick={() => setRequestModalVisible(true)}>Request Unblinding</Button>
+        <span style={{ fontSize: 18, fontWeight: 600 }}><EyeOutlined /> {t("unblinding.title")}</span>
+        <Button onClick={() => setRequestModalVisible(true)}>{t("unblinding.request")}</Button>
       </Space>
 
       <Card style={{ marginTop: 16 }}>
@@ -110,24 +112,24 @@ export default function UnblindingPage() {
           rowKey="id"
           pagination={false}
           size="small"
-          locale={{ emptyText: <Empty description="No unblinding requests" /> }}
+          locale={{ emptyText: <Empty description={t("unblinding.empty")} /> }}
         />
       </Card>
 
-      <Modal title="Request Unblinding" open={requestModalVisible}
+      <Modal title={t("unblinding.modalTitle")} open={requestModalVisible}
              onOk={handleRequest} onCancel={() => setRequestModalVisible(false)}>
         <Space direction="vertical" style={{ width: "100%" }}>
-          <label>Assignment ID</label>
+          <label>{t("unblinding.assignmentId")}</label>
           <InputNumber min={1} value={assignmentId}
                        onChange={(value) => setAssignmentId(value ?? undefined)}
                        style={{ width: "100%" }} />
-          <label>Reason</label>
+          <label>{t("unblinding.reason")}</label>
           <TextArea rows={3} value={reason} onChange={(e) => setReason(e.target.value)} />
         </Space>
       </Modal>
 
       <Modal
-        title="Review Unblinding Request"
+        title={t("unblinding.reviewTitle")}
         open={!!reviewTarget}
         onCancel={() => setReviewTarget(null)}
         footer={null}
@@ -138,15 +140,15 @@ export default function UnblindingPage() {
             <p><strong>Arm:</strong> {reviewTarget.armName}</p>
             <p><strong>Reason:</strong> {reviewTarget.reason}</p>
             <Divider />
-            <label>Decision</label>
+            <label>{t("unblinding.decision")}</label>
             <Select value={reviewDecision} onChange={setReviewDecision} style={{ width: "100%" }}>
-              <Select.Option value="APPROVED">Approve</Select.Option>
-              <Select.Option value="REJECTED">Reject</Select.Option>
+              <Select.Option value="APPROVED">{t("unblinding.approve")}</Select.Option>
+              <Select.Option value="REJECTED">{t("unblinding.reject")}</Select.Option>
             </Select>
-            <label>Review Notes</label>
+            <label>{t("unblinding.reviewNotes")}</label>
             <TextArea rows={3} value={reviewNotes} onChange={(e) => setReviewNotes(e.target.value)} />
             <Button type="primary" onClick={handleReview} disabled={!reviewDecision}>
-              Submit Review
+              {t("unblinding.submitReview")}
             </Button>
           </Space>
         )}

@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Form, InputNumber, Button, Typography, Table, Tag, message, Alert, Space, Modal, Select, Empty } from "antd";
 import { ArrowLeftOutlined, SwapOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { useScheme, useRandomize, useAssignments } from "@/hooks/useRandomization";
 import { SkeletonPage } from "@/components/SkeletonCard";
 
 const { Title } = Typography;
 
 export default function AllocationPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const schemeId = Number(id);
   const { data: scheme, isLoading: schemeLoading } = useScheme(schemeId);
@@ -18,17 +20,17 @@ export default function AllocationPage() {
   const [stratumValues, setStratumValues] = useState<Record<string, string>>({});
 
   if (schemeLoading) return <SkeletonPage />;
-  if (!scheme) return <Alert message="Scheme not found" type="error" showIcon />;
+  if (!scheme) return <Alert message={t("scheme.notFound")} type="error" showIcon />;
 
   if (scheme.status !== "ACTIVE") {
     return (
       <div>
         <Space style={{ marginBottom: 16 }}>
-          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(`/app/randomization/schemes/${schemeId}`)}>Back</Button>
+          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(`/app/randomization/schemes/${schemeId}`)}>{t("allocation.back")}</Button>
         </Space>
         <Alert
-          message="Scheme not active"
-          description="This scheme must be activated before subjects can be randomized."
+          message={t("allocation.notActive")}
+          description={t("allocation.notActiveDescription")}
           type="warning"
           showIcon
         />
@@ -38,7 +40,7 @@ export default function AllocationPage() {
 
   const handleRandomize = async () => {
     if (!subjectId) {
-      message.error("Please enter a study subject ID");
+      message.error(t("allocation.enterSubjectId"));
       return;
     }
     try {
@@ -48,10 +50,10 @@ export default function AllocationPage() {
         stratumValues: Object.keys(stratumValues).length > 0 ? stratumValues : undefined,
       });
       Modal.success({
-        title: "Randomization Complete",
+        title: t("allocation.complete"),
         content: (
           <div>
-            <p>Subject <strong>#{subjectId}</strong> assigned to:</p>
+            <p>{t("allocation.assignedTo")} <strong>#{subjectId}</strong>:</p>
             <Tag color="blue" style={{ fontSize: 16, padding: "4px 12px" }}>{result.armName}</Tag>
           </div>
         ),
@@ -59,7 +61,7 @@ export default function AllocationPage() {
       setSubjectId(undefined);
       setStratumValues({});
     } catch (e: any) {
-      message.error(e?.message ?? "Randomization failed");
+      message.error(e?.message ?? t("allocation.failed"));
     }
   };
 
@@ -68,17 +70,17 @@ export default function AllocationPage() {
   };
 
   const columns = [
-    { title: "Subject ID", dataIndex: "studySubjectId", key: "studySubjectId" },
-    { title: "Arm", dataIndex: "armName", key: "armName",
+    { title: t("allocation.column.subjectId"), dataIndex: "studySubjectId", key: "studySubjectId" },
+    { title: t("allocation.column.arm"), dataIndex: "armName", key: "armName",
       render: (name: string) => <Tag color="blue">{name}</Tag>,
     },
-    { title: "Stratum", dataIndex: "stratumPath", key: "stratumPath",
+    { title: t("allocation.column.stratum"), dataIndex: "stratumPath", key: "stratumPath",
       render: (p: string) => p || "-",
     },
-    { title: "Status", dataIndex: "status", key: "status",
+    { title: t("allocation.column.status"), dataIndex: "status", key: "status",
       render: (s: string) => <Tag color={statusColors[s]}>{s}</Tag>,
     },
-    { title: "Assigned Date", dataIndex: "assignedDate", key: "assignedDate",
+    { title: t("allocation.column.assignedDate"), dataIndex: "assignedDate", key: "assignedDate",
       render: (d: string) => d ? new Date(d).toLocaleString() : "-",
     },
   ];
@@ -86,14 +88,14 @@ export default function AllocationPage() {
   return (
     <div>
       <Space style={{ marginBottom: 16 }}>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(`/app/randomization/schemes/${schemeId}`)}>Back</Button>
+        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(`/app/randomization/schemes/${schemeId}`)}>{t("allocation.back")}</Button>
       </Space>
 
-      <Title level={4}><SwapOutlined /> Allocation - {scheme.name}</Title>
+      <Title level={4}><SwapOutlined /> {t("allocation.title")} - {scheme.name}</Title>
 
-      <Card title="New Randomization" style={{ marginBottom: 16 }}>
+      <Card title={t("allocation.newRandomization")} style={{ marginBottom: 16 }}>
         <Form layout="inline">
-          <Form.Item label="Study Subject ID" required>
+          <Form.Item label={t("allocation.subjectId")} required>
             <InputNumber
               min={1}
               value={subjectId}
@@ -105,7 +107,7 @@ export default function AllocationPage() {
             <Form.Item key={stratum.id} label={stratum.name}>
               <Select
                 style={{ width: 160 }}
-                placeholder="Select value"
+                placeholder={t("allocation.selectValue")}
                 onChange={(v) => setStratumValues(prev => ({ ...prev, [stratum.name]: v }))}
                 value={stratumValues[stratum.name]}
               >
@@ -122,20 +124,20 @@ export default function AllocationPage() {
               loading={randomize.isPending}
               icon={<SwapOutlined />}
             >
-              Randomize
+              {t("allocation.randomize")}
             </Button>
           </Form.Item>
         </Form>
       </Card>
 
-      <Card title={`Assignments (${assignments?.length ?? 0})`}>
+      <Card title={`${t("allocation.assignments")} (${assignments?.length ?? 0})`}>
         <Table
           dataSource={assignments ?? []}
           columns={columns}
           rowKey="id"
           pagination={false}
           size="small"
-          locale={{ emptyText: <Empty description="No assignments yet" /> }}
+          locale={{ emptyText: <Empty description={t("allocation.empty")} /> }}
         />
       </Card>
     </div>

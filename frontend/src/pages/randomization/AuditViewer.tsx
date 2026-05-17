@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Table, Tag, Typography, Space, Button, Empty } from "antd";
 import { ArrowLeftOutlined, AuditOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { useAuditLogs } from "@/hooks/useRandomization";
 import { SkeletonPage } from "@/components/SkeletonCard";
 import type {} from "@/types/randomization";
@@ -19,6 +20,7 @@ const actionColors: Record<string, string> = {
 };
 
 export default function AuditViewer() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const schemeId = Number(id);
   const { data: logs, isLoading } = useAuditLogs(schemeId);
@@ -28,39 +30,39 @@ export default function AuditViewer() {
 
   const columns = [
     {
-      title: "Date", dataIndex: "performedDate", key: "performedDate", width: 180,
+      title: t("audit.column.date"), dataIndex: "performedDate", key: "performedDate", width: 180,
       render: (d: string) => d ? new Date(d).toLocaleString() : "-",
     },
     {
-      title: "Action", dataIndex: "action", key: "action",
+      title: t("audit.column.action"), dataIndex: "action", key: "action",
       render: (a: string) => <Tag color={actionColors[a] ?? "default"}>{a}</Tag>,
     },
-    { title: "Entity", dataIndex: "entityType", key: "entityType" },
-    { title: "Entity ID", dataIndex: "entityId", key: "entityId" },
+    { title: t("audit.column.entity"), dataIndex: "entityType", key: "entityType" },
+    { title: t("audit.column.entityId"), dataIndex: "entityId", key: "entityId" },
     {
-      title: "Details", dataIndex: "details", key: "details",
+      title: t("audit.column.details"), dataIndex: "details", key: "details",
       ellipsis: true,
     },
     {
-      title: "Old Value", dataIndex: "oldValue", key: "oldValue",
-      ellipsis: true,
-      render: (v: string) => v || "-",
-    },
-    {
-      title: "New Value", dataIndex: "newValue", key: "newValue",
+      title: t("audit.column.oldValue"), dataIndex: "oldValue", key: "oldValue",
       ellipsis: true,
       render: (v: string) => v || "-",
     },
-    { title: "User ID", dataIndex: "performedBy", key: "performedBy" },
+    {
+      title: t("audit.column.newValue"), dataIndex: "newValue", key: "newValue",
+      ellipsis: true,
+      render: (v: string) => v || "-",
+    },
+    { title: t("audit.column.userId"), dataIndex: "performedBy", key: "performedBy" },
   ];
 
   return (
     <div>
       <Space style={{ marginBottom: 16 }}>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => { navigate(`/app/randomization/schemes/${schemeId}`); }}>Back</Button>
+        <Button icon={<ArrowLeftOutlined />} onClick={() => { navigate(`/app/randomization/schemes/${schemeId}`); }}>{t("audit.back")}</Button>
       </Space>
 
-      <Title level={4}><AuditOutlined /> Audit Log</Title>
+      <Title level={4}><AuditOutlined /> {t("audit.title")}</Title>
 
       <Card style={{ marginTop: 16 }}>
         <Table
@@ -69,7 +71,7 @@ export default function AuditViewer() {
           rowKey="id"
           pagination={{ pageSize: 20 }}
           size="small"
-          locale={{ emptyText: <Empty description="No audit entries" /> }}
+          locale={{ emptyText: <Empty description={t("audit.empty")} /> }}
         />
       </Card>
     </div>

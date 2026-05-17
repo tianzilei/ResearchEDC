@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Descriptions, Tag, Button, Space, Typography, Table, Divider, message, Alert, Modal } from "antd";
 import { SafetyOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { useScheme, useActivateScheme, useCloseScheme } from "@/hooks/useRandomization";
 import { SkeletonPage } from "@/components/SkeletonCard";
 
@@ -15,6 +16,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function SchemeEditor() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const schemeId = Number(id);
   const { data: scheme, isLoading } = useScheme(schemeId);
@@ -24,45 +26,45 @@ export default function SchemeEditor() {
 
   if (isLoading) return <SkeletonPage />;
   if (!scheme) {
-    return <Alert message="Scheme not found" type="error" showIcon />;
+    return <Alert message={t("scheme.notFound")} type="error" showIcon />;
   }
 
   const handleActivate = () => {
     Modal.confirm({
-      title: "Activate Scheme",
-      content: "Once activated, subjects can be randomized using this scheme. The configuration will be locked.",
+      title: t("scheme.activateConfirm"),
+      content: t("scheme.activateMessage"),
       onOk: async () => {
         await activateScheme.mutateAsync(schemeId);
-        message.success("Scheme activated");
+        message.success(t("scheme.activated"));
       },
     });
   };
 
   const handleClose = () => {
     Modal.confirm({
-      title: "Close Scheme",
-      content: "Closing will stop all new randomizations. Existing assignments remain valid.",
+      title: t("scheme.closeConfirm"),
+      content: t("scheme.closeMessage"),
       onOk: async () => {
         await closeScheme.mutateAsync(schemeId);
-        message.success("Scheme closed");
+        message.success(t("scheme.closed"));
       },
     });
   };
 
   const armColumns = [
-    { title: "#", dataIndex: "orderNumber", key: "orderNumber", width: 60 },
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Display Name", dataIndex: "displayName", key: "displayName" },
-    { title: "Ratio", dataIndex: "ratio", key: "ratio" },
+    { title: t("scheme.column.order"), dataIndex: "orderNumber", key: "orderNumber", width: 60 },
+    { title: t("scheme.column.name"), dataIndex: "name", key: "name" },
+    { title: t("scheme.column.displayName"), dataIndex: "displayName", key: "displayName" },
+    { title: t("scheme.column.ratio"), dataIndex: "ratio", key: "ratio" },
   ];
 
   const stratumColumns = [
-    { title: "#", dataIndex: "orderNumber", key: "orderNumber", width: 60 },
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Type", dataIndex: "stratumType", key: "stratumType",
-      render: (t: string) => <Tag>{t}</Tag>,
+    { title: t("scheme.column.order"), dataIndex: "orderNumber", key: "orderNumber", width: 60 },
+    { title: t("scheme.column.name"), dataIndex: "name", key: "name" },
+    { title: t("scheme.column.type"), dataIndex: "stratumType", key: "stratumType",
+      render: (type: string) => <Tag>{type}</Tag>,
     },
-    { title: "Options", dataIndex: "options", key: "options",
+    { title: t("scheme.column.options"), dataIndex: "options", key: "options",
       render: (opts: any[]) => opts?.map((o: any) => o.label).join(", ") ?? "-",
     },
   ];
@@ -71,7 +73,7 @@ export default function SchemeEditor() {
     <div>
       <Space style={{ marginBottom: 16 }}>
         <Button icon={<ArrowLeftOutlined />} onClick={() => navigate("/app/randomization")}>
-          Back
+          {t("scheme.back")}
         </Button>
       </Space>
 
@@ -84,12 +86,12 @@ export default function SchemeEditor() {
           <Space>
             {scheme.status === "DRAFT" && (
               <Button type="primary" onClick={handleActivate} loading={activateScheme.isPending}>
-                Activate
+                {t("scheme.activate")}
               </Button>
             )}
             {scheme.status === "ACTIVE" && (
               <Button danger onClick={handleClose} loading={closeScheme.isPending}>
-                Close
+                {t("scheme.close")}
               </Button>
             )}
           </Space>
@@ -98,24 +100,24 @@ export default function SchemeEditor() {
         <Divider />
 
         <Descriptions column={2} bordered size="small">
-          <Descriptions.Item label="Algorithm">
+          <Descriptions.Item label={t("scheme.algorithm")}>
             <Tag color={algorithmColors[scheme.algorithm]}>{scheme.algorithm}</Tag>
           </Descriptions.Item>
-          <Descriptions.Item label="Status">
+          <Descriptions.Item label={t("scheme.status")}>
             <Tag color={statusColors[scheme.status ?? "DRAFT"]}>{scheme.status}</Tag>
           </Descriptions.Item>
-          <Descriptions.Item label="Min Block Size">{scheme.minBlockSize ?? "-"}</Descriptions.Item>
-          <Descriptions.Item label="Max Block Size">{scheme.maxBlockSize ?? "-"}</Descriptions.Item>
-          <Descriptions.Item label="Total Assigned">{scheme.totalAssigned ?? 0}</Descriptions.Item>
-          <Descriptions.Item label="Seed">{scheme.seed ?? "-"}</Descriptions.Item>
+          <Descriptions.Item label={t("scheme.minBlockSize")}>{scheme.minBlockSize ?? "-"}</Descriptions.Item>
+          <Descriptions.Item label={t("scheme.maxBlockSize")}>{scheme.maxBlockSize ?? "-"}</Descriptions.Item>
+          <Descriptions.Item label={t("scheme.totalAssigned")}>{scheme.totalAssigned ?? 0}</Descriptions.Item>
+          <Descriptions.Item label={t("scheme.seed")}>{scheme.seed ?? "-"}</Descriptions.Item>
         </Descriptions>
 
-        <Divider orientation="left">Study Arms</Divider>
+        <Divider orientation="left">{t("scheme.studyArms")}</Divider>
         <Table dataSource={scheme.arms} columns={armColumns} rowKey="id" pagination={false} size="small" />
 
         {(scheme.stratifications?.length ?? 0) > 0 && (
           <>
-            <Divider orientation="left">Stratification Factors</Divider>
+            <Divider orientation="left">{t("scheme.stratificationFactors")}</Divider>
             <Table dataSource={scheme.stratifications} columns={stratumColumns} rowKey="id" pagination={false} size="small" />
           </>
         )}
