@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
-import { Layout, Menu, Button, theme as antTheme, Dropdown, Space } from "antd";
+import { Layout, Menu, Button, theme as antTheme, Dropdown, Space, Select } from "antd";
 import type { MenuProps } from "antd";
 import {
   DashboardOutlined,
@@ -16,57 +16,61 @@ import {
   FormOutlined,
   LinkOutlined,
   CheckCircleOutlined,
+  GlobalOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/providers/AuthProvider";
 import { useNavigate, useLocation } from "react-router-dom";
 import { usePermissions } from "@/hooks/usePermissions";
 import StudySwitcher from "@/components/StudySwitcher";
 import { SkeletonPage } from "@/components/SkeletonCard";
 import type { Permission } from "@/types/user";
+import { SUPPORTED_LANGUAGES } from "@/i18n";
 
 const { Header, Sider, Content } = Layout;
 
 function useMenuItems(): MenuProps["items"] {
   const permissions = usePermissions();
   const has = (p: Permission) => permissions.includes(p);
+  const { t } = useTranslation();
 
   const items: NonNullable<MenuProps["items"]> = [
-    { key: "/app/dashboard", icon: <DashboardOutlined />, label: "Dashboard" },
+    { key: "/app/dashboard", icon: <DashboardOutlined />, label: t("layout.dashboard") },
   ];
 
   if (has("study:view")) {
-    items.push({ key: "/app/studies", icon: <MedicineBoxOutlined />, label: "Studies" });
+    items.push({ key: "/app/studies", icon: <MedicineBoxOutlined />, label: t("layout.studies") });
   }
   if (has("subject:view")) {
-    items.push({ key: "/app/subjects", icon: <UserOutlined />, label: "Subjects" });
+    items.push({ key: "/app/subjects", icon: <UserOutlined />, label: t("layout.subjects") });
   }
   if (has("crf:design")) {
-    items.push({ key: "/app/crfs", icon: <FileTextOutlined />, label: "CRFs" });
+    items.push({ key: "/app/crfs", icon: <FileTextOutlined />, label: t("layout.crfs") });
   }
   if (has("crf:design")) {
     items.push({
       key: "questionnaires",
       icon: <FormOutlined />,
-      label: "Questionnaires",
+      label: t("layout.questionnaires"),
       children: [
-        { key: "/app/questionnaires/templates", icon: <FileTextOutlined />, label: "Templates" },
-        { key: "/app/questionnaires/assignments", icon: <LinkOutlined />, label: "Assignments" },
-        { key: "/app/questionnaires/responses", icon: <CheckCircleOutlined />, label: "Responses" },
-        { key: "/app/questionnaires/export", icon: <ExportOutlined />, label: "Export" },
+        { key: "/app/questionnaires/templates", icon: <FileTextOutlined />, label: t("layout.templates") },
+        { key: "/app/questionnaires/assignments", icon: <LinkOutlined />, label: t("layout.assignments") },
+        { key: "/app/questionnaires/responses", icon: <CheckCircleOutlined />, label: t("layout.responses") },
+        { key: "/app/questionnaires/export", icon: <ExportOutlined />, label: t("layout.export") },
       ],
     } satisfies NonNullable<MenuProps["items"]>[number]);
   }
   if (has("data:export")) {
-    items.push({ key: "/app/data-export", icon: <ExportOutlined />, label: "Data Export" });
+    items.push({ key: "/app/data-export", icon: <ExportOutlined />, label: t("layout.dataExport") });
   }
   if (has("randomization:view")) {
-    items.push({ key: "/app/randomization", icon: <SafetyOutlined />, label: "Randomization" });
+    items.push({ key: "/app/randomization", icon: <SafetyOutlined />, label: t("layout.randomization") });
   }
   if (has("audit:view")) {
-    items.push({ key: "/app/audit-log", icon: <AuditOutlined />, label: "Audit Log" });
+    items.push({ key: "/app/audit-log", icon: <AuditOutlined />, label: t("layout.auditLog") });
   }
   if (has("admin:access")) {
-    items.push({ key: "/app/admin", icon: <SettingOutlined />, label: "Admin" });
+    items.push({ key: "/app/admin", icon: <SettingOutlined />, label: t("layout.admin") });
   }
 
   return items;
@@ -78,6 +82,7 @@ export default function AppLayout() {
   const location = useLocation();
   const { token } = antTheme.useToken();
   const menuItems = useMenuItems();
+  const { t, i18n } = useTranslation();
 
   const defaultOpenKeys = location.pathname.startsWith("/app/questionnaires")
     ? ["questionnaires"]
@@ -102,7 +107,7 @@ export default function AppLayout() {
     {
       key: "logout",
       icon: <LogoutOutlined />,
-      label: "Logout",
+      label: t("layout.logout"),
       onClick: () => {
         logout();
         void navigate("/login");
@@ -159,24 +164,44 @@ export default function AppLayout() {
           <div style={{ borderLeft: "1px solid rgba(212,168,84,0.2)", height: 28, width: 1 }} />
           <StudySwitcher />
         </Space>
-        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-          <Button
-            type="text"
+        <Space size="middle">
+          <Select
+            value={i18n.language?.startsWith("zh") ? "zh" : "en"}
+            onChange={(lng) => { void i18n.changeLanguage(lng); }}
+            size="small"
+            variant="borderless"
             style={{
-              color: "rgba(248,245,240,0.85)",
-              height: 60,
+              minWidth: 80,
+              color: "rgba(248,245,240,0.75)",
               fontFamily: "'DM Sans', sans-serif",
-              fontSize: 13,
-              letterSpacing: "0.02em",
+              fontSize: 12,
             }}
-          >
-            <Space>
-              <UserOutlined style={{ color: "#D4A854", fontSize: 14 }} />
-              {user?.name ?? "User"}
-              <DownOutlined style={{ fontSize: 9, opacity: 0.6 }} />
-            </Space>
-          </Button>
-        </Dropdown>
+            popupMatchSelectWidth={false}
+            suffixIcon={<GlobalOutlined style={{ color: "rgba(248,245,240,0.5)", fontSize: 13 }} />}
+            options={SUPPORTED_LANGUAGES.map((l) => ({
+              value: l.key,
+              label: l.label,
+            }))}
+          />
+          <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+            <Button
+              type="text"
+              style={{
+                color: "rgba(248,245,240,0.85)",
+                height: 60,
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 13,
+                letterSpacing: "0.02em",
+              }}
+            >
+              <Space>
+                <UserOutlined style={{ color: "#D4A854", fontSize: 14 }} />
+                {user?.name ?? "User"}
+                <DownOutlined style={{ fontSize: 9, opacity: 0.6 }} />
+              </Space>
+            </Button>
+          </Dropdown>
+        </Space>
       </Header>
       <Layout>
         <Sider
