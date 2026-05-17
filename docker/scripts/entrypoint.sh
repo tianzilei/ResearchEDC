@@ -94,6 +94,10 @@ org.quartz.jobStore.misfireThreshold=${OC_QUARTZ_MISFIRE_THRESHOLD:-18000000}
 org.quartz.threadPool.threadCount=${OC_QUARTZ_THREAD_COUNT:-1}
 org.quartz.threadPool.threadPriority=${OC_QUARTZ_THREAD_PRIORITY:-5}
 
+# Hibernate DDL auto (none | validate | update | create | create-drop)
+# Default 'none' for production; set 'validate' to check schema compatibility
+hibernate.ddl.auto=${OC_HIBERNATE_DDL_AUTO:-none}
+
 # Other
 extract.number=${OC_EXTRACT_PAGE_SIZE:-99}
 collectStats=${OC_COLLECT_STATS:-false}
