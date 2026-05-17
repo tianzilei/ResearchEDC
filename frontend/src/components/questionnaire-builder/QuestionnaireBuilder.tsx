@@ -172,7 +172,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
   const initial = useMemo(() => {
     questionCounter = 0;
     pageCounter = 0;
-    return value && value.pages ? fromSurveyJS(value) : createDefaultSurvey();
+    return value?.pages ? fromSurveyJS(value) : createDefaultSurvey();
   }, []);
   const [survey, setSurvey] = useState<SurveyDef>(initial);
   const [selectedPageIdx, setSelectedPageIdx] = useState(0);
@@ -237,7 +237,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
   function deleteQuestion(idx: number) {
     const page = currentPage;
     if (!page) return;
-    const elements = page.elements.filter((_, i) => i !== idx) as QuestionDef[];
+    const elements = page.elements.filter((_, i) => i !== idx);
     const pages = [...survey.pages];
     const updatedPage: PageDef = { ...page, elements };
     pages[selectedPageIdx] = updatedPage;
@@ -266,7 +266,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
     if (!page) return;
     const elements = page.elements.map((q, i) =>
       i === idx ? { ...q, ...updates } : q,
-    ) as QuestionDef[];
+    );
     const pages = [...survey.pages];
     const updatedPage: PageDef = { ...page, elements };
     pages[selectedPageIdx] = updatedPage;
@@ -295,7 +295,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
   }
 
   const previewModel = useMemo(
-    () => new Model(surveyJSJson as Record<string, unknown>),
+    () => new Model(surveyJSJson),
     [surveyJSJson],
   );
 

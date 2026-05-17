@@ -120,37 +120,60 @@ export default function AppLayout() {
           padding: "0 28px",
           height: 60,
           lineHeight: "60px",
-          borderBottom: "1px solid rgba(212,168,84,0.25)",
+          borderBottom: "1.5px solid rgba(212,168,84,0.30)",
+          background: "#0F1A2E",
+          backgroundImage:
+            "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%)",
+          position: "relative",
+          zIndex: 10,
         }}
       >
         <Space size="middle">
-          <MedicineBoxOutlined style={{ fontSize: 22, color: "#099A87" }} />
+          <div
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+              border: "1.5px solid rgba(212,168,84,0.4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(212,168,84,0.08)",
+              flexShrink: 0,
+            }}
+          >
+            <MedicineBoxOutlined style={{ fontSize: 18, color: "#099A87" }} />
+          </div>
           <span
             style={{
               color: "#F8F5F0",
               fontSize: 17,
               fontWeight: 500,
               fontFamily: "'DM Sans', sans-serif",
-              letterSpacing: "0.02em",
+              letterSpacing: "0.04em",
+              textShadow: "0 1px 2px rgba(0,0,0,0.2)",
             }}
           >
             OpenClinica
           </span>
+          <div style={{ borderLeft: "1px solid rgba(212,168,84,0.2)", height: 28, width: 1 }} />
           <StudySwitcher />
         </Space>
         <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
           <Button
             type="text"
             style={{
-              color: "rgba(248,245,240,0.8)",
+              color: "rgba(248,245,240,0.85)",
               height: 60,
               fontFamily: "'DM Sans', sans-serif",
+              fontSize: 13,
+              letterSpacing: "0.02em",
             }}
           >
             <Space>
-              <UserOutlined style={{ color: "#D4A854" }} />
+              <UserOutlined style={{ color: "#D4A854", fontSize: 14 }} />
               {user?.name ?? "User"}
-              <DownOutlined style={{ fontSize: 10 }} />
+              <DownOutlined style={{ fontSize: 9, opacity: 0.6 }} />
             </Space>
           </Button>
         </Dropdown>
@@ -161,6 +184,7 @@ export default function AppLayout() {
           style={{
             background: token.colorBgContainer,
             borderRight: "1px solid #EDE8E0",
+            boxShadow: "inset 0 2px 4px rgba(15,26,46,0.04)",
           }}
           breakpoint="lg"
           collapsedWidth={0}
@@ -176,9 +200,8 @@ export default function AppLayout() {
             style={{
               height: "100%",
               borderRight: 0,
-              paddingTop: 12,
-              paddingBottom: 12,
-              transition: "background 0.2s",
+              paddingTop: 16,
+              paddingBottom: 16,
             }}
           />
         </Sider>
@@ -187,15 +210,24 @@ export default function AppLayout() {
             padding: 28,
             background: token.colorBgLayout,
             backgroundImage:
-              "radial-gradient(circle, #D9D4CA 0.8px, transparent 0.8px)",
-            backgroundSize: "24px 24px",
+              "radial-gradient(circle, #D9D4CA 0.6px, transparent 0.6px)",
+            backgroundSize: "28px 28px",
+            minHeight: "calc(100vh - 60px)",
           }}
         >
-          <Suspense fallback={<SkeletonPage />}>
-            <div className="animate-in" style={{ animationDuration: "0.45s" }}>
-              <Outlet />
-            </div>
-          </Suspense>
+          <div
+            style={{
+              maxWidth: 1400,
+              margin: "0 auto",
+              width: "100%",
+            }}
+          >
+            <Suspense fallback={<SkeletonPage />}>
+              <div className="animate-in" style={{ animationDuration: "0.5s" }}>
+                <Outlet />
+              </div>
+            </Suspense>
+          </div>
         </Content>
       </Layout>
     </Layout>

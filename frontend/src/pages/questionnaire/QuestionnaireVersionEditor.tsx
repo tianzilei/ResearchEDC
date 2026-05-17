@@ -277,7 +277,7 @@ export default function QuestionnaireVersionEditor() {
             const schema = editMode === "builder" ? builderJson : (() => {
               try { return JSON.parse(surveyJson); } catch { return null; }
             })();
-            if (!schema || !schema.pages) {
+            if (!schema?.pages) {
               message.error("Please build the questionnaire first");
               return;
             }
@@ -360,7 +360,7 @@ export default function QuestionnaireVersionEditor() {
                 label: <span><EyeOutlined /> Preview</span>,
                 children: (
                   <div style={{ maxWidth: 600, margin: "0 auto", padding: 16 }}>
-                    <Survey model={new Model(editJson as Record<string, unknown>)} />
+                    <Survey model={new Model(editJson)} />
                   </div>
                 ),
               },
