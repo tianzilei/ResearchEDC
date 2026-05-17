@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
+const CARD_ACCENTS = ["#099A87", "#D4A854", "#099A87", "#D4A854", "#099A87"];
+
 export default function Dashboard() {
   const { isAuthenticated, isInitialized, login } = useAuth();
   const { data: studies, isLoading, isError } = useStudies();
@@ -64,57 +66,74 @@ export default function Dashboard() {
     0,
   ) ?? 0;
 
+  const stats = [
+    {
+      title: "Active Studies",
+      value: activeStudies,
+      icon: <MedicineBoxOutlined />,
+    },
+    {
+      title: "Sites",
+      value: totalSites,
+      icon: <TeamOutlined />,
+    },
+    {
+      title: "Subjects",
+      value: 0,
+      icon: <UserOutlined />,
+    },
+    {
+      title: "CRFs Completed",
+      value: 0,
+      icon: <FileTextOutlined />,
+    },
+    {
+      title: "Queries Open",
+      value: 0,
+      icon: <CheckCircleOutlined />,
+    },
+  ];
+
   return (
-    <div>
-      <Title level={4} style={{ marginTop: 0 }}>
+    <div className="animate-in" style={{ animationDuration: "0.45s" }}>
+      <Title
+        level={3}
+        style={{
+          marginTop: 0,
+          marginBottom: 24,
+          paddingLeft: 14,
+          borderLeft: "3px solid #099A87",
+          fontFamily: "'Sora', sans-serif",
+          fontWeight: 600,
+        }}
+      >
         Dashboard
       </Title>
       <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic
-              title="Active Studies"
-              value={activeStudies}
-              prefix={<MedicineBoxOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic
-              title="Sites"
-              value={totalSites}
-              prefix={<TeamOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic
-              title="Subjects"
-              value={0}
-              prefix={<UserOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic
-              title="CRFs Completed"
-              value={0}
-              prefix={<FileTextOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card>
-            <Statistic
-              title="Queries Open"
-              value={0}
-              prefix={<CheckCircleOutlined />}
-            />
-          </Card>
-        </Col>
+        {stats.map((stat, index) => (
+          <Col key={stat.title} xs={24} sm={12} lg={6}>
+            <Card
+              className="card-hover"
+              style={{
+                animation: "fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both",
+                animationDelay: `${index * 0.08}s`,
+                borderLeft: `3px solid ${CARD_ACCENTS[index] ?? "#099A87"}`,
+                borderRadius: 12,
+              }}
+            >
+              <Statistic
+                title={stat.title}
+                value={stat.value}
+                prefix={
+                  <span style={{ color: CARD_ACCENTS[index] ?? "#099A87" }}>
+                    {stat.icon}
+                  </span>
+                }
+                valueStyle={{ fontFamily: "'Sora', sans-serif", fontWeight: 600 }}
+              />
+            </Card>
+          </Col>
+        ))}
       </Row>
     </div>
   );
