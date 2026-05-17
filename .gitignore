@@ -58,6 +58,8 @@ ws/src/main/resources/datainfo.properties
 
 # AI/Agent working directories
 .sisyphus/
+.opencode/
+.claude/
 
 # Local development files
 *.log
@@ -71,8 +73,30 @@ ws/src/main/resources/datainfo.properties
 /surefire-reports/
 /failsafe-reports/
 
-# Node.js (for future frontend)
+# Node.js / Frontend
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.eslintcache
+frontend/dist/
+frontend/node_modules/.vite/
+*.tsbuildinfo
+
+# Environment files (keep .env.example)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Build and temp
+*.class
+temp/
+.tmp/
+
+# IDE - VS Code / Cursor
+.vscode/
+*.code-workspace
+
+# macOS extended attributes
+*.icloud
