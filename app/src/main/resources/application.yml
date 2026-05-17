@@ -129,3 +129,26 @@ logging:
     org.akaza.openclinica: WARN
     org.springframework: WARN
     org.hibernate: WARN
+
+# Production: restrict Actuator to safe endpoints only (P0.1)
+# Env, beans, conditions are disabled to prevent sensitive information disclosure
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    env:
+      enabled: false
+    beans:
+      enabled: false
+    conditions:
+      enabled: false
+
+# Production: disable Swagger UI entirely (P0.2)
+# Try-it-out could allow unauthorized API probing in production
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false

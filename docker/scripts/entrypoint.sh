@@ -32,13 +32,13 @@ cat > "${CONFIG_DIR}/datainfo.properties" << EOF
 # Generated: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
 # =============================================================================
 
-# Database
+# Database — no default password: must be set via environment
 dbType=${OC_DB_TYPE:-postgres}
 dbHost=${OC_DB_HOST:-postgres}
 dbPort=${OC_DB_PORT:-5432}
-db=${OC_DB_NAME:-openclinica}
-dbUser=${OC_DB_USER:-openclinica}
-dbPass=${OC_DB_PASS:-openclinica}
+db=${OC_DB_NAME:?OC_DB_NAME is required}
+dbUser=${OC_DB_USER:?OC_DB_USER is required}
+dbPass=${OC_DB_PASS:?OC_DB_PASS is required}
 
 # File paths
 filePath=${DATA_DIR}/
@@ -49,10 +49,10 @@ logLocation=local
 logLevel=${OC_LOG_LEVEL:-info}
 
 # System URL
-sysURL=${OC_SYS_URL:-http://localhost:8080/MainMenu}
+sysURL=${OC_SYS_URL:?OC_SYS_URL is required}
 
-# Admin email
-adminEmail=${OC_ADMIN_EMAIL:-admin@example.com}
+# Admin email — must be configured; no default
+adminEmail=${OC_ADMIN_EMAIL:?OC_ADMIN_EMAIL is required}
 
 # User account notification (email or screen)
 userAccountNotification=${OC_USER_ACCOUNT_NOTIFICATION:-email}
@@ -71,7 +71,7 @@ mailSmtpStarttls.enable=${OC_MAIL_STARTTLS:-false}
 mailSmtpsAuth=false
 mailSmtpsStarttls.enable=false
 mailSmtpConnectionTimeout=${OC_MAIL_TIMEOUT:-100}
-mailErrorMsg=${OC_ADMIN_EMAIL:-admin@example.com}
+mailErrorMsg=${OC_ADMIN_EMAIL:?OC_ADMIN_EMAIL is required}
 
 # LDAP configuration
 ldap.enabled=${OC_LDAP_ENABLED:-false}
@@ -105,11 +105,8 @@ designerURL=${OC_DESIGNER_URL:-https://designer13.openclinica.com/}
 OpenClinica.version=3.18-SNAPSHOT
 EOF
 
-# Also place a copy in the classpath for Spring context loading
-# (CoreResources also looks for classpath:datainfo.properties)
-WEBAPP_CLASSES="${CATALINA_HOME}/webapps/ROOT/WEB-INF/classes"
-mkdir -p "${WEBAPP_CLASSES}" 2>/dev/null || true
-cp "${CONFIG_DIR}/datainfo.properties" "${WEBAPP_CLASSES}/datainfo.properties" 2>/dev/null || true
+# Security: only write credentials to CONFIG_DIR, not to WEBAPP_CLASSES.
+# Use spring.config.additional-location if classpath access is needed.
 
 echo "[entrypoint] Generated datainfo.properties:"
 echo "  DB:     ${OC_DB_TYPE}://${OC_DB_HOST}:${OC_DB_PORT}/${OC_DB_NAME}"
