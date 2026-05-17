@@ -38,6 +38,7 @@
 
 		<!-- Spring Boot & ecosystem (for app module) -->
 		<spring-boot.version>3.2.5</spring-boot.version>
+		<spring-modulith.version>1.1.4</spring-modulith.version>
 		<springdoc-openapi.version>2.5.0</springdoc-openapi.version>
 	</properties>
 	<profiles>
@@ -97,6 +98,13 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.springframework.modulith</groupId>
+				<artifactId>spring-modulith-bom</artifactId>
+				<version>${spring-modulith.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.jmesa</groupId>
 				<artifactId>jmesa</artifactId>
@@ -271,7 +279,7 @@
 		<dependency>
 			<groupId>org.codehaus.janino</groupId>
 			<artifactId>janino</artifactId>
-			<version>2.7.5</version>
+			<version>3.1.10</version>
 		</dependency>
 
 		<!-- SPRING -->
