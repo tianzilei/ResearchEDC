@@ -33,7 +33,7 @@ export default function CrfList() {
   const columns = [
     { title: "Name", dataIndex: "name", key: "name",
       render: (name: string, r: CrfSummary) => (
-        <a onClick={() => navigate(`/app/crfs/${r.crfId}`)}>{name}</a>
+        <a onClick={() => { navigate(`/app/crfs/${r.crfId}`); }}>{name}</a>
       ),
     },
     { title: "OID", dataIndex: "ocOid", key: "ocOid" },

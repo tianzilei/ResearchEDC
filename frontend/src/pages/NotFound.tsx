@@ -18,7 +18,7 @@ export default function NotFound() {
         title="404"
         subTitle="Page not found."
         extra={
-          <Button type="primary" onClick={() => navigate("/app/dashboard")}>
+          <Button type="primary" onClick={() => { navigate("/app/dashboard"); }}>
             Back to Dashboard
           </Button>
         }

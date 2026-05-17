@@ -48,7 +48,7 @@ export default function Dashboard() {
           type="warning"
           showIcon
           action={
-            <a onClick={() => navigate(0)}>Retry</a>
+            <a onClick={() => { navigate(0); }}>Retry</a>
           }
         />
       </div>

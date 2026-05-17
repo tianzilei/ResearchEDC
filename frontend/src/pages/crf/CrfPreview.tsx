@@ -51,7 +51,7 @@ export default function CrfPreview() {
   return (
     <div>
       <Space style={{ marginBottom: 16 }}>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate("/app/crfs")}>Back to CRFs</Button>
+        <Button icon={<ArrowLeftOutlined />} onClick={() => { navigate("/app/crfs"); }}>Back to CRFs</Button>
       </Space>
 
       <Title level={4}><FileTextOutlined /> {version.name}</Title>
