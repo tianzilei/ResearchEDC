@@ -1,0 +1,106 @@
+{
+  "title": "Epworth Sleepiness Scale (ESS)",
+  "description": "Epworth 嗜睡量表",
+  "pages": [
+    {
+      "elements": [
+        {
+          "type": "radiogroup",
+          "name": "ESS_01",
+          "title": "1. 坐着阅读时",
+          "choices": [
+            {"value": 0, "text": "从不打瞌睡"},
+            {"value": 1, "text": "轻度可能打瞌睡"},
+            {"value": 2, "text": "中度可能打瞌睡"},
+            {"value": 3, "text": "高度可能打瞌睡"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_02",
+          "title": "2. 看电视时",
+          "choices": [
+            {"value": 0, "text": "从不打瞌睡"},
+            {"value": 1, "text": "轻度可能打瞌睡"},
+            {"value": 2, "text": "中度可能打瞌睡"},
+            {"value": 3, "text": "高度可能打瞌睡"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_03",
+          "title": "3. 在公共场合坐着不动（如开会或看电影）时",
+          "choices": [
+            {"value": 0, "text": "从不打瞌睡"},
+            {"value": 1, "text": "轻度可能打瞌睡"},
+            {"value": 2, "text": "中度可能打瞌睡"},
+            {"value": 3, "text": "高度可能打瞌睡"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_04",
+          "title": "4. 连续乘坐汽车1小时无间断时",
+          "choices": [
+            {"value": 0, "text": "从不打瞌睡"},
+            {"value": 1, "text": "轻度可能打瞌睡"},
+            {"value": 2, "text": "中度可能打瞌睡"},
+            {"value": 3, "text": "高度可能打瞌睡"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_05",
+          "title": "5. 条件允许的情况下，下午躺着休息时",
+          "choices": [
+            {"value": 0, "text": "从不打瞌睡"},
+            {"value": 1, "text": "轻度可能打瞌睡"},
+            {"value": 2, "text": "中度可能打瞌睡"},
+            {"value": 3, "text": "高度可能打瞌睡"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_06",
+          "title": "6. 坐着和别人谈话时",
+          "choices": [
+            {"value": 0, "text": "从不打瞌睡"},
+            {"value": 1, "text": "轻度可能打瞌睡"},
+            {"value": 2, "text": "中度可能打瞌睡"},
+            {"value": 3, "text": "高度可能打瞌睡"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_07",
+          "title": "7. 午餐(未饮酒)安静地坐着时",
+          "choices": [
+            {"value": 0, "text": "从不打瞌睡"},
+            {"value": 1, "text": "轻度可能打瞌睡"},
+            {"value": 2, "text": "中度可能打瞌睡"},
+            {"value": 3, "text": "高度可能打瞌睡"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_08",
+          "title": "8. 在车上堵车停几分钟时",
+          "choices": [
+            {"value": 0, "text": "从不打瞌睡"},
+            {"value": 1, "text": "轻度可能打瞌睡"},
+            {"value": 2, "text": "中度可能打瞌睡"},
+            {"value": 3, "text": "高度可能打瞌睡"}
+          ],
+          "isRequired": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "title": "Insomnia Severity Index (ISI)",
+  "description": "失眠严重程度指数",
+  "pages": [
+    {
+      "elements": [
+        {
+          "type": "radiogroup",
+          "name": "ISI_01",
+          "title": "1. 入睡困难",
+          "choices": [
+            {"value": 0, "text": "无"},
+            {"value": 1, "text": "轻度"},
+            {"value": 2, "text": "中度"},
+            {"value": 3, "text": "重度"},
+            {"value": 4, "text": "极重度"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ISI_02",
+          "title": "2. 维持睡眠困难",
+          "choices": [
+            {"value": 0, "text": "无"},
+            {"value": 1, "text": "轻度"},
+            {"value": 2, "text": "中度"},
+            {"value": 3, "text": "重度"},
+            {"value": 4, "text": "极重度"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ISI_03",
+          "title": "3. 早醒",
+          "choices": [
+            {"value": 0, "text": "无"},
+            {"value": 1, "text": "轻度"},
+            {"value": 2, "text": "中度"},
+            {"value": 3, "text": "重度"},
+            {"value": 4, "text": "极重度"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ISI_04",
+          "title": "4. 对您目前的睡眠模式满意度",
+          "choices": [
+            {"value": 0, "text": "非常满意"},
+            {"value": 1, "text": "满意"},
+            {"value": 2, "text": "一般"},
+            {"value": 3, "text": "不满意"},
+            {"value": 4, "text": "非常不满意"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ISI_05",
+          "title": "5. 您的睡眠问题在多大程度上干扰了您的日常功能",
+          "choices": [
+            {"value": 0, "text": "完全无干扰"},
+            {"value": 1, "text": "轻微"},
+            {"value": 2, "text": "有些"},
+            {"value": 3, "text": "很多"},
+            {"value": 4, "text": "非常干扰"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ISI_06",
+          "title": "6. 您的睡眠问题在多大程度上影响了您的生活质量",
+          "choices": [
+            {"value": 0, "text": "完全无影响"},
+            {"value": 1, "text": "轻微"},
+            {"value": 2, "text": "有些"},
+            {"value": 3, "text": "很多"},
+            {"value": 4, "text": "非常影响"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ISI_07",
+          "title": "7. 您对目前的睡眠问题有多大程度的担忧/痛苦",
+          "choices": [
+            {"value": 0, "text": "完全不担忧"},
+            {"value": 1, "text": "轻微"},
+            {"value": 2, "text": "有些"},
+            {"value": 3, "text": "很多"},
+            {"value": 4, "text": "非常担忧"}
+          ],
+          "isRequired": true
+        }
+      ]
+    }
+  ]
+}

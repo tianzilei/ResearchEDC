@@ -1,0 +1,94 @@
+{
+  "title": "Generalized Anxiety Disorder 7 (GAD-7)",
+  "description": "广泛性焦虑障碍量表",
+  "pages": [
+    {
+      "elements": [
+        {
+          "type": "radiogroup",
+          "name": "GAD7_01",
+          "title": "1. 感觉紧张、焦虑或急切",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "GAD7_02",
+          "title": "2. 不能停止或无法控制地担心",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "GAD7_03",
+          "title": "3. 对各种各样的事情过度担忧",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "GAD7_04",
+          "title": "4. 很难放松下来",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "GAD7_05",
+          "title": "5. 坐立不安，以至于很难安静地坐着",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "GAD7_06",
+          "title": "6. 容易烦躁或被激怒",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "GAD7_07",
+          "title": "7. 害怕可能发生的事情而非常不安",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        }
+      ]
+    }
+  ]
+}

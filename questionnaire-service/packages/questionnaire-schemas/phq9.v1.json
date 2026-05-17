@@ -1,0 +1,118 @@
+{
+  "title": "Patient Health Questionnaire 9 (PHQ-9)",
+  "description": "病人健康问卷抑郁量表",
+  "pages": [
+    {
+      "elements": [
+        {
+          "type": "radiogroup",
+          "name": "PHQ9_01",
+          "title": "1. 做事时提不起劲或没有兴趣",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "PHQ9_02",
+          "title": "2. 感到心情低落、沮丧或绝望",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "PHQ9_03",
+          "title": "3. 入睡困难、睡不安稳或睡眠过多",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "PHQ9_04",
+          "title": "4. 感觉疲倦或没有活力",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "PHQ9_05",
+          "title": "5. 食欲不振或吃太多",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "PHQ9_06",
+          "title": "6. 觉得自己很糟，或觉得自己很失败",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "PHQ9_07",
+          "title": "7. 对事物专注有困难",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "PHQ9_08",
+          "title": "8. 动作或说话速度缓慢，或相反，比平常更多动",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "PHQ9_09",
+          "title": "9. 有不如死掉或用某种方式伤害自己的念头",
+          "choices": [
+            {"value": 0, "text": "完全不会"},
+            {"value": 1, "text": "几天"},
+            {"value": 2, "text": "一半以上天数"},
+            {"value": 3, "text": "几乎每天"}
+          ],
+          "isRequired": true
+        }
+      ]
+    }
+  ]
+}

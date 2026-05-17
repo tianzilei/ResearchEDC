@@ -1,0 +1,73 @@
+services:
+  api:
+    build: ../apps/api
+    ports:
+      - "8000:8000"
+    env_file: ../apps/api/.env
+    environment:
+      - DATABASE_URL=postgresql+psycopg://openclinica:openclinica@postgres:5432/openclinica_questionnaire
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - CORS_ORIGINS=["http://localhost:3000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ../apps/api:/app
+    command: >
+      sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  worker:
+    build: ../apps/api
+    env_file: ../apps/api/.env
+    environment:
+      - DATABASE_URL=postgresql+psycopg://openclinica:openclinica@postgres:5432/openclinica_questionnaire
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    command: celery -A app.workers.celery_app worker --loglevel=info --concurrency=2
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: openclinica
+      POSTGRES_PASSWORD: openclinica
+      POSTGRES_DB: openclinica_questionnaire
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U openclinica -d openclinica_questionnaire"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio-password
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
