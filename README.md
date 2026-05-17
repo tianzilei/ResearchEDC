@@ -50,14 +50,15 @@ OpenClinica/
 ├── frontend/           # React 19 SPA (pnpm workspace)
 │   ├── src/
 │   │   ├── api/        # API 客户端 + 类型
-│   │   ├── components/ # 通用组件 (StudySwitcher, SkeletonCard)
-│   │   ├── hooks/      # TanStack Query 封装 + 权限 hooks
+│   │   ├── components/ # 通用组件 (StudySwitcher, SkeletonCard, FormField)
+│   │   │   └── form-engine/  # 表单引擎 (FormField, DataEntryForm, FormStatus)
+│   │   ├── hooks/      # TanStack Query 封装 + 权限 hooks + useAutoSave
 │   │   ├── layouts/    # AppLayout (顶栏 + 侧栏 + 内容区)
-│   │   ├── pages/      # 页面组件
+│   │   ├── pages/      # 页面组件 (Dashboard, CRF, 随机化, 导出)
 │   │   ├── providers/  # AuthProvider, AppProviders
 │   │   ├── router/     # React Router 配置
 │   │   ├── styles/     # Ant Design 主题
-│   │   └── types/      # TypeScript 类型定义
+│   │   └── types/      # TypeScript 类型定义 (用户, 研究, 随机化)
 │   ├── vite.config.ts  # Vite 配置 (代理 / API 构建输出)
 │   └── package.json
 ├── app/                # Spring Boot 模块化单体入口
@@ -65,8 +66,11 @@ OpenClinica/
 │   │   └── org/akaza/openclinica/
 │   │       ├── config/      # WebMvcConfig (SPA fallback), WebServiceConfig, OpenApiConfig
 │   │       └── module/      # Spring Modulith 模块
-│   │           ├── notification/  # 通知模块 (已提取)
-│   │           └── identity/      # 身份模块桩
+│   │           ├── randomization/  # 随机化系统 (算法 + API)
+│   │           ├── export/         # 导出中心 (异步任务)
+│   │           ├── crf/            # CRF 元数据 (REST API)
+│   │           ├── notification/   # 通知模块 (事件驱动邮件)
+│   │           └── identity/       # 身份模块桩
 │   └── src/main/resources/
 │       ├── application.yml # profile 配置
 │       └── static/         # 前端构建产物 (自动生成)
@@ -133,12 +137,38 @@ docker compose -f deploy/compose/docker-compose.dev.yml up --build
 
 ## 测试架构
 
-| 层级 | 基类 | 数据库 | 数量 |
-|------|------|--------|------|
-| 纯单元测试 | `junit.framework.TestCase` | ❌ | 17 (core) + 2 (web) |
-| DAO 集成测试 | `HibernateOcDbTestCase` (DBUnit) | ✅ | DBUnit XML 数据集 |
-| Service 集成测试 | `HibernateOcDbTestCase` | ✅ | 同 DAO |
-| Modulith 验证 | JUnit 5 + `ApplicationModules` | ❌ | 1 (app) |
+| 层级 | 基类 | 数据库 | 当前状态 |
+|------|------|--------|---------|
+| 纯单元测试 | `junit.framework.TestCase` | ❌ | ✅ 8 tests pass (core) |
+| Mockito 测试 | `junit.framework.TestCase` | ❌ | ✅ 3 tests pass (web) |
+| DAO 集成测试 | `HibernateOcDbTestCase` (DBUnit) | ✅ | ⚠️ 待启用 (测试方法被注释) |
+| Service 集成测试 | `HibernateOcDbTestCase` | ✅ | ⚠️ 同上 |
+| Modulith 验证 | JUnit 5 + `ApplicationModules` | ❌ | ✅ 1 test pass |
+
+### 运行测试
+```bash
+# 全量测试 (需要 PostgreSQL Docker)
+mvn test
+
+# Modulith 模块验证 (无需数据库)
+mvn test -pl app -am -Dtest=ModulithVerificationTest
+
+# 启动 PostgreSQL Docker
+docker run -d --name oc-test-pg -e POSTGRES_USER=clinica \
+  -e POSTGRES_PASSWORD=clinica \
+  -e POSTGRES_DB=openclinica-TEST-3.12 \
+  -p 5432:5432 postgres:17-alpine
+```
+
+**注意:** `JAVA_HOME` 需指向 JDK 21 (Homebrew 默认 JDK 25 会导致 Mockito/ByteBuddy 不兼容)
+
+### 前端质量门禁
+| 检查 | 命令 | 状态 |
+|------|------|------|
+| TypeScript strict | `pnpm typecheck` | ✅ 0 errors |
+| ESLint | `pnpm lint` | ✅ 0 errors |
+| 构建 | `pnpm build` | ✅ |
+| 测试 | `pnpm test` | ⏳ Vitest 待编写 |
 
 测试数据文件: `core/src/test/resources/org/akaza/openclinica/{dao,service}/testdata/`
 
@@ -177,8 +207,24 @@ docker compose -f deploy/compose/docker-compose.dev.yml up --build
 | 数据提取 | `control/extract/` | ODM 导出、报告生成 |
 | SOAP API | `ws/` | 研究/Subject/CRUD |
 | REST API | `controller/` | Spring MVC JSON API |
-| 通知模块 | `module/notification/` | Spring Modulith 模块 (事件驱动邮件) |
-| 前台 SPA | `frontend/src/` | React 19 管理界面 |
+| **随机化系统** | `module/randomization/` | Spring Modulith — 3 种算法, 8 表 REST API |
+| **导出中心** | `module/export/` | Spring Modulith — 异步任务, 取消/重试 |
+| **CRF 元数据** | `module/crf/` | Spring Modulith — CRF/REST API |
+| 通知模块 | `module/notification/` | Spring Modulith — 事件驱动邮件 |
+| 前台 SPA | `frontend/src/` | React 19 管理界面 (8 页面) |
+
+### 前端页面一览
+| 页面 | 路由 | 功能 |
+|------|------|------|
+| Dashboard | `/app/dashboard` | 登录后首页, 研究概览统计 |
+| CRF 列表 | `/app/crfs` | CRF 库浏览 |
+| CRF 预览 | `/app/crfs/:versionId` | 版本详情 + 分段结构 |
+| 导出中心 | `/app/data-export` | 创建/跟踪/取消导出任务 |
+| 随机化 | `/app/randomization` | Scheme Dashboard + 创建 |
+| Scheme 详情 | `/app/randomization/schemes/:id` | 详情/激活/关闭 |
+| 分配 | `/app/randomization/schemes/:id/allocate` | 受试者随机分配 |
+| 揭盲 | `/app/randomization/schemes/:id/unblinding` | 揭盲请求/审核 |
+| 审计日志 | `/app/randomization/schemes/:id/audit` | 操作审计追踪 |
 
 ---
 

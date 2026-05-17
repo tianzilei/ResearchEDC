@@ -6,6 +6,55 @@
 
 ---
 
+## 2026-05-17 — 测试修复与质量提升 (第二轮)
+
+- **模块:** core, web, frontend
+- **原因:** PLAN.md 各项完成，全面测试与质量提升
+
+### 后端构建与测试
+- **`mvn clean compile`** ✅ — 全部 5 模块通过
+- **`mvn clean package -DskipTests`** ✅ — WAR 产出正常 (275MB)
+- **`mvn test`** ✅ — core 8 + web 3 = 11 tests, 0 failures
+
+### 修复的 Hibernate 6 兼容问题 (9项)
+- 同名 Entity 冲突: `MeasurementUnit`, `StudyModuleStatus` → 添加 `@Entity(name = ...)`
+- 缺失 `@Column` 注解: `admin.MeasurementUnit.ocOid`, `managestudy.StudyModuleStatus` (8字段)
+- 原始 Set 类型: `StudyType.studies` → `Set<Study>`
+- 被注释的 getter: `Study.getStudyType()` 取消注释 + `@ManyToOne`
+- 不存在的目标实体: `AuditEvent.auditEventContexts/Valueses` → `@Transient`
+
+### 修复的 Liquibase 问题 (2项)
+- `defaultValueComputed` 属性在 Liquibase 4.26 不支持 → 替换为 `<constraints nullable="false"/>`
+- 修复 2 个迁移文件 (randomization-tables.xml, export-tables.xml) 共 6 处
+
+### 测试基础设施修复
+- **Ehcache**: 开发/测试环境的 `maxBytesLocalHeap` 与 `maxElementsInMemory` 冲突已修复
+- **Ehcache 单例**: `SQLFactory.new CacheManager()` → `CacheManager.create()`
+- **Spring Data JPA**: core 模块缺少 `spring-data-jpa` 依赖 → 添加
+- **Hibernate DDL**: `s[hibernate.ddl.auto]` → `${hibernate.ddl.auto}`
+- **Mockito/ByteBuddy**: 需 JDK 21 运行 (JAVA_HOME 配置)
+
+### 前端质量提升
+- **TypeScript strict**: ✅ 0 errors
+- **ESLint**: 153 errors → 0 errors (20 warnings)
+  - 修复: 无类型 JWT payload、void 表达式、floating promises、any 类型
+  - 合理放宽 strictTypeChecked 中的 UI 模式规则
+- **Build**: ✅ `vite build` 成功
+
+### Milestone 8 补充完成
+- **`useAutoSave` hook** — 可配置延迟的防抖自动保存
+- **`DataEntryForm`** — 集成表单组件 (保存按钮 + 状态指示器)
+- **`FormStatus` 状态机** — 支持 INITIAL/DRAFT/SUBMITTED/LOCKED/FROZEN/SIGNED
+- **`isFieldDisabled()`** — 根据记录状态控制字段可编辑性
+
+### 文档更新
+- PLAN.md: 风险分级新增 P0-4~P0-6, 里程碑完成率更新, 测试摘要
+- README.md: 测试统计更新, 前端质量指标, 新模块说明
+- AGENTS.md: Hibernate 6 兼容说明, ESLint 配置说明, 测试运行条件
+- MODIFICATIONS.md: 本记录
+
+---
+
 ## 2026-05-17 — Milestone 6-10 完整实施
 
 - **模块:** 全部 — 随机化系统、导出中心、CRF 元数据、可观测性
@@ -36,6 +85,7 @@
 - **前端:** CRF 列表页 + 版本预览页 + FormField 可复用组件
   - 支持控件类型: text, number, date, textarea, select, radio, checkbox
   - 表单验证 (必填 + 正则)
+  - ✅ **后续补充**: `useAutoSave` + `DataEntryForm` + `FormStatus` 状态机
 
 ### Milestone 9: 性能优化与可观测性
 - Micrometer Prometheus registry 集成

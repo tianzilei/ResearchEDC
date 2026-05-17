@@ -9,11 +9,14 @@ OpenClinica is an open-source Electronic Data Capture (EDC) and Clinical Data Ma
 
 New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/static/`. Backend modular monolith with Spring Modulith at `org.akaza.openclinica.module.*`.
 
+**当前状态:** `mvn clean compile` ✅ | `mvn clean package -DskipTests` ✅ | `mvn test` 11/11 pass ✅ | Frontend TypeScript 0 errors ✅ | ESLint 0 errors ✅
+
 ## STRUCTURE
 
 ```
 ./
 ├── app/            # Spring Boot modular monolith entry point (WAR)
+│   └── module/     # Spring Modulith modules (randomization, export, crf, notification, identity)
 ├── core/           # Domain logic, DAOs, services, Hibernate entities
 ├── frontend/       # React 19 + TypeScript SPA (pnpm workspace)
 ├── web/            # Web UI (JSP), servlets, controllers, REST endpoints  
@@ -65,8 +68,10 @@ New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/stati
 - **Auth:** Keycloak OIDC via `AuthProvider` context (session token based)
 - **State:** Server state via TanStack Query; session state via React context
 - **Permissions:** `usePermissions` hook derives from JWT roles via `ROLE_PERMISSIONS` matrix
+- **Form engine:** `FormField` + `DataEntryForm` + `FormStatus` (auto-save via `useAutoSave`)
 - **Build:** `pnpm build` → `app/src/main/resources/static/`
 - **Dev server:** `pnpm dev` on port 5173, proxies `/api` `/actuator` `/auth` to localhost:8080
+- **Quality:** `pnpm typecheck` (0 errors) | `pnpm lint` (0 errors) | `pnpm build` (no warnings)
 
 ## TESTING ARCHITECTURE
 
@@ -91,6 +96,11 @@ Tests live in `core/src/test` (17 files), `web/src/test` (2 files), and `app/src
 ### Frontend Tests (planned)
 - Vitest + jsdom for unit and component tests
 - Playwright for E2E tests
+
+**Test run prerequisites:**
+- `JAVA_HOME` must point to JDK 21 (Java 25 breaks Mockito/ByteBuddy)
+- PostgreSQL must be running on localhost:5432 for `mvn test` (core DBUnit tests)
+- Start test DB: `docker run -d --name oc-test-pg -e POSTGRES_USER=clinica -e POSTGRES_PASSWORD=clinica -e POSTGRES_DB=openclinica-TEST-3.12 -p 5432:5432 postgres:17-alpine`
 
 ## ANTI-PATTERNS (THIS PROJECT)
 
