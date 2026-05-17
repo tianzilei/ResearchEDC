@@ -1,3 +1,26 @@
+/* ============================================
+   OpenClinica — Global Styles
+   ============================================ */
+
+:root {
+  --color-primary: #099a87;
+  --color-primary-hover: #07b89a;
+  --color-primary-active: #087a6c;
+  --color-dark-base: #0f1a2e;
+  --color-dark-elevated: #1a2740;
+  --color-brass: #d4a854;
+  --color-brass-light: #e8c87a;
+  --color-surface: #f8f5f0;
+  --color-surface-alt: #efeae2;
+  --color-text-primary: #1a1d23;
+  --color-text-secondary: #6b7280;
+  --color-border-light: #e5e0d8;
+  --color-border-subtle: #ede8e0;
+  --font-heading: "Sora", sans-serif;
+  --font-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
 *,
 *::before,
 *::after {
@@ -14,15 +37,78 @@ body,
 }
 
 body {
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    "Noto Sans",
-    sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: var(--color-text-primary);
+  background-color: #efeae2;
+  background-image: radial-gradient(circle, #d9d4ca 0.8px, transparent 0.8px);
+  background-size: 24px 24px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  color: var(--color-text-primary);
+}
+
+/* ── Page Entrance Animation ── */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── Card hover effect (applied via className on Cards) ── */
+
+.card-hover {
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 26, 46, 0.10);
+}
+
+/* ── Scrollbar styling ── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(15, 26, 46, 0.15);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 26, 46, 0.25);
+}
+
+/* ── Selection ── */
+
+::selection {
+  background: rgba(9, 154, 135, 0.2);
+  color: var(--color-text-primary);
 }
