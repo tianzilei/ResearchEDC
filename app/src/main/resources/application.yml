@@ -1,0 +1,122 @@
+# =============================================================================
+# OpenClinica Spring Boot Configuration
+# =============================================================================
+# Profiles: dev, test, prod
+# Usage: --spring.profiles.active=dev
+# =============================================================================
+
+# -- Default profile (shared across all environments) --
+server:
+  port: 8080
+  servlet:
+    context-path: /OpenClinica
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  # Application info for Actuator /info endpoint
+  application:
+    name: OpenClinica
+    version: @project.version@
+
+  # JSP view resolution (legacy UI)
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
+    static-path-pattern: /static/**
+
+  # Servlet multipart configuration
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  # Jackson serialization
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      fail-on-empty-beans: false
+
+  # JPA / Hibernate (overridden by XML config via @ImportResource)
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+
+# Actuator endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,beans,conditions
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: when-authorized
+
+# Springdoc OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    try-it-out-enabled: true
+    operations-sorter: method
+  show-actuator: true
+
+# =============================================================================
+# Profile: dev (development)
+# =============================================================================
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.akaza.openclinica: DEBUG
+    org.springframework: INFO
+    org.hibernate: INFO
+    org.hibernate.SQL: DEBUG
+
+# =============================================================================
+# Profile: test (testing / CI)
+# =============================================================================
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+server:
+  port: 0
+
+logging:
+  level:
+    org.akaza.openclinica: DEBUG
+    org.springframework: INFO
+
+# =============================================================================
+# Profile: prod (production)
+# =============================================================================
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.akaza.openclinica: WARN
+    org.springframework: WARN
+    org.hibernate: WARN
