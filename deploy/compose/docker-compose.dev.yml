@@ -99,6 +99,37 @@ services:
         condition: service_healthy
     logging: *default-logging
 
+  # ---- OpenClinica App (Spring Boot + React SPA) ----
+  app:
+    build:
+      context: ../..
+      dockerfile: docker/app/Dockerfile
+    container_name: oc-app
+    restart: unless-stopped
+    ports:
+      - "${OC_APP_PORT:-8083}:8080"
+    environment:
+      OC_DB_HOST: postgres
+      OC_DB_PORT: "5432"
+      OC_DB_NAME: ${OC_DB_NAME:-openclinica}
+      OC_DB_USER: ${OC_DB_USER:-openclinica}
+      OC_DB_PASS: ${OC_DB_PASS:-openclinica}
+      OC_SYS_URL: ${OC_SYS_URL:-http://localhost:8083/app/dashboard}
+      OC_ADMIN_EMAIL: ${OC_ADMIN_EMAIL:-admin@example.com}
+      OC_LOG_LEVEL: ${OC_LOG_LEVEL:-info}
+      OC_MAIL_HOST: mailhog
+      OC_MAIL_PORT: "1025"
+      OC_MAIL_AUTH: "false"
+      OC_LDAP_ENABLED: "false"
+      OC_WEBAPP_NAME: "ROOT"
+    volumes:
+      - oc-data:/opt/openclinica/data
+      - oc-logs:/opt/openclinica/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging: *default-logging
+
   # ---- MailHog (SMTP capture for development) ----
   mailhog:
     image: mailhog/mailhog:latest
