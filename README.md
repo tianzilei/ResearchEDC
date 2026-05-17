@@ -5,8 +5,41 @@
 OpenClinica 是一个开源的临床试验电子数据采集（EDC）和临床数据管理（CDM）系统，用于优化临床试验工作流程。
 
 **当前版本:** 3.18-SNAPSHOT  
-**最后更新:** 2026-05-17  
-**Git Commit:** 69cccaf0f
+**最后更新:** 2026-05-17
+
+---
+
+## 测试架构
+
+OpenClinica 采用三层测试体系，覆盖不同粒度的业务逻辑验证：
+
+### 1. 纯单元测试（JUnit）
+- **基类:** `junit.framework.TestCase`
+- **依赖:** 无 Spring 上下文，无数据库
+- **用途:** 测试表达式语法验证（`ExpressionServiceTest`）、日期格式转换（`ItemDataDAOTest`）、权限控制（`SubmitDataServletTest`）
+- **Mock 框架:** Mockito（用于 web 层角色/权限桩代码）
+
+### 2. DAO 集成测试（DBUnit）
+- **基类:** `HibernateOcDbTestCase`（继承 DBUnit `DataSourceBasedDBTestCase`）
+- **依赖:** 完整 Spring 上下文 + 真实数据库连接（通过 `test.properties` 配置）
+- **数据准备:** DBUnit XML 文件，按约定路径自动加载：
+  ```
+  测试类: org.akaza.openclinica.dao.rule.RuleSetDaoTest
+  数据文件: org/akaza/openclinica/dao/rule/testdata/RuleSetDaoTest.xml
+  ```
+- **事务隔离:** `tearDown()` 中回滚未提交事务，关闭 DataSource 连接
+
+### 3. Service 集成测试
+- **基类:** `HibernateOcDbTestCase`（同 DAO 测试）
+- **用途:** 验证业务编排逻辑，如 `RuleSetService.filterByStatusEqualsAvailable()`
+- **Spring Bean 获取:** `getContext().getBean("serviceName")`
+
+### 测试文件统计
+| 模块 | 测试类 | DBUnit XML 数据集 |
+|------|--------|-------------------|
+| `core/` | 17 | 12 |
+| `web/` | 2 | 0 |
+| **总计** | **19** | **12** |
 
 ---
 
@@ -48,7 +81,7 @@ OpenClinica/
 ├── pom.xml                    # Maven父POM
 ├── README.md                  # 本文件
 ├── AGENTS.md                  # AI助手知识库
-├── core/                      # 核心模块（754个Java文件）
+├── core/                      # 核心模块（736个Java文件）
 │   ├── src/main/java/org/akaza/openclinica/
 │   │   ├── bean/             # DTO/POJO对象
 │   │   ├── dao/              # 数据访问层
@@ -61,7 +94,7 @@ OpenClinica/
 │       ├── migration/        # Liquibase迁移脚本
 │       └── properties/       # 配置文件
 │
-├── web/                       # Web模块（486个Java文件）
+├── web/                       # Web模块（481个Java文件，419个JSP页面）
 │   ├── src/main/java/org/akaza/openclinica/
 │   │   ├── control/          # Servlet控制器
 │   │   ├── controller/       # Spring MVC REST控制器
@@ -280,10 +313,11 @@ mvn liquibase:rollback -Dliquibase.rollbackTag=version_3_0 -pl core
 
 ## 相关文档
 
-- [AGENTS.md](./AGENTS.md) - AI助手知识库
-- [core/AGENTS.md](./core/AGENTS.md) - 核心模块详情
-- [web/AGENTS.md](./web/AGENTS.md) - Web模块详情
+- [AGENTS.md](./AGENTS.md) - AI助手知识库（测试架构、编码约定）
+- [core/AGENTS.md](./core/AGENTS.md) - 核心模块详情（DAO/Service 测试模式）
+- [web/AGENTS.md](./web/AGENTS.md) - Web模块详情（Mockito 测试模式）
 - [ws/AGENTS.md](./ws/AGENTS.md) - Web服务模块详情
+- [MODERNIZATION_FINAL.md](./MODERNIZATION_FINAL.md) - 现代化改造方案
 
 ---
 

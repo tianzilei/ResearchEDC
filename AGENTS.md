@@ -1,7 +1,6 @@
 # OpenClinica - PROJECT KNOWLEDGE BASE
 
 **Generated:** 2026-05-17  
-**Commit:** 69cccaf0f  
 **Branch:** master  
 
 ## OVERVIEW
@@ -39,7 +38,7 @@ OpenClinica is an open-source Electronic Data Capture (EDC) and Clinical Data Ma
 - **Beans:** `*Bean` suffix for DTOs (e.g., `StudyBean`)
 - **DAOs:** `*DAO` suffix, extend `EntityDAO<K extends EntityBean>`
 - **Servlets:** `*Servlet` suffix, extend `SecureController` or `CoreSecureController`
-- **Tests:** `*Test.java`, use `HibernateOcDbTestCase` base class
+- **Tests:** 3-tier: JUnit (`TestCase`), DAO integration (`HibernateOcDbTestCase` + DBUnit), Service integration
 - **Logging:** SLF4J + Logback (configured in `logback.xml`)
 
 ## ANTI-PATTERNS (THIS PROJECT)
@@ -50,6 +49,23 @@ OpenClinica is an open-source Electronic Data Capture (EDC) and Clinical Data Ma
 - **NEVER** hardcode file paths - use `CoreResources.getField()`
 - **DO NOT** ignore transaction boundaries - use `@Transactional` or `TransactionTemplate`
 - **AVOID** Java 7+ features (project targets Java 7 compatibility)
+
+## TESTING ARCHITECTURE
+
+Tests live in `core/src/test` (17 files) and `web/src/test` (2 files). Three tiers:
+
+| Tier | Base Class | DB Needed | Use Case |
+|------|-----------|-----------|----------|
+| **Unit** | `junit.framework.TestCase` | ❌ | Pure logic, format conversion, expression parsing |
+| **DAO** | `HibernateOcDbTestCase` (extends DBUnit `DataSourceBasedDBTestCase`) | ✅ | CRUD operations, query correctness |
+| **Service** | `HibernateOcDbTestCase` | ✅ | Business service integration, rule filtering |
+
+**Key patterns:**
+- DAO/Service tests load full Spring context: all `applicationContext-*.xml` via `ClassPathXmlApplicationContext`
+- Test data follows convention: `{package}/testdata/{ClassName}.xml` — DBUnit FlatXmlDataSet auto-loaded per test class
+- Pure unit tests (like `SubmitDataServletTest`) use Mockito for role/permission mocking
+- `test.properties` configures DB connection (Oracle/PostgreSQL)
+- Base classes `HibernateOcDbTestCase` and `OcDbTestCase` in `core/.../templates/`
 
 ## UNIQUE STYLES
 
