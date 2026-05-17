@@ -226,14 +226,15 @@ public class Study   extends DataMapDomainObject {
 		this.userAccount = userAccount;
 	}
 
-//	@JoinColumn(name = "type_id")
-//	public StudyType getStudyType() {
-//		return this.studyType;
-//	}
-//
-//	public void setStudyType(StudyType studyType) {
-//		this.studyType = studyType;
-//	}
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "type_id")
+	public StudyType getStudyType() {
+		return this.studyType;
+	}
+
+	public void setStudyType(StudyType studyType) {
+		this.studyType = studyType;
+	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "parent_study_id")

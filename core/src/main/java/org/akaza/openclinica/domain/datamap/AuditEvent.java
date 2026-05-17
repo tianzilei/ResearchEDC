@@ -6,10 +6,9 @@ import java.util.HashSet;
 import java.util.Set;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
@@ -120,7 +119,7 @@ public class AuditEvent extends AbstractMutableDomainObject {
 		this.actionMessage = actionMessage;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "auditEvent")
+	@Transient
 	public Set getAuditEventValueses() {
 		return this.auditEventValueses;
 	}
@@ -129,7 +128,7 @@ public class AuditEvent extends AbstractMutableDomainObject {
 		this.auditEventValueses = auditEventValueses;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "auditEvent")
+	@Transient
 	public Set getAuditEventContexts() {
 		return this.auditEventContexts;
 	}
