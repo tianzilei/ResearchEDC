@@ -193,19 +193,20 @@
             <version>2.15.1</version>
         </dependency>
 
-        <!-- HttpUnit -->
-        <dependency>
-            <groupId>httpunit</groupId>
-            <artifactId>httpunit</artifactId>
-            <version>1.7.3</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- JDOM2 -->
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
             <version>2.0.6.1</version>
+        </dependency>
+
+        <!-- javax.servlet API for libraries compiled against javax.servlet (e.g. JMesa, jmesa TableFacadeFactory) -->
+        <!-- provided scope: not packaged into WAR - Tomcat 10 provides jakarta.servlet at runtime -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Jakarta JSTL -->
@@ -261,6 +262,17 @@
         <dependency>
             <groupId>org.codehaus.castor</groupId>
             <artifactId>castor-xml</artifactId>
+            <version>1.4.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.castor</groupId>
+                    <artifactId>castor-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.castor</groupId>
+            <artifactId>castor-core</artifactId>
             <version>1.4.1</version>
         </dependency>
 
@@ -326,6 +338,13 @@
             <artifactId>mockito-core</artifactId>
             <version>5.11.0</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Jakarta XML Binding API (for DatatypeConverter) -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.1</version>
         </dependency>
 
         <!-- Jackson -->

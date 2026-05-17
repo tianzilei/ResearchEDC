@@ -166,7 +166,8 @@
             <artifactId>commons-fileupload</artifactId>
             <version>1.5</version>
         </dependency>
-        <!-- Required by commons-fileupload (compiled against javax.servlet) -->
+        <!-- javax.servlet API for compilation of libraries compiled against javax.servlet (e.g. commons-fileupload 1.x) -->
+        <!-- provided scope: not packaged into WAR - Tomcat 10 provides jakarta.servlet at runtime -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -250,6 +251,17 @@
         <dependency>
             <groupId>org.codehaus.castor</groupId>
             <artifactId>castor-xml</artifactId>
+            <version>1.4.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.castor</groupId>
+                    <artifactId>castor-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.castor</groupId>
+            <artifactId>castor-core</artifactId>
             <version>1.4.1</version>
         </dependency>
 

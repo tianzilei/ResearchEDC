@@ -182,14 +182,6 @@
             <version>2.15.1</version>
         </dependency>
 
-        <!-- HttpUnit -->
-        <dependency>
-            <groupId>httpunit</groupId>
-            <artifactId>httpunit</artifactId>
-            <version>1.7.3</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- JDOM2 -->
         <dependency>
             <groupId>org.jdom</groupId>
@@ -203,6 +195,14 @@
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
             <version>3.0.0</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- javax.servlet API for libraries compiled against javax.servlet (e.g. commons-fileupload) -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Jakarta Servlet API -->
@@ -247,6 +247,17 @@
             <groupId>org.codehaus.castor</groupId>
             <artifactId>castor-xml</artifactId>
             <version>1.4.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.castor</groupId>
+                    <artifactId>castor-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.castor</groupId>
+            <artifactId>castor-core</artifactId>
+            <version>1.4.1</version>
         </dependency>
 
         <!-- PostgreSQL JDBC Driver -->
@@ -273,6 +284,21 @@
                 <groupId>org.jvnet.jaxb</groupId>
                 <artifactId>jaxb-maven-plugin</artifactId>
                 <version>4.0.6</version>
+                <executions>
+                    <execution>
+                        <id>generate-jaxb-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaDirectory>src/main/webapp/WEB-INF/schemas</schemaDirectory>
+                            <generateDirectory>${project.build.directory}/generated-sources/jaxb</generateDirectory>
+                            <clearOutputDir>false</clearOutputDir>
+                            <episode>false</episode>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
