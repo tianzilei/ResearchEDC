@@ -23,7 +23,7 @@ export default function StudySwitcher() {
   return (
     <Select
       showSearch
-      value={currentStudy ? `${currentStudy.name}` : undefined}
+      value={currentStudy ? currentStudy.name : undefined}
       placeholder="Select a study..."
       open={open}
       onDropdownVisibleChange={setOpen}
@@ -52,13 +52,13 @@ export default function StudySwitcher() {
         return [...studyOpts, ...siteOpts];
       })}
       optionRender={(option) => {
-        const item = option.data.item as Study;
+        const item = option.data.item;
         return (
           <Space>
             {item.type === "site" ? <HomeOutlined /> : <MedicineBoxOutlined />}
             <span>{item.name}</span>
             <Text type="secondary" style={{ fontSize: 12 }}>
-              {item.identifier}
+              {item.identifier ?? ""}
             </Text>
           </Space>
         );

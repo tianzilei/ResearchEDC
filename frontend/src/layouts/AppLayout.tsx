@@ -83,7 +83,7 @@ export default function AppLayout() {
       label: "Logout",
       onClick: () => {
         logout();
-        navigate("/login");
+        void navigate("/login");
       },
     },
   ];
