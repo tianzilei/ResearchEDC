@@ -97,10 +97,52 @@ services:
           memory: 64M
     logging: *prod-logging
 
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: oc-prod-prometheus
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ../prometheus:/etc/prometheus:ro
+      - oc-prod-prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=30d"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    logging: *prod-logging
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: oc-prod-grafana
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_INSTALL_PLUGINS: ""
+    volumes:
+      - ../grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ../grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - oc-prod-grafana-data:/var/lib/grafana
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging: *prod-logging
+
 volumes:
   oc-prod-postgres-data:
     driver: local
   oc-prod-data:
     driver: local
   oc-prod-logs:
+    driver: local
+  oc-prod-prometheus-data:
+    driver: local
+  oc-prod-grafana-data:
     driver: local

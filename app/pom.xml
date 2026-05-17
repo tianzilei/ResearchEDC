@@ -146,6 +146,12 @@
             <version>3.2.1</version>
         </dependency>
 
+        <!-- Micrometer Prometheus (for metrics export) -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
         <!-- Spring Data JPA (for new module repositories) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

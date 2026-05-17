@@ -51,12 +51,20 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,env,beans,conditions
+        include: health,info,metrics,prometheus,env,beans,conditions
       base-path: /actuator
   endpoint:
     health:
       show-details: when-authorized
       show-components: when-authorized
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
 
 # Springdoc OpenAPI
 springdoc:
