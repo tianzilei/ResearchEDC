@@ -1,8 +1,11 @@
+import { lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import AppLayout from "@/layouts/AppLayout";
-import Dashboard from "@/pages/Dashboard";
 import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
+import ErrorPage from "@/pages/ErrorPage";
+
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
 
 const router = createBrowserRouter([
   {
@@ -11,17 +14,25 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Dashboard />,
+        element: <Navigate to="dashboard" replace />,
       },
       {
         path: "dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "403",
+        element: <ErrorPage status={403} />,
       },
     ],
   },
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/error",
+    element: <ErrorPage status={500} />,
   },
   {
     path: "/",
