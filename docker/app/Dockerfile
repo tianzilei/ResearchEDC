@@ -64,14 +64,14 @@ COPY docker/scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Environment variables with defaults
+# JVM tuning for containerized environments
+# UseContainerSupport is default in Java 21; explicit for visibility
+# MaxRAMPercentage=75 leaves headroom for native memory, metaspace, threads
+ENV CATALINA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/openclinica/logs"
+
 ENV OC_DB_TYPE=postgres \
     OC_DB_HOST=postgres \
     OC_DB_PORT=5432 \
-    OC_DB_NAME=openclinica \
-    OC_DB_USER=openclinica \
-    OC_DB_PASS=openclinica \
-    OC_SYS_URL=http://localhost:8080/app/dashboard \
-    OC_ADMIN_EMAIL=admin@example.com \
     OC_FILE_PATH=/opt/openclinica/data \
     OC_LOG_DIR=/opt/openclinica/logs \
     OC_LOG_LEVEL=info \

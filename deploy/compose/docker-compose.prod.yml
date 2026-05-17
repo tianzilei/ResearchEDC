@@ -39,6 +39,7 @@ services:
     ports:
       - "127.0.0.1:8080:8080"
     environment:
+      # JVM tuning: heap auto-scales to 75% of 4G limit via CATALINA_OPTS (set in Dockerfile)
       OC_DB_HOST: postgres
       OC_DB_PORT: "5432"
       OC_DB_NAME: ${OC_DB_NAME:?OC_DB_NAME is required}
