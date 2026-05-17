@@ -1,7 +1,7 @@
 # web/ - Web UI Layer
 
 **Module:** Web interface, JSP pages, servlets, REST controllers  
-**Files:** ~486 Java files, ~300 JSP files  
+**Files:** ~481 Java files, ~419 JSP files  
 
 ## STRUCTURE
 
@@ -38,6 +38,16 @@ web/src/main/webapp/
 - **Servlets:** Extend `SecureController` for auth/security
 - **REST Controllers:** Use `@Controller` + `@RequestMapping`
 - **JSPs:** Use `include/footer.jsp`, `include/header.jsp`
+
+## TESTING
+
+**Base class:** `junit.framework.TestCase` (no Spring context, no database)
+
+**Tests in web module** (e.g., `SubmitDataServletTest`, `ListDiscNotesForCRFServletTest`):
+- Pure JUnit unit tests — no DB, no Spring context
+- Use **Mockito** (`import static org.mockito.Mockito.*`) for mocking role/permission objects
+- Test authorization logic like `mayViewData()`, `maySubmitData()` with different roles
+- Configure locale via `ResourceBundleProvider.updateLocale()`
 
 ## ANTI-PATTERNS
 
