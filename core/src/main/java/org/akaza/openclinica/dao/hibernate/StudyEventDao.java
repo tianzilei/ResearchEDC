@@ -21,9 +21,9 @@ public class StudyEventDao extends AbstractDomainDao<StudyEvent> implements Appl
 	}
 	public StudyEvent fetchByStudyEventDefOID(String oid,Integer studySubjectId){
 		String query = " from StudyEvent se where se.studySubject.studySubjectId = :studySubjectId and se.studyEventDefinition.oc_oid = :oid order by se.studyEventDefinition.ordinal,se.sampleOrdinal";
-		 org.hibernate.Query q = getCurrentSession().createQuery(query);
-         q.setInteger("studySubjectId", studySubjectId);
-         q.setString("oid", oid);
+		 org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+         q.setParameter("studySubjectId", studySubjectId);
+         q.setParameter("oid", oid);
 
          StudyEvent se = (StudyEvent) q.uniqueResult();
         // this.eventPublisher.publishEvent(new OnStudyEventUpdated(se));
@@ -35,10 +35,10 @@ public class StudyEventDao extends AbstractDomainDao<StudyEvent> implements Appl
 	@Transactional
 	public StudyEvent fetchByStudyEventDefOIDAndOrdinal(String oid,Integer ordinal,Integer studySubjectId){
 		String query = " from StudyEvent se where se.studySubject.studySubjectId = :studySubjectId and se.studyEventDefinition.oc_oid = :oid and se.sampleOrdinal = :ordinal order by se.studyEventDefinition.ordinal,se.sampleOrdinal";
-		 org.hibernate.Query q = getCurrentSession().createQuery(query);
-         q.setInteger("studySubjectId", studySubjectId);
-         q.setString("oid", oid);
-         q.setInteger("ordinal", ordinal);
+		 org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+         q.setParameter("studySubjectId", studySubjectId);
+         q.setParameter("oid", oid);
+         q.setParameter("ordinal", ordinal);
          StudyEvent se = (StudyEvent) q.uniqueResult();
         // this.eventPublisher.publishEvent(new OnStudyEventUpdated(se));
          return se;
@@ -47,10 +47,10 @@ public class StudyEventDao extends AbstractDomainDao<StudyEvent> implements Appl
     @Transactional(propagation = Propagation.NEVER)
     public StudyEvent fetchByStudyEventDefOIDAndOrdinalTransactional(String oid,Integer ordinal,Integer studySubjectId){
         String query = " from StudyEvent se where se.studySubject.studySubjectId = :studySubjectId and se.studyEventDefinition.oc_oid = :oid and se.sampleOrdinal = :ordinal order by se.studyEventDefinition.ordinal,se.sampleOrdinal";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studySubjectId", studySubjectId);
-        q.setString("oid", oid);
-        q.setInteger("ordinal", ordinal);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studySubjectId", studySubjectId);
+        q.setParameter("oid", oid);
+        q.setParameter("ordinal", ordinal);
         StudyEvent se = (StudyEvent) q.uniqueResult();
         // this.eventPublisher.publishEvent(new OnStudyEventUpdated(se));
         return se;
@@ -58,7 +58,7 @@ public class StudyEventDao extends AbstractDomainDao<StudyEvent> implements Appl
 
     public Integer findMaxOrdinalByStudySubjectStudyEventDefinition(int studySubjectId, int studyEventDefinitionId) {
         String query = "select max(sample_ordinal) from study_event where study_subject_id = " + studySubjectId + " and study_event_definition_id = " + studyEventDefinitionId;
-        org.hibernate.Query q = getCurrentSession().createSQLQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createNativeQuery(query);
         Number result = (Number) q.uniqueResult();
         if (result == null) return 0;
         else return result.intValue();
@@ -70,9 +70,9 @@ public class StudyEventDao extends AbstractDomainDao<StudyEvent> implements Appl
 		List<StudyEvent> eventList = null;
 
 		String query = " from StudyEvent se where se.studySubject.studySubjectId = :studySubjectId and se.studyEventDefinition.oc_oid = :oid order by se.studyEventDefinition.ordinal,se.sampleOrdinal";
-		 org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studySubjectId", studySubjectId);
-        q.setString("oid", oid);
+		 org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studySubjectId", studySubjectId);
+        q.setParameter("oid", oid);
 
         eventList = (List<StudyEvent>) q.list();
         return eventList;
@@ -105,8 +105,8 @@ public class StudyEventDao extends AbstractDomainDao<StudyEvent> implements Appl
 	@Transactional
     public StudyEvent findByStudyEventId(int studyEventId) {
         String query = "from " + getDomainClassName() + " study_event  where study_event.studyEventId = :studyeventid ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studyeventid", studyEventId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyeventid", studyEventId);
         return (StudyEvent) q.uniqueResult();
     }
 

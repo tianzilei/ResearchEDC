@@ -1,7 +1,7 @@
 package org.akaza.openclinica.dao.managestudy;
 
 import org.akaza.openclinica.dao.core.CoreResources;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.joda.time.DateTime;
 
 import java.text.DateFormat;
@@ -53,7 +53,7 @@ public class StudyAuditLogFilter implements CriteriaCommand {
     }
 
     private String buildCriteria(String criteria, String property, Object value) {
-        value = StringEscapeUtils.escapeSql(value.toString());
+        value = value.toString().replace("'", "''");
         if (value != null) {
             if (property.equals("studySubject.status")) {
                 criteria = criteria + " and ";

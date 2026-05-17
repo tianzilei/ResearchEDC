@@ -12,9 +12,9 @@ public class StudyParameterValueDao extends AbstractDomainDao<StudyParameterValu
 
 	public StudyParameterValue findByStudyIdParameter(int studyId, String parameter) {
         String query = "from " + getDomainClassName() + " study_parameter_value where study_parameter_value.study.studyId = :studyid and study_parameter_value.studyParameter = :parameter ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studyid", studyId);
-        q.setString("parameter", parameter);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyid", studyId);
+        q.setParameter("parameter", parameter);
         return (StudyParameterValue) q.uniqueResult();
     }
 }

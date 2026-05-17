@@ -14,23 +14,23 @@ public class CrfDao extends AbstractDomainDao<CrfBean> {
 
     public CrfBean findByName(String crfName) {
         String query = "from " + getDomainClassName() + " crf  where crf.name = :crfName ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("crfName", crfName);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("crfName", crfName);
         return (CrfBean) q.uniqueResult();
     }
 
     public CrfBean findByOcOID(String OCOID) {
         getSessionFactory().getStatistics().logSummary();
         String query = "from " + getDomainClassName() + " do  where do.ocOid = :OCOID";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("OCOID", OCOID);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("OCOID", OCOID);
         return (CrfBean) q.uniqueResult();
     }
 
     public CrfBean findByCrfId(Integer crfId) {
         String query = "from " + getDomainClassName() + " crf  where crf.crfId = :crfId ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("crfId", crfId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("crfId", crfId);
         return (CrfBean) q.uniqueResult();
     }
     

@@ -12,8 +12,8 @@ public class CompletionStatusDao extends AbstractDomainDao<CompletionStatus> {
 
     public CompletionStatus findByCompletionStatusId(int completion_status_id) {
         String query = "from " + getDomainClassName() + " completion_status  where completion_status.completionStatusId = :completionstatusid ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("completionstatusid", completion_status_id);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("completionstatusid", completion_status_id);
         return (CompletionStatus) q.uniqueResult();
     }
 

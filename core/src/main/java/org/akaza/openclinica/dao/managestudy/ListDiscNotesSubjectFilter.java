@@ -1,6 +1,6 @@
 package org.akaza.openclinica.dao.managestudy;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +40,7 @@ public class ListDiscNotesSubjectFilter implements CriteriaCommand {
 
     private String buildCriteriaForSelect(String criteria, String property, Object value) {
 
-        value = StringEscapeUtils.escapeSql(value.toString());
+        value = value.toString().replace("'", "''");
         if (value != null) {
             if (property.equals("dn.discrepancy_note_type_id")) {
                 int typeId = Integer.valueOf(value.toString());
@@ -55,7 +55,7 @@ public class ListDiscNotesSubjectFilter implements CriteriaCommand {
     }
 
     private String buildCriteria(String criteria, String property, Object value) {
-        value = StringEscapeUtils.escapeSql(value.toString());
+        value = value.toString().replace("'", "''");
         if (value != null) {
             if (property.equals("status") || property.equals("studySubject.status")) {
                 criteria = criteria + " and ";

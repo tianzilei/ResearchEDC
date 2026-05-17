@@ -31,7 +31,6 @@ import org.akaza.openclinica.dao.cache.EhCacheWrapper;
 import org.akaza.openclinica.i18n.util.ResourceBundleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 
 /**
  * <p/>
@@ -69,7 +68,6 @@ public abstract class EntityDAO<K extends String, V extends ArrayList> implement
     /* Here is the cache reference */
     protected EhCacheWrapper cache;
     // protected EhCacheWrapper cache = new EhCacheWrapper();
-    protected EhCacheManagerFactoryBean cacheManager;
 
     // set the types we expect from the database
 

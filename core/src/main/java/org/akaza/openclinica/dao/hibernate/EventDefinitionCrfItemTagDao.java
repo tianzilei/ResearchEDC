@@ -19,7 +19,7 @@ public class EventDefinitionCrfItemTagDao extends AbstractDomainDao<EventDefinit
 
         String query = " from " + getDomainClassName() + "  where " + " tag_id= " + tag_id + " and active=" + active + " and path LIKE '" + crfPath + ".%'";
 
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
         return (List<EventDefinitionCrfItemTag>) q.list();
     }
 
@@ -27,7 +27,7 @@ public class EventDefinitionCrfItemTagDao extends AbstractDomainDao<EventDefinit
 
         String query = " from " + getDomainClassName() + "  where " + " tag_id= " + tag_id + " and active=" + active + " and path= '" + itemPath + "'";
 
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
         return (EventDefinitionCrfItemTag) q.uniqueResult();
     }
 

@@ -1,7 +1,7 @@
 package org.akaza.openclinica.dao.hibernate;
 
 import org.akaza.openclinica.dao.managestudy.CriteriaCommand;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,7 +67,7 @@ public class ViewRuleAssignmentFilter implements CriteriaCommand {
     }*/
 
     private String buildCriteria(String criteria, String property, Object value) {
-        value = StringEscapeUtils.escapeSql(value.toString());
+        value = value.toString().replace("'", "''");
         if (value != null) {
             if (property.equals("studyId") || property.equals("ruleSetRunSchedule") ||  property.equals("actionType") || property.equals("actionExecuteOn") || property.equals("ruleSetRuleStatus")) {
                 criteria = criteria + " " + columnMapping.get(property) + " = " + value.toString() + " ";

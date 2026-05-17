@@ -12,8 +12,8 @@ public class UserTypeDao extends AbstractDomainDao<UserType> {
     public UserType findByUserTypeId(Integer userTypeId) {
         getSessionFactory().getStatistics().logSummary();
         String query = "from " + getDomainClassName() + " do  where do.userTypeId = :user_type_id";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("user_type_id", userTypeId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("user_type_id", userTypeId);
         return (UserType) q.uniqueResult();
     }
 

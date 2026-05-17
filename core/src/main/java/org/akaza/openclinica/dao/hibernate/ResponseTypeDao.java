@@ -13,15 +13,15 @@ public class ResponseTypeDao extends AbstractDomainDao<ResponseType> {
 
     public ResponseType findByResponseTypeName(String name) {
         String query = "from " + getDomainClassName() + " response_type  where response_type.name = :name ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("name", name);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("name", name);
         return (ResponseType) q.uniqueResult();
     }
 
     public ResponseType findByItemFormMetaDataId(Integer itemFormMetadataId) {
         String query = "select rt.* from response_type rt, response_set rs, item_form_metadata ifm where ifm.response_set_id=rs.response_set_id"
                 + " and rs.response_type_id=rt.response_type_id and ifm.item_form_metadata_id = " + String.valueOf(itemFormMetadataId);
-        org.hibernate.Query q = getCurrentSession().createSQLQuery(query).addEntity(ResponseType.class);
+        org.hibernate.query.Query q = getCurrentSession().createNativeQuery(query, ResponseType.class);
         return (ResponseType) q.uniqueResult();
     }
 

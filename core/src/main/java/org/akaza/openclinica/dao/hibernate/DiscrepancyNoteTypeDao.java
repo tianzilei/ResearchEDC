@@ -10,8 +10,8 @@ public class DiscrepancyNoteTypeDao extends AbstractDomainDao<DiscrepancyNoteTyp
     }
     public DiscrepancyNoteType findByDiscrepancyNoteTypeId(Integer discrepancyNoteTypeId) {
         String query = "from " + getDomainClassName() + " do  where do.discrepancyNoteTypeId = :discrepancynotetypeid";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("discrepancynotetypeid", discrepancyNoteTypeId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("discrepancynotetypeid", discrepancyNoteTypeId);
         return (DiscrepancyNoteType) q.uniqueResult();
     }
 

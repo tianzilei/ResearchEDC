@@ -13,16 +13,16 @@ public class RuleActionPropertyDao extends AbstractDomainDao<PropertyBean> {
 
     public ArrayList <PropertyBean> findByOid(String itemOid , String groupOid) {
         String query = "from " + getDomainClassName() +  "  where oc_oid = :itemOid OR oc_oid=:groupOid ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("itemOid", itemOid);
-        q.setString("groupOid", groupOid);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("itemOid", itemOid);
+        q.setParameter("groupOid", groupOid);
         return (ArrayList <PropertyBean>) q.list();
     }
 
     public ArrayList <PropertyBean> findByOid(String Oid) {
         String query = "from " + getDomainClassName() +  "  where oc_oid=:Oid ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("Oid", Oid);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("Oid", Oid);
         return (ArrayList <PropertyBean>) q.list();
     }
 

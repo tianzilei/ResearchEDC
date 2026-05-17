@@ -16,10 +16,10 @@ public class DynamicsItemGroupMetadataDao extends AbstractDomainDao<DynamicsItem
         String query =
             "from " + getDomainClassName()
                 + " metadata where metadata.itemGroupMetadataId = :id and metadata.itemGroupId = :item_group_id and metadata.eventCrfId = :event_crf_id ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("id", new Integer(metadataBean.getId()));
-        q.setInteger("item_group_id", new Integer(metadataBean.getItemGroupId()));
-        q.setInteger("event_crf_id", new Integer(eventCrfBean.getId()));
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("id", new Integer(metadataBean.getId()));
+        q.setParameter("item_group_id", new Integer(metadataBean.getItemGroupId()));
+        q.setParameter("event_crf_id", new Integer(eventCrfBean.getId()));
         return (DynamicsItemGroupMetadataBean) q.uniqueResult();
     }
     
@@ -27,10 +27,10 @@ public class DynamicsItemGroupMetadataDao extends AbstractDomainDao<DynamicsItem
         String query =
             "from " + getDomainClassName()
                 + " metadata where metadata.itemGroupMetadataId = :id and metadata.itemGroupId = :item_group_id and metadata.eventCrfId = :event_crf_id ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("id", new Integer(metadataBean.getId()));
-        q.setInteger("item_group_id", new Integer(metadataBean.getItemGroupId()));
-        q.setInteger("event_crf_id", new Integer(eventCrfBeanId));
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("id", new Integer(metadataBean.getId()));
+        q.setParameter("item_group_id", new Integer(metadataBean.getItemGroupId()));
+        q.setParameter("event_crf_id", new Integer(eventCrfBeanId));
         return (DynamicsItemGroupMetadataBean) q.uniqueResult();
     }
     
@@ -50,17 +50,17 @@ public class DynamicsItemGroupMetadataDao extends AbstractDomainDao<DynamicsItem
                 + " and dg.show_group = 'true' limit 1";
         }
         
-        org.hibernate.Query q = this.getCurrentSession().createSQLQuery(query);
-        q.setInteger("eventCrfId", eventCrfId);
-        q.setInteger("crfVersionId", crfVersionId);
-        q.setInteger("sectionId", sectionId);
-        q.setInteger("crfVersionId", crfVersionId);
+        org.hibernate.query.Query q = this.getCurrentSession().createNativeQuery(query);
+        q.setParameter("eventCrfId", eventCrfId);
+        q.setParameter("crfVersionId", crfVersionId);
+        q.setParameter("sectionId", sectionId);
+        q.setParameter("crfVersionId", crfVersionId);
         return q.list() != null && q.list().size() > 0;
     }
     public  void delete(int eventCrfId){
         String query = " delete from " + getDomainClassName() +  "  where eventCrfId =:eventCrfId ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("eventCrfId", eventCrfId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("eventCrfId", eventCrfId);
         q.executeUpdate();
     }
 

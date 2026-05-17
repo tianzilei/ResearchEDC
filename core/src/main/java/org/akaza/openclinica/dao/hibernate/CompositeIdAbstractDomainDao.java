@@ -1,18 +1,20 @@
 package org.akaza.openclinica.dao.hibernate;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 import org.akaza.openclinica.domain.CompositeIdDomainObject;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.transaction.annotation.Transactional;
-
 
 public abstract class CompositeIdAbstractDomainDao<T extends CompositeIdDomainObject> {
 
-    private HibernateTemplate hibernateTemplate;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     abstract Class<T> domainClass();
 
@@ -22,60 +24,52 @@ public abstract class CompositeIdAbstractDomainDao<T extends CompositeIdDomainOb
 
     @SuppressWarnings("unchecked")
     @Transactional
-    public ArrayList<T> findAll() {
-        getSessionFactory().getStatistics().logSummary();
-        String query = "from " + getDomainClassName() + " do";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        return (ArrayList<T>) q.list();
+    public List<T> findAll() {
+        String queryStr = "from " + getDomainClassName() + " do";
+        Query q = getEntityManager().createQuery(queryStr);
+        return q.getResultList();
     }
-    
+
     @Transactional
     public T saveOrUpdate(T domainObject) {
-        getSessionFactory().getStatistics().logSummary();
-        getCurrentSession().saveOrUpdate(domainObject);
-        return domainObject;
+        if (domainObject.getId() == null) {
+            getEntityManager().persist(domainObject);
+            return domainObject;
+        } else {
+            return getEntityManager().merge(domainObject);
+        }
     }
 
     @Transactional
     public Serializable save(T domainObject) {
-        getSessionFactory().getStatistics().logSummary();
-        Serializable id = getCurrentSession().save(domainObject);
-        return id;
+        getEntityManager().persist(domainObject);
+        return (Serializable) domainObject.getId();
     }
 
-    
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public T findByColumnName(Object id, String key) {
+        String queryStr = "from " + getDomainClassName() + " do where do." + key + " = :value";
+        Query q = getEntityManager().createQuery(queryStr);
+        q.setParameter("value", id);
+        return (T) q.getSingleResult();
+    }
 
     @Transactional
-    public T findByColumnName(Object id,String key) {
-    String query = "from " + getDomainClassName() + " do where do."+key +"= ?";
-    org.hibernate.Query q = getCurrentSession().createQuery(query);
-    q.setParameter(0, id);
-    return (T) q.uniqueResult();
-    } 
-    
     public Long count() {
-        return (Long) getCurrentSession().createQuery("select count(*) from " + domainClass().getName()).uniqueResult();
+        String queryStr = "select count(*) from " + getDomainClassName();
+        return (Long) getEntityManager().createQuery(queryStr).getSingleResult();
     }
 
-    public SessionFactory getSessionFactory() {
-        return hibernateTemplate.getSessionFactory();
+    public EntityManager getEntityManager() {
+        return entityManager;
     }
 
-    /**
-     * @return Session Object
-     */
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
     public Session getCurrentSession() {
-        return getSessionFactory().getCurrentSession();
+        return entityManager.unwrap(Session.class);
     }
-
-    public HibernateTemplate getHibernateTemplate() {
-        return hibernateTemplate;
-    }
-
-    public void setHibernateTemplate(HibernateTemplate hibernateTemplate) {
-        this.hibernateTemplate = hibernateTemplate;
-    }
-
-
-
 }

@@ -3,7 +3,7 @@ package org.akaza.openclinica.dao;
 import org.akaza.openclinica.dao.core.CoreResources;
 import org.akaza.openclinica.dao.managestudy.CriteriaCommand;
 import org.akaza.openclinica.domain.SourceDataVerification;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +43,7 @@ public class EventCRFSDVFilter implements CriteriaCommand {
     }
 
     private String buildCriteria(String criteria, String property, Object value) {
-        value = StringEscapeUtils.escapeSql(value.toString());
+        value = value.toString().replace("'", "''");
         if (value != null) {
             if (property.equals("sdvStatus")) {
                 String dbType = CoreResources.getDBName();

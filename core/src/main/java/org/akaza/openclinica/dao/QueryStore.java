@@ -16,7 +16,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;

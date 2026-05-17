@@ -3,7 +3,7 @@ package org.akaza.openclinica.dao.hibernate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 
 /**
  * Utility operations for Hibernate manipulation

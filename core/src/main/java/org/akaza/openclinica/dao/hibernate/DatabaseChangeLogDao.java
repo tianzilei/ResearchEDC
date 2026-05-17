@@ -21,16 +21,16 @@ public class DatabaseChangeLogDao {
     @SuppressWarnings("unchecked")
     public ArrayList<DatabaseChangeLogBean> findAll() {
         String query = "from " + getDomainClassName() + " dcl order by dcl.id desc ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
         return (ArrayList<DatabaseChangeLogBean>) q.list();
     }
 
     public DatabaseChangeLogBean findById(String id, String author, String fileName) {
         String query = "from " + getDomainClassName() + " do  where do.id = :id and do.author = :author and do.fileName = :fileName ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("id", id);
-        q.setString("author", author);
-        q.setString("fileName", fileName);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("id", id);
+        q.setParameter("author", author);
+        q.setParameter("fileName", fileName);
         return (DatabaseChangeLogBean) q.uniqueResult();
     }
 

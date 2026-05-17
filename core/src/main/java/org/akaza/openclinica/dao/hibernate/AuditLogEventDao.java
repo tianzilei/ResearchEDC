@@ -2,7 +2,6 @@ package org.akaza.openclinica.dao.hibernate;
 
 import org.akaza.openclinica.domain.datamap.AuditLogEvent;
 import org.hibernate.Filter;
-import org.hibernate.impl.FilterImpl;
 
 public class AuditLogEventDao extends AbstractDomainDao<AuditLogEvent> {
 
@@ -29,16 +28,16 @@ public class AuditLogEventDao extends AbstractDomainDao<AuditLogEvent> {
 		    query = "from " + getDomainClassName() +  " do  where "+buildQuery;
 	       else
 	    	   query = "from " + getDomainClassName()  ;
-	       org.hibernate.Query q = getCurrentSession().createQuery(query);
+	       org.hibernate.query.Query q = getCurrentSession().createQuery(query);
 	       if(auditLogEvent.getEntityId()!=null && auditLogEvent.getAuditTable()!=null && anotherAuditTable==null)
-	       {  q.setInteger("entity_id", auditLogEvent.getEntityId());
-	        	   q.setString("audit_table", auditLogEvent.getAuditTable());
+	       {  q.setParameter("entity_id", auditLogEvent.getEntityId());
+	        	   q.setParameter("audit_table", auditLogEvent.getAuditTable());
 	       }
 	       else if(auditLogEvent.getEntityId()!=null && auditLogEvent.getAuditTable()!=null && anotherAuditTable!=null)
 	       {
-	    	   q.setInteger("entity_id", auditLogEvent.getEntityId());
-        	   q.setString("audit_table", auditLogEvent.getAuditTable());
-        	   q.setString("anotherAuditTable", anotherAuditTable);
+	    	   q.setParameter("entity_id", auditLogEvent.getEntityId());
+        	   q.setParameter("audit_table", auditLogEvent.getAuditTable());
+        	   q.setParameter("anotherAuditTable", anotherAuditTable);
 	       }
 	        	   return (T) q.list();
 	 }

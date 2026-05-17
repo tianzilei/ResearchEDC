@@ -1,6 +1,6 @@
 package org.akaza.openclinica.dao.managestudy;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class ListEventsForSubjectFilter implements CriteriaCommand {
     }
 
     private String buildCriteria(String criteria, String property, Object value) {
-        value = StringEscapeUtils.escapeSql(value.toString());
+        value = value.toString().replace("'", "''");
         if (value != null) {
             if (property.equals("studySubject.status")) {
                 criteria = criteria + " and ";
@@ -172,7 +172,7 @@ public class ListEventsForSubjectFilter implements CriteriaCommand {
     		String property = filter.getProperty(); 
     		Object value = filter.getValue();
 
-		    value = StringEscapeUtils.escapeSql(value.toString());
+		    value = value.toString().replace("'", "''");
 	        if (value != null) {
 	             if (property.startsWith("crf_")) {
 	                int crfId = Integer.parseInt(property.toString().substring(4));

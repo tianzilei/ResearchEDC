@@ -37,7 +37,7 @@ public class IdtViewDao extends AbstractDomainDao<IdtView> {
  
         query = query + " order by itemDataId";
        
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
         q.setMaxResults(per_page); // limit
         q.setFirstResult((page - 1) * per_page); // offset
         return (List<IdtView>) q.list();

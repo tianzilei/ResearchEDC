@@ -15,15 +15,15 @@ public class ConfigurationDao extends AbstractDomainDao<ConfigurationBean> {
     @SuppressWarnings("unchecked")
     public ArrayList<ConfigurationBean> findAll() {
         String query = "from " + getDomainClassName();
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
         return (ArrayList<ConfigurationBean>) q.list();
     }
 
     @Transactional
     public ConfigurationBean findByKey(String key) {
         String query = "from " + getDomainClassName() + " do where do.key = :key  ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("key", key);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("key", key);
         return (ConfigurationBean) q.uniqueResult();
     }
 

@@ -70,7 +70,7 @@ public class PreparedStatementFactory {
                 logger.debug("\nfound object name:[" + objType + "] [" + order + "] value[" + objParam + "]");
 
                 if ("java.lang.String".equals(objType)) {
-                    ps.setString(order.intValue(), objParam.toString());
+                    ps.setObject(order.intValue(), objParam.toString());
                 } else if ("java.lang.Float".equals(objType)) {
                     Float objFloatParam = (Float) objParam;
                     ps.setFloat(order.intValue(), objFloatParam.floatValue());
@@ -81,21 +81,21 @@ public class PreparedStatementFactory {
                     java.util.Date objTempDate = (java.util.Date) objParam;
                     java.sql.Date objDateParam = new java.sql.Date(objTempDate.getTime());
                     // (java.sql.Date)objParam;
-                    ps.setDate(order.intValue(), objDateParam);
+                    ps.setObject(order.intValue(), objDateParam);
                 } else if ("java.sql.Date".equals(objType)) {// added by
                     // jxu,2004-10-26
                     // a date from DB but not set on page, still sql date type
-                    ps.setDate(order.intValue(), (java.sql.Date) objParam);
+                    ps.setObject(order.intValue(), (java.sql.Date) objParam);
                 } else if ("java.sql.Timestamp".equals(objType)) {
-                    ps.setTimestamp(order.intValue(), (java.sql.Timestamp) objParam);
+                    ps.setObject(order.intValue(), (java.sql.Timestamp) objParam);
                 } else if ("java.lang.Boolean".equals(objType)) {
                     // BADS FLAG
                     if (CoreResources.getDBName().equals("oracle")) {
                         Boolean objBoolParam = (Boolean) objParam;
-                        ps.setString(order.intValue(), objBoolParam ? "1" : "0");
+                        ps.setObject(order.intValue(), objBoolParam ? "1" : "0");
                     } else {
                         Boolean objBoolParam = (Boolean) objParam;
-                        ps.setBoolean(order.intValue(), objBoolParam.booleanValue());
+                        ps.setObject(order.intValue(), objBoolParam.booleanValue());
                     }
 
                 } else if ("java.lang.Byte".equals(objType)) {

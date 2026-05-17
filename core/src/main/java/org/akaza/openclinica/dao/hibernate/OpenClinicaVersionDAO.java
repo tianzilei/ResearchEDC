@@ -23,7 +23,7 @@ public class OpenClinicaVersionDAO extends AbstractDomainDao<OpenClinicaVersionB
     @Transactional
     public OpenClinicaVersionBean findDefault() {
         String query = "from " + getDomainClassName() + " ocVersion";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
         return (OpenClinicaVersionBean) q.uniqueResult();
     }
 
@@ -45,7 +45,7 @@ public class OpenClinicaVersionDAO extends AbstractDomainDao<OpenClinicaVersionB
     @Transactional
     public int deleteDefault() {
         String query = "delete from " + getDomainClassName() + " ocVersion";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
         return q.executeUpdate();
     }
 

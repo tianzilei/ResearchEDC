@@ -16,10 +16,10 @@ public class EventCrfDao extends AbstractDomainDao<EventCrf> {
         String query = "from "
                 + getDomainClassName()
                 + " event_crf where event_crf.crfVersion.crfVersionId = :crfversionid and event_crf.studyEvent.studyEventId = :studyeventid and event_crf.studySubject.studySubjectId= :studysubjectid";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studyeventid", study_event_id);
-        q.setInteger("studysubjectid", study_subject_id);
-        q.setInteger("crfversionid", crf_version_id);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyeventid", study_event_id);
+        q.setParameter("studysubjectid", study_subject_id);
+        q.setParameter("crfversionid", crf_version_id);
         return (EventCrf) q.uniqueResult();
     }
 
@@ -27,10 +27,10 @@ public class EventCrfDao extends AbstractDomainDao<EventCrf> {
         String query = "from "
                 + getDomainClassName()
                 + " event_crf where event_crf.crfVersion.crf.crfId = :crfid and event_crf.studyEvent.studyEventId = :studyeventid and event_crf.studySubject.studySubjectId= :studysubjectid";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studyeventid", study_event_id);
-        q.setInteger("studysubjectid", study_subject_id);
-        q.setInteger("crfid", crf_id);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyeventid", study_event_id);
+        q.setParameter("studysubjectid", study_subject_id);
+        q.setParameter("crfid", crf_id);
         return (EventCrf) q.uniqueResult();
     }
 
@@ -39,9 +39,9 @@ public class EventCrfDao extends AbstractDomainDao<EventCrf> {
         String query = "from "
                 + getDomainClassName()
                 + " event_crf where event_crf.studyEvent.studyEventId = :studyeventid and event_crf.studySubject.ocOid= :studysubjectoid";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studyeventid", studyEventId);
-        q.setString("studysubjectoid", studySubjectOid);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyeventid", studyEventId);
+        q.setParameter("studysubjectoid", studySubjectOid);
         return q.list();
 	}
     
@@ -50,9 +50,9 @@ public class EventCrfDao extends AbstractDomainDao<EventCrf> {
         String query = "from "
                 + getDomainClassName()
                 + " event_crf where event_crf.studyEvent.studyEventId = :studyeventid and event_crf.statusId = :statusid";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studyeventid", studyEventId);
-        q.setInteger("statusid", statusCode);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyeventid", studyEventId);
+        q.setParameter("statusid", statusCode);
         return q.list();
     }
     

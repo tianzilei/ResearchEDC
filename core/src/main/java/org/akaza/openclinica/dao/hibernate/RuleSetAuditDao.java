@@ -15,7 +15,7 @@ public class RuleSetAuditDao extends AbstractDomainDao<RuleSetAuditBean> {
     @SuppressWarnings("unchecked")
     public ArrayList<RuleSetAuditBean> findAllByRuleSet(RuleSetBean ruleSet) {
         String query = "from " + getDomainClassName() + " ruleSetAudit  where ruleSetAudit.ruleSetBean = :ruleSet  ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
         q.setParameter("ruleSet", ruleSet);
         return (ArrayList<RuleSetAuditBean>) q.list();
     }

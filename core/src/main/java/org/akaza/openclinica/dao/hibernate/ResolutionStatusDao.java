@@ -10,8 +10,8 @@ public class ResolutionStatusDao extends AbstractDomainDao<ResolutionStatus> {
     }
     public ResolutionStatus findByResolutionStatusId(Integer resolutionStatusId) {
         String query = "from " + getDomainClassName() + " do  where do.resolutionStatusId = :resolutionstatusid";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("resolutionstatusid", resolutionStatusId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("resolutionstatusid", resolutionStatusId);
         return (ResolutionStatus) q.uniqueResult();
     }
 

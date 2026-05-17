@@ -1,7 +1,7 @@
 package org.akaza.openclinica.dao.submit;
 
 import org.akaza.openclinica.dao.managestudy.CriteriaCommand;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.joda.time.DateTime;
 
 import java.text.DateFormat;
@@ -50,7 +50,7 @@ public class ListSubjectFilter implements CriteriaCommand {
     }
 
     private String buildCriteria(String criteria, String property, Object value) {
-        value = StringEscapeUtils.escapeSql(value.toString());
+        value = value.toString().replace("'", "''");
         if (value != null) {
             if (property.equals("subject.status")) {
                 criteria = criteria + " and ";

@@ -12,10 +12,10 @@ public class EventDefinitionCrfTagDao extends AbstractDomainDao<EventDefinitionC
 
     public EventDefinitionCrfTag findByCrfPath(int tagId, String path, boolean active) {
         String query = "from " + getDomainClassName() + " where path = :path and tagId= :tagId and active= :active ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("tagId", tagId);
-        q.setString("path", path);
-        q.setBoolean("active", active);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("tagId", tagId);
+        q.setParameter("path", path);
+        q.setParameter("active", active);
         return (EventDefinitionCrfTag) q.uniqueResult();
 
     }

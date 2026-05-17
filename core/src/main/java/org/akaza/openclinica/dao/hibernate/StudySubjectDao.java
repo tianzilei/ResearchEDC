@@ -20,8 +20,8 @@ public class StudySubjectDao extends AbstractDomainDao<StudySubject> {
     @SuppressWarnings("unchecked")
     public List<StudySubject> findAllByStudy(Integer studyId) {
         String query = "from " + getDomainClassName() + " do where do.study.studyId = :studyid";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studyid", studyId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyid", studyId);
         return (List<StudySubject>) q.list();
       
     }
@@ -29,43 +29,43 @@ public class StudySubjectDao extends AbstractDomainDao<StudySubject> {
     public StudySubject findByOcOID(String OCOID) {
         getSessionFactory().getStatistics().logSummary();
         String query = "from " + getDomainClassName() + " do  where do.ocOid = :OCOID";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("OCOID", OCOID);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("OCOID", OCOID);
         return (StudySubject) q.uniqueResult();
     }
 
     public StudySubject findByLabelAndStudy(String embeddedStudySubjectId, Study study) {
         getSessionFactory().getStatistics().logSummary();
         String query = "from " + getDomainClassName() + " do  where do.study.studyId = :studyid and do.label = :label";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studyid", study.getStudyId());
-        q.setString("label", embeddedStudySubjectId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyid", study.getStudyId());
+        q.setParameter("label", embeddedStudySubjectId);
         return (StudySubject) q.uniqueResult();
     }
 
     public StudySubject findByLabelAndStudyOrParentStudy(String embeddedStudySubjectId, Study study) {
         getSessionFactory().getStatistics().logSummary();
         String query = "from " + getDomainClassName() + " do  where (do.study.studyId = :studyid or do.study.study.studyId = :studyid) and do.label = :label";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studyid", study.getStudyId());
-        q.setString("label", embeddedStudySubjectId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyid", study.getStudyId());
+        q.setParameter("label", embeddedStudySubjectId);
         return (StudySubject) q.uniqueResult();
     }
 
     public ArrayList<StudySubject> findByLabelAndParentStudy(String embeddedStudySubjectId, Study parentStudy) {
         getSessionFactory().getStatistics().logSummary();
         String query = "from " + getDomainClassName() + " do  where do.study.study.studyId = :studyid and do.label = :label";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studyid", parentStudy.getStudyId());
-        q.setString("label", embeddedStudySubjectId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyid", parentStudy.getStudyId());
+        q.setParameter("label", embeddedStudySubjectId);
         return (ArrayList<StudySubject>) q.list();
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public ArrayList<StudyEvent> fetchListSEs(String id) {
         String query = " from StudyEvent se where se.studySubject.ocOid = :id order by se.studyEventDefinition.ordinal,se.sampleOrdinal";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("id", id.toString());
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("id", id.toString());
 
         return (ArrayList<StudyEvent>) q.list();
 
@@ -95,8 +95,8 @@ public class StudySubjectDao extends AbstractDomainDao<StudySubject> {
         getSessionFactory().getStatistics().logSummary();
         String query = "from " + getDomainClassName() + " do  where (do.study.studyId = :studyid or do.study.study.studyId = :studyid)";
 
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studyid", studyId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyid", studyId);
         List<StudySubject> allStudySubjects = (ArrayList<StudySubject>) q.list();
         
         int greatestLabel = 0;

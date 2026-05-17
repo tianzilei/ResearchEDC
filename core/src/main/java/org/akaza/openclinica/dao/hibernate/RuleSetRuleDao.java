@@ -32,7 +32,7 @@ public class RuleSetRuleDao extends AbstractDomainDao<RuleSetRuleBean> {
     @SuppressWarnings("unchecked")
     public ArrayList<RuleSetRuleBean> findByRuleSetBeanAndRuleBean(RuleSetBean ruleSetBean, RuleBean ruleBean) {
         String query = "from " + getDomainClassName() + " ruleSetRule  where ruleSetRule.ruleSetBean = :ruleSetBean" + " AND ruleSetRule.ruleBean = :ruleBean ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
         q.setParameter("ruleSetBean", ruleSetBean);
         q.setParameter("ruleBean", ruleBean);
         return (ArrayList<RuleSetRuleBean>) q.list();
@@ -48,11 +48,11 @@ public class RuleSetRuleDao extends AbstractDomainDao<RuleSetRuleBean> {
     @Transactional
     public ArrayList<RuleSetRuleBean> findByRuleSetStudyIdAndStatusAvail(Integer studyId) {
         String query = "from " + getDomainClassName() + " ruleSetRule  where ruleSetRule.ruleSetBean.studyId = :studyId and status = :status ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
         
         
         
-        q.setInteger("studyId", studyId);
+        q.setParameter("studyId", studyId);
         q.setParameter("status", org.akaza.openclinica.domain.Status.AVAILABLE);
         
         q.setCacheable(true);
@@ -104,7 +104,7 @@ public class RuleSetRuleDao extends AbstractDomainDao<RuleSetRuleBean> {
                 + " join rule_expression rer on r.rule_expression_id = rer.id " + " join rule_action ra on ra.rule_set_rule_id = rsr.id " + " where ";
 
         query += filter.execute("");
-        org.hibernate.Query q = getCurrentSession().createSQLQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createNativeQuery(query);
 
         return ((Number) q.uniqueResult()).intValue();
     }
@@ -130,7 +130,7 @@ public class RuleSetRuleDao extends AbstractDomainDao<RuleSetRuleBean> {
 
         query += filter.execute("");
         query += sort.execute("");
-        org.hibernate.Query q = getCurrentSession().createSQLQuery(query).addEntity(domainClass());
+        org.hibernate.query.Query q = getCurrentSession().createNativeQuery(query, domainClass());
         q.setFirstResult(rowStart);
         q.setMaxResults(rowEnd - rowStart);
         return (ArrayList<RuleSetRuleBean>) q.list();
@@ -145,7 +145,7 @@ public class RuleSetRuleDao extends AbstractDomainDao<RuleSetRuleBean> {
                 + " join rule_expression re on rs.rule_expression_id = re.id " + " join rule r on r.id = rsr.rule_id "
                 + " join rule_expression rer on r.rule_expression_id = rer.id " + " join rule_action ra on ra.rule_set_rule_id = rsr.id " + " where rs.study_id = " + study.getId() + "  AND  rsr.status_id = 1";
 
-        org.hibernate.Query q = getCurrentSession().createSQLQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createNativeQuery(query);
         return ((Number) q.uniqueResult()).intValue();
     }
 

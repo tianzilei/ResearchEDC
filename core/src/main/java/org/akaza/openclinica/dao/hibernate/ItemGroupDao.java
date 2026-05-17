@@ -6,7 +6,7 @@ import org.akaza.openclinica.bean.oid.ItemGroupOidGenerator;
 import org.akaza.openclinica.bean.oid.OidGenerator;
 import org.akaza.openclinica.domain.datamap.CrfBean;
 import org.akaza.openclinica.domain.datamap.ItemGroup;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 
 public class ItemGroupDao extends AbstractDomainDao<ItemGroup> {
 
@@ -18,17 +18,17 @@ public class ItemGroupDao extends AbstractDomainDao<ItemGroup> {
     public ItemGroup findByOcOID(String OCOID) {
         getSessionFactory().getStatistics().logSummary();
         String query = "from " + getDomainClassName() + " do  where do.ocOid = :OCOID";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("OCOID", OCOID);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("OCOID", OCOID);
         return (ItemGroup) q.uniqueResult();
     }
 
     public ItemGroup findByNameCrfId(String groupName, CrfBean crf) {
         getSessionFactory().getStatistics().logSummary();
         String query = "from " + getDomainClassName() + " do  where do.name = :groupName and do.crf = :crf";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("groupName", groupName);
-        q.setEntity("crf", crf);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("groupName", groupName);
+        q.setParameter("crf", crf);
         return (ItemGroup) q.uniqueResult();
     }
 
@@ -37,8 +37,8 @@ public class ItemGroupDao extends AbstractDomainDao<ItemGroup> {
 
     @SuppressWarnings("unchecked")
     public ArrayList<ItemGroup> findByCrfVersionId(Integer crfVersionId) {
-        Query q = getCurrentSession().createSQLQuery(findAllByCrfVersionIdQuery).addEntity(ItemGroup.class);
-        q.setInteger("crfversionid", crfVersionId.intValue());
+        Query q = getCurrentSession().createNativeQuery(findAllByCrfVersionIdQuery, ItemGroup.class);
+        q.setParameter("crfversionid", crfVersionId.intValue());
         return (ArrayList<ItemGroup>) q.list();
     }
 

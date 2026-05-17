@@ -13,16 +13,16 @@ public class ItemDataDao extends AbstractDomainDao<ItemData> {
     public ItemData findByItemEventCrfOrdinal(Integer itemId, Integer eventCrfId, Integer ordinal) {
         String query = "from " + getDomainClassName()
                 + " item_data where item_data.item.itemId = :itemid and item_data.eventCrf.eventCrfId = :eventcrfid and item_data.ordinal = :ordinal";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("itemid", itemId);
-        q.setInteger("eventcrfid", eventCrfId);
-        q.setInteger("ordinal", ordinal);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("itemid", itemId);
+        q.setParameter("eventcrfid", eventCrfId);
+        q.setParameter("ordinal", ordinal);
         return (ItemData) q.uniqueResult();
     }
 
     public List<ItemData> findAllByEventCrf(Integer eventCrfId) {
         String query = "select * from item_data where event_crf_id = " + eventCrfId;
-        org.hibernate.Query q = getCurrentSession().createSQLQuery(query).addEntity(ItemData.class);
+        org.hibernate.query.Query q = getCurrentSession().createNativeQuery(query, ItemData.class);
         
         return (List<ItemData>) q.list();
       
@@ -36,7 +36,7 @@ public class ItemDataDao extends AbstractDomainDao<ItemData> {
             "join item_group_metadata igm on i.item_id=igm.item_id and igm.crf_version_id = ec.crf_version_id " + 
             "where id.event_crf_id = " + eventCrfId + " and igm.item_group_id = " + itemGroupId + " " + 
             "order by id.ordinal, igm.ordinal";
-        org.hibernate.Query q = getCurrentSession().createSQLQuery(query).addEntity(ItemData.class);
+        org.hibernate.query.Query q = getCurrentSession().createNativeQuery(query, ItemData.class);
         
         return (List<ItemData>) q.list();
       
@@ -44,8 +44,8 @@ public class ItemDataDao extends AbstractDomainDao<ItemData> {
     
     public List<ItemData> findByEventCrfId(Integer eventCrfId) {
         String query = "from " + getDomainClassName() + " item_data where item_data.eventCrf.eventCrfId = :eventcrfid";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("eventcrfid", eventCrfId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("eventcrfid", eventCrfId);
         return (List<ItemData>) q.list();
       
     }
@@ -53,7 +53,7 @@ public class ItemDataDao extends AbstractDomainDao<ItemData> {
     public int getMaxGroupRepeat(Integer eventCrfId, Integer itemId) {
         getCurrentSession().flush();
         String query = "select max(ordinal) from item_data where event_crf_id = " + eventCrfId + " and item_id = " + itemId;
-        org.hibernate.Query q = getCurrentSession().createSQLQuery(query);
+        org.hibernate.query.Query q = getCurrentSession().createNativeQuery(query);
         Number result = (Number) q.uniqueResult();
         if (result == null) return 0;
         else return result.intValue();

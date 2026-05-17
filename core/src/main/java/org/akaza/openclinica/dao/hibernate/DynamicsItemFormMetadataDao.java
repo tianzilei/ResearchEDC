@@ -9,7 +9,7 @@ import org.akaza.openclinica.bean.submit.ItemFormMetadataBean;
 import org.akaza.openclinica.dao.core.CoreResources;
 import org.akaza.openclinica.domain.crfdata.DynamicsItemFormMetadataBean;
 import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +35,9 @@ public class DynamicsItemFormMetadataDao extends AbstractDomainDao<DynamicsItemF
                 "metadata.itemDataId = :item_data_id order by metadata.id desc ";
 
         Query q = getCurrentSession().createQuery(query);
-        q.setInteger("item_id", new Integer(metadataBean.getItemId()));
-        q.setInteger("event_crf_id", new Integer(eventCrfBean.getId()));
-        q.setInteger("item_data_id", new Integer(itemDataBean.getId()));
+        q.setParameter("item_id", new Integer(metadataBean.getItemId()));
+        q.setParameter("event_crf_id", new Integer(eventCrfBean.getId()));
+        q.setParameter("item_data_id", new Integer(itemDataBean.getId()));
         ArrayList <DynamicsItemFormMetadataBean> list = (ArrayList<DynamicsItemFormMetadataBean>) q.list();
         return list.size() !=0 ? list.get(0) : null;
     }
@@ -51,8 +51,8 @@ public class DynamicsItemFormMetadataDao extends AbstractDomainDao<DynamicsItemF
                 "metadata.showItem = true order by metadata.id desc ";
 
         Query q = getCurrentSession().createQuery(query);
-        q.setInteger("item_id", itemId);
-        q.setInteger("event_crf_id", new Integer(eventCrfBean.getId()));
+        q.setParameter("item_id", itemId);
+        q.setParameter("event_crf_id", new Integer(eventCrfBean.getId()));
         ArrayList <DynamicsItemFormMetadataBean> list = (ArrayList<DynamicsItemFormMetadataBean>) q.list();
         return list;
     }
@@ -62,7 +62,7 @@ public class DynamicsItemFormMetadataDao extends AbstractDomainDao<DynamicsItemF
         String query = "from " + getDomainClassName() + " metadata where metadata.itemDataId = :item_data_id ";
         Query q = getCurrentSession().createQuery(query);
 
-        q.setInteger("item_data_id", new Integer(itemDataBean.getId()));
+        q.setParameter("item_data_id", new Integer(itemDataBean.getId()));
         return (DynamicsItemFormMetadataBean) q.uniqueResult();
     }
 
@@ -212,26 +212,26 @@ public class DynamicsItemFormMetadataDao extends AbstractDomainDao<DynamicsItemF
     protected List<Integer> queryForIDs(String oracleQuery, String postgresQuery, Integer groupId, Integer sectionId,
             Integer eventCrfId, Integer crfVersionId) {
         String query = "oracle".equalsIgnoreCase(CoreResources.getDBName()) ? oracleQuery : postgresQuery;
-        Query q = getCurrentSession().createSQLQuery(query);
+        Query q = getCurrentSession().createNativeQuery(query);
         if (groupId != null) {
-            q.setInteger("groupId", groupId);
+            q.setParameter("groupId", groupId);
         }
         if (sectionId != null) {
-            q.setInteger("sectionId", sectionId);
+            q.setParameter("sectionId", sectionId);
         }
         if (eventCrfId != null) {
-            q.setInteger("eventCrfId", eventCrfId);
+            q.setParameter("eventCrfId", eventCrfId);
         }
         if (crfVersionId != null) {
-            q.setInteger("crfVersionId", crfVersionId);
+            q.setParameter("crfVersionId", crfVersionId);
         }
         return HibernateUtil.queryIDsList(q);
     }
     
     public  void delete(int eventCrfId){
         String query = " delete from " + getDomainClassName() +  "  where eventCrfId =:eventCrfId ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("eventCrfId", eventCrfId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("eventCrfId", eventCrfId);
         q.executeUpdate();
     }
 

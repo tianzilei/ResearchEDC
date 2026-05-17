@@ -42,8 +42,7 @@ import org.akaza.openclinica.dao.core.CoreResources;
 import org.akaza.openclinica.dao.core.DAODigester;
 import org.akaza.openclinica.dao.core.SQLFactory;
 import org.akaza.openclinica.dao.core.TypeNames;
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.validator.util.SetAccessibility;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * <P>

@@ -12,15 +12,15 @@ public class SubjectDao extends AbstractDomainDao<Subject> {
     
     public Subject findBySubjectId(Integer subjectId) {
         String query = "from " + getDomainClassName() + " do  where do.subjectId = :subject_id ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("subject_id", subjectId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("subject_id", subjectId);
         return (Subject) q.uniqueResult();
     }
 
     public Subject findByUniqueIdentifier(String uniqueIdentifier) {
         String query = "from " + getDomainClassName() + " do  where do.uniqueIdentifier = :unique_identifier ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("unique_identifier", uniqueIdentifier);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("unique_identifier", uniqueIdentifier);
         return (Subject) q.uniqueResult();
     }
 }

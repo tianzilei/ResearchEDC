@@ -16,8 +16,8 @@ public class StudyModuleStatusDao extends AbstractDomainDao<StudyModuleStatus> {
 
     public StudyModuleStatus findByStudyId(int studyId) {
         String query = "from " + getDomainClassName() + " sms  where sms.studyId = :studyId ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("studyId", studyId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyId", studyId);
         return (StudyModuleStatus) q.uniqueResult();
     }
 

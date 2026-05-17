@@ -14,23 +14,23 @@ public class CrfVersionDao extends AbstractDomainDao<CrfVersion> {
 
     public CrfVersion findByCrfVersionId(int crf_version_id) {
         String query = "from " + getDomainClassName() + " crf_version  where crf_version.crfVersionId = :crfversionid ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("crfversionid", crf_version_id);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("crfversionid", crf_version_id);
         return (CrfVersion) q.uniqueResult();
     }
 
     public CrfVersion findByOcOID(String OCOID) {
         getSessionFactory().getStatistics().logSummary();
         String query = "from " + getDomainClassName() + " do  where do.ocOid = :OCOID";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("OCOID", OCOID);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("OCOID", OCOID);
         return (CrfVersion) q.uniqueResult();
     }
 
     public CrfVersion findByNameCrfId(String name, Integer crfId) {
         String query = "select distinct cv.* from crf_version cv,crf c " + "where c.crf_id = " + crfId + " and cv.name = '" + name
                 + "' and cv.crf_id = c.crf_id";
-        org.hibernate.Query q = getCurrentSession().createSQLQuery(query).addEntity(CrfVersion.class);
+        org.hibernate.query.Query q = getCurrentSession().createNativeQuery(query, CrfVersion.class);
         return ((CrfVersion) q.uniqueResult());
     }
     

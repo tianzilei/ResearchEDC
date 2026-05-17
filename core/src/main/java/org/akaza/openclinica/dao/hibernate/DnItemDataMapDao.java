@@ -13,8 +13,8 @@ public class DnItemDataMapDao extends AbstractDomainDao<DnItemDataMap> {
 
     public List<DnItemDataMap> findByItemData(Integer itemDataId) {
         String query = "from " + getDomainClassName() + " do where do.itemData.itemDataId = :itemdataid ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("itemdataid", itemDataId);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("itemdataid", itemDataId);
         return (List<DnItemDataMap>) q.list();
     }
 }

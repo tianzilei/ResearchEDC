@@ -12,8 +12,8 @@ public class AuthoritiesDao extends AbstractDomainDao<AuthoritiesBean> {
 
     public AuthoritiesBean findByUsername(String username) {
         String query = "from " + getDomainClassName() + " authorities  where authorities.username = :username ";
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("username", username);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("username", username);
         return (AuthoritiesBean) q.uniqueResult();
     }
 }

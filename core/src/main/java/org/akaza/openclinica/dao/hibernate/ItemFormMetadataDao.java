@@ -3,7 +3,7 @@ package org.akaza.openclinica.dao.hibernate;
 import java.util.List;
 
 import org.akaza.openclinica.domain.datamap.ItemFormMetadata;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 
 public class ItemFormMetadataDao extends AbstractDomainDao<ItemFormMetadata> {
 
@@ -15,7 +15,7 @@ public class ItemFormMetadataDao extends AbstractDomainDao<ItemFormMetadata> {
     public ItemFormMetadata findByItemCrfVersion(Integer itemId, Integer crfVersionId) {
         String query = "SELECT distinct m.* " + " FROM item_form_metadata m" + " WHERE m.item_id= " + String.valueOf(itemId) + " AND m.crf_version_id= "
                 + String.valueOf(crfVersionId);
-        Query q = getCurrentSession().createSQLQuery(query).addEntity(ItemFormMetadata.class);
+        Query q = getCurrentSession().createNativeQuery(query, ItemFormMetadata.class);
         return (ItemFormMetadata) q.uniqueResult();
 
     }
@@ -24,8 +24,8 @@ public class ItemFormMetadataDao extends AbstractDomainDao<ItemFormMetadata> {
 
     @SuppressWarnings("unchecked")
     public List<ItemFormMetadata> findAllByCrfVersion(int crf_version_id) {
-        org.hibernate.Query q = getCurrentSession().createSQLQuery(findAllByCrfVersionQuery).addEntity(ItemFormMetadata.class);
-        q.setInteger("crfversionid", crf_version_id);
+        org.hibernate.query.Query q = getCurrentSession().createNativeQuery(findAllByCrfVersionQuery, ItemFormMetadata.class);
+        q.setParameter("crfversionid", crf_version_id);
         return (List<ItemFormMetadata>) q.list();
     }
 

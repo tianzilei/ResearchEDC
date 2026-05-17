@@ -22,9 +22,9 @@ public class ItemDataFlagDao extends AbstractDomainDao<ItemDataFlag> {
         String query = " from " + getDomainClassName() + "  where "
                 + " tag_id = :tag_id and path LIKE :eventCrfPath";
         
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("tag_id", tag_id);
-        q.setString("eventCrfPath", eventCrfPath + ".%");
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("tag_id", tag_id);
+        q.setParameter("eventCrfPath", eventCrfPath + ".%");
         
         return (List<ItemDataFlag>) q.list();
     }
@@ -34,9 +34,9 @@ public class ItemDataFlagDao extends AbstractDomainDao<ItemDataFlag> {
         String query = " from " + getDomainClassName() + "  where "
                 + " tag_id= :tag_id  and path= :itemDataPath ";
         
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setInteger("tag_id", tag_id);
-        q.setString("itemDataPath", itemDataPath);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("tag_id", tag_id);
+        q.setParameter("itemDataPath", itemDataPath);
         
         return (ItemDataFlag) q.uniqueResult();
     }

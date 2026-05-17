@@ -36,8 +36,8 @@ public class UsageStatsServiceDAO extends AbstractDomainDao<LogUsageStatsBean> {
 
         List<LogUsageStatsBean> logUsageStatsBeanLst = new ArrayList<LogUsageStatsBean>();
         LogUsageStatsBean logUsageStatsBeanRet = new LogUsageStatsBean();
-        org.hibernate.Query q = getCurrentSession().createQuery(query);
-        q.setString("param_key", param_key);
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("param_key", param_key);
         logUsageStatsBeanLst = q.list();
         if ((null != logUsageStatsBeanLst) && (logUsageStatsBeanLst.size() != 0)) {
             logUsageStatsBeanRet = logUsageStatsBeanLst.get(0);

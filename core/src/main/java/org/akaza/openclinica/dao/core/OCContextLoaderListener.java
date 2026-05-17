@@ -3,7 +3,7 @@ package org.akaza.openclinica.dao.core;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import javax.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextEvent;
 
 import liquibase.logging.LogFactory;
 
