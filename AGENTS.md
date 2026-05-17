@@ -5,7 +5,7 @@
 
 ## OVERVIEW
 
-OpenClinica is an open-source Electronic Data Capture (EDC) and Clinical Data Management (CDM) platform for clinical trials. Built on Java 7 with Spring Framework 3.2, Hibernate ORM, and Liquibase migrations. Multi-module Maven project supporting Oracle and PostgreSQL.
+OpenClinica is an open-source Electronic Data Capture (EDC) and Clinical Data Management (CDM) platform for clinical trials. Built on Java 21 with Spring Framework 6.1.5, Hibernate ORM 6.4.4, and Liquibase migrations. Multi-module Maven project supporting Oracle and PostgreSQL.
 
 ## STRUCTURE
 
@@ -14,7 +14,7 @@ OpenClinica is an open-source Electronic Data Capture (EDC) and Clinical Data Ma
 ├── core/           # Domain logic, DAOs, services, Hibernate entities
 ├── web/            # Web UI (JSP), servlets, controllers, REST endpoints  
 ├── ws/             # SOAP web services, study/subject/event endpoints
-├── pom.xml         # Maven parent - Spring 3.2, Hibernate 3.5, Java 7
+├── pom.xml         # Maven parent - Spring 6.1.5, Hibernate 6.4.4, Java 21
 └── README.md
 ```
 
@@ -48,7 +48,7 @@ OpenClinica is an open-source Electronic Data Capture (EDC) and Clinical Data Ma
 - **AVOID** modifying migration files after they've been released
 - **NEVER** hardcode file paths - use `CoreResources.getField()`
 - **DO NOT** ignore transaction boundaries - use `@Transactional` or `TransactionTemplate`
-- **AVOID** Java 7+ features (project targets Java 7 compatibility)
+- **AVOID** Java 21+ preview features (project targets Java 21 LTS compatibility)
 
 ## TESTING ARCHITECTURE
 
