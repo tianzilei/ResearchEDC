@@ -1,6 +1,7 @@
 import { Button, Typography, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import { MedicineBoxOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 
@@ -10,19 +11,10 @@ interface ErrorPageProps {
   subTitle?: string;
 }
 
-const DEFAULT_MESSAGES: Record<number, { title: string; subTitle: string }> = {
-  403: {
-    title: "403",
-    subTitle: "You do not have permission to access this page.",
-  },
-  404: {
-    title: "404",
-    subTitle: "The page you are looking for does not exist.",
-  },
-  500: {
-    title: "500",
-    subTitle: "Something went wrong. Please try again later.",
-  },
+const ERROR_MESSAGES: Record<number, { key: string }> = {
+  403: { key: "403" },
+  404: { key: "404" },
+  500: { key: "500" },
 };
 
 export default function ErrorPage({
@@ -30,8 +22,18 @@ export default function ErrorPage({
   title,
   subTitle,
 }: ErrorPageProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const defaultMsg = DEFAULT_MESSAGES[status] ?? { title: "Error", subTitle: "An unexpected error occurred." };
+
+  const SUBTITLE_KEYS: Record<403 | 404 | 500, string> = {
+    403: "error.403.subtitle",
+    404: "error.404.subtitle",
+    500: "error.500.subtitle",
+  };
+
+  const defaultMsg = ERROR_MESSAGES[status]
+    ? { title: ERROR_MESSAGES[status].key, subTitle: t(SUBTITLE_KEYS[status]) }
+    : { title: t("error.default.title"), subTitle: t("error.default.subtitle") };
 
   return (
     <div
@@ -178,7 +180,7 @@ export default function ErrorPage({
               marginTop: 8,
             }}
           >
-            Back to Dashboard
+            {t("error.backToDashboard")}
           </Button>
         </Space>
       </div>

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, Col, Row, Typography, Alert, Space } from "antd";
 import {
   TeamOutlined,
@@ -126,10 +127,11 @@ const ACTIVITY_COLORS: Record<string, string> = {
 };
 
 function DonutChart() {
+  const { t } = useTranslation();
   const segments = [
-    { label: "Active", value: 65, color: "#099A87" },
-    { label: "Paused", value: 20, color: "#D4A854" },
-    { label: "Closed", value: 15, color: "#D9D4CA" },
+    { label: t("dashboard.chart.active"), value: 65, color: "#099A87" },
+    { label: t("dashboard.chart.paused"), value: 20, color: "#D4A854" },
+    { label: t("dashboard.chart.closed"), value: 15, color: "#D9D4CA" },
   ];
   const total = segments.reduce((s, seg) => s + seg.value, 0);
   const radius = 60;
@@ -168,7 +170,7 @@ function DonutChart() {
           {total}
         </text>
         <text x={80} y={95} textAnchor="middle" fill="#6B7280" fontSize={12} fontFamily="'DM Sans', sans-serif">
-          Studies
+          {t("dashboard.chart.studies")}
         </text>
       </svg>
       <div style={{ display: "flex", gap: 20 }}>
@@ -185,17 +187,40 @@ function DonutChart() {
   );
 }
 
-function getGreeting(): string {
+function getGreeting(t: (key: string) => string): string {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return t("dashboard.greeting.morning");
+  if (hour < 18) return t("dashboard.greeting.afternoon");
+  return t("dashboard.greeting.evening");
 }
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const { isAuthenticated, isInitialized, login, user } = useAuth();
   const { data: studies, isLoading, isError } = useStudies();
   const navigate = useNavigate();
+
+  const statTitles: Record<string, string> = {
+    studies: t("dashboard.stats.activeStudies"),
+    sites: t("dashboard.stats.sites"),
+    subjects: t("dashboard.stats.subjects"),
+    crfs: t("dashboard.stats.crfsCompleted"),
+    queries: t("dashboard.stats.queriesOpen"),
+  };
+
+  const actionLabels: Record<string, string> = {
+    export: t("dashboard.actions.dataExport"),
+    randomization: t("dashboard.actions.randomization"),
+    crfs: t("dashboard.actions.crfLibrary"),
+    questionnaires: t("dashboard.actions.questionnaires"),
+  };
+
+  const actionDescriptions: Record<string, string> = {
+    export: t("dashboard.actions.dataExportDesc"),
+    randomization: t("dashboard.actions.randomizationDesc"),
+    crfs: t("dashboard.actions.crfLibraryDesc"),
+    questionnaires: t("dashboard.actions.questionnairesDesc"),
+  };
 
   useEffect(() => {
     if (isInitialized && !isAuthenticated) {
@@ -207,7 +232,7 @@ export default function Dashboard() {
     return (
       <div>
         <Title level={4} style={{ marginTop: 0, fontFamily: "'Sora', sans-serif" }}>
-          Dashboard
+          {t("dashboard.title")}
         </Title>
         <SkeletonCard count={5} />
       </div>
@@ -218,15 +243,15 @@ export default function Dashboard() {
     return (
       <div>
         <Title level={4} style={{ marginTop: 0, fontFamily: "'Sora', sans-serif" }}>
-          Dashboard
+          {t("dashboard.title")}
         </Title>
         <Alert
-          message="Unable to load dashboard data"
-          description="The server could not be reached. Please check your connection and try again."
+          message={t("dashboard.error.title")}
+          description={t("dashboard.error.description")}
           type="warning"
           showIcon
           action={
-            <a onClick={() => { navigate(0); }}>Retry</a>
+            <a onClick={() => { navigate(0); }}>{t("dashboard.error.retry")}</a>
           }
         />
       </div>
@@ -265,10 +290,10 @@ export default function Dashboard() {
               fontSize: 22,
             }}
           >
-            {getGreeting()}, {user?.name ?? "User"}
+            {getGreeting(t)}, {user?.name ?? t("dashboard.greeting.user")}
           </Title>
           <Text style={{ color: "#6B7280", fontSize: 13, letterSpacing: "0.01em" }}>
-            Here is an overview of your clinical data
+            {t("dashboard.subtitle")}
           </Text>
         </div>
       </div>
@@ -324,7 +349,7 @@ export default function Dashboard() {
                       letterSpacing: "0.01em",
                     }}
                   >
-                    {card.title}
+                    {statTitles[card.key]}
                   </div>
                 </div>
               </Space>
@@ -341,9 +366,9 @@ export default function Dashboard() {
             title={
               <Space>
                 <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 15, fontWeight: 600, color: "#1A1D23" }}>
-                  Recent Activity
+                  {t("dashboard.recentActivity")}
                 </span>
-                <span style={{ fontSize: 12, color: "#9CA3AF", fontWeight: 400 }}>Past 7 days</span>
+                <span style={{ fontSize: 12, color: "#9CA3AF", fontWeight: 400 }}>{t("dashboard.past7Days")}</span>
               </Space>
             }
             styles={{
@@ -437,7 +462,7 @@ export default function Dashboard() {
           <Card
             title={
               <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 15, fontWeight: 600, color: "#1A1D23" }}>
-                Study Overview
+                {t("dashboard.studyOverview")}
               </span>
             }
             styles={{
@@ -465,7 +490,7 @@ export default function Dashboard() {
             color: "#1A1D23",
           }}
         >
-          Quick Actions
+          {t("dashboard.quickActions")}
         </Title>
         <Row gutter={[16, 16]}>
           {QUICK_ACTIONS.map((action, index) => (
@@ -514,7 +539,7 @@ export default function Dashboard() {
                           color: "#1A1D23",
                         }}
                       >
-                        {action.label}
+                        {actionLabels[action.key]}
                       </span>
                       <RightOutlined style={{ fontSize: 11, color: "#D4A854" }} />
                     </div>
@@ -526,7 +551,7 @@ export default function Dashboard() {
                         lineHeight: 1.4,
                       }}
                     >
-                      {action.description}
+                      {actionDescriptions[action.key]}
                     </div>
                   </div>
                 </Space>

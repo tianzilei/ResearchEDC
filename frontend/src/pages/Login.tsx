@@ -2,10 +2,12 @@ import { Button, Card, Typography, Space } from "antd";
 import { MedicineBoxOutlined } from "@ant-design/icons";
 import { useAuth } from "@/providers/AuthProvider";
 import { Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 
 export default function Login() {
+  const { t } = useTranslation();
   const { isAuthenticated, isInitialized, login } = useAuth();
 
   if (!isInitialized) {
@@ -153,7 +155,7 @@ export default function Login() {
               marginTop: 4,
             }}
           >
-            Sign in with Keycloak
+            {t("login.signIn")}
           </Button>
         </Space>
       </Card>

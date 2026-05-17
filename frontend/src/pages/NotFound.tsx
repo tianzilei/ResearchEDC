@@ -1,10 +1,12 @@
 import { Button, Typography, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import { MedicineBoxOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 
 export default function NotFound() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   return (
@@ -119,7 +121,7 @@ export default function NotFound() {
               lineHeight: 1.6,
             }}
           >
-            Page not found.
+            {t("notFound.message")}
           </Text>
         </div>
 
@@ -138,7 +140,7 @@ export default function NotFound() {
             marginTop: 8,
           }}
         >
-          Back to Dashboard
+          {t("error.backToDashboard")}
         </Button>
       </Space>
     </div>
