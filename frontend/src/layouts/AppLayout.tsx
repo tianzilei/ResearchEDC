@@ -63,9 +63,12 @@ export default function AppLayout() {
   const { token } = antTheme.useToken();
   const menuItems = useMenuItems();
 
-  const selectedKey = ((menuItems ?? []) as { key: string }[]).find(
-    (item) => item.key !== "/app/dashboard" && location.pathname.startsWith(item.key),
-  )?.key ?? "/app/dashboard";
+  const selectedKey = (() => {
+    if (location.pathname.startsWith("/app/randomization")) return "/app/randomization";
+    return ((menuItems ?? []) as { key: string }[]).find(
+      (item) => item.key !== "/app/dashboard" && location.pathname.startsWith(item.key),
+    )?.key ?? "/app/dashboard";
+  })();
 
   const userMenuItems: MenuProps["items"] = [
     {

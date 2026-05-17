@@ -32,7 +32,12 @@ export type Permission =
   | "data:export"
   | "user:manage"
   | "randomization:view"
+  | "randomization:configure"
+  | "randomization:activate"
   | "randomization:assign"
+  | "randomization:view_unblinded"
+  | "randomization:unblind"
+  | "randomization:export"
   | "audit:view"
   | "admin:access";
 
@@ -44,7 +49,9 @@ export const ROLE_PERMISSIONS: Record<StudyRole, Permission[]> = {
     "crf:design", "crf:enter", "crf:review",
     "data:export",
     "user:manage",
-    "randomization:view", "randomization:assign",
+    "randomization:view", "randomization:configure", "randomization:activate",
+    "randomization:assign", "randomization:view_unblinded", "randomization:unblind",
+    "randomization:export",
     "audit:view",
     "admin:access",
   ],
@@ -54,7 +61,7 @@ export const ROLE_PERMISSIONS: Record<StudyRole, Permission[]> = {
     "subject:view", "subject:create", "subject:edit",
     "crf:design", "crf:enter", "crf:review",
     "data:export",
-    "randomization:view",
+    "randomization:view", "randomization:assign",
     "audit:view",
   ],
   studyDirector: [
