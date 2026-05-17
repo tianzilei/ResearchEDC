@@ -4,19 +4,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.akaza.openclinica.domain.AbstractAuditableMutableDomainObject;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import java.util.Date;
 
-/**
- * @author: Shamim
- * Date: Feb 17, 2009
- * Time: 8:17:02 PM
- * There will be a single instance of this class which will maintain completion status of
- * different entities of study module.
- */
-@Entity
+@Entity(name = "managestudy_study_module_status")
 @Table(name = "study_module_status")
 @GenericGenerator(name = "id-generator", strategy = "native", parameters = { @Parameter(name = "sequence", value = "study_module_status_id_seq") })
 public class StudyModuleStatus extends AbstractAuditableMutableDomainObject {
@@ -35,6 +29,7 @@ public class StudyModuleStatus extends AbstractAuditableMutableDomainObject {
 
     private transient int studyStatus;
 
+    @Column(name = "study_id")
     public int getStudyId() {
         return studyId;
     }
@@ -43,6 +38,7 @@ public class StudyModuleStatus extends AbstractAuditableMutableDomainObject {
         this.studyId = studyId;
     }
 
+    @Column(name = "study")
     public int getStudy() {
         return study;
     }
@@ -51,6 +47,7 @@ public class StudyModuleStatus extends AbstractAuditableMutableDomainObject {
         this.study = study;
     }
 
+    @Column(name = "crf")
     public int getCrf() {
         return crf;
     }
@@ -59,6 +56,7 @@ public class StudyModuleStatus extends AbstractAuditableMutableDomainObject {
         this.crf = crf;
     }
 
+    @Column(name = "event_definition")
     public int getEventDefinition() {
         return eventDefinition;
     }
@@ -67,6 +65,7 @@ public class StudyModuleStatus extends AbstractAuditableMutableDomainObject {
         this.eventDefinition = eventDefinition;
     }
 
+    @Column(name = "subject_group")
     public int getSubjectGroup() {
         return subjectGroup;
     }
@@ -75,6 +74,7 @@ public class StudyModuleStatus extends AbstractAuditableMutableDomainObject {
         this.subjectGroup = subjectGroup;
     }
 
+    @Column(name = "rule")
     public int getRule() {
         return rule;
     }
@@ -83,6 +83,7 @@ public class StudyModuleStatus extends AbstractAuditableMutableDomainObject {
         this.rule = rule;
     }
 
+    @Column(name = "site")
     public int getSite() {
         return site;
     }
@@ -91,6 +92,7 @@ public class StudyModuleStatus extends AbstractAuditableMutableDomainObject {
         this.site = site;
     }
 
+    @Column(name = "users")
     public int getUsers() {
         return users;
     }

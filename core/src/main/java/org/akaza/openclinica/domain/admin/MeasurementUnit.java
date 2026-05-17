@@ -12,6 +12,7 @@ import org.akaza.openclinica.domain.AbstractMutableDomainObject;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
@@ -20,7 +21,7 @@ import jakarta.persistence.Table;
  * @author ywang (May, 2009)
  * 
  */
-@Entity
+@Entity(name = "admin_measurement_unit")
 @Table(name = "measurement_unit")
 @GenericGenerator(name = "id-generator", strategy = "native", parameters = { @Parameter(name = "sequence", value = "measurement_unit_measurement_unit_id") })
 public class MeasurementUnit extends AbstractMutableDomainObject {
@@ -44,6 +45,7 @@ public class MeasurementUnit extends AbstractMutableDomainObject {
         this.description = description;
     }
 
+    @Column(name = "oc_oid", unique = true, nullable = false, length = 40)
     public String getOcOid() {
         return ocOid;
     }
