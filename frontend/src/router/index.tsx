@@ -11,6 +11,7 @@ const SchemeEditor = lazy(() => import("@/pages/randomization/SchemeEditor"));
 const AllocationPage = lazy(() => import("@/pages/randomization/AllocationPage"));
 const UnblindingPage = lazy(() => import("@/pages/randomization/UnblindingPage"));
 const AuditViewer = lazy(() => import("@/pages/randomization/AuditViewer"));
+const ExportCenter = lazy(() => import("@/pages/export/ExportCenter"));
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,14 @@ const router = createBrowserRouter([
       },
       {
         path: "randomization/schemes/:id/audit",
+        element: <AuditViewer />,
+      },
+      {
+        path: "data-export",
+        element: <ExportCenter />,
+      },
+      {
+        path: "audit-log",
         element: <AuditViewer />,
       },
       {
