@@ -1,0 +1,128 @@
+# =============================================================================
+# OpenClinica Development Docker Compose
+#
+# Services:
+#   postgres  — PostgreSQL 17 database
+#   web       — OpenClinica Web application (Tomcat 10.1 + JDK 21)
+#   ws        — OpenClinica Web Services (Tomcat 10.1 + JDK 21)
+#   mailhog   — SMTP test server (captures emails without sending)
+#   adminer   — Database administration UI
+# =============================================================================
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  # ---- Database ----
+  postgres:
+    image: postgres:17-alpine
+    container_name: oc-postgres
+    restart: unless-stopped
+    ports:
+      - "${OC_DB_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-openclinica}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-openclinica}
+      POSTGRES_DB: ${POSTGRES_DB:-openclinica}
+    volumes:
+      - oc-postgres-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-openclinica} -d ${POSTGRES_DB:-openclinica}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging: *default-logging
+
+  # ---- OpenClinica Web ----
+  web:
+    build:
+      context: ../..
+      dockerfile: docker/web/Dockerfile
+    container_name: oc-web
+    restart: unless-stopped
+    ports:
+      - "${OC_WEB_PORT:-8080}:8080"
+    environment:
+      OC_DB_HOST: postgres
+      OC_DB_PORT: "5432"
+      OC_DB_NAME: ${OC_DB_NAME:-openclinica}
+      OC_DB_USER: ${OC_DB_USER:-openclinica}
+      OC_DB_PASS: ${OC_DB_PASS:-openclinica}
+      OC_SYS_URL: ${OC_SYS_URL:-http://localhost:8080/MainMenu}
+      OC_ADMIN_EMAIL: ${OC_ADMIN_EMAIL:-admin@example.com}
+      OC_LOG_LEVEL: ${OC_LOG_LEVEL:-info}
+      OC_MAIL_HOST: mailhog
+      OC_MAIL_PORT: "1025"
+      OC_MAIL_AUTH: "false"
+      OC_LDAP_ENABLED: "false"
+      OC_WEBAPP_NAME: "ROOT"
+    volumes:
+      - oc-data:/opt/openclinica/data
+      - oc-logs:/opt/openclinica/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging: *default-logging
+
+  # ---- OpenClinica Web Services ----
+  ws:
+    build:
+      context: ../..
+      dockerfile: docker/ws/Dockerfile
+    container_name: oc-ws
+    restart: unless-stopped
+    ports:
+      - "${OC_WS_PORT:-8081}:8080"
+    environment:
+      OC_DB_HOST: postgres
+      OC_DB_PORT: "5432"
+      OC_DB_NAME: ${OC_DB_NAME:-openclinica}
+      OC_DB_USER: ${OC_DB_USER:-openclinica}
+      OC_DB_PASS: ${OC_DB_PASS:-openclinica}
+      OC_SYS_URL: ${OC_SYS_URL:-http://localhost:8080/MainMenu}
+      OC_LOG_LEVEL: ${OC_LOG_LEVEL:-info}
+      OC_MAIL_HOST: mailhog
+      OC_MAIL_PORT: "1025"
+      OC_MAIL_AUTH: "false"
+      OC_LDAP_ENABLED: "false"
+      OC_WEBAPP_NAME: "ROOT"
+    volumes:
+      - oc-data:/opt/openclinica/data
+      - oc-logs:/opt/openclinica/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging: *default-logging
+
+  # ---- MailHog (SMTP capture for development) ----
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: oc-mailhog
+    restart: unless-stopped
+    ports:
+      - "${OC_MAILHOG_HTTP_PORT:-8025}:8025"
+    logging: *default-logging
+
+  # ---- Adminer (Database admin UI) ----
+  adminer:
+    image: adminer:latest
+    container_name: oc-adminer
+    restart: unless-stopped
+    ports:
+      - "${OC_ADMINER_PORT:-8082}:8080"
+    depends_on:
+      - postgres
+    logging: *default-logging
+
+volumes:
+  oc-postgres-data:
+    driver: local
+  oc-data:
+    driver: local
+  oc-logs:
+    driver: local
