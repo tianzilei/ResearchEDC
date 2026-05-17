@@ -149,16 +149,11 @@ public class SQLFactory {
         // key is the public static final sting used above; value is the actual
         // filename
         HashMap fileList = new HashMap();
-        CacheManager cacheManager = new CacheManager();
-        
-        
-       
-      
+        CacheManager cacheManager = null;
         try {
-            if(resourceLoader!=null && cacheManager!=null)
-            cacheManager = cacheManager.create(resourceLoader.getResource("classpath:org/akaza/openclinica/ehcache.xml").getInputStream());
+            if (resourceLoader != null)
+                cacheManager = CacheManager.create(resourceLoader.getResource("classpath:org/akaza/openclinica/ehcache.xml").getInputStream());
         } catch (CacheException e) {
-          
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
