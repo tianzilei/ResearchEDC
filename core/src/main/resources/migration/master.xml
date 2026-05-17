@@ -17,5 +17,6 @@
   <include  file="migration/3.12/release.xml"/>  
   <include  file="migration/3.14/release.xml"/>
   <include  file="migration/3.17/release.xml"/>
+  <include  file="migration/3.18/release.xml"/>
 </databaseChangeLog> 
 
