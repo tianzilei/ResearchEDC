@@ -33,9 +33,19 @@ core/src/main/java/org/akaza/openclinica/
 ## CONVENTIONS
 
 - **DAOs:** Extend `EntityDAO<K>` with `execute()`/`executeFind()` methods
-- **Entities:** Hibernate 3.5 with annotations in `domain/datamap/`
+- **Entities:** Hibernate 6.4.4 with JPA annotations in `domain/datamap/` (migrated from Hibernate 3.5)
 - **Beans:** Plain DTOs in `bean/` with getters/setters
 - **Services:** Interface + Impl pattern in `service/`
+
+## KNOWN ISSUES
+
+### Hibernate 6 兼容性
+- **Physical naming strategy**: `CamelCaseToUnderscoresNamingStrategy` 将 Java 属性名转换为下划线列名
+  - 约 50+ 实体使用隐式命名策略（无 `@Column`），约 50+ 使用显式 `@Column(name = "...")`
+  - 同名表对应多个 Entity 时需添加 `@Entity(name = "...")` 区分
+  - 原始 `Set` 类型（无泛型）在 Hibernate 6 中需添加类型参数
+- **Liquibase 4.26**: `defaultValueComputed` 属性在 column 元素中不支持，需使用 `<constraints nullable="false"/>`
+- **单元测试**: 需 JDK 21 运行（JDK 25 下 Mockito/ByteBuddy 不兼容）
 
 ## TESTING
 
@@ -46,6 +56,7 @@ core/src/main/java/org/akaza/openclinica/
 - Use DBUnit `FlatXmlDataSetBuilder` to load test data from `{package}/testdata/{ClassName}.xml`
 - Test data simulates full clinical trial state (studies, subjects, events, CRFs, items)
 - Teardown rolls back transactions and closes DS connection for isolation
+- ⚠️ 测试方法多数被注释，需准备完整 PostgreSQL 数据库
 
 **Service tests** (e.g., `RuleSetServiceTest`):
 - Same `HibernateOcDbTestCase` base as DAO tests
@@ -58,6 +69,16 @@ core/src/main/java/org/akaza/openclinica/
 
 **Test data files:** 12 XML files under `src/test/resources/org/akaza/openclinica/{dao,service}/testdata/`
 **Config:** `src/test/resources/test.properties` (DB connection) and `applicationContext-core-spring.xml`
+
+### 运行测试
+```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+docker run -d --name oc-test-pg -e POSTGRES_USER=clinica \
+  -e POSTGRES_PASSWORD=clinica \
+  -e POSTGRES_DB=openclinica-TEST-3.12 \
+  -p 5432:5432 postgres:17-alpine
+mvn test -pl core
+```
 
 ## ANTI-PATTERNS
 

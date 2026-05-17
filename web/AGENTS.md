@@ -51,6 +51,7 @@ web/src/main/webapp/
 - Use **Mockito** (`import static org.mockito.Mockito.*`) for mocking role/permission objects
 - Test authorization logic like `mayViewData()`, `maySubmitData()` with different roles
 - Configure locale via `ResourceBundleProvider.updateLocale()`
+- ✅ 3 tests pass (JAVA_HOME=21 required for Mockito/ByteBuddy compatibility)
 
 ## ANTI-PATTERNS
 
