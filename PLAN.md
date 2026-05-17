@@ -125,12 +125,12 @@ Milestone 10: 后续升级评估 (Java 25 / SB 4 / K8s)
 
 #### Phase 2.1：容器化基线建立
 
-- [ ] `docker/web/Dockerfile` — multi-stage build，Tomcat 10.1 + JDK 21
-- [ ] `docker/ws/Dockerfile` — WS 模块镜像
-- [ ] `deploy/compose/docker-compose.dev.yml` — web + ws + postgres + mailhog + adminer
-- [ ] `deploy/compose/.env.example` — 环境变量模板
-- [ ] 数据库连接配置改为环境变量注入（`OC_DB_*`）
-- [ ] 上传路径、日志路径 volume 化
+- [x] `docker/web/Dockerfile` — multi-stage build，Tomcat 10.1 + JDK 21
+- [x] `docker/ws/Dockerfile` — WS 模块镜像
+- [x] `deploy/compose/docker-compose.dev.yml` — web + ws + postgres + mailhog + adminer
+- [x] `deploy/compose/.env.example` — 环境变量模板
+- [x] 数据库连接配置改为环境变量注入（`OC_DB_*`），通过 entrypoint 脚本在容器启动时动态生成 `datainfo.properties`
+- [x] 上传路径、日志路径 volume 化
 
 验收：
 ```bash

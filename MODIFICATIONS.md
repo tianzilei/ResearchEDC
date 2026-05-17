@@ -122,6 +122,25 @@
 
 ---
 
+## 2026-05-17 — Milestone 1: Docker-first 可运行基线 (Phase 2.1)
+
+- **模块:** Docker 基础设施
+- **原因:** 建立 Docker-first 可运行基线，让系统以 Docker Compose 方式一键启动
+- **差异:**
+  - 新增 `docker/web/Dockerfile` — 多阶段构建 (Maven 编译 + Tomcat 10.1/jdk21 部署)
+  - 新增 `docker/ws/Dockerfile` — WS 模块多阶段构建镜像
+  - 新增 `docker/scripts/entrypoint.sh` — 容器启动时从 OC_DB_* 环境变量动态生成 datainfo.properties
+  - 新增 `deploy/compose/docker-compose.dev.yml` — web + ws + postgres + mailhog + adminer 编排
+  - 新增 `deploy/compose/.env.example` — 环境变量模板
+  - 数据库连接配置改为环境变量注入 (OC_DB_HOST/PORT/NAME/USER/PASS)
+  - 上传路径 (`/opt/openclinica/data`) 和日志路径 (`/opt/openclinica/logs`) volume 化
+- **许可证影响:** 无，保持 GNU LGPL
+- **数据库:** 无变化
+- **回滚:** git revert 新增文件
+- **验证状态:** ✅ 已验证 (脚本语法检查通过)
+
+---
+
 ## 2026-05-17 — 文档整理
 
 - **模块:** 文档系统
