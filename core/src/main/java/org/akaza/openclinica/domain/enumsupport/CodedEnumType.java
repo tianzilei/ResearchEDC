@@ -1,10 +1,10 @@
 package org.akaza.openclinica.domain.enumsupport;
 
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.internal.util.ReflectHelper;
 import org.hibernate.usertype.EnhancedUserType;
 import org.hibernate.usertype.ParameterizedType;
-import org.hibernate.util.ReflectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,26 +14,19 @@ import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Properties;
 
 /**
- * 
- * A UserType to handle Coded Enumerations. Any Enum that is added to the
- * application and needs to be persisted using this method needs to do the 
- * following 
- * 
- * 1. Implement CodedEnum Interface
- * 2. A static method needs to be added "public static EnumType getByCode(Integer code) {}"
- * 3. Add the definition to typedefs.xml
- * 
- * @author Krikor Krumlian
+ * Hibernate UserType for coded enumerations.
  */
-public class CodedEnumType implements EnhancedUserType, ParameterizedType {
+public class CodedEnumType implements EnhancedUserType<CodedEnum>, ParameterizedType {
 
     private Class<CodedEnum> enumClass;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     @SuppressWarnings("unchecked")
+    @Override
     public void setParameterValues(Properties parameters) {
         String enumClassName = parameters.getProperty("enumClassname");
         try {
@@ -43,103 +36,94 @@ public class CodedEnumType implements EnhancedUserType, ParameterizedType {
         }
     }
 
-    /* 
-     * Tells Hibernate what Java value type class is mapped by this userType
-     * @see org.hibernate.usertype.UserType#returnedClass()
-     */
+    @Override
     public Class<CodedEnum> returnedClass() {
         return enumClass;
     }
 
-    /* 
-     * Tells Hibernate what SQL column types to use for DDL schema generation.
-     * @see org.hibernate.usertype.UserType#sqlTypes()
-     * 
-     */
     public int[] sqlTypes() {
-        return new int[] { Hibernate.INTEGER.sqlType() };
+        return new int[] { Types.INTEGER };
     }
 
-    /* 
-     * Hibernate can make some minor performance optimizations for immutable types. This method 
-     * tells Hibernate that this type is immutable.
-     * @see org.hibernate.usertype.UserType#isMutable()
-     * 
-     */
+    @Override
+    public int getSqlType() {
+        return Types.INTEGER;
+    }
+
+    @Override
     public boolean isMutable() {
         return false;
     }
 
-    public Object deepCopy(Object value) {
+    @Override
+    public CodedEnum deepCopy(CodedEnum value) {
         return value;
     }
 
-    /* 
-     * This method is called when Hibernate puts the object into a second-level cache.
-     * @see org.hibernate.usertype.UserType#disassemble(java.lang.Object)
-     */
-    public Serializable disassemble(Object value) {
+    @Override
+    public Serializable disassemble(CodedEnum value) {
         return (Serializable) value;
     }
 
-    /* This method does the opposite of what disassemble does. It can transform cached data into
-     * an instance. 
-     * @see org.hibernate.usertype.UserType#assemble(java.io.Serializable, java.lang.Object)
-     */
-    public Object assemble(Serializable cached, Object owner) {
-        return cached;
-    }
-
-    /* 
-     * Handles merging of detached object state.
-     * @see org.hibernate.usertype.UserType#replace(java.lang.Object, java.lang.Object, java.lang.Object)
-     */
-    public Object replace(Object original, Object target, Object owner) {
+    @Override
+    public CodedEnum replace(CodedEnum original, CodedEnum target, Object owner) {
         return original;
     }
 
-    /* 
-     * This method compares the current property value to a previous snapshot and determines
-     * whether the property is dirty and must be saved to the database.
-     * @see org.hibernate.usertype.UserType#equals(java.lang.Object, java.lang.Object)
-     */
-    public boolean equals(Object x, Object y) {
+    @Override
+    public CodedEnum assemble(Serializable cached, Object owner) {
+        return (CodedEnum) cached;
+    }
+
+    @Override
+    public boolean equals(CodedEnum x, CodedEnum y) {
         return x == y;
     }
 
-    public int hashCode(Object x) {
+    @Override
+    public int hashCode(CodedEnum x) {
         return x.hashCode();
     }
 
-    public Object fromXMLString(String xmlValue) {
+    public CodedEnum fromXMLString(String xmlValue) {
         return getByCode(xmlValue);
     }
 
-    public String objectToSQLString(Object value) {
+    public CodedEnum fromStringValue(CharSequence charSequence) {
+        if (charSequence == null) return null;
+        return getByCode(charSequence.toString());
+    }
+
+    public String objectToSQLString(CodedEnum value) {
         return '\'' + getCodeAsString(value) + '\'';
     }
 
-    public String toXMLString(Object value) {
+    public String toXMLString(CodedEnum value) {
         return getCodeAsString(value);
     }
 
-    /* 
-     * Retrieves the property value from the JDBC Result-Set. You can also access the owner of the component
-     * if you need it for the conversion.
-     * @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet, java.lang.String[], java.lang.Object)
-     */
-    public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws SQLException {
-        String key = rs.getString(names[0]);
+    @Override
+    public String toString(CodedEnum value) {
+        return value == null ? null : String.valueOf(getCode(value));
+    }
+
+    @Override
+    public String toSqlLiteral(CodedEnum value) {
+        return toString(value);
+    }
+
+    @Override
+    public CodedEnum nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner)
+            throws SQLException {
+        String key = rs.getString(position);
         return rs.wasNull() ? null : getByCode(key);
     }
 
-    /* 
-     * This method writes the property value to the JDBC Prepared-Statement.
-     * @see org.hibernate.usertype.UserType#nullSafeSet(java.sql.PreparedStatement, java.lang.Object, int)
-     */
-    public void nullSafeSet(PreparedStatement st, Object value, int index) throws SQLException {
+    @Override
+    public void nullSafeSet(PreparedStatement st, CodedEnum value, int index, SharedSessionContractImplementor session)
+            throws SQLException {
         if (value == null) {
-            st.setNull(index, Hibernate.INTEGER.sqlType());
+            st.setNull(index, Types.INTEGER);
         } else {
             Integer code = getCode(value);
             logger.debug("Binding '{}' to parameter: {}", code, index);
@@ -155,7 +139,7 @@ public class CodedEnumType implements EnhancedUserType, ParameterizedType {
         return getCode(value).toString();
     }
 
-    private Object getByCode(String key) {
+    private CodedEnum getByCode(String key) {
         Object value = null;
         Method method = null;
         Integer theKey = null;
@@ -177,7 +161,7 @@ public class CodedEnumType implements EnhancedUserType, ParameterizedType {
         } catch (InvocationTargetException e) {
             throw new CodedEnumPersistenceException("InvocationTargetException on Method " + method + " being passed " + theKey + " on value " + value, e);
         }
-        return value;
+        return (CodedEnum) value;
     }
 
 }

@@ -15,10 +15,10 @@ import org.hibernate.annotations.Type;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * <p>
@@ -84,7 +84,7 @@ public class AuditUserLoginBean extends AbstractMutableDomainObject {
         this.details = details;
     }
 
-    @Type(type = "loginStatus")
+    @Type(value = org.akaza.openclinica.domain.enumsupport.CodedEnumType.class, parameters = @org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.akaza.openclinica.domain.technicaladmin.LoginStatus"))
     @Column(name = "login_status_code")
     public LoginStatus getLoginStatus() {
         return loginStatus;

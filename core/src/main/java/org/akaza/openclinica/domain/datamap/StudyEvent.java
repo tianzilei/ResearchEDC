@@ -4,18 +4,18 @@ package org.akaza.openclinica.domain.datamap;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 import org.akaza.openclinica.domain.DataMapDomainObject;
 import org.akaza.openclinica.domain.Status;
@@ -131,7 +131,7 @@ public class StudyEvent extends DataMapDomainObject  {
 		this.studySubject = studySubject;
 	}
 
-	/*@Type(type = "status")
+	/*@Type(value = org.akaza.openclinica.domain.enumsupport.CodedEnumType.class, parameters = @org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.akaza.openclinica.bean.core.Status"))
     @Column(name = "status_id")
     public Status getStatus() {
         if (status != null) {

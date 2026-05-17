@@ -13,10 +13,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * @author Krikor Krumlian
@@ -47,7 +47,7 @@ public class RuleActionRunLogBean extends AbstractMutableDomainObject {
         this.ruleOid = ruleOid;
     }
 
-    @Type(type = "actionType")
+    @Type(value = org.akaza.openclinica.domain.enumsupport.CodedEnumType.class, parameters = @org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.akaza.openclinica.domain.rule.action.ActionType"))
     @Column(name = "action_type", updatable = false)
     public ActionType getActionType() {
         return actionType;

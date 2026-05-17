@@ -2,7 +2,7 @@ package org.akaza.openclinica.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 
 public class DataMapDomainObject implements MutableDomainObject,Serializable {
 

@@ -11,18 +11,18 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import org.akaza.openclinica.domain.AbstractAuditableMutableDomainObject;
 import org.akaza.openclinica.domain.rule.RuleSetRuleBean;
@@ -76,7 +76,7 @@ public class RuleActionBean extends AbstractAuditableMutableDomainObject impleme
         return p;
     }
 
-    @Type(type = "actionType")
+    @Type(value = org.akaza.openclinica.domain.enumsupport.CodedEnumType.class, parameters = @org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.akaza.openclinica.domain.rule.action.ActionType"))
     @Column(name = "action_type", updatable = false, insertable = false)
     public ActionType getActionType() {
         return actionType;

@@ -1,8 +1,8 @@
 package org.akaza.openclinica.domain.datamap;
 // Generated Aug 8, 2013 11:32:37 AM by Hibernate Tools 3.4.0.CR1
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 import org.akaza.openclinica.domain.DataMapDomainObject;
 import org.akaza.openclinica.domain.MutableDomainObject;

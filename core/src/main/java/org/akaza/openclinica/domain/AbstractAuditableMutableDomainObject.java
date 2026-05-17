@@ -3,9 +3,9 @@ package org.akaza.openclinica.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 
 import org.akaza.openclinica.bean.login.UserAccountBean;
 import org.hibernate.annotations.Type;
@@ -110,7 +110,7 @@ public abstract class AbstractAuditableMutableDomainObject extends AbstractMutab
     /**
      * @return the status
      */
-    @Type(type = "status")
+    @Type(value = org.akaza.openclinica.domain.enumsupport.CodedEnumType.class, parameters = @org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.akaza.openclinica.bean.core.Status"))
     @Column(name = "status_id")
     public Status getStatus() {
         if (status != null) {
