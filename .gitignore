@@ -83,6 +83,10 @@ frontend/dist/
 frontend/node_modules/.vite/
 *.tsbuildinfo
 
+# Frontend build output copied into Spring Boot static resources
+# Built at CI/deploy time via Docker multi-stage build or frontend-maven-plugin
+app/src/main/resources/static/
+
 # Environment files (keep .env.example)
 .env
 .env.local
