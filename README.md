@@ -71,12 +71,18 @@ OpenClinica/
 │   ├── src/main/java/
 │   │   └── org/akaza/openclinica/
 │   │       ├── config/      # WebMvcConfig (SPA fallback), WebServiceConfig, OpenApiConfig
-│   │       └── module/      # Spring Modulith 模块
+│   │       └── module/      # Spring Modulith 模块 (12 个)
 │   │           ├── randomization/  # 随机化系统 (算法 + API)
 │   │           ├── export/         # 导出中心 (异步任务)
 │   │           ├── crf/            # CRF 元数据 (REST API)
 │   │           ├── notification/   # 通知模块 (事件驱动邮件)
-│   │           └── identity/       # 身份模块桩
+│   │           ├── legacy/         # 遗留网关 (底层 DAO REST 封装)
+│   │           ├── audit/          # 审计日志 (事件驱动 + 独立表)
+│   │           ├── study/          # 研究管理 (study 表桥接)
+│   │           ├── subject/        # 受试者管理 (subject/study_subject 桥接)
+│   │           ├── event/          # 访视管理 (study_event/event_crf 桥接)
+│   │           ├── datacapture/    # 数据采集 (item_data/response_set 桥接)
+│   │           └── identity/       # 身份权限 (user_account/study_user_role 桥接)
 │   └── src/main/resources/
 │       ├── application.yml # profile 配置
 │       └── static/         # 前端构建产物 (自动生成)
@@ -230,16 +236,21 @@ python -m pytest app/tests/ -v  # 31 tests
 
 | 模块 | 位置 | 功能 |
 |------|------|------|
-| 研究管理 | `control/managestudy/` | 研究/Site/Subject 管理 |
-| 数据录入 | `control/submit/` | CRF 数据录入、双录入、电子签名 |
-| 规则引擎 | `logic/rule/` | 表达式验证、自动计算 |
-| 数据提取 | `control/extract/` | ODM 导出、报告生成 |
-| SOAP API | `ws/` | 研究/Subject/CRUD |
-| REST API | `controller/` | Spring MVC JSON API |
-| **随机化系统** | `module/randomization/` | Spring Modulith — 3 种算法, 8 表 REST API |
-| **导出中心** | `module/export/` | Spring Modulith — 异步任务, 取消/重试 |
-| **CRF 元数据** | `module/crf/` | Spring Modulith — CRF/REST API |
-| 通知模块 | `module/notification/` | Spring Modulith — 事件驱动邮件 |
+| 研究管理 (遗留) | `control/managestudy/` | 研究/Site/Subject 管理 (186 Servlet) |
+| 数据录入 (遗留) | `control/submit/` | CRF 数据录入、双录入、电子签名 |
+| 规则引擎 (遗留) | `logic/rule/` | 表达式验证、自动计算 |
+| SOAP API (遗留) | `ws/` | 研究/Subject/CRUD |
+| **随机化系统** | `module/randomization/` | 3 种算法, 8 表 REST API |
+| **导出中心** | `module/export/` | 异步任务, 取消/重试 |
+| **CRF 元数据** | `module/crf/` | CRF 列表/版本/预览, REST API |
+| **Legacy 网关** | `module/legacy/` | 遗留 DAO REST 封装 |
+| **审计模块** | `module/audit/` | 事件驱动审计, 独立表 |
+| **研究模块** | `module/study/` | study 表桥接 REST API |
+| **受试者模块** | `module/subject/` | subject/study_subject 桥接 |
+| **访视模块** | `module/event/` | study_event/event_crf 桥接 |
+| **数据采集模块** | `module/datacapture/` | item_data/response_set 桥接 |
+| **身份模块** | `module/identity/` | user_account/study_user_role 桥接 |
+| 通知模块 | `module/notification/` | 事件驱动邮件 |
 | **问卷服务** | `questionnaire-service/apps/api/` | **FastAPI + SQLAlchemy + 评分引擎** |
 | 前台 SPA | `frontend/src/` | React 19 管理界面 (8 页面) |
 

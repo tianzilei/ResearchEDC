@@ -15,7 +15,7 @@
 |------|---------|------|
 | **Java 版本升级** | Java 7 → 21, Spring 3 → 6.1.5, Hibernate 3 → 6.4.4, Jakarta EE 10 | ✅ |
 | **Spring Boot 化** | app 模块整合 core + web + ws, Actuator + OpenAPI + Profiles | ✅ |
-| **Spring Modulith** | notification 模块已提取, identity 模块桩, 边界验证测试 | ✅ |
+| **Spring Modulith** | notification 模块已提取, identity 模块已实现, 边界验证测试 | ✅ |
 | **前端基线** | React 19 + TypeScript strict + Vite 6 + Ant Design 5 + TanStack Query 5 | ✅ |
 | **前端 "Precision Clinical"** | 设计重构: 配色/排版/动效/AppLayout/Dashboard | ✅ |
 | **随机化系统** | 3 种算法, 8 表 REST API, 前端 6 页面 | ✅ |
@@ -25,16 +25,24 @@
 | **Docker 部署** | 三层 Compose (dev/test/prod), Nginx + TLS + Prometheus + Grafana | ✅ |
 | **Maven 构建** | `mvn compile` ✅, `mvn package` ✅, `mvn test` 11/11 ✅ | ✅ |
 | **Hibernate 6 兼容** | 修复 9 个实体映射 + 2 个 Liquibase 问题 | ✅ |
-| **P0 安全加固** | Actuator 端点封锁, Swagger UI 禁用, entrypoint 默认密码移除 | ✅ (2026-05-18) |
-| **P1 Maven 插件升级** | surefire 2.10 → 3.2.5, resources 2.5 → 3.3.1 | ✅ (2026-05-18) |
-| **P2 构建/Git 优化** | 前端构建产物 .gitignore, JVM 容器化 CATALINA_OPTS | ✅ (2026-05-18) |
+| **P0 安全加固** | Actuator 端点封锁, Swagger UI 禁用, entrypoint 默认密码移除 | ✅ |
+| **P1 Maven 插件升级** | surefire 2.10 → 3.2.5, resources 2.5 → 3.3.1 | ✅ |
+| **P2 构建/Git 优化** | 前端构建产物 .gitignore, JVM 容器化 CATALINA_OPTS | ✅ |
+| **Sprint 0: Foundation** | CRF 防腐层构建、legacy-gateway 模块、EntityScan 修复、边界测试 | ✅ (2026-05-18) |
+| **Sprint 1: Audit 模块** | 独立 audit_log 表 + JPA 实体 + 事件驱动 + Liquibase 迁移 | ✅ (2026-05-18) |
+| **Sprint 2: Study 模块** | study 表桥接实体 + Repository + Service + REST API | ✅ (2026-05-18) |
+| **Sprint 3: Subject 模块** | subject + study_subject 桥接实体 + REST API | ✅ (2026-05-18) |
+| **Sprint 4: Event 模块** | study_event + event_crf + study_event_definition 桥接实体 + REST API | ✅ (2026-05-18) |
+| **Sprint 5: Data Capture 模块** | item_data + response_set + item_group 桥接实体 + REST API | ✅ (2026-05-18) |
+| **Identity 模块实现** | user_account + study_user_role 桥接实体 + REST API | ✅ (2026-05-18) |
 
 ### 1.2 遗留债务快照
 
 | 指标 | 数值 | 趋势 |
 |------|------|------|
-| 遗留 Java 文件 (core+web+ws) | ~1300 | 🔴 需冻结增长 |
-| JSP 页面数 | 419 | 🔴 需绞杀 |
+| Modulith 模块 | 11 个 (包括 7 个新提取) | ✅ 完成模块化基线 |
+| 遗留 Java 文件 (core+web+ws) | ~1300 | 🔴 待绞杀 (Phase C) |
+| JSP 页面数 | 419 | 🔴 待绞杀 (Phase G) |
 | WAR 体积 | 275 MB | 🔴 需降至 < 150 MB |
 | Java 测试覆盖 | 11 tests / 1300+ files | 🔴 需增量建设 |
 | 陈旧依赖数 | 10+ (Ehcache 2, Quartz 1.8, Commons Collections 3 等) | 🟡 可分批替换 |
@@ -353,4 +361,5 @@ CI/CD:   GitHub Actions + Docker build + Compose smoke test
 ---
 
 > **计划维护:** 本 PLAN.md 随 OpenClinica_Architecture_Debt_Design.md 更新而同步修订。  
-> **阶段切换条件:** 每个阶段完成后，对照其验收标准逐项检查，全部通过后方可进入下一阶段。
+> **阶段切换条件:** 每个阶段完成后，对照其验收标准逐项检查，全部通过后方可进入下一阶段。  
+> **实际操作计划:** 详细的代码绞杀步骤见 [.sisyphus/LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md)
