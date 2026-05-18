@@ -353,13 +353,13 @@ public class ExampleSpringJob extends QuartzJobBean {
                 TriggerBean triggerBean = new TriggerBean();
                 triggerBean.setDataset(datasetBean);
                 triggerBean.setUserAccount(userBean);
-                triggerBean.setFullName(trigger.getName());
+                triggerBean.setFullName(trigger.getKey().getName());
                 auditEventDAO.createRowForExtractDataJobSuccess(triggerBean, auditMessage.toString());
             } else {
                 TriggerBean triggerBean = new TriggerBean();
                 // triggerBean.setDataset(datasetBean);
                 triggerBean.setUserAccount(userBean);
-                triggerBean.setFullName(trigger.getName());
+                triggerBean.setFullName(trigger.getKey().getName());
                 auditEventDAO.createRowForExtractDataJobFailure(triggerBean);
                 // logger.debug("-- made it here for some reason, ds id: "
                 // + dsId);

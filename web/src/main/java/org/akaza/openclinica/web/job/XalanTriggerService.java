@@ -2,6 +2,7 @@ package org.akaza.openclinica.web.job;
 
 import org.quartz.JobDataMap;
 import org.quartz.SimpleTrigger;
+import org.quartz.impl.triggers.SimpleTriggerImpl;
 
 import java.util.Date;
 
@@ -22,7 +23,7 @@ public class XalanTriggerService {
     public SimpleTrigger generateXalanTrigger(String xslFile, String xmlFile, String sqlFile, int datasetId) {
         Date startDateTime = new Date(System.currentTimeMillis());
         String jobName = xmlFile + datasetId;
-        SimpleTrigger trigger = new SimpleTrigger(jobName, TRIGGER_GROUP_NAME, 1, 1);
+	SimpleTriggerImpl trigger = new SimpleTriggerImpl(jobName, TRIGGER_GROUP_NAME, 1, 1);
         
         trigger.setStartTime(startDateTime);
         trigger.setName(jobName);// + datasetId);
@@ -40,7 +41,6 @@ public class XalanTriggerService {
         // jobDataMap.put(ExampleSpringJob.LOCALE, locale);
         
         trigger.setJobDataMap(jobDataMap);
-        trigger.setVolatility(false);
         
         return trigger;
     }

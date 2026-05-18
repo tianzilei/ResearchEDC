@@ -164,7 +164,7 @@ public class ExtractController {
         cnt++;
         jobDetailBean = new JobDetailFactoryBean();
         jobDetailBean.setGroup(this.TRIGGER_GROUP_NAME);
-        jobDetailBean.setName(simpleTrigger.getName()+System.currentTimeMillis());
+        jobDetailBean.setName(simpleTrigger.getKey().getName()+System.currentTimeMillis());
         jobDetailBean.setJobClass(org.akaza.openclinica.job.XsltStatefulJob.class);
         jobDetailBean.setJobDataMap(simpleTrigger.getJobDataMap());
         jobDetailBean.setDurability(true); // need durability? YES - we will want to see if it's finished

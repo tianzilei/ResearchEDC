@@ -97,9 +97,11 @@ import org.akaza.openclinica.web.InconsistentStateException;
 import org.akaza.openclinica.web.InsufficientPermissionException;
 import org.akaza.openclinica.web.SQLInitServlet;
 import org.akaza.openclinica.web.bean.EntityBeanTable;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
-import org.quartz.impl.StdScheduler;
+import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
@@ -166,7 +168,7 @@ public abstract class SecureController extends HttpServlet {
     protected UserAccountDao userDaoDomain;
     private static String SCHEDULER = "schedulerFactoryBean";
 
-    private StdScheduler scheduler;
+    private Scheduler scheduler;
     /**
      * local_df is set to the client locale in each request.
      */
@@ -288,8 +290,8 @@ public abstract class SecureController extends HttpServlet {
         Integer datasetId = (Integer) request.getSession().getAttribute("datasetId");
         try {
             if (jobName != null && groupName != null) {
-                int state = getScheduler(request).getTriggerState(jobName, groupName);
-                org.quartz.JobDetail details = getScheduler(request).getJobDetail(jobName, groupName);
+                Trigger.TriggerState state = getScheduler(request).getTriggerState(TriggerKey.triggerKey(jobName, groupName));
+                org.quartz.JobDetail details = getScheduler(request).getJobDetail(JobKey.jobKey(jobName, groupName));
                 List contexts = getScheduler(request).getCurrentlyExecutingJobs();
                 // will we get the above, even if its completed running?
                 // ProcessingResultType message = null;
@@ -304,7 +306,7 @@ public abstract class SecureController extends HttpServlet {
                 // ProcessingResultType message = (ProcessingResultType) details.getResult();
                 org.quartz.JobDataMap dataMap = details.getJobDataMap();
                 String failMessage = dataMap.getString("failMessage");
-                if (state == Trigger.STATE_NONE || state== Trigger.STATE_COMPLETE) {
+                if (state == Trigger.TriggerState.NONE || state == Trigger.TriggerState.COMPLETE) {
                     // add the message here that your export is done
                     // TODO make absolute paths in the message, for example a link from /pages/* would break
                     // TODO i18n
@@ -363,9 +365,9 @@ public abstract class SecureController extends HttpServlet {
         return successMsg;
     }
 
-    private StdScheduler getScheduler(HttpServletRequest request) {
+    private Scheduler getScheduler(HttpServletRequest request) {
         scheduler =
-            this.scheduler != null ? scheduler : (StdScheduler) SpringServletAccess.getApplicationContext(request.getSession().getServletContext()).getBean(
+            this.scheduler != null ? scheduler : (Scheduler) SpringServletAccess.getApplicationContext(request.getSession().getServletContext()).getBean(
                     SCHEDULER);
         return scheduler;
     }

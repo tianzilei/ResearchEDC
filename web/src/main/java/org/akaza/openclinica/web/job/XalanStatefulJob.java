@@ -1,9 +1,11 @@
 package org.akaza.openclinica.web.job;
 
-import org.quartz.StatefulJob;
+import org.quartz.DisallowConcurrentExecution;
+import org.quartz.PersistJobDataAfterExecution;
 
-public class XalanStatefulJob extends XalanTransformJob
-    implements StatefulJob {
+@DisallowConcurrentExecution
+@PersistJobDataAfterExecution
+public class XalanStatefulJob extends XalanTransformJob {
     
     public XalanStatefulJob() {
         super();

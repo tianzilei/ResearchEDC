@@ -46,9 +46,9 @@ import org.akaza.openclinica.web.bean.ArchivedDatasetFileRow;
 import org.akaza.openclinica.web.bean.EntityBeanTable;
 import org.akaza.openclinica.web.job.XalanTriggerService;
 import org.quartz.JobDetail;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
-import org.quartz.impl.StdScheduler;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 
 /**
@@ -70,7 +70,7 @@ public class ExportDatasetServlet extends SecureController {
         return "ExportDataset?datasetId=" + dsId;
     }
 
-    private StdScheduler scheduler;
+    private Scheduler scheduler;
 
     private static String SCHEDULER = "schedulerFactoryBean";
     private static final String DATASET_DIR = SQLInitServlet.getField("filePath") + "datasets" + File.separator;
@@ -240,7 +240,7 @@ public class ExportDatasetServlet extends SecureController {
 
                     JobDetailFactoryBean jobDetailBean = new JobDetailFactoryBean();
                     jobDetailBean.setGroup(xts.TRIGGER_GROUP_NAME);
-                    jobDetailBean.setName(simpleTrigger.getName());
+                    jobDetailBean.setName(simpleTrigger.getKey().getName());
                     jobDetailBean.setJobClass(org.akaza.openclinica.web.job.XalanStatefulJob.class);
                     jobDetailBean.setJobDataMap(simpleTrigger.getJobDataMap());
                     jobDetailBean.setDurability(true); // need durability?
@@ -591,8 +591,8 @@ public class ExportDatasetServlet extends SecureController {
 
     }
 
-    private StdScheduler getScheduler() {
-        scheduler = this.scheduler != null ? scheduler : (StdScheduler) SpringServletAccess.getApplicationContext(context).getBean(SCHEDULER);
+    private Scheduler getScheduler() {
+        scheduler = this.scheduler != null ? scheduler : (Scheduler) SpringServletAccess.getApplicationContext(context).getBean(SCHEDULER);
         return scheduler;
     }
 

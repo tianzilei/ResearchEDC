@@ -15,22 +15,26 @@ import org.akaza.openclinica.web.job.ImportSpringJob;
 import org.akaza.openclinica.web.job.TriggerService;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
-import org.quartz.impl.StdScheduler;
+import org.quartz.TriggerKey;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Set;
 
 public class UpdateJobImportServlet extends SecureController {
 
     private static String SCHEDULER = "schedulerFactoryBean";
     private static String TRIGGER_IMPORT_GROUP = "importTrigger";
-    private StdScheduler scheduler;
+    private Scheduler scheduler;
     private SimpleTrigger trigger;
     private JobDataMap dataMap;
     private static final String IMPORT_DIR = SQLInitServlet.getField("filePath") + CreateJobImportServlet.DIR_PATH + File.separator;
@@ -49,15 +53,15 @@ public class UpdateJobImportServlet extends SecureController {
 
     }
 
-    private StdScheduler getScheduler() {
-        scheduler = this.scheduler != null ? scheduler : (StdScheduler) SpringServletAccess.getApplicationContext(context).getBean(SCHEDULER);
+    private Scheduler getScheduler() {
+        scheduler = this.scheduler != null ? scheduler : (Scheduler) SpringServletAccess.getApplicationContext(context).getBean(SCHEDULER);
         return scheduler;
     }
 
     private void setUpServlet(Trigger trigger) throws Exception {
         FormProcessor fp2 = new FormProcessor(request);
 
-        request.setAttribute(CreateJobImportServlet.JOB_NAME, trigger.getName());
+        request.setAttribute(CreateJobImportServlet.JOB_NAME, trigger.getKey().getName());
         request.setAttribute(CreateJobImportServlet.JOB_DESC, trigger.getDescription());
 
         dataMap = trigger.getJobDataMap();
@@ -121,13 +125,15 @@ public class UpdateJobImportServlet extends SecureController {
         String triggerName = fp.getString("tname");
         scheduler = getScheduler();
         logger.debug("found trigger name " + triggerName);
-        Trigger trigger = scheduler.getTrigger(triggerName, TRIGGER_IMPORT_GROUP);
+        Trigger trigger = scheduler.getTrigger(TriggerKey.triggerKey(triggerName, TRIGGER_IMPORT_GROUP));
         //System.out.println("found trigger from the other side " + trigger.getFullName());
         if (StringUtil.isBlank(action)) {
             setUpServlet(trigger);
             forwardPage(Page.UPDATE_JOB_IMPORT);
         } else if ("confirmall".equalsIgnoreCase(action)) {
-            HashMap errors = triggerService.validateImportJobForm(fp, request, scheduler.getTriggerNames("DEFAULT"), trigger.getName());
+            Set<TriggerKey> triggerKeySet = scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals("DEFAULT"));
+            String[] triggerNames = triggerKeySet.stream().map(TriggerKey::getName).toArray(String[]::new);
+            HashMap errors = triggerService.validateImportJobForm(fp, request, triggerNames, trigger.getKey().getName());
             if (!errors.isEmpty()) {
                 // send back
                 addPageMessage("Your modifications caused an error, please see the messages for more information.");
@@ -143,14 +149,14 @@ public class UpdateJobImportServlet extends SecureController {
                 // scheduler = getScheduler();
                 JobDetailFactoryBean jobDetailBean = new JobDetailFactoryBean();
                 jobDetailBean.setGroup(TRIGGER_IMPORT_GROUP);
-                jobDetailBean.setName(trigger.getName());
+                jobDetailBean.setName(trigger.getKey().getName());
                 jobDetailBean.setJobClass(org.akaza.openclinica.web.job.ImportStatefulJob.class);
                 jobDetailBean.setJobDataMap(trigger.getJobDataMap());
                 jobDetailBean.setDurability(true); // need durability?
                 jobDetailBean.afterPropertiesSet();
 
                 try {
-                    scheduler.deleteJob(triggerName, TRIGGER_IMPORT_GROUP);
+                    scheduler.deleteJob(JobKey.jobKey(triggerName, TRIGGER_IMPORT_GROUP));
                     JobDetail jobDetail = jobDetailBean.getObject();
                     Date dateStart = scheduler.scheduleJob(jobDetail, trigger);
 

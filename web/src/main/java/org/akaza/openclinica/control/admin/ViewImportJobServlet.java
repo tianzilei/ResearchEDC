@@ -10,13 +10,16 @@ import org.akaza.openclinica.web.bean.EntityBeanTable;
 import org.akaza.openclinica.web.bean.TriggerRow;
 import org.akaza.openclinica.web.job.ExampleSpringJob;
 import org.quartz.JobDataMap;
+import org.quartz.Scheduler;
 import org.quartz.Trigger;
-import org.quartz.impl.StdScheduler;
+import org.quartz.TriggerKey;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * 
@@ -30,7 +33,7 @@ public class ViewImportJobServlet extends SecureController {
     private static String IMPORT_TRIGGER = "importTrigger";
 
     private SchedulerFactoryBean schedulerFactoryBean;
-    private StdScheduler scheduler;
+    private Scheduler scheduler;
 
     @Override
     protected void mayProceed() throws InsufficientPermissionException {
@@ -48,8 +51,8 @@ public class ViewImportJobServlet extends SecureController {
         // allow only admin-level users
     }
 
-    private StdScheduler getScheduler() {
-        scheduler = this.scheduler != null ? scheduler : (StdScheduler) SpringServletAccess.getApplicationContext(context).getBean(SCHEDULER);
+    private Scheduler getScheduler() {
+        scheduler = this.scheduler != null ? scheduler : (Scheduler) SpringServletAccess.getApplicationContext(context).getBean(SCHEDULER);
         return scheduler;
     }
 
@@ -60,14 +63,15 @@ public class ViewImportJobServlet extends SecureController {
         scheduler = getScheduler();
         // then we pull all the triggers that are specifically named
         // IMPORT_TRIGGER.
-        String[] triggerNames = scheduler.getTriggerNames(IMPORT_TRIGGER);
+        Set<TriggerKey> triggerKeySet = scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals(IMPORT_TRIGGER));
+        String[] triggerNames = triggerKeySet.stream().map(TriggerKey::getName).toArray(String[]::new);
 
         // the next bit goes out and processes all the triggers
         ArrayList triggerBeans = new ArrayList<TriggerBean>();
 
         for (String triggerName : triggerNames) {
-            Trigger trigger = scheduler.getTrigger(triggerName, IMPORT_TRIGGER);
-            logger.debug("found trigger, full name: " + trigger.getFullName());
+            Trigger trigger = scheduler.getTrigger(TriggerKey.triggerKey(triggerName, IMPORT_TRIGGER));
+            logger.debug("found trigger, full name: " + trigger.getKey().getName());
             try {
                 logger.debug("prev fire time " + trigger.getPreviousFireTime().toString());
                 logger.debug("next fire time " + trigger.getNextFireTime().toString());
@@ -77,7 +81,7 @@ public class ViewImportJobServlet extends SecureController {
             }
 
             TriggerBean triggerBean = new TriggerBean();
-            triggerBean.setFullName(trigger.getName());
+            triggerBean.setFullName(trigger.getKey().getName());
             triggerBean.setPreviousDate(trigger.getPreviousFireTime());
             triggerBean.setNextDate(trigger.getNextFireTime());
             if (trigger.getDescription() != null) {
@@ -95,13 +99,13 @@ public class ViewImportJobServlet extends SecureController {
             }
 
             // this next bit of code looks to see if the trigger is paused
-            logger.debug("Trigger Priority: " + trigger.getName() + " " + trigger.getPriority());
-            if (scheduler.getTriggerState(triggerName, IMPORT_TRIGGER) == Trigger.STATE_PAUSED) {
+            logger.debug("Trigger Priority: " + trigger.getKey().getName() + " " + trigger.getPriority());
+            if (scheduler.getTriggerState(TriggerKey.triggerKey(triggerName, IMPORT_TRIGGER)) == Trigger.TriggerState.PAUSED) {
                 triggerBean.setActive(false);
-                logger.debug("setting active to false for trigger: " + trigger.getName());
+                logger.debug("setting active to false for trigger: " + trigger.getKey().getName());
             } else {
                 triggerBean.setActive(true);
-                logger.debug("setting active to TRUE for trigger: " + trigger.getName());
+                logger.debug("setting active to TRUE for trigger: " + trigger.getKey().getName());
             }
             triggerBeans.add(triggerBean);
             // our wrapper to show triggers
