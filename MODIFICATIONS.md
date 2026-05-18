@@ -6,6 +6,56 @@
 
 ---
 
+## 2026-05-18 — 遗留代码模块化提取 (Sprints 0-5 + Identity)
+
+- **模块:** app (所有 module/*), core/, docs
+- **原因:** Strangler Fig 模式逐步将遗留 core 代码迁移到 Spring Modulith 模块
+
+### Sprint 0: Foundation (12 文件)
+- **CRF 模块防腐层修复**: 创建 `LegacyCrfAdapter`，将 `CrfService` 从 112 行精简为 30 行，消除所有 `core.dao.*` 和 `core.bean.*` 直接引用
+- **legacy-gateway 模块**: 创建 `module/legacy/` — 封装 `StudyDAO`/`StudySubjectDAO` 为 REST 网关 (`/api/legacy/studies`, `/api/legacy/subjects`)
+- **EntityScan 修复**: 从显式列表改为扫描 `org.akaza.openclinica.module`，新模块实体自动发现
+- **ModulithVerificationTest**: 保留标准边界验证
+
+### Sprint 1: Audit 模块 (11 文件)
+- **新表**: `audit_log` (BIGINT PK, study_id, event_type, entity_type/id, old/new value, performed_by, performed_date, details, source_module)
+- **事件驱动**: `AuditRecordedEvent` + `@EventListener` 消费者（遵循 notification 模块模式）
+- **REST API**: `POST /api/v1/audit` 记录事件，`GET /api/v1/audit` 分页查询
+- **Liquibase**: `2026-05-18-audit-tables.xml` 创建表 + 5 个索引
+
+### Sprint 2: Study 模块 (8 文件)
+- **实体**: `StudyEntity` — `@Entity(name = "ModuleStudy")` 映射到现有 `study` 表，50 个字段，FK 存储为普通 Integer
+- **API**: `GET /api/v1/studies`, `GET /api/v1/studies/{id}` (含 sites), `GET /api/v1/studies/search?name=`
+
+### Sprint 3: Subject 模块 (10 文件)
+- **实体**: `SubjectEntity` (subject 表) + `StudySubjectEntity` (study_subject 表)
+- **API**: 受试者搜索、明细、按 Study 查询 enrollment
+
+### Sprint 4: Event 模块 (14 文件)
+- **实体**: `StudyEventEntity`, `StudyEventDefinitionEntity`, `EventCrfEntity`
+- **API**: Event definitions, subject events, event CRFs
+
+### Sprint 5: Data Capture 模块 (11 文件)
+- **实体**: `ItemDataEntity`, `ResponseSetEntity`, `ItemGroupEntity`
+- **API**: 按 EventCRF 查询 item data、response set 选项解析、item groups
+
+### Identity 模块实现 (10 文件)
+- **从桩到实现**: identity 模块从空 `package-info.java` 扩展为完整模块
+- **实体**: `UserAccountEntity` + `RoleEntity`
+- **API**: 用户搜索、角色查询
+
+### 验证
+- `mvn clean compile -DskipTests`: ✅ BUILD SUCCESS (7.8s)
+- `mvn package -DskipTests`: ✅ BUILD SUCCESS
+- `ModulithVerificationTest`: ✅ 1 test, 0 failures (2.6s)
+
+### 模块化提取统计
+- 新模块: `audit`, `study`, `subject`, `event`, `datacapture`, `identity`, `legacy`
+- 总新增 Java 文件: 76 个
+- 覆盖数据库表: `audit_log` (新), `study`, `subject`, `study_subject`, `study_event`, `study_event_definition`, `event_crf`, `item_data`, `response_set`, `item_group`, `user_account`, `study_user_role` (现有桥接)
+
+---
+
 ## 2026-05-18 — 前端 Precision Clinical 重构 + Docker 构建优化
 
 - **模块:** frontend, docker, docs
