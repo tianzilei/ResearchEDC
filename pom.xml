@@ -9,7 +9,7 @@
 	<description>OpenClinica</description>
 
 	<modules>
-		<module>core</module>
+		<module>legacy-core</module>
 		<module>web</module>
 		<module>ws</module>
 		<module>app</module>
