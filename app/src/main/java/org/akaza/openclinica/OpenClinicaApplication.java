@@ -28,8 +28,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 })
 @EntityScan(basePackages = {
     "org.akaza.openclinica.domain",
-    "org.akaza.openclinica.module.randomization.entity",
-    "org.akaza.openclinica.module.export.entity"
+    "org.akaza.openclinica.module"
 })
 @EnableTransactionManagement
 @ImportResource(locations = {
