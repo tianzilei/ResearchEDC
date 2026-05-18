@@ -39,6 +39,29 @@ spring:
       write-dates-as-timestamps: false
       fail-on-empty-beans: false
 
+  # Mail (replaces applicationContext-core-email.xml)
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail.smtp.auth: ${MAIL_SMTP_AUTH:false}
+      mail.smtp.starttls.enable: ${MAIL_STARTTLS:false}
+      mail.smtps.auth: ${MAIL_SMTPS_AUTH:false}
+      mail.smtps.starttls.enable: ${MAIL_SMTPS_STARTTLS:false}
+      mail.smtp.connectiontimeout: ${MAIL_SMTP_TIMEOUT:5000}
+      mail.smtp.starttls.required: ${MAIL_STARTTLS_REQUIRED:false}
+      mail.smtp.ssl.protocols: ${MAIL_SSL_PROTOCOLS:TLSv1.2}
+
+  # Scheduling (replaces applicationContext-core-annotation-scheduler.xml)
+  task:
+    scheduling:
+      pool:
+        size: 42
+
   # JPA / Hibernate (overridden by XML config via @ImportResource)
   jpa:
     open-in-view: false
