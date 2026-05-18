@@ -37,7 +37,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     "classpath:org/akaza/openclinica/applicationContext-core-hibernate.xml",
     "classpath:org/akaza/openclinica/applicationContext-core-security.xml",
     "classpath:org/akaza/openclinica/applicationContext-core-service.xml",
-    "classpath:org/akaza/openclinica/applicationContext-core-scheduler.xml",
     "classpath:org/akaza/openclinica/applicationContext-security.xml"
 })
 @ServletComponentScan(basePackages = {
