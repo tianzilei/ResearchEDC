@@ -1,6 +1,9 @@
 package org.akaza.openclinica.module.subject.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import org.akaza.openclinica.module.subject.dto.CreateSubjectRequest;
+import org.akaza.openclinica.module.subject.dto.EnrollSubjectRequest;
 import org.akaza.openclinica.module.subject.dto.StudySubjectDTO;
 import org.akaza.openclinica.module.subject.dto.SubjectDTO;
 import org.akaza.openclinica.module.subject.entity.StudySubjectEntity;
@@ -49,6 +52,52 @@ public class SubjectService {
             .orElseThrow(() -> new java.util.NoSuchElementException(
                 "StudySubject not found: " + studySubjectId));
         return toStudySubjectDto(entity);
+    }
+
+    @Transactional
+    public SubjectDTO createSubject(CreateSubjectRequest request, Integer ownerId) {
+        if (request.getUniqueIdentifier() == null || request.getUniqueIdentifier().isBlank()) {
+            throw new IllegalArgumentException("Subject uniqueIdentifier is required");
+        }
+        SubjectEntity entity = new SubjectEntity();
+        entity.setUniqueIdentifier(request.getUniqueIdentifier());
+        entity.setDateOfBirth(request.getDateOfBirth());
+        entity.setGender(request.getGender());
+        entity.setDobCollected(request.getDobCollected());
+        entity.setDateCreated(LocalDateTime.now());
+        entity.setOwnerId(ownerId);
+
+        SubjectEntity saved = subjectRepository.save(entity);
+
+        return toSubjectDto(saved);
+    }
+
+    @Transactional
+    public StudySubjectDTO enrollSubject(EnrollSubjectRequest request, Integer ownerId) {
+        if (request.getStudyId() == null) {
+            throw new IllegalArgumentException("Study ID is required");
+        }
+        if (request.getSubjectId() == null) {
+            throw new IllegalArgumentException("Subject ID is required");
+        }
+        if (!subjectRepository.existsById(request.getSubjectId())) {
+            throw new java.util.NoSuchElementException(
+                "Subject not found: " + request.getSubjectId());
+        }
+
+        StudySubjectEntity entity = new StudySubjectEntity();
+        entity.setStudyId(request.getStudyId());
+        entity.setSubjectId(request.getSubjectId());
+        entity.setLabel(request.getLabel());
+        entity.setSecondaryLabel(request.getSecondaryLabel());
+        entity.setEnrollmentDate(request.getEnrollmentDate());
+        entity.setOcOid(request.getOcOid());
+        entity.setDateCreated(LocalDateTime.now());
+        entity.setOwnerId(ownerId);
+
+        StudySubjectEntity saved = studySubjectRepository.save(entity);
+
+        return toStudySubjectDto(saved);
     }
 
     private SubjectDTO toSubjectDto(SubjectEntity e) {

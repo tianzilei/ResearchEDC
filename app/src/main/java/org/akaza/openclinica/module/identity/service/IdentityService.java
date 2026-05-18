@@ -1,6 +1,11 @@
 package org.akaza.openclinica.module.identity.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
+
+import org.akaza.openclinica.module.identity.dto.AssignRoleRequest;
+import org.akaza.openclinica.module.identity.dto.CreateUserRequest;
 import org.akaza.openclinica.module.identity.dto.RoleDTO;
 import org.akaza.openclinica.module.identity.dto.UserDTO;
 import org.akaza.openclinica.module.identity.entity.RoleEntity;
@@ -33,14 +38,14 @@ public class IdentityService {
 
     public UserDTO getUserByUsername(String username) {
         UserAccountEntity entity = userAccountRepository.findByUserName(username)
-            .orElseThrow(() -> new java.util.NoSuchElementException(
+            .orElseThrow(() -> new NoSuchElementException(
                 "User not found: " + username));
         return toUserDto(entity);
     }
 
     public UserDTO getUser(Integer userId) {
         UserAccountEntity entity = userAccountRepository.findById(userId)
-            .orElseThrow(() -> new java.util.NoSuchElementException(
+            .orElseThrow(() -> new NoSuchElementException(
                 "User not found: " + userId));
         return toUserDto(entity);
     }
@@ -57,6 +62,45 @@ public class IdentityService {
             .stream()
             .map(this::toRoleDto)
             .toList();
+    }
+
+    @Transactional
+    public UserDTO createUser(CreateUserRequest request, Integer ownerId) {
+        if (request.getUserName() == null || request.getUserName().isBlank()) {
+            throw new IllegalArgumentException("userName is required");
+        }
+        if (userAccountRepository.findByUserName(request.getUserName()).isPresent()) {
+            throw new IllegalArgumentException(
+                "User already exists: " + request.getUserName());
+        }
+
+        UserAccountEntity entity = new UserAccountEntity();
+        entity.setUserName(request.getUserName());
+        entity.setFirstName(request.getFirstName());
+        entity.setLastName(request.getLastName());
+        entity.setEmail(request.getEmail());
+        entity.setPhone(request.getPhone());
+        entity.setInstitutionalAffiliation(request.getInstitutionalAffiliation());
+        entity.setStatusId(request.getStatusId());
+        entity.setEnabled(true);
+        entity.setAccountNonLocked(true);
+        entity.setDateCreated(LocalDateTime.now());
+        entity.setOwnerId(ownerId);
+
+        UserAccountEntity saved = userAccountRepository.save(entity);
+        return toUserDto(saved);
+    }
+
+    @Transactional
+    public void assignRole(AssignRoleRequest request, Integer ownerId) {
+        RoleEntity entity = new RoleEntity();
+        entity.setUserName(request.getUserName());
+        entity.setStudyId(request.getStudyId());
+        entity.setRoleName(request.getRoleName());
+        entity.setStatusId(request.getStatusId());
+        entity.setOwnerId(ownerId);
+
+        roleRepository.save(entity);
     }
 
     private UserDTO toUserDto(UserAccountEntity e) {

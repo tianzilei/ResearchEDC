@@ -1,9 +1,12 @@
 package org.akaza.openclinica.module.event.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.akaza.openclinica.module.event.dto.EventCrfDTO;
 import org.akaza.openclinica.module.event.dto.EventDefinitionDTO;
+import org.akaza.openclinica.module.event.dto.ScheduleEventRequest;
 import org.akaza.openclinica.module.event.dto.StudyEventDTO;
+import org.akaza.openclinica.module.event.dto.UpdateEventRequest;
 import org.akaza.openclinica.module.event.entity.EventCrfEntity;
 import org.akaza.openclinica.module.event.entity.StudyEventDefinitionEntity;
 import org.akaza.openclinica.module.event.entity.StudyEventEntity;
@@ -55,6 +58,66 @@ public class EventService {
             .stream()
             .map(this::toCrfDto)
             .toList();
+    }
+
+    @Transactional
+    public StudyEventDTO scheduleEvent(ScheduleEventRequest request, Integer ownerId) {
+        if (request.getStudySubjectId() == null) {
+            throw new IllegalArgumentException("studySubjectId is required");
+        }
+        if (request.getStudyEventDefinitionId() == null) {
+            throw new IllegalArgumentException("studyEventDefinitionId is required");
+        }
+
+        StudyEventEntity entity = new StudyEventEntity();
+        entity.setStudySubjectId(request.getStudySubjectId());
+        entity.setStudyEventDefinitionId(request.getStudyEventDefinitionId());
+        entity.setLocation(request.getLocation());
+        entity.setDateStart(request.getStartDate());
+        entity.setDateEnd(request.getEndDate());
+        entity.setStatusId(request.getStatusId());
+        entity.setSubjectEventStatusId(request.getSubjectEventStatusId());
+        entity.setDateCreated(LocalDateTime.now());
+        entity.setOwnerId(ownerId);
+
+        StudyEventEntity saved = studyEventRepository.save(entity);
+
+        return toEventDto(saved);
+    }
+
+    @Transactional
+    public StudyEventDTO updateEvent(Integer eventId, UpdateEventRequest request, Integer updaterId) {
+        StudyEventEntity entity = studyEventRepository.findById(eventId)
+            .orElseThrow(() -> new java.util.NoSuchElementException(
+                "StudyEvent not found: " + eventId));
+
+        if (request.getStudySubjectId() != null) entity.setStudySubjectId(request.getStudySubjectId());
+        if (request.getStudyEventDefinitionId() != null) entity.setStudyEventDefinitionId(request.getStudyEventDefinitionId());
+        if (request.getLocation() != null) entity.setLocation(request.getLocation());
+        if (request.getStartDate() != null) entity.setDateStart(request.getStartDate());
+        if (request.getEndDate() != null) entity.setDateEnd(request.getEndDate());
+        if (request.getStatusId() != null) entity.setStatusId(request.getStatusId());
+        if (request.getSubjectEventStatusId() != null) entity.setSubjectEventStatusId(request.getSubjectEventStatusId());
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(updaterId);
+
+        StudyEventEntity saved = studyEventRepository.save(entity);
+
+        return toEventDto(saved);
+    }
+
+    @Transactional
+    public void completeEvent(Integer eventId, Integer userId) {
+        StudyEventEntity entity = studyEventRepository.findById(eventId)
+            .orElseThrow(() -> new java.util.NoSuchElementException(
+                "StudyEvent not found: " + eventId));
+
+        entity.setStatusId(7);
+        entity.setSubjectEventStatusId(7);
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(userId);
+
+        studyEventRepository.save(entity);
     }
 
     private StudyEventDTO toEventDto(StudyEventEntity e) {

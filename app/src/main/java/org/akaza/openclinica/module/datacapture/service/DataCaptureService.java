@@ -1,11 +1,14 @@
 package org.akaza.openclinica.module.datacapture.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.akaza.openclinica.module.datacapture.dto.BatchSaveItemsRequest;
 import org.akaza.openclinica.module.datacapture.dto.ItemDataDTO;
 import org.akaza.openclinica.module.datacapture.dto.ItemGroupDTO;
 import org.akaza.openclinica.module.datacapture.dto.ResponseSetDTO;
 import org.akaza.openclinica.module.datacapture.dto.ResponseSetDTO.OptionDTO;
+import org.akaza.openclinica.module.datacapture.dto.SaveItemDataRequest;
 import org.akaza.openclinica.module.datacapture.entity.ItemDataEntity;
 import org.akaza.openclinica.module.datacapture.entity.ItemGroupEntity;
 import org.akaza.openclinica.module.datacapture.entity.ResponseSetEntity;
@@ -50,6 +53,45 @@ public class DataCaptureService {
             .stream()
             .map(this::toItemGroupDto)
             .toList();
+    }
+
+    @Transactional
+    public ItemDataDTO saveItemData(SaveItemDataRequest request, Integer userId) {
+        List<ItemDataEntity> existing = itemDataRepository.findByEventCrfIdAndItemId(
+            request.getEventCrfId(), request.getItemId());
+
+        ItemDataEntity entity;
+        if (!existing.isEmpty()) {
+            entity = existing.getFirst();
+            entity.setValue(request.getValue());
+            if (request.getStatusId() != null) {
+                entity.setStatusId(request.getStatusId());
+            }
+            entity.setDateUpdated(LocalDateTime.now());
+            entity.setUpdateId(userId);
+        } else {
+            entity = new ItemDataEntity();
+            entity.setEventCrfId(request.getEventCrfId());
+            entity.setItemId(request.getItemId());
+            entity.setValue(request.getValue());
+            entity.setStatusId(request.getStatusId() != null ? request.getStatusId() : 1);
+            entity.setDeleted(false);
+            entity.setDateCreated(LocalDateTime.now());
+            entity.setOwnerId(userId);
+        }
+
+        ItemDataEntity saved = itemDataRepository.save(entity);
+        return toItemDataDto(saved);
+    }
+
+    @Transactional
+    public List<ItemDataDTO> batchSaveItems(BatchSaveItemsRequest request, Integer userId) {
+        List<ItemDataDTO> results = new ArrayList<>();
+        for (SaveItemDataRequest itemRequest : request.getItems()) {
+            itemRequest.setEventCrfId(request.getEventCrfId());
+            results.add(saveItemData(itemRequest, userId));
+        }
+        return results;
     }
 
     private ItemDataDTO toItemDataDto(ItemDataEntity e) {
