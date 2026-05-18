@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      outDir: isDev ? "dist" : "../app/src/main/resources/static",
+      outDir: "dist",
       emptyOutDir: true,
       sourcemap: isDev,
       manifest: false,
