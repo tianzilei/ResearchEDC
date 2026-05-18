@@ -1,13 +1,16 @@
 package org.akaza.openclinica.job;
 
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.InterruptableJob;
 import org.quartz.JobExecutionContext;
-import org.quartz.StatefulJob;
+import org.quartz.PersistJobDataAfterExecution;
 import org.quartz.UnableToInterruptJobException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XsltStatefulJob extends XsltTransformJob implements StatefulJob, InterruptableJob {
+@DisallowConcurrentExecution
+@PersistJobDataAfterExecution
+public class XsltStatefulJob extends XsltTransformJob implements InterruptableJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltStatefulJob.class);
 
@@ -19,7 +22,7 @@ public class XsltStatefulJob extends XsltTransformJob implements StatefulJob, In
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        jobTerminationMonitor = JobTerminationMonitor.createInstance(context.getJobDetail().getFullName());
+        jobTerminationMonitor = JobTerminationMonitor.createInstance(context.getJobDetail().getKey().toString());
         super.executeInternal(context);
     }
 

@@ -61,7 +61,7 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.impl.StdScheduler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -113,7 +113,7 @@ public class XsltTransformJob extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext context) {
-        logger.info("Job " + context.getJobDetail().getFullName() + " started.");
+        logger.info("Job " + context.getJobDetail().getKey().toString() + " started.");
         initDependencies(context.getScheduler());
         // need to generate a Locale for emailing users with i18n
         // TODO make dynamic?
@@ -247,7 +247,7 @@ public class XsltTransformJob extends QuartzJobBean {
                 fId = fileID.intValue();
                 logger.debug("found " + fId + " and " + ODMXMLFileName);
             }
-            logger.info("Finished ODM generation of job " + context.getJobDetail().getFullName());
+            logger.info("Finished ODM generation of job " + context.getJobDetail().getKey().toString());
 
             // create dirs
             File output = new File(outputPath);
@@ -600,7 +600,7 @@ public class XsltTransformJob extends QuartzJobBean {
             if (datasetBean != null)
                 resetArchiveDataset(datasetBean.getId());
 
-            logger.info("Job " + context.getJobDetail().getFullName() + " finished.");
+            logger.info("Job " + context.getJobDetail().getKey().toString() + " finished.");
         }
 
     }
@@ -832,11 +832,13 @@ public class XsltTransformJob extends QuartzJobBean {
         String SCHEDULER = "schedulerFactoryBean";
         try {
             ApplicationContext appContext = (ApplicationContext) context.getScheduler().getContext().get("applicationContext");
-            StdScheduler scheduler = (StdScheduler) appContext.getBean(SCHEDULER);
+            Scheduler scheduler = (Scheduler) appContext.getBean(SCHEDULER);
             JobDetail jobDetail = context.getJobDetail();
             JobDataMap dataMap = jobDetail.getJobDataMap();
+            if (dataMap == null) {
+                dataMap = new JobDataMap();
+            }
             dataMap.put("successMsg", message);
-            jobDetail.setJobDataMap(dataMap);
             // replace the job with the extra data
             scheduler.addJob(jobDetail, true);
 
@@ -849,11 +851,13 @@ public class XsltTransformJob extends QuartzJobBean {
         String SCHEDULER = "schedulerFactoryBean";
         try {
             ApplicationContext appContext = (ApplicationContext) context.getScheduler().getContext().get("applicationContext");
-            StdScheduler scheduler = (StdScheduler) appContext.getBean(SCHEDULER);
+            Scheduler scheduler = (Scheduler) appContext.getBean(SCHEDULER);
             JobDetail jobDetail = context.getJobDetail();
             JobDataMap dataMap = jobDetail.getJobDataMap();
+            if (dataMap == null) {
+                dataMap = new JobDataMap();
+            }
             dataMap.put("failMessage", message);
-            jobDetail.setJobDataMap(dataMap);
             // replace the job with the extra data
             scheduler.addJob(jobDetail, true);
 

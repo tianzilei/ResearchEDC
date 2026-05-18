@@ -7,6 +7,7 @@ import org.akaza.openclinica.bean.extract.ExtractPropertyBean;
 import org.akaza.openclinica.bean.login.UserAccountBean;
 import org.quartz.JobDataMap;
 import org.quartz.SimpleTrigger;
+import org.quartz.impl.triggers.SimpleTriggerImpl;
 
 public class XsltTriggerService {
     public XsltTriggerService() {
@@ -49,7 +50,7 @@ public class XsltTriggerService {
         if(triggerGroupName!=null)
             TRIGGER_GROUP_NAME = triggerGroupName;
 
-        SimpleTrigger trigger = new SimpleTrigger(jobName, triggerGroupName);
+	SimpleTriggerImpl trigger = new SimpleTriggerImpl(jobName, triggerGroupName);
 
         trigger.setStartTime(startDateTime);
         trigger.setName(jobName);// + datasetId);
@@ -85,7 +86,6 @@ public class XsltTriggerService {
         jobDataMap.put(EP_BEAN, epBean);
 
         trigger.setJobDataMap(jobDataMap);
-        trigger.setVolatility(false);
 
         return trigger;
     }

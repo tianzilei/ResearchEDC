@@ -48,7 +48,7 @@ public class StringUtil {
      *
      * @param s
      * @return true if blank, false otherwise
-     * @deprecated Use {@link org.apache.commons.lang.StringUtils#isBlank(String)} instead.
+     * @deprecated Use {@link org.apache.commons.lang3.StringUtils#isBlank(CharSequence)} instead.
      */
     @Deprecated
     public static boolean isBlank(String s) {

@@ -9,7 +9,7 @@ package org.akaza.openclinica.job;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.listeners.JobListenerSupport;
+import org.quartz.JobListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,24 +17,27 @@ import org.slf4j.LoggerFactory;
  * @author Doug Rodrigues (douglas.rodrigues@openclinica.com)
  *
  */
-public class JobExecutionExceptionListener extends JobListenerSupport {
+public class JobExecutionExceptionListener implements JobListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobExecutionExceptionListener.class);
 
-    /* (non-Javadoc)
-     * @see org.quartz.JobListener#getName()
-     */
     @Override
     public String getName() {
         return "JobExecutionExceptionListener";
     }
 
-    /* (non-Javadoc)
-     * @see org.quartz.listeners.JobListenerSupport#jobWasExecuted(org.quartz.JobExecutionContext, org.quartz.JobExecutionException)
-     */
+    @Override
+    public void jobToBeExecuted(JobExecutionContext context) {
+        // no-op
+    }
+
+    @Override
+    public void jobExecutionVetoed(JobExecutionContext context) {
+        // no-op
+    }
+
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-        super.jobWasExecuted(context, jobException);
         if (jobException != null) {
             LOG.warn("Error executing Quartz job", jobException);
         }

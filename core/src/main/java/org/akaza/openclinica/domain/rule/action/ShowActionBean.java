@@ -1,7 +1,8 @@
 package org.akaza.openclinica.domain.rule.action;
 
-import org.apache.commons.collections.FactoryUtils;
-import org.apache.commons.collections.list.LazyList;
+import org.apache.commons.collections4.Factory;
+import org.apache.commons.collections4.FactoryUtils;
+import org.apache.commons.collections4.list.LazyList;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -24,7 +25,7 @@ public class ShowActionBean extends RuleActionBean {
 
     private String message;
     private List<PropertyBean> properties;
-    private List<PropertyBean> lazyProperties = LazyList.decorate(new ArrayList<PropertyBean>(), FactoryUtils.instantiateFactory(PropertyBean.class));
+    private List<PropertyBean> lazyProperties = LazyList.lazyList(new ArrayList<PropertyBean>(), FactoryUtils.instantiateFactory(PropertyBean.class));
 
     public ShowActionBean() {
         setActionType(ActionType.SHOW);

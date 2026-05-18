@@ -9,7 +9,7 @@ package org.akaza.openclinica.job;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
-import org.quartz.listeners.TriggerListenerSupport;
+import org.quartz.TriggerListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author Doug Rodrigues (douglas.rodrigues@openclinica.com)
  *
  */
-public class JobTriggerListener extends TriggerListenerSupport {
+public class JobTriggerListener implements TriggerListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobTriggerListener.class);
 
@@ -26,33 +26,29 @@ public class JobTriggerListener extends TriggerListenerSupport {
         return "JobTriggerListener";
     }
 
-    @Override
+	@Override
     public void triggerFired(Trigger trigger, JobExecutionContext context) {
-        super.triggerFired(trigger, context);
         logTriggerInfo(trigger, "Trigger {} fired");
     }
 
     @Override
     public boolean vetoJobExecution(Trigger trigger, JobExecutionContext context) {
-        boolean result =  super.vetoJobExecution(trigger, context);
         logTriggerInfo(trigger, "Trigger {} vetoed");
-        return result;
+        return false;
     }
 
     @Override
     public void triggerMisfired(Trigger trigger) {
-        super.triggerMisfired(trigger);
         logTriggerInfo(trigger, "Trigger {} misfired");
     }
 
     @Override
-    public void triggerComplete(Trigger trigger, JobExecutionContext context, int triggerInstructionCode) {
-        super.triggerComplete(trigger, context, triggerInstructionCode);
+    public void triggerComplete(Trigger trigger, JobExecutionContext context, Trigger.CompletedExecutionInstruction triggerInstructionCode) {
         logTriggerInfo(trigger, "Trigger {} complete");
     }
 
     private void logTriggerInfo(Trigger trigger, String message) {
-        LOG.debug(message, trigger.getName());
+        LOG.debug(message, trigger.getKey().getName());
     }
 
 

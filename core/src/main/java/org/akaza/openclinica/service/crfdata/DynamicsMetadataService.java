@@ -56,7 +56,7 @@ import org.akaza.openclinica.service.RandomizeService;
 import org.akaza.openclinica.service.pmanage.Authorization;
 import org.akaza.openclinica.service.rule.expression.ExpressionService;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

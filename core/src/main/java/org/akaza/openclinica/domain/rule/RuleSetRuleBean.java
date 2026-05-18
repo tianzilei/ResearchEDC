@@ -32,8 +32,9 @@ import org.akaza.openclinica.domain.rule.action.RandomizeActionBean;
 import org.akaza.openclinica.domain.rule.action.RuleActionBean;
 import org.akaza.openclinica.domain.rule.action.RuleActionRunBean.Phase;
 import org.akaza.openclinica.domain.rule.action.ShowActionBean;
-import org.apache.commons.collections.FactoryUtils;
-import org.apache.commons.collections.list.LazyList;
+import org.apache.commons.collections4.Factory;
+import org.apache.commons.collections4.FactoryUtils;
+import org.apache.commons.collections4.list.LazyList;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -50,21 +51,21 @@ public class RuleSetRuleBean extends AbstractAuditableMutableDomainObject implem
     RuleSetBean ruleSetBean;
     RuleBean ruleBean;
     List<RuleActionBean> actions;
-    private List<DiscrepancyNoteActionBean> lazyDiscrepancyNoteActions = LazyList.decorate(new ArrayList<DiscrepancyNoteActionBean>(),
+    private List<DiscrepancyNoteActionBean> lazyDiscrepancyNoteActions = LazyList.lazyList(new ArrayList<DiscrepancyNoteActionBean>(),
             FactoryUtils.instantiateFactory(DiscrepancyNoteActionBean.class));
     private List<EmailActionBean> lazyEmailActions = LazyList
-            .decorate(new ArrayList<EmailActionBean>(), FactoryUtils.instantiateFactory(EmailActionBean.class));
-    private List<ShowActionBean> lazyShowActions = LazyList.decorate(new ArrayList<ShowActionBean>(), FactoryUtils.instantiateFactory(ShowActionBean.class));
-    private List<HideActionBean> lazyHideActions = LazyList.decorate(new ArrayList<HideActionBean>(), FactoryUtils.instantiateFactory(HideActionBean.class));
-    private List<InsertActionBean> lazyInsertActions = LazyList.decorate(new ArrayList<InsertActionBean>(),
+            .lazyList(new ArrayList<EmailActionBean>(), FactoryUtils.instantiateFactory(EmailActionBean.class));
+    private List<ShowActionBean> lazyShowActions = LazyList.lazyList(new ArrayList<ShowActionBean>(), FactoryUtils.instantiateFactory(ShowActionBean.class));
+    private List<HideActionBean> lazyHideActions = LazyList.lazyList(new ArrayList<HideActionBean>(), FactoryUtils.instantiateFactory(HideActionBean.class));
+    private List<InsertActionBean> lazyInsertActions = LazyList.lazyList(new ArrayList<InsertActionBean>(),
             FactoryUtils.instantiateFactory(InsertActionBean.class));
-    private List<RandomizeActionBean> lazyRandomizeActions = LazyList.decorate(new ArrayList<RandomizeActionBean>(),
+    private List<RandomizeActionBean> lazyRandomizeActions = LazyList.lazyList(new ArrayList<RandomizeActionBean>(),
             FactoryUtils.instantiateFactory(RandomizeActionBean.class));
 
-    private List<EventActionBean> lazyEventActions =  LazyList.decorate(new ArrayList<EventActionBean>(),
+    private List<EventActionBean> lazyEventActions =  LazyList.lazyList(new ArrayList<EventActionBean>(),
             FactoryUtils.instantiateFactory(EventActionBean.class));
     private List<NotificationActionBean> lazyNotificationActions = LazyList
-            .decorate(new ArrayList<NotificationActionBean>(), FactoryUtils.instantiateFactory(NotificationActionBean.class));
+            .lazyList(new ArrayList<NotificationActionBean>(), FactoryUtils.instantiateFactory(NotificationActionBean.class));
 
     
     // Transient
