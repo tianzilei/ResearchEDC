@@ -4,15 +4,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.servlet.ServletComponentScan;
-import org.springframework.context.annotation.ImportResource;
+
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * OpenClinica Spring Boot Application.
  *
  * <p>Merges the legacy OpenClinica web and ws WAR modules into a single Spring Boot
- * modular monolith. Existing Spring XML configurations are imported via {@code @ImportResource}
- * and will be gradually migrated to Java Config in subsequent iterations.</p>
+ * modular monolith. All XML configurations have been migrated to Java Config.</p>
  *
  * <p>This class also extends {@link OpenClinicaServletInitializer} to support
  * traditional WAR deployment to Tomcat as a fallback.</p>
@@ -31,9 +30,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     "org.akaza.openclinica.module"
 })
 @EnableTransactionManagement
-@ImportResource(locations = {
-    "classpath:org/akaza/openclinica/applicationContext-core-hibernate.xml"
-})
+
 @ServletComponentScan(basePackages = {
     "org.akaza.openclinica.control",
     "org.akaza.openclinica.web"
