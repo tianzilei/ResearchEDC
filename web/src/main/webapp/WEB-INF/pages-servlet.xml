@@ -15,7 +15,6 @@
             http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd">
 
 
-    <bean id="whitelabelApprovalEndpoint" class="org.springframework.security.oauth2.provider.endpoint.WhitelabelApprovalEndpoint "/>
 
     <!--
     <bean id="accessConfirmationController" class="org.akaza.openclinica.controller.AccessConfirmationController">

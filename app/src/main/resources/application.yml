@@ -62,7 +62,27 @@ spring:
       pool:
         size: 42
 
-  # JPA / Hibernate (overridden by XML config via @ImportResource)
+  # Keycloak / OIDC authentication (optional - only activates when KEYCLOAK_ISSUER_URI is set)
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            provider: keycloak
+            client-id: ${KEYCLOAK_CLIENT_ID:openclinica-backend}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:}
+            authorization-grant-type: authorization_code
+            scope: openid,profile,email
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+        provider:
+          keycloak:
+            issuer-uri: ${KEYCLOAK_ISSUER_URI:}
+            user-name-attribute: preferred_username
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:}
+
+  # JPA / Hibernate
   jpa:
     open-in-view: false
     hibernate:

@@ -25,11 +25,13 @@ import org.akaza.openclinica.web.restful.ODMMetadataRestResource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
@@ -37,6 +39,8 @@ import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -269,10 +273,34 @@ public class SecurityConfig {
         return handler;
     }
 
-    /* ---- Security Filter Chain ---- */
+    /* ---- API Security Filter Chain (JWT / OAuth2 Resource Server) ---- */
 
     @Bean
-    public SecurityFilterChain filterChain(
+    @Order(1)
+    public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+        // @formatter:off
+        http
+            .securityMatcher("/api/**")
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().authenticated()
+            )
+            .csrf(csrf -> csrf.disable())
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(new KeycloakJwtAuthenticationConverter()))
+            )
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            );
+        // @formatter:on
+
+        return http.build();
+    }
+
+    /* ---- Web Security Filter Chain (OIDC Login + Form Login + Session) ---- */
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain webFilterChain(
             HttpSecurity http,
             OpenClinicaUsernamePasswordAuthenticationFilter myFilter,
             ConcurrentSessionFilter concurrencyFilter,
@@ -318,6 +346,10 @@ public class SecurityConfig {
             )
             .csrf(csrf -> csrf.disable())
             .anonymous(anonymous -> {})
+            .oauth2Login(oauth2 -> oauth2
+                .loginPage("/pages/login/login")
+                .successHandler(new OidcSessionBridgeSuccessHandler())
+            )
             .sessionManagement(session -> session
                 .sessionFixation(fixation -> fixation.migrateSession())
                 .maximumSessions(1)
