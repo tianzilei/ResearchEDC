@@ -32,9 +32,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 })
 @EnableTransactionManagement
 @ImportResource(locations = {
-    "classpath:org/akaza/openclinica/applicationContext-core-hibernate.xml",
-    "classpath:org/akaza/openclinica/applicationContext-core-security.xml",
-    "classpath:org/akaza/openclinica/applicationContext-security.xml"
+    "classpath:org/akaza/openclinica/applicationContext-core-hibernate.xml"
 })
 @ServletComponentScan(basePackages = {
     "org.akaza.openclinica.control",
