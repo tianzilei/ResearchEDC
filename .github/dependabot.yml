@@ -1,0 +1,34 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "automerge"
+    ignore:
+      # Legacy deps frozen in legacy-core - only security patches
+      - dependency-name: "net.sf.ehcache:ehcache"
+      - dependency-name: "org.quartz-scheduler:quartz"
+    registries: "*"
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "frontend"
+  - package-ecosystem: "pip"
+    directory: "/questionnaire-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "questionnaire-service"
