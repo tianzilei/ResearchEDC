@@ -1,0 +1,28 @@
+name: Docker Compose Check
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    paths:
+      - "deploy/**"
+      - "docker/**"
+      - "Dockerfile"
+      - "**/Dockerfile"
+      - "compose*.yml"
+
+concurrency:
+  group: docker-compose-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate Compose Config
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose configuration
+        run: docker compose -f deploy/compose/docker-compose.dev.yml config

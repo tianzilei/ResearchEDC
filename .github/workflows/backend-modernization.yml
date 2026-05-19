@@ -1,0 +1,40 @@
+name: Backend Modernization
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    paths:
+      - "pom.xml"
+      - "**/pom.xml"
+      - "app/**"
+      - "legacy-core/**"
+      - "web/**"
+      - "ws/**"
+      - "scripts/**"
+
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: "maven"
+
+      - name: Maven compile
+        run: mvn -B clean compile -DskipTests
+
+      - name: Maven verify
+        run: mvn -B verify -DskipITs=true

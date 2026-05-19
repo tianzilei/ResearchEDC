@@ -1,0 +1,40 @@
+name: Questionnaire Service Modernization
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    paths:
+      - "questionnaire-service/**"
+
+concurrency:
+  group: questionnaire-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test & Verify
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: questionnaire-service/apps/api
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: questionnaire-service/apps/api/pyproject.toml
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run tests
+        run: python -m pytest app/tests/ -v
