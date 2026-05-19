@@ -4,6 +4,7 @@ import AppLayout from "@/layouts/AppLayout";
 import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
 import ErrorPage from "@/pages/ErrorPage";
+import LegacyFrame from "@/components/LegacyFrame";
 
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const RandomizationDashboard = lazy(() => import("@/pages/randomization/RandomizationDashboard"));
@@ -99,6 +100,10 @@ const router = createBrowserRouter([
       {
         path: "403",
         element: <ErrorPage status={403} />,
+      },
+      {
+        path: "legacy/*",
+        element: <LegacyFrame />,
       },
     ],
   },
