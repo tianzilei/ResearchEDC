@@ -55,6 +55,7 @@ ws/src/main/resources/datainfo.properties
 *.ear
 *.zip
 *.tar.gz
+*.deb
 
 # AI/Agent working directories
 .sisyphus/
@@ -134,6 +135,12 @@ hs_err_pid*
 
 # Spring Boot DevTools
 .spring-boot-devtools.properties
+
+# Oracle JDBC driver (PostgreSQL-only project)
+*.jar
+
+# Local Maven repository
+lib/
 
 # Docker
 .docker/
