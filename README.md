@@ -47,7 +47,7 @@ ResearchEDC is an independently maintained research electronic data capture and 
 ## 项目结构
 
 ```
-OpenClinica/
+ResearchEDC/
 ├── pom.xml             # Maven 父 POM
 ├── frontend/           # React 19 SPA (pnpm workspace, 43 源文件)
 │   ├── src/
@@ -104,9 +104,6 @@ OpenClinica/
 ├── deploy/             # Docker Compose + Nginx 配置
 │   ├── compose/        # dev/test/prod 三层 Compose
 │   └── nginx/          # 生产级 Nginx 配置
-├── docker/             # multi-stage Dockerfiles (含 build cache mounts)
-├── docs/               # 文档
-│   └── refactor/       # 重构计划与基线
 ├── .dockerignore       # Docker 构建忽略规则
 └── scripts/            # 构建/部署/发布脚本
 ```
@@ -293,19 +290,21 @@ python -m pytest app/tests/ -v  # 31 tests
 
 ## Origin and License
 
-ResearchEDC is derived from OpenClinica v3.x. OpenClinica is distributed under the GNU Lesser General Public License (LGPL), version 2.1 or later.
+ResearchEDC is independently maintained research electronic data capture and clinical data management platform derived from OpenClinica v3.x.
 
-This project has been renamed to avoid confusion with the official OpenClinica project. The renaming does not alter the license obligations for code derived from OpenClinica. Files derived from OpenClinica remain licensed under the GNU LGPL, version 2.1 or later.
+- **Upstream project:** [OpenClinica](https://github.com/OpenClinica/OpenClinica)
+- **Upstream license:** GNU LGPL, version 2.1 or later
+- **Initial fork/import date:** 2023 (approximate)
+- **ResearchEDC rename date:** 2026-05-20
 
-See `NOTICE`, `UPSTREAM.md`, and `MODIFICATIONS.md` for attribution and modification records.
+This repository contains substantial modifications and refactoring. The renaming does not alter the license obligations for code derived from OpenClinica — files derived from OpenClinica remain licensed under the GNU LGPL, version 2.1 or later.
 
-## Trademark Notice
+### Trademark Notice
 
 OpenClinica is a trademark of its respective owner. ResearchEDC is not an official OpenClinica release and is not affiliated with, endorsed by, or sponsored by OpenClinica.
 
-## 相关文档
+### 相关文档
 
 - [AGENTS.md](./AGENTS.md) — AI 助手知识库
 - [MODIFICATIONS.md](./MODIFICATIONS.md) — 修改记录
 - [PLAN.md](./PLAN.md) — 已知问题与规划
-- [NOTICE](./NOTICE) — 来源声明与版权说明
