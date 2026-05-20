@@ -1,0 +1,43 @@
+package org.researchedc;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.web.servlet.ServletComponentScan;
+
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+/**
+ * OpenClinica Spring Boot Application.
+ *
+ * <p>Merges the legacy OpenClinica web and ws WAR modules into a single Spring Boot
+ * modular monolith. All XML configurations have been migrated to Java Config.</p>
+ *
+ * <p>This class also extends {@link OpenClinicaServletInitializer} to support
+ * traditional WAR deployment to Tomcat as a fallback.</p>
+ */
+@SpringBootApplication(scanBasePackages = {
+    "org.researchedc.controller",
+    "org.researchedc.service",
+    "org.researchedc.domain",
+    "org.researchedc.ws",
+    "org.researchedc.web",
+    "org.researchedc.config",
+    "org.researchedc.module"
+})
+@EntityScan(basePackages = {
+    "org.researchedc.domain",
+    "org.researchedc.module"
+})
+@EnableTransactionManagement
+
+@ServletComponentScan(basePackages = {
+    "org.researchedc.control",
+    "org.researchedc.web"
+})
+public class OpenClinicaApplication extends OpenClinicaServletInitializer {
+
+    public static void main(String[] args) {
+        SpringApplication.run(OpenClinicaApplication.class, args);
+    }
+}
