@@ -98,6 +98,46 @@ app/src/main/resources/static/
 temp/
 .tmp/
 
+# Python / Questionnaire Service
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+tox.ini
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Database
+*.h2.db
+*.mv.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Java heap dumps
+*.hprof
+hs_err_pid*
+
+# Spring Boot DevTools
+.spring-boot-devtools.properties
+
+# Docker
+.docker/
+
 # IDE - VS Code / Cursor
 .vscode/
 *.code-workspace
