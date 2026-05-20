@@ -1,0 +1,20 @@
+package org.researchedc.dao.hibernate;
+
+import org.researchedc.domain.datamap.StudyParameterValue;
+
+
+public class StudyParameterValueDao extends AbstractDomainDao<StudyParameterValue> {
+	
+    @Override
+    public Class<StudyParameterValue> domainClass() {
+        return StudyParameterValue.class;
+    }
+
+	public StudyParameterValue findByStudyIdParameter(int studyId, String parameter) {
+        String query = "from " + getDomainClassName() + " study_parameter_value where study_parameter_value.study.studyId = :studyid and study_parameter_value.studyParameter = :parameter ";
+        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
+        q.setParameter("studyid", studyId);
+        q.setParameter("parameter", parameter);
+        return (StudyParameterValue) q.uniqueResult();
+    }
+}
