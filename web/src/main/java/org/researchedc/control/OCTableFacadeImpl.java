@@ -1,0 +1,60 @@
+package org.researchedc.control;
+
+import org.researchedc.exception.OpenClinicaSystemException;
+import org.researchedc.web.JakartaWebContext;
+import org.jmesa.core.CoreContext;
+import org.jmesa.facade.TableFacadeImpl;
+import org.jmesa.limit.ExportType;
+import org.jmesa.web.WebContext;
+import org.jmesa.view.View;
+import org.jmesa.view.csv.CsvViewExporter;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+public class OCTableFacadeImpl extends TableFacadeImpl {
+
+    private final HttpServletResponse response;
+    private final HttpServletRequest request;
+    private final String fileName;
+
+    public OCTableFacadeImpl(String id, HttpServletRequest request, HttpServletResponse response, String fileName) {
+        super(id, (javax.servlet.http.HttpServletRequest) null);
+        this.response = response;
+        this.fileName = fileName + System.currentTimeMillis();
+        this.request = request;
+        setWebContext(new JakartaWebContext(request));
+    }
+
+    @Override
+    protected View getExportView(ExportType exportType) {
+
+        if (exportType == ExportType.PDF) {
+            return new XmlView(getTable(), getCoreContext());
+        } else {
+            return super.getExportView(exportType);
+        }
+    }
+
+    @Override
+    protected void renderExport(ExportType exportType, View view) {
+
+        try {
+            CoreContext cc = getCoreContext();
+
+            if (exportType == ExportType.CSV) {
+                new OCCsvViewExporter(view, cc, response, fileName).export();
+//                 new CsvViewExporter(view, cc, response, fileName + ".txt").export();
+            } else if (exportType == ExportType.EXCEL) {
+                super.renderExport(exportType, view);
+            } else if (exportType == ExportType.PDF) {
+                new XmlViewExporter(view, cc, request, response).export();
+            } else {
+                super.renderExport(exportType, view);
+            }
+        } catch (Exception e) {
+            throw new OpenClinicaSystemException(e);
+            // logger.error("Not able to perform the " + exportType + " export.");
+        }
+    }
+}
