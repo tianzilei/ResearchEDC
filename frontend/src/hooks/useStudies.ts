@@ -12,7 +12,7 @@ export function useStudies() {
   return useAppQuery<StudySummary[]>({
     queryKey: ["studies"],
     queryFn: async () => {
-      const response = await fetch("/OpenClinica/auth/api/v1/studies");
+      const response = await fetch("/research-edc/auth/api/v1/studies");
       if (!response.ok) {
         throw new Error("Failed to fetch studies");
       }

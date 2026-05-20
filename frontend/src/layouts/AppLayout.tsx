@@ -159,7 +159,7 @@ export default function AppLayout() {
               textShadow: "0 1px 2px rgba(0,0,0,0.2)",
             }}
           >
-            OpenClinica
+            ResearchEDC
           </span>
           <div style={{ borderLeft: "1px solid rgba(212,168,84,0.2)", height: 28, width: 1 }} />
           <StudySwitcher />

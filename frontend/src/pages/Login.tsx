@@ -116,7 +116,7 @@ export default function Login() {
                 color: "#1A1D23",
               }}
             >
-              OpenClinica
+              ResearchEDC
             </Title>
             <Text
               style={{
@@ -125,7 +125,7 @@ export default function Login() {
                 fontFamily: "'DM Sans', sans-serif",
               }}
             >
-              Clinical Data Management System
+              Research Electronic Data Capture
             </Text>
           </div>
 
