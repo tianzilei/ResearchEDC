@@ -4,6 +4,7 @@
 # Build output
 /target/
 */target/
+**/target/
 
 # Maven
 pom.xml.tag
@@ -43,6 +44,9 @@ ws/.DS_Store
 
 # Git merge artifacts
 *.orig
+
+# Legacy VCS artifacts (upstream OpenClinica was Mercurial)
+.hgignore
 
 # Application configuration (environment-specific)
 web/src/main/resources/datainfo.properties
@@ -98,6 +102,7 @@ app/src/main/resources/static/
 *.class
 temp/
 .tmp/
+**/catalina.home_IS_UNDEFINED/
 
 # Python / Questionnaire Service
 __pycache__/

@@ -2,7 +2,7 @@
 
 > **设计依据:** [OpenClinica_Architecture_Debt_Design.md](./docs/refactor/OpenClinica_Architecture_Debt_Design.md)  
 > **项目版本:** 3.18-SNAPSHOT  
-> **最后更新:** 2026-05-20  
+> **最后更新:** 2026-05-20 (cleanup + .gitignore)  
 > **核心原则:** Strangler Fig（绞杀者模式）— 新功能不进旧核心，旧能力逐步被新模块替代
 
 ---
@@ -28,6 +28,7 @@
 | **P0 安全加固** | Actuator 端点封锁, Swagger UI 禁用, entrypoint 默认密码移除 | ✅ |
 | **P1 Maven 插件升级** | surefire 2.10 → 3.2.5, resources 2.5 → 3.3.1 | ✅ |
 | **P2 构建/Git 优化** | 前端构建产物 .gitignore, JVM 容器化 CATALINA_OPTS | ✅ |
+| **项目清理** | .gitignore 更新 (`**/target/`, `.hgignore`, `**/catalina.home_IS_UNDEFINED/`), 清除遗留 Mercurial/JDBC 残留及 AI 缓存 (~58MB) | ✅ (2026-05-20) |
 | **Sprint 0: Foundation** | CRF 防腐层构建、legacy-gateway 模块、EntityScan 修复、边界测试 | ✅ (2026-05-18) |
 | **Sprint 1: Audit 模块** | 独立 audit_log 表 + JPA 实体 + 事件驱动 + Liquibase 迁移 | ✅ (2026-05-18) |
 | **Sprint 2: Study 模块** | study 表桥接实体 + Repository + Service + REST API | ✅ (2026-05-18) |

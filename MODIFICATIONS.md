@@ -6,6 +6,34 @@
 
 ---
 
+## 2026-05-20 — 项目清理: .gitignore 更新 + 无用文件删除
+
+- **模块:** 全项目
+- **原因:** 复制项目到新环境前清理构建产物、AI 工作目录、遗留 VCS 残留
+
+### 变更内容
+
+1. **`.gitignore` 更新**: 新增 3 个忽略模式
+   - `**/target/` — 覆盖深层嵌套 Maven 模块构建输出
+   - `.hgignore` — 停止跟踪上游遗留的 Mercurial 忽略文件
+   - `**/catalina.home_IS_UNDEFINED/` — 忽略运行时 Tomcat 日志目录
+2. **`git rm` 已跟踪遗留文件**:
+   - `.hgignore` — Mercurial VCS 残留（上游 OpenClinica 原使用 Mercurial）
+   - `web/src/main/config/libraries/postgresql-8.1-405.jdbc3.jar` — PostgreSQL 8.1 上古 JDBC 驱动
+3. **`rm -rf` 构建产物 & AI 缓存 (共 ~58MB)**:
+   - `app/catalina.home_IS_UNDEFINED/` + `legacy-core/catalina.home_IS_UNDEFINED/` — Tomcat 运行时日志
+   - `frontend/tsconfig.tsbuildinfo` + `tsconfig.node.tsbuildinfo` — TypeScript 增量编译缓存
+   - `.opencode/node_modules/` (57M) + `package.json` + `package-lock.json` — AI 框架依赖
+   - `.sisyphus/run-continuation/` — 22 个历史 AI 会话备份
+   - `questionnaire-service/apps/api/.pytest_cache/` — pytest 缓存
+
+### 验证
+- 所有 11 项删除确认 ✅
+- 项目大小: 297M → **239M** (节省 ~58M, 不含 `.git/` 194M)
+- `.gitignore` 更新验证 ✅
+
+---
+
 ## 2026-05-20 — ResearchEDC 命名迁移
 
 - **模块:** 全项目 — repo 名称、package 命名空间、Maven 坐标、Docker 服务、UI 显示名、合规文档

@@ -10,7 +10,7 @@ ResearchEDC is an independently maintained research electronic data capture (EDC
 
 New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/static/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. Legacy code at `legacy-core/`, `web/` (482 files + 417 JSP), `ws/` (57 files) is being incrementally strangulated into Modulith modules.
 
-**当前状态:** `mvn clean compile` ✅ | `mvn clean package -DskipTests` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend TypeScript 0 errors ✅ | ESLint 0 errors ✅ | **Questionnaire Service** `pytest` 31/31 ✅ | Docker Compose ✅ | E2E API ✅ | **ResearchEDC Rename** ✅
+**当前状态:** `mvn clean compile` ✅ | `mvn clean package -DskipTests` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend TypeScript 0 errors ✅ | ESLint 0 errors ✅ | **Questionnaire Service** `pytest` 31/31 ✅ | Docker Compose ✅ | E2E API ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅
 
 ## STRUCTURE
 
@@ -48,7 +48,7 @@ New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/stati
 ├── AGENTS.md
 ├── MODIFICATIONS.md
 ├── PLAN.md
-└── .sisyphus/               # Sisyphus AI work plans
+└── .sisyphus/               # AI work plans (run-continuation cleaned)
 ```
 
 ## WHERE TO LOOK
@@ -176,6 +176,7 @@ python -m pytest app/tests/ -v
 - **Routing:** `/app/*` -> React SPA, `/legacy/*` -> JSP, `/q/*` -> questionnaire, `/api/*` -> REST
 - **Modulith:** Only `org.researchedc.module.*` is verified; legacy packages are excluded
 - **Version:** 3.18-SNAPSHOT
+- **Cleanup (2026-05-20):** `.gitignore` updated with `**/target/`, `.hgignore`, `**/catalina.home_IS_UNDEFINED/`. Removed stale `.hgignore`, JDBC driver, AI caches (~58MB). See MODIFICATIONS.md for details.
 
 ## SUBMODULE REFERENCES
 
