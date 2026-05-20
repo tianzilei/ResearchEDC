@@ -11,7 +11,7 @@
                            http://www.springframework.org/schema/security
                            https://www.springframework.org/schema/security/spring-security.xsd">
 
-    <!-- Public URLs - no security required -->
+    <!-- Public URLs -->
     <security:http pattern="/pages/login/login" security="none"/>
     <security:http pattern="/SystemStatus" security="none"/>
     <security:http pattern="/RssReader" security="none"/>
@@ -22,39 +22,16 @@
     <security:http pattern="/help/**" security="none"/>
     <security:http pattern="/ws/**" security="none"/>
     <security:http pattern="/Contact" security="none"/>
-    <security:http pattern="/rest2/openrosa/**" security="none"/>
-    <security:http pattern="/pages/odmk/**" security="none"/>
-    <security:http pattern="/pages/openrosa/**" security="none"/>
-    <security:http pattern="/pages/accounts/**" security="none"/>
-    <security:http pattern="/pages/itemdata/**" security="none"/>
-    <security:http pattern="/pages/auth/api/v1/studies/**" security="none"/>
-    <security:http pattern="/pages/odmss/**" security="none"/>
-    <security:http pattern="/pages/healthcheck/**" security="none"/>
-    <security:http pattern="/pages/api/v1/anonymousform/**" security="none"/>
-    <security:http pattern="/pages/api/v2/anonymousform/**" security="none"/>
-    <security:http pattern="/pages/api/v1/editform/**" security="none"/>
-    <security:http pattern="/pages/auth/api/v1/discrepancynote/**" security="none"/>
-    <security:http pattern="/pages/auth/api/v1/forms/migrate/**" security="none"/>
-    <security:http pattern="/pages/api/v1/forms/migrate/**" security="none"/>
-    <security:http pattern="/pages/auth/api/**" security="none"/>
-    <security:http pattern="/pages/auth/api/v1/system/**" security="none"/>
 
-    <!-- Main HTTP Security Configuration -->
+    <!-- HTTP Security Configuration -->
     <security:http access-denied-page="/accounts/denied.htm" entry-point-ref="authenticationProcessingFilterEntryPoint">
 
         <security:anonymous />
 
-        <!-- Authorization rules -->
         <security:intercept-url pattern="/**" access="ROLE_USER" />
-
-        <!-- Custom filters -->
         <security:custom-filter ref="myFilter" position="FORM_LOGIN_FILTER" />
         <security:custom-filter ref="concurrencyFilter" position="CONCURRENT_SESSION_FILTER" />
-
-        <!-- Session management -->
         <security:session-management session-authentication-strategy-ref="sas"/>
-
-        <!-- Logout configuration -->
         <security:logout logout-success-url="/MainMenu" logout-url="/j_spring_security_logout" />
 
     </security:http>
@@ -65,7 +42,7 @@
         <constructor-arg value="/pages/login/login"/>
     </bean>
 
-    <!-- Custom Authentication Filter -->
+    <!-- Authentication Filter -->
     <bean id="myFilter" class="org.researchedc.web.filter.OpenClinicaUsernamePasswordAuthenticationFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="authenticationFailureHandler" ref="failureHandler" />
@@ -75,7 +52,6 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="allowSessionCreation" value="true" />
         <property name="sessionAuthenticationStrategy" ref="sas"/>
-        <property name="crfLocker" ref="crfLocker"/>
     </bean>
 
     <!-- Success Handler -->
@@ -103,7 +79,6 @@
     <bean id="sessionRegistry" class="org.researchedc.web.filter.OpenClinicaSessionRegistryImpl">
         <property name="auditUserLoginDao" ref="auditUserLoginDao"/>
         <property name="dataSource" ref="dataSource"/>
-        <property name="crfLocker" ref="crfLocker" />
     </bean>
 
     <!-- Session Authentication Strategy -->
@@ -117,36 +92,5 @@
         <property name="auditUserLoginDao" ref="auditUserLoginDao"/>
         <property name="dataSource" ref="dataSource"/>
     </bean>
-
-    <!-- REST Resources -->
-    <bean id="metadataCollectorResource" class="org.researchedc.web.restful.MetadataCollectorResource">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="ruleSetRuleDao" ref="ruleSetRuleDao"/>
-        <property name="coreResources" ref="coreResources"/>
-        <property name="studyDaoHib" ref="studyDaoDomain"/>
-    </bean>
-
-    <bean id="odmMetadataRestResource" class="org.researchedc.web.restful.ODMMetadataRestResource">
-        <property name="metadataCollectorResource" ref="metadataCollectorResource"/>
-    </bean>
-
-    <bean id="clinicalDataCollectorResource" class="org.researchedc.web.restful.ClinicalDataCollectorResource">
-        <property name="generateClinicalDataService" ref="generateClinicalDataService"/>
-    </bean>
-
-    <bean id="odmClinicalDataRestResource" class="org.researchedc.web.restful.ODMClinicaDataResource">
-        <property name="clinicalDataCollectorResource" ref="clinicalDataCollectorResource"/>
-        <property name="metadataCollectorResource" ref="metadataCollectorResource"/>
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
-
-    <bean id="openRosaServices" class="org.researchedc.web.pform.OpenRosaServices">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="coreResources" ref="coreResources"/>
-        <property name="ruleActionPropertyDao" ref="ruleActionPropertyDao"/>
-        <property name="openRosaSubmissionController" ref="openRosaSubmissionController" />
-    </bean>
-
-    <bean id="openRosaSubmissionController" class="org.researchedc.controller.openrosa.OpenRosaSubmissionController" autowire="byName"/>
 
 </beans>

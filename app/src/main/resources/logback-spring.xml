@@ -28,14 +28,14 @@
     </root>
 
     <springProfile name="dev">
-        <logger name="org.akaza.openclinica" level="DEBUG"/>
+        <logger name="org.researchedc" level="DEBUG"/>
     </springProfile>
 
     <springProfile name="test">
-        <logger name="org.akaza.openclinica" level="DEBUG"/>
+        <logger name="org.researchedc" level="DEBUG"/>
     </springProfile>
 
     <springProfile name="prod">
-        <logger name="org.akaza.openclinica" level="WARN"/>
+        <logger name="org.researchedc" level="WARN"/>
     </springProfile>
 </configuration>

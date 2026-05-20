@@ -1,5 +1,5 @@
 # =============================================================================
-# OpenClinica Spring Boot Configuration
+# ResearchEDC Spring Boot Configuration
 # =============================================================================
 # Profiles: dev, test, prod
 # Usage: --spring.profiles.active=dev
@@ -9,14 +9,14 @@
 server:
   port: 8080
   servlet:
-    context-path: /OpenClinica
+    context-path: /research-edc
   tomcat:
     uri-encoding: UTF-8
 
 spring:
   # Application info for Actuator /info endpoint
   application:
-    name: OpenClinica
+    name: ResearchEDC
     version: @project.version@
 
   # JSP view resolution (legacy UI)
@@ -69,7 +69,7 @@ spring:
         registration:
           keycloak:
             provider: keycloak
-            client-id: ${KEYCLOAK_CLIENT_ID:openclinica-backend}
+            client-id: ${KEYCLOAK_CLIENT_ID:researchedc-backend}
             client-secret: ${KEYCLOAK_CLIENT_SECRET:}
             authorization-grant-type: authorization_code
             scope: openid,profile,email
@@ -133,7 +133,7 @@ server:
 
 logging:
   level:
-    org.akaza.openclinica: DEBUG
+    org.researchedc: DEBUG
     org.springframework: INFO
     org.hibernate: INFO
     org.hibernate.SQL: DEBUG
@@ -152,7 +152,7 @@ server:
 
 logging:
   level:
-    org.akaza.openclinica: DEBUG
+    org.researchedc: DEBUG
     org.springframework: INFO
 
 # =============================================================================
@@ -169,7 +169,7 @@ server:
 
 logging:
   level:
-    org.akaza.openclinica: WARN
+    org.researchedc: WARN
     org.springframework: WARN
     org.hibernate: WARN
 

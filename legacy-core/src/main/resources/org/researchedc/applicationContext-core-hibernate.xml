@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/tx
+                            http://www.springframework.org/schema/tx/spring-tx.xsd
+                            http://www.springframework.org/schema/aop
+                            http://www.springframework.org/schema/aop/spring-aop.xsd
+                            http://www.springframework.org/schema/context
+                            http://www.springframework.org/schema/context/spring-context.xsd
+                            http://www.springframework.org/schema/data/jpa
+                            http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+    <!-- Enable component scanning for entity classes -->
+    <context:component-scan base-package="org.researchedc.domain"/>
+
+    <!-- JPA Entity Manager Factory for Hibernate 6.x -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan">
+            <list>
+                <value>org.researchedc.domain.rule</value>
+                <value>org.researchedc.domain.user</value>
+                <value>org.researchedc.domain.managestudy</value>
+                <value>org.researchedc.domain.technicaladmin</value>
+                <value>org.researchedc.domain.admin</value>
+                <value>org.researchedc.domain.crfdata</value>
+                <value>org.researchedc.domain.usageStats</value>
+                <value>org.researchedc.domain.datamap</value>
+            </list>
+        </property>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="showSql" value="false"/>
+                <property name="generateDdl" value="false"/>
+            </bean>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <prop key="hibernate.generate_statistics">true</prop>
+                <!-- Second-level cache disabled for Hibernate 6 compatibility.
+                     EhCacheRegionFactory was removed in Hibernate 6.
+                     Re-enable with JCache (JSR-107) + Ehcache 3 when needed:
+                     <prop key="hibernate.cache.region.factory_class">jcache</prop>
+                     <prop key="hibernate.javax.cache.provider">org.ehcache.jsr107.EhcacheCachingProvider</prop> -->
+                <prop key="hibernate.cache.use_query_cache">false</prop>
+                <prop key="hibernate.cache.use_second_level_cache">false</prop>
+                <prop key="hibernate.physical_naming_strategy">org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy</prop>
+                <prop key="hibernate.id.new_generator_mappings">true</prop>
+                <!-- hbm2ddl.auto: controlled via OC_HIBERNATE_DDL_AUTO env var in Docker.
+                     Set to 'validate' to check schema compatibility against entity mappings.
+                     Other values: none, create, create-drop, update (use with caution). -->
+                <prop key="jakarta.persistence.schema-generation.database.action">${hibernate.ddl.auto}</prop>
+                <!-- Uncommenting the following line allows better logging of Hibernate errors for debugging purposes. Must be commented out for production use. -->
+                <!-- prop key="hibernate.jdbc.batch_size">0</prop -->
+            </props>
+        </property>
+    </bean>
+
+    <!-- JPA Transaction Manager for Hibernate 6.x -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <!-- Transaction Template -->
+    <bean id="sharedTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <!-- Enable annotation-driven transaction management -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+    <!-- JPA Repositories support -->
+    <jpa:repositories base-package="org.researchedc.dao.hibernate"/>
+
+    <!-- Abstract Domain DAO - using JPA EntityManager instead of HibernateTemplate -->
+    <bean id="abstractDomainDao" class="org.researchedc.dao.hibernate.AbstractDomainDao" abstract="true">
+        <property name="entityManager" ref="entityManagerFactory"/>
+    </bean>
+
+    <!-- DAO Beans -->
+    <bean id="ruleActionRunLogDao" class="org.researchedc.dao.hibernate.RuleActionRunLogDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="dynamicsItemFormMetadataDao" class="org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="dynamicsItemGroupMetadataDao" class="org.researchedc.dao.hibernate.DynamicsItemGroupMetadataDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="ruleSetDao" class="org.researchedc.dao.hibernate.RuleSetDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="ruleSetAuditDao" class="org.researchedc.dao.hibernate.RuleSetAuditDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="ruleDao" class="org.researchedc.dao.hibernate.RuleDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="ruleActionPropertyDao" class="org.researchedc.dao.hibernate.RuleActionPropertyDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="ruleSetRuleDao" class="org.researchedc.dao.hibernate.RuleSetRuleDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="ruleSetRuleAuditDao" class="org.researchedc.dao.hibernate.RuleSetRuleAuditDao" parent="abstractDomainDao" autowire="byName" />
+
+    <bean id="authoritiesDao" class="org.researchedc.dao.hibernate.AuthoritiesDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="studyModuleStatusDao" class="org.researchedc.dao.hibernate.StudyModuleStatusDao" parent="abstractDomainDao" autowire="byName"/>
+
+    <bean id="auditUserLoginDao" class="org.researchedc.dao.hibernate.AuditUserLoginDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="databaseChangeLogDao" class="org.researchedc.dao.hibernate.DatabaseChangeLogDao" autowire="byName" />
+    <bean id="configurationDao" class="org.researchedc.dao.hibernate.ConfigurationDao" parent="abstractDomainDao" autowire="byName" />
+
+    <bean id="measurementUnitDao" class="org.researchedc.dao.hibernate.MeasurementUnitDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="scdItemMetadataDao" class="org.researchedc.dao.hibernate.SCDItemMetadataDao" parent="abstractDomainDao" autowire="byName" />
+
+    <bean id="usageStatsServiceDAO" class="org.researchedc.dao.hibernate.UsageStatsServiceDAO" parent="abstractDomainDao" autowire="byName" />
+    <bean id="openClinicaVersionDAO" class="org.researchedc.dao.hibernate.OpenClinicaVersionDAO" parent="abstractDomainDao" autowire="byName" />
+    <bean id="crfVersionDao" class="org.researchedc.dao.hibernate.CrfVersionDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="eventCrfDao" class="org.researchedc.dao.hibernate.EventCrfDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="eventDefinitionCrfDao" class="org.researchedc.dao.hibernate.EventDefinitionCrfDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="crfVersionMediaDao" class="org.researchedc.dao.hibernate.CrfVersionMediaDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="crfDao" class="org.researchedc.dao.hibernate.CrfDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="sectionDao" class="org.researchedc.dao.hibernate.SectionDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="itemGroupDao" class="org.researchedc.dao.hibernate.ItemGroupDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="itemDao" class="org.researchedc.dao.hibernate.ItemDao" parent="abstractDomainDao" autowire="byName" />
+
+    <bean id="eventDefinitionCrfItemTagDao" class="org.researchedc.dao.hibernate.EventDefinitionCrfItemTagDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="eventDefinitionCrfTagDao" class="org.researchedc.dao.hibernate.EventDefinitionCrfTagDao" parent="abstractDomainDao" autowire="byName" />
+
+    <bean id="eventCrfFlagDao" class="org.researchedc.dao.hibernate.EventCrfFlagDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="itemDataFlagDao" class="org.researchedc.dao.hibernate.ItemDataFlagDao" parent="abstractDomainDao" autowire="byName" />
+
+    <bean id="eventCrfFlagWorkflowDao" class="org.researchedc.dao.hibernate.EventCrfFlagWorkflowDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="itemDataFlagWorkflowDao" class="org.researchedc.dao.hibernate.ItemDataFlagWorkflowDao" parent="abstractDomainDao" autowire="byName" />
+
+    <bean id="idtViewDao" class="org.researchedc.dao.hibernate.IdtViewDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="tagDao" class="org.researchedc.dao.hibernate.TagDao" parent="abstractDomainDao" autowire="byName" />
+
+    <bean id="itemDataDao" class="org.researchedc.dao.hibernate.ItemDataDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="itemReferenceTypeDao" class="org.researchedc.dao.hibernate.ItemReferenceTypeDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="itemDataTypeDao" class="org.researchedc.dao.hibernate.ItemDataTypeDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="responseSetDao" class="org.researchedc.dao.hibernate.ResponseSetDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="responseTypeDao" class="org.researchedc.dao.hibernate.ResponseTypeDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="itemFormMetadataDao" class="org.researchedc.dao.hibernate.ItemFormMetadataDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="versioningMapDao" class="org.researchedc.dao.hibernate.VersioningMapDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="itemGroupMetadataDao" class="org.researchedc.dao.hibernate.ItemGroupMetadataDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="studyParameterValueDao" class="org.researchedc.dao.hibernate.StudyParameterValueDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="dnItemDataMapDao" class="org.researchedc.dao.hibernate.DnItemDataMapDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="completionStatusDao" class="org.researchedc.dao.hibernate.CompletionStatusDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="discrepancyNoteDao" class="org.researchedc.dao.hibernate.DiscrepancyNoteDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="discrepancyNoteTypeDao" class="org.researchedc.dao.hibernate.DiscrepancyNoteTypeDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="resolutionStatusDao" class="org.researchedc.dao.hibernate.ResolutionStatusDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="studyUserRoleDao" class="org.researchedc.dao.hibernate.StudyUserRoleDao" parent="abstractDomainDao" autowire="byName" />
+    <bean id="subjectDao" class="org.researchedc.dao.hibernate.SubjectDao" parent="abstractDomainDao" autowire="byName" />
+
+    <bean id="viewNotesDao" class="org.researchedc.dao.managestudy.ViewNotesDaoImpl">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="queryStore" ref="queryStore"/>
+    </bean>
+
+    <bean id="studyDaoDomain" class="org.researchedc.dao.hibernate.StudyDao" parent="abstractDomainDao" autowire="byName"/>
+
+    <bean id="studySubjectDaoDomain" class="org.researchedc.dao.hibernate.StudySubjectDao" parent="abstractDomainDao" autowire="byName"/>
+    <bean id="studyEventDefDaoDomain" class="org.researchedc.dao.hibernate.StudyEventDefinitionDao" parent="abstractDomainDao" autowire="byName"/>
+    <bean id="auditLogEventDaoDomain" class="org.researchedc.dao.hibernate.AuditLogEventDao" parent="abstractDomainDao" autowire="byName"/>
+    <bean id="userDaoDomain" class="org.researchedc.dao.hibernate.UserAccountDao" parent="abstractDomainDao" autowire="byName"/>
+    <bean id="userTypeDao" class="org.researchedc.dao.hibernate.UserTypeDao" parent="abstractDomainDao" autowire="byName"/>
+    <bean id="studyEventDaoDomain" class="org.researchedc.dao.hibernate.StudyEventDao" parent="abstractDomainDao" autowire="byName"/>
+</beans>
