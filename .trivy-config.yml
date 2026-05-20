@@ -1,0 +1,6 @@
+# Trivy configuration for OpenClinica
+severity: CRITICAL,HIGH
+vuln-type: os,library
+scan:
+  skip-dirs:
+    - /usr/local/tomcat/webapps/ROOT/WEB-INF/lib/

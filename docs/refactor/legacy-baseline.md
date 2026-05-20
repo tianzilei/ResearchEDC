@@ -188,7 +188,7 @@ All counts were generated using `find` and `grep` against the master branch sour
 - **Ehcache**: `grep "import net.sf.ehcache"` across all Java sources
 - **javax residuals**: `grep "^import javax\."` across all Java sources
 - **Modern module files**: `find app/src -path '*/module/<name>/*' -name '*.java'` per module
-- **Legacy imports from modern**: `grep "import org.akaza.openclinica.(dao|bean|domain)\."` in `app/src/`
+- **Legacy imports from modern**: `grep "import org.researchedc.(dao|bean|domain)\."` in `app/src/`
 
 ---
 

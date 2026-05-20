@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="openclinica" id="2026-05-17-01-create-randomization-scheme">
+        <createTable tableName="randomization_scheme">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="study_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="algorithm" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="DRAFT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="seed" type="BIGINT"/>
+            <column name="min_block_size" type="INT"/>
+            <column name="max_block_size" type="INT"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="TIMESTAMP"/>
+            <column name="created_by" type="INT"/>
+            <column name="updated_by" type="INT"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="randomization_scheme" baseColumnNames="study_id"
+                                 constraintName="fk_r_scheme_study" referencedTableName="study"
+                                 referencedColumnNames="study_id"/>
+    </changeSet>
+
+    <changeSet author="openclinica" id="2026-05-17-02-create-randomization-arm">
+        <createTable tableName="randomization_arm">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="scheme_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="display_name" type="VARCHAR(255)"/>
+            <column name="ratio" type="INT" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_number" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="randomization_arm" baseColumnNames="scheme_id"
+                                 constraintName="fk_r_arm_scheme" referencedTableName="randomization_scheme"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="openclinica" id="2026-05-17-03-create-randomization-stratum">
+        <createTable tableName="randomization_stratum">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="scheme_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stratum_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_number" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="randomization_stratum" baseColumnNames="scheme_id"
+                                 constraintName="fk_r_stratum_scheme" referencedTableName="randomization_scheme"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="openclinica" id="2026-05-17-04-create-randomization-stratum-option">
+        <createTable tableName="randomization_stratum_option">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="stratum_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_number" type="INT" defaultValue="0"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="randomization_stratum_option" baseColumnNames="stratum_id"
+                                 constraintName="fk_r_stratum_opt_stratum" referencedTableName="randomization_stratum"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="openclinica" id="2026-05-17-05-create-randomization-block">
+        <createTable tableName="randomization_block">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="scheme_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="block_size" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="block_index" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stratum_path" type="VARCHAR(512)"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="randomization_block" baseColumnNames="scheme_id"
+                                 constraintName="fk_r_block_scheme" referencedTableName="randomization_scheme"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="openclinica" id="2026-05-17-06-create-randomization-assignment">
+        <createTable tableName="randomization_assignment">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="scheme_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_subject_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="arm_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stratum_path" type="VARCHAR(512)"/>
+            <column name="block_id" type="BIGINT"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assigned_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assigned_by" type="INT"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="randomization_assignment" baseColumnNames="scheme_id"
+                                 constraintName="fk_r_assign_scheme" referencedTableName="randomization_scheme"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="randomization_assignment" baseColumnNames="study_subject_id"
+                                 constraintName="fk_r_assign_subject" referencedTableName="study_subject"
+                                 referencedColumnNames="study_subject_id"/>
+        <addForeignKeyConstraint baseTableName="randomization_assignment" baseColumnNames="arm_id"
+                                 constraintName="fk_r_assign_arm" referencedTableName="randomization_arm"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="randomization_assignment" baseColumnNames="block_id"
+                                 constraintName="fk_r_assign_block" referencedTableName="randomization_block"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet author="openclinica" id="2026-05-17-07-create-randomization-unblinding-request">
+        <createTable tableName="randomization_unblinding_request">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="assignment_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="requested_by" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="requested_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reason" type="VARCHAR(2000)"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reviewed_by" type="INT"/>
+            <column name="reviewed_date" type="TIMESTAMP"/>
+            <column name="review_notes" type="VARCHAR(2000)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="randomization_unblinding_request" baseColumnNames="assignment_id"
+                                 constraintName="fk_r_unblind_assignment" referencedTableName="randomization_assignment"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="openclinica" id="2026-05-17-08-create-randomization-audit-log">
+        <createTable tableName="randomization_audit_log">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="scheme_id" type="BIGINT"/>
+            <column name="study_id" type="INT"/>
+            <column name="action" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entity_type" type="VARCHAR(50)"/>
+            <column name="entity_id" type="BIGINT"/>
+            <column name="old_value" type="VARCHAR(4000)"/>
+            <column name="new_value" type="VARCHAR(4000)"/>
+            <column name="performed_by" type="INT"/>
+            <column name="performed_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="details" type="VARCHAR(4000)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="randomization_audit_log" baseColumnNames="scheme_id"
+                                 constraintName="fk_r_audit_scheme" referencedTableName="randomization_scheme"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet author="openclinica" id="2026-05-17-09-add-randomization-indexes">
+        <createIndex indexName="idx_r_assign_scheme_subject" tableName="randomization_assignment">
+            <column name="scheme_id"/>
+            <column name="study_subject_id"/>
+        </createIndex>
+        <createIndex indexName="idx_r_assign_scheme_status" tableName="randomization_assignment">
+            <column name="scheme_id"/>
+            <column name="status"/>
+        </createIndex>
+        <createIndex indexName="idx_r_audit_scheme_action" tableName="randomization_audit_log">
+            <column name="scheme_id"/>
+            <column name="action"/>
+            <column name="performed_date"/>
+        </createIndex>
+        <createIndex indexName="idx_r_block_scheme_path" tableName="randomization_block">
+            <column name="scheme_id"/>
+            <column name="stratum_path"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

@@ -1,4 +1,4 @@
-package org.akaza.openclinica.gwt.client;
+package org.researchedc.gwt.client;
 
 import com.google.gwt.i18n.client.Constants;
 

@@ -1,0 +1,17 @@
+org/akaza/openclinica/service/rule/expression/ExpressionServiceTest.class
+org/akaza/openclinica/dao/rule/RuleDaoTest.class
+org/akaza/openclinica/templates/HibernateOcDbTestCase.class
+org/akaza/openclinica/dao/rule/RuleSetDaoTest.class
+org/akaza/openclinica/service/rule/RulesPostImportContainerServiceTest.class
+org/akaza/openclinica/dao/rule/RuleSetAuditDaoTest.class
+org/akaza/openclinica/dao/submit/ItemDataDAOTest.class
+org/akaza/openclinica/dao/ConfigurationDaoTest.class
+org/akaza/openclinica/dao/AuditUserLoginDaoTest.class
+org/akaza/openclinica/dao/DatabaseChangeLogDaoTest.class
+org/akaza/openclinica/service/rule/RuleSetServiceTest.class
+org/akaza/openclinica/dao/rule/RuleSetRuleAuditDaoTest.class
+org/akaza/openclinica/logic/expressionTree/OpenClinicaExpressionParserTest.class
+org/akaza/openclinica/dao/AuthoritiesDaoTest.class
+org/akaza/openclinica/templates/OcDbTestCase.class
+org/akaza/openclinica/dao/rule/RuleSetRuleDaoTest.class
+org/akaza/openclinica/service/rule/expression/SampleTest.class

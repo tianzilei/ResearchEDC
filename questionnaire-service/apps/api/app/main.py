@@ -14,8 +14,8 @@ from app.api.v1.routers import (
 )
 
 app = FastAPI(
-    title="OpenClinica Questionnaire Service",
-    description="Clinical Questionnaire Service API for OpenClinica",
+    title="ResearchEDC Questionnaire Service",
+    description="ResearchEDC Questionnaire Service API",
     version="0.1.0",
     docs_url="/docs",
     redoc_url="/redoc",

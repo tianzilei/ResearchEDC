@@ -6,7 +6,7 @@
 
     <inherits name="com.google.gwt.i18n.I18N"/>
 
-    <entry-point class='org.akaza.openclinica.gwt.client.GwtMenu'/>
+    <entry-point class='org.researchedc.gwt.client.GwtMenu'/>
 
     <!-- French language, independent of country -->
     <extend-property name="locale" values="fr"/>
