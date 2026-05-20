@@ -3,13 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>OpenClinica-app</artifactId>
+    <artifactId>research-edc-app</artifactId>
     <packaging>war</packaging>
-    <name>OpenClinica Spring Boot Application</name>
+    <name>ResearchEDC Spring Boot Application</name>
     <description>Spring Boot modular monolith combining web + ws modules</description>
     <parent>
-        <groupId>org.akaza.openclinica</groupId>
-        <artifactId>OpenClinica</artifactId>
+        <groupId>org.researchedc</groupId>
+        <artifactId>research-edc</artifactId>
         <version>3.18-SNAPSHOT</version>
     </parent>
 
@@ -47,31 +47,31 @@
         <!-- OpenClinica core (JAR) -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>OpenClinica-core</artifactId>
+            <artifactId>research-edc-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- OpenClinica web (classes JAR for compiled classes only) -->
+        <!-- ResearchEDC web (classes JAR for compiled classes only) -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>OpenClinica-web</artifactId>
+            <artifactId>research-edc-web</artifactId>
             <version>${project.version}</version>
             <classifier>classes</classifier>
         </dependency>
 
-        <!-- OpenClinica web (WAR for JSP/resource overlay) -->
+        <!-- ResearchEDC web (WAR for JSP/resource overlay) -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>OpenClinica-web</artifactId>
+            <artifactId>research-edc-web</artifactId>
             <version>${project.version}</version>
             <type>war</type>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- OpenClinica ws (classes JAR for compiled classes only) -->
+        <!-- ResearchEDC ws (classes JAR for compiled classes only) -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>OpenClinica-ws</artifactId>
+            <artifactId>research-edc-ws</artifactId>
             <version>${project.version}</version>
             <classifier>classes</classifier>
         </dependency>
@@ -99,12 +99,10 @@
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.web</groupId>
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-            <version>3.0.1</version>
         </dependency>
 
         <!-- Springdoc OpenAPI -->
@@ -124,26 +122,22 @@
         <dependency>
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-ws-security</artifactId>
-            <version>4.0.10</version>
         </dependency>
 
         <!-- Jakarta SOAP API -->
         <dependency>
             <groupId>jakarta.xml.soap</groupId>
             <artifactId>jakarta.xml.soap-api</artifactId>
-            <version>3.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.messaging.saaj</groupId>
             <artifactId>saaj-impl</artifactId>
-            <version>3.0.3</version>
         </dependency>
 
         <!-- Sitemesh (for JSP decoration) -->
         <dependency>
             <groupId>org.sitemesh</groupId>
             <artifactId>sitemesh</artifactId>
-            <version>3.2.1</version>
         </dependency>
 
         <!-- Micrometer Prometheus (for metrics export) -->
@@ -190,19 +184,16 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>1.19.8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.19.8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.19.8</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -220,7 +211,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>org.akaza.openclinica.OpenClinicaApplication</mainClass>
+                    <mainClass>org.researchedc.OpenClinicaApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>
@@ -241,7 +232,7 @@
                     <overlays>
                         <overlay>
                             <groupId>${project.groupId}</groupId>
-                            <artifactId>OpenClinica-web</artifactId>
+                            <artifactId>research-edc-web</artifactId>
                             <type>war</type>
                         </overlay>
                     </overlays>

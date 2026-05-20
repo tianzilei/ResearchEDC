@@ -3,19 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>OpenClinica-web</artifactId>
+    <artifactId>research-edc-web</artifactId>
     <packaging>war</packaging>
-    <name>OpenClinica Web Application</name>
+    <name>ResearchEDC Web Application</name>
     <parent>
-        <groupId>org.akaza.openclinica</groupId>
-        <artifactId>OpenClinica</artifactId>
+        <groupId>org.researchedc</groupId>
+        <artifactId>research-edc</artifactId>
         <version>3.18-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>OpenClinica-core</artifactId>
+            <artifactId>research-edc-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -30,7 +30,6 @@
         <dependency>
             <groupId>com.rometools</groupId>
             <artifactId>rome-fetcher</artifactId>
-            <version>1.18.0</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -42,7 +41,6 @@
         <dependency>
             <groupId>com.rometools</groupId>
             <artifactId>rome</artifactId>
-            <version>1.18.0</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -64,7 +62,6 @@
         <dependency>
             <groupId>jakarta.transaction</groupId>
             <artifactId>jakarta.transaction-api</artifactId>
-            <version>2.0.1</version>
         </dependency>
 
         <!-- Spring WebMVC -->
@@ -106,35 +103,30 @@
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.14.12</version>
         </dependency>
 
         <!-- Apache Commons Lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.14.0</version>
         </dependency>
 
         <!-- Joda Time -->
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.12.7</version>
         </dependency>
 
         <!-- Sitemesh -->
         <dependency>
             <groupId>org.sitemesh</groupId>
             <artifactId>sitemesh</artifactId>
-            <version>3.2.1</version>
         </dependency>
 
         <!-- OpenPDF -->
         <dependency>
             <groupId>com.github.librepdf</groupId>
             <artifactId>openpdf</artifactId>
-            <version>2.0.2</version>
         </dependency>
 
         <!-- JMesa -->
@@ -155,49 +147,42 @@
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
-            <version>1.8.0</version>
         </dependency>
 
         <!-- Apache Commons Collections4 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
         </dependency>
 
         <!-- Apache Commons Math3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
         </dependency>
 
         <!-- Apache Commons Digester3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-digester3</artifactId>
-            <version>3.2</version>
         </dependency>
 
         <!-- Apache Commons FileUpload -->
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.5</version>
         </dependency>
 
         <!-- Apache Commons IO -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.15.1</version>
         </dependency>
 
         <!-- JDOM2 -->
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
-            <version>2.0.6.1</version>
         </dependency>
 
         <!-- javax.servlet API for libraries compiled against javax.servlet (e.g. JMesa, jmesa TableFacadeFactory) -->
@@ -213,7 +198,6 @@
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.web</groupId>
@@ -225,7 +209,6 @@
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -233,7 +216,6 @@
         <dependency>
             <groupId>jakarta.servlet.jsp</groupId>
             <artifactId>jakarta.servlet.jsp-api</artifactId>
-            <version>3.1.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -241,28 +223,24 @@
         <dependency>
             <groupId>jakarta.mail</groupId>
             <artifactId>jakarta.mail-api</artifactId>
-            <version>2.1.3</version>
         </dependency>
 
         <!-- Apache POI -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>5.2.5</version>
         </dependency>
 
         <!-- JExcelAPI -->
         <dependency>
             <groupId>net.sourceforge.jexcelapi</groupId>
             <artifactId>jxl</artifactId>
-            <version>2.6.12</version>
         </dependency>
 
         <!-- Castor -->
         <dependency>
             <groupId>org.codehaus.castor</groupId>
             <artifactId>castor-xml</artifactId>
-            <version>1.4.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.codehaus.castor</groupId>
@@ -273,7 +251,6 @@
         <dependency>
             <groupId>org.codehaus.castor</groupId>
             <artifactId>castor-core</artifactId>
-            <version>1.4.1</version>
         </dependency>
 
         <!-- Quartz -->
@@ -308,17 +285,14 @@
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>3.1.5</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
-            <version>3.1.5</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.ext</groupId>
             <artifactId>jersey-spring6</artifactId>
-            <version>3.1.5</version>
         </dependency>
 
         <!-- FreeMarker -->
@@ -332,7 +306,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.11.0</version>
             <scope>test</scope>
         </dependency>
 
