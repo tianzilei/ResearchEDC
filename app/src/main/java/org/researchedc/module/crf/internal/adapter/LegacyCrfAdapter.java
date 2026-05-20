@@ -1,120 +1,99 @@
 package org.researchedc.module.crf.internal.adapter;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.sql.DataSource;
 
-import org.researchedc.bean.admin.CRFBean;
-import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.bean.submit.ItemBean;
-import org.researchedc.bean.submit.ItemFormMetadataBean;
-import org.researchedc.bean.submit.SectionBean;
-import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.module.crf.dto.CrfSummaryDTO;
 import org.researchedc.module.crf.dto.CrfVersionDTO;
 import org.researchedc.module.crf.dto.ItemDTO;
 import org.researchedc.module.crf.dto.SectionDTO;
+import org.researchedc.module.crf.entity.CrfEntity;
+import org.researchedc.module.crf.entity.CrfVersionEntity;
+import org.researchedc.module.crf.entity.ItemEntity;
+import org.researchedc.module.crf.entity.ItemFormMetadataEntity;
+import org.researchedc.module.crf.entity.SectionEntity;
+import org.researchedc.module.crf.repository.CrfRepository;
+import org.researchedc.module.crf.repository.CrfVersionRepository;
+import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
+import org.researchedc.module.crf.repository.ItemRepository;
+import org.researchedc.module.crf.repository.SectionRepository;
 import org.springframework.stereotype.Component;
 
-/**
- * Anti-corruption layer adapter that bridges the CRF module to legacy
- * {@code core.dao.*} and {@code core.bean.*} classes.
- *
- * <p>This is the ONLY class in the CRF module that may import from legacy
- * packages. All other classes must go through this adapter to access
- * legacy CRF data.</p>
- */
 @Component
 public class LegacyCrfAdapter {
 
-    private final CRFDAO crfDao;
-    private final CRFVersionDAO crfVersionDao;
-    private final ItemDAO itemDao;
-    private final ItemFormMetadataDAO itemFormMetadataDao;
-    private final SectionDAO sectionDao;
+    private final CrfRepository crfRepository;
+    private final CrfVersionRepository crfVersionRepository;
+    private final SectionRepository sectionRepository;
+    private final ItemRepository itemRepository;
+    private final ItemFormMetadataRepository itemFormMetadataRepository;
 
-    @SuppressWarnings("unchecked")
-    public LegacyCrfAdapter(DataSource dataSource) {
-        this.crfDao = new CRFDAO(dataSource);
-        this.crfVersionDao = new CRFVersionDAO(dataSource);
-        this.itemDao = new ItemDAO(dataSource);
-        this.itemFormMetadataDao = new ItemFormMetadataDAO(dataSource);
-        this.sectionDao = new SectionDAO(dataSource);
+    public LegacyCrfAdapter(CrfRepository crfRepository,
+                            CrfVersionRepository crfVersionRepository,
+                            SectionRepository sectionRepository,
+                            ItemRepository itemRepository,
+                            ItemFormMetadataRepository itemFormMetadataRepository) {
+        this.crfRepository = crfRepository;
+        this.crfVersionRepository = crfVersionRepository;
+        this.sectionRepository = sectionRepository;
+        this.itemRepository = itemRepository;
+        this.itemFormMetadataRepository = itemFormMetadataRepository;
     }
 
-    @SuppressWarnings("unchecked")
     public List<CrfSummaryDTO> findAllCrfs() {
         List<CrfSummaryDTO> result = new ArrayList<>();
-        for (Object obj : crfDao.findAll()) {
-            CRFBean crf = (CRFBean) obj;
+        for (CrfEntity crf : crfRepository.findAll()) {
             CrfSummaryDTO dto = new CrfSummaryDTO();
-            dto.setCrfId(crf.getId());
+            dto.setCrfId(crf.getCrfId());
             dto.setName(crf.getName());
             dto.setDescription(crf.getDescription());
-            dto.setOcOid(crf.getOid());
-            dto.setStatus(crf.getStatus() != null ? crf.getStatus().getName() : "unknown");
-            dto.setDateCreated(toDate(crf.getCreatedDate()));
-            dto.setDateUpdated(toDate(crf.getUpdatedDate()));
-            dto.setVersionCount(countVersionsByCrf(crf.getId()));
+            dto.setOcOid(crf.getOcOid());
+            dto.setStatus(String.valueOf(crf.getStatusId()));
+            dto.setVersionCount(crfVersionRepository.findByCrfIdOrderByCrfVersionId(crf.getCrfId()).size());
             result.add(dto);
         }
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     public CrfVersionDTO findVersionById(int crfVersionId) {
-        CRFVersionBean version = (CRFVersionBean) crfVersionDao.findByPK(crfVersionId);
+        CrfVersionEntity version = crfVersionRepository.findById(crfVersionId).orElse(null);
         if (version == null) {
             return null;
         }
 
         CrfVersionDTO dto = new CrfVersionDTO();
-        dto.setCrfVersionId(version.getId());
+        dto.setCrfVersionId(version.getCrfVersionId());
         dto.setCrfId(version.getCrfId());
         dto.setName(version.getName());
         dto.setDescription(version.getDescription());
         dto.setRevisionNotes(version.getRevisionNotes());
-        dto.setOcOid(version.getOid());
-        dto.setStatus(version.getStatus() != null ? version.getStatus().getName() : "unknown");
-        dto.setDateCreated(toDate(version.getCreatedDate()));
+        dto.setOcOid(version.getOcOid());
+        dto.setStatus(String.valueOf(version.getStatusId()));
         dto.setSections(findSectionsByVersionId(crfVersionId));
         return dto;
     }
 
-    @SuppressWarnings("unchecked")
     public List<ItemDTO> findItemsBySectionAndVersion(int sectionId, int crfVersionId) {
         List<ItemDTO> result = new ArrayList<>();
-        List<Object> metadataList;
-        try {
-            metadataList = (List<Object>) (List<?>) itemFormMetadataDao.findAllByCRFVersionId(crfVersionId);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to load items for section " + sectionId, e);
-        }
-        for (Object obj : metadataList) {
-            ItemFormMetadataBean meta = (ItemFormMetadataBean) obj;
-            if (meta.getSectionId() != sectionId) {
+        for (ItemFormMetadataEntity meta : itemFormMetadataRepository.findByCrfVersionId(crfVersionId)) {
+            if (meta.getSectionId() == null || meta.getSectionId() != sectionId) {
                 continue;
             }
-            ItemBean item = (ItemBean) itemDao.findByPK(meta.getItemId());
+            ItemEntity item = itemRepository.findById(meta.getItemId()).orElse(null);
             if (item == null) {
                 continue;
             }
             ItemDTO dto = new ItemDTO();
-            dto.setItemId(item.getId());
+            dto.setItemId(item.getItemId());
             dto.setName(item.getName());
             dto.setDescription(item.getDescription());
             dto.setUnits(item.getUnits());
-            dto.setDataType(item.getDataType() != null ? item.getDataType().getName() : "text");
-            dto.setOcOid(item.getOid());
-            dto.setPhi(item.isPhiStatus());
-            dto.setOrdinal(meta.getOrdinal());
+            dto.setDataType("text");
+            dto.setOcOid(item.getOcOid());
+            dto.setPhi(item.getPhiStatus() != null && item.getPhiStatus());
+            dto.setOrdinal(meta.getOrdinal() != null ? meta.getOrdinal() : 0);
             dto.setDefaultValue(meta.getDefaultValue());
-            dto.setRequired(meta.isRequired());
+            dto.setRequired(meta.getRequired() != null && meta.getRequired());
             dto.setRegexp(meta.getRegexp());
             dto.setRegexpErrorMsg(meta.getRegexpErrorMsg());
             result.add(dto);
@@ -122,33 +101,17 @@ public class LegacyCrfAdapter {
         return result;
     }
 
-
-    @SuppressWarnings("unchecked")
-    private int countVersionsByCrf(int crfId) {
-        return crfVersionDao.findAllByCRF(crfId).size();
-    }
-
-    @SuppressWarnings("unchecked")
     private List<SectionDTO> findSectionsByVersionId(int crfVersionId) {
-        List<Object> sectionList = sectionDao.findAllByCRFVersionId(crfVersionId);
         List<SectionDTO> sectionDTOs = new ArrayList<>();
-        for (Object obj : sectionList) {
-            SectionBean section = (SectionBean) obj;
+        for (SectionEntity section : sectionRepository.findByCrfVersionIdOrderByOrdinal(crfVersionId)) {
             SectionDTO sd = new SectionDTO();
-            sd.setSectionId(section.getId());
+            sd.setSectionId(section.getSectionId());
             sd.setCrfVersionId(crfVersionId);
             sd.setLabel(section.getLabel());
             sd.setTitle(section.getTitle());
-            sd.setOrdinal(section.getOrdinal());
+            sd.setOrdinal(section.getOrdinal() != null ? section.getOrdinal() : 0);
             sectionDTOs.add(sd);
         }
         return sectionDTOs;
-    }
-
-    private static Date toDate(Object value) {
-        if (value instanceof Date) {
-            return (Date) value;
-        }
-        return null;
     }
 }
