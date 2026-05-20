@@ -2,7 +2,6 @@ package org.researchedc.module.legacy.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
 
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.managestudy.StudyBean;
@@ -24,9 +23,9 @@ public class LegacyDatasetController {
     private final DatasetDAO datasetDao;
     private final StudyDAO studyDao;
 
-    public LegacyDatasetController(DataSource dataSource) {
-        this.datasetDao = new DatasetDAO(dataSource);
-        this.studyDao = new StudyDAO(dataSource);
+    public LegacyDatasetController(DatasetDAO datasetDao, StudyDAO studyDao) {
+        this.datasetDao = datasetDao;
+        this.studyDao = studyDao;
     }
 
     @GetMapping

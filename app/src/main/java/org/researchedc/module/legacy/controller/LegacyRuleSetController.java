@@ -2,13 +2,9 @@ package org.researchedc.module.legacy.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
-
-import org.researchedc.bean.rule.RuleBean;
 import org.researchedc.bean.rule.RuleSetBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.rule.RuleDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.module.legacy.dto.RuleSetDTO;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class LegacyRuleSetController {
 
     private final RuleSetDAO ruleSetDao;
-    private final RuleDAO ruleDao;
     private final StudyDAO studyDao;
 
-    public LegacyRuleSetController(DataSource dataSource) {
-        this.ruleSetDao = new RuleSetDAO(dataSource);
-        this.ruleDao = new RuleDAO(dataSource);
-        this.studyDao = new StudyDAO(dataSource);
+    public LegacyRuleSetController(RuleSetDAO ruleSetDao, StudyDAO studyDao) {
+        this.ruleSetDao = ruleSetDao;
+        this.studyDao = studyDao;
     }
 
     @GetMapping

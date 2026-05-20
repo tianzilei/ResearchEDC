@@ -2,7 +2,6 @@ package org.researchedc.module.legacy.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
 
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.login.UserAccountBean;
@@ -31,10 +30,11 @@ public class LegacyCrfManageController {
     private final CRFVersionDAO crfVersionDao;
     private final UserAccountDAO userAccountDao;
 
-    public LegacyCrfManageController(DataSource dataSource) {
-        this.crfDao = new CRFDAO(dataSource);
-        this.crfVersionDao = new CRFVersionDAO(dataSource);
-        this.userAccountDao = new UserAccountDAO(dataSource);
+    public LegacyCrfManageController(CRFDAO crfDao, CRFVersionDAO crfVersionDao,
+                                     UserAccountDAO userAccountDao) {
+        this.crfDao = crfDao;
+        this.crfVersionDao = crfVersionDao;
+        this.userAccountDao = userAccountDao;
     }
 
     @GetMapping

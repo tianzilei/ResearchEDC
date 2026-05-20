@@ -2,7 +2,6 @@ package org.researchedc.module.legacy.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.module.legacy.dto.SubjectDTO;
@@ -19,9 +18,8 @@ public class LegacySubjectController {
 
     private final StudySubjectDAO studySubjectDao;
 
-    @SuppressWarnings("unchecked")
-    public LegacySubjectController(DataSource dataSource) {
-        this.studySubjectDao = new StudySubjectDAO(dataSource);
+    public LegacySubjectController(StudySubjectDAO studySubjectDao) {
+        this.studySubjectDao = studySubjectDao;
     }
 
     @GetMapping

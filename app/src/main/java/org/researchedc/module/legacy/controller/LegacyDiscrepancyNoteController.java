@@ -3,7 +3,6 @@ package org.researchedc.module.legacy.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.sql.DataSource;
 
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
@@ -31,10 +30,12 @@ public class LegacyDiscrepancyNoteController {
     private final StudyDAO studyDao;
     private final UserAccountDAO userAccountDao;
 
-    public LegacyDiscrepancyNoteController(DataSource dataSource) {
-        this.discrepancyNoteDao = new DiscrepancyNoteDAO(dataSource);
-        this.studyDao = new StudyDAO(dataSource);
-        this.userAccountDao = new UserAccountDAO(dataSource);
+    public LegacyDiscrepancyNoteController(DiscrepancyNoteDAO discrepancyNoteDao,
+                                           StudyDAO studyDao,
+                                           UserAccountDAO userAccountDao) {
+        this.discrepancyNoteDao = discrepancyNoteDao;
+        this.studyDao = studyDao;
+        this.userAccountDao = userAccountDao;
     }
 
     @GetMapping

@@ -2,7 +2,6 @@ package org.researchedc.module.legacy.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
 
 import org.researchedc.bean.extract.FilterBean;
 import org.researchedc.dao.extract.FilterDAO;
@@ -20,8 +19,8 @@ public class LegacyFilterController {
 
     private final FilterDAO filterDao;
 
-    public LegacyFilterController(DataSource dataSource) {
-        this.filterDao = new FilterDAO(dataSource);
+    public LegacyFilterController(FilterDAO filterDao) {
+        this.filterDao = filterDao;
     }
 
     @GetMapping

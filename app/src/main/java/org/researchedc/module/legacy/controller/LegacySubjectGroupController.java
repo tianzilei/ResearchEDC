@@ -2,7 +2,6 @@ package org.researchedc.module.legacy.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
 
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
@@ -16,7 +15,6 @@ import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.module.legacy.dto.SubjectGroupClassDTO;
 import org.researchedc.module.legacy.dto.SubjectGroupDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,11 +33,14 @@ public class LegacySubjectGroupController {
     private final StudyDAO studyDao;
     private final UserAccountDAO userAccountDao;
 
-    public LegacySubjectGroupController(DataSource dataSource) {
-        this.groupClassDao = new StudyGroupClassDAO(dataSource);
-        this.groupDao = new StudyGroupDAO(dataSource);
-        this.studyDao = new StudyDAO(dataSource);
-        this.userAccountDao = new UserAccountDAO(dataSource);
+    public LegacySubjectGroupController(StudyGroupClassDAO groupClassDao,
+                                        StudyGroupDAO groupDao,
+                                        StudyDAO studyDao,
+                                        UserAccountDAO userAccountDao) {
+        this.groupClassDao = groupClassDao;
+        this.groupDao = groupDao;
+        this.studyDao = studyDao;
+        this.userAccountDao = userAccountDao;
     }
 
     @GetMapping("/classes")
