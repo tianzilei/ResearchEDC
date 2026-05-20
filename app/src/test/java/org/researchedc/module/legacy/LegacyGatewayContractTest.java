@@ -4,13 +4,15 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,28 +24,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.extract.FilterBean;
-import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyGroupBean;
 import org.researchedc.bean.managestudy.StudyGroupClassBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.rule.RuleSetBean;
-import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.extract.FilterDAO;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.dao.managestudy.StudyGroupDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.module.crf.entity.CrfEntity;
+import org.researchedc.module.crf.entity.CrfVersionEntity;
+import org.researchedc.module.crf.service.CrfService;
 import org.researchedc.module.legacy.controller.LegacyCrfManageController;
 import org.researchedc.module.legacy.controller.LegacyDatasetController;
 import org.researchedc.module.legacy.controller.LegacyDiscrepancyNoteController;
@@ -52,6 +48,11 @@ import org.researchedc.module.legacy.controller.LegacyRuleSetController;
 import org.researchedc.module.legacy.controller.LegacyStudyController;
 import org.researchedc.module.legacy.controller.LegacySubjectController;
 import org.researchedc.module.legacy.controller.LegacySubjectGroupController;
+import org.researchedc.module.study.dto.StudyDetailDTO;
+import org.researchedc.module.study.dto.StudySummaryDTO;
+import org.researchedc.module.study.service.StudyService;
+import org.researchedc.module.subject.dto.StudySubjectDTO;
+import org.researchedc.module.subject.service.SubjectService;
 import org.researchedc.module.legacy.dto.CreateCrfRequest;
 import org.researchedc.module.legacy.dto.CreateDiscrepancyNoteRequest;
 import org.researchedc.module.legacy.dto.SubjectGroupClassDTO;
@@ -93,39 +94,17 @@ class LegacyGatewayContractTest {
 
     // ─── DAO mocks (shared across controller tests) ──────────────
 
-    @Mock private StudyDAO studyDao;
-    @Mock private StudySubjectDAO studySubjectDao;
+    @Mock private StudyService studyService;
+    @Mock private SubjectService subjectService;
     @Mock private RuleSetDAO ruleSetDao;
     @Mock private DiscrepancyNoteDAO discrepancyNoteDao;
-    @Mock private UserAccountDAO userAccountDao;
     @Mock private DatasetDAO datasetDao;
-    @Mock private CRFDAO crfDao;
-    @Mock private CRFVersionDAO crfVersionDao;
+    @Mock private CrfService crfService;
     @Mock private StudyGroupClassDAO studyGroupClassDao;
     @Mock private StudyGroupDAO studyGroupDao;
     @Mock private FilterDAO filterDao;
 
     // ─── Bean helpers ───────────────────────────────────────────
-
-    private static StudyBean createStudyBean(int id, String name) {
-        StudyBean b = new StudyBean();
-        b.setId(id);
-        b.setName(name);
-        b.setIdentifier("ID-" + id);
-        b.setOid("S_OID_" + id);
-        return b;
-    }
-
-    private static StudySubjectBean createStudySubjectBean(int id, int studyId, String label) {
-        StudySubjectBean b = new StudySubjectBean();
-        b.setId(id);
-        b.setStudyId(studyId);
-        b.setLabel(label);
-        b.setUniqueIdentifier("SUBJ-" + id);
-        b.setEnrollmentDate(new Date());
-        b.setSecondaryLabel("sec-" + id);
-        return b;
-    }
 
     private static RuleSetBean createRuleSetBean(int id, String name, StudyBean study) {
         RuleSetBean b = new RuleSetBean();
@@ -157,24 +136,6 @@ class LegacyGatewayContractTest {
         b.setId(id);
         b.setName(name);
         b.setStudyId(studyId);
-        b.setCreatedDate(new java.util.Date());
-        return b;
-    }
-
-    private static CRFBean createCrfBean(int id, String name) {
-        CRFBean b = new CRFBean();
-        b.setId(id);
-        b.setName(name);
-        b.setOid("CRF_OID_" + id);
-        b.setCreatedDate(new java.util.Date());
-        return b;
-    }
-
-    private static CRFVersionBean createCrfVersionBean(int id, int crfId, String name) {
-        CRFVersionBean b = new CRFVersionBean();
-        b.setId(id);
-        b.setCrfId(crfId);
-        b.setName(name);
         b.setCreatedDate(new java.util.Date());
         return b;
     }
@@ -220,14 +181,24 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacyStudyController(studyDao)).build();
+                    new LegacyStudyController(studyService)).build();
+        }
+
+        private static StudySummaryDTO createStudySummaryDto(int id, String name) {
+            StudySummaryDTO dto = new StudySummaryDTO();
+            dto.setStudyId(id);
+            dto.setName(name);
+            dto.setUniqueIdentifier("ID-" + id);
+            dto.setOcOid("S_OID_" + id);
+            dto.setDateCreated(LocalDateTime.now());
+            return dto;
         }
 
         @Test
         void listStudies_returns200() throws Exception {
-            when(studyDao.findAll()).thenReturn(new ArrayList<>(List.of(
-                    createStudyBean(1, "Study A"),
-                    createStudyBean(2, "Study B"))));
+            when(studyService.listStudies()).thenReturn(new ArrayList<>(List.of(
+                    createStudySummaryDto(1, "Study A"),
+                    createStudySummaryDto(2, "Study B"))));
 
             mockMvc.perform(get("/api/legacy/studies"))
                     .andExpect(status().isOk())
@@ -237,7 +208,12 @@ class LegacyGatewayContractTest {
 
         @Test
         void getStudy_whenFound_returns200() throws Exception {
-            when(studyDao.findByPK(1)).thenReturn(createStudyBean(1, "Test Study"));
+            StudyDetailDTO detail = new StudyDetailDTO();
+            detail.setStudyId(1);
+            detail.setName("Test Study");
+            detail.setUniqueIdentifier("ID-1");
+            detail.setOcOid("S_OID_1");
+            when(studyService.getStudy(1)).thenReturn(detail);
 
             mockMvc.perform(get("/api/legacy/studies/1"))
                     .andExpect(status().isOk())
@@ -246,9 +222,8 @@ class LegacyGatewayContractTest {
 
         @Test
         void getStudy_whenNotFound_returns404() throws Exception {
-            StudyBean empty = new StudyBean();
-            empty.setId(0);
-            when(studyDao.findByPK(99)).thenReturn(empty);
+            when(studyService.getStudy(99)).thenThrow(
+                    new java.util.NoSuchElementException("not found"));
 
             mockMvc.perform(get("/api/legacy/studies/99"))
                     .andExpect(status().isNotFound());
@@ -256,9 +231,9 @@ class LegacyGatewayContractTest {
 
         @Test
         void searchStudies_returnsFiltered() throws Exception {
-            when(studyDao.findAll()).thenReturn(new ArrayList<>(List.of(
-                    createStudyBean(1, "Clinical Trial A"),
-                    createStudyBean(2, "Observational Study"))));
+            when(studyService.searchByName("Clinical"))
+                    .thenReturn(new ArrayList<>(List.of(
+                            createStudySummaryDto(1, "Clinical Trial A"))));
 
             mockMvc.perform(get("/api/legacy/studies/search")
                             .param("query", "Clinical"))
@@ -269,8 +244,9 @@ class LegacyGatewayContractTest {
 
         @Test
         void listSites_returns200() throws Exception {
-            when(studyDao.findAllByParent(1)).thenReturn(new ArrayList<>(List.of(
-                    createStudyBean(2, "Site X"))));
+            when(studyService.listSites(1))
+                    .thenReturn(new ArrayList<>(List.of(
+                            createStudySummaryDto(2, "Site X"))));
 
             mockMvc.perform(get("/api/legacy/studies/1/sites"))
                     .andExpect(status().isOk())
@@ -279,12 +255,23 @@ class LegacyGatewayContractTest {
 
         @Test
         void findByOid_whenFound_returns200() throws Exception {
-            when(studyDao.findByOid("S_OID_1")).thenReturn(createStudyBean(1, "By OID"));
+            when(studyService.listStudies())
+                    .thenReturn(new ArrayList<>(List.of(
+                            createStudySummaryDto(1, "By OID"))));
 
             mockMvc.perform(get("/api/legacy/studies/by-oid")
                             .param("oid", "S_OID_1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.name").value("By OID"));
+        }
+
+        @Test
+        void findByOid_whenNotFound_returns404() throws Exception {
+            when(studyService.listStudies()).thenReturn(new ArrayList<>());
+
+            mockMvc.perform(get("/api/legacy/studies/by-oid")
+                            .param("oid", "NONEXISTENT"))
+                    .andExpect(status().isNotFound());
         }
     }
 
@@ -297,13 +284,24 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacySubjectController(studySubjectDao)).build();
+                    new LegacySubjectController(subjectService)).build();
+        }
+
+        private static StudySubjectDTO createStudySubjectDto(int id, int studyId, String label) {
+            StudySubjectDTO dto = new StudySubjectDTO();
+            dto.setStudySubjectId(id);
+            dto.setStudyId(studyId);
+            dto.setLabel(label);
+            dto.setSecondaryLabel("sec-" + id);
+            dto.setEnrollmentDate(LocalDateTime.now());
+            return dto;
         }
 
         @Test
         void listSubjects_returns200() throws Exception {
-            when(studySubjectDao.findAllByStudyId(1)).thenReturn(new ArrayList<>(List.of(
-                    createStudySubjectBean(1, 1, "SUBJ-001"))));
+            when(subjectService.listStudySubjects(1))
+                    .thenReturn(new ArrayList<>(List.of(
+                            createStudySubjectDto(1, 1, "SUBJ-001"))));
 
             mockMvc.perform(get("/api/legacy/subjects")
                             .param("studyId", "1"))
@@ -313,8 +311,8 @@ class LegacyGatewayContractTest {
 
         @Test
         void getSubject_whenFound_returns200() throws Exception {
-            when(studySubjectDao.findByPK(1)).thenReturn(
-                    createStudySubjectBean(1, 1, "SUBJ-001"));
+            when(subjectService.getStudySubject(1))
+                    .thenReturn(createStudySubjectDto(1, 1, "SUBJ-001"));
 
             mockMvc.perform(get("/api/legacy/subjects/1"))
                     .andExpect(status().isOk())
@@ -323,9 +321,8 @@ class LegacyGatewayContractTest {
 
         @Test
         void getSubject_whenNotFound_returns404() throws Exception {
-            StudySubjectBean empty = new StudySubjectBean();
-            empty.setId(0);
-            when(studySubjectDao.findByPK(99)).thenReturn(empty);
+            when(subjectService.getStudySubject(99))
+                    .thenThrow(new java.util.NoSuchElementException("not found"));
 
             mockMvc.perform(get("/api/legacy/subjects/99"))
                     .andExpect(status().isNotFound());
@@ -333,9 +330,10 @@ class LegacyGatewayContractTest {
 
         @Test
         void searchByLabel_returnsFiltered() throws Exception {
-            when(studySubjectDao.findAllByStudyId(1)).thenReturn(new ArrayList<>(List.of(
-                    createStudySubjectBean(1, 1, "SUBJ-001"),
-                    createStudySubjectBean(2, 1, "SUBJ-002"))));
+            when(subjectService.listStudySubjects(1))
+                    .thenReturn(new ArrayList<>(List.of(
+                            createStudySubjectDto(1, 1, "SUBJ-001"),
+                            createStudySubjectDto(2, 1, "SUBJ-002"))));
 
             mockMvc.perform(get("/api/legacy/subjects/by-label")
                             .param("studyId", "1")
@@ -354,7 +352,7 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacyRuleSetController(ruleSetDao, studyDao)).build();
+                    new LegacyRuleSetController(ruleSetDao)).build();
         }
 
         @Test
@@ -369,12 +367,8 @@ class LegacyGatewayContractTest {
 
         @Test
         void listRuleSets_withStudyId_filters() throws Exception {
-            StudyBean study = new StudyBean();
-            study.setId(1);
-            study.setName("S1");
-            when(studyDao.findByPK(1)).thenReturn(study);
-            when(ruleSetDao.findAllByStudy(study)).thenReturn(
-                    new ArrayList<>(List.of(createRuleSetBean(1, "RS-1", study))));
+            when(ruleSetDao.findAllByStudy(any())).thenReturn(
+                    new ArrayList<>(List.of(createRuleSetBean(1, "RS-1", null))));
 
             mockMvc.perform(get("/api/legacy/rule-sets")
                             .param("studyId", "1"))
@@ -413,7 +407,7 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacyDiscrepancyNoteController(discrepancyNoteDao, studyDao, userAccountDao)).build();
+                    new LegacyDiscrepancyNoteController(discrepancyNoteDao)).build();
         }
 
         @Test
@@ -454,10 +448,6 @@ class LegacyGatewayContractTest {
 
         @Test
         void createNote_returns200() throws Exception {
-            UserAccountBean user = new UserAccountBean();
-            user.setId(1);
-            when(userAccountDao.findByPK(1)).thenReturn(user);
-
             CreateDiscrepancyNoteRequest req = new CreateDiscrepancyNoteRequest();
             req.setDescription("New note");
             req.setDetailedNotes("details");
@@ -505,7 +495,7 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacyDatasetController(datasetDao, studyDao)).build();
+                    new LegacyDatasetController(datasetDao)).build();
         }
 
         @Test
@@ -552,12 +542,34 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacyCrfManageController(crfDao, crfVersionDao, userAccountDao)).build();
+                    new LegacyCrfManageController(crfService)).build();
+        }
+
+        private static CrfEntity createCrfEntity(int id, String name) {
+            CrfEntity e = new CrfEntity();
+            e.setCrfId(id);
+            e.setName(name);
+            e.setDescription("desc");
+            e.setOcOid("CRF_OID_" + id);
+            e.setStatusId(1);
+            return e;
+        }
+
+        private static CrfVersionEntity createCrfVersionEntity(int id, int crfId, String name) {
+            CrfVersionEntity e = new CrfVersionEntity();
+            e.setCrfVersionId(id);
+            e.setCrfId(crfId);
+            e.setName(name);
+            e.setDescription("desc");
+            e.setRevisionNotes("");
+            e.setStatusId(1);
+            return e;
         }
 
         @Test
         void listCrfs_returns200() throws Exception {
-            when(crfDao.findAll()).thenReturn(new ArrayList<>(List.of(createCrfBean(1, "CRF-1"))));
+            when(crfService.getAllCrfEntities()).thenReturn(
+                    new ArrayList<>(List.of(createCrfEntity(1, "CRF-1"))));
 
             mockMvc.perform(get("/api/legacy/crfs"))
                     .andExpect(status().isOk())
@@ -566,7 +578,7 @@ class LegacyGatewayContractTest {
 
         @Test
         void getCrf_whenFound_returns200() throws Exception {
-            when(crfDao.findByPK(1)).thenReturn(createCrfBean(1, "CRF-1"));
+            when(crfService.getCrfEntity(1)).thenReturn(createCrfEntity(1, "CRF-1"));
 
             mockMvc.perform(get("/api/legacy/crfs/1"))
                     .andExpect(status().isOk())
@@ -574,15 +586,18 @@ class LegacyGatewayContractTest {
         }
 
         @Test
+        void getCrf_whenNotFound_returns404() throws Exception {
+            when(crfService.getCrfEntity(99)).thenThrow(
+                    new java.util.NoSuchElementException("not found"));
+
+            mockMvc.perform(get("/api/legacy/crfs/99"))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
         void createCrf_returns200() throws Exception {
-            UserAccountBean user = new UserAccountBean();
-            user.setId(1);
-            when(userAccountDao.findByPK(1)).thenReturn(user);
-            when(crfDao.create(any(CRFBean.class))).thenAnswer(i -> {
-                CRFBean b = i.getArgument(0);
-                b.setId(1);
-                return b;
-            });
+            when(crfService.createCrf(eq("New CRF"), eq("desc"), eq(1)))
+                    .thenReturn(createCrfEntity(1, "New CRF"));
 
             CreateCrfRequest req = new CreateCrfRequest();
             req.setName("New CRF");
@@ -597,7 +612,8 @@ class LegacyGatewayContractTest {
 
         @Test
         void updateCrf_returns200() throws Exception {
-            when(crfDao.findByPK(1)).thenReturn(createCrfBean(1, "Old"));
+            when(crfService.updateCrf(eq(1), eq("Updated"), any()))
+                    .thenReturn(createCrfEntity(1, "Updated"));
 
             CreateCrfRequest req = new CreateCrfRequest();
             req.setName("Updated");
@@ -610,8 +626,8 @@ class LegacyGatewayContractTest {
 
         @Test
         void listVersions_returns200() throws Exception {
-            when(crfVersionDao.findAllByCRF(1)).thenReturn(
-                    List.of(createCrfVersionBean(1, 1, "v1.0")));
+            when(crfService.listVersionEntities(1)).thenReturn(
+                    List.of(createCrfVersionEntity(1, 1, "v1.0")));
 
             mockMvc.perform(get("/api/legacy/crfs/1/versions"))
                     .andExpect(status().isOk())
@@ -620,7 +636,8 @@ class LegacyGatewayContractTest {
 
         @Test
         void getVersion_whenFound_returns200() throws Exception {
-            when(crfVersionDao.findByPK(1)).thenReturn(createCrfVersionBean(1, 1, "v1.0"));
+            when(crfService.getCrfVersionEntity(1))
+                    .thenReturn(createCrfVersionEntity(1, 1, "v1.0"));
 
             mockMvc.perform(get("/api/legacy/crfs/versions/1"))
                     .andExpect(status().isOk())
@@ -628,15 +645,18 @@ class LegacyGatewayContractTest {
         }
 
         @Test
+        void getVersion_whenNotFound_returns404() throws Exception {
+            when(crfService.getCrfVersionEntity(99))
+                    .thenThrow(new java.util.NoSuchElementException("not found"));
+
+            mockMvc.perform(get("/api/legacy/crfs/versions/99"))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
         void createVersion_returns200() throws Exception {
-            UserAccountBean user = new UserAccountBean();
-            user.setId(1);
-            when(userAccountDao.findByPK(1)).thenReturn(user);
-            when(crfVersionDao.create(any(CRFVersionBean.class))).thenAnswer(i -> {
-                CRFVersionBean b = i.getArgument(0);
-                b.setId(1);
-                return b;
-            });
+            when(crfService.createVersion(eq(1), eq("v2.0"), any(), any(), eq(1)))
+                    .thenReturn(createCrfVersionEntity(1, 1, "v2.0"));
 
             var request = new java.util.HashMap<String, String>();
             request.put("name", "v2.0");
@@ -650,10 +670,17 @@ class LegacyGatewayContractTest {
 
         @Test
         void deleteVersion_returns204() throws Exception {
-            when(crfVersionDao.findByPK(1)).thenReturn(createCrfVersionBean(1, 1, "v1.0"));
-
             mockMvc.perform(delete("/api/legacy/crfs/versions/1"))
                     .andExpect(status().isNoContent());
+        }
+
+        @Test
+        void deleteVersion_whenNotFound_returns404() throws Exception {
+            doThrow(new java.util.NoSuchElementException("not found"))
+                    .when(crfService).deleteVersion(99);
+
+            mockMvc.perform(delete("/api/legacy/crfs/versions/99"))
+                    .andExpect(status().isNotFound());
         }
     }
 
@@ -666,14 +693,12 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacySubjectGroupController(studyGroupClassDao, studyGroupDao, studyDao, userAccountDao)).build();
+                    new LegacySubjectGroupController(studyGroupClassDao, studyGroupDao)).build();
         }
 
         @Test
         void listClasses_returns200() throws Exception {
-            StudyBean study = createStudyBean(1, "S1");
-            when(studyDao.findByPK(1)).thenReturn(study);
-            when(studyGroupClassDao.findAllByStudy(study)).thenReturn(
+            when(studyGroupClassDao.findAllByStudy(any())).thenReturn(
                     new ArrayList<>(List.of(createGroupClassBean(1, 1, "Class A"))));
 
             mockMvc.perform(get("/api/legacy/subject-groups/classes")
@@ -694,9 +719,6 @@ class LegacyGatewayContractTest {
 
         @Test
         void createClass_returns200() throws Exception {
-            UserAccountBean user = new UserAccountBean();
-            user.setId(1);
-            when(userAccountDao.findByPK(1)).thenReturn(user);
             when(studyGroupClassDao.create(any(StudyGroupClassBean.class))).thenAnswer(i -> {
                 StudyGroupClassBean b = i.getArgument(0);
                 b.setId(1);
@@ -743,9 +765,6 @@ class LegacyGatewayContractTest {
 
         @Test
         void createGroup_returns200() throws Exception {
-            UserAccountBean user = new UserAccountBean();
-            user.setId(1);
-            when(userAccountDao.findByPK(1)).thenReturn(user);
             when(studyGroupDao.create(any(StudyGroupBean.class))).thenAnswer(i -> {
                 StudyGroupBean b = i.getArgument(0);
                 b.setId(1);
