@@ -34,6 +34,9 @@ const EventDefinitionsPage = lazy(() => import("@/pages/studies/EventDefinitions
 const SubjectGroupsPage = lazy(() => import("@/pages/studies/SubjectGroupsPage"));
 const JobManager = lazy(() => import("@/pages/admin/JobManager"));
 const ImportManager = lazy(() => import("@/pages/admin/ImportManager"));
+const PasswordPolicy = lazy(() => import("@/pages/admin/PasswordPolicy"));
+const LogViewer = lazy(() => import("@/pages/admin/LogViewer"));
+const StudyUserRoleEditor = lazy(() => import("@/pages/admin/StudyUserRoleEditor"));
 const Instructions = lazy(() => import("@/pages/Instructions"));
 const DatasetBuilder = lazy(() => import("@/pages/export/DatasetBuilder"));
 const FilterBuilder = lazy(() => import("@/pages/export/FilterBuilder"));
@@ -183,6 +186,18 @@ const router = createBrowserRouter([
       {
         path: "admin/import",
         element: <ImportManager />,
+      },
+      {
+        path: "admin/password-policy",
+        element: <PasswordPolicy />,
+      },
+      {
+        path: "admin/logs",
+        element: <LogViewer />,
+      },
+      {
+        path: "admin/studies/:studyId/users",
+        element: <StudyUserRoleEditor />,
       },
       {
         path: "subjects",
