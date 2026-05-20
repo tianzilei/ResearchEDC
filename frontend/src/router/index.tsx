@@ -33,6 +33,7 @@ const SiteManagement = lazy(() => import("@/pages/studies/SiteManagement"));
 const EventDefinitionsPage = lazy(() => import("@/pages/studies/EventDefinitionsPage"));
 const SubjectGroupsPage = lazy(() => import("@/pages/studies/SubjectGroupsPage"));
 const JobManager = lazy(() => import("@/pages/admin/JobManager"));
+const ImportManager = lazy(() => import("@/pages/admin/ImportManager"));
 const DatasetBuilder = lazy(() => import("@/pages/export/DatasetBuilder"));
 const FilterBuilder = lazy(() => import("@/pages/export/FilterBuilder"));
 const Profile = lazy(() => import("@/pages/Profile"));
@@ -177,6 +178,10 @@ const router = createBrowserRouter([
       {
         path: "admin/jobs",
         element: <JobManager />,
+      },
+      {
+        path: "admin/import",
+        element: <ImportManager />,
       },
       {
         path: "subjects",
