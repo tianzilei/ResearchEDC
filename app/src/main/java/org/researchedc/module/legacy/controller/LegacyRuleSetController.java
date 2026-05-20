@@ -3,8 +3,6 @@ package org.researchedc.module.legacy.controller;
 import java.util.ArrayList;
 import java.util.List;
 import org.researchedc.bean.rule.RuleSetBean;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.module.legacy.dto.RuleSetDTO;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class LegacyRuleSetController {
 
     private final RuleSetDAO ruleSetDao;
-    private final StudyDAO studyDao;
 
-    public LegacyRuleSetController(RuleSetDAO ruleSetDao, StudyDAO studyDao) {
+    public LegacyRuleSetController(RuleSetDAO ruleSetDao) {
         this.ruleSetDao = ruleSetDao;
-        this.studyDao = studyDao;
     }
 
     @GetMapping
@@ -32,10 +28,8 @@ public class LegacyRuleSetController {
             @RequestParam(required = false) Integer studyId) {
         List<RuleSetDTO> result = new ArrayList<>();
         if (studyId != null) {
-            StudyBean study = (StudyBean) studyDao.findByPK(studyId);
-            if (study == null || study.getId() == 0) {
-                return ResponseEntity.ok(List.of());
-            }
+            org.researchedc.bean.managestudy.StudyBean study = new org.researchedc.bean.managestudy.StudyBean();
+            study.setId(studyId);
             for (RuleSetBean bean : ruleSetDao.findAllByStudy(study)) {
                 result.add(toDto(bean));
             }

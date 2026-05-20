@@ -6,10 +6,7 @@ import java.util.List;
 
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.module.legacy.dto.CreateDiscrepancyNoteRequest;
 import org.researchedc.module.legacy.dto.DiscrepancyNoteDTO;
 import org.springframework.http.ResponseEntity;
@@ -27,15 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class LegacyDiscrepancyNoteController {
 
     private final DiscrepancyNoteDAO discrepancyNoteDao;
-    private final StudyDAO studyDao;
-    private final UserAccountDAO userAccountDao;
 
-    public LegacyDiscrepancyNoteController(DiscrepancyNoteDAO discrepancyNoteDao,
-                                           StudyDAO studyDao,
-                                           UserAccountDAO userAccountDao) {
+    public LegacyDiscrepancyNoteController(DiscrepancyNoteDAO discrepancyNoteDao) {
         this.discrepancyNoteDao = discrepancyNoteDao;
-        this.studyDao = studyDao;
-        this.userAccountDao = userAccountDao;
     }
 
     @GetMapping
@@ -63,10 +54,8 @@ public class LegacyDiscrepancyNoteController {
 
     private ResponseEntity<List<DiscrepancyNoteDTO>> listNotesByStudy(int studyId) {
         List<DiscrepancyNoteDTO> result = new ArrayList<>();
-        StudyBean study = (StudyBean) studyDao.findByPK(studyId);
-        if (study == null || study.getId() == 0) {
-            return ResponseEntity.ok(List.of());
-        }
+        org.researchedc.bean.managestudy.StudyBean study = new org.researchedc.bean.managestudy.StudyBean();
+        study.setId(studyId);
         for (Object obj : discrepancyNoteDao.findAllParentsByStudy(study)) {
             result.add(toDto((DiscrepancyNoteBean) obj));
         }
@@ -101,7 +90,8 @@ public class LegacyDiscrepancyNoteController {
         parent.setColumn("value");
         parent.setEventCRFId(request.getEventCrfId());
 
-        UserAccountBean defaultUser = (UserAccountBean) userAccountDao.findByPK(1);
+        UserAccountBean defaultUser = new UserAccountBean();
+        defaultUser.setId(1);
         parent.setOwner(defaultUser);
 
         parent = (DiscrepancyNoteBean) discrepancyNoteDao.create(parent);

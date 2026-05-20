@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyGroupBean;
 import org.researchedc.bean.managestudy.StudyGroupClassBean;
 import org.researchedc.bean.core.GroupClassType;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.module.legacy.dto.SubjectGroupClassDTO;
@@ -30,17 +27,11 @@ public class LegacySubjectGroupController {
 
     private final StudyGroupClassDAO groupClassDao;
     private final StudyGroupDAO groupDao;
-    private final StudyDAO studyDao;
-    private final UserAccountDAO userAccountDao;
 
     public LegacySubjectGroupController(StudyGroupClassDAO groupClassDao,
-                                        StudyGroupDAO groupDao,
-                                        StudyDAO studyDao,
-                                        UserAccountDAO userAccountDao) {
+                                        StudyGroupDAO groupDao) {
         this.groupClassDao = groupClassDao;
         this.groupDao = groupDao;
-        this.studyDao = studyDao;
-        this.userAccountDao = userAccountDao;
     }
 
     @GetMapping("/classes")
@@ -48,10 +39,8 @@ public class LegacySubjectGroupController {
     public ResponseEntity<List<SubjectGroupClassDTO>> listClasses(
             @RequestParam int studyId) {
         List<SubjectGroupClassDTO> result = new ArrayList<>();
-        StudyBean study = (StudyBean) studyDao.findByPK(studyId);
-        if (study == null || study.getId() == 0) {
-            return ResponseEntity.ok(List.of());
-        }
+        org.researchedc.bean.managestudy.StudyBean study = new org.researchedc.bean.managestudy.StudyBean();
+        study.setId(studyId);
         for (Object obj : groupClassDao.findAllByStudy(study)) {
             result.add(toClassDto((StudyGroupClassBean) obj));
         }
@@ -77,7 +66,8 @@ public class LegacySubjectGroupController {
         bean.setStudyId(dto.getStudyId());
         bean.setGroupClassTypeId(1);
         bean.setSubjectAssignment(dto.getSubjectAssignment() != null ? dto.getSubjectAssignment() : "optimal");
-        UserAccountBean defaultUser = (UserAccountBean) userAccountDao.findByPK(1);
+        UserAccountBean defaultUser = new UserAccountBean();
+        defaultUser.setId(1);
         bean.setOwner(defaultUser);
         bean = (StudyGroupClassBean) groupClassDao.create(bean);
         return ResponseEntity.ok(toClassDto(bean));
@@ -119,7 +109,8 @@ public class LegacySubjectGroupController {
         bean.setName(dto.getName());
         bean.setDescription(dto.getDescription() != null ? dto.getDescription() : "");
         bean.setStudyGroupClassId(classId);
-        UserAccountBean defaultUser = (UserAccountBean) userAccountDao.findByPK(1);
+        UserAccountBean defaultUser = new UserAccountBean();
+        defaultUser.setId(1);
         bean.setOwner(defaultUser);
         bean = (StudyGroupBean) groupDao.create(bean);
         return ResponseEntity.ok(toGroupDto(bean));

@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.researchedc.bean.extract.DatasetBean;
-import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.dao.extract.DatasetDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.module.legacy.dto.DatasetDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,11 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class LegacyDatasetController {
 
     private final DatasetDAO datasetDao;
-    private final StudyDAO studyDao;
 
-    public LegacyDatasetController(DatasetDAO datasetDao, StudyDAO studyDao) {
+    public LegacyDatasetController(DatasetDAO datasetDao) {
         this.datasetDao = datasetDao;
-        this.studyDao = studyDao;
     }
 
     @GetMapping
@@ -60,10 +56,7 @@ public class LegacyDatasetController {
             @RequestParam int studyId) {
         DatasetBean bean = new DatasetBean();
         bean.setName(name);
-        StudyBean study = (StudyBean) studyDao.findByPK(studyId);
-        if (study != null) {
-            bean.setStudyId(study.getId());
-        }
+        bean.setStudyId(studyId);
         bean = (DatasetBean) datasetDao.create(bean);
         return ResponseEntity.ok(toDto(bean));
     }

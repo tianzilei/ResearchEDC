@@ -1,10 +1,12 @@
 package org.researchedc.module.legacy.controller;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.module.legacy.dto.StudySummaryDTO;
+import org.researchedc.module.study.dto.StudyDetailDTO;
+import org.researchedc.module.study.service.StudyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,41 +18,37 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/legacy/studies")
 public class LegacyStudyController {
 
-    private final StudyDAO studyDao;
+    private final StudyService studyService;
 
-    public LegacyStudyController(StudyDAO studyDao) {
-        this.studyDao = studyDao;
+    public LegacyStudyController(StudyService studyService) {
+        this.studyService = studyService;
     }
 
     @GetMapping
     public ResponseEntity<List<StudySummaryDTO>> listStudies() {
         List<StudySummaryDTO> result = new ArrayList<>();
-        for (Object obj : studyDao.findAll()) {
-            StudyBean bean = (StudyBean) obj;
-            result.add(toDto(bean));
+        for (org.researchedc.module.study.dto.StudySummaryDTO s : studyService.listStudies()) {
+            result.add(toDto(s));
         }
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<StudySummaryDTO> getStudy(@PathVariable int id) {
-        StudyBean bean = (StudyBean) studyDao.findByPK(id);
-        if (bean == null || bean.getId() == 0) {
+        try {
+            StudyDetailDTO detail = studyService.getStudy(id);
+            return ResponseEntity.ok(toDetailDto(detail));
+        } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(toDto(bean));
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<StudySummaryDTO>> searchStudies(
             @RequestParam String query) {
         List<StudySummaryDTO> result = new ArrayList<>();
-        for (Object obj : studyDao.findAll()) {
-            StudyBean bean = (StudyBean) obj;
-            if (bean.getName() != null
-                    && bean.getName().toLowerCase().contains(query.toLowerCase())) {
-                result.add(toDto(bean));
-            }
+        for (org.researchedc.module.study.dto.StudySummaryDTO s : studyService.searchByName(query)) {
+            result.add(toDto(s));
         }
         return ResponseEntity.ok(result);
     }
@@ -58,31 +56,51 @@ public class LegacyStudyController {
     @GetMapping("/{id}/sites")
     public ResponseEntity<List<StudySummaryDTO>> listSites(@PathVariable int id) {
         List<StudySummaryDTO> result = new ArrayList<>();
-        for (Object obj : studyDao.findAllByParent(id)) {
-            result.add(toDto((StudyBean) obj));
+        for (org.researchedc.module.study.dto.StudySummaryDTO s : studyService.listSites(id)) {
+            result.add(toDto(s));
         }
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/by-oid")
     public ResponseEntity<StudySummaryDTO> findByOid(@RequestParam String oid) {
-        StudyBean bean = (StudyBean) studyDao.findByOid(oid);
-        if (bean == null) {
-            return ResponseEntity.notFound().build();
+        for (org.researchedc.module.study.dto.StudySummaryDTO s : studyService.listStudies()) {
+            if (oid.equals(s.getOcOid())) {
+                return ResponseEntity.ok(toDto(s));
+            }
         }
-        return ResponseEntity.ok(toDto(bean));
+        return ResponseEntity.notFound().build();
     }
 
-    private static StudySummaryDTO toDto(StudyBean bean) {
+    private static StudySummaryDTO toDto(org.researchedc.module.study.dto.StudySummaryDTO src) {
         StudySummaryDTO dto = new StudySummaryDTO();
-        dto.setStudyId(bean.getId());
-        dto.setName(bean.getName());
-        dto.setIdentifier(bean.getIdentifier());
-        dto.setOid(bean.getOid());
-        dto.setType(bean.getType() != null ? bean.getType().getName() : null);
-        dto.setStatus(bean.getStatus() != null ? bean.getStatus().getName() : null);
-        dto.setPrincipalInvestigator(bean.getPrincipalInvestigator());
-        dto.setDateCreated(bean.getCreatedDate());
+        dto.setStudyId(src.getStudyId());
+        dto.setName(src.getName());
+        dto.setIdentifier(src.getUniqueIdentifier());
+        dto.setOid(src.getOcOid());
+        dto.setType(null);
+        dto.setStatus(src.getStatus());
+        dto.setPrincipalInvestigator(src.getPrincipalInvestigator());
+        if (src.getDateCreated() != null) {
+            dto.setDateCreated(Date.from(
+                    src.getDateCreated().atZone(ZoneId.systemDefault()).toInstant()));
+        }
+        return dto;
+    }
+
+    private static StudySummaryDTO toDetailDto(StudyDetailDTO src) {
+        StudySummaryDTO dto = new StudySummaryDTO();
+        dto.setStudyId(src.getStudyId());
+        dto.setName(src.getName());
+        dto.setIdentifier(src.getUniqueIdentifier());
+        dto.setOid(src.getOcOid());
+        dto.setType(null);
+        dto.setStatus(src.getStatus());
+        dto.setPrincipalInvestigator(src.getPrincipalInvestigator());
+        if (src.getDateCreated() != null) {
+            dto.setDateCreated(Date.from(
+                    src.getDateCreated().atZone(ZoneId.systemDefault()).toInstant()));
+        }
         return dto;
     }
 }

@@ -1,23 +1,22 @@
 package org.researchedc.module.legacy.controller;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.researchedc.bean.admin.CRFBean;
-import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.module.crf.entity.CrfEntity;
+import org.researchedc.module.crf.entity.CrfVersionEntity;
+import org.researchedc.module.crf.service.CrfService;
 import org.researchedc.module.legacy.dto.CreateCrfRequest;
 import org.researchedc.module.legacy.dto.CrfManageDTO;
 import org.researchedc.module.legacy.dto.CrfVersionManageDTO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,129 +25,114 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/legacy/crfs")
 public class LegacyCrfManageController {
 
-    private final CRFDAO crfDao;
-    private final CRFVersionDAO crfVersionDao;
-    private final UserAccountDAO userAccountDao;
+    private final CrfService crfService;
 
-    public LegacyCrfManageController(CRFDAO crfDao, CRFVersionDAO crfVersionDao,
-                                     UserAccountDAO userAccountDao) {
-        this.crfDao = crfDao;
-        this.crfVersionDao = crfVersionDao;
-        this.userAccountDao = userAccountDao;
+    public LegacyCrfManageController(CrfService crfService) {
+        this.crfService = crfService;
     }
 
     @GetMapping
-    @SuppressWarnings("unchecked")
     public ResponseEntity<List<CrfManageDTO>> listCrfs() {
         List<CrfManageDTO> result = new ArrayList<>();
-        for (Object obj : crfDao.findAll()) {
-            result.add(toDto((CRFBean) obj));
+        for (CrfEntity entity : crfService.getAllCrfEntities()) {
+            result.add(toCrfDto(entity));
         }
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CrfManageDTO> getCrf(@PathVariable int id) {
-        CRFBean bean = (CRFBean) crfDao.findByPK(id);
-        if (bean == null || bean.getId() == 0) {
+        try {
+            CrfEntity entity = crfService.getCrfEntity(id);
+            return ResponseEntity.ok(toCrfDto(entity));
+        } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(toDto(bean));
     }
 
     @PostMapping
-    @SuppressWarnings("unchecked")
     public ResponseEntity<CrfManageDTO> createCrf(@RequestBody CreateCrfRequest request) {
-        CRFBean bean = new CRFBean();
-        bean.setName(request.getName());
-        bean.setDescription(request.getDescription());
-        bean.setStatusId(1);
-        UserAccountBean defaultUser = (UserAccountBean) userAccountDao.findByPK(1);
-        bean.setOwner(defaultUser);
-        bean = (CRFBean) crfDao.create(bean);
-        return ResponseEntity.ok(toDto(bean));
+        Integer ownerId = 1;
+        CrfEntity entity = crfService.createCrf(request.getName(), request.getDescription(), ownerId);
+        return ResponseEntity.ok(toCrfDto(entity));
     }
 
     @PutMapping("/{id}")
-    @SuppressWarnings("unchecked")
-    public ResponseEntity<CrfManageDTO> updateCrf(@PathVariable int id, @RequestBody CreateCrfRequest request) {
-        CRFBean bean = (CRFBean) crfDao.findByPK(id);
-        if (bean == null || bean.getId() == 0) {
+    public ResponseEntity<CrfManageDTO> updateCrf(@PathVariable int id,
+                                                   @RequestBody CreateCrfRequest request) {
+        try {
+            CrfEntity entity = crfService.updateCrf(id, request.getName(), request.getDescription());
+            return ResponseEntity.ok(toCrfDto(entity));
+        } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-        bean.setName(request.getName());
-        bean.setDescription(request.getDescription());
-        crfDao.update(bean);
-        return ResponseEntity.ok(toDto(bean));
     }
 
     @GetMapping("/{id}/versions")
-    @SuppressWarnings("unchecked")
     public ResponseEntity<List<CrfVersionManageDTO>> listVersions(@PathVariable int id) {
         List<CrfVersionManageDTO> result = new ArrayList<>();
-        for (Object obj : crfVersionDao.findAllByCRF(id)) {
-            result.add(toVersionDto((CRFVersionBean) obj));
+        for (CrfVersionEntity entity : crfService.listVersionEntities(id)) {
+            result.add(toVersionDto(entity));
         }
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/versions/{versionId}")
     public ResponseEntity<CrfVersionManageDTO> getVersion(@PathVariable int versionId) {
-        CRFVersionBean bean = (CRFVersionBean) crfVersionDao.findByPK(versionId);
-        if (bean == null || bean.getId() == 0) {
+        try {
+            CrfVersionEntity entity = crfService.getCrfVersionEntity(versionId);
+            return ResponseEntity.ok(toVersionDto(entity));
+        } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(toVersionDto(bean));
     }
 
     @PostMapping("/{crfId}/versions")
-    @SuppressWarnings("unchecked")
     public ResponseEntity<CrfVersionManageDTO> createVersion(@PathVariable int crfId,
             @RequestBody CrfVersionManageDTO request) {
-        CRFVersionBean bean = new CRFVersionBean();
-        bean.setName(request.getName());
-        bean.setDescription(request.getDescription() != null ? request.getDescription() : "");
-        bean.setRevisionNotes(request.getRevisionNotes() != null ? request.getRevisionNotes() : "");
-        bean.setCrfId(crfId);
-        bean.setStatusId(1);
-        UserAccountBean defaultUser = (UserAccountBean) userAccountDao.findByPK(1);
-        bean.setOwner(defaultUser);
-        bean = (CRFVersionBean) crfVersionDao.create(bean);
-        return ResponseEntity.ok(toVersionDto(bean));
+        Integer ownerId = 1;
+        CrfVersionEntity entity = crfService.createVersion(
+                crfId, request.getName(), request.getDescription(),
+                request.getRevisionNotes(), ownerId);
+        return ResponseEntity.ok(toVersionDto(entity));
     }
 
     @DeleteMapping("/versions/{versionId}")
     public ResponseEntity<Void> deleteVersion(@PathVariable int versionId) {
-        CRFVersionBean bean = (CRFVersionBean) crfVersionDao.findByPK(versionId);
-        if (bean == null || bean.getId() == 0) {
+        try {
+            crfService.deleteVersion(versionId);
+            return ResponseEntity.noContent().build();
+        } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-        crfVersionDao.delete(versionId);
-        return ResponseEntity.noContent().build();
     }
 
-    private CrfManageDTO toDto(CRFBean bean) {
+    private CrfManageDTO toCrfDto(CrfEntity entity) {
         CrfManageDTO dto = new CrfManageDTO();
-        dto.setCrfId(bean.getId());
-        dto.setName(bean.getName());
-        dto.setDescription(bean.getDescription());
-        dto.setOcOid(bean.getOid());
-        dto.setStatus(bean.getStatus() != null ? bean.getStatus().getName() : null);
-        dto.setDateCreated(bean.getCreatedDate());
+        dto.setCrfId(entity.getCrfId());
+        dto.setName(entity.getName());
+        dto.setDescription(entity.getDescription());
+        dto.setOcOid(entity.getOcOid());
+        dto.setStatus(String.valueOf(entity.getStatusId()));
+        if (entity.getDateCreated() != null) {
+            dto.setDateCreated(Date.from(
+                    entity.getDateCreated().atZone(ZoneId.systemDefault()).toInstant()));
+        }
         return dto;
     }
 
-    private CrfVersionManageDTO toVersionDto(CRFVersionBean bean) {
+    private CrfVersionManageDTO toVersionDto(CrfVersionEntity entity) {
         CrfVersionManageDTO dto = new CrfVersionManageDTO();
-        dto.setCrfVersionId(bean.getId());
-        dto.setCrfId(bean.getCrfId());
-        dto.setName(bean.getName());
-        dto.setDescription(bean.getDescription());
-        dto.setRevisionNotes(bean.getRevisionNotes());
-        if (bean.getStatus() != null) {
-            dto.setStatus(bean.getStatus().getName());
+        dto.setCrfVersionId(entity.getCrfVersionId());
+        dto.setCrfId(entity.getCrfId());
+        dto.setName(entity.getName());
+        dto.setDescription(entity.getDescription());
+        dto.setRevisionNotes(entity.getRevisionNotes());
+        dto.setStatus(String.valueOf(entity.getStatusId()));
+        if (entity.getDateCreated() != null) {
+            dto.setDateCreated(Date.from(
+                    entity.getDateCreated().atZone(ZoneId.systemDefault()).toInstant()));
         }
-        dto.setDateCreated(bean.getCreatedDate());
         return dto;
     }
 }
