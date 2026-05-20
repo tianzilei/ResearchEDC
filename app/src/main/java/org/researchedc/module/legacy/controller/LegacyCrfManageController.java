@@ -4,12 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.sql.DataSource;
-
 import org.researchedc.bean.admin.CRFBean;
-
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.dao.admin.CRFDAO;
@@ -23,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -103,6 +99,32 @@ public class LegacyCrfManageController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(toVersionDto(bean));
+    }
+
+    @PostMapping("/{crfId}/versions")
+    @SuppressWarnings("unchecked")
+    public ResponseEntity<CrfVersionManageDTO> createVersion(@PathVariable int crfId,
+            @RequestBody CrfVersionManageDTO request) {
+        CRFVersionBean bean = new CRFVersionBean();
+        bean.setName(request.getName());
+        bean.setDescription(request.getDescription() != null ? request.getDescription() : "");
+        bean.setRevisionNotes(request.getRevisionNotes() != null ? request.getRevisionNotes() : "");
+        bean.setCrfId(crfId);
+        bean.setStatusId(1);
+        UserAccountBean defaultUser = (UserAccountBean) userAccountDao.findByPK(1);
+        bean.setOwner(defaultUser);
+        bean = (CRFVersionBean) crfVersionDao.create(bean);
+        return ResponseEntity.ok(toVersionDto(bean));
+    }
+
+    @DeleteMapping("/versions/{versionId}")
+    public ResponseEntity<Void> deleteVersion(@PathVariable int versionId) {
+        CRFVersionBean bean = (CRFVersionBean) crfVersionDao.findByPK(versionId);
+        if (bean == null || bean.getId() == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        crfVersionDao.delete(versionId);
+        return ResponseEntity.noContent().build();
     }
 
     private CrfManageDTO toDto(CRFBean bean) {
