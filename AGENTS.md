@@ -1,15 +1,16 @@
-# OpenClinica - PROJECT KNOWLEDGE BASE
+# ResearchEDC - PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-05-18  
-**Branch:** master  
+**Derived from:** OpenClinica v3.x  
+**Generated:** 2026-05-20  
+**Branch:** refactor/research-edc-rename  
 
 ## OVERVIEW
 
-OpenClinica is an open-source Electronic Data Capture (EDC) and Clinical Data Management (CDM) platform for clinical trials. Built on Java 21 with Spring Framework 6.1.5, Hibernate ORM 6.4.4, and Liquibase migrations. Multi-module Maven project supporting Oracle and PostgreSQL.
+ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x. Built on Java 21 with Spring Framework 6.1.5, Hibernate ORM 6.4.4, and Liquibase migrations. Multi-module Maven project supporting Oracle and PostgreSQL.
 
-New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/static/`. Backend modular monolith with Spring Modulith at `org.akaza.openclinica.module.*`. Legacy code at `core/` (737 files), `web/` (482 files + 417 JSP), `ws/` (57 files) is being incrementally strangulated into Modulith modules.
+New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/static/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. Legacy code at `legacy-core/`, `web/` (482 files + 417 JSP), `ws/` (57 files) is being incrementally strangulated into Modulith modules.
 
-**当前状态:** `mvn clean compile` ✅ | `mvn clean package -DskipTests` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend TypeScript 0 errors ✅ | ESLint 0 errors ✅ | **Questionnaire Service** `pytest` 31/31 ✅ | Docker Compose ✅ | E2E API ✅
+**当前状态:** `mvn clean compile` ✅ | `mvn clean package -DskipTests` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend TypeScript 0 errors ✅ | ESLint 0 errors ✅ | **Questionnaire Service** `pytest` 31/31 ✅ | Docker Compose ✅ | E2E API ✅ | **ResearchEDC Rename** ✅
 
 ## STRUCTURE
 
@@ -82,11 +83,11 @@ New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/stati
 ## CONVENTIONS
 
 ### Backend
-- **Package:** `org.akaza.openclinica.*`
+- **Package:** `org.researchedc.*`
 - **Beans:** `*Bean` suffix for legacy DTOs (e.g., `StudyBean`)
 - **DAOs:** `*DAO` suffix, extend `EntityDAO<K extends EntityBean>`
 - **Servlets:** `*Servlet` suffix, extend `SecureController` or `CoreSecureController`
-- **Modules:** `org.akaza.openclinica.module.<name>.*` with `@ApplicationModule`
+- **Modules:** `org.researchedc.module.<name>.*` with `@ApplicationModule`
 - **Module entities:** `@Entity(name = "Module<Name>")` to avoid collision with legacy entities
 - **Module FKs:** Plain `Integer`/`Long` columns, NOT JPA `@ManyToOne` (follows randomization pattern)
 - **Anti-corruption layer:** Legacy DAO access only in `module/<name>/internal/adapter/`
@@ -171,7 +172,7 @@ python -m pytest app/tests/ -v
 - **Database:** Supports Oracle and PostgreSQL
 - **Security:** Legacy Spring Security for JSP; Keycloak OIDC for SPA
 - **Routing:** `/app/*` -> React SPA, `/legacy/*` -> JSP, `/q/*` -> questionnaire, `/api/*` -> REST
-- **Modulith:** Only `org.akaza.openclinica.module.*` is verified; legacy packages are excluded
+- **Modulith:** Only `org.researchedc.module.*` is verified; legacy packages are excluded
 - **Version:** 3.18-SNAPSHOT
 
 ## SUBMODULE REFERENCES

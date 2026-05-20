@@ -1,10 +1,12 @@
-# OpenClinica — 电子数据采集系统
+# ResearchEDC
 
 **版本:** 3.18-SNAPSHOT  
-**最后更新:** 2026-05-18  
-**许可证:** GNU LGPL  
+**最后更新:** 2026-05-20  
+**许可证:** GNU LGPL
 
-OpenClinica 是一个开源的临床试验电子数据采集（EDC）和临床数据管理（CDM）平台。
+ResearchEDC is an independently maintained research electronic data capture and clinical research data management platform derived from OpenClinica v3.x.
+
+该项目专注于研究者发起的临床研究，支持电子病例报告表、受试者管理、研究工作流、数据导出以及未来扩展的随机化、问卷集成、针刺临床试验工作流和神经生理数据元数据管理。
 
 ---
 
@@ -287,11 +289,21 @@ python -m pytest app/tests/ -v  # 31 tests
 
 ---
 
+## Origin and License
+
+ResearchEDC is derived from OpenClinica v3.x. OpenClinica is distributed under the GNU Lesser General Public License (LGPL), version 2.1 or later.
+
+This project has been renamed to avoid confusion with the official OpenClinica project. The renaming does not alter the license obligations for code derived from OpenClinica. Files derived from OpenClinica remain licensed under the GNU LGPL, version 2.1 or later.
+
+See `NOTICE`, `UPSTREAM.md`, and `MODIFICATIONS.md` for attribution and modification records.
+
+## Trademark Notice
+
+OpenClinica is a trademark of its respective owner. ResearchEDC is not an official OpenClinica release and is not affiliated with, endorsed by, or sponsored by OpenClinica.
+
 ## 相关文档
 
 - [AGENTS.md](./AGENTS.md) — AI 助手知识库
 - [MODIFICATIONS.md](./MODIFICATIONS.md) — 修改记录
 - [PLAN.md](./PLAN.md) — 已知问题与规划
-- [core/AGENTS.md](./core/AGENTS.md) — 领域逻辑与数据访问
-- [web/AGENTS.md](./web/AGENTS.md) — Web UI 层
-- [ws/AGENTS.md](./ws/AGENTS.md) — SOAP 服务
+- [NOTICE](./NOTICE) — 来源声明与版权说明
