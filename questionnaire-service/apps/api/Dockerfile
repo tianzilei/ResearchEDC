@@ -12,6 +12,9 @@ RUN poetry config virtualenvs.create false \
 # Stage 2: Runtime
 FROM python:3.12-slim AS runtime
 
+LABEL org.opencontainers.image.title="ResearchEDC" \
+      org.opencontainers.image.description="ResearchEDC Questionnaire Service — FastAPI"
+
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \

@@ -1,5 +1,5 @@
 # =============================================================================
-# OpenClinica Web Services — Multi-stage Docker Build
+# ResearchEDC Web Services — Multi-stage Docker Build
 # Stage 1: Build WAR with Maven
 # Stage 2: Deploy WAR to Tomcat 10.1 + JDK 21
 # =============================================================================
@@ -35,6 +35,9 @@ RUN mvn clean package -DskipTests -pl ws -am
 # =============================================================================
 FROM tomcat:10.1-jdk21-temurin
 
+LABEL org.opencontainers.image.title="ResearchEDC" \
+      org.opencontainers.image.description="ResearchEDC Web Services — SOAP Web Services (Tomcat 10.1 + JDK 21)"
+
 # Remove default webapps
 RUN rm -rf /usr/local/tomcat/webapps/*
 
@@ -42,32 +45,32 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 COPY --from=build /build/ws/target/OpenClinica-ws-*.war /usr/local/tomcat/webapps/ROOT.war
 
 # Create data and log directories
-RUN mkdir -p /opt/openclinica/data /opt/openclinica/logs /opt/openclinica/config
+RUN mkdir -p /opt/researchedc/data /opt/researchedc/logs /opt/researchedc/config
 
 # Copy entrypoint script
 COPY docker/scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Environment variables with defaults
-ENV OC_DB_TYPE=postgres \
-    OC_DB_HOST=postgres \
-    OC_DB_PORT=5432 \
-    OC_DB_NAME=openclinica \
-    OC_DB_USER=openclinica \
-    OC_DB_PASS=openclinica \
-    OC_SYS_URL=http://localhost:8080/MainMenu \
-    OC_ADMIN_EMAIL=admin@example.com \
-    OC_FILE_PATH=/opt/openclinica/data \
-    OC_LOG_DIR=/opt/openclinica/logs \
-    OC_LOG_LEVEL=info \
-    OC_MAIL_HOST=mailhog \
-    OC_MAIL_PORT=1025 \
-    OC_MAIL_PROTOCOL=smtp \
-    OC_MAIL_AUTH=false \
-    OC_LDAP_ENABLED=false \
+ENV RESEARCHEDC_DB_TYPE=postgres \
+    RESEARCHEDC_DB_HOST=postgres \
+    RESEARCHEDC_DB_PORT=5432 \
+    RESEARCHEDC_DB_NAME=researchedc \
+    RESEARCHEDC_DB_USER=researchedc \
+    RESEARCHEDC_DB_PASS=researchedc \
+    RESEARCHEDC_SYS_URL=http://localhost:8080/MainMenu \
+    RESEARCHEDC_ADMIN_EMAIL=admin@example.com \
+    RESEARCHEDC_FILE_PATH=/opt/researchedc/data \
+    RESEARCHEDC_LOG_DIR=/opt/researchedc/logs \
+    RESEARCHEDC_LOG_LEVEL=info \
+    RESEARCHEDC_MAIL_HOST=mailhog \
+    RESEARCHEDC_MAIL_PORT=1025 \
+    RESEARCHEDC_MAIL_PROTOCOL=smtp \
+    RESEARCHEDC_MAIL_AUTH=false \
+    RESEARCHEDC_LDAP_ENABLED=false \
     TZ=UTC
 
-VOLUME ["/opt/openclinica/data", "/opt/openclinica/logs", "/opt/openclinica/config"]
+VOLUME ["/opt/researchedc/data", "/opt/researchedc/logs", "/opt/researchedc/config"]
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["catalina.sh", "run"]

@@ -7,7 +7,7 @@ x-logging: &prod-logging
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: oc-prod-postgres
+    container_name: researchedc-prod-postgres
     restart: unless-stopped
     ports:
       - "127.0.0.1:5432:5432"
@@ -16,7 +16,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
       POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
     volumes:
-      - oc-prod-postgres-data:/var/lib/postgresql/data
+      - researchedc-prod-postgres-data:/var/lib/postgresql/data
       - ../compose/initdb:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
@@ -33,39 +33,39 @@ services:
     logging: *prod-logging
 
   web:
-    image: ${OC_WEB_IMAGE:-openclinica-web:latest}
-    container_name: oc-prod-web
+    image: ${RESEARCHEDC_WEB_IMAGE:-researchedc-web:latest}
+    container_name: researchedc-prod-web
     restart: unless-stopped
     ports:
       - "127.0.0.1:8080:8080"
     environment:
       # JVM tuning: heap auto-scales to 75% of 4G limit via CATALINA_OPTS (set in Dockerfile)
-      OC_DB_HOST: postgres
-      OC_DB_PORT: "5432"
-      OC_DB_NAME: ${OC_DB_NAME:?OC_DB_NAME is required}
-      OC_DB_USER: ${OC_DB_USER:?OC_DB_USER is required}
-      OC_DB_PASS: ${OC_DB_PASS:?OC_DB_PASS is required}
-      OC_SYS_URL: ${OC_SYS_URL:?OC_SYS_URL is required}
-      OC_ADMIN_EMAIL: ${OC_ADMIN_EMAIL:?OC_ADMIN_EMAIL is required}
-      OC_FILE_PATH: /opt/openclinica/data
-      OC_LOG_DIR: /opt/openclinica/logs
-      OC_LOG_LEVEL: ${OC_LOG_LEVEL:-warn}
-      OC_MAIL_HOST: ${OC_MAIL_HOST:?OC_MAIL_HOST is required}
-      OC_MAIL_PORT: ${OC_MAIL_PORT:-587}
-      OC_MAIL_PROTOCOL: ${OC_MAIL_PROTOCOL:-smtp}
-      OC_MAIL_USER: ${OC_MAIL_USER:-}
-      OC_MAIL_PASS: ${OC_MAIL_PASS:-}
-      OC_MAIL_AUTH: ${OC_MAIL_AUTH:-true}
-      OC_MAIL_STARTTLS: ${OC_MAIL_STARTTLS:-true}
-      OC_LDAP_ENABLED: ${OC_LDAP_ENABLED:-false}
-      OC_HIBERNATE_DDL_AUTO: ${OC_HIBERNATE_DDL_AUTO:-none}
-      OC_COLLECT_STATS: ${OC_COLLECT_STATS:-false}
-      OC_MAX_INACTIVE_INTERVAL: ${OC_MAX_INACTIVE_INTERVAL:-1800}
+      RESEARCHEDC_DB_HOST: postgres
+      RESEARCHEDC_DB_PORT: "5432"
+      RESEARCHEDC_DB_NAME: ${RESEARCHEDC_DB_NAME:?RESEARCHEDC_DB_NAME is required}
+      RESEARCHEDC_DB_USER: ${RESEARCHEDC_DB_USER:?RESEARCHEDC_DB_USER is required}
+      RESEARCHEDC_DB_PASS: ${RESEARCHEDC_DB_PASS:?RESEARCHEDC_DB_PASS is required}
+      RESEARCHEDC_SYS_URL: ${RESEARCHEDC_SYS_URL:?RESEARCHEDC_SYS_URL is required}
+      RESEARCHEDC_ADMIN_EMAIL: ${RESEARCHEDC_ADMIN_EMAIL:?RESEARCHEDC_ADMIN_EMAIL is required}
+      RESEARCHEDC_FILE_PATH: /opt/researchedc/data
+      RESEARCHEDC_LOG_DIR: /opt/researchedc/logs
+      RESEARCHEDC_LOG_LEVEL: ${RESEARCHEDC_LOG_LEVEL:-warn}
+      RESEARCHEDC_MAIL_HOST: ${RESEARCHEDC_MAIL_HOST:?RESEARCHEDC_MAIL_HOST is required}
+      RESEARCHEDC_MAIL_PORT: ${RESEARCHEDC_MAIL_PORT:-587}
+      RESEARCHEDC_MAIL_PROTOCOL: ${RESEARCHEDC_MAIL_PROTOCOL:-smtp}
+      RESEARCHEDC_MAIL_USER: ${RESEARCHEDC_MAIL_USER:-}
+      RESEARCHEDC_MAIL_PASS: ${RESEARCHEDC_MAIL_PASS:-}
+      RESEARCHEDC_MAIL_AUTH: ${RESEARCHEDC_MAIL_AUTH:-true}
+      RESEARCHEDC_MAIL_STARTTLS: ${RESEARCHEDC_MAIL_STARTTLS:-true}
+      RESEARCHEDC_LDAP_ENABLED: ${RESEARCHEDC_LDAP_ENABLED:-false}
+      RESEARCHEDC_HIBERNATE_DDL_AUTO: ${RESEARCHEDC_HIBERNATE_DDL_AUTO:-none}
+      RESEARCHEDC_COLLECT_STATS: ${RESEARCHEDC_COLLECT_STATS:-false}
+      RESEARCHEDC_MAX_INACTIVE_INTERVAL: ${RESEARCHEDC_MAX_INACTIVE_INTERVAL:-1800}
       TZ: ${TZ:-UTC}
-      OC_WEBAPP_NAME: "ROOT"
+      RESEARCHEDC_WEBAPP_NAME: "ROOT"
     volumes:
-      - oc-prod-data:/opt/openclinica/data
-      - oc-prod-logs:/opt/openclinica/logs
+      - researchedc-prod-data:/opt/researchedc/data
+      - researchedc-prod-logs:/opt/researchedc/logs
     depends_on:
       postgres:
         condition: service_healthy
@@ -79,7 +79,7 @@ services:
 
   nginx:
     image: nginx:1.27-alpine
-    container_name: oc-prod-nginx
+    container_name: researchedc-prod-nginx
     restart: unless-stopped
     ports:
       - "80:80"
@@ -87,7 +87,7 @@ services:
     volumes:
       - ../nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ../nginx/ssl:/etc/nginx/ssl:ro
-      - oc-prod-data:/opt/openclinica/data:ro
+      - researchedc-prod-data:/opt/researchedc/data:ro
     depends_on:
       - web
     deploy:
@@ -100,13 +100,13 @@ services:
 
   prometheus:
     image: prom/prometheus:v2.53.0
-    container_name: oc-prod-prometheus
+    container_name: researchedc-prod-prometheus
     restart: unless-stopped
     ports:
       - "127.0.0.1:9090:9090"
     volumes:
       - ../prometheus:/etc/prometheus:ro
-      - oc-prod-prometheus-data:/prometheus
+      - researchedc-prod-prometheus-data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
@@ -119,7 +119,7 @@ services:
 
   grafana:
     image: grafana/grafana:11.1.0
-    container_name: oc-prod-grafana
+    container_name: researchedc-prod-grafana
     restart: unless-stopped
     ports:
       - "127.0.0.1:3000:3000"
@@ -129,7 +129,7 @@ services:
     volumes:
       - ../grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
       - ../grafana/datasources:/etc/grafana/provisioning/datasources:ro
-      - oc-prod-grafana-data:/var/lib/grafana
+      - researchedc-prod-grafana-data:/var/lib/grafana
     deploy:
       resources:
         limits:
@@ -137,13 +137,13 @@ services:
     logging: *prod-logging
 
 volumes:
-  oc-prod-postgres-data:
+  researchedc-prod-postgres-data:
     driver: local
-  oc-prod-data:
+  researchedc-prod-data:
     driver: local
-  oc-prod-logs:
+  researchedc-prod-logs:
     driver: local
-  oc-prod-prometheus-data:
+  researchedc-prod-prometheus-data:
     driver: local
-  oc-prod-grafana-data:
+  researchedc-prod-grafana-data:
     driver: local

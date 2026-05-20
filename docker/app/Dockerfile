@@ -1,5 +1,5 @@
 # =============================================================================
-# OpenClinica App (Spring Boot + React SPA) — Multi-stage Docker Build
+# ResearchEDC App (Spring Boot + React SPA) — Multi-stage Docker Build
 # Stage 1: Build frontend (pnpm)
 # Stage 2: Build WAR with Maven
 # Stage 3: Deploy WAR to Tomcat 10.1 + JDK 21
@@ -50,6 +50,9 @@ RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests -pl app -a
 # =============================================================================
 FROM tomcat:10.1-jdk21-temurin
 
+LABEL org.opencontainers.image.title="ResearchEDC" \
+      org.opencontainers.image.description="ResearchEDC App — Spring Boot + React SPA"
+
 # Remove default webapps
 RUN rm -rf /usr/local/tomcat/webapps/*
 
@@ -57,7 +60,7 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 COPY --from=build /build/app/target/OpenClinica-*.war /usr/local/tomcat/webapps/ROOT.war
 
 # Create data and log directories
-RUN mkdir -p /opt/openclinica/data /opt/openclinica/logs /opt/openclinica/config
+RUN mkdir -p /opt/researchedc/data /opt/researchedc/logs /opt/researchedc/config
 
 # Copy entrypoint script
 COPY docker/scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
@@ -67,23 +70,23 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 # JVM tuning for containerized environments
 # UseContainerSupport is default in Java 21; explicit for visibility
 # MaxRAMPercentage=75 leaves headroom for native memory, metaspace, threads
-ENV CATALINA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/openclinica/logs"
+ENV CATALINA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/researchedc/logs"
 
-ENV OC_DB_TYPE=postgres \
-    OC_DB_HOST=postgres \
-    OC_DB_PORT=5432 \
-    OC_FILE_PATH=/opt/openclinica/data \
-    OC_LOG_DIR=/opt/openclinica/logs \
-    OC_LOG_LEVEL=info \
-    OC_MAIL_HOST=mailhog \
-    OC_MAIL_PORT=1025 \
-    OC_MAIL_PROTOCOL=smtp \
-    OC_MAIL_AUTH=false \
-    OC_LDAP_ENABLED=false \
-    OC_MAX_INACTIVE_INTERVAL=3600 \
+ENV RESEARCHEDC_DB_TYPE=postgres \
+    RESEARCHEDC_DB_HOST=postgres \
+    RESEARCHEDC_DB_PORT=5432 \
+    RESEARCHEDC_FILE_PATH=/opt/researchedc/data \
+    RESEARCHEDC_LOG_DIR=/opt/researchedc/logs \
+    RESEARCHEDC_LOG_LEVEL=info \
+    RESEARCHEDC_MAIL_HOST=mailhog \
+    RESEARCHEDC_MAIL_PORT=1025 \
+    RESEARCHEDC_MAIL_PROTOCOL=smtp \
+    RESEARCHEDC_MAIL_AUTH=false \
+    RESEARCHEDC_LDAP_ENABLED=false \
+    RESEARCHEDC_MAX_INACTIVE_INTERVAL=3600 \
     TZ=UTC
 
-VOLUME ["/opt/openclinica/data", "/opt/openclinica/logs", "/opt/openclinica/config"]
+VOLUME ["/opt/researchedc/data", "/opt/researchedc/logs", "/opt/researchedc/config"]
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["catalina.sh", "run"]
