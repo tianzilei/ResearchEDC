@@ -38,6 +38,7 @@ const PasswordPolicy = lazy(() => import("@/pages/admin/PasswordPolicy"));
 const LogViewer = lazy(() => import("@/pages/admin/LogViewer"));
 const StudyUserRoleEditor = lazy(() => import("@/pages/admin/StudyUserRoleEditor"));
 const Instructions = lazy(() => import("@/pages/Instructions"));
+const EntityAction = lazy(() => import("@/pages/EntityAction"));
 const DatasetBuilder = lazy(() => import("@/pages/export/DatasetBuilder"));
 const FilterBuilder = lazy(() => import("@/pages/export/FilterBuilder"));
 const Profile = lazy(() => import("@/pages/Profile"));
@@ -226,6 +227,10 @@ const router = createBrowserRouter([
       {
         path: "instructions/:topic",
         element: <Instructions />,
+      },
+      {
+        path: "actions/:entity/:action/:id",
+        element: <EntityAction />,
       },
       {
         path: "audit-log",
