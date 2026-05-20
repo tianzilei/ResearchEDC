@@ -13,7 +13,7 @@ import org.researchedc.module.study.dto.UpdateStudyRequest;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.study.event.StudyChangedEvent;
-import org.researchedc.module.study.infrastructure.LegacyStudyAdapter;
+
 import org.researchedc.module.study.service.StudyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,20 +30,17 @@ public class StudyApplicationService {
     private final StudyService studyService;
     private final StudyPolicy studyPolicy;
     private final StudyDomainService studyDomainService;
-    private final LegacyStudyAdapter legacyStudyAdapter;
     private final ApplicationEventPublisher eventPublisher;
     private final AuditService auditService;
 
     public StudyApplicationService(StudyService studyService,
                                     StudyPolicy studyPolicy,
                                     StudyDomainService studyDomainService,
-                                    LegacyStudyAdapter legacyStudyAdapter,
                                     ApplicationEventPublisher eventPublisher,
                                     AuditService auditService) {
         this.studyService = studyService;
         this.studyPolicy = studyPolicy;
         this.studyDomainService = studyDomainService;
-        this.legacyStudyAdapter = legacyStudyAdapter;
         this.eventPublisher = eventPublisher;
         this.auditService = auditService;
     }

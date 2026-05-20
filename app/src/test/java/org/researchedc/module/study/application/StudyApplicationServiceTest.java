@@ -13,7 +13,6 @@ import org.researchedc.module.study.domain.StudyDomainService;
 import org.researchedc.module.study.domain.StudyPolicy;
 import org.researchedc.module.study.dto.StudyDetailDTO;
 import org.researchedc.module.study.event.StudyChangedEvent;
-import org.researchedc.module.study.infrastructure.LegacyStudyAdapter;
 import org.researchedc.module.study.service.StudyService;
 import org.researchedc.module.audit.service.AuditService;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +29,6 @@ class StudyApplicationServiceTest {
     @Mock private StudyService studyService;
     @Mock private StudyPolicy studyPolicy;
     @Mock private StudyDomainService studyDomainService;
-    @Mock private LegacyStudyAdapter legacyStudyAdapter;
     @Mock private ApplicationEventPublisher eventPublisher;
     @Mock private AuditService auditService;
 
@@ -40,7 +38,7 @@ class StudyApplicationServiceTest {
     void setUp() {
         applicationService = new StudyApplicationService(
                 studyService, studyPolicy, studyDomainService,
-                legacyStudyAdapter, eventPublisher, auditService);
+                eventPublisher, auditService);
     }
 
     @Test
