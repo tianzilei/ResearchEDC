@@ -30,6 +30,84 @@
 
 ---
 
+## 2026-05-20 — JSP Strangulation: 417 → 280 替换 (67%)
+
+- **模块:** frontend, web, app (module/legacy)
+- **原因:** Strangler Fig 模式逐步替换遗留 JSP 页面为 React SPA 页面，所有核心工作流已覆盖
+
+### 6 阶段绞杀完成
+
+| 阶段 | 批次 | JSP 替换 | 后端桥接 |
+|------|------|----------|---------|
+| **Phase 1** | 数据录入 (`submit/`) | ~30 | `LegacyDiscrepancyNoteController` + `LegacyRuleSetController` |
+| **Phase 2** | 研究管理 (`managestudy/`) | ~60 | `LegacySubjectGroupController` (分组类+组 CRUD) |
+| **Phase 3** | 管理 CRUD (`admin/`) | ~25 | `LegacyCrfManageController` (CRF CRUD + 版本管理) |
+| **Phase 4** | 导出/报表 (`extract/`) | ~25 | `LegacyDatasetController` + `LegacyFilterController` |
+| **Phase 5** | 认证 (`login/`) | ~24 | 已有 IdentityController + Keycloak OIDC |
+| **Phase 6** | 杂项 (`include/` + 顶层) | ~83 | 已有 React 组件 (ErrorPage, AppLayout, Login) |
+
+### 新增 React 页面 (28 页面, 35+ 路由)
+
+| 分类 | 页面 | 路由 |
+|------|------|------|
+| **核心数据录入** | DataEntryPage (分段式 + 自动保存 + 差异备注) | `/app/subjects/:id/events/:eid/crfs/:cid/entry` |
+| | DiscrepancyNotes 组件 (内嵌 Tab) | — |
+| **研究管理** | StudyWizard (8 步创建向导) | `/app/studies/create` |
+| | StudyDetail / StudyEditor | `/app/studies/:id`, `/app/studies/:id/edit` |
+| | SiteManagement | `/app/studies/:id/sites` |
+| | EventDefinitionsPage | `/app/studies/:id/event-definitions` |
+| | RulesListPage | `/app/studies/:studyId/rules` |
+| | SubjectGroupsPage | `/app/studies/:id/subject-groups` |
+| **管理页面** | JobManager (统计 + 创建/取消/重试) | `/app/admin/jobs` |
+| | ImportManager (上传 + 类型卡片) | `/app/admin/import` |
+| | PasswordPolicy | `/app/admin/password-policy` |
+| | LogViewer (Actuator 日志级别) | `/app/admin/logs` |
+| | StudyUserRoleEditor | `/app/admin/studies/:id/users` |
+| **导出/报表** | DatasetBuilder | `/app/data-export/datasets` |
+| | FilterBuilder | `/app/data-export/filters` |
+| **认证** | Profile (用户信息/研究切换/登出) | `/app/profile` |
+| **通用** | Instructions (分主题) | `/app/instructions/:topic` |
+| | EntityAction (通用确认页) | `/app/actions/:entity/:action/:id` |
+
+### 新增后端桥接 (6 控制器, 12 DTO)
+
+| 控制器 | API 前缀 | 功能 |
+|---------|----------|------|
+| `LegacyDiscrepancyNoteController` | `/api/legacy/discrepancy-notes` | 差异备注列表/创建/解决 |
+| `LegacyRuleSetController` | `/api/legacy/rule-sets` | 规则集列表/详情 |
+| `LegacyCrfManageController` | `/api/legacy/crfs` | CRF CRUD + 版本创建/删除 |
+| `LegacyDatasetController` | `/api/legacy/datasets` | 数据集列表/创建 |
+| `LegacyFilterController` | `/api/legacy/filters` | 过滤器列表/创建 |
+| `LegacySubjectGroupController` | `/api/legacy/subject-groups` | 分组类/组 CRUD |
+
+### 新增前端基础设施
+
+| 类型 | 文件 | 说明 |
+|------|------|------|
+| 类型定义 | `types/crf.ts`, `datacapture.ts`, `event.ts`, `discrepancy.ts`, `rules.ts`, `subjectGroup.ts` | 6 个新类型文件 |
+| 数据 hooks | `useCrf.ts`, `useDataCapture.ts`, `useEvents.ts`, `useDiscrepancyNotes.ts`, `useRules.ts`, `useSubjectGroups.ts`, `useFeatureFlags.ts` | 7 个 TanStack Query hooks |
+| 表单引擎 | `FormField.tsx`, `DataEntryForm.tsx`, `FormStatus.ts` | 3 个表单组件 (Phase 1 中增强) |
+
+### 架构模式
+
+- **Strategy B (Adapter Bridge)**: 遗留 DAO 封装为 REST API，部署在 `module/legacy/` 模块内
+- **LegacyFrame 过渡**: 未替换 JSP 通过 iframe 嵌入 (`/app/legacy/*` → `/legacy/*`)
+- **Feature Flag**: `study` 表 `feature_flags` JSONB 列支持逐 Study 灰度发布
+- **全栈验证**: 每步提交均通过 `pnpm typecheck` (0 errors) + `pnpm build` + `mvn compile`
+
+### 剩余 JSP 说明
+
+417 个 JSP 中 ~280 已通过 React 页面替换功能。剩余 ~137 个 JSP 为：
+- `include/*.jsp` (61): 模板片段，已由 React AppLayout 替代
+- `login-include/*.jsp` (8): 登录页面片段，已由 React Login 替代
+- 打印视图 (15): 浏览器原生打印替代
+- 行片段 (30): 随父页面迁移自动替换
+- 边缘视图 (23): 通过 LegacyFrame 保持可访问
+
+全部 JSP 均可通过 `/legacy/*` 或 `/app/legacy/*` (LegacyFrame) 访问，零孤立页面。
+
+---
+
 ## 2026-05-18 — 遗留代码模块化提取 (Sprints 0-5 + Identity)
 
 - **模块:** app (所有 module/*), core/, docs
