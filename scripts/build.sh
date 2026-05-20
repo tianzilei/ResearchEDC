@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# OpenClinica — Maven Build Script
+# ResearchEDC — Maven Build Script
 #
 # Compiles all modules, runs tests (if DB available), and packages WARs.
 # Use --skip-tests to skip test execution.
@@ -29,7 +29,7 @@ done
 
 MAVEN_OPTS="${MAVEN_OPTS:--Xmx2g}"
 
-echo "=== OpenClinica Build ==="
+echo "=== ResearchEDC Build ==="
 echo "  Java:    $(java -version 2>&1 | head -1)"
 echo "  Maven:   $(${MAVEN} --version 2>&1 | head -1)"
 echo "  Tests:   $([ "${SKIP_TESTS}" = true ] && echo 'SKIPPED' || echo 'ENABLED')"

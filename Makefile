@@ -1,5 +1,5 @@
 # ============================================================================
-# OpenClinica — Makefile
+# ResearchEDC — Makefile
 #
 # Common development and deployment commands.
 # Usage: make <target>
@@ -95,7 +95,7 @@ shell: ## Open shell in web container
 	docker compose -f $(COMPOSE_DEV) exec web bash
 
 psql: ## Open PostgreSQL shell
-	docker compose -f $(COMPOSE_DEV) exec postgres psql -U openclinica -d openclinica
+	docker compose -f $(COMPOSE_DEV) exec postgres psql -U researchedc -d researchedc
 
 clean: ## Remove all build artifacts
 	rm -rf core/target web/target ws/target

@@ -1,8 +1,8 @@
 #!/bin/bash
 # =============================================================================
-# OpenClinica — Database Schema Initialization
+# ResearchEDC — Database Schema Initialization
 #
-# Creates a fresh OpenClinica database and applies Liquibase migrations.
+# Creates a fresh ResearchEDC database and applies Liquibase migrations.
 # Used for setting up a new development or test environment.
 # =============================================================================
 set -euo pipefail
@@ -19,14 +19,14 @@ if [ ! -f "${COMPOSE_FILE}" ]; then
     exit 1
 fi
 
-echo "=== OpenClinica Database Initialization (${MODE}) ==="
+echo "=== ResearchEDC Database Initialization (${MODE}) ==="
 echo ""
 
 # Step 1: Start PostgreSQL
 echo "Step 1: Starting PostgreSQL..."
 docker compose -f "${COMPOSE_FILE}" up -d postgres
 echo "  Waiting for PostgreSQL to become healthy..."
-docker compose -f "${COMPOSE_FILE}" exec postgres pg_isready -U openclinica -t 30
+docker compose -f "${COMPOSE_FILE}" exec postgres pg_isready -U researchedc -t 30
 echo "  PostgreSQL is ready."
 echo ""
 
@@ -45,7 +45,7 @@ echo ""
 
 # Step 4: Verify key tables exist
 echo "Step 4: Verifying schema..."
-docker compose -f "${COMPOSE_FILE}" exec -T postgres psql -U openclinica -d openclinica -c "
+docker compose -f "${COMPOSE_FILE}" exec -T postgres psql -U researchedc -d researchedc -c "
 SELECT table_name FROM information_schema.tables
 WHERE table_schema = 'public'
   AND table_name IN ('study', 'subject', 'user_account', 'study_event', 'item_data', 'discrepancy_note')
@@ -55,7 +55,7 @@ echo ""
 
 echo "=== Initialization Complete ==="
 echo ""
-echo "The database 'openclinica' now has the full OpenClinica schema."
+echo "The database 'researchedc' now has the full ResearchEDC schema."
 echo "Next steps:"
 echo "  1. Access the application at http://localhost:8080"
 echo "  2. Default admin account: admin / (check Docker logs for generated password)"

@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# OpenClinica — Vulnerability Scanning
+# ResearchEDC — Vulnerability Scanning
 #
 # Scans Docker images for known CVEs using Trivy.
 # Install Trivy: https://trivy.dev/latest/getting-started/installation/
@@ -15,7 +15,7 @@ SEVERITY="${SEVERITY:-CRITICAL,HIGH}"
 TAG="${TAG:-3.18-SNAPSHOT}"
 EXIT_ON_FINDING="${EXIT_ON_FINDING:-false}"
 
-echo "=== OpenClinica Vulnerability Scan ==="
+echo "=== ResearchEDC Vulnerability Scan ==="
 echo "  Scanner: Trivy ($(trivy --version 2>&1 | head -1))"
 echo "  Type:    ${SCAN_TYPE}"
 echo "  Severity: ${SEVERITY}"
@@ -60,8 +60,8 @@ scan_filesystem() {
 case "${SCAN_TYPE}" in
     image)
         echo "Scanning Docker images..."
-        scan_image "openclinica-web:${TAG}"
-        scan_image "openclinica-ws:${TAG}"
+        scan_image "researchedc-web:${TAG}"
+        scan_image "researchedc-ws:${TAG}"
         scan_image "tomcat:10.1-jdk21-temurin"
         scan_image "postgres:17-alpine"
         scan_image "nginx:1.27-alpine"
@@ -76,12 +76,12 @@ case "${SCAN_TYPE}" in
 
     sbom)
         mkdir -p "${PROJECT_DIR}/target/sbom"
-        echo "Generating SBOM for openclinica-web:${TAG}..."
-        trivy image --format cyclonedx --output "${PROJECT_DIR}/target/sbom/web-${TAG}.cdx.json" "openclinica-web:${TAG}"
+        echo "Generating SBOM for researchedc-web:${TAG}..."
+        trivy image --format cyclonedx --output "${PROJECT_DIR}/target/sbom/web-${TAG}.cdx.json" "researchedc-web:${TAG}"
         echo "  SBOM: target/sbom/web-${TAG}.cdx.json"
 
-        echo "Generating SBOM for openclinica-ws:${TAG}..."
-        trivy image --format cyclonedx --output "${PROJECT_DIR}/target/sbom/ws-${TAG}.cdx.json" "openclinica-ws:${TAG}"
+        echo "Generating SBOM for researchedc-ws:${TAG}..."
+        trivy image --format cyclonedx --output "${PROJECT_DIR}/target/sbom/ws-${TAG}.cdx.json" "researchedc-ws:${TAG}"
         echo "  SBOM: target/sbom/ws-${TAG}.cdx.json"
         ;;
 
@@ -96,4 +96,4 @@ echo ""
 echo "Review findings and address HIGH/CRITICAL CVEs before production deployment."
 echo ""
 echo "To scan with HTML report:"
-echo "  trivy image --format html --output report.html openclinica-web:${TAG}"
+echo "  trivy image --format html --output report.html researchedc-web:${TAG}"

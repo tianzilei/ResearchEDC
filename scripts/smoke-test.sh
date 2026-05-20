@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# OpenClinica — Docker Compose Smoke Test
+# ResearchEDC — Docker Compose Smoke Test
 #
 # Starts the application stack and verifies endpoints respond correctly.
 # Designed to run as a non-interactive validation step.
@@ -27,7 +27,7 @@ check() {
     fi
 }
 
-echo "=== OpenClinica Smoke Test ==="
+echo "=== ResearchEDC Smoke Test ==="
 echo ""
 
 # Ensure stack is running
@@ -37,7 +37,7 @@ docker compose -f "${COMPOSE_FILE}" up --build -d postgres web mailhog
 # Wait for PostgreSQL
 echo "  Waiting for PostgreSQL (30s max)..."
 for i in $(seq 1 30); do
-    if docker compose -f "${COMPOSE_FILE}" exec postgres pg_isready -U openclinica &>/dev/null; then
+    if docker compose -f "${COMPOSE_FILE}" exec postgres pg_isready -U researchedc &>/dev/null; then
         echo "  PostgreSQL is ready."
         break
     fi
@@ -78,7 +78,7 @@ check "MailHog API responds" "200" test "${MAILHOG}" = "200"
 
 # Test 5: PostgreSQL connection count
 echo "Test 5: PostgreSQL connection limit..."
-CONN_CHECK=$(docker compose -f "${COMPOSE_FILE}" exec postgres psql -U openclinica -t -c "SELECT count(*) FROM pg_stat_activity WHERE datname='openclinica';" 2>/dev/null | tr -d ' ')
+CONN_CHECK=$(docker compose -f "${COMPOSE_FILE}" exec postgres psql -U researchedc -t -c "SELECT count(*) FROM pg_stat_activity WHERE datname='researchedc';" 2>/dev/null | tr -d ' ')
 check "PostgreSQL accepts connections" "numeric" test "${CONN_CHECK}" -ge 0 2>/dev/null
 
 echo ""

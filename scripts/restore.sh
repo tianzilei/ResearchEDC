@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# OpenClinica — Database & Files Restore
+# ResearchEDC — Database & Files Restore
 #
 # Restores from a backup created by scripts/backup.sh.
 # Usage: bash scripts/restore.sh <TIMESTAMP> [--db-only] [--data-only]
@@ -33,16 +33,16 @@ while [[ $# -gt 0 ]]; do
 done
 
 DB_CONTAINER="oc-prod-postgres"
-DB_USER="${POSTGRES_USER:-openclinica}"
-DB_NAME="${POSTGRES_DB:-openclinica}"
+DB_USER="${POSTGRES_USER:-researchedc}"
+DB_NAME="${POSTGRES_DB:-researchedc}"
 
-echo "=== OpenClinica Restore (${TIMESTAMP}) ==="
+echo "=== ResearchEDC Restore (${TIMESTAMP}) ==="
 echo ""
 
 # Sanity checks
-if [ ! -f "${BACKUP_DIR}/openclinica_db_${TIMESTAMP}.dump" ] && [ ! -f "${BACKUP_DIR}/openclinica_db_${TIMESTAMP}.dump.gz" ]; then
+if [ ! -f "${BACKUP_DIR}/researchedc_db_${TIMESTAMP}.dump" ] && [ ! -f "${BACKUP_DIR}/researchedc_db_${TIMESTAMP}.dump.gz" ]; then
     echo "ERROR: DB backup not found for timestamp ${TIMESTAMP}"
-    echo "  Looked for: ${BACKUP_DIR}/openclinica_db_${TIMESTAMP}.dump[.gz]"
+    echo "  Looked for: ${BACKUP_DIR}/researchedc_db_${TIMESTAMP}.dump[.gz]"
     exit 1
 fi
 
@@ -60,11 +60,11 @@ if [ "${DATA_ONLY}" = false ]; then
     sleep 5
 
     # Handle compressed backup
-    if [ -f "${BACKUP_DIR}/openclinica_db_${TIMESTAMP}.dump.gz" ]; then
-        gunzip -c "${BACKUP_DIR}/openclinica_db_${TIMESTAMP}.dump.gz" > "/tmp/oc_restore_${TIMESTAMP}.dump"
+    if [ -f "${BACKUP_DIR}/researchedc_db_${TIMESTAMP}.dump.gz" ]; then
+        gunzip -c "${BACKUP_DIR}/researchedc_db_${TIMESTAMP}.dump.gz" > "/tmp/oc_restore_${TIMESTAMP}.dump"
         RESTORE_FILE="/tmp/oc_restore_${TIMESTAMP}.dump"
     else
-        RESTORE_FILE="${BACKUP_DIR}/openclinica_db_${TIMESTAMP}.dump"
+        RESTORE_FILE="${BACKUP_DIR}/researchedc_db_${TIMESTAMP}.dump"
     fi
 
     # Drop existing connections and restore
@@ -88,14 +88,14 @@ if [ "${DATA_ONLY}" = false ]; then
 fi
 
 # Restore application data
-if [ "${DB_ONLY}" = false ] && [ -f "${BACKUP_DIR}/openclinica_data_${TIMESTAMP}.tar" ]; then
+if [ "${DB_ONLY}" = false ] && [ -f "${BACKUP_DIR}/researchedc_data_${TIMESTAMP}.tar" ]; then
     echo "Step 2: Restoring application data..."
     DATA_VOLUME="oc-prod-data"
     if docker volume inspect "${DATA_VOLUME}" &>/dev/null; then
         docker run --rm \
             -v "${DATA_VOLUME}:/data" \
             -v "${BACKUP_DIR}:/backup" \
-            alpine tar xf "/backup/openclinica_data_${TIMESTAMP}.tar" -C /data
+            alpine tar xf "/backup/researchedc_data_${TIMESTAMP}.tar" -C /data
         echo "  Application data restored."
     else
         echo "  WARNING: Volume ${DATA_VOLUME} not found."

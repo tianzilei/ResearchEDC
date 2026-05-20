@@ -1,13 +1,13 @@
 #!/bin/bash
 # =============================================================================
-# OpenClinica — Hibernate Schema Validation
+# ResearchEDC — Hibernate Schema Validation
 #
 # Validates that Hibernate entity mappings match the actual database schema
 # using hibernate.hbm2ddl.auto=validate in a Docker environment.
 #
 # Prerequisites:
 #   - Docker and docker-compose installed
-#   - A PostgreSQL instance with OpenClinica schema (or use the compose setup)
+#   - A PostgreSQL instance with ResearchEDC schema (or use the compose setup)
 # =============================================================================
 set -euo pipefail
 
@@ -15,7 +15,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "${SCRIPT_DIR}")"
 COMPOSE_FILE="${PROJECT_DIR}/deploy/compose/docker-compose.dev.yml"
 
-echo "=== OpenClinica Hibernate Schema Validation ==="
+echo "=== ResearchEDC Hibernate Schema Validation ==="
 echo ""
 
 # Ensure Docker is available
@@ -26,14 +26,14 @@ fi
 
 # Check if a database is available
 echo "Step 1: Checking database connectivity..."
-if docker compose -f "${COMPOSE_FILE}" exec postgres pg_isready -U openclinica &>/dev/null 2>&1; then
+if docker compose -f "${COMPOSE_FILE}" exec postgres pg_isready -U researchedc &>/dev/null 2>&1; then
     echo "  Database is running and accessible."
     DB_RUNNING=true
 else
     echo "  Database is not running. Starting PostgreSQL container..."
     docker compose -f "${COMPOSE_FILE}" up -d postgres
     echo "  Waiting for PostgreSQL to become healthy..."
-    docker compose -f "${COMPOSE_FILE}" exec postgres pg_isready -U openclinica -t 30
+    docker compose -f "${COMPOSE_FILE}" exec postgres pg_isready -U researchedc -t 30
     DB_RUNNING=true
 fi
 

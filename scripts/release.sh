@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# OpenClinica — Release & Rollback Workflow
+# ResearchEDC — Release & Rollback Workflow
 #
 # Orchestrates the full release process: build, scan, tag, push, deploy.
 # Also supports rollback to a previous release.
@@ -36,11 +36,11 @@ case "${ACTION}" in
             exit 1
         fi
 
-        echo "=== OpenClinica Rollback to ${VERSION} ==="
+        echo "=== ResearchEDC Rollback to ${VERSION} ==="
         echo ""
 
         # Check that the previous images exist
-        for img in "openclinica-web:${VERSION}" "openclinica-ws:${VERSION}"; do
+        for img in "researchedc-web:${VERSION}" "researchedc-ws:${VERSION}"; do
             if ! docker image inspect "${img}" &>/dev/null; then
                 echo "ERROR: Image ${img} not found locally."
                 echo "  Pull it first: docker pull ${img}"
@@ -49,8 +49,8 @@ case "${ACTION}" in
         done
 
         # Re-tag as current
-        docker tag "openclinica-web:${VERSION}" "openclinica-web:latest"
-        docker tag "openclinica-ws:${VERSION}" "openclinica-ws:latest"
+        docker tag "researchedc-web:${VERSION}" "researchedc-web:latest"
+        docker tag "researchedc-ws:${VERSION}" "researchedc-ws:latest"
         echo "Re-tagged ${VERSION} as latest."
 
         # Restore database if a backup exists for this version
@@ -69,7 +69,7 @@ case "${ACTION}" in
     *)
         # ========== Release ==========
         VERSION="${ACTION}"
-        echo "=== OpenClinica Release ${VERSION} ==="
+        echo "=== ResearchEDC Release ${VERSION} ==="
         echo ""
 
         # Step 1: Verify clean git state
@@ -114,7 +114,7 @@ case "${ACTION}" in
 
         # Step 6: Tag and push
         echo "Step 6: Tagging release..."
-        git tag -a "v${VERSION}" -m "OpenClinica release ${VERSION}"
+        git tag -a "v${VERSION}" -m "ResearchEDC release ${VERSION}"
         echo "  Tagged as v${VERSION}"
         echo ""
 
@@ -124,8 +124,8 @@ case "${ACTION}" in
             BACKUP_DIR="${PROJECT_DIR}/backups"
             mkdir -p "${BACKUP_DIR}"
             # Use a compact timestamp approach
-            docker exec oc-prod-postgres pg_dump -U openclinica --format=custom \
-                --file="/tmp/pre_upgrade_${VERSION}.dump" openclinica
+            docker exec oc-prod-postgres pg_dump -U researchedc --format=custom \
+                --file="/tmp/pre_upgrade_${VERSION}.dump" researchedc
             docker cp "oc-prod-postgres:/tmp/pre_upgrade_${VERSION}.dump" "${BACKUP_DIR}/pre-upgrade-${VERSION}.dump"
             docker exec oc-prod-postgres rm -f "/tmp/pre_upgrade_${VERSION}.dump"
             echo "  Pre-upgrade backup: ${BACKUP_DIR}/pre-upgrade-${VERSION}.dump"
@@ -137,13 +137,13 @@ case "${ACTION}" in
         echo "=== Release ${VERSION} preparation complete ==="
         echo ""
         echo "Summary:"
-        echo "  Images:  openclinica-web:${VERSION}, openclinica-ws:${VERSION}"
+        echo "  Images:  researchedc-web:${VERSION}, researchedc-ws:${VERSION}"
         echo "  Git tag: v${VERSION}"
         echo ""
         echo "To deploy:"
         echo "  1. Push images to registry:"
-        echo "     docker push openclinica-web:${VERSION}"
-        echo "     docker push openclinica-ws:${VERSION}"
+        echo "     docker push researchedc-web:${VERSION}"
+        echo "     docker push researchedc-ws:${VERSION}"
         echo "  2. On production server:"
         echo "     docker compose -f deploy/compose/docker-compose.prod.yml pull"
         echo "     docker compose -f deploy/compose/docker-compose.prod.yml up -d web ws nginx"
