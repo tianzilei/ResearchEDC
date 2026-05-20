@@ -1,8 +1,32 @@
-# OpenClinica 修改记录
+# ResearchEDC 修改记录
 
-**项目:** OpenClinica 技术栈现代化重构  
+**项目:** ResearchEDC — 基于 OpenClinica v3.x 的科研电子数据采集平台  
 **基础版本:** 3.18-SNAPSHOT (基于 3.14)  
 **许可证:** GNU LGPL 
+
+---
+
+## 2026-05-20 — ResearchEDC 命名迁移
+
+- **模块:** 全项目 — repo 名称、package 命名空间、Maven 坐标、Docker 服务、UI 显示名、合规文档
+- **原因:** 将项目从 OpenClinica 衍生标识独立为 ResearchEDC，降低品牌混淆风险
+
+### 变更内容
+
+1. **Repo 标识**: 项目显示名称、README、AGENTS.md 更新为 ResearchEDC
+2. **Java Package**: `org.akaza.openclinica` → `org.researchedc`（~1,485 个 Java 文件）
+3. **Maven 坐标**: `groupId` → `org.researchedc`, `artifactId` → `research-edc`（含所有子模块）
+4. **前端**: SPA 应用名、API 基础路径、Keycloak 配置更新
+5. **Docker**: 服务名、容器名、映像标签改为 `researchedc-*` 前缀
+6. **配置**: `application.yml` 更新 context-path、应用名
+7. **合规**: 新增 NOTICE、UPSTREAM.md，更新 MODIFICATIONS.md 记录
+8. **来源说明**: LICENSE、NOTICE、README 中保留 OpenClinica 原始版权和许可信息
+
+### 合规说明
+
+- 来源于 OpenClinica 的代码继续保留 GNU LGPL 许可
+- 不删除原始 copyright、license、disclaimer
+- OpenClinica 为商标，ResearchEDC 非官方版本，无从属关系
 
 ---
 
@@ -14,7 +38,7 @@
 ### Sprint 0: Foundation (12 文件)
 - **CRF 模块防腐层修复**: 创建 `LegacyCrfAdapter`，将 `CrfService` 从 112 行精简为 30 行，消除所有 `core.dao.*` 和 `core.bean.*` 直接引用
 - **legacy-gateway 模块**: 创建 `module/legacy/` — 封装 `StudyDAO`/`StudySubjectDAO` 为 REST 网关 (`/api/legacy/studies`, `/api/legacy/subjects`)
-- **EntityScan 修复**: 从显式列表改为扫描 `org.akaza.openclinica.module`，新模块实体自动发现
+- **EntityScan 修复**: 从显式列表改为扫描 `org.researchedc.module`，新模块实体自动发现
 - **ModulithVerificationTest**: 保留标准边界验证
 
 ### Sprint 1: Audit 模块 (11 文件)
