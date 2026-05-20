@@ -88,7 +88,7 @@ OpenClinica/
 │   └── src/main/resources/
 │       ├── application.yml # profile 配置
 │       └── static/         # 前端构建产物 (自动生成)
-├── core/               # 领域逻辑 & 数据访问 (736 源文件)
+├── legacy-core/        # 遗留领域逻辑 & 数据访问 (736 源文件)
 │   ├── dao/            # 数据访问层 (EntityDAO 模式)
 │   ├── domain/         # Hibernate 实体 (@Entity)
 │   ├── service/        # 业务服务层
@@ -105,6 +105,8 @@ OpenClinica/
 │   ├── compose/        # dev/test/prod 三层 Compose
 │   └── nginx/          # 生产级 Nginx 配置
 ├── docker/             # multi-stage Dockerfiles (含 build cache mounts)
+├── docs/               # 文档
+│   └── refactor/       # 重构计划与基线
 ├── .dockerignore       # Docker 构建忽略规则
 └── scripts/            # 构建/部署/发布脚本
 ```
@@ -207,7 +209,7 @@ python -m pytest app/tests/ -v  # 31 tests
 - **背景**: 全局 dot-grid 图纸纹理 (radial-gradient)
 - **组件**: AppLayout 精修 (brass 边框 header, max-width 内容区), Dashboard 重设计 (问候头像、彩色统计卡片、活动时间线、SVG 环形图、快捷操作), ErrorPage/NotFound 定制页面
 
-测试数据文件: `core/src/test/resources/org/akaza/openclinica/{dao,service}/testdata/`
+测试数据文件: `legacy-core/src/test/resources/org/akaza/openclinica/{dao,service}/testdata/`
 
 ---
 
@@ -285,7 +287,7 @@ python -m pytest app/tests/ -v  # 31 tests
 ## 国际化
 
 支持 6 种语言: en, de, es, fr, pt, zh  
-资源文件: `core/src/main/resources/org/akaza/openclinica/i18n/`
+资源文件: `legacy-core/src/main/resources/org/akaza/openclinica/i18n/`
 
 ---
 

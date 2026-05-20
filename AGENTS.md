@@ -29,7 +29,7 @@ New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/stati
 │       ├── event/           # 访视管理 (映射 study_event/event_crf, 14 文件)
 │       ├── datacapture/     # 数据采集 (映射 item_data/response_set, 11 文件)
 │       └── identity/        # 身份权限 (映射 user_account/study_user_role, 10 文件)
-├── core/                    # 遗留领域逻辑 — ~737 源文件 (待绞杀)
+├── legacy-core/             # 遗留领域逻辑 — ~737 源文件 (待绞杀)
 │   ├── bean/                # DTOs (250 文件)
 │   ├── dao/                 # 数据访问层 (140 文件)
 │   ├── domain/              # Hibernate 实体 (166 文件)
@@ -43,6 +43,8 @@ New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/stati
 ├── deploy/                  # Docker Compose, Nginx, scripts
 ├── docker/                  # Dockerfiles
 ├── pom.xml                  # Maven parent
+├── docs/                    # Documentation
+│   └── refactor/            # Refactoring plans & baseline
 ├── AGENTS.md
 ├── MODIFICATIONS.md
 ├── PLAN.md
@@ -69,15 +71,15 @@ New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/stati
 | **Data Capture module** | `app/.../module/datacapture/` | 桥接 item_data/response_set, REST API |
 | **Identity module** | `app/.../module/identity/` | 桥接 user_account/study_user_role, REST API |
 | SPA fallback config | `app/.../config/WebMvcConfig.java` | `/app/**` -> React index.html |
-| Legacy Hibernate entities | `core/.../domain/datamap/` | ~62 实体, JPA 注解 |
-| Legacy DAOs (JDBC) | `core/.../dao/*/` | EntityDAO 子类, SQL digester |
-| Legacy DAOs (JPA) | `core/.../dao/hibernate/` | AbstractDomainDao 子类 |
+| Legacy Hibernate entities | `legacy-core/.../domain/datamap/` | ~62 实体, JPA 注解 |
+| Legacy DAOs (JDBC) | `legacy-core/.../dao/*/` | EntityDAO 子类, SQL digester |
+| Legacy DAOs (JPA) | `legacy-core/.../dao/hibernate/` | AbstractDomainDao 子类 |
 | Web controllers | `web/.../control/**/*.java` | 186 个 SecureController 子类 |
 | REST controllers | `web/.../controller/*.java` | Spring @Controller |
 | SOAP endpoints | `ws/.../ws/*Endpoint.java` | 7 个 Spring WS 端点 |
 | JSP pages | `web/.../webapp/WEB-INF/jsp/**/*.jsp` | 417 页面 |
-| Liquibase migrations | `core/.../migration/` | 版本化 schema 变更 |
-| i18n strings | `core/.../i18n/*.properties` | 6 种语言 |
+| Liquibase migrations | `legacy-core/.../migration/` | 版本化 schema 变更 |
+| i18n strings | `legacy-core/.../i18n/*.properties` | 6 种语言 |
 | Docker Compose | `deploy/compose/` | dev/test/prod 三层 |
 
 ## CONVENTIONS
@@ -121,7 +123,7 @@ New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/stati
 ## TESTING ARCHITECTURE
 
 ### Backend Tests
-Tests live in `core/src/test` (17 files), `web/src/test` (2 files), and `app/src/test`:
+Tests live in `legacy-core/src/test` (17 files), `web/src/test` (2 files), and `app/src/test`:
 
 | Tier | Base Class | DB Needed | Use Case |
 |------|-----------|-----------|----------|
@@ -177,7 +179,7 @@ python -m pytest app/tests/ -v
 
 ## SUBMODULE REFERENCES
 
-- [core/AGENTS.md](./core/AGENTS.md) - Domain logic and data access
+- [legacy-core/AGENTS.md](./legacy-core/AGENTS.md) - Domain logic and data access
 - [web/AGENTS.md](./web/AGENTS.md) - Web UI and controllers
 - [ws/AGENTS.md](./ws/AGENTS.md) - SOAP web services
 - [LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md) - Remaining legacy refactoring roadmap

@@ -1,14 +1,14 @@
-# core/ - Domain Logic & Data Access
+# legacy-core/ - Domain Logic & Data Access
 
 **Module:** Core business logic, DAOs, services, and Hibernate entities  
 **Files:** ~736 Java files  
 
-> **Modulith 迁移状态:** core 模块的包 (`bean`, `dao`, `domain`, `service`, `logic` 等) 是遗留代码。新模块应创建在 `app/` 模块的 `org.researchedc.module.<name>` 包下，逐步从 core 提取到对应的 Modulith 模块中。提取顺序: notification ✅ → export → audit → randomization → subject → study/site → crf/data-capture。
+> **Modulith 迁移状态:** legacy-core 模块的包 (`bean`, `dao`, `domain`, `service`, `logic` 等) 是遗留代码。新模块应创建在 `app/` 模块的 `org.researchedc.module.<name>` 包下，逐步从 legacy-core 提取到对应的 Modulith 模块中。提取顺序: notification ✅ → export → audit → randomization → subject → study/site → crf/data-capture。
 
 ## STRUCTURE
 
 ```
-core/src/main/java/org/akaza/openclinica/
+legacy-core/src/main/java/org/akaza/openclinica/
 ├── bean/          # DTOs/Beans - StudyBean, SubjectBean, etc.
 ├── dao/           # Data Access Objects - SQL queries
 ├── domain/        # Hibernate entities (JPA annotations)
@@ -77,7 +77,7 @@ docker run -d --name oc-test-pg -e POSTGRES_USER=clinica \
   -e POSTGRES_PASSWORD=clinica \
   -e POSTGRES_DB=openclinica-TEST-3.12 \
   -p 5432:5432 postgres:17-alpine
-mvn test -pl core
+mvn test -pl legacy-core
 ```
 
 ## ANTI-PATTERNS

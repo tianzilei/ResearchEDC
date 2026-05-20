@@ -104,4 +104,7 @@ temp/
 
 # macOS extended attributes
 *.icloud
-target-old/
+
+# Stale backup directories from refactoring
+target-old*/
+*.bak/
