@@ -15,6 +15,26 @@ const AuditViewer = lazy(() => import("@/pages/randomization/AuditViewer"));
 const ExportCenter = lazy(() => import("@/pages/export/ExportCenter"));
 const CrfList = lazy(() => import("@/pages/crf/CrfList"));
 const CrfPreview = lazy(() => import("@/pages/crf/CrfPreview"));
+const SubjectList = lazy(() => import("@/pages/subject/SubjectList"));
+const UserManagement = lazy(() => import("@/pages/admin/UserManagement"));
+const AuditLogViewer = lazy(() => import("@/pages/admin/AuditLogViewer"));
+const SystemConfiguration = lazy(() => import("@/pages/admin/SystemConfiguration"));
+const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
+const CrfAdmin = lazy(() => import("@/pages/admin/CrfAdmin"));
+const SubjectDetail = lazy(() => import("@/pages/subject/SubjectDetail"));
+const StudyList = lazy(() => import("@/pages/studies/StudyList"));
+const StudyWizard = lazy(() => import("@/pages/studies/StudyWizard"));
+const EventList = lazy(() => import("@/pages/events/EventList"));
+const DataEntryPage = lazy(() => import("@/pages/datacapture/DataEntryPage"));
+const RulesListPage = lazy(() => import("@/pages/rules/RulesListPage"));
+const StudyDetail = lazy(() => import("@/pages/studies/StudyDetail"));
+const StudyEditor = lazy(() => import("@/pages/studies/StudyEditor"));
+const SiteManagement = lazy(() => import("@/pages/studies/SiteManagement"));
+const EventDefinitionsPage = lazy(() => import("@/pages/studies/EventDefinitionsPage"));
+const SubjectGroupsPage = lazy(() => import("@/pages/studies/SubjectGroupsPage"));
+const JobManager = lazy(() => import("@/pages/admin/JobManager"));
+const DatasetBuilder = lazy(() => import("@/pages/export/DatasetBuilder"));
+const Profile = lazy(() => import("@/pages/Profile"));
 
 const QuestionnaireTemplates = lazy(() => import("@/pages/questionnaire/QuestionnaireTemplates"));
 const QuestionnaireVersionEditor = lazy(() => import("@/pages/questionnaire/QuestionnaireVersionEditor"));
@@ -62,6 +82,10 @@ const router = createBrowserRouter([
         element: <ExportCenter />,
       },
       {
+        path: "data-export/datasets",
+        element: <DatasetBuilder />,
+      },
+      {
         path: "crfs",
         element: <CrfList />,
       },
@@ -92,6 +116,82 @@ const router = createBrowserRouter([
       {
         path: "questionnaires/export",
         element: <QuestionnaireExport />,
+      },
+      {
+        path: "studies",
+        element: <StudyList />,
+      },
+      {
+        path: "studies/create",
+        element: <StudyWizard />,
+      },
+      {
+        path: "studies/:id",
+        element: <StudyDetail />,
+      },
+      {
+        path: "studies/:id/edit",
+        element: <StudyEditor />,
+      },
+      {
+        path: "studies/:id/sites",
+        element: <SiteManagement />,
+      },
+      {
+        path: "studies/:studyId/event-definitions",
+        element: <EventDefinitionsPage />,
+      },
+      {
+        path: "studies/:studyId/subject-groups",
+        element: <SubjectGroupsPage />,
+      },
+      {
+        path: "studies/:studyId/rules",
+        element: <RulesListPage />,
+      },
+      {
+        path: "admin/users",
+        element: <UserManagement />,
+      },
+      {
+        path: "admin/audit-log",
+        element: <AuditLogViewer />,
+      },
+      {
+        path: "admin/system",
+        element: <SystemConfiguration />,
+      },
+      {
+        path: "admin",
+        element: <AdminDashboard />,
+      },
+      {
+        path: "admin/crf-library",
+        element: <CrfAdmin />,
+      },
+      {
+        path: "admin/jobs",
+        element: <JobManager />,
+      },
+      {
+        path: "subjects",
+        element: <SubjectList />,
+      },
+      {
+        path: "subjects/:id",
+        element: <SubjectDetail />,
+      },
+      {
+        path: "subjects/:subjectId/events",
+        element: <EventList />,
+      },
+      {
+        path: "subjects/:subjectId/events/:eventId/crfs/:eventCrfId/entry",
+        element: <DataEntryPage />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
       },
       {
         path: "audit-log",

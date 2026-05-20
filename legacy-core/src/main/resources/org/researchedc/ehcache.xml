@@ -1,4 +1,0 @@
-<!-- DEPRECATED: Ehcache 2 configuration. 
-     Replaced by Caffeine cache (see CacheConfig.java and EhCacheWrapper.java).
-     This file is retained for reference only and is no longer loaded at runtime. -->
-<ehcache />

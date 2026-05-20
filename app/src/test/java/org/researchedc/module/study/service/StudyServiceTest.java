@@ -15,6 +15,7 @@ import org.researchedc.module.study.dto.StudyDetailDTO;
 import org.researchedc.module.study.dto.StudySummaryDTO;
 import org.researchedc.module.study.dto.UpdateStudyRequest;
 import org.researchedc.module.study.entity.StudyEntity;
+import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.study.repository.StudyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,12 +27,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class StudyServiceTest {
 
     @Mock private StudyRepository studyRepository;
+    @Mock private AuditService auditService;
 
     private StudyService service;
 
     @BeforeEach
     void setUp() {
-        service = new StudyService(studyRepository);
+        service = new StudyService(studyRepository, auditService);
     }
 
     @Test
@@ -121,7 +123,11 @@ class StudyServiceTest {
         request.setStatusId(1);
 
         when(studyRepository.save(any(StudyEntity.class)))
-                .thenAnswer(i -> i.getArgument(0));
+                .thenAnswer(i -> {
+                    StudyEntity e = i.getArgument(0);
+                    if (e.getStudyId() == null) e.setStudyId(1);
+                    return e;
+                });
 
         StudyDetailDTO result = service.createStudy(request, 42);
 

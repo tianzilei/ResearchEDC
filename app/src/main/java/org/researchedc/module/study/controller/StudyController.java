@@ -3,6 +3,7 @@ package org.researchedc.module.study.controller;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.researchedc.module.study.dto.CreateStudyRequest;
+import org.researchedc.module.study.dto.FeatureFlagsDTO;
 import org.researchedc.module.study.dto.StudyDetailDTO;
 import org.researchedc.module.study.dto.StudySummaryDTO;
 import org.researchedc.module.study.dto.UpdateStudyRequest;
@@ -85,6 +86,38 @@ public class StudyController {
         // TODO: extract userId from security context / JWT token
         Integer userId = 1;
         studyService.updateStudyStatus(id, statusId, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}/feature-flags")
+    public ResponseEntity<FeatureFlagsDTO> getFeatureFlags(@PathVariable Integer id) {
+        String json = studyService.getFeatureFlags(id);
+        com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Boolean>> typeRef =
+            new com.fasterxml.jackson.core.type.TypeReference<>() {};
+        try {
+            java.util.Map<String, Boolean> flags =
+                new com.fasterxml.jackson.databind.ObjectMapper().readValue(json, typeRef);
+            return ResponseEntity.ok(new FeatureFlagsDTO(flags));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new FeatureFlagsDTO(java.util.Collections.emptyMap()));
+        }
+    }
+
+    @PutMapping("/{id}/feature-flags")
+    public ResponseEntity<Void> updateFeatureFlags(
+            @PathVariable Integer id,
+            @RequestBody FeatureFlagsDTO featureFlags) {
+        Integer userId = 1;
+        String flagsJson = "{}";
+        if (featureFlags.getFlags() != null) {
+            try {
+                flagsJson = new com.fasterxml.jackson.databind.ObjectMapper()
+                    .writeValueAsString(featureFlags.getFlags());
+            } catch (Exception e) {
+                flagsJson = "{}";
+            }
+        }
+        studyService.updateFeatureFlags(id, flagsJson, userId);
         return ResponseEntity.ok().build();
     }
 }

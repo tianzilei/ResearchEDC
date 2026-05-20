@@ -181,6 +181,12 @@ public class StudyEntity {
     @Column
     private Integer version;
 
+    @Column(name = "feature_flags", columnDefinition = "JSONB")
+    private String featureFlags;
+
+    public String getFeatureFlags() { return featureFlags; }
+    public void setFeatureFlags(String v) { this.featureFlags = v; }
+
     public Integer getStudyId() { return studyId; }
     public void setStudyId(Integer studyId) { this.studyId = studyId; }
 

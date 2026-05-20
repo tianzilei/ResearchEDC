@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.26.xsd">
+
+    <changeSet id="2026-05-20-03" author="sisyphus">
+        <comment>
+            Phase G: Add feature_flags JSONB column to study table.
+            Enables study-level feature flags for incremental JSP→React migration.
+            Each study can independently opt into new UI features.
+        </comment>
+
+        <addColumn tableName="study">
+            <column name="feature_flags" type="JSONB" defaultValue="'{}'::jsonb">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="study" columnName="feature_flags"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

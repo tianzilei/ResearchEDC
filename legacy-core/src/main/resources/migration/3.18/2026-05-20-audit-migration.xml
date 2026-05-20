@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.26.xsd">
+
+    <changeSet id="2026-05-20-01" author="sisyphus" runInTransaction="true">
+        <comment>
+            Phase H: Migrate legacy audit_log_event data to new audit_log table.
+            Maps legacy audit_log_event_type IDs to AuditEventType enum values,
+            preserving all historical audit records in the new schema.
+        </comment>
+
+        <sql dbms="postgresql">
+            INSERT INTO audit_log (
+                study_id,
+                event_type,
+                entity_type,
+                entity_id,
+                entity_label,
+                old_value,
+                new_value,
+                performed_by,
+                performed_date,
+                details,
+                source_module
+            )
+            SELECT
+                NULL::INT AS study_id,
+                CASE ale.audit_log_event_type_id
+                    WHEN 1  THEN 'UPDATE'
+                    WHEN 2  THEN 'CREATE'
+                    WHEN 3  THEN 'UPDATE'
+                    WHEN 4  THEN 'UPDATE'
+                    WHEN 5  THEN 'CREATE'
+                    WHEN 6  THEN 'UPDATE'
+                    WHEN 7  THEN 'UPDATE'
+                    WHEN 8  THEN 'UPDATE'
+                    WHEN 9  THEN 'UPDATE'
+                    WHEN 10 THEN 'CREATE'
+                    WHEN 11 THEN 'UPDATE'
+                    WHEN 12 THEN 'UPDATE'
+                    WHEN 13 THEN 'DELETE'
+                    WHEN 14 THEN 'UPDATE'
+                    WHEN 15 THEN 'UPDATE'
+                    WHEN 16 THEN 'UPDATE'
+                    WHEN 17 THEN 'CREATE'
+                    WHEN 18 THEN 'UPDATE'
+                    WHEN 19 THEN 'UPDATE'
+                    WHEN 20 THEN 'UPDATE'
+                    WHEN 21 THEN 'UPDATE'
+                    WHEN 22 THEN 'LOCK'
+                    WHEN 23 THEN 'DELETE'
+                    WHEN 24 THEN 'UPDATE'
+                    WHEN 25 THEN 'UPDATE'
+                    WHEN 26 THEN 'LOCK'
+                    WHEN 27 THEN 'UPDATE'
+                    WHEN 28 THEN 'CREATE'
+                    WHEN 29 THEN 'UPDATE'
+                    WHEN 30 THEN 'CREATE'
+                    WHEN 31 THEN 'SYSTEM'
+                    WHEN 32 THEN 'UPDATE'
+                    WHEN 33 THEN 'CREATE'
+                    WHEN 40 THEN 'UPDATE'
+                    WHEN 41 THEN 'UPDATE'
+                    WHEN 42 THEN 'CREATE'
+                    WHEN 43 THEN 'UPDATE'
+                    ELSE 'SYSTEM'
+                END AS event_type,
+                ale.audit_table AS entity_type,
+                ale.entity_id::BIGINT AS entity_id,
+                ale.entity_name AS entity_label,
+                ale.old_value,
+                ale.new_value,
+                ale.user_id AS performed_by,
+                ale.audit_date AS performed_date,
+                ale.reason_for_change AS details,
+                'legacy' AS source_module
+            FROM audit_log_event ale
+            LEFT JOIN audit_log al_new
+                ON al_new.entity_type = ale.audit_table
+                AND al_new.entity_id = ale.entity_id::BIGINT
+                AND al_new.performed_date = ale.audit_date
+                AND al_new.performed_by = ale.user_id
+            WHERE al_new.id IS NULL
+            ORDER BY ale.audit_id;
+        </sql>
+
+        <rollback>
+            <sql dbms="postgresql">
+                DELETE FROM audit_log WHERE source_module = 'legacy';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2026-05-20-02" author="sisyphus">
+        <comment>Record migration completion count for observability</comment>
+        <sql dbms="postgresql">
+            INSERT INTO audit_log (
+                event_type, entity_type, entity_label,
+                performed_by, performed_date, details, source_module
+            )
+            SELECT
+                'SYSTEM' AS event_type,
+                'Migration' AS entity_type,
+                'audit_log_event → audit_log' AS entity_label,
+                NULL::INT AS performed_by,
+                NOW() AS performed_date,
+                (SELECT COUNT(*)::TEXT || ' records migrated from audit_log_event to audit_log'
+                 FROM audit_log WHERE source_module = 'legacy') AS details,
+                'system' AS source_module;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

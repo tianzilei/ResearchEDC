@@ -2,6 +2,7 @@
 
 **版本:** 3.18-SNAPSHOT  
 **最后更新:** 2026-05-20  
+**JSP 迁移进度:** 225/417 (54%) — 192 页通过 LegacyFrame 向后兼容  
 **许可证:** GNU LGPL
 
 ResearchEDC is an independently maintained research electronic data capture and clinical research data management platform derived from OpenClinica v3.x.
@@ -49,21 +50,21 @@ ResearchEDC is an independently maintained research electronic data capture and 
 ```
 ResearchEDC/
 ├── pom.xml             # Maven 父 POM
-├── frontend/           # React 19 SPA (pnpm workspace, 43 源文件)
+├── frontend/           # React 19 SPA (pnpm workspace, 28 pages)
 │   ├── src/
 │   │   ├── api/        # API 客户端 + 类型
-│   │   ├── components/ # 通用组件 (StudySwitcher, SkeletonCard, FormField)
-│   │   │   ├── form-engine/          # 表单引擎 (FormField, DataEntryForm, FormStatus)
+│   │   ├── components/ # 通用组件 + form-engine + DiscrepancyNotes
+│   │   │   ├── form-engine/          # 表单引擎 (DataEntryForm, FormField, FormStatus)
 │   │   │   └── questionnaire-builder/ # 问卷可视化 Builder
-│   │   ├── hooks/      # TanStack Query 封装 + 权限 hooks + useAutoSave
-│   │   ├── layouts/    # AppLayout (Precision Clinical 风格 — 顶栏 + 侧栏 + 内容区)
-│   │   ├── pages/      # 页面组件 (Dashboard, CRF, 随机化, 导出, 问卷)
-│   │   │   └── questionnaire/  # 问卷相关页面 (7 个页面)
-│   │   ├── providers/  # AuthProvider, AppProviders
-│   │   ├── router/     # React Router 配置
-│   │   ├── styles/     # 设计系统: 全局 CSS (dot-grid 纹理, glass panel, 动效), Ant Design 主题
-│   │   └── types/      # TypeScript 类型定义 (用户, 研究, 随机化)
-│   ├── vite.config.ts  # Vite 配置 (代理 / API 构建输出)
+│   │   ├── hooks/      # 15+ TanStack Query hooks (CRF, events, data capture, rules, etc.)
+│   │   ├── layouts/    # AppLayout (顶栏 + 侧栏 + 内容区)
+│   │   ├── pages/      # 28 页面组件 (admin/ crf/ datacapture/ events/ export/ questionnaire/
+│   │   │   │           #   randomization/ rules/ studies/ subject/)
+│   │   ├── providers/  # AuthProvider (Keycloak OIDC) + AppProviders
+│   │   ├── router/     # React Router 7 配置 (30+ routes)
+│   │   ├── styles/     # 设计系统: dot-grid 纹理, glass panel, 动效, Ant Design 主题
+│   │   └── types/      # 10+ TypeScript 类型文件 (study, crf, event, datacapture, rules, user)
+│   ├── vite.config.ts  # Vite 6 配置 (API 代理 / 构建输出)
 │   └── package.json
 ├── questionnaire-service/  # Python FastAPI 问卷微服务 (独立部署)
 │   ├── apps/api/            # FastAPI 后端 (models, services, scoring, routers, workers)
@@ -95,10 +96,10 @@ ResearchEDC/
 │   ├── logic/          # 规则引擎
 │   ├── job/            # Quartz 定时任务
 │   └── migration/      # Liquibase 迁移脚本
-├── web/                # Web UI & REST API (481 源文件, 419 JSP)
+├── web/                # Web UI & REST API (481 源文件, 417 JSP — ~225 replaced via React)
 │   ├── control/        # Servlet 控制器 (SecureController)
 │   ├── controller/     # Spring MVC REST 控制器
-│   └── webapp/         # JSP 页面、前端资源
+│   └── webapp/         # JSP 页面 (剩余 192 页通过 LegacyFrame iframe 访问)
 ├── ws/                 # SOAP Web 服务 (57 源文件)
 │   └── endpoint/       # Spring WS 端点
 ├── deploy/             # Docker Compose + Nginx 配置
@@ -113,12 +114,18 @@ ResearchEDC/
 ## 路由架构
 
 ```
-/legacy/*  → 旧 OpenClinica JSP (向后兼容)
-/app/*     → 新 React SPA (前端路由, index.html fallback)
-/q/*       → 问卷受试者填写页 (独立于 AppLayout)
-/api/*     → Spring Boot REST API
-/auth/*    → Keycloak / OIDC
-/actuator/* → Spring Boot Actuator
+/legacy/*       → 旧 OpenClinica JSP (192 页向后兼容)
+/app/*          → 新 React SPA (28 页面, 30+ 路由, index.html fallback)
+/app/studies/create  → 研究创建 8 步向导
+/app/studies/:id          → 研究详情/编辑/站点/事件定义/规则/分组
+/app/subjects/:id         → 受试者详情/访视/数据录入
+/app/admin/*              → 管理页面 (用户/审计/系统/CRF/任务)
+/app/data-export/*        → 导出中心 + 数据集
+/q/*            → 问卷受试者填写页 (独立于 AppLayout)
+/api/v1/*       → Spring Boot Modulith REST API (study/subject/event/datacapture/...)
+/api/legacy/*   → Legacy 网关桥接 API (notes/rules/crfs/datasets/groups)
+/auth/*         → Keycloak / OIDC
+/actuator/*     → Spring Boot Actuator
 ```
 
 ---
@@ -253,17 +260,48 @@ python -m pytest app/tests/ -v  # 31 tests
 | **身份模块** | `module/identity/` | user_account/study_user_role 桥接 |
 | 通知模块 | `module/notification/` | 事件驱动邮件 |
 | **问卷服务** | `questionnaire-service/apps/api/` | **FastAPI + SQLAlchemy + 评分引擎** |
-| 前台 SPA | `frontend/src/` | React 19 管理界面 (8 页面) |
+| 前台 SPA | `frontend/src/` | React 19 管理界面 (28 页面, ~225 JSP 已替换) |
 
 ### 前端页面一览
 
-#### Java 后台页面
+#### 核心页面
 | 页面 | 路由 | 功能 |
 |------|------|------|
 | Dashboard | `/app/dashboard` | 登录后首页, 研究概览统计 |
+| 研究列表 | `/app/studies` | 研究/站点浏览, 快速创建 |
+| 研究创建向导 | `/app/studies/create` | **8 步向导**: 协议→赞助→设计→条件→招募→机构→联系→确认 |
+| 研究详情 | `/app/studies/:id` | 协议信息/设计/机构概览, 快捷操作 |
+| 研究编辑 | `/app/studies/:id/edit` | 编辑 40+ 研究字段 |
+| 站点管理 | `/app/studies/:id/sites` | 站点创建/列表/状态管理 |
+| 事件定义 | `/app/studies/:id/event-definitions` | 研究事件类型 CRUD |
+| 受试者列表 | `/app/subjects` | 受试者检索/创建/入组 |
+| 受试者详情 | `/app/subjects/:id` | 档案/入组信息/访视列表 |
+| 访视列表 | `/app/subjects/:id/events` | 访视计划/完成/状态 |
+| **数据录入** | `/app/subjects/:id/events/:eid/crfs/:cid/entry` | **CRF 分段录入: 自动保存, 差异备注, 事件完成** |
+| 规则列表 | `/app/studies/:studyId/rules` | 规则集列表/详情 |
+| 受试者分组 | `/app/studies/:id/subject-groups` | 分组类/组管理和创建 |
+
+#### 管理页面
+| 页面 | 路由 | 功能 |
+|------|------|------|
+| 管理首页 | `/app/admin` | 管理导航 (用户/审计/系统/CRF/任务) |
+| 用户管理 | `/app/admin/users` | 用户列表/创建/角色分配 |
+| 审计日志 | `/app/admin/audit-log` | 全局审计日志, 模块筛选 |
+| 系统配置 | `/app/admin/system` | 健康检查/版本/组件状态 |
+| CRF 库 | `/app/admin/crf-library` | CRF 浏览/版本查看/创建/编辑 |
+| **任务管理** | `/app/admin/jobs` | **导出任务状态查看/刷新** |
+
+#### 数据功能页面
+| 页面 | 路由 | 功能 |
+|------|------|------|
+| 导出中心 | `/app/data-export` | 创建/跟踪/取消导出任务 |
+| **数据集** | `/app/data-export/datasets` | **数据集列表/创建** |
 | CRF 列表 | `/app/crfs` | CRF 库浏览 |
 | CRF 预览 | `/app/crfs/:versionId` | 版本详情 + 分段结构 |
-| 导出中心 | `/app/data-export` | 创建/跟踪/取消导出任务 |
+
+#### 随机化页面
+| 页面 | 路由 | 功能 |
+|------|------|------|
 | 随机化 | `/app/randomization` | Scheme Dashboard + 创建 |
 | Scheme 详情 | `/app/randomization/schemes/:id` | 详情/激活/关闭 |
 | 分配 | `/app/randomization/schemes/:id/allocate` | 受试者随机分配 |

@@ -2,6 +2,8 @@ package org.researchedc.module.event.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.researchedc.module.audit.enums.AuditEventType;
+import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.event.dto.EventCrfDTO;
 import org.researchedc.module.event.dto.EventDefinitionDTO;
 import org.researchedc.module.event.dto.ScheduleEventRequest;
@@ -23,13 +25,16 @@ public class EventService {
     private final StudyEventRepository studyEventRepository;
     private final StudyEventDefinitionRepository eventDefinitionRepository;
     private final EventCrfRepository eventCrfRepository;
+    private final AuditService auditService;
 
     public EventService(StudyEventRepository studyEventRepository,
                         StudyEventDefinitionRepository eventDefinitionRepository,
-                        EventCrfRepository eventCrfRepository) {
+                        EventCrfRepository eventCrfRepository,
+                        AuditService auditService) {
         this.studyEventRepository = studyEventRepository;
         this.eventDefinitionRepository = eventDefinitionRepository;
         this.eventCrfRepository = eventCrfRepository;
+        this.auditService = auditService;
     }
 
     public List<EventDefinitionDTO> listEventDefinitions(Integer studyId) {
@@ -82,6 +87,11 @@ public class EventService {
 
         StudyEventEntity saved = studyEventRepository.save(entity);
 
+        auditService.recordAudit(
+                null, AuditEventType.CREATE, "StudyEvent",
+                saved.getStudyEventId().longValue(), "Event #" + saved.getStudyEventId(),
+                null, null, ownerId, "Scheduled for subject " + request.getStudySubjectId(), "event");
+
         return toEventDto(saved);
     }
 
@@ -103,6 +113,11 @@ public class EventService {
 
         StudyEventEntity saved = studyEventRepository.save(entity);
 
+        auditService.recordAudit(
+                null, AuditEventType.UPDATE, "StudyEvent",
+                saved.getStudyEventId().longValue(), "Event #" + saved.getStudyEventId(),
+                null, null, updaterId, "Event updated", "event");
+
         return toEventDto(saved);
     }
 
@@ -118,6 +133,11 @@ public class EventService {
         entity.setUpdateId(userId);
 
         studyEventRepository.save(entity);
+
+        auditService.recordAudit(
+                null, AuditEventType.UPDATE, "StudyEvent",
+                entity.getStudyEventId().longValue(), "Event #" + entity.getStudyEventId(),
+                null, null, userId, "Event completed (status=7)", "event");
     }
 
     private StudyEventDTO toEventDto(StudyEventEntity e) {

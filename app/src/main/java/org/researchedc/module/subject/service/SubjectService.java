@@ -2,9 +2,9 @@ package org.researchedc.module.subject.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.researchedc.module.audit.enums.AuditEventType;
+import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.event.dto.ScheduleEventRequest;
-import org.researchedc.module.event.repository.StudyEventDefinitionRepository;
-import org.researchedc.module.event.repository.StudyEventRepository;
 import org.researchedc.module.event.service.EventService;
 import org.researchedc.module.subject.dto.CreateSubjectRequest;
 import org.researchedc.module.subject.dto.EnrollSubjectRequest;
@@ -24,13 +24,16 @@ public class SubjectService {
     private final SubjectRepository subjectRepository;
     private final StudySubjectRepository studySubjectRepository;
     private final EventService eventService;
+    private final AuditService auditService;
 
     public SubjectService(SubjectRepository subjectRepository,
                           StudySubjectRepository studySubjectRepository,
-                          EventService eventService) {
+                          EventService eventService,
+                          AuditService auditService) {
         this.subjectRepository = subjectRepository;
         this.studySubjectRepository = studySubjectRepository;
         this.eventService = eventService;
+        this.auditService = auditService;
     }
 
     public List<SubjectDTO> searchSubjects(String query) {
@@ -76,6 +79,11 @@ public class SubjectService {
 
         SubjectEntity saved = subjectRepository.save(entity);
 
+        auditService.recordAudit(
+                null, AuditEventType.CREATE, "Subject",
+                saved.getSubjectId().longValue(), saved.getUniqueIdentifier(),
+                null, null, ownerId, null, "subject");
+
         return toSubjectDto(saved);
     }
 
@@ -103,6 +111,11 @@ public class SubjectService {
         entity.setOwnerId(ownerId);
 
         StudySubjectEntity saved = studySubjectRepository.save(entity);
+
+        auditService.recordAudit(
+                request.getStudyId(), AuditEventType.CREATE, "StudySubject",
+                saved.getStudySubjectId().longValue(), saved.getLabel(),
+                null, null, ownerId, "Enrolled in study " + request.getStudyId(), "subject");
 
         // Optionally create a study event after enrollment
         if (request.getEventDefinitionId() != null && request.getEventDefinitionId() > 0) {

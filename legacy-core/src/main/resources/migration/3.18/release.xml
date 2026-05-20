@@ -6,4 +6,6 @@
     <include file="migration/3.18/2026-05-17-randomization-tables.xml"/>
     <include file="migration/3.18/2026-05-17-export-tables.xml"/>
     <include file="migration/3.18/2026-05-18-audit-tables.xml"/>
+    <include file="migration/3.18/2026-05-20-audit-migration.xml"/>
+    <include file="migration/3.18/2026-05-20-feature-flags.xml"/>
 </databaseChangeLog>

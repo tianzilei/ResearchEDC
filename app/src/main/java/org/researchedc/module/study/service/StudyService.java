@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.researchedc.module.audit.enums.AuditEventType;
+import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.study.dto.CreateStudyRequest;
 import org.researchedc.module.study.dto.StudyDetailDTO;
 import org.researchedc.module.study.dto.StudySummaryDTO;
@@ -18,9 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudyService {
 
     private final StudyRepository studyRepository;
+    private final AuditService auditService;
 
-    public StudyService(StudyRepository studyRepository) {
+    public StudyService(StudyRepository studyRepository, AuditService auditService) {
         this.studyRepository = studyRepository;
+        this.auditService = auditService;
     }
 
     public List<StudySummaryDTO> listStudies() {
@@ -73,6 +77,11 @@ public class StudyService {
 
         StudyEntity saved = studyRepository.save(entity);
 
+        auditService.recordAudit(
+                saved.getStudyId(), AuditEventType.CREATE, "Study",
+                saved.getStudyId().longValue(), saved.getName(),
+                null, null, ownerId, null, "study");
+
         return toDetail(saved);
     }
 
@@ -88,6 +97,11 @@ public class StudyService {
 
         StudyEntity saved = studyRepository.save(entity);
 
+        auditService.recordAudit(
+                saved.getStudyId(), AuditEventType.UPDATE, "Study",
+                saved.getStudyId().longValue(), saved.getName(),
+                null, null, updaterId, null, "study");
+
         return toDetail(saved);
     }
 
@@ -96,7 +110,13 @@ public class StudyService {
         StudyEntity entity = studyRepository.findById(studyId)
             .orElseThrow(() -> new NoSuchElementException(
                 "Study not found: " + studyId));
+        String name = entity.getName();
         studyRepository.delete(entity);
+
+        auditService.recordAudit(
+                entity.getStudyId(), AuditEventType.DELETE, "Study",
+                studyId.longValue(), name,
+                null, null, userId, null, "study");
     }
 
     @Transactional
@@ -104,10 +124,17 @@ public class StudyService {
         StudyEntity entity = studyRepository.findById(studyId)
             .orElseThrow(() -> new NoSuchElementException(
                 "Study not found: " + studyId));
+        Integer oldStatus = entity.getStatusId();
         entity.setStatusId(statusId);
         entity.setDateUpdated(LocalDateTime.now());
         entity.setUpdateId(userId);
         studyRepository.save(entity);
+
+        auditService.recordAudit(
+                entity.getStudyId(), AuditEventType.UPDATE, "Study",
+                studyId.longValue(), entity.getName(),
+                String.valueOf(oldStatus), String.valueOf(statusId),
+                userId, "Status changed", "study");
     }
 
     private void applyCreateRequest(StudyEntity entity, CreateStudyRequest r) {
@@ -236,5 +263,24 @@ public class StudyService {
         dto.setAllocation(e.getAllocation());
         dto.setMasking(e.getMasking());
         return dto;
+    }
+
+    public String getFeatureFlags(Integer studyId) {
+        StudyEntity entity = studyRepository.findById(studyId)
+            .orElseThrow(() -> new NoSuchElementException(
+                "Study not found: " + studyId));
+        String flags = entity.getFeatureFlags();
+        return flags != null ? flags : "{}";
+    }
+
+    @Transactional
+    public void updateFeatureFlags(Integer studyId, String flagsJson, Integer userId) {
+        StudyEntity entity = studyRepository.findById(studyId)
+            .orElseThrow(() -> new NoSuchElementException(
+                "Study not found: " + studyId));
+        entity.setFeatureFlags(flagsJson);
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(userId);
+        studyRepository.save(entity);
     }
 }
