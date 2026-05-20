@@ -1,10 +1,10 @@
 <%@page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="/WEB-INF/jsp/taglibs.jsp" %>
 
-<%@page import="org.akaza.openclinica.web.SQLInitServlet"%>
+<%@page import="org.researchedc.web.SQLInitServlet"%>
 <%@page import="org.springframework.web.util.HtmlUtils" %>
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/> 
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/> 
 
 <!--script language="JavaScript">
 function reportBug(versionNumber) {

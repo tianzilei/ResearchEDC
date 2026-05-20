@@ -29,7 +29,7 @@
          <property name="xsd" value="/WEB-INF/schemas/subject.xsd" />
      </bean>
     
-    <bean id="createSubjectEndpoint" class="org.akaza.openclinica.ws.CreateSubjectEndpoint">
+    <bean id="createSubjectEndpoint" class="org.researchedc.ws.CreateSubjectEndpoint">
     <constructor-arg ref="subjectService"/>
     </bean>
 

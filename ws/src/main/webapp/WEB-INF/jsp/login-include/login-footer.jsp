@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/taglibs.jsp" %>
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.licensing" var="licensing"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.licensing" var="licensing"/>
 
 <script type="text/javascript" src="<c:url value='/includes/wz_tooltip/wz_tooltip.js'/>"></script>
 </td>

@@ -1,8 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.format" var="resformat"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.format" var="resformat"/>
 <c:set var="dteFormat"><fmt:message key="date_format_string" bundle="${resformat}"/></c:set>
 
 <jsp:include page="../include/managestudy-header.jsp"/>
@@ -40,9 +40,9 @@
   </tr>
 <jsp:include page="../include/sideInfo.jsp"/>
 
-<jsp:useBean scope="request" id="user" class="org.akaza.openclinica.bean.login.UserAccountBean"/>
-<jsp:useBean scope="request" id="uRole" class="org.akaza.openclinica.bean.login.StudyUserRoleBean"/>
-<jsp:useBean scope="request" id="uStudy" class="org.akaza.openclinica.bean.managestudy.StudyBean"/>
+<jsp:useBean scope="request" id="user" class="org.researchedc.bean.login.UserAccountBean"/>
+<jsp:useBean scope="request" id="uRole" class="org.researchedc.bean.login.StudyUserRoleBean"/>
+<jsp:useBean scope="request" id="uStudy" class="org.researchedc.bean.managestudy.StudyBean"/>
 
 <h1><span class="title_manage"><fmt:message key="view_user_account" bundle="${resword}"/></span></h1>
 <div style="width: 600px">

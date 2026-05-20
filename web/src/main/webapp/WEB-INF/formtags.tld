@@ -11,7 +11,7 @@
 
  <tag>
    <name>tabletag</name>
-   <tag-class>org.akaza.openclinica.view.tags.TableTag</tag-class>
+   <tag-class>org.researchedc.view.tags.TableTag</tag-class>
    <body-content>empty</body-content>
 
     <!--Is the context viewdataentry, initialdataentry, or doubledataentry? -->
@@ -26,7 +26,7 @@
 
    <tag>
    <name>print_tabletag</name>
-   <tag-class>org.akaza.openclinica.view.tags.PrintTableTag</tag-class>
+   <tag-class>org.researchedc.view.tags.PrintTableTag</tag-class>
    <body-content>scriptless</body-content>
 
       <!--Does the printable form involve data? -->

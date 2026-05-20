@@ -2,9 +2,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.notes" var="restext"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.workflow" var="resworkflow"/>
+<fmt:setBundle basename="org.researchedc.i18n.notes" var="restext"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.workflow" var="resworkflow"/>
 
 <jsp:include page="../include/admin-header.jsp"/>
 
@@ -57,9 +57,9 @@
   </tr>
 <jsp:include page="../include/sideInfo.jsp"/>
 
-<jsp:useBean scope='session' id='userBean' class='org.akaza.openclinica.bean.login.UserAccountBean'/>
-<jsp:useBean scope='session' id='userRole' class='org.akaza.openclinica.bean.login.StudyUserRoleBean' />
-<jsp:useBean scope='request' id='table' class='org.akaza.openclinica.web.bean.EntityBeanTable'/>
+<jsp:useBean scope='session' id='userBean' class='org.researchedc.bean.login.UserAccountBean'/>
+<jsp:useBean scope='session' id='userRole' class='org.researchedc.bean.login.StudyUserRoleBean' />
+<jsp:useBean scope='request' id='table' class='org.researchedc.web.bean.EntityBeanTable'/>
 <h1><span class="title_manage"><fmt:message key="administer_subjects" bundle="${resworkflow}"/> <a href="javascript:openDocWindow('https://docs.openclinica.com/3.1/administer-subjects')"><img src="images/bt_Help_Manage.gif" border="0" alt="<fmt:message key="help" bundle="${resword}"/>" title="<fmt:message key="help" bundle="${resword}"/>"></a></span></h1>
 
 <form  action="${pageContext.request.contextPath}/ListSubject">

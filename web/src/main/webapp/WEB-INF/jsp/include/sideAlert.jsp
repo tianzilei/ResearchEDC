@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
 
 <table border="0" cellpadding="0" cellspacing="0" <%--style="position: relative; top: -21px;"--%>>
  

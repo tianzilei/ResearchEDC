@@ -1,16 +1,16 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.format" var="resformat"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.format" var="resformat"/>
 <c:set var="dteFormat"><fmt:message key="date_format_string" bundle="${resformat}"/></c:set>
 
 <html>
 <head>
 <link rel="stylesheet" href="includes/styles.css" type="text/css">
 </head>
-<jsp:useBean scope="request" id="section" class="org.akaza.openclinica.bean.submit.DisplaySectionBean" />
-<jsp:useBean scope="session" id="studyEvent" class="org.akaza.openclinica.bean.managestudy.StudyEventBean" />
+<jsp:useBean scope="request" id="section" class="org.researchedc.bean.submit.DisplaySectionBean" />
+<jsp:useBean scope="session" id="studyEvent" class="org.researchedc.bean.managestudy.StudyEventBean" />
 
 <body>
 <h1><span class="title_manage">

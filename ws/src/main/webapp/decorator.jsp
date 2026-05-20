@@ -9,7 +9,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="gwt:property" content="locale=${pageContext.request.locale}">
     <title><decorator:title default="OpenClinica" /></title>
-    <script type="text/javascript" language="javascript" src="../gwt/GwtMenu/org.akaza.openclinica.gwt.GwtMenu.nocache.js"></script>
+    <script type="text/javascript" language="javascript" src="../gwt/GwtMenu/org.researchedc.gwt.GwtMenu.nocache.js"></script>
     <script type="text/javascript" language="javascript" src="../includes/prototype.js"></script>
     <script type="text/javascript" language="javascript" src="../includes/global_functions_javascript.js"></script>
     <script type="text/javascript" language="javascript" src="../includes/Tabs.js"></script>
@@ -27,7 +27,7 @@
 </head>
 <body>
 <div id="headerDiv">
-    <fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
+    <fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
     <div id="logoDiv"><img src="../images/Logo.gif" alt="Akaza logo"/></div>
     <!-- the sub-menu, or alternative menu, displays if JavaScript is disabled-->
     <div id="menuContainer">

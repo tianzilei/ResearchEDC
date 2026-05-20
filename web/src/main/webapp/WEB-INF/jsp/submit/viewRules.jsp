@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
 
 
 <c:choose>
@@ -45,8 +45,8 @@
   </tr>
 <jsp:include page="../include/sideInfo.jsp"/>
 
-<jsp:useBean scope='session' id='userBean' class='org.akaza.openclinica.bean.login.UserAccountBean'/>
-<jsp:useBean scope='request' id='ruleSet' class='org.akaza.openclinica.domain.rule.RuleSetBean'/>
+<jsp:useBean scope='session' id='userBean' class='org.researchedc.bean.login.UserAccountBean'/>
+<jsp:useBean scope='request' id='ruleSet' class='org.researchedc.domain.rule.RuleSetBean'/>
 
 <h1><c:choose>
 <c:when test="${userBean.sysAdmin && module=='admin'}">

@@ -40,10 +40,10 @@ padding-top:4px;
 width:160px;
 }
 </style>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/> 
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/> 
 
 
-<%--<jsp:useBean scope="session" id="panel" class="org.akaza.openclinica.view.StudyInfoPanel" />--%>
+<%--<jsp:useBean scope="session" id="panel" class="org.researchedc.view.StudyInfoPanel" />--%>
 
 
 <!-- Sidebar Contents after alert-->

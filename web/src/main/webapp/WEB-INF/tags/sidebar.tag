@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="com.akazaresearch.viewtags" prefix="view" %>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
 
 <%-- request-scoped boolean values indicating whether to display the various internal DIVs,
 and whether they should be open or closed --%>

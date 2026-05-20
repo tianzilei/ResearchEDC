@@ -140,7 +140,7 @@
         <constructor-arg ref="jaxb2Marshaller"/>
     </bean>
 
-    <bean id="dateAdapter" class="org.akaza.openclinica.ws.DateAdapter" />
+    <bean id="dateAdapter" class="org.researchedc.ws.DateAdapter" />
 
     <bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="contextPaths">
@@ -158,7 +158,7 @@
 
     <!--  Endpoints -->
 
-    <bean id="dataEndpoint" class="org.akaza.openclinica.ws.DataEndpoint">
+    <bean id="dataEndpoint" class="org.researchedc.ws.DataEndpoint">
         <constructor-arg ref="dataSource"/>
         <constructor-arg ref="messageSource"/>
         <constructor-arg ref="coreResources"/>
@@ -166,26 +166,26 @@
         <property name="transactionTemplate" ref="sharedTransactionTemplate"/>
     </bean>
 
-     <bean id="studyEventDefinitionEndpoint" class="org.akaza.openclinica.ws.StudyEventDefinitionEndpoint">
+     <bean id="studyEventDefinitionEndpoint" class="org.researchedc.ws.StudyEventDefinitionEndpoint">
         <constructor-arg ref="dataSource"/>
         <constructor-arg ref="messageSource"/>
     </bean>
 
-    <bean id="studyEndpoint" class="org.akaza.openclinica.ws.StudyEndpoint">
+    <bean id="studyEndpoint" class="org.researchedc.ws.StudyEndpoint">
         <constructor-arg ref="dataSource"/>
         <constructor-arg ref="messageSource"/>
         <constructor-arg ref="coreResources"/>
         <constructor-arg ref="ruleSetRuleDao"/>
     </bean>
 
-    <bean id="studySubjectEndpoint" class="org.akaza.openclinica.ws.StudySubjectEndpoint">
+    <bean id="studySubjectEndpoint" class="org.researchedc.ws.StudySubjectEndpoint">
         <constructor-arg ref="subjectService"/>
         <constructor-arg ref="dataSource"/>
         <constructor-arg ref="messageSource"/>
         <property name="dateFormat" value="yyyy-MM-dd"/>
     </bean>
 
-    <bean id="eventEndpoint" class="org.akaza.openclinica.ws.EventEndpoint">
+    <bean id="eventEndpoint" class="org.researchedc.ws.EventEndpoint">
         <constructor-arg ref="eventService"/>
         <constructor-arg ref="dataSource"/>
         <constructor-arg ref="messageSource"/>
@@ -193,7 +193,7 @@
         <property name="transactionTemplate" ref="sharedTransactionTemplate"/>
     </bean>
 
-    <bean id="crfEndpoint" class="org.akaza.openclinica.ws.CrfEndpoint">
+    <bean id="crfEndpoint" class="org.researchedc.ws.CrfEndpoint">
         <constructor-arg ref="subjectService"/>
         <constructor-arg ref="dataSource"/>
         <property name="dateFormat" value="yyyy-MM-dd"/>
@@ -202,7 +202,7 @@
 
     <!-- Security -->
 
-    <bean id="userPermissionInterceptor" class="org.akaza.openclinica.ws.UserPermissionInterceptor">
+    <bean id="userPermissionInterceptor" class="org.researchedc.ws.UserPermissionInterceptor">
         <constructor-arg ref="dataSource"/>
     </bean>
 
@@ -221,7 +221,7 @@
     </bean>
 
     <bean id="springSecurityHandler"
-      class="org.akaza.openclinica.ws.SpringPlainTextPasswordValidationCallbackHandler">
+      class="org.researchedc.ws.SpringPlainTextPasswordValidationCallbackHandler">
     <property name="authenticationManager" ref="authenticationManager"/>
     </bean>
 </beans>

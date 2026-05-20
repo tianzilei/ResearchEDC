@@ -2,11 +2,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/> 
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/> 
 
 
 <%--
-<jsp:useBean scope="session" id="panel" class="org.akaza.openclinica.view.StudyInfoPanel" />
+<jsp:useBean scope="session" id="panel" class="org.researchedc.view.StudyInfoPanel" />
 --%>
 
 

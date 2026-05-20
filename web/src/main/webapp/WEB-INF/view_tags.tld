@@ -11,7 +11,7 @@
 
     <tag>
         <name>alertTag</name>
-        <tag-class>org.akaza.openclinica.view.tags.AlertTag</tag-class>
+        <tag-class>org.researchedc.view.tags.AlertTag</tag-class>
         <body-content>empty</body-content>
     </tag>
 

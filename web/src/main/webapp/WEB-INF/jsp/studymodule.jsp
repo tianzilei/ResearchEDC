@@ -3,9 +3,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.page_messages" var="pagemessage"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.notes" var="restext"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.page_messages" var="pagemessage"/>
+<fmt:setBundle basename="org.researchedc.i18n.notes" var="restext"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
 <jsp:include page="include/managestudy_top_pages.jsp"/>
 <script type="text/JavaScript" language="JavaScript" src="../includes/jmesa/jquery.min.js"></script>
 <script type="text/javascript" language="JavaScript" src="../includes/jmesa/jquery.blockUI.js"></script>

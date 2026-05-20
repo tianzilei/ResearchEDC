@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="reswords"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="reswords"/>
 
 <tr id="sidebar_IconKey_open">
 		<td class="sidebar_tab">

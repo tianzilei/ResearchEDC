@@ -73,30 +73,30 @@
     </bean>
 
     <bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-        <property name="contextPath" value="org.akaza.openclinica.ws.generated"/>
+        <property name="contextPath" value="org.researchedc.ws.generated"/>
         <property name="mtomEnabled" value="true"/>
     </bean>
     
     <!--  Endpoints 
-    <bean id="subjectEndpoint" class="org.akaza.openclinica.ws.SubjectEndpoint">
+    <bean id="subjectEndpoint" class="org.researchedc.ws.SubjectEndpoint">
         <constructor-arg ref="subjectService"/>
         <constructor-arg ref="dataSource"/>
         <property name="dateFormat" value="yyyy-MM-dd"/>
     </bean>-->  
     
-    <bean id="studySubjectEndpoint" class="org.akaza.openclinica.ws.StudySubjectEndpoint">
+    <bean id="studySubjectEndpoint" class="org.researchedc.ws.StudySubjectEndpoint">
         <constructor-arg ref="subjectService"/>
         <constructor-arg ref="dataSource"/>
         <property name="dateFormat" value="yyyy-MM-dd"/>
     </bean>
     
-    <bean id="eventEndpoint" class="org.akaza.openclinica.ws.EventEndpoint">
+    <bean id="eventEndpoint" class="org.researchedc.ws.EventEndpoint">
         <constructor-arg ref="eventService"/>
         <constructor-arg ref="dataSource"/>
         <property name="dateFormat" value="yyyy-MM-dd"/>
     </bean>
     
-    <bean id="crfEndpoint" class="org.akaza.openclinica.ws.CrfEndpoint">
+    <bean id="crfEndpoint" class="org.researchedc.ws.CrfEndpoint">
         <constructor-arg ref="subjectService"/>
         <constructor-arg ref="dataSource"/>
         <property name="dateFormat" value="yyyy-MM-dd"/>

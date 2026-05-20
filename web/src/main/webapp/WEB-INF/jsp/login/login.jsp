@@ -3,7 +3,7 @@
 <%String action = request.getParameter("action");%>
 <c:set var="action" value="<%=action%>" scope="request"></c:set>
 <!-- For Mantis Issue 6099 -->
-<jsp:useBean scope='session' id='userBean' class='org.akaza.openclinica.bean.login.UserAccountBean'/>
+<jsp:useBean scope='session' id='userBean' class='org.researchedc.bean.login.UserAccountBean'/>
     <c:if test="${userBean.name!='' && empty action}">	
     <c:redirect url="/MainMenu"/>
     </c:if>
@@ -30,10 +30,10 @@
 <script type="text/JavaScript" language="JavaScript" src="<c:url value='/includes/ua-parser.min.js'/>"></script>
 </head>
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.notes" var="restext"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.workflow" var="resworkflow"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.format" var="resformat"/>
+<fmt:setBundle basename="org.researchedc.i18n.notes" var="restext"/>
+<fmt:setBundle basename="org.researchedc.i18n.workflow" var="resworkflow"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.format" var="resformat"/>
 
 <%--<c:choose>--%>
     <%--<c:when test="${resword.locale == null}"><fmt:setLocale value="en" scope="session"/></c:when>--%>

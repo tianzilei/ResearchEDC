@@ -11,7 +11,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<jsp:useBean scope="session" id="panel" class="org.akaza.openclinica.view.StudyInfoPanel" />
+<jsp:useBean scope="session" id="panel" class="org.researchedc.view.StudyInfoPanel" />
 
 <%
 	String url = request.getParameter("panelURL");

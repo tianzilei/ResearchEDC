@@ -5,7 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="com.akazaresearch.tags" prefix="aka_frm" %>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
 <html>
 <head><title>Print CRF</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -16,9 +16,9 @@
   <link rel="stylesheet" href="includes/styles.css" type="text/css">
   <link rel="stylesheet" href="includes/print_crf.css" type="text/css">
 </head>
-<jsp:useBean scope="request" id="crfVersionBean" class="org.akaza.openclinica.bean.submit.CRFVersionBean" />
-<jsp:useBean scope="request" id="crfBean" class="org.akaza.openclinica.bean.admin.CRFBean" />
-<jsp:useBean scope="session" id="studyEvent" class="org.akaza.openclinica.bean.managestudy.StudyEventBean" />
+<jsp:useBean scope="request" id="crfVersionBean" class="org.researchedc.bean.submit.CRFVersionBean" />
+<jsp:useBean scope="request" id="crfBean" class="org.researchedc.bean.admin.CRFBean" />
+<jsp:useBean scope="session" id="studyEvent" class="org.researchedc.bean.managestudy.StudyEventBean" />
 <%-- dataInvolved is a request attribute set in PrintCRFServlet and PrintDataEntryServlet --%>
 <c:set var="dataIsInvolved" value="${dataInvolved}" />
 <body>

@@ -1,13 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 
-<%@ page import="org.akaza.openclinica.bean.core.DataEntryStage"%>
-<%@ page import="org.akaza.openclinica.bean.core.SubjectEventStatus"%>
+<%@ page import="org.researchedc.bean.core.DataEntryStage"%>
+<%@ page import="org.researchedc.bean.core.SubjectEventStatus"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.terms" var="resterm"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.format" var="resformat"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.terms" var="resterm"/>
+<fmt:setBundle basename="org.researchedc.i18n.format" var="resformat"/>
 <c:set var="dteFormat"><fmt:message key="date_format_string" bundle="${resformat}"/></c:set>
 
 <c:set var="eblRowCount" value="${param.eblRowCount}" />
@@ -15,7 +15,7 @@
 <c:set var="eventCRFNum" value="${param.eventDefCRFNum}" />
 <c:set var="resolutionStatusFromServlet" value="${param.resolutionStatus}" />
 
-<jsp:useBean scope="request" id="currRow" class="org.akaza.openclinica.web.bean.DisplayStudySubjectRow" />
+<jsp:useBean scope="request" id="currRow" class="org.researchedc.web.bean.DisplayStudySubjectRow" />
 <c:set var="eventCount" value="0"/>
 <c:forEach var="event" items="${currRow.bean.studyEvents}">
     <c:set var="eventCount" value="${eventCount+1}"/>

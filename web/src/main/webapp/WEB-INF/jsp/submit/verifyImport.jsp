@@ -3,10 +3,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.notes" var="restext"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.workflow" var="resworkflow"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.terms" var="resterm"/>
+<fmt:setBundle basename="org.researchedc.i18n.notes" var="restext"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.workflow" var="resworkflow"/>
+<fmt:setBundle basename="org.researchedc.i18n.terms" var="resterm"/>
 
 <script type="text/javascript" language="JavaScript">
   <!--
@@ -57,13 +57,13 @@
 <jsp:include page="../include/sideInfo.jsp"/>
 
 
-<jsp:useBean scope='session' id='version' class='org.akaza.openclinica.bean.submit.CRFVersionBean'/>
-<jsp:useBean scope='session' id='userBean' class='org.akaza.openclinica.bean.login.UserAccountBean'/>
+<jsp:useBean scope='session' id='version' class='org.researchedc.bean.submit.CRFVersionBean'/>
+<jsp:useBean scope='session' id='userBean' class='org.researchedc.bean.login.UserAccountBean'/>
 <jsp:useBean scope='session' id='importedData' class='java.util.ArrayList'/>
 <jsp:useBean scope='session' id='subjectData' class='java.util.ArrayList'/>
 <jsp:useBean scope='session' id='validationErrors' class='java.util.HashMap'/>
 <jsp:useBean scope='session' id='hardValidationErrors' class='java.util.HashMap'/>
-<jsp:useBean scope='session' id='summaryStats' class='org.akaza.openclinica.bean.submit.crfdata.SummaryStatsBean'/>
+<jsp:useBean scope='session' id='summaryStats' class='org.researchedc.bean.submit.crfdata.SummaryStatsBean'/>
 <jsp:useBean scope='session' id='crfName' class='java.lang.String'/>
 
 

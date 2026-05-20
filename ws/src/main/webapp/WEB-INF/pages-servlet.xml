@@ -27,7 +27,7 @@
 
     
     <!-- automatic Controller scanning -->
-    <context:component-scan base-package="org.akaza.openclinica.controller"/>
+    <context:component-scan base-package="org.researchedc.controller"/>
 
     <!-- This declaration allows the use of method-level annotations that map URLs to methods in
     Controllers
@@ -35,14 +35,14 @@
      <!-- Our own implementation of the HandlerInterceptor interface -->
     
 
-    <bean class="org.akaza.openclinica.controller.SidebarInit" name="sidebarInit">
+    <bean class="org.researchedc.controller.SidebarInit" name="sidebarInit">
         <property name="alertsBoxSetup" value="OPENALERTS" />
         <property name="enableIconsBoxSetup" value="DISABLEICONS"/>
         <property name="infoBoxSetup" value="OPENINFO" />
         <property name="instructionsBoxSetup" value="OPENINSTRUCTIONS"/>
     </bean>
 
-    <bean name="setUpUserInterceptor" class="org.akaza.openclinica.controller.helper.SetUpUserInterceptor">
+    <bean name="setUpUserInterceptor" class="org.researchedc.controller.helper.SetUpUserInterceptor">
           <property name="dataSource" ref="dataSource"/>
     </bean>
 

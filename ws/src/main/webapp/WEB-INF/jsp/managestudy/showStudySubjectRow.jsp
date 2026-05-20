@@ -2,15 +2,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword"/>
-<fmt:setBundle basename="org.akaza.openclinica.i18n.format" var="resformat"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword"/>
+<fmt:setBundle basename="org.researchedc.i18n.format" var="resformat"/>
 <c:set var="dteFormat"><fmt:message key="date_format_string" bundle="${resformat}"/></c:set>
 
 <c:set var="eblRowCount" value="${param.eblRowCount}" />
 <!-- row number: <c:out value="${eblRowCount}"/> -->
 
 <jsp:useBean scope="request" id="currRow" class=
-        "org.akaza.openclinica.web.bean.DisplayStudySubjectRow" />
+        "org.researchedc.web.bean.DisplayStudySubjectRow" />
 <c:set var="groups" value="5"/>
 <c:forEach var="group" items="${currRow.bean.studyGroups}">
     <c:set var="groups" value="${groups+1}"/>

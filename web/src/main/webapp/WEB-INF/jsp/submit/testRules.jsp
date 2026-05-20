@@ -6,8 +6,8 @@
 
 
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword" />
-<fmt:setBundle basename="org.akaza.openclinica.i18n.format" var="resformat"/>
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword" />
+<fmt:setBundle basename="org.researchedc.i18n.format" var="resformat"/>
 
 
 <c:choose>
@@ -79,9 +79,9 @@
 </script>
 
 <jsp:useBean scope='session' id='userBean'
-    class='org.akaza.openclinica.bean.login.UserAccountBean' />
+    class='org.researchedc.bean.login.UserAccountBean' />
 <jsp:useBean scope='request' id='ruleSet'
-    class='org.akaza.openclinica.domain.rule.RuleSetBean' />
+    class='org.researchedc.domain.rule.RuleSetBean' />
 
 
 <jsp:useBean scope="request" id="presetValues" class="java.util.HashMap" />
@@ -264,7 +264,7 @@
             <c:set var="dibKey" value="${mapEntry.key}-dib" />
             <c:choose>
                <c:when test= "${dibKey}">
-                 <c:set var="dibItemDataType" value ='<%= ((org.akaza.openclinica.bean.submit.DisplayItemBean)request.getAttribute((String)pageContext.getAttribute("dibKey"))).getItem().getItemDataTypeId() %>' />
+                 <c:set var="dibItemDataType" value ='<%= ((org.researchedc.bean.submit.DisplayItemBean)request.getAttribute((String)pageContext.getAttribute("dibKey"))).getItem().getItemDataTypeId() %>' />
                </c:when>
             <c:otherwise>
             <c:set var="dibItemDataType" value="${studyEventProperty}"/>

@@ -12,7 +12,7 @@
 
     <tag>
         <name>jsEscape</name>
-        <tag-class>org.akaza.openclinica.view.tags.JavaScriptEscapeTag</tag-class>
+        <tag-class>org.researchedc.view.tags.JavaScriptEscapeTag</tag-class>
         <body-content>empty</body-content>
 
         <attribute>

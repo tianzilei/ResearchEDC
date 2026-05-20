@@ -17,7 +17,7 @@
 
 
     <!--
-    <bean id="accessConfirmationController" class="org.akaza.openclinica.controller.AccessConfirmationController">
+    <bean id="accessConfirmationController" class="org.researchedc.controller.AccessConfirmationController">
         <property name="clientDetailsService" ref="clientDetails"/>
     </bean> 
     
@@ -39,25 +39,25 @@
     <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 
     <!-- Scans the classpath of this application for @Components to deploy as beans -->
-    <context:component-scan base-package="org.akaza.openclinica.controller" />
+    <context:component-scan base-package="org.researchedc.controller" />
 
-    <bean class="org.akaza.openclinica.controller.SidebarInit" name="sidebarInit">
+    <bean class="org.researchedc.controller.SidebarInit" name="sidebarInit">
         <property name="alertsBoxSetup" value="OPENALERTS" />
         <property name="enableIconsBoxSetup" value="DISABLEICONS"/>
         <property name="infoBoxSetup" value="OPENINFO" />
         <property name="instructionsBoxSetup" value="OPENINSTRUCTIONS"/>
     </bean>
 
-    <bean name="setUpUserInterceptor" class="org.akaza.openclinica.controller.helper.SetUpUserInterceptor">
+    <bean name="setUpUserInterceptor" class="org.researchedc.controller.helper.SetUpUserInterceptor">
     	<property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean name="sdvFactory" class="org.akaza.openclinica.web.table.sdv.SubjectIdSDVFactory">
+    <bean name="sdvFactory" class="org.researchedc.web.table.sdv.SubjectIdSDVFactory">
     	<property name="dataSource" ref="dataSource"/>
     </bean>
    
    
-       <bean name="scheduledJobTableFactory" class="org.akaza.openclinica.web.table.scheduledjobs.ScheduledJobTableFactory">
+       <bean name="scheduledJobTableFactory" class="org.researchedc.web.table.scheduledjobs.ScheduledJobTableFactory">
     </bean>
                  
 	

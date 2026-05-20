@@ -3,13 +3,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<fmt:setBundle basename="org.akaza.openclinica.i18n.format"
+<fmt:setBundle basename="org.researchedc.i18n.format"
 	var="resformat" />
-<fmt:setBundle basename="org.akaza.openclinica.i18n.notes" var="restext" />
-<fmt:setBundle basename="org.akaza.openclinica.i18n.words" var="resword" />
-<fmt:setBundle basename="org.akaza.openclinica.i18n.workflow"
+<fmt:setBundle basename="org.researchedc.i18n.notes" var="restext" />
+<fmt:setBundle basename="org.researchedc.i18n.words" var="resword" />
+<fmt:setBundle basename="org.researchedc.i18n.workflow"
 	var="resworkflow" />
-<fmt:setBundle basename="org.akaza.openclinica.i18n.page_messages"
+<fmt:setBundle basename="org.researchedc.i18n.page_messages"
 	var="resmessages" />
 
 <c:set var="dteFormat">
@@ -45,17 +45,17 @@
 
 <jsp:include page="../include/sideInfo.jsp" />
 <jsp:useBean scope="request" id="displayStudy"
-	class="org.akaza.openclinica.bean.admin.DisplayStudyBean" />
+	class="org.researchedc.bean.admin.DisplayStudyBean" />
 <jsp:useBean scope="session" id="study"
-	class="org.akaza.openclinica.bean.managestudy.StudyBean" />
+	class="org.researchedc.bean.managestudy.StudyBean" />
 <jsp:useBean scope="request" id="subject"
-	class="org.akaza.openclinica.bean.submit.SubjectBean" />
+	class="org.researchedc.bean.submit.SubjectBean" />
 <jsp:useBean scope="request" id="studySub"
-	class="org.akaza.openclinica.bean.managestudy.StudySubjectBean" />
+	class="org.researchedc.bean.managestudy.StudySubjectBean" />
 <jsp:useBean scope='session' id='userBean'
-	class='org.akaza.openclinica.bean.login.UserAccountBean' />
+	class='org.researchedc.bean.login.UserAccountBean' />
 <jsp:useBean scope='request' id='crf'
-	class='org.akaza.openclinica.bean.admin.CRFBean' />
+	class='org.researchedc.bean.admin.CRFBean' />
 <jsp:useBean scope='request' id='siteList' class='java.util.ArrayList' />
 <jsp:useBean scope='request' id='eventList' class='java.util.ArrayList' />
 
