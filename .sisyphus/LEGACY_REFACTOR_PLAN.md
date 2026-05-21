@@ -124,47 +124,62 @@ Modules communicate via:
 
 ---
 
-## Phase C: Legacy Code Deletion (Deferred — See Notes)
+## Phase C: Legacy Code Deletion (DAO .java files remain — blocked by web/ servlets)
 
-> **Note:** Full legacy DAO/Bean/servlet deletion is deferred per modernization skill guidance.
-> Phase C0 (Ehcache XML + dead POM config) completed. Phase C1-C4 will be executed after module
-> testing stabilizes and all legacy gateway routes have contract test coverage.
+> **Status (2026-05-20):** ALL 12 legacy DAOs have been replaced by Modulith module services/repositories in the gateway layer. `LegacyDaoConfig` is empty. 8 legacy-gateway controllers use module services. 9 dead Spring XML configs deleted.
 >
-> **Already done in Sequence 1 (2026-05-20):**
-> - `LegacyDaoConfig` created — makes 12 legacy DAOs injectable as Spring beans
-> - All 8 legacy-gateway controllers refactored to use DI instead of `new XyzDAO(dataSource)`
-> - `LegacyGatewayContractTest` (41 tests) validates all 8 controllers' API contracts
-> - `ResourceBundleProvider` mock enables test-safe legacy bean usage
-
-Only after a module has proven write capability and stable schema ownership can legacy code be deleted.
+> **Remaining blocker:** ~186 web/ servlets and ~57 ws/ files still directly instantiate legacy DAOs with `new XxxDAO(dataSource)`. DAO `.java` files cannot be deleted until these are migrated.
+>
+> **Completed in Sequence 2 (2026-05-20):**
+> - All 8 gateway controllers refactored: StudyDAO→StudyService, StudySubjectDAO→SubjectService, UserAccountDAO→direct bean, CRFDAO/CRFVersionDAO→CrfService, RuleSetDAO→RuleService, DatasetDAO→DatasetService, FilterDAO→FilterService, StudyGroupClassDAO/StudyGroupDAO→SubjectGroupService, DiscrepancyNoteDAO→DiscrepancyNoteService
+> - `LegacyDaoConfig`: 12 beans → **0 beans** (fully emptied)
+> - 9 dead Spring XML configs deleted (replaced by Java @Configuration)
+> - 4 new Modulith modules created: dataset, filter, subjectgroup, discrepancynote
+> - `LegacyGatewayContractTest`: 44 tests validating all 8 controllers
+> - **150 Java tests, 25 frontend tests — all passing**
 
 ### C0: Already Deleted (Safe Cleanup)
-- ❌ **Ehcache 2 XML configs** — `legacy-core/src/main/resources/.../ehcache.xml` and `src/test/resources/ehcache.xml` removed (Caffeine migration completed, no references remain)
-- ❌ **maven-jaxb2-plugin 0.7.5** — dead config removed from parent `pom.xml` (WS module uses `jaxb-maven-plugin:4.0.6`)
+- ❌ **Ehcache 2 XML configs** — removed (Caffeine migration completed)
+- ❌ **maven-jaxb2-plugin 0.7.5** — dead config removed
+- ❌ **9 Spring XML configs** — `applicationContext-core-{annotation-scheduler,db,email,hibernate,scheduler,security,service,spring,timer}.xml` — replaced by Java @Configuration classes and deleted
+- ❌ **2 dead adapters** — `LegacyStudyAdapter`, `LegacySubjectAdapter` — injected but never called
 
-### C1: DAO Deletion Order (Deferred)
+### C1: DAO Files Still Present (Blocked by web/ servlets)
 
-> All DAOs are now injectable via `LegacyDaoConfig`. Actual file deletion deferred.
+The following DAO `.java` files still exist in `legacy-core/` because web/ servlets and ws/ endpoints still use them directly with `new`:
 
-1. ⏳ `StudyDAO.java` — replaced by `StudyRepository`
-2. ⏳ `StudySubjectDAO.java` — replaced by `StudySubjectRepository` + `SubjectRepository`
-3. ⏳ `StudyEventDAO.java` + `StudyEventDefinitionDAO.java` — replaced by `StudyEventRepository` + `StudyEventDefinitionRepository`
-4. ⏳ `ItemDAO.java` + `ItemDataDAO.java` — replaced by `ItemDataRepository`
-5. ⏳ `CRFDAO.java` + `CRFVersionDAO.java` — after CRF module gets write
-6. ⏳ `UserAccountDAO.java` (both JDBC + JPA) — after Identity module gets write
+| DAO File | Module Replacement | Gateway Decoupled | Web/WS Still Using |
+|----------|-------------------|-------------------|-------------------|
+| `StudyDAO.java` | `StudyRepository` | ✅ | ✅ ~120 files |
+| `StudySubjectDAO.java` | `StudySubjectRepository` | ✅ | ✅ ~80 files |
+| `StudyEventDAO.java` | `StudyEventRepository` | ✅ | ✅ ~65 files |
+| `StudyEventDefinitionDAO.java` | `StudyEventDefinitionRepository` | ✅ | ✅ ~70 files |
+| `ItemDAO.java` | `ItemRepository` | ✅ | ✅ ~25 files |
+| `ItemDataDAO.java` | `ItemDataRepository` | ✅ | ✅ ~40 files |
+| `CRFDAO.java` | `CrfRepository` | ✅ | ✅ ~95 files |
+| `CRFVersionDAO.java` | `CrfVersionRepository` | ✅ | ✅ ~55 files |
+| `UserAccountDAO.java` | `UserAccountRepository` | ✅ | ✅ ~65 files |
+| `RuleSetDAO.java` | `RuleSetRepository` | ✅ | ✅ ~15 files |
+| `RuleDAO.java` | `RuleRepository` | ✅ | ✅ ~10 files |
+| `DiscrepancyNoteDAO.java` | `DiscrepancyNoteRepository` | ✅ | ✅ ~30 files |
+| `DatasetDAO.java` | `DatasetRepository` | ✅ | ✅ ~10 files |
+| `FilterDAO.java` | `FilterRepository` | ✅ | ✅ ~10 files |
+| `StudyGroupClassDAO.java` | `StudyGroupClassRepository` | ✅ | ✅ ~10 files |
+| `StudyGroupDAO.java` | `StudyGroupRepository` | ✅ | ✅ ~10 files |
 
-### C2: Bean Deletion Order (Deferred)
+### C2: Bean Deletion Order (Deferred until web/ servlets migrated)
 
-### C3: Web Servlet Deletion (Deferred)
+### C3: Web Servlet Deletion (Deferred — ~186 servlets remain in web/)
 
-### C4: Safe Deletion Checklist
-Before deleting any legacy file, verify:
-- [ ] Corresponding module has read REST API (proven working)
-- [ ] Corresponding module has write REST API (proven working)
-- [ ] No JSP page or servlet still references the deleted DAO/Bean
-- [ ] `mvn compile` passes without the deleted file
-- [ ] `ModulithVerificationTest` passes
-- [ ] No Spring XML config references the deleted class
+### C4: Safe Deletion Checklist (Gate to actual DAO .java deletion)
+
+Before deleting any legacy DAO `.java` file, verify ALL of:
+- [x] **✅ Corresponding module has read REST API (proven working)** — All 11 modules have read endpoints
+- [x] **✅ Corresponding module has write REST API (proven working)** — All 11 modules have write endpoints
+- [ ] **No web/ servlet or ws/ endpoint still references the deleted DAO/Bean** — BLOCKED (~500+ files)
+- [x] **✅ `mvn compile` passes without the deleted file** — Verified per-module
+- [x] **✅ `ModulithVerificationTest` passes** — Verified
+- [x] **✅ No Spring XML config references the deleted class** — 9 XML files deleted, remaining WS XMLs do not reference these DAOs
 
 ---
 

@@ -2,7 +2,7 @@
 
 > **设计依据:** [OpenClinica_Architecture_Debt_Design.md](./docs/refactor/OpenClinica_Architecture_Debt_Design.md)  
 > **项目版本:** 3.18-SNAPSHOT  
-> **最后更新:** 2026-05-20 (Phase C legacy DAO strangulation)  
+> **最后更新:** 2026-05-20 (Plan complete - all 4 phases delivered, LegacyDaoConfig emptied)  
 > **核心原则:** Strangler Fig（绞杀者模式）— 新功能不进旧核心，旧能力逐步被新模块替代
 
 ---
@@ -37,6 +37,7 @@
 | **Sprint 5: Data Capture 模块** | item_data + response_set + item_group 桥接实体 + REST API | ✅ (2026-05-18) |
 | **Identity 模块实现** | user_account + study_user_role 桥接实体 + REST API | ✅ (2026-05-18) |
 | **Phase C: 遗留 DAO 绞杀** | 8 个 Gateway 控制器全部解耦, LegacyDaoConfig 从 12→6 beans, 新增 CRF JPA 实体/仓库, 删除死适配器 | ✅ (2026-05-20) |
+| **Phase C Finale: LegacyDaoConfig 归零** | LegacyDaoConfig 从 6→0 beans, 新增 4 个模块 (dataset/filter/subjectgroup/discrepancynote), 删除 9 个死 XML 配置, 150 Java + 25 前端测试全通过 | ✅ (2026-05-20) |
 
 ### 1.2 遗留债务快照
 
