@@ -83,58 +83,6 @@
 	</properties>
 	<profiles>
 		<profile>
-			<id>codeship</id>
-			<properties>
-					<db.test>107.170.116.150</db.test>
-			</properties>
-		</profile>
-		<profile>
-			<!-- This profile is not compatible with Maven v2. Use it with Maven v3
-				only. -->
-			<id>m2eclipse-config</id>
-			<activation>
-				<property>
-					<name>useJRebel</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<groupId>org.eclipse.m2e</groupId>
-							<artifactId>lifecycle-mapping</artifactId>
-							<version>1.0.0</version>
-							<configuration>
-								<lifecycleMappingMetadata>
-									<pluginExecutions>
-										<pluginExecution>
-											<pluginExecutionFilter>
-												<groupId>org.zeroturnaround</groupId>
-												<artifactId>jrebel-maven-plugin</artifactId>
-												<versionRange>[1.0.0,)</versionRange>
-												<goals>
-													<goal>generate</goal>
-												</goals>
-											</pluginExecutionFilter>
-											<action>
-												<ignore />
-											</action>
-										</pluginExecution>
-										<!-- <pluginExecution> <pluginExecutionFilter> <groupId>org.codehaus.mojo</groupId>
-											<artifactId>buildnumber-maven-plugin</artifactId> <versionRange>[1.0.0,)</versionRange>
-											<goals> <goal>create</goal> </goals> <configuration> <doUpdate>false</doUpdate>
-											<getRevisionOnlyOnce>true</getRevisionOnlyOnce> </configuration> </pluginExecutionFilter>
-											<action> <ignore /> </action> </pluginExecution> -->
-									</pluginExecutions>
-								</lifecycleMappingMetadata>
-							</configuration>
-						</plugin>
-					</plugins>
-				</pluginManagement>
-			</build>
-		</profile>
-		<profile>
 			<id>dependency-check</id>
 			<build>
 				<plugins>
@@ -801,21 +749,6 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>org.zeroturnaround</groupId>
-					<artifactId>jrebel-maven-plugin</artifactId>
-					<version>1.0.7</version>
-					<executions>
-						<execution>
-							<id>generate-rebel-xml</id>
-							<phase>process-resources</phase>
-							<goals>
-								<goal>generate</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-
-				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
 					<version>3.5.0</version>
@@ -983,16 +916,16 @@
 	</pluginRepositories>
 
 	<distributionManagement>
-		<repository>
-			<id>openclinica-artifactory</id>
-			<name>dev.openclinica.com-releases</name>
-			<url>https://dev.openclinica.com/artifactory/libs-release-local</url>
-		</repository>
 		<snapshotRepository>
-			<id>openclinica-artifactory</id>
-			<name>dev.openclinica.com-snapshots</name>
-			<url>https://dev.openclinica.com/artifactory/libs-snapshot-local</url>
+			<id>researchedc-snapshots</id>
+			<name>ResearchEDC Snapshots</name>
+			<url>https://nexus.researchedc.org/repository/maven-snapshots</url>
 		</snapshotRepository>
+		<repository>
+			<id>researchedc-releases</id>
+			<name>ResearchEDC Releases</name>
+			<url>https://nexus.researchedc.org/repository/maven-releases</url>
+		</repository>
 	</distributionManagement>
 
 </project>
