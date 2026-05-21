@@ -6,6 +6,42 @@
 
 ---
 
+## 2026-05-22 — AGENTS.md 知识库扩展与清理
+
+- **模块:** 全项目
+- **原因:** 完善 AI 助手的项目知识体系，清理已完成的历史文档
+
+### 变更内容
+
+1. **新增 AGENTS.md (3 个):**
+   - `app/AGENTS.md` — Spring Boot 入口点、配置类、Modulith 模块结构
+   - `frontend/AGENTS.md` — React 19 SPA 结构、API 层、组件/页面清单
+   - `questionnaire-service/AGENTS.md` — Python FastAPI 微服务架构、评分引擎
+
+2. **更新 AGENTS.md (1 个):**
+   - 根 `AGENTS.md` — 新增子模块引用 (app, frontend, questionnaire-service)
+
+3. **删除无用文档 (4 个):**
+   - `PLAN.md` — 架构债务治理计划（所有 4 阶段已完成，全部项目标 ✅）
+   - `legacy-core/README.txt` — 2010 年 OpenClinica 3.1-beta 发布说明（完全过时）
+   - `web/README.txt` — 过时的模板发布说明（Maven 变量未解析）
+   - `ws/README.txt` — 同上
+
+4. **更新 README.md:**
+   - 修正 app 模块包路径 (`org.researchedc` 而非 `org.akaza.openclinica`)
+   - 更新 JSP 迁移进度 (280/417 已替换)
+   - 补充 5 个新 Modulith 模块 (rule, dataset, filter, subjectgroup, discrepancynote)
+   - 补充 AGENTS.md 子模块引用
+   - 移除已删除 `PLAN.md` 的引用
+   - 更新测试架构表 (150 Java + 25 Vitest + 31 pytest)
+
+### 验证
+- `rm PLAN.md legacy-core/README.txt web/README.txt ws/README.txt` ✅
+- README.md 内容与项目实际状态一致 ✅
+- AGENTS.md 层次结构完整 (root → 6 个子模块) ✅
+
+---
+
 ## 2026-05-20 — Phase C: Legacy DAO Strangulation — LegacyDaoConfig 归零
 
 - **模块:** app/module/ — 5 个新 Modulith 模块 + 8 个 Gateway 控制器重构
