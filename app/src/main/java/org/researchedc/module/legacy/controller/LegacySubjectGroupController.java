@@ -1,16 +1,15 @@
 package org.researchedc.module.legacy.controller;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.bean.managestudy.StudyGroupBean;
-import org.researchedc.bean.managestudy.StudyGroupClassBean;
-import org.researchedc.bean.core.GroupClassType;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.module.legacy.dto.SubjectGroupClassDTO;
 import org.researchedc.module.legacy.dto.SubjectGroupDTO;
+import org.researchedc.module.subjectgroup.entity.StudyGroupClassEntity;
+import org.researchedc.module.subjectgroup.entity.StudyGroupEntity;
+import org.researchedc.module.subjectgroup.service.SubjectGroupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,137 +24,109 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/legacy/subject-groups")
 public class LegacySubjectGroupController {
 
-    private final StudyGroupClassDAO groupClassDao;
-    private final StudyGroupDAO groupDao;
+    private final SubjectGroupService subjectGroupService;
 
-    public LegacySubjectGroupController(StudyGroupClassDAO groupClassDao,
-                                        StudyGroupDAO groupDao) {
-        this.groupClassDao = groupClassDao;
-        this.groupDao = groupDao;
+    public LegacySubjectGroupController(SubjectGroupService subjectGroupService) {
+        this.subjectGroupService = subjectGroupService;
     }
 
     @GetMapping("/classes")
-    @SuppressWarnings("unchecked")
     public ResponseEntity<List<SubjectGroupClassDTO>> listClasses(
             @RequestParam int studyId) {
         List<SubjectGroupClassDTO> result = new ArrayList<>();
-        org.researchedc.bean.managestudy.StudyBean study = new org.researchedc.bean.managestudy.StudyBean();
-        study.setId(studyId);
-        for (Object obj : groupClassDao.findAllByStudy(study)) {
-            result.add(toClassDto((StudyGroupClassBean) obj));
+        for (StudyGroupClassEntity entity : subjectGroupService.listClassesByStudy(studyId)) {
+            result.add(toClassDto(entity));
         }
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/classes/{id}")
-    @SuppressWarnings("unchecked")
     public ResponseEntity<SubjectGroupClassDTO> getClass(@PathVariable int id) {
-        StudyGroupClassBean bean = (StudyGroupClassBean) groupClassDao.findByPK(id);
-        if (bean == null || bean.getId() == 0) {
+        try {
+            StudyGroupClassEntity entity = subjectGroupService.getClassById(id);
+            SubjectGroupClassDTO dto = toClassDto(entity);
+            List<SubjectGroupDTO> groups = new ArrayList<>();
+            for (StudyGroupEntity g : subjectGroupService.getGroupsByClassId(id)) {
+                groups.add(toGroupDto(g));
+            }
+            dto.setGroups(groups);
+            return ResponseEntity.ok(dto);
+        } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(toClassDto(bean));
     }
 
     @PostMapping("/classes")
-    @SuppressWarnings("unchecked")
     public ResponseEntity<SubjectGroupClassDTO> createClass(
             @RequestBody SubjectGroupClassDTO dto) {
-        StudyGroupClassBean bean = new StudyGroupClassBean();
-        bean.setName(dto.getName());
-        bean.setStudyId(dto.getStudyId());
-        bean.setGroupClassTypeId(1);
-        bean.setSubjectAssignment(dto.getSubjectAssignment() != null ? dto.getSubjectAssignment() : "optimal");
-        UserAccountBean defaultUser = new UserAccountBean();
-        defaultUser.setId(1);
-        bean.setOwner(defaultUser);
-        bean = (StudyGroupClassBean) groupClassDao.create(bean);
-        return ResponseEntity.ok(toClassDto(bean));
+        Integer ownerId = 1;
+        StudyGroupClassEntity entity = subjectGroupService.createClass(
+                dto.getName(), dto.getStudyId(), dto.getSubjectAssignment(), ownerId);
+        return ResponseEntity.ok(toClassDto(entity));
     }
 
     @PutMapping("/classes/{id}")
-    @SuppressWarnings("unchecked")
     public ResponseEntity<SubjectGroupClassDTO> updateClass(
             @PathVariable int id, @RequestBody SubjectGroupClassDTO dto) {
-        StudyGroupClassBean bean = (StudyGroupClassBean) groupClassDao.findByPK(id);
-        if (bean == null || bean.getId() == 0) {
+        try {
+            StudyGroupClassEntity entity = subjectGroupService.updateClass(
+                    id, dto.getName(), dto.getSubjectAssignment());
+            return ResponseEntity.ok(toClassDto(entity));
+        } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-        bean.setName(dto.getName());
-        bean.setSubjectAssignment(dto.getSubjectAssignment() != null ? dto.getSubjectAssignment() : "optimal");
-        groupClassDao.update(bean);
-        return ResponseEntity.ok(toClassDto(bean));
     }
 
     @GetMapping("/classes/{classId}/groups")
-    @SuppressWarnings("unchecked")
     public ResponseEntity<List<SubjectGroupDTO>> listGroups(@PathVariable int classId) {
         List<SubjectGroupDTO> result = new ArrayList<>();
-        StudyGroupClassBean groupClass = (StudyGroupClassBean) groupClassDao.findByPK(classId);
-        if (groupClass == null || groupClass.getId() == 0) {
-            return ResponseEntity.ok(List.of());
-        }
-        for (Object obj : groupDao.findAllByGroupClass(groupClass)) {
-            result.add(toGroupDto((StudyGroupBean) obj));
+        for (StudyGroupEntity entity : subjectGroupService.getGroupsByClassId(classId)) {
+            result.add(toGroupDto(entity));
         }
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/classes/{classId}/groups")
-    @SuppressWarnings("unchecked")
     public ResponseEntity<SubjectGroupDTO> createGroup(
             @PathVariable int classId, @RequestBody SubjectGroupDTO dto) {
-        StudyGroupBean bean = new StudyGroupBean();
-        bean.setName(dto.getName());
-        bean.setDescription(dto.getDescription() != null ? dto.getDescription() : "");
-        bean.setStudyGroupClassId(classId);
-        UserAccountBean defaultUser = new UserAccountBean();
-        defaultUser.setId(1);
-        bean.setOwner(defaultUser);
-        bean = (StudyGroupBean) groupDao.create(bean);
-        return ResponseEntity.ok(toGroupDto(bean));
+        Integer ownerId = 1;
+        StudyGroupEntity entity = subjectGroupService.createGroup(
+                dto.getName(), dto.getDescription(), classId, ownerId);
+        return ResponseEntity.ok(toGroupDto(entity));
     }
 
     @PutMapping("/groups/{id}")
-    @SuppressWarnings("unchecked")
     public ResponseEntity<SubjectGroupDTO> updateGroup(
             @PathVariable int id, @RequestBody SubjectGroupDTO dto) {
-        StudyGroupBean bean = (StudyGroupBean) groupDao.findByPK(id);
-        if (bean == null || bean.getId() == 0) {
+        try {
+            StudyGroupEntity entity = subjectGroupService.updateGroup(
+                    id, dto.getName(), dto.getDescription());
+            return ResponseEntity.ok(toGroupDto(entity));
+        } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-        bean.setName(dto.getName());
-        bean.setDescription(dto.getDescription() != null ? dto.getDescription() : "");
-        groupDao.update(bean);
-        return ResponseEntity.ok(toGroupDto(bean));
     }
 
-    private SubjectGroupClassDTO toClassDto(StudyGroupClassBean bean) {
+    private SubjectGroupClassDTO toClassDto(StudyGroupClassEntity entity) {
         SubjectGroupClassDTO dto = new SubjectGroupClassDTO();
-        dto.setGroupClassId(bean.getId());
-        dto.setName(bean.getName());
-        dto.setStudyId(bean.getStudyId());
-        dto.setSubjectAssignment(bean.getSubjectAssignment());
-        dto.setOwnerId(bean.getOwnerId());
-        dto.setDateCreated(bean.getCreatedDate());
-
-        GroupClassType type = GroupClassType.get(bean.getGroupClassTypeId());
-        dto.setGroupClassType(type != null ? type.getName() : null);
-
-        List<SubjectGroupDTO> groups = new ArrayList<>();
-        for (Object obj : groupDao.findAllByGroupClass(bean)) {
-            groups.add(toGroupDto((StudyGroupBean) obj));
+        dto.setGroupClassId(entity.getStudyGroupClassId());
+        dto.setName(entity.getName());
+        dto.setStudyId(entity.getStudyId());
+        dto.setSubjectAssignment(entity.getSubjectAssignment());
+        dto.setOwnerId(entity.getOwnerId() != null ? entity.getOwnerId() : 0);
+        if (entity.getDateCreated() != null) {
+            dto.setDateCreated(Date.from(
+                    entity.getDateCreated().atZone(ZoneId.systemDefault()).toInstant()));
         }
-        dto.setGroups(groups);
         return dto;
     }
 
-    private SubjectGroupDTO toGroupDto(StudyGroupBean bean) {
+    private SubjectGroupDTO toGroupDto(StudyGroupEntity entity) {
         SubjectGroupDTO dto = new SubjectGroupDTO();
-        dto.setGroupId(bean.getId());
-        dto.setName(bean.getName());
-        dto.setDescription(bean.getDescription());
-        dto.setGroupClassId(bean.getStudyGroupClassId());
+        dto.setGroupId(entity.getStudyGroupId());
+        dto.setName(entity.getName());
+        dto.setDescription(entity.getDescription());
+        dto.setGroupClassId(entity.getStudyGroupClassId());
         return dto;
     }
 }

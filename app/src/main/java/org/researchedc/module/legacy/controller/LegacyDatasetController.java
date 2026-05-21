@@ -1,10 +1,12 @@
 package org.researchedc.module.legacy.controller;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.researchedc.bean.extract.DatasetBean;
-import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.module.dataset.entity.DatasetEntity;
+import org.researchedc.module.dataset.service.DatasetService;
 import org.researchedc.module.legacy.dto.DatasetDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,60 +20,58 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/legacy/datasets")
 public class LegacyDatasetController {
 
-    private final DatasetDAO datasetDao;
+    private final DatasetService datasetService;
 
-    public LegacyDatasetController(DatasetDAO datasetDao) {
-        this.datasetDao = datasetDao;
+    public LegacyDatasetController(DatasetService datasetService) {
+        this.datasetService = datasetService;
     }
 
     @GetMapping
-    @SuppressWarnings("unchecked")
     public ResponseEntity<List<DatasetDTO>> listDatasets(
             @RequestParam(required = false) Integer studyId) {
         List<DatasetDTO> result = new ArrayList<>();
+        List<DatasetEntity> entities;
         if (studyId != null) {
-            for (Object obj : datasetDao.findAllByStudyId(studyId)) {
-                result.add(toDto((DatasetBean) obj));
-            }
+            entities = datasetService.listByStudy(studyId);
         } else {
-            for (Object obj : datasetDao.findAll()) {
-                result.add(toDto((DatasetBean) obj));
-            }
+            entities = datasetService.listAll();
+        }
+        for (DatasetEntity entity : entities) {
+            result.add(toDto(entity));
         }
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DatasetDTO> getDataset(@PathVariable int id) {
-        DatasetBean bean = (DatasetBean) datasetDao.findByPK(id);
-        if (bean == null || bean.getId() == 0) {
+        try {
+            DatasetEntity entity = datasetService.getById(id);
+            return ResponseEntity.ok(toDto(entity));
+        } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(toDto(bean));
     }
 
     @PostMapping
-    @SuppressWarnings("unchecked")
     public ResponseEntity<DatasetDTO> createDataset(@RequestParam String name,
             @RequestParam int studyId) {
-        DatasetBean bean = new DatasetBean();
-        bean.setName(name);
-        bean.setStudyId(studyId);
-        bean = (DatasetBean) datasetDao.create(bean);
-        return ResponseEntity.ok(toDto(bean));
+        Integer ownerId = 1;
+        DatasetEntity entity = datasetService.create(name, null, studyId, ownerId);
+        return ResponseEntity.ok(toDto(entity));
     }
 
-    private DatasetDTO toDto(DatasetBean bean) {
+    private static DatasetDTO toDto(DatasetEntity entity) {
         DatasetDTO dto = new DatasetDTO();
-        dto.setDatasetId(bean.getId());
-        dto.setName(bean.getName());
-        dto.setDescription(bean.getDescription());
-        dto.setStudyId(bean.getStudyId());
-        dto.setOwnerId(bean.getOwnerId());
-        dto.setDateCreated(bean.getCreatedDate());
-        if (bean.getStatus() != null) {
-            dto.setStatus(bean.getStatus().getName());
+        dto.setDatasetId(entity.getDatasetId());
+        dto.setName(entity.getName());
+        dto.setDescription(entity.getDescription());
+        dto.setStudyId(entity.getStudyId() != null ? entity.getStudyId() : 0);
+        dto.setOwnerId(entity.getOwnerId() != null ? entity.getOwnerId() : 0);
+        if (entity.getDateCreated() != null) {
+            dto.setDateCreated(Date.from(
+                    entity.getDateCreated().atZone(ZoneId.systemDefault()).toInstant()));
         }
+        dto.setStatus(String.valueOf(entity.getStatusId()));
         return dto;
     }
 }

@@ -1,10 +1,12 @@
 package org.researchedc.module.legacy.controller;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.researchedc.bean.extract.FilterBean;
-import org.researchedc.dao.extract.FilterDAO;
+import org.researchedc.module.filter.entity.FilterEntity;
+import org.researchedc.module.filter.service.FilterService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,58 +19,49 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/legacy/filters")
 public class LegacyFilterController {
 
-    private final FilterDAO filterDao;
+    private final FilterService filterService;
 
-    public LegacyFilterController(FilterDAO filterDao) {
-        this.filterDao = filterDao;
+    public LegacyFilterController(FilterService filterService) {
+        this.filterService = filterService;
     }
 
     @GetMapping
-    @SuppressWarnings("unchecked")
     public ResponseEntity<List<FilterDTO>> listFilters() {
         List<FilterDTO> result = new ArrayList<>();
-        for (Object obj : filterDao.findAll()) {
-            FilterBean bean = (FilterBean) obj;
-            FilterDTO dto = new FilterDTO();
-            dto.setId(bean.getId());
-            dto.setName(bean.getName());
-            dto.setDescription(bean.getDescription());
-            dto.setOwnerId(bean.getOwnerId());
-            dto.setDateCreated(bean.getCreatedDate());
-            result.add(dto);
+        for (FilterEntity entity : filterService.listAll()) {
+            result.add(toDto(entity));
         }
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<FilterDTO> getFilter(@PathVariable int id) {
-        FilterBean bean = (FilterBean) filterDao.findByPK(id);
-        if (bean == null || bean.getId() == 0) {
+        try {
+            FilterEntity entity = filterService.getById(id);
+            return ResponseEntity.ok(toDto(entity));
+        } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-        FilterDTO dto = new FilterDTO();
-        dto.setId(bean.getId());
-        dto.setName(bean.getName());
-        dto.setDescription(bean.getDescription());
-        dto.setOwnerId(bean.getOwnerId());
-        dto.setDateCreated(bean.getCreatedDate());
-        return ResponseEntity.ok(dto);
     }
 
     @PostMapping
-    @SuppressWarnings("unchecked")
     public ResponseEntity<FilterDTO> createFilter(@RequestBody FilterDTO request) {
-        FilterBean bean = new FilterBean();
-        bean.setName(request.getName());
-        bean.setDescription(request.getDescription() != null ? request.getDescription() : "");
-        bean = (FilterBean) filterDao.create(bean);
+        Integer ownerId = 1;
+        FilterEntity entity = filterService.create(request.getName(), request.getDescription(), ownerId);
+        return ResponseEntity.ok(toDto(entity));
+    }
+
+    private static FilterDTO toDto(FilterEntity entity) {
         FilterDTO dto = new FilterDTO();
-        dto.setId(bean.getId());
-        dto.setName(bean.getName());
-        dto.setDescription(bean.getDescription());
-        dto.setOwnerId(bean.getOwnerId());
-        dto.setDateCreated(bean.getCreatedDate());
-        return ResponseEntity.ok(dto);
+        dto.setId(entity.getFilterId());
+        dto.setName(entity.getName());
+        dto.setDescription(entity.getDescription());
+        dto.setOwnerId(entity.getOwnerId() != null ? entity.getOwnerId() : 0);
+        if (entity.getDateCreated() != null) {
+            dto.setDateCreated(Date.from(
+                    entity.getDateCreated().atZone(ZoneId.systemDefault()).toInstant()));
+        }
+        return dto;
     }
 
     public static class FilterDTO {
@@ -76,7 +69,7 @@ public class LegacyFilterController {
         private String name;
         private String description;
         private int ownerId;
-        private java.util.Date dateCreated;
+        private Date dateCreated;
 
         public int getId() { return id; }
         public void setId(int v) { this.id = v; }
@@ -86,7 +79,7 @@ public class LegacyFilterController {
         public void setDescription(String v) { this.description = v; }
         public int getOwnerId() { return ownerId; }
         public void setOwnerId(int v) { this.ownerId = v; }
-        public java.util.Date getDateCreated() { return dateCreated; }
-        public void setDateCreated(java.util.Date v) { this.dateCreated = v; }
+        public Date getDateCreated() { return dateCreated; }
+        public void setDateCreated(Date v) { this.dateCreated = v; }
     }
 }

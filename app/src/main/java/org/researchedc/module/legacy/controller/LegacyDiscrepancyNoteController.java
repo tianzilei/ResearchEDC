@@ -1,12 +1,12 @@
 package org.researchedc.module.legacy.controller;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.module.discrepancynote.entity.DiscrepancyNoteEntity;
+import org.researchedc.module.discrepancynote.service.DiscrepancyNoteService;
 import org.researchedc.module.legacy.dto.CreateDiscrepancyNoteRequest;
 import org.researchedc.module.legacy.dto.DiscrepancyNoteDTO;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/legacy/discrepancy-notes")
 public class LegacyDiscrepancyNoteController {
 
-    private final DiscrepancyNoteDAO discrepancyNoteDao;
+    private final DiscrepancyNoteService discrepancyNoteService;
 
-    public LegacyDiscrepancyNoteController(DiscrepancyNoteDAO discrepancyNoteDao) {
-        this.discrepancyNoteDao = discrepancyNoteDao;
+    public LegacyDiscrepancyNoteController(DiscrepancyNoteService discrepancyNoteService) {
+        this.discrepancyNoteService = discrepancyNoteService;
     }
 
     @GetMapping
@@ -44,97 +44,67 @@ public class LegacyDiscrepancyNoteController {
 
     private ResponseEntity<List<DiscrepancyNoteDTO>> listNotesByEventCrf(int eventCrfId) {
         List<DiscrepancyNoteDTO> result = new ArrayList<>();
-        for (DiscrepancyNoteBean bean : discrepancyNoteDao.findAllParentItemNotesByEventCRF(eventCrfId)) {
-            if (bean.getParentDnId() == 0) {
-                result.add(toDto(bean));
-            }
+        for (DiscrepancyNoteEntity entity : discrepancyNoteService.listByStudy(eventCrfId)) {
+            result.add(toDto(entity));
         }
         return ResponseEntity.ok(result);
     }
 
     private ResponseEntity<List<DiscrepancyNoteDTO>> listNotesByStudy(int studyId) {
         List<DiscrepancyNoteDTO> result = new ArrayList<>();
-        org.researchedc.bean.managestudy.StudyBean study = new org.researchedc.bean.managestudy.StudyBean();
-        study.setId(studyId);
-        for (Object obj : discrepancyNoteDao.findAllParentsByStudy(study)) {
-            result.add(toDto((DiscrepancyNoteBean) obj));
+        for (DiscrepancyNoteEntity entity : discrepancyNoteService.listByStudy(studyId)) {
+            result.add(toDto(entity));
         }
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DiscrepancyNoteDTO> getNote(@PathVariable int id) {
-        Object obj = discrepancyNoteDao.findByPK(id);
-        if (!(obj instanceof DiscrepancyNoteBean)) {
+        try {
+            DiscrepancyNoteEntity entity = discrepancyNoteService.getById(id);
+            return ResponseEntity.ok(toDto(entity));
+        } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-        DiscrepancyNoteBean bean = (DiscrepancyNoteBean) obj;
-        if (bean.getId() == 0) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(toDto(bean));
     }
 
     @PostMapping
-    @SuppressWarnings("unchecked")
     public ResponseEntity<DiscrepancyNoteDTO> createNote(
             @RequestBody CreateDiscrepancyNoteRequest request) {
-        DiscrepancyNoteBean parent = new DiscrepancyNoteBean();
-        parent.setDescription(request.getDescription());
-        parent.setDetailedNotes(request.getDetailedNotes());
-        parent.setEntityType(request.getEntityType());
-        parent.setEntityId(request.getEntityId());
-        parent.setStudyId(request.getStudyId());
-        parent.setDiscrepancyNoteTypeId(1);
-        parent.setResolutionStatusId(1);
-        parent.setColumn("value");
-        parent.setEventCRFId(request.getEventCrfId());
-
-        UserAccountBean defaultUser = new UserAccountBean();
-        defaultUser.setId(1);
-        parent.setOwner(defaultUser);
-
-        parent = (DiscrepancyNoteBean) discrepancyNoteDao.create(parent);
-        discrepancyNoteDao.createMapping(parent);
-
-        return ResponseEntity.ok(toDto(parent));
+        Integer ownerId = 1;
+        DiscrepancyNoteEntity entity = discrepancyNoteService.create(
+                request.getDescription(), 1, 1,
+                request.getDetailedNotes(), ownerId, null,
+                request.getEntityType(), request.getEntityId(),
+                request.getStudyId(), null);
+        return ResponseEntity.ok(toDto(entity));
     }
 
     @PatchMapping("/{id}/resolve")
     public ResponseEntity<DiscrepancyNoteDTO> resolveNote(@PathVariable int id) {
-        Object obj = discrepancyNoteDao.findByPK(id);
-        if (!(obj instanceof DiscrepancyNoteBean)) {
+        try {
+            DiscrepancyNoteEntity entity = discrepancyNoteService.resolveNote(id);
+            return ResponseEntity.ok(toDto(entity));
+        } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-        DiscrepancyNoteBean bean = (DiscrepancyNoteBean) obj;
-        if (bean.getId() == 0) {
-            return ResponseEntity.notFound().build();
-        }
-        bean.setResolutionStatusId(2);
-        discrepancyNoteDao.update(bean);
-        return ResponseEntity.ok(toDto(bean));
     }
 
-    private DiscrepancyNoteDTO toDto(DiscrepancyNoteBean bean) {
+    private DiscrepancyNoteDTO toDto(DiscrepancyNoteEntity entity) {
         DiscrepancyNoteDTO dto = new DiscrepancyNoteDTO();
-        dto.setDiscrepancyNoteId(bean.getId());
-        dto.setDescription(bean.getDescription());
-        dto.setDetailedNotes(bean.getDetailedNotes());
-        dto.setType(bean.getDisType() != null ? bean.getDisType().getName() : null);
-        dto.setResolutionStatus(bean.getResStatus() != null ? bean.getResStatus().getName() : null);
-        dto.setEntityType(bean.getEntityType());
-        dto.setColumn(bean.getColumn());
-        dto.setEntityId(bean.getEntityId());
-        dto.setStudyId(bean.getStudyId());
-        dto.setOwnerId(bean.getOwnerId());
-        dto.setDateCreated(bean.getCreatedDate());
-        dto.setParentDnId(bean.getParentDnId());
-        dto.setHasChildren(bean.getNumChildren() > 0);
-        dto.setEventCRFId(bean.getEventCRFId());
-        dto.setSubjectName(bean.getSubjectName());
-        dto.setEventName(bean.getEventName());
-        dto.setCrfName(bean.getCrfName());
-        dto.setEntityName(bean.getEntityName());
+        dto.setDiscrepancyNoteId(entity.getDiscrepancyNoteId());
+        dto.setDescription(entity.getDescription());
+        dto.setDetailedNotes(entity.getDetailedNotes());
+        dto.setEntityType(entity.getEntityType());
+        dto.setColumn("value");
+        dto.setEntityId(entity.getDiscrepancyNoteId());
+        dto.setStudyId(entity.getStudyId());
+        dto.setOwnerId(entity.getOwnerId());
+        if (entity.getDateCreated() != null) {
+            dto.setDateCreated(Date.from(
+                    entity.getDateCreated().atZone(ZoneId.systemDefault()).toInstant()));
+        }
+        dto.setParentDnId(entity.getParentDnId() != null ? entity.getParentDnId() : 0);
         return dto;
     }
 }

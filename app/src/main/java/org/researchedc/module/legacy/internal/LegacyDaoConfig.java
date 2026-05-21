@@ -16,32 +16,10 @@ import org.springframework.context.annotation.Configuration;
  * <p>This is a transitional configuration. As each DAO is replaced by a
  * proper Spring Data JPA repository (see Sequence 2 migration), the
  * corresponding bean declaration here can be removed.</p>
+ *
+ * <p>Current status: ALL 12 original DAOs have been replaced.
+ * This class is retained for backward compatibility during cleanup.</p>
  */
 @Configuration
 public class LegacyDaoConfig {
-
-    @Bean
-    public DiscrepancyNoteDAO discrepancyNoteDao(DataSource dataSource) {
-        return new DiscrepancyNoteDAO(dataSource);
-    }
-
-    @Bean
-    public DatasetDAO datasetDao(DataSource dataSource) {
-        return new DatasetDAO(dataSource);
-    }
-
-    @Bean
-    public StudyGroupClassDAO studyGroupClassDao(DataSource dataSource) {
-        return new StudyGroupClassDAO(dataSource);
-    }
-
-    @Bean
-    public StudyGroupDAO studyGroupDao(DataSource dataSource) {
-        return new StudyGroupDAO(dataSource);
-    }
-
-    @Bean
-    public FilterDAO filterDao(DataSource dataSource) {
-        return new FilterDAO(dataSource);
-    }
 }
