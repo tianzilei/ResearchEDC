@@ -27,16 +27,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.extract.FilterBean;
 import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
-import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyGroupBean;
 import org.researchedc.bean.managestudy.StudyGroupClassBean;
-import org.researchedc.bean.rule.RuleSetBean;
 import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.extract.FilterDAO;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.dao.managestudy.StudyGroupDAO;
-import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.module.crf.entity.CrfEntity;
 import org.researchedc.module.crf.entity.CrfVersionEntity;
 import org.researchedc.module.crf.service.CrfService;
@@ -47,6 +44,8 @@ import org.researchedc.module.legacy.controller.LegacyFilterController;
 import org.researchedc.module.legacy.controller.LegacyRuleSetController;
 import org.researchedc.module.legacy.controller.LegacyStudyController;
 import org.researchedc.module.legacy.controller.LegacySubjectController;
+import org.researchedc.module.rule.entity.RuleSetEntity;
+import org.researchedc.module.rule.service.RuleService;
 import org.researchedc.module.legacy.controller.LegacySubjectGroupController;
 import org.researchedc.module.study.dto.StudyDetailDTO;
 import org.researchedc.module.study.dto.StudySummaryDTO;
@@ -96,7 +95,7 @@ class LegacyGatewayContractTest {
 
     @Mock private StudyService studyService;
     @Mock private SubjectService subjectService;
-    @Mock private RuleSetDAO ruleSetDao;
+    @Mock private RuleService ruleService;
     @Mock private DiscrepancyNoteDAO discrepancyNoteDao;
     @Mock private DatasetDAO datasetDao;
     @Mock private CrfService crfService;
@@ -105,14 +104,6 @@ class LegacyGatewayContractTest {
     @Mock private FilterDAO filterDao;
 
     // ─── Bean helpers ───────────────────────────────────────────
-
-    private static RuleSetBean createRuleSetBean(int id, String name, StudyBean study) {
-        RuleSetBean b = new RuleSetBean();
-        b.setId(id);
-        b.setName(name);
-        b.setStudy(study);
-        return b;
-    }
 
     private static DiscrepancyNoteBean createNoteBean(int id, String description, int eventCrfId) {
         DiscrepancyNoteBean b = new DiscrepancyNoteBean();
@@ -352,45 +343,52 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacyRuleSetController(ruleSetDao)).build();
+                    new LegacyRuleSetController(ruleService)).build();
+        }
+
+        private static RuleSetEntity createRuleSetEntity(int id) {
+            RuleSetEntity e = new RuleSetEntity();
+            e.setRuleSetId(id);
+            e.setStudyId(1);
+            e.setStudyEventDefinitionId(1);
+            e.setStatusId(1);
+            return e;
         }
 
         @Test
         void listRuleSets_withoutStudy_returnsAll() throws Exception {
-            when(ruleSetDao.findAll()).thenReturn(
-                    new ArrayList<>(List.of(createRuleSetBean(1, "RS-1", null))));
+            when(ruleService.listAllRuleSets()).thenReturn(
+                    new ArrayList<>(List.of(createRuleSetEntity(1))));
 
             mockMvc.perform(get("/api/legacy/rule-sets"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].name").value("RS-1"));
+                    .andExpect(jsonPath("$.length()").value(1));
         }
 
         @Test
         void listRuleSets_withStudyId_filters() throws Exception {
-            when(ruleSetDao.findAllByStudy(any())).thenReturn(
-                    new ArrayList<>(List.of(createRuleSetBean(1, "RS-1", null))));
+            when(ruleService.listRuleSetsByStudy(1)).thenReturn(
+                    new ArrayList<>(List.of(createRuleSetEntity(1))));
 
             mockMvc.perform(get("/api/legacy/rule-sets")
                             .param("studyId", "1"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$[0].name").value("RS-1"));
+                    .andExpect(jsonPath("$.length()").value(1));
         }
 
         @Test
         void getRuleSet_whenFound_returns200() throws Exception {
-            when(ruleSetDao.findByPK(1)).thenReturn(
-                    createRuleSetBean(1, "RS-1", null));
+            when(ruleService.getRuleSet(1)).thenReturn(createRuleSetEntity(1));
 
             mockMvc.perform(get("/api/legacy/rule-sets/1"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.name").value("RS-1"));
+                    .andExpect(jsonPath("$.ruleSetId").value(1));
         }
 
         @Test
         void getRuleSet_whenNotFound_returns404() throws Exception {
-            RuleSetBean empty = new RuleSetBean();
-            empty.setId(0);
-            when(ruleSetDao.findByPK(99)).thenReturn(empty);
+            when(ruleService.getRuleSet(99))
+                    .thenThrow(new java.util.NoSuchElementException("not found"));
 
             mockMvc.perform(get("/api/legacy/rule-sets/99"))
                     .andExpect(status().isNotFound());

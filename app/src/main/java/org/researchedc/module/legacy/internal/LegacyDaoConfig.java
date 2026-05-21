@@ -6,8 +6,6 @@ import org.researchedc.dao.extract.FilterDAO;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.dao.managestudy.StudyGroupDAO;
-import org.researchedc.dao.rule.RuleDAO;
-import org.researchedc.dao.rule.RuleSetDAO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,16 +19,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class LegacyDaoConfig {
-
-    @Bean
-    public RuleSetDAO ruleSetDao(DataSource dataSource) {
-        return new RuleSetDAO(dataSource);
-    }
-
-    @Bean
-    public RuleDAO ruleDao(DataSource dataSource) {
-        return new RuleDAO(dataSource);
-    }
 
     @Bean
     public DiscrepancyNoteDAO discrepancyNoteDao(DataSource dataSource) {
