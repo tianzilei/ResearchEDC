@@ -40,6 +40,11 @@
 - README.md 内容与项目实际状态一致 ✅
 - AGENTS.md 层次结构完整 (root → 6 个子模块) ✅
 
+### 后续清理 (2026-05-22)
+- 删除 2 个已执行的 `.sisyphus/plans/` 文件（`jsp-strangulation-plan.md`, `questionnaire-python-backend.md`）
+- 修正 `frontend/AGENTS.md` 构建输出路径（`frontend/dist/`，Vite 实际配置）
+- 4 个原子提交 ✅ | push 因 TLS 网络问题暂缓
+
 ---
 
 ## 2026-05-20 — Phase C: Legacy DAO Strangulation — LegacyDaoConfig 归零

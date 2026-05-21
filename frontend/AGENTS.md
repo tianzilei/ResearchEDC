@@ -4,7 +4,7 @@
 **Files:** ~94 TypeScript/TSX files (src), ~109 total (excluding node_modules)  
 
 > React 19 + TypeScript 5.8 strict + Vite 6 + Ant Design 5. Serves at `/app/*` path behind Nginx.
-> Built output goes to `app/src/main/resources/static/` for WAR packaging.
+> Build output goes to `frontend/dist/` (Vite `outDir: "dist"`), served by Nginx in production.
 
 ## STRUCTURE
 
