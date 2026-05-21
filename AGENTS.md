@@ -10,7 +10,7 @@ ResearchEDC is an independently maintained research electronic data capture (EDC
 
 New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/static/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. Legacy code at `legacy-core/`, `web/` (482 files + 417 JSP), `ws/` (57 files) is being incrementally strangulated into Modulith modules.
 
-**当前状态:** `mvn clean compile` ✅ | `mvn clean package -DskipTests` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend TypeScript 0 errors ✅ | ESLint 0 errors ✅ | **Questionnaire Service** `pytest` 31/31 ✅ | Docker Compose ✅ | E2E API ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅
+**当前状态:** `mvn clean compile` ✅ | `mvn clean package -DskipTests` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend TypeScript 0 errors ✅ | ESLint 0 errors ✅ | **Questionnaire Service** `pytest` 31/31 ✅ | Docker Compose ✅ | E2E API ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: LegacyDaoConfig 归零** ✅ | **150 Java tests + 25 Vitest tests** ✅
 
 ## STRUCTURE
 
@@ -28,7 +28,12 @@ New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/stati
 │       ├── subject/         # 受试者管理 (映射 subject/study_subject, 10 文件)
 │       ├── event/           # 访视管理 (映射 study_event/event_crf, 14 文件)
 │       ├── datacapture/     # 数据采集 (映射 item_data/response_set, 11 文件)
-│       └── identity/        # 身份权限 (映射 user_account/study_user_role, 10 文件)
+│       ├── identity/        # 身份权限 (映射 user_account/study_user_role, 10 文件)
+│       ├── rule/            # 规则引擎 (JPA 实体 + 仓库, 13 文件)
+│       ├── dataset/         # 数据集管理 (JPA 实体 + 仓库, 7 文件)
+│       ├── filter/          # 过滤器管理 (JPA 实体 + 仓库, 7 文件)
+│       ├── subjectgroup/    # 受试者分组 (JPA 实体 + 仓库, 10 文件)
+│       └── discrepancynote/ # 差异备注管理 (JPA 实体 + 仓库, 7 文件)
 ├── legacy-core/             # 遗留领域逻辑 — ~737 源文件 (待绞杀)
 │   ├── bean/                # DTOs (250 文件)
 │   ├── dao/                 # 数据访问层 (140 文件)
@@ -110,7 +115,7 @@ New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/stati
 |--------|--------|----------|-------|----------|------------|------|---------------|
 | `randomization` | ✅ Complete | 8 | 6 | 3 | 1 | 9 | `/api/v1/randomization` |
 | `export` | ✅ Complete | 1 | 1 | 1 | 1 | 2 | `/api/v1/exports` |
-| `crf` | ✅ Fixed | 0 | 0 | 1 | 1 | 4 | `/api/v1/crfs` |
+| `crf` | ✅ Complete | 6 | 6 | 1 | 1 | 4 | `/api/v1/crfs` |
 | `notification` | ✅ Complete | 0 | 0 | 2 | 0 | 0 | event-driven |
 | `legacy` | ✅ Built | 0 | 0 | 0 | 2 | 2 | `/api/v1/legacy/*` |
 | `audit` | ✅ Extracted | 1 | 1 | 1 | 1 | 1 | `/api/v1/audit` |
@@ -119,6 +124,11 @@ New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/stati
 | `event` | ✅ Extracted | 3 | 3 | 1 | 1 | 3 | `/api/v1/events` |
 | `datacapture` | ✅ Extracted | 3 | 3 | 1 | 1 | 3 | `/api/v1/data-capture` |
 | `identity` | ✅ Built | 2 | 2 | 1 | 1 | 2 | `/api/v1/identity` |
+| `rule` | ✅ Built | 4 | 4 | 1 | 0 | 0 | (gateway only) |
+| `dataset` | ✅ Built | 1 | 1 | 1 | 0 | 0 | (gateway only) |
+| `filter` | ✅ Built | 1 | 1 | 1 | 0 | 0 | (gateway only) |
+| `subjectgroup` | ✅ Built | 2 | 2 | 1 | 0 | 0 | (gateway only) |
+| `discrepancynote` | ✅ Built | 1 | 1 | 1 | 0 | 0 | (gateway only) |
 
 ## TESTING ARCHITECTURE
 

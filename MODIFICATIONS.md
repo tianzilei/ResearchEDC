@@ -6,6 +6,49 @@
 
 ---
 
+## 2026-05-20 — Phase C: Legacy DAO Strangulation — LegacyDaoConfig 归零
+
+- **模块:** app/module/ — 5 个新 Modulith 模块 + 8 个 Gateway 控制器重构
+- **原因:** 完成 PLAN.md 所有 4 个阶段，将遗留 DAO 从 Gateway 层完全消除
+
+### 变更内容
+
+1. **8 个 Gateway 控制器全部解耦**: 从遗留 JDBC DAO 迁移到 Module Service
+   - `LegacyStudyController`: `StudyDAO` → `StudyService`
+   - `LegacySubjectController`: `StudySubjectDAO` → `SubjectService`
+   - `LegacyCrfManageController`: `CRFDAO`/`CRFVersionDAO`/`UserAccountDAO` → `CrfService`
+   - `LegacyRuleSetController`: `RuleSetDAO` → `RuleService`
+   - `LegacyDatasetController`: `DatasetDAO` → `DatasetService`
+   - `LegacyFilterController`: `FilterDAO` → `FilterService`
+   - `LegacySubjectGroupController`: `StudyGroupClassDAO`/`StudyGroupDAO` → `SubjectGroupService`
+   - `LegacyDiscrepancyNoteController`: `DiscrepancyNoteDAO` → `DiscrepancyNoteService`
+
+2. **5 个新 Modulith 模块** (38 新文件):
+   - `rule/` — RuleSetEntity, RuleEntity, RuleSetRuleEntity, RuleExpressionEntity + 4 repos + RuleService
+   - `dataset/` — DatasetEntity (36 列) + DatasetRepository + DatasetService
+   - `filter/` — FilterEntity (9 列) + FilterRepository + FilterService
+   - `subjectgroup/` — StudyGroupClassEntity + StudyGroupEntity + 2 repos + SubjectGroupService
+   - `discrepancynote/` — DiscrepancyNoteEntity (11 列) + DiscrepancyNoteRepository + DiscrepancyNoteService
+
+3. **CRF 模块增强**: 新增 SectionEntity, ItemEntity, ItemFormMetadataEntity + repos. `LegacyCrfAdapter` 改用 JPA 仓库.
+
+4. **死代码删除**:
+   - `LegacyDaoConfig`: **12 → 0 beans** (全部清空)
+   - 9 个死 Spring XML 配置文件 (已被 Java @Configuration 完全替代)
+   - LegacyStudyAdapter, LegacySubjectAdapter (注入但从未调用)
+
+5. **前端测试**: 从 7 个增加到 **25 个** (新增 FormStatus 10, DataEntryForm 6, StudySwitcher 2)
+
+6. **模块边界**: 为 study, subject, crf, rule 模块添加 `@NamedInterface`. 4 个新模块完整 package-info.
+
+### 验证
+- `mvn clean compile` ✅ | `ModulithVerificationTest` ✅
+- **150 Java tests** (0 failures) — 较之前 +4
+- **25 Vitest tests** (0 failures) — 较之前 +18
+- 工作目录干净, 13 个原子提交 ✅
+
+---
+
 ## 2026-05-20 — 项目清理: .gitignore 更新 + 无用文件删除
 
 - **模块:** 全项目
