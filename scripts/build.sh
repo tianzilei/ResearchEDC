@@ -81,7 +81,7 @@ ${MAVEN} package -DskipTests ${PROFILE}
 echo ""
 
 echo "=== Build Complete ==="
-echo "  core JAR: $(find core/target -name '*.jar' -not -name '*-sources*' -not -name '*-javadoc*' 2>/dev/null | head -1)"
+echo "  core JAR: $(find legacy-core/target -name '*.jar' -not -name '*-sources*' -not -name '*-javadoc*' 2>/dev/null | head -1)"
 echo "  web WAR:  $(find web/target -name '*.war' 2>/dev/null | head -1)"
 echo "  ws WAR:   $(find ws/target -name '*.war' 2>/dev/null | head -1)"
 echo ""

@@ -69,7 +69,7 @@ case "${SCAN_TYPE}" in
 
     filesystem)
         echo "Scanning project filesystem..."
-        scan_filesystem "${PROJECT_DIR}/core"
+        scan_filesystem "${PROJECT_DIR}/legacy-core"
         scan_filesystem "${PROJECT_DIR}/web"
         scan_filesystem "${PROJECT_DIR}/ws"
         ;;

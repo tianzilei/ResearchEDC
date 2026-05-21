@@ -1,7 +1,7 @@
 # OpenClinica Legacy Code Refactoring Plan
 
 > **Last updated:** 2026-05-20 (Sequence 1-2 complete: 41 contract tests + 47 service tests + DAO config + controller refactoring)  
-> **Scope:** All remaining legacy code in `core/`, `web/`, `ws/`  
+> **Scope:** All remaining legacy code in `legacy-core/`, `web/`, `ws/`  
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
 ---
@@ -24,7 +24,7 @@
 ### Remaining legacy code (~1,274 files)
 
 ```
-core/     737 files  →  bean/  dao/  domain/  service/  logic/  job/  exception/  validator/  i18n/  patterns/  core/  log/
+legacy-core/  737 files  →  bean/  dao/  domain/  service/  logic/  job/  exception/  validator/  i18n/  patterns/  core/  log/
 web/      482 files  →  control/ (186 servlets)  controller/ (40 Spring MVC)
             + 417 JSP pages (managestudy 120, submit 70, admin 69, include 61, extract 50, login 16, misc 31)
 ws/        57 files  →  7 SOAP endpoints + validators + beans + logic + client

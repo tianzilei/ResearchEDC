@@ -98,5 +98,5 @@ psql: ## Open PostgreSQL shell
 	docker compose -f $(COMPOSE_DEV) exec postgres psql -U researchedc -d researchedc
 
 clean: ## Remove all build artifacts
-	rm -rf core/target web/target ws/target
+	rm -rf legacy-core/target web/target ws/target
 	docker compose -f $(COMPOSE_DEV) down -v
