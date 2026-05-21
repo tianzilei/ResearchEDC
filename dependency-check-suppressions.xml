@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-    <!-- Suppress false positives for OpenClinica internal libraries -->
+    <!-- Suppress false positives for ResearchEDC internal libraries -->
     <suppress>
-        <notes><![CDATA[OpenClinica internal package, not an external dependency]]></notes>
+        <notes><![CDATA[ResearchEDC internal package, not an external dependency]]></notes>
         <packageUrl regex="true">pkg:maven/org\.akaza\.openclinica/.*@.*</packageUrl>
         <cpe>cpe:/a:openclinica:openclinica</cpe>
     </suppress>

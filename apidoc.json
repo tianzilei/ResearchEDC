@@ -1,8 +1,8 @@
 {
-  "name": "OpenClinica API",
-  "version": "3.8",
-  "description": "The OpenClinica REST API",
-  "title": "The OpenClinica REST API",
+  "name": "ResearchEDC API",
+  "version": "3.18-SNAPSHOT",
+  "description": "The ResearchEDC REST API",
+  "title": "The ResearchEDC REST API",
   "template": {
     "withCompare": false,
     "withGenerator": false
