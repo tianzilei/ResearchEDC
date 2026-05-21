@@ -2,7 +2,7 @@
 
 **版本:** 3.18-SNAPSHOT  
 **最后更新:** 2026-05-20  
-**JSP 迁移进度:** 225/417 (54%) — 192 页通过 LegacyFrame 向后兼容  
+**JSP 迁移进度:** 280/417 (67%) — 137 页通过 LegacyFrame 向后兼容  
 **许可证:** GNU LGPL
 
 ResearchEDC is an independently maintained research electronic data capture and clinical research data management platform derived from OpenClinica v3.x.
@@ -72,9 +72,9 @@ ResearchEDC/
 │   └── packages/            # SurveyJS 问卷 schema (ISI, GAD-7, PHQ-9, ESS)
 ├── app/                # Spring Boot 模块化单体入口
 │   ├── src/main/java/
-│   │   └── org/akaza/openclinica/
+│   │   └── org/researchedc/
 │   │       ├── config/      # WebMvcConfig (SPA fallback), WebServiceConfig, OpenApiConfig
-│   │       └── module/      # Spring Modulith 模块 (12 个)
+│   │       └── module/      # Spring Modulith 模块 (16 个)
 │   │           ├── randomization/  # 随机化系统 (算法 + API)
 │   │           ├── export/         # 导出中心 (异步任务)
 │   │           ├── crf/            # CRF 元数据 (REST API)
@@ -85,7 +85,12 @@ ResearchEDC/
 │   │           ├── subject/        # 受试者管理 (subject/study_subject 桥接)
 │   │           ├── event/          # 访视管理 (study_event/event_crf 桥接)
 │   │           ├── datacapture/    # 数据采集 (item_data/response_set 桥接)
-│   │           └── identity/       # 身份权限 (user_account/study_user_role 桥接)
+│   │           ├── identity/       # 身份权限 (user_account/study_user_role 桥接)
+│   │           ├── rule/           # 规则引擎 (JPA 实体 + 仓库)
+│   │           ├── dataset/        # 数据集管理 (JPA 实体 + 仓库)
+│   │           ├── filter/         # 过滤器管理 (JPA 实体 + 仓库)
+│   │           ├── subjectgroup/   # 受试者分组 (JPA 实体 + 仓库)
+│   │           └── discrepancynote/# 差异备注管理 (JPA 实体 + 仓库)
 │   └── src/main/resources/
 │       ├── application.yml # profile 配置
 │       └── static/         # 前端构建产物 (自动生成)
@@ -174,6 +179,8 @@ python -m pytest app/tests/ -v               # 运行 31 个测试
 | DAO 集成测试 | `HibernateOcDbTestCase` (DBUnit) | ✅ | ⚠️ 待启用 (测试方法被注释) |
 | Service 集成测试 | `HibernateOcDbTestCase` | ✅ | ⚠️ 同上 |
 | Modulith 验证 | JUnit 5 + `ApplicationModules` | ❌ | ✅ 1 test pass |
+| **模块单元测试** | JUnit 5 + `@SpringBootTest` | ✅ | **✅ 150 Java tests pass** |
+| **前端测试** | Vitest + React Testing Library | ❌ | **✅ 25 Vitest tests pass** |
 | **问卷服务单元测试** | **pytest** | ❌ | **✅ 31 tests pass** |
 | **问卷服务 E2E** | **curl + pytest** | ✅ | **✅ Docker Compose + API** |
 
@@ -258,6 +265,11 @@ python -m pytest app/tests/ -v  # 31 tests
 | **访视模块** | `module/event/` | study_event/event_crf 桥接 |
 | **数据采集模块** | `module/datacapture/` | item_data/response_set 桥接 |
 | **身份模块** | `module/identity/` | user_account/study_user_role 桥接 |
+| **规则模块** | `module/rule/` | 规则集/规则/表达式 JPA 实体 + 仓库 |
+| **数据集模块** | `module/dataset/` | 数据集 JPA 实体 + 仓库 |
+| **过滤器模块** | `module/filter/` | 过滤器 JPA 实体 + 仓库 |
+| **受试者分组模块** | `module/subjectgroup/` | 分组类/分组 JPA 实体 + 仓库 |
+| **差异备注模块** | `module/discrepancynote/` | 差异备注 JPA 实体 + 仓库 |
 | 通知模块 | `module/notification/` | 事件驱动邮件 |
 | **问卷服务** | `questionnaire-service/apps/api/` | **FastAPI + SQLAlchemy + 评分引擎** |
 | 前台 SPA | `frontend/src/` | React 19 管理界面 (28 页面, ~225 JSP 已替换) |
@@ -343,6 +355,11 @@ OpenClinica is a trademark of its respective owner. ResearchEDC is not an offici
 
 ### 相关文档
 
-- [AGENTS.md](./AGENTS.md) — AI 助手知识库
+- [AGENTS.md](./AGENTS.md) — AI 助手知识库 (含 app, frontend, questionnaire-service 等子模块)
+- [app/AGENTS.md](./app/AGENTS.md) — Spring Boot 配置与 Modulith 模块
+- [frontend/AGENTS.md](./frontend/AGENTS.md) — React 19 SPA 前后端交互
+- [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) — Python FastAPI 微服务
+- [legacy-core/AGENTS.md](./legacy-core/AGENTS.md) — 领域逻辑与数据访问
+- [web/AGENTS.md](./web/AGENTS.md) — Web UI 与控制器
+- [ws/AGENTS.md](./ws/AGENTS.md) — SOAP Web 服务
 - [MODIFICATIONS.md](./MODIFICATIONS.md) — 修改记录
-- [PLAN.md](./PLAN.md) — 已知问题与规划

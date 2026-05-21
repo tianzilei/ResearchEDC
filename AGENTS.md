@@ -52,7 +52,6 @@ New React 19 SPA frontend at `frontend/`, built to `app/src/main/resources/stati
 │   └── refactor/            # Refactoring plans & baseline
 ├── AGENTS.md
 ├── MODIFICATIONS.md
-├── PLAN.md
 └── .sisyphus/               # AI work plans (run-continuation cleaned)
 ```
 
@@ -193,4 +192,7 @@ python -m pytest app/tests/ -v
 - [legacy-core/AGENTS.md](./legacy-core/AGENTS.md) - Domain logic and data access
 - [web/AGENTS.md](./web/AGENTS.md) - Web UI and controllers
 - [ws/AGENTS.md](./ws/AGENTS.md) - SOAP web services
+- [app/AGENTS.md](./app/AGENTS.md) - Spring Boot entry point, config, and Modulith modules
+- [frontend/AGENTS.md](./frontend/AGENTS.md) - React 19 SPA (TypeScript, Vite, Ant Design)
+- [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) - Python FastAPI microservice
 - [LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md) - Remaining legacy refactoring roadmap
