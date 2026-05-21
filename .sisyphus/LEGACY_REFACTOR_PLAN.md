@@ -336,7 +336,7 @@ The 11 `applicationContext-*.xml` files are still loaded via `@ImportResource`:
 | **S1** | **Contract tests** | **✅ COMPLETE (2026-05-20)** | **41 MockMvc tests for 8 legacy-gateway controllers** |
 | **S2** | **Service tests** | **✅ COMPLETE (2026-05-20)** | **47 new tests: Subject(15), Event(12), DataCapture(9), Identity(11)** |
 
-**Total Java tests: 146 (0 failures)**  
+**Total Java tests: 150 (0 failures)**  
 **Module test coverage: 10 modules with baseline tests**
 
 ---
