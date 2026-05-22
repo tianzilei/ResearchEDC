@@ -6,6 +6,7 @@
  * copyright 2003-2005 Akaza Research
  */
 package org.researchedc.dao.managestudy;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 
 import java.sql.Types;
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ import org.researchedc.dao.submit.SubjectDAO;
  *         TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style -
  *         Code Templates
  */
-public class DiscrepancyNoteDAO extends AuditableEntityDAO {
+public class DiscrepancyNoteDAO extends AuditableEntityDAO implements IDiscrepancyNoteDAO {
     // if true, we fetch the mapping along with the bean
     // only applies to functions which return a single bean
     private boolean fetchMapping = false;

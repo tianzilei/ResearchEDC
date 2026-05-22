@@ -39,7 +39,9 @@ import org.apache.commons.lang3.StringUtils;
  * @author jxu
  * 
  */
-public class EventDefinitionCRFDAO extends AuditableEntityDAO {
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
+
+public class EventDefinitionCRFDAO extends AuditableEntityDAO implements EventDefinitionCRFDao {
     // private DAODigester digester;
 
     private void setQueryNames() {

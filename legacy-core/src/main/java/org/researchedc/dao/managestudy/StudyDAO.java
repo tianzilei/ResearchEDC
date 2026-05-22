@@ -36,8 +36,10 @@ import java.util.Locale;
 
 import javax.sql.DataSource;
 
+import org.researchedc.dao.spi.IStudyDAO;
+
 @Deprecated(since = "3.18", forRemoval = true)
-public class StudyDAO <K extends String,V extends ArrayList> extends AuditableEntityDAO {
+public class StudyDAO <K extends String,V extends ArrayList> extends AuditableEntityDAO implements IStudyDAO {
     // private DataSource ds;
     // private DAODigester digester;
 

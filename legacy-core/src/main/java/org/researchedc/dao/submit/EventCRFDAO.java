@@ -53,7 +53,9 @@ import org.apache.commons.lang3.StringUtils;
  * 
  *         TODO test create and update first thing
  */
-public class EventCRFDAO<K extends String, V extends ArrayList> extends AuditableEntityDAO {
+import org.researchedc.dao.spi.EventCRFDao;
+
+public class EventCRFDAO<K extends String, V extends ArrayList> extends AuditableEntityDAO implements EventCRFDao {
     // private DAODigester digester;
 
     private void setQueryNames() {

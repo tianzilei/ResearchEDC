@@ -6,6 +6,7 @@
  * Copyright 2003-2008 Akaza Research 
  */
 package org.researchedc.dao.rule;
+import org.researchedc.dao.spi.IRuleDAO;
 
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
@@ -36,7 +37,7 @@ import javax.sql.DataSource;
  * @author Krikor Krumlian
  * 
  */
-public class RuleDAO extends AuditableEntityDAO {
+public class RuleDAO extends AuditableEntityDAO implements IRuleDAO {
 
     private EventCRFDAO eventCrfDao;
     private RuleSetDAO ruleSetDao;

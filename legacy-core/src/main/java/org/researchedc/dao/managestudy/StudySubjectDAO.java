@@ -36,8 +36,10 @@ import org.apache.commons.lang3.StringUtils;
  * @author jxu
  *
  */
+import org.researchedc.dao.spi.IStudySubjectDAO;
+
 @Deprecated(since = "3.18", forRemoval = true)
-public class StudySubjectDAO<K extends String,V extends ArrayList> extends AuditableEntityDAO {
+public class StudySubjectDAO<K extends String,V extends ArrayList> extends AuditableEntityDAO implements IStudySubjectDAO {
 
     // private DAODigester digester;
 

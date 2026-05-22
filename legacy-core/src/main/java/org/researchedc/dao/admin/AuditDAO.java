@@ -19,6 +19,7 @@ import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.EntityDAO;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
+import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.i18n.util.I18nFormatUtil;
 
 import java.text.SimpleDateFormat;
@@ -37,7 +38,7 @@ import javax.sql.DataSource;
  * @author jsampson
  *
  */
-public class AuditDAO extends EntityDAO {
+public class AuditDAO extends EntityDAO implements AuditDao {
     // private DAODigester digester;
     // YW 12-06-2007 <<!!! Be careful when there is item with data-type as
     // "Date".

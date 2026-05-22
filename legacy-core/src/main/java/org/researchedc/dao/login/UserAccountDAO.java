@@ -30,6 +30,7 @@ import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 
 /**
@@ -46,7 +47,7 @@ import org.researchedc.i18n.util.ResourceBundleProvider;
  *         <P>
  *         expand on query to get all that from a select star?
  */
-public class UserAccountDAO extends AuditableEntityDAO {
+public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDAO {
     // private DataSource ds;
     // private DAODigester digester;
 

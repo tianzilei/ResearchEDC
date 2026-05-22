@@ -7,6 +7,7 @@
  */
 
 package org.researchedc.dao.rule;
+import org.researchedc.dao.spi.IRuleSetDAO;
 
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.EntityBean;
@@ -44,7 +45,7 @@ import javax.sql.DataSource;
  * @author Krikor Krumlian
  * 
  */
-public class RuleSetDAO extends AuditableEntityDAO {
+public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
     private EventCRFDAO eventCrfDao;
     private StudyEventDefinitionDAO studyEventDefinitionDAO;

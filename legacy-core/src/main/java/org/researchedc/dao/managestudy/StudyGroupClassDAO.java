@@ -29,7 +29,7 @@ import javax.sql.DataSource;
  * The data access object that users will access the database for study group
  * class objects
  */
-public class StudyGroupClassDAO extends AuditableEntityDAO {
+public class StudyGroupClassDAO extends AuditableEntityDAO implements org.researchedc.dao.spi.StudyGroupClassDao {
     protected void setQueryNames() {
         findAllByStudyName = "findAllByStudy";
         findByPKAndStudyName = "findByPKAndStudy";

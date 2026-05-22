@@ -24,6 +24,7 @@ import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
+import org.researchedc.dao.spi.ICrfDAO;
 
 /**
  * the data access object for instruments in the database.
@@ -31,7 +32,7 @@ import org.researchedc.dao.core.TypeNames;
  * @author thickerson
  * 
  */
-public class CRFDAO<K extends String, V extends ArrayList> extends AuditableEntityDAO {
+public class CRFDAO<K extends String, V extends ArrayList> extends AuditableEntityDAO implements ICrfDAO {
     // private DataSource ds;
     // private DAODigester digester;
 

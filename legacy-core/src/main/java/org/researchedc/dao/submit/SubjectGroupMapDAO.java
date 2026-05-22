@@ -26,7 +26,7 @@ import javax.sql.DataSource;
  * @author jxu
  * 
  */
-public class SubjectGroupMapDAO extends AuditableEntityDAO {
+public class SubjectGroupMapDAO extends AuditableEntityDAO implements org.researchedc.dao.spi.SubjectGroupMapDao {
 
     private void setQueryNames() {
         this.getCurrentPKName = "getCurrentPK";

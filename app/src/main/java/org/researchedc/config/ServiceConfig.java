@@ -3,11 +3,34 @@ package org.researchedc.config;
 import javax.sql.DataSource;
 
 import org.researchedc.core.CRFLocker;
-import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
 import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.spi.AuditDao;
+import org.researchedc.dao.spi.IAuditEventDAO;
+import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
+import org.researchedc.dao.spi.ISectionDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.hibernate.AuditLogEventDao;
 import org.researchedc.dao.hibernate.EventDefinitionCrfTagDao;
+import org.researchedc.legacy.dao.AuditDaoImpl;
+import org.researchedc.legacy.dao.IAuditEventDAOImpl;
+import org.researchedc.legacy.dao.CRFVersionDaoImpl;
+import org.researchedc.legacy.dao.ICrfDAOImpl;
+import org.researchedc.legacy.dao.IItemDAOImpl;
+import org.researchedc.legacy.dao.IItemDataDAOImpl;
+import org.researchedc.legacy.dao.IItemFormMetadataDAOImpl;
+import org.researchedc.legacy.dao.IItemGroupDAOImpl;
+import org.researchedc.legacy.dao.IItemGroupMetadataDAOImpl;
+import org.researchedc.legacy.dao.ISectionDAOImpl;
+import org.researchedc.legacy.dao.ISubjectDAOImpl;
+import org.researchedc.legacy.dao.IUserAccountDAOImpl;
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
 import org.researchedc.dao.hibernate.RuleSetDao;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
@@ -17,7 +40,6 @@ import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.hibernate.StudySubjectDao;
 import org.researchedc.dao.hibernate.StudyUserRoleDao;
 import org.researchedc.dao.hibernate.UserAccountDao;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.ViewNotesDao;
 import org.researchedc.dao.core.CoreResources;
@@ -67,8 +89,18 @@ public class ServiceConfig {
     // ──────────────────────────────────────────────────────────────────────
 
     @Bean
-    public AuditEventDAO auditEventDao() {
-        return new AuditEventDAO(dataSource);
+    public IAuditEventDAO auditEventDao() {
+        return new IAuditEventDAOImpl(dataSource);
+    }
+
+    @Bean
+    public AuditDao auditJdbcDao() {
+        return new AuditDaoImpl(dataSource);
+    }
+
+    @Bean
+    public ICrfDAO crfDao() {
+        return new ICrfDAOImpl(dataSource);
     }
 
     @Bean
@@ -82,13 +114,48 @@ public class ServiceConfig {
     }
 
     @Bean
-    public UserAccountDAO userAccountDao() {
-        return new UserAccountDAO(dataSource);
+    public IUserAccountDAO userAccountDao() {
+        return new IUserAccountDAOImpl(dataSource);
     }
 
     @Bean
     public ArchivedDatasetFileDAO archivedDatasetFileDao() {
         return new ArchivedDatasetFileDAO(dataSource);
+    }
+
+    @Bean
+    public IItemDataDAO itemDataDao() {
+        return new IItemDataDAOImpl(dataSource);
+    }
+
+    @Bean
+    public IItemDAO itemDao() {
+        return new IItemDAOImpl(dataSource);
+    }
+
+    @Bean
+    public ICrfVersionDAO crfVersionJdbcDao() {
+        return new CRFVersionDaoImpl(dataSource);
+    }
+
+    @Bean
+    public ISectionDAO sectionJdbcDao() {
+        return new ISectionDAOImpl(dataSource);
+    }
+
+    @Bean
+    public IItemFormMetadataDAO itemFormMetadataJdbcDao() {
+        return new IItemFormMetadataDAOImpl(dataSource);
+    }
+
+    @Bean
+    public IItemGroupDAO itemGroupJdbcDao() {
+        return new IItemGroupDAOImpl(dataSource);
+    }
+
+    @Bean
+    public IItemGroupMetadataDAO itemGroupMetadataJdbcDao() {
+        return new IItemGroupMetadataDAOImpl(dataSource);
     }
 
     // ──────────────────────────────────────────────────────────────────────
@@ -98,6 +165,11 @@ public class ServiceConfig {
     @Bean
     public RandomizeService randomizeService() {
         return new RandomizeService(dataSource);
+    }
+
+    @Bean
+    public ISubjectDAO subjectJdbcDao() {
+        return new ISubjectDAOImpl(dataSource);
     }
 
     @Bean

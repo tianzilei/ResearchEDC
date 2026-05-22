@@ -35,7 +35,7 @@ import org.researchedc.dao.core.TypeNames;
  * 
  * 
  */
-public class CRFVersionDAO<K extends String, V extends ArrayList> extends AuditableEntityDAO {
+public class CRFVersionDAO<K extends String, V extends ArrayList> extends AuditableEntityDAO implements org.researchedc.dao.spi.ICrfVersionDAO {
 
     @Override
     protected void setDigesterName() {

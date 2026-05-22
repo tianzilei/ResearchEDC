@@ -19,6 +19,7 @@ import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.submit.SubjectDAO;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import javax.sql.DataSource;
  * 
  * 
  */
-public class AuditEventDAO extends AuditableEntityDAO {
+public class AuditEventDAO extends AuditableEntityDAO implements IAuditEventDAO {
     // private DAODigester digester;
 
     public AuditEventDAO(DataSource ds) {

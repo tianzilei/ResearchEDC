@@ -30,7 +30,9 @@ import org.researchedc.dao.core.TypeNames;
  * @author thickerson
  * @author jsampson
  */
-public class StudyEventDefinitionDAO<K extends String,V extends ArrayList> extends AuditableEntityDAO {
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+
+public class StudyEventDefinitionDAO<K extends String,V extends ArrayList> extends AuditableEntityDAO implements IStudyEventDefinitionDAO {
 
     private void setQueryNames() {
         findAllByStudyName = "findAllByStudy";

@@ -38,7 +38,7 @@ import javax.sql.DataSource;
  *
  *
  */
-public class DatasetDAO extends AuditableEntityDAO {
+public class DatasetDAO extends AuditableEntityDAO implements org.researchedc.dao.spi.DatasetDao {
 
     // private DataSource ds;
     // private DAODigester digester;

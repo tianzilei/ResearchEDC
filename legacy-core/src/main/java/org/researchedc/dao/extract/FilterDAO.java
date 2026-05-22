@@ -28,7 +28,7 @@ import javax.sql.DataSource;
  * @author thickerson
  *
  */
-public class FilterDAO extends AuditableEntityDAO {
+public class FilterDAO extends AuditableEntityDAO implements org.researchedc.dao.spi.FilterDao {
     private DAODigester digester;
 
     @Override

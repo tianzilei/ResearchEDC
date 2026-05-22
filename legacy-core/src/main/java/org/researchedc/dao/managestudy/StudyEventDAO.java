@@ -46,7 +46,9 @@ import org.researchedc.service.rule.StudyEventBeanListener;
  *         Modified by ywang.
  *
  */
-public class StudyEventDAO extends AuditableEntityDAO implements Listener {
+import org.researchedc.dao.spi.IStudyEventDAO;
+
+public class StudyEventDAO extends AuditableEntityDAO implements IStudyEventDAO, Listener {
     
 	
 	private Observer observer;

@@ -26,7 +26,7 @@ import javax.sql.DataSource;
 /**
  * @author jxu
  */
-public class StudyGroupDAO extends AuditableEntityDAO {
+public class StudyGroupDAO extends AuditableEntityDAO implements org.researchedc.dao.spi.StudyGroupDao {
     // private DAODigester digester;
 
     protected void setQueryNames() {

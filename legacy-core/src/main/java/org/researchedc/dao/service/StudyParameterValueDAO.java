@@ -6,6 +6,7 @@
  * copyright 2003-2005 Akaza Research
  */
 package org.researchedc.dao.service;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.managestudy.StudyBean;
@@ -24,7 +25,7 @@ import java.util.Iterator;
 
 import javax.sql.DataSource;
 
-public class StudyParameterValueDAO extends AuditableEntityDAO {
+public class StudyParameterValueDAO extends AuditableEntityDAO implements IStudyParameterValueDAO {
 
     @Override
     protected void setDigesterName() {

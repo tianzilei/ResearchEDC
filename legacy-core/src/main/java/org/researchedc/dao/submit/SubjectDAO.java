@@ -13,6 +13,7 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.CoreResources;
+import org.researchedc.dao.spi.ISubjectDAO;
 
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
@@ -32,7 +33,7 @@ import javax.sql.DataSource;
  * @author jxu
  */
 @Deprecated(since = "3.18", forRemoval = true)
-public class SubjectDAO extends AuditableEntityDAO {
+public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
     // private DataSource ds;
     // private DAODigester digester;
     // protected String
