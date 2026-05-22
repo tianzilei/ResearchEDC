@@ -385,7 +385,7 @@ public class SecurityConfig {
         resource.setDataSource(dataSource);
         resource.setRuleSetRuleDao(ruleSetRuleDao);
         resource.setCoreResources(coreResources);
-        resource.setStudyDaoHib(studyDaoDomain);
+        resource.setStudyDaoHib((org.researchedc.dao.spi.IStudyDAO) studyDaoDomain);
         return resource;
     }
 

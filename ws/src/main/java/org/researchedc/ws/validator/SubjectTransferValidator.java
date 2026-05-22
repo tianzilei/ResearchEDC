@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
@@ -16,7 +17,7 @@ import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.submit.SubjectDAO;
 import org.researchedc.ws.bean.SubjectStudyDefinitionBean;
 import org.springframework.validation.Errors;
@@ -28,7 +29,7 @@ public class SubjectTransferValidator implements Validator {
     StudyDAO studyDAO;
     SubjectDAO subjectDao;
     StudySubjectDAO studySubjectDAO;
-    StudyParameterValueDAO studyParameterValueDAO;
+    IStudyParameterValueDAO studyParameterValueDAO;
     UserAccountDAO userAccountDAO;
     BaseVSValidatorImplementation helper;
 
@@ -352,7 +353,7 @@ public class SubjectTransferValidator implements Validator {
         return this.studySubjectDAO != null ? studySubjectDAO : new StudySubjectDAO(dataSource);
     }
 
-    public StudyParameterValueDAO getStudyParameterValueDAO() {
+    public IStudyParameterValueDAO getStudyParameterValueDAO() {
         return this.studyParameterValueDAO != null ? studyParameterValueDAO : new StudyParameterValueDAO(dataSource);
     }
     public UserAccountDAO getUserAccountDAO() {

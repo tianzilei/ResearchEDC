@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 
 import javax.sql.DataSource;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.ResolutionStatus;
@@ -27,7 +28,6 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;

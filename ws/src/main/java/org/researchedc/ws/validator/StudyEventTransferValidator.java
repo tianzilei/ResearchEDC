@@ -2,6 +2,7 @@ package org.researchedc.ws.validator;
 
 import java.util.Date;
 
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.StudyUserRoleBean;
@@ -15,7 +16,7 @@ import org.researchedc.ws.bean.StudyEventTransferBean;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.researchedc.bean.service.StudyParameterValueBean;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 import javax.sql.DataSource;
 
@@ -26,7 +27,7 @@ public class StudyEventTransferValidator implements Validator {
     StudySubjectDAO studySubjectDAO;
     StudyEventDefinitionDAO studyEventDefinitionDAO;
     BaseVSValidatorImplementation helper;
-    private StudyParameterValueDAO studyParameterValueDAO;
+    private IStudyParameterValueDAO studyParameterValueDAO;
     private static String TRUE ="true";    
     private static String REQUIRED ="required";
     public StudyEventTransferValidator(DataSource dataSource) {
@@ -178,8 +179,8 @@ public class StudyEventTransferValidator implements Validator {
         return this.studyEventDefinitionDAO != null ? studyEventDefinitionDAO : new StudyEventDefinitionDAO(dataSource);
     }
 
-    public StudyParameterValueDAO getStudyParameterValueDAO() {
-    	        return this.studyParameterValueDAO != null ? studyParameterValueDAO : new StudyParameterValueDAO(dataSource);
+    public IStudyParameterValueDAO getStudyParameterValueDAO() {
+    	    	return this.studyParameterValueDAO != null ? studyParameterValueDAO : new StudyParameterValueDAO(dataSource);
     	 }
     	
 }

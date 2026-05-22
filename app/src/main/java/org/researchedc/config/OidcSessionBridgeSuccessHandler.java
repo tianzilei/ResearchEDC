@@ -8,8 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.legacy.dao.IUserAccountDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -38,8 +40,12 @@ public class OidcSessionBridgeSuccessHandler implements AuthenticationSuccessHan
             if (username != null) {
                 DataSource ds = resolveDataSource(request);
                 if (ds != null) {
-                    UserAccountDAO dao = new UserAccountDAO(ds);
+                    IUserAccountDAO dao = new IUserAccountDAOImpl(ds);
                     UserAccountBean ub = (UserAccountBean) dao.findByUserName(username);
+                    if (ub == null || ub.getId() <= 0) {
+                        // JIT provisioning: create local user from OIDC claims
+                        ub = createUserFromOidc(dao, oidcUser, username);
+                    }
                     if (ub != null && ub.getId() > 0) {
                         HttpSession session = request.getSession(true);
                         session.setAttribute("userBean", ub);
@@ -47,12 +53,33 @@ public class OidcSessionBridgeSuccessHandler implements AuthenticationSuccessHan
                         log.info("OIDC session bridge: mapped Keycloak user '{}' to UserAccountBean id={}",
                                 username, ub.getId());
                     } else {
-                        log.warn("OIDC session bridge: no local user found for '{}'", username);
+                        log.warn("OIDC session bridge: could not create local user for '{}'", username);
                     }
                 }
             }
         }
         delegate.onAuthenticationSuccess(request, response, authentication);
+    }
+
+    private UserAccountBean createUserFromOidc(IUserAccountDAO dao, OidcUser oidcUser, String username) {
+        try {
+            UserAccountBean ub = new UserAccountBean();
+            ub.setName(username);
+            ub.setFirstName(oidcUser.getGivenName() != null ? oidcUser.getGivenName() : username);
+            ub.setLastName(oidcUser.getFamilyName() != null ? oidcUser.getFamilyName() : "User");
+            ub.setEmail(oidcUser.getEmail() != null ? oidcUser.getEmail() : username + "@researchedc.org");
+            ub.setEnabled(true);
+            ub.setStatus(Status.AVAILABLE);
+            ub.setPasswd("");
+            ub.setPasswdTimestamp(new java.util.Date());
+            ub.setCreatedDate(new java.util.Date());
+            UserAccountBean created = (UserAccountBean) dao.create(ub);
+            log.info("JIT provisioned local user '{}' from OIDC (id={})", username, created.getId());
+            return created;
+        } catch (Exception e) {
+            log.error("Failed to JIT provision local user '{}': {}", username, e.getMessage());
+            return null;
+        }
     }
 
     private DataSource resolveDataSource(HttpServletRequest request) {
