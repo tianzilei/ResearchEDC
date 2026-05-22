@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Wave 1 Schema Fork: Create module-owned dataset table -->
+    <!-- The module_dataset table replaces shared dataset table for the Dataset Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-22-module-dataset-seq-1">
+        <comment>Create sequence for module_dataset PK</comment>
+        <createSequence sequenceName="module_dataset_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-dataset-table-2">
+        <comment>Create module_dataset table with all columns matching DatasetEntity</comment>
+        <createTable tableName="module_dataset">
+            <column name="dataset_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_id" type="INT"/>
+            <column name="status_id" type="INT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(2000)"/>
+            <column name="sql_statement" type="CLOB"/>
+            <column name="num_runs" type="INT"/>
+            <column name="date_start" type="TIMESTAMP"/>
+            <column name="date_end" type="TIMESTAMP"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="date_last_run" type="TIMESTAMP"/>
+            <column name="owner_id" type="INT"/>
+            <column name="approver_id" type="INT"/>
+            <column name="update_id" type="INT"/>
+            <column defaultValueBoolean="false" name="show_event_location" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_event_start" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_event_end" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_subject_dob" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_subject_gender" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_event_status" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_subject_status" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_subject_unique_id" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_subject_age_at_event" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_crf_status" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_crf_version" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_crf_int_name" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_crf_int_date" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_group_info" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="show_disc_info" type="BOOLEAN"/>
+            <column name="odm_meta_data_version_name" type="VARCHAR(255)"/>
+            <column name="odm_meta_data_version_oid" type="VARCHAR(255)"/>
+            <column name="odm_prior_study_oid" type="VARCHAR(255)"/>
+            <column name="odm_prior_meta_data_version_oid" type="VARCHAR(255)"/>
+            <column defaultValueBoolean="false" name="show_secondary_id" type="BOOLEAN"/>
+            <column name="dataset_item_status_id" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-dataset-pk-3">
+        <comment>Add primary key on dataset_id</comment>
+        <addPrimaryKey columnNames="dataset_id" constraintName="pk_module_dataset" tableName="module_dataset"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-dataset-copy-4">
+        <comment>Copy existing data from legacy dataset table to module_dataset</comment>
+        <sql>
+            INSERT INTO module_dataset (
+                dataset_id, study_id, status_id, name, description, sql_statement,
+                num_runs, date_start, date_end, date_created, date_updated, date_last_run,
+                owner_id, approver_id, update_id,
+                show_event_location, show_event_start, show_event_end,
+                show_subject_dob, show_subject_gender, show_event_status, show_subject_status,
+                show_subject_unique_id, show_subject_age_at_event,
+                show_crf_status, show_crf_version, show_crf_int_name, show_crf_int_date,
+                show_group_info, show_disc_info,
+                odm_meta_data_version_name, odm_meta_data_version_oid, odm_prior_study_oid,
+                odm_prior_meta_data_version_oid,
+                show_secondary_id, dataset_item_status_id
+            )
+            SELECT
+                dataset_id, study_id, status_id, name, description, sql_statement,
+                num_runs, date_start, date_end, date_created, date_updated, date_last_run,
+                owner_id, approver_id, update_id,
+                show_event_location, show_event_start, show_event_end,
+                show_subject_dob, show_subject_gender, show_event_status, show_subject_status,
+                show_subject_unique_id, show_subject_age_at_event,
+                show_crf_status, show_crf_version, show_crf_int_name, show_crf_int_date,
+                show_group_info, show_disc_info,
+                odm_metadataversion_name, odm_metadataversion_oid, odm_prior_study_oid,
+                odm_prior_metadataversion_oid,
+                show_secondary_id, dataset_item_status_id
+            FROM dataset
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-dataset-seq-val-5">
+        <comment>Set sequence to max existing dataset_id</comment>
+        <sql>
+            SELECT setval('module_dataset_id_seq', COALESCE((SELECT MAX(dataset_id) FROM dataset), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

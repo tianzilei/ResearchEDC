@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Wave 2 Schema Fork: Create module-owned crf table -->
+    <!-- The module_crf table replaces the shared crf table for the CRF Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-22-module-crf-seq-1">
+        <comment>Create sequence for module_crf PK</comment>
+        <createSequence sequenceName="module_crf_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-crf-table-2">
+        <comment>Create module_crf table with all columns matching CrfEntity</comment>
+        <createTable tableName="module_crf">
+            <column name="crf_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(4000)"/>
+            <column name="oc_oid" type="VARCHAR(40)"/>
+            <column name="status_id" type="INT"/>
+            <column name="owner_id" type="INT"/>
+            <column name="source_study_id" type="INT"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="update_id" type="INT"/>
+            <column name="version" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-crf-pk-3">
+        <comment>Add primary key on crf_id</comment>
+        <addPrimaryKey columnNames="crf_id" constraintName="pk_module_crf" tableName="module_crf"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-crf-copy-4">
+        <comment>Copy existing data from legacy crf table to module_crf</comment>
+        <sql>
+            INSERT INTO module_crf (
+                crf_id, name, description, oc_oid, status_id,
+                owner_id, source_study_id, date_created, date_updated, update_id
+            )
+            SELECT
+                crf_id, name, description, oc_oid, status_id,
+                owner_id, source_study_id, date_created, date_updated, update_id
+            FROM crf
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-crf-seq-val-5">
+        <comment>Set sequence to max existing crf_id</comment>
+        <sql>
+            SELECT setval('module_crf_id_seq', COALESCE((SELECT MAX(crf_id) FROM crf), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

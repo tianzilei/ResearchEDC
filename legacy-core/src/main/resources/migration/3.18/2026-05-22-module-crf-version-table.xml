@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Wave 2 Schema Fork: Create module-owned crf_version table -->
+    <!-- The module_crf_version table replaces the shared crf_version table for the CRF Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-22-module-crf-version-seq-1">
+        <comment>Create sequence for module_crf_version PK</comment>
+        <createSequence sequenceName="module_crf_version_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-crf-version-table-2">
+        <comment>Create module_crf_version table with all columns matching CrfVersionEntity</comment>
+        <createTable tableName="module_crf_version">
+            <column name="crf_version_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="crf_id" type="INT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(4000)"/>
+            <column name="revision_notes" type="VARCHAR(255)"/>
+            <column name="oc_oid" type="VARCHAR(40)"/>
+            <column name="status_id" type="INT"/>
+            <column name="owner_id" type="INT"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="update_id" type="INT"/>
+            <column name="xform" type="CLOB"/>
+            <column name="xformName" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-crf-version-pk-3">
+        <comment>Add primary key on crf_version_id</comment>
+        <addPrimaryKey columnNames="crf_version_id" constraintName="pk_module_crf_version" tableName="module_crf_version"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-crf-version-copy-4">
+        <comment>Copy existing data from legacy crf_version table to module_crf_version</comment>
+        <sql>
+            INSERT INTO module_crf_version (
+                crf_version_id, crf_id, name, description, revision_notes,
+                oc_oid, status_id, owner_id, date_created, date_updated,
+                update_id, xform, xformName
+            )
+            SELECT
+                crf_version_id, crf_id, name, description, revision_notes,
+                oc_oid, status_id, owner_id, date_created, date_updated,
+                update_id, xform, xformName
+            FROM crf_version
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-crf-version-seq-val-5">
+        <comment>Set sequence to max existing crf_version_id</comment>
+        <sql>
+            SELECT setval('module_crf_version_id_seq', COALESCE((SELECT MAX(crf_version_id) FROM crf_version), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Wave 2 Schema Fork: Create module-owned section table -->
+    <!-- The module_section table replaces shared section table for the CRF Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-22-module-section-seq-1">
+        <comment>Create sequence for module_section PK</comment>
+        <createSequence sequenceName="module_section_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-section-table-2">
+        <comment>Create module_section table with all columns matching SectionEntity</comment>
+        <createTable tableName="module_section">
+            <column name="section_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="crf_version_id" type="INT"/>
+            <column name="label" type="VARCHAR(2000)"/>
+            <column name="title" type="VARCHAR(2000)"/>
+            <column name="subtitle" type="VARCHAR(2000)"/>
+            <column name="instructions" type="VARCHAR(2000)"/>
+            <column name="ordinal" type="INT"/>
+            <column name="parent_id" type="INT"/>
+            <column name="status_id" type="INT"/>
+            <column name="owner_id" type="INT"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="update_id" type="INT"/>
+            <column name="borders" type="INT"/>
+            <column name="page_number_label" type="VARCHAR(5)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-section-pk-3">
+        <comment>Add primary key on section_id</comment>
+        <addPrimaryKey columnNames="section_id" constraintName="pk_module_section" tableName="module_section"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-section-copy-4">
+        <comment>Copy existing data from legacy section table to module_section</comment>
+        <sql>
+            INSERT INTO module_section (
+                section_id, crf_version_id, label, title, subtitle, instructions,
+                ordinal, parent_id, status_id, owner_id, date_created, date_updated,
+                update_id, borders, page_number_label
+            )
+            SELECT
+                section_id, crf_version_id, label, title, subtitle, instructions,
+                ordinal, parent_id, status_id, owner_id, date_created, date_updated,
+                update_id, borders, page_number_label
+            FROM section
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-section-seq-val-5">
+        <comment>Set sequence to max existing section_id</comment>
+        <sql>
+            SELECT setval('module_section_id_seq', COALESCE((SELECT MAX(section_id) FROM section), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

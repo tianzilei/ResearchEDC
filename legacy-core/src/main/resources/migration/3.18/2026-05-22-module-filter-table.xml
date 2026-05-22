@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!--
+        Fork the `filter` table so the filter module owns its own table.
+        Creates module_filter table with the same schema as the legacy filter table,
+        copies existing data, and creates a dedicated sequence for PK generation.
+    -->
+    <changeSet author="research-edc" id="2026-05-22-01-create-module-filter-sequence">
+        <createSequence sequenceName="module_filter_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-02-create-module-filter-table">
+        <createTable tableName="module_filter">
+            <column name="filter_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(2000)"/>
+            <column name="sql_statement" type="CLOB"/>
+            <column name="status_id" type="INT"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="owner_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_id" type="INT"/>
+        </createTable>
+        <addPrimaryKey tableName="module_filter" columnNames="filter_id"
+                       constraintName="pk_module_filter"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-03-migrate-filter-data">
+        <comment>Copy existing data from legacy filter table into module_filter</comment>
+        <sql>INSERT INTO module_filter SELECT * FROM filter</sql>
+        <sql>SELECT setval('module_filter_id_seq', COALESCE((SELECT MAX(filter_id) FROM filter), 1))</sql>
+    </changeSet>
+
+</databaseChangeLog>

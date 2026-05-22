@@ -61,6 +61,9 @@ services:
       RESEARCHEDC_MAIL_AUTH: "false"
       RESEARCHEDC_LDAP_ENABLED: "false"
       RESEARCHEDC_WEBAPP_NAME: "ROOT"
+      KEYCLOAK_ISSUER_URI: http://keycloak:8080/realms/researchedc
+      KEYCLOAK_CLIENT_ID: researchedc-backend
+      KEYCLOAK_CLIENT_SECRET: researchedc-backend-secret
     volumes:
       - researchedc-data:/opt/researchedc/data
       - researchedc-logs:/opt/researchedc/logs
@@ -148,6 +151,31 @@ services:
       - "${RESEARCHEDC_ADMINER_PORT:-8082}:8080"
     depends_on:
       - postgres
+    logging: *default-logging
+
+  # ---- Keycloak (Authentication / SSO) ----
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: researchedc-keycloak
+    restart: unless-stopped
+    ports:
+      - "${KEYCLOAK_PORT:-8443}:8080"
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: researchedc-keycloak
+      KC_DB_USERNAME: ${POSTGRES_USER:-researchedc}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-researchedc}
+      KC_HOSTNAME: localhost
+      KC_HTTP_ENABLED: "true"
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./deploy/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    command: ["start-dev", "--import-realm"]
+    depends_on:
+      postgres:
+        condition: service_healthy
     logging: *default-logging
 
 volumes:

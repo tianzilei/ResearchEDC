@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Wave 2 Schema Fork: Create module-owned item_form_metadata table -->
+    <!-- The module_item_form_metadata table replaces shared item_form_metadata table for the CRF Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-22-module-ifm-seq-1">
+        <comment>Create sequence for module_item_form_metadata PK</comment>
+        <createSequence sequenceName="module_ifm_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-ifm-table-2">
+        <comment>Create module_item_form_metadata table with all columns matching ItemFormMetadataEntity</comment>
+        <createTable tableName="module_item_form_metadata">
+            <column name="item_form_metadata_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="item_id" type="INT"/>
+            <column name="section_id" type="INT"/>
+            <column name="crf_version_id" type="INT"/>
+            <column name="ordinal" type="INT"/>
+            <column name="required" type="BOOLEAN"/>
+            <column name="default_value" type="VARCHAR(4000)"/>
+            <column name="regexp" type="VARCHAR(1000)"/>
+            <column name="regexp_error_msg" type="VARCHAR(2000)"/>
+            <column name="response_layout" type="VARCHAR(255)"/>
+            <column name="width_decimal" type="VARCHAR(10)"/>
+            <column name="show_item" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-ifm-pk-3">
+        <comment>Add primary key on item_form_metadata_id</comment>
+        <addPrimaryKey columnNames="item_form_metadata_id" constraintName="pk_module_item_form_metadata" tableName="module_item_form_metadata"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-ifm-copy-4">
+        <comment>Copy existing data from legacy item_form_metadata table to module_item_form_metadata</comment>
+        <sql>
+            INSERT INTO module_item_form_metadata (
+                item_form_metadata_id, item_id, section_id, crf_version_id, ordinal,
+                required, default_value, regexp, regexp_error_msg,
+                response_layout, width_decimal, show_item
+            )
+            SELECT
+                item_form_metadata_id, item_id, section_id, crf_version_id, ordinal,
+                required, default_value, regexp, regexp_error_msg,
+                response_layout, width_decimal, show_item
+            FROM item_form_metadata
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-ifm-seq-val-5">
+        <comment>Set sequence to max existing item_form_metadata_id</comment>
+        <sql>
+            SELECT setval('module_ifm_id_seq', COALESCE((SELECT MAX(item_form_metadata_id) FROM item_form_metadata), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

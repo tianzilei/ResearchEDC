@@ -1,0 +1,90 @@
+{
+  "id": "researchedc",
+  "realm": "researchedc",
+  "displayName": "ResearchEDC",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "resetPasswordAllowed": true,
+  "accessTokenLifespan": 300,
+  "accessCodeLifespan": 60,
+  "ssoSessionMaxLifespan": 86400,
+
+  "clients": [
+    {
+      "clientId": "researchedc-frontend",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["http://localhost:8080/*", "http://localhost:5173/*"],
+      "webOrigins": ["http://localhost:8080", "http://localhost:5173"],
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:8080/*"
+      }
+    },
+    {
+      "clientId": "researchedc-backend",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "researchedc-backend-secret",
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "serviceAccountsEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "attributes": {
+        "access.token.lifespan": "3600"
+      }
+    }
+  ],
+
+  "roles": {
+    "realm": [
+      { "name": "admin", "description": "System Administrator" },
+      { "name": "investigator", "description": "Principal Investigator" },
+      { "name": "coordinator", "description": "Study Coordinator" },
+      { "name": "data_entry", "description": "Data Entry Person" },
+      { "name": "monitor", "description": "Study Monitor" }
+    ]
+  },
+
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "email": "admin@researchedc.org",
+      "firstName": "Admin",
+      "lastName": "User",
+      "credentials": [{ "type": "password", "value": "admin", "temporary": false }],
+      "realmRoles": ["admin"],
+      "clientRoles": {}
+    },
+    {
+      "username": "investigator",
+      "enabled": true,
+      "email": "investigator@researchedc.org",
+      "firstName": "Principal",
+      "lastName": "Investigator",
+      "credentials": [{ "type": "password", "value": "researchedc", "temporary": false }],
+      "realmRoles": ["investigator"],
+      "clientRoles": {}
+    },
+    {
+      "username": "coordinator",
+      "enabled": true,
+      "email": "coordinator@researchedc.org",
+      "firstName": "Study",
+      "lastName": "Coordinator",
+      "credentials": [{ "type": "password", "value": "researchedc", "temporary": false }],
+      "realmRoles": ["coordinator"],
+      "clientRoles": {}
+    }
+  ],
+
+  "defaultDefaultClientScopes": ["email", "profile", "roles"],
+  "optionalClientScopes": ["address", "phone", "offline_access"]
+}

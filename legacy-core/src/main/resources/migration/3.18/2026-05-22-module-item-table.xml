@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Wave 2 Schema Fork: Create module-owned item table -->
+    <!-- The module_item table replaces shared item table for the CRF Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-22-module-item-seq-1">
+        <comment>Create sequence for module_item PK</comment>
+        <createSequence sequenceName="module_item_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-item-table-2">
+        <comment>Create module_item table with all columns matching ItemEntity</comment>
+        <createTable tableName="module_item">
+            <column name="item_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(4000)"/>
+            <column name="units" type="VARCHAR(64)"/>
+            <column name="item_data_type_id" type="INT"/>
+            <column name="oc_oid" type="VARCHAR(40)"/>
+            <column name="phi_status" type="BOOLEAN"/>
+            <column name="status_id" type="INT"/>
+            <column name="owner_id" type="INT"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="update_id" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-item-pk-3">
+        <comment>Add primary key on item_id</comment>
+        <addPrimaryKey columnNames="item_id" constraintName="pk_module_item" tableName="module_item"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-item-copy-4">
+        <comment>Copy existing data from legacy item table to module_item</comment>
+        <sql>
+            INSERT INTO module_item (
+                item_id, name, description, units, item_data_type_id, oc_oid,
+                phi_status, status_id, owner_id, date_created, date_updated, update_id
+            )
+            SELECT
+                item_id, name, description, units, item_data_type_id, oc_oid,
+                phi_status, status_id, owner_id, date_created, date_updated, update_id
+            FROM item
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-module-item-seq-val-5">
+        <comment>Set sequence to max existing item_id</comment>
+        <sql>
+            SELECT setval('module_item_id_seq', COALESCE((SELECT MAX(item_id) FROM item), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

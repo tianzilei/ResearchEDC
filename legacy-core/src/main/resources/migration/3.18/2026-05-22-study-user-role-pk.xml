@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!--
+        add study_user_role_id PK column to study_user_role table.
+        The table originally had no PK column — the legacy entity used @EmbeddedId (composite key).
+        The module RoleEntity needs a single-column PK with @GeneratedValue(IDENTITY).
+    -->
+    <changeSet author="research-edc" id="2026-05-22-01-add-study-user-role-pk-column">
+        <addColumn tableName="study_user_role">
+            <column name="study_user_role_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-02-populate-study-user-role-pk">
+        <comment>Populate study_user_role_id with sequential values for existing rows</comment>
+        <sql>CREATE SEQUENCE IF NOT EXISTS study_user_role_id_seq START 1</sql>
+        <sql>UPDATE study_user_role SET study_user_role_id = nextval('study_user_role_id_seq') WHERE study_user_role_id IS NULL</sql>
+        <sql>
+            ALTER TABLE study_user_role ALTER COLUMN study_user_role_id SET DEFAULT nextval('study_user_role_id_seq'::regclass)
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-03-make-study-user-role-pk-not-null">
+        <addNotNullConstraint tableName="study_user_role" columnName="study_user_role_id" columnDataType="BIGINT"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-22-04-add-study-user-role-pk-constraint">
+        <addPrimaryKey tableName="study_user_role" columnNames="study_user_role_id"
+                       constraintName="pk_study_user_role_id"/>
+    </changeSet>
+
+</databaseChangeLog>
