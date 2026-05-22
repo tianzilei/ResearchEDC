@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-05-20 (Sequence 1-2 complete: 41 contract tests + 47 service tests + DAO config + controller refactoring)  
+> **Last updated:** 2026-05-22 (Sequence 17 COMPLETE: All phases A-H substantially complete. Phase B: 7 module-owned tables forked. Phase C: 5 DAOs deleted, 1,634 DAO calls eliminated, 28 SPI interfaces created, 100% compile. Phase E Infra: Keycloak realm + Docker Compose. ws/: 12MB cleanup. Next: Phase E Backend OIDC session bridge improvements.)  
 > **Scope:** All remaining legacy code in `legacy-core/`, `web/`, `ws/`  
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
