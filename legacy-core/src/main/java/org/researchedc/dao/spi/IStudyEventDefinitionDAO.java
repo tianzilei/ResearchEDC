@@ -1,0 +1,35 @@
+package org.researchedc.dao.spi;
+
+import org.researchedc.bean.admin.CRFBean;
+import org.researchedc.bean.core.EntityBean;
+import org.researchedc.bean.managestudy.StudyBean;
+import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
+import org.researchedc.domain.datamap.StudyEventDefinition;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+public interface IStudyEventDefinitionDAO {
+    EntityBean findByPK(int ID);
+    EntityBean create(EntityBean eb);
+    EntityBean update(EntityBean eb);
+    Collection findAll();
+    Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase);
+    Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase);
+    Collection findAllByPermission(Object objCurrentUser, int intActionType);
+    Object getEntityFromHashMap(HashMap hm);
+    StudyEventDefinitionBean findByOid(String oid);
+    StudyEventDefinitionBean findByOidAndStudy(String oid, int studyId, int parentStudyId);
+    ArrayList findAllByStudy(StudyBean study);
+    ArrayList findAllWithStudyEvent(StudyBean currentStudy);
+    ArrayList<StudyEventDefinitionBean> findAllByCrf(CRFBean crf);
+    EntityBean findByName(String name);
+    StudyEventDefinitionBean findByEventDefinitionCRFId(int eventDefinitionCRFId);
+    Collection findAllByStudyAndLimit(int studyId);
+    ArrayList<StudyEventDefinitionBean> findAllActiveByParentStudyId(int parentStudyId);
+    Map<Integer, StudyEventDefinitionBean> findByStudySubject(int studySubjectId);
+    Map<Integer, Integer> buildMaxOrdinalByStudyEvent(int studySubjectId);
+    java.util.ArrayList findAllActiveByStudy(StudyBean study);
+    default StudyEventDefinition findByStudyEventDefinitionId(int studyEventDefinitionId) { throw new UnsupportedOperationException(); }
+}

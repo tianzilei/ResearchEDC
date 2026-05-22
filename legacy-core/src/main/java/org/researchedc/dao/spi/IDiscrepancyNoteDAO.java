@@ -1,0 +1,61 @@
+package org.researchedc.dao.spi;
+
+import org.researchedc.bean.core.EntityBean;
+import org.researchedc.bean.core.ResolutionStatus;
+import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
+import org.researchedc.bean.managestudy.StudyBean;
+import org.researchedc.bean.managestudy.StudyEventBean;
+import org.researchedc.dao.managestudy.ListNotesFilter;
+import org.researchedc.dao.managestudy.ListNotesSort;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+
+public interface IDiscrepancyNoteDAO {
+    EntityBean findByPK(int ID);
+    Collection findAll();
+    Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase);
+    Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase);
+    Collection findAllByPermission(Object objCurrentUser, int intActionType);
+    ArrayList findAllParentsByStudy(StudyBean study);
+    ArrayList findAllByStudyAndParent(StudyBean study, int parentId);
+    ArrayList<DiscrepancyNoteBean> findAllItemNotesByEventCRF(int eventCRFId);
+    ArrayList<DiscrepancyNoteBean> findAllParentItemNotesByEventCRF(int eventCRFId);
+    ArrayList<DiscrepancyNoteBean> findAllParentItemNotesByEventCRFWithConstraints(int eventCRFId, StringBuffer constraints);
+    Integer getSubjectDNCountWithFilter(ListNotesFilter filter, Integer currentStudyId);
+    Integer getStudySubjectDNCountWithFilter(ListNotesFilter filter, Integer currentStudyId);
+    Integer getStudyEventDNCountWithFilter(ListNotesFilter filter, Integer currentStudyId);
+    Integer getEventCrfDNCountWithFilter(ListNotesFilter filter, Integer currentStudyId);
+    Integer getItemDataDNCountWithFilter(ListNotesFilter filter, Integer currentStudyId);
+    ArrayList<DiscrepancyNoteBean> getWithFilterAndSort(StudyBean currentStudy, ListNotesFilter filter, ListNotesSort sort, int rowStart, int rowEnd);
+    Integer getViewNotesCountWithFilter(ListNotesFilter filter, StudyBean currentStudy);
+    Integer getViewNotesCountWithFilter(String filter, StudyBean currentStudy);
+    ArrayList<DiscrepancyNoteBean> getViewNotesWithFilterAndSort(StudyBean currentStudy, ListNotesFilter filter, ListNotesSort sort);
+    ArrayList<DiscrepancyNoteBean> findAllDiscrepancyNotesDataByStudy(StudyBean currentStudy);
+    ArrayList<DiscrepancyNoteBean> getNotesWithFilterAndSort(StudyBean currentStudy, ListNotesFilter filter, ListNotesSort sort);
+    Collection findAllByEntityAndColumn(String entityName, int entityId, String column);
+    ArrayList findAllEntityByPK(String entityName, int noteId);
+    ArrayList findAllSubjectByStudy(StudyBean study);
+    ArrayList<DiscrepancyNoteBean> findAllSubjectByStudyAndId(StudyBean study, int subjectId);
+    ArrayList findAllStudySubjectByStudy(StudyBean study);
+    ArrayList<DiscrepancyNoteBean> findAllStudySubjectByStudyAndId(StudyBean study, int studySubjectId);
+    ArrayList<DiscrepancyNoteBean> findAllStudySubjectByStudiesAndStudySubjectId(StudyBean currentStudy, StudyBean subjectStudy, int studySubjectId);
+    ArrayList<DiscrepancyNoteBean> findAllSubjectByStudiesAndSubjectId(StudyBean currentStudy, StudyBean subjectStudy, int studySubjectId);
+    ArrayList findAllStudyEventByStudy(StudyBean study);
+    ArrayList findAllStudyEventByStudyAndId(StudyBean study, int studySubjectId);
+    ArrayList findAllStudyEventByStudiesAndSubjectId(StudyBean currentStudy, StudyBean subjectStudy, int studySubjectId);
+    ArrayList findAllEventCRFByStudy(StudyBean study);
+    ArrayList findAllEventCRFByStudyAndParent(StudyBean study, DiscrepancyNoteBean parent);
+    HashMap<ResolutionStatus, Integer> countByEntityTypeAndStudyEventWithConstraints(String entityType, StudyEventBean studyEvent, StringBuffer constraints, boolean isSite);
+    Object getEntityFromHashMap(HashMap hm);
+    EntityBean create(EntityBean eb);
+    void createMapping(DiscrepancyNoteBean eb);
+    EntityBean update(EntityBean eb);
+    EntityBean updateAssignedUser(EntityBean eb);
+    EntityBean updateDnMapActivation(EntityBean eb);
+    ArrayList findExistingNotesForItemData(int itemDataId);
+    ArrayList<DiscrepancyNoteBean> findParentNotesOnlyByItemData(int itemDataId);
+    boolean isFetchMapping();
+    void setFetchMapping(boolean fetchMapping);
+}

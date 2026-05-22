@@ -1,0 +1,23 @@
+package org.researchedc.dao.spi;
+
+import org.researchedc.bean.core.EntityBean;
+import org.researchedc.bean.rule.RuleBean;
+import org.researchedc.bean.rule.RuleSetBean;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+
+public interface IRuleDAO {
+    EntityBean findByPK(int ID);
+    Collection findAll();
+    Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase);
+    Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase);
+    Collection findAllByPermission(Object objCurrentUser, int intActionType);
+    RuleBean findByOid(RuleBean ruleBean);
+    RuleBean findByOid(String oid);
+    ArrayList<RuleBean> findByRuleSet(RuleSetBean ruleSet);
+    EntityBean create(EntityBean eb);
+    EntityBean update(EntityBean eb);
+    Object getEntityFromHashMap(HashMap hm);
+}

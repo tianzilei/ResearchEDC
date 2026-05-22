@@ -1,0 +1,61 @@
+package org.researchedc.dao.spi;
+
+import org.researchedc.bean.core.AuditableEntityBean;
+import org.researchedc.bean.core.EntityBean;
+import org.researchedc.bean.core.SubjectEventStatus;
+import org.researchedc.bean.managestudy.StudyBean;
+import org.researchedc.bean.managestudy.StudyEventBean;
+import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
+import org.researchedc.bean.managestudy.StudySubjectBean;
+import org.researchedc.domain.datamap.StudyEvent;
+import org.researchedc.patterns.ocobserver.StudyEventContainer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+
+public interface IStudyEventDAO {
+    EntityBean findByPK(int ID);
+    EntityBean findByPKCached(int ID);
+    EntityBean create(EntityBean eb);
+    EntityBean create(EntityBean eb, boolean isTransaction);
+    EntityBean update(EntityBean eb);
+    EntityBean update(EntityBean eb, boolean isTransaction);
+    EntityBean update(EntityBean eb, java.sql.Connection con);
+    EntityBean update(EntityBean eb, java.sql.Connection con, boolean isTransaction);
+    Collection findAll();
+    Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase);
+    Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase);
+    Collection findAllByPermission(Object objCurrentUser, int intActionType);
+    Object getEntityFromHashMap(HashMap hm);
+    Collection findAllByDefinition(int definitionId);
+    ArrayList findAllByStudyEventDefinitionAndCrfOids(String studyEventDefinitionOid, String crfOrCrfVersionOid);
+    ArrayList findAllWithSubjectLabelByDefinition(int definitionId);
+    ArrayList findAllWithSubjectLabelByStudySubjectAndDefinition(StudySubjectBean studySubject, int definitionId);
+    EntityBean findByStudySubjectIdAndDefinitionIdAndOrdinal(int ssbid, int sedid, int ord);
+    ArrayList findAllByDefinitionAndSubject(StudyEventDefinitionBean definition, StudySubjectBean subject);
+    ArrayList findAllByDefinitionAndSubjectOrderByOrdinal(StudyEventDefinitionBean definition, StudySubjectBean subject);
+    ArrayList findAllByStudyAndStudySubjectId(StudyBean study, int studySubjectId);
+    ArrayList findAllByStudyAndEventDefinitionId(StudyBean study, int eventDefinitionId);
+    int getMaxSampleOrdinal(StudyEventDefinitionBean sedb, StudySubjectBean studySubject);
+    AuditableEntityBean findByPKAndStudy(int id, StudyBean study);
+    ArrayList findAllByStudy(StudyBean study);
+    ArrayList findAllBySubjectAndStudy(int subjectId, int studyId);
+    ArrayList findAllBySubjectId(int subjectId);
+    ArrayList findAllBySubjectIdOrdered(int subjectId);
+    HashMap findCRFsByStudy(StudyBean sb);
+    HashMap findCRFsByStudyEvent(StudyEventBean seb);
+    int getDefinitionIdFromStudyEventId(int studyEventId);
+    EntityBean getNextScheduledEvent(String studySubjectOID);
+    ArrayList findAllByStudySubject(StudySubjectBean ssb);
+    ArrayList findAllByStudySubjectAndDefinition(StudySubjectBean ssb, StudyEventDefinitionBean sed);
+    Integer countNotRemovedEvents(Integer studyEventDefinitionId);
+    int getCurrentPK();
+    Integer getCountofEventsBasedOnEventStatus(StudyBean currentStudy, SubjectEventStatus subjectEventStatus);
+    Integer getCountofEvents(StudyBean currentStudy);
+    StudyEventBean findAllByStudyEventDefinitionAndCrfOidsAndOrdinal(String studyEventDefinitionOid, String crfOrCrfVersionOid, String ordinal, String studySubjectId);
+    HashMap getStudySubjectCRFData(StudyBean sb, int studySubjectId, int eventDefId, String crfVersionOID, int eventOrdinal);
+    default StudyEvent fetchByStudyEventDefOIDAndOrdinal(String oid, Integer ordinal, int studySubjectId) { throw new UnsupportedOperationException(); }
+    default StudyEvent saveOrUpdateTransactional(StudyEventContainer container) { throw new UnsupportedOperationException(); }
+    default Integer findMaxOrdinalByStudySubjectStudyEventDefinition(int studySubjectId, int studyEventDefinitionId) { throw new UnsupportedOperationException(); }
+    boolean isThisRepeatingEventScheduledMoreThanOneTime(int studyId, int sed_Id);
+}
