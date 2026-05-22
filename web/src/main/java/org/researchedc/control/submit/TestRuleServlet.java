@@ -22,7 +22,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import org.researchedc.dao.spi.IRuleDAO;
 
 /**
  * Verify the Rule import , show records that have Errors as well as records that will be saved.
@@ -70,7 +71,7 @@ public class TestRuleServlet extends SecureController {
     Locale locale;
     XmlSchemaValidationHelper schemaValidator = new XmlSchemaValidationHelper();
     RuleSetRuleDao ruleSetRuleDao;
-    RuleSetDao ruleSetDao;
+    IRuleSetDAO ruleSetDao;
     ItemDAO itemDAO;
     ItemFormMetadataDAO itemFormMetadataDAO;
     RulesPostImportContainerService rulesPostImportContainerService;
@@ -482,8 +483,8 @@ else
         return ruleSetRuleDao;
     }
 
-    private RuleSetDao getRuleSetDao() {
-        ruleSetDao = this.ruleSetDao != null ? ruleSetDao : (RuleSetDao) SpringServletAccess.getApplicationContext(context).getBean("ruleSetDao");
+    private IRuleSetDAO getRuleSetDao() {
+        ruleSetDao = this.ruleSetDao != null ? ruleSetDao : (IRuleSetDAO) SpringServletAccess.getApplicationContext(context).getBean("ruleSetDao");
         return ruleSetDao;
     }
 

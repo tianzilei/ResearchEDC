@@ -7,13 +7,13 @@
  */
 package org.researchedc.control.managestudy;
 
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 

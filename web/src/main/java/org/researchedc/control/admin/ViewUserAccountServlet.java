@@ -13,7 +13,9 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.view.Page;
 import org.researchedc.web.InconsistentStateException;
@@ -48,7 +50,7 @@ public class ViewUserAccountServlet extends SecureController {
     protected void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
         int userId = fp.getInt(ARG_USER_ID, true);
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
 
         UserAccountBean user = getBean(udao, userId);
 
@@ -86,7 +88,7 @@ public class ViewUserAccountServlet extends SecureController {
     // int userId = fp.getInt(ARG_USER_ID);
     //
     // SQLFactory factory = SQLFactory.getInstance();
-    // UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+    // IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
     //
     // UserAccountBean user = getBean(udao, userId);
     //
@@ -109,9 +111,9 @@ public class ViewUserAccountServlet extends SecureController {
     // }
     // }
 
-    private UserAccountBean getBean(UserAccountDAO udao, int id) {
+    private UserAccountBean getBean(IUserAccountDAO udao, int id) {
         UserAccountBean answer = (UserAccountBean) udao.findByPK(id);
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
 
         ArrayList roles = answer.getRoles();
 

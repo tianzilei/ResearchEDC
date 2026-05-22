@@ -18,6 +18,7 @@ import org.researchedc.core.SecurityManager;
 import org.researchedc.core.SessionManager;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.SQLInitServlet;
@@ -85,7 +86,7 @@ public class RequestPasswordServlet extends SecureController {
 
         sm = new SessionManager(null, ubForm.getName(), SpringServletAccess.getApplicationContext(context));
 
-        UserAccountDAO uDAO = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO uDAO = new UserAccountDAO(sm.getDataSource());
         // see whether this user in the DB
         UserAccountBean ubDB = (UserAccountBean) uDAO.findByUserName(ubForm.getName());
 

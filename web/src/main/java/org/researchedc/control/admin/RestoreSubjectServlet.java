@@ -17,10 +17,14 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -53,7 +57,7 @@ public class RestoreSubjectServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        SubjectDAO sdao = new SubjectDAO(sm.getDataSource());
+        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
         FormProcessor fp = new FormProcessor(request);
         int subjectId = fp.getInt("id");
 
@@ -66,11 +70,11 @@ public class RestoreSubjectServlet extends SecureController {
             SubjectBean subject = (SubjectBean) sdao.findByPK(subjectId);
 
             // find all study subjects
-            StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+            IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
             ArrayList studySubs = ssdao.findAllBySubjectId(subjectId);
 
             // find study events
-            StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+            IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
             ArrayList events = sedao.findAllBySubjectId(subjectId);
             if ("confirm".equalsIgnoreCase(action)) {
                 request.setAttribute("subjectToRestore", subject);
@@ -96,7 +100,7 @@ public class RestoreSubjectServlet extends SecureController {
                     }
                 }
 
-                EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+                EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
 
                 for (int j = 0; j < events.size(); j++) {
                     StudyEventBean event = (StudyEventBean) events.get(j);

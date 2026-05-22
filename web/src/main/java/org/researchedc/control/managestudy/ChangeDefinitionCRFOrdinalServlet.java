@@ -11,7 +11,9 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 
 import java.util.ArrayList;
@@ -35,9 +37,9 @@ public class ChangeDefinitionCRFOrdinalServlet extends ChangeOrdinalServlet {
         int prevOrdinal = fp.getInt("previousOrdinal");
 
         int definitionId = fp.getInt("id");
-        EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
         increase(current, previous, currOrdinal, prevOrdinal, definitionId, edcdao);
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         int siteId = fp.getInt("siteId");
         if (siteId > 0) {
             request.setAttribute("idToSort", new Integer(definitionId).toString());
@@ -57,7 +59,7 @@ public class ChangeDefinitionCRFOrdinalServlet extends ChangeOrdinalServlet {
      * @param idPrevious
      * @param dao
      */
-    private void increase(int idCurrent, int idPrevious, int currOrdinal, int prevOrdinal, int defId, EventDefinitionCRFDAO dao) {
+    private void increase(int idCurrent, int idPrevious, int currOrdinal, int prevOrdinal, int defId, EventDefinitionCRFDao dao) {
         EventDefinitionCRFBean current = (EventDefinitionCRFBean) dao.findByPK(idCurrent);
         EventDefinitionCRFBean previous = (EventDefinitionCRFBean) dao.findByPK(idPrevious);
 
@@ -89,7 +91,7 @@ public class ChangeDefinitionCRFOrdinalServlet extends ChangeOrdinalServlet {
      * @param definitionId
      * @param dao
      */
-    private void fixDuplicates(int definitionId, EventDefinitionCRFDAO dao) {
+    private void fixDuplicates(int definitionId, EventDefinitionCRFDao dao) {
         ArrayList list = dao.findAllByEventDefinitionId(definitionId);
         int prevOrdinal = 0;
         boolean incrementNextOrdinal = false;

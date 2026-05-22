@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -19,8 +20,9 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyConfigService;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.apache.commons.lang3.StringUtils;
@@ -65,7 +67,7 @@ public class UpdateStudyServletNew extends SecureController {
         int studyId = fp.getInt("id");
         studyId = studyId == 0 ? fp.getInt("studyId") : studyId;
         String action = fp.getString("action");
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         boolean isInterventional = false;
 
         study = (StudyBean) sdao.findByPK(studyId);
@@ -491,7 +493,7 @@ public class UpdateStudyServletNew extends SecureController {
     }
 
     private void submitStudy(StudyBean newStudy) {
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
 
         StudyBean study1 = newStudy;
@@ -618,7 +620,7 @@ public class UpdateStudyServletNew extends SecureController {
         return SecureController.ADMIN_SERVLET_CODE;
     }
 
-    private void updateParameter(StudyParameterValueDAO spvdao, StudyParameterValueBean spv) {
+    private void updateParameter(IStudyParameterValueDAO spvdao, StudyParameterValueBean spv) {
         StudyParameterValueBean spv1 = spvdao.findByHandleAndStudy(spv.getStudyId(), spv.getParameter());
         logger.debug("found parameter: " + spv.getParameter());
         if (spv1.getId() > 0) {
@@ -630,7 +632,7 @@ public class UpdateStudyServletNew extends SecureController {
         }
     }
 
-    private void updateInterviewerForSites(StudyBean studyBean, List<StudyBean> sites, StudyParameterValueDAO studyParameterValueDAO, String parameterType) {
+    private void updateInterviewerForSites(StudyBean studyBean, List<StudyBean> sites, IStudyParameterValueDAO studyParameterValueDAO, String parameterType) {
 
         StudyParameterValueBean studyParameterValueBean = new StudyParameterValueBean();
 

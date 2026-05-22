@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.extract;
 
+import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.extract.ArchivedDatasetFileBean;
 import org.researchedc.bean.extract.DatasetBean;
@@ -14,8 +15,8 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -46,7 +47,7 @@ public class AccessFileServlet extends SecureController {
         ArchivedDatasetFileDAO asdfdao = new ArchivedDatasetFileDAO(sm.getDataSource());
         DatasetDAO dsDao = new DatasetDAO(sm.getDataSource());
         ArchivedDatasetFileBean asdfBean = (ArchivedDatasetFileBean) asdfdao.findByPK(fileId);
-        StudyDAO studyDao = new StudyDAO(sm.getDataSource());
+        IStudyDAO studyDao = new StudyDAO(sm.getDataSource());
         DatasetBean dsBean = (DatasetBean) dsDao.findByPK(asdfBean.getDatasetId());
         int parentId = currentStudy.getParentStudyId();
         if(parentId==0)//Logged in at study level

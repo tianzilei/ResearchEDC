@@ -41,7 +41,7 @@ import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.EntityDAO;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.I18nFormatUtil;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -971,7 +971,7 @@ public class Validator {
             }
             break;
         case USERNAME_UNIQUE:
-            UserAccountDAO udao = (UserAccountDAO) v.getArg(0);
+            IUserAccountDAO udao = (IUserAccountDAO) v.getArg(0);
 
             if (!usernameUnique(fieldName, udao)) {
                 addError(fieldName, v);
@@ -1648,7 +1648,7 @@ public class Validator {
         return true;
     }
 
-    protected boolean usernameUnique(String fieldName, UserAccountDAO udao) {
+    protected boolean usernameUnique(String fieldName, IUserAccountDAO udao) {
         String fieldValue = getFieldValue(fieldName);
 
         if (fieldValue == null) {

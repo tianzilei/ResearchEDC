@@ -37,6 +37,7 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * @author jxu
@@ -186,7 +187,7 @@ public class AdministrativeEditingServlet extends DataEntryServlet {
         this.checkUpdateDataPermission(request);
         request.setAttribute("fromResolvingNotes", fromResolvingNotes);
         LOGGER.debug(" +++++++++++++++++++ " + ecb.getStudyEventId());
-        // StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        // IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
         // StudyEventBean sEvent = (StudyEventBean)
         // sedao.findByPK(ecb.getStudyEventId());
         // if (sEvent.getSubjectEventStatus().equals(SubjectEventStatus.SIGNED))
@@ -426,8 +427,8 @@ public class AdministrativeEditingServlet extends DataEntryServlet {
 
     @Override
     protected boolean isAdminForcedReasonForChange(HttpServletRequest request) {
-        // StudyParameterValueDAO spvdao = new
-        // StudyParameterValueDAO(sm.getDataSource());
+        // IStudyParameterValueDAO spvdao = new
+        // IStudyParameterValueDAO(sm.getDataSource());
         // ArrayList studyParameters =
         // spvdao.findParamConfigByStudy(currentStudy);
 

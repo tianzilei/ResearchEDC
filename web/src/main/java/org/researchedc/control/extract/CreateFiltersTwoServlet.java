@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.extract;
 
+import org.researchedc.dao.extract.FilterDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -20,8 +21,9 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.extract.FilterDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
@@ -80,7 +82,7 @@ public class CreateFiltersTwoServlet extends SecureController {
             // throw an error
 
         } else if ("begin".equalsIgnoreCase(action)) {
-            StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+            IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
             HashMap events = sedao.findCRFsByStudy(studyWithEventDefs);
             // if events are empty -- resend to first filter page with message
             if (events.isEmpty()) {
@@ -119,7 +121,7 @@ public class CreateFiltersTwoServlet extends SecureController {
             int crfId = fp.getInt("crfId");
             if (crfId > 0) {
                 CRFVersionDAO cvDAO = new CRFVersionDAO(sm.getDataSource());
-                CRFDAO cDAO = new CRFDAO(sm.getDataSource());
+                ICrfDAO cDAO = new CRFDAO(sm.getDataSource());
                 SectionDAO secDAO = new SectionDAO(sm.getDataSource());
                 Collection sections = secDAO.findByVersionId(crfId);
                 CRFVersionBean cvBean = (CRFVersionBean) cvDAO.findByPK(crfId);
@@ -132,7 +134,7 @@ public class CreateFiltersTwoServlet extends SecureController {
                 forwardPage(Page.CREATE_FILTER_SCREEN_3_1);
             } else {
                 addPageMessage(respage.getString("select_a_CRF_before_picking"));
-                StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+                IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
                 HashMap events = sedao.findCRFsByStudy(studyWithEventDefs);
 
                 request.setAttribute("events", events);
@@ -289,7 +291,7 @@ public class CreateFiltersTwoServlet extends SecureController {
                 session.setAttribute("newSQL", newNewSQL);
                 session.setAttribute("newExp", newNewExp);
                 // add new params, and go back
-                StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+                IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
                 HashMap events = sedao.findCRFsByStudy(currentStudy);
                 //
                 request.setAttribute("events", events);

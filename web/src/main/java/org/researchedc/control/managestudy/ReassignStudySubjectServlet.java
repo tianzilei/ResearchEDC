@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
+import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.bean.admin.DisplayStudyBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -18,9 +19,11 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.SubjectDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -57,9 +60,9 @@ public class ReassignStudySubjectServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
         String action = request.getParameter("action");
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
-        StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
-        SubjectDAO subdao = new SubjectDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        ISubjectDAO subdao = new SubjectDAO(sm.getDataSource());
         FormProcessor fp = new FormProcessor(request);
 
         int studySubId = fp.getInt("id");

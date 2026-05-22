@@ -31,7 +31,7 @@ import org.researchedc.dao.hibernate.SectionDao;
 import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.hibernate.StudySubjectDao;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.domain.datamap.CrfVersion;
@@ -83,12 +83,15 @@ public class EditFormController {
     private SectionDao sectionDao;
 
     @Autowired
+    @Qualifier("studyEventDaoDomain")
     private StudyEventDao studyEventDao;
 
     @Autowired
+    @Qualifier("studyEventDefDaoDomain")
     private StudyEventDefinitionDao studyEventDefinitionDao;
 
     @Autowired
+    @Qualifier("studySubjectDaoDomain")
     private StudySubjectDao studySubjectDao;
 
     @Autowired
@@ -116,8 +119,7 @@ public class EditFormController {
     ParticipantPortalRegistrar participantPortalRegistrar;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-    UserAccountDAO udao;
-    StudyDAO sdao;
+    IStudyDAO sdao;
 
     /**
      * @api {get} /pages/api/v1/editform/:studyOid/url Get Form Edit URL

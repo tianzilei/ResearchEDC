@@ -16,8 +16,8 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.rule.FileProperties;
 import org.researchedc.control.submit.UploadFileServlet;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.StudyDao;
-import org.researchedc.dao.hibernate.StudyParameterValueDao;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.domain.datamap.Study;
 import org.researchedc.domain.datamap.StudyParameterValue;
 import org.researchedc.exception.OpenClinicaSystemException;
@@ -54,10 +54,10 @@ public class OpenRosaSubmissionController {
     private OpenRosaSubmissionService openRosaSubmissionService;
 
     @Autowired
-    private StudyDao studyDao;
+    private IStudyDAO studyDao;
 
     @Autowired
-    private StudyParameterValueDao studyParameterValueDao;
+    private IStudyParameterValueDAO studyParameterValueDao;
 
     @Autowired
     PformSubmissionNotificationService notifier;

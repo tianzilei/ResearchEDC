@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
-import org.researchedc.dao.hibernate.CrfVersionDao;
-import org.researchedc.dao.hibernate.StudyDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.domain.datamap.CrfVersion;
 import org.researchedc.domain.datamap.Study;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +20,10 @@ public class OpenRosaSubmissionService {
     SubmissionProcessorChain submissionProcessorChain;
     
     @Autowired
-    StudyDao studyDao;
+    IStudyDAO studyDao;
     
     @Autowired
-    CrfVersionDao crfVersionDao;
+    ICrfVersionDAO crfVersionDao;
     
     @Transactional
     public void processRequest(Study study, HashMap<String,String> subjectContext, String requestBody, Errors errors, Locale locale, ArrayList <HashMap> listOfUploadFilePaths) throws Exception {

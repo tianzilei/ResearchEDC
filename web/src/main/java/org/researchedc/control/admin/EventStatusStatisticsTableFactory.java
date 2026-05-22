@@ -5,9 +5,9 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.AbstractTableFactory;
 import org.researchedc.control.EventStatusView;
 import org.researchedc.control.StatisticsView;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.jmesa.core.filter.DateFilterMatcher;
 import org.jmesa.core.filter.MatcherKey;
@@ -30,9 +30,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class EventStatusStatisticsTableFactory extends AbstractTableFactory {
 
-    private StudyDAO studyDao;
-    private StudySubjectDAO studySubjectDao;
-    private StudyEventDAO studyEventDao;
+    private IStudyDAO studyDao;
+    private IStudySubjectDAO studySubjectDao;
+    private IStudyEventDAO studyEventDao;
     private StudyBean currentStudy;
     private ResourceBundle reswords = ResourceBundleProvider.getWordsBundle();
 
@@ -106,19 +106,19 @@ public class EventStatusStatisticsTableFactory extends AbstractTableFactory {
         tableFacade.setItems(theItems);
     }
 
-    public StudyDAO getStudyDao() {
+    public IStudyDAO getStudyDao() {
         return studyDao;
     }
 
-    public void setStudyDao(StudyDAO studyDao) {
+    public void setStudyDao(IStudyDAO studyDao) {
         this.studyDao = studyDao;
     }
 
-    public StudySubjectDAO getStudySubjectDao() {
+    public IStudySubjectDAO getStudySubjectDao() {
         return studySubjectDao;
     }
 
-    public void setStudySubjectDao(StudySubjectDAO studySubjectDao) {
+    public void setStudySubjectDao(IStudySubjectDAO studySubjectDao) {
         this.studySubjectDao = studySubjectDao;
     }
 
@@ -130,11 +130,11 @@ public class EventStatusStatisticsTableFactory extends AbstractTableFactory {
         this.currentStudy = currentStudy;
     }
 
-    public StudyEventDAO getStudyEventDao() {
+    public IStudyEventDAO getStudyEventDao() {
         return studyEventDao;
     }
 
-    public void setStudyEventDao(StudyEventDAO studyEventDao) {
+    public void setStudyEventDao(IStudyEventDAO studyEventDao) {
         this.studyEventDao = studyEventDao;
     }
 

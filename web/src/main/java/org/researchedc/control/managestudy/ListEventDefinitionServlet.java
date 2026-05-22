@@ -19,12 +19,18 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -94,17 +100,17 @@ public class ListEventDefinitionServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        StudyEventDefinitionDAO edao = new StudyEventDefinitionDAO(sm.getDataSource());
-        UserAccountDAO sdao = new UserAccountDAO(sm.getDataSource());
-        EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
-        CRFDAO crfDao = new CRFDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO edao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IUserAccountDAO sdao = new UserAccountDAO(sm.getDataSource());
+        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        ICrfDAO crfDao = new CRFDAO(sm.getDataSource());
         CRFVersionDAO crfVersionDao = new CRFVersionDAO(sm.getDataSource());
         ArrayList seds = edao.findAllByStudy(currentStudy);
 
         // request.setAttribute("seds", seds);
 
-        StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
         ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
         for (int i = 0; i < seds.size(); i++) {
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seds.get(i);
@@ -176,7 +182,7 @@ public class ListEventDefinitionServlet extends SecureController {
      * @param sed
      * @return
      */
-    private boolean isPopulated(StudyEventDefinitionBean sed, StudyEventDAO sedao) {
+    private boolean isPopulated(StudyEventDefinitionBean sed, IStudyEventDAO sedao) {
         /*
         // checks study event
         ArrayList events = (ArrayList) sedao.findAllByDefinition(sed.getId());
@@ -201,7 +207,7 @@ public class ListEventDefinitionServlet extends SecureController {
      * @param sed
      * @return
      */
-    private boolean isLockable(StudyEventDefinitionBean sed, StudyEventDAO sedao, EventCRFDAO ecdao, ItemDataDAO iddao) {
+    private boolean isLockable(StudyEventDefinitionBean sed, IStudyEventDAO sedao, EventCRFDao ecdao, ItemDataDAO iddao) {
 
         // checks study event
         ArrayList events = (ArrayList) sedao.findAllByDefinition(sed.getId());

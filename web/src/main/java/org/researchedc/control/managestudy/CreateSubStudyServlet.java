@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.Role;
@@ -23,11 +24,14 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.domain.SourceDataVerification;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;
@@ -254,7 +258,7 @@ public class CreateSubStudyServlet extends SecureController {
     //    errors = v.validate();
 
         // >> tbh
- /*       StudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+ /*       IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
         ArrayList<StudyBean> allStudies = (ArrayList<StudyBean>) studyDAO.findAll();
         for (StudyBean thisBean : allStudies) {
             if (fp.getString("uniqueProId").trim().equals(thisBean.getIdentifier())) {
@@ -403,7 +407,7 @@ public class CreateSubStudyServlet extends SecureController {
      */
     private void submitStudy() throws IOException {
         FormProcessor fp = new FormProcessor(request);
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         StudyBean study = (StudyBean) session.getAttribute("newStudy");
 
         ArrayList parameters = study.getStudyParameters();
@@ -471,17 +475,17 @@ public class CreateSubStudyServlet extends SecureController {
         if (site.getParentStudyId()==0){
         	parentStudyBean = site;
         }else{
-            StudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+            IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
              parentStudyBean = (StudyBean) studyDAO.findByPK(site.getParentStudyId());          	
         }
-        EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
         ArrayList <EventDefinitionCRFBean> eventDefCrfList =(ArrayList <EventDefinitionCRFBean>) edcdao.findAllActiveSitesAndStudiesPerParentStudy(parentStudyBean.getId());
 
         ArrayList<StudyEventDefinitionBean> seds = new ArrayList<StudyEventDefinitionBean>();
         StudyBean parentStudy = (StudyBean) new StudyDAO(sm.getDataSource()).findByPK(site.getParentStudyId());
         seds = (ArrayList<StudyEventDefinitionBean>) session.getAttribute("definitions");
         if (seds == null || seds.size() <= 0) {
-            StudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(sm.getDataSource());
+            IStudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(sm.getDataSource());
             seds = sedDao.findAllByStudy(parentStudy);
         }
         CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
@@ -491,7 +495,7 @@ public class CreateSubStudyServlet extends SecureController {
             if (participateFormStatus.equals("enabled")) baseUrl();
             request.setAttribute("participateFormStatus",participateFormStatus );
 
-         //   EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+         //   EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
             ArrayList<EventDefinitionCRFBean> edcs = sed.getCrfs();
             
             int start = 0;
@@ -648,7 +652,7 @@ public class CreateSubStudyServlet extends SecureController {
 
        }
        errors = v.validate();
-       StudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+       IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
        ArrayList<StudyBean> allStudies = (ArrayList<StudyBean>) studyDAO.findAll();
        for (StudyBean thisBean : allStudies) {
            if (fp.getString("uniqueProId").trim().equals(thisBean.getIdentifier())) {
@@ -725,7 +729,7 @@ public class CreateSubStudyServlet extends SecureController {
             request.setAttribute("participateFormStatus",participateFormStatus );
             if (participateFormStatus.equals("enabled")) 	baseUrl();
 
-            EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+            EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
             ArrayList<EventDefinitionCRFBean> edcs = sed.getCrfs();
             for (EventDefinitionCRFBean edcBean : edcs) {
            
@@ -754,10 +758,10 @@ public class CreateSubStudyServlet extends SecureController {
         StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());    
 
         ArrayList<StudyEventDefinitionBean> seds = new ArrayList<StudyEventDefinitionBean>();
-        StudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(sm.getDataSource());
+        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
         CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        CRFDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
         StudyBean parentStudy = (StudyBean) new StudyDAO(sm.getDataSource()).findByPK(site.getParentStudyId());
         seds = sedDao.findAllByStudy(parentStudy);
         int start = 0;

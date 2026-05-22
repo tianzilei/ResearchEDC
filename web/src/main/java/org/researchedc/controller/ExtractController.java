@@ -14,6 +14,8 @@ import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.core.SQLFactory;
+import org.researchedc.dao.spi.DatasetDao;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -62,7 +64,7 @@ public class ExtractController {
     /**
      * process the page from whence you came, i.e. extract a dataset
      * @param id, the id of the extract properties bean, gained from Core Resources
-     * @param datasetId, the id of the dataset, found through DatasetDAO
+     * @param datasetId, the id of the dataset, found through DatasetDao
      * @param request, http request
      * @return model map, but more importantly, creates a quartz job which runs right away and generates all output there
      */

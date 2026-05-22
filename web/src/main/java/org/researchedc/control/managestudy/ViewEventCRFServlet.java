@@ -18,8 +18,11 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
@@ -49,12 +52,12 @@ public class ViewEventCRFServlet extends SecureController {
         int eventCRFId = fp.getInt("id", true);
         int studySubId = fp.getInt("studySubId", true);
 
-        StudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
-        EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
         ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
         ItemDAO idao = new ItemDAO(sm.getDataSource());
         ItemFormMetadataDAO ifmdao = new ItemFormMetadataDAO(sm.getDataSource());
-        CRFDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
         SectionDAO secdao = new SectionDAO(sm.getDataSource());
 
         if (eventCRFId == 0) {

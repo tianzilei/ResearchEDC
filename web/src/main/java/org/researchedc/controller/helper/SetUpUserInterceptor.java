@@ -2,6 +2,7 @@ package org.researchedc.controller.helper;
 
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class SetUpUserInterceptor implements HandlerInterceptor {
         UserAccountBean userBean = (UserAccountBean) currentSession.getAttribute("userBean");
         String userName = "";
         boolean userBeanIsInvalid;
-        UserAccountDAO userAccountDAO = new UserAccountDAO(dataSource);
+        IUserAccountDAO userAccountDAO = new UserAccountDAO(dataSource);
 
         if (userBean == null) {
 

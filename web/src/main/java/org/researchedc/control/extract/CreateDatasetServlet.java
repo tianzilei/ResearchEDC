@@ -18,6 +18,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import org.researchedc.dao.extract.FilterDAO;
+import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DatasetItemStatus;
 import org.researchedc.bean.core.NumericComparisonOperator;
@@ -35,13 +38,16 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.extract.DatasetDAO;
-import org.researchedc.dao.extract.FilterDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.service.crfdata.HideCRFManager;
 import org.researchedc.view.Page;
@@ -112,9 +118,9 @@ public class CreateDatasetServlet extends SecureController {
     }
 
     /*
-     * public void setUpStudyGroups() { StudyDAO studydao = new
-     * StudyDAO(sm.getDataSource()); StudyGroupClassDAO sgclassdao = new
-     * StudyGroupClassDAO(sm.getDataSource()); StudyBean theStudy =
+     * public void setUpStudyGroups() { IStudyDAO studydao = new
+     * IStudyDAO(sm.getDataSource()); StudyGroupClassDao sgclassdao = new
+     * StudyGroupClassDao(sm.getDataSource()); StudyBean theStudy =
      * (StudyBean)studydao.findByPK(sm.getUserBean().getActiveStudyId());
      * ArrayList sgclasses = sgclassdao.findAllActiveByStudy(theStudy);
      * //StudyGroupClassBean sgclass = (StudyGroupClassBean)sgclasses.get(0);
@@ -123,7 +129,7 @@ public class CreateDatasetServlet extends SecureController {
      */
 
     public ArrayList setUpStudyGroups() {
-        StudyDAO studydao = new StudyDAO(sm.getDataSource());
+        IStudyDAO studydao = new StudyDAO(sm.getDataSource());
         StudyGroupClassDAO sgclassdao = new StudyGroupClassDAO(sm.getDataSource());
         StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
         ArrayList sgclasses = sgclassdao.findAllActiveByStudy(theStudy);
@@ -156,9 +162,9 @@ public class CreateDatasetServlet extends SecureController {
             if ("begin".equalsIgnoreCase(action)) {
                 // step 2 -- select study events/crfs
 
-                StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-                StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
-                EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+                IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+                IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+                EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
                 StudyBean studyWithEventDefinitions = currentStudy;
                 if (currentStudy.getParentStudyId() > 0) {
                     studyWithEventDefinitions = new StudyBean();
@@ -167,7 +173,7 @@ public class CreateDatasetServlet extends SecureController {
                 }
                 ArrayList seds = seddao.findAllActiveByStudy(studyWithEventDefinitions);
 
-                CRFDAO crfdao = new CRFDAO(sm.getDataSource());
+                ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
                 HashMap events = new LinkedHashMap();
                 for (int i = 0; i < seds.size(); i++) {
                     StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seds.get(i);
@@ -531,7 +537,7 @@ public class CreateDatasetServlet extends SecureController {
             db.getEventIds().add(new Integer(defId));
         }
 
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
         String defName = "";
         if (defId > 0 && crfId != -1) {
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(defId);
@@ -566,7 +572,7 @@ public class CreateDatasetServlet extends SecureController {
         }
 
         if (crfId != 0 && allItems != null) {
-            CRFDAO cdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
             CRFBean crf = (CRFBean) cdao.findByPK(crfId);
 
             ArrayList newSelectItems = new ArrayList();
@@ -1033,7 +1039,7 @@ public class CreateDatasetServlet extends SecureController {
         }
     }
 
-    public static ArrayList<String> allSedItemIdsInStudy(HashMap events, CRFDAO crfdao, ItemDAO idao) {
+    public static ArrayList<String> allSedItemIdsInStudy(HashMap events, ICrfDAO crfdao, ItemDAO idao) {
         ArrayList<String> sedItemIds = new ArrayList<String>();
         Iterator it = events.keySet().iterator();
         while (it.hasNext()) {

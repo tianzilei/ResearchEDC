@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.UserAccountBean;
@@ -18,7 +19,8 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -66,7 +68,7 @@ public class UpdateStudyServlet extends SecureController {
         panel.setIconInfoShown(true);
         panel.setManageSubject(false);
 
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         StudyBean study = (StudyBean) session.getAttribute("newStudy");
 
         if (study == null) {
@@ -435,7 +437,7 @@ public class UpdateStudyServlet extends SecureController {
     }
 
     private void submitStudy() {
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
 
         StudyBean study1 = (StudyBean) session.getAttribute("newStudy");
@@ -689,7 +691,7 @@ public class UpdateStudyServlet extends SecureController {
         return SecureController.ADMIN_SERVLET_CODE;
     }
 
-    private void updateParameter(StudyParameterValueDAO spvdao, StudyParameterValueBean spv) {
+    private void updateParameter(IStudyParameterValueDAO spvdao, StudyParameterValueBean spv) {
         StudyParameterValueBean spv1 = spvdao.findByHandleAndStudy(spv.getStudyId(), spv.getParameter());
         if (spv1.getId() > 0) {
             spvdao.update(spv);

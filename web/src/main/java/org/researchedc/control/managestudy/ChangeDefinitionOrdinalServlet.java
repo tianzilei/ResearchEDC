@@ -10,6 +10,7 @@ package org.researchedc.control.managestudy;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.view.Page;
 
 /**
@@ -24,7 +25,7 @@ public class ChangeDefinitionOrdinalServlet extends ChangeOrdinalServlet {
         FormProcessor fp = new FormProcessor(request);
         int current = fp.getInt("current");
         int previous = fp.getInt("previous");
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
         increase(current, previous, seddao);
         String url=response.encodeRedirectURL("ListEventDefinition");
         response.sendRedirect(url);
@@ -39,7 +40,7 @@ public class ChangeDefinitionOrdinalServlet extends ChangeOrdinalServlet {
      * @param idCurrent
      * @param idPrevious
      */
-    private void increase(int idCurrent, int idPrevious, StudyEventDefinitionDAO dao) {
+    private void increase(int idCurrent, int idPrevious, IStudyEventDefinitionDAO dao) {
 
         if (idCurrent > 0) {
             StudyEventDefinitionBean current = (StudyEventDefinitionBean) dao.findByPK(idCurrent);

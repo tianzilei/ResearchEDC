@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.submit;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.DataEntryStage;
@@ -33,14 +34,20 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.control.managestudy.ViewStudySubjectServlet;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.service.crfdata.DynamicsMetadataService;
@@ -112,7 +119,7 @@ public class TableOfContentsServlet extends SecureController {
 
     private FormProcessor fp;
 
-    private EventCRFDAO ecdao;
+    private EventCRFDao ecdao;
 
     private EventCRFBean ecb;
 
@@ -204,14 +211,14 @@ public class TableOfContentsServlet extends SecureController {
         logger.info("Creating event CRF within Table of Contents.  Study id: " + currentStudy.getId() + "; CRF Version id: " + crfVersionId
             + "; Study Event id: " + studyEventId + "; Event Definition CRF id: " + eventDefinitionCRFId + "; Subject: " + subjectId);
 
-        StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
         StudySubjectBean ssb = ssdao.findBySubjectIdAndStudy(subjectId, currentStudy);
 
         if (!ssb.isActive()) {
             throw new InconsistentStateException(Page.LIST_STUDY_SUBJECTS_SERVLET, resexception.getString("trying_to_begin_DE1"));
         }
 
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
         StudyEventDefinitionBean sedb = seddao.findByEventDefinitionCRFId(eventDefinitionCRFId);
 
         if (!ssb.isActive() || !sedb.isActive()) {
@@ -225,7 +232,7 @@ public class TableOfContentsServlet extends SecureController {
             throw new InconsistentStateException(Page.LIST_STUDY_SUBJECTS_SERVLET, resexception.getString("trying_to_begin_DE3"));
         }
 
-        StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
         StudyEventBean sEvent = (StudyEventBean) sedao.findByPK(studyEventId);
 
         StudyBean studyWithSED = currentStudy;
@@ -403,7 +410,7 @@ public class TableOfContentsServlet extends SecureController {
         DisplayTableOfContentsBean displayBean = getDisplayBean(ecb, sm.getDataSource(), currentStudy);
 
         // this is for generating side info panel
-        StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
         StudySubjectBean ssb = (StudySubjectBean) ssdao.findByPK(ecb.getStudySubjectId());
         ArrayList beans = ViewStudySubjectServlet.getDisplayStudyEventsForStudySubject(ssb, sm.getDataSource(), ub, currentRole);
         request.setAttribute("studySubject", ssb);
@@ -636,11 +643,11 @@ public class TableOfContentsServlet extends SecureController {
         answer.setEventCRF(ecb);
 
         // get data
-        StudySubjectDAO ssdao = new StudySubjectDAO(ds);
+        IStudySubjectDAO ssdao = new StudySubjectDAO(ds);
         StudySubjectBean ssb = (StudySubjectBean) ssdao.findByPK(ecb.getStudySubjectId());
         answer.setStudySubject(ssb);
 
-        StudyEventDAO sedao = new StudyEventDAO(ds);
+        IStudyEventDAO sedao = new StudyEventDAO(ds);
         StudyEventBean seb = (StudyEventBean) sedao.findByPK(ecb.getStudyEventId());
         answer.setStudyEvent(seb);
 
@@ -649,7 +656,7 @@ public class TableOfContentsServlet extends SecureController {
         answer.setSections(sections);
 
         // get metadata
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(ds);
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(ds);
         StudyEventDefinitionBean sedb = (StudyEventDefinitionBean) seddao.findByPK(seb.getStudyEventDefinitionId());
         answer.setStudyEventDefinition(sedb);
 
@@ -657,12 +664,12 @@ public class TableOfContentsServlet extends SecureController {
         CRFVersionBean cvb = (CRFVersionBean) cvdao.findByPK(ecb.getCRFVersionId());
         answer.setCrfVersion(cvb);
 
-        CRFDAO cdao = new CRFDAO(ds);
+        ICrfDAO cdao = new CRFDAO(ds);
         CRFBean cb = (CRFBean) cdao.findByPK(cvb.getCrfId());
         answer.setCrf(cb);
 
         StudyBean studyForStudySubject = new StudyDAO(ds).findByStudySubjectId(ssb.getId());
-        EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(ds);
+        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(ds);
         EventDefinitionCRFBean edcb = edcdao.findByStudyEventDefinitionIdAndCRFId(studyForStudySubject, sedb.getId(), cb.getId());
         answer.setEventDefinitionCRF(edcb);
 

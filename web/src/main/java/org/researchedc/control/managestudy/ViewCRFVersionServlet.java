@@ -18,6 +18,7 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
@@ -73,7 +74,7 @@ public class ViewCRFVersionServlet extends SecureController {
         } else {
             CRFVersionBean version = (CRFVersionBean) cvdao.findByPK(crfVersionId);
             // tbh
-            CRFDAO crfdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
             CRFBean crf = (CRFBean) crfdao.findByPK(version.getCrfId());
             CRFVersionMetadataUtil metadataUtil = new CRFVersionMetadataUtil(sm.getDataSource());
             ArrayList<SectionBean> sections = metadataUtil.retrieveFormMetadata(version); 

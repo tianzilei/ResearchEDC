@@ -32,6 +32,7 @@ import org.researchedc.core.CRFLocker;
 import org.researchedc.dao.hibernate.AuditUserLoginDao;
 import org.researchedc.dao.hibernate.ConfigurationDao;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
 import org.researchedc.domain.technicaladmin.LoginStatus;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -77,7 +78,7 @@ public class OpenClinicaUsernamePasswordAuthenticationFilter extends AbstractAut
 
     private AuditUserLoginDao auditUserLoginDao;
     private ConfigurationDao configurationDao;
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     private DataSource dataSource;
     private org.researchedc.core.CRFLocker crfLocker; 
 
@@ -311,7 +312,7 @@ public class OpenClinicaUsernamePasswordAuthenticationFilter extends AbstractAut
         this.dataSource = dataSource;
     }
 
-    public UserAccountDAO getUserAccountDao() {
+    public IUserAccountDAO getUserAccountDao() {
         return userAccountDao != null ? userAccountDao : new UserAccountDAO(dataSource);
     }
 

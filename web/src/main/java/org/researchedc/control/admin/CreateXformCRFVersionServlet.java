@@ -18,6 +18,7 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.CrfDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.hibernate.CrfVersionDao;
 import org.researchedc.domain.datamap.CrfBean;
 import org.researchedc.domain.datamap.CrfVersion;

@@ -21,7 +21,9 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InconsistentStateException;
 import org.researchedc.web.InsufficientPermissionException;
@@ -72,7 +74,7 @@ public class EditUserAccountServlet extends SecureController {
     public static final String USER_ACCOUNT_NOTIFICATION = "notifyPassword";
 
     private ArrayList getAllStudies() {
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         return (ArrayList) sdao.findAll();
     }
 
@@ -101,7 +103,7 @@ public class EditUserAccountServlet extends SecureController {
         int userId = fp.getInt(ARG_USERID);
         
         
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
         UserAccountBean user = (UserAccountBean) udao.findByPK(userId);
 
         techAdminProtect(user);
@@ -245,7 +247,7 @@ public class EditUserAccountServlet extends SecureController {
     // }
     //
     // SQLFactory factory = SQLFactory.getInstance();
-    // UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+    // IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
     //
     // HashMap presetValues;
     // } catch (Exception e) {
@@ -324,7 +326,7 @@ public class EditUserAccountServlet extends SecureController {
     }
 
 	public Boolean isApiKeyExist(String uuid) {
-		UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+		IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
 		UserAccountBean uBean = (UserAccountBean) udao.findByApiKey(uuid);
 		if (uBean == null || !uBean.isActive()) {
 			return false;

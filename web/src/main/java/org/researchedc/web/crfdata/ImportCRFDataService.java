@@ -50,13 +50,20 @@ import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.Validator;
 import org.researchedc.control.submit.ImportCRFInfoContainer;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
@@ -84,16 +91,16 @@ public class ImportCRFDataService {
 
     /*
      * purpose: look up EventCRFBeans by the following: Study Subject, Study Event, CRF Version, using the
-     * findByEventSubjectVersion method in EventCRFDAO. May return more than one, hmm.
+     * findByEventSubjectVersion method in EventCRFDao. May return more than one, hmm.
      */
     public List<EventCRFBean> fetchEventCRFBeans(ODMContainer odmContainer, UserAccountBean ub) {
         ArrayList<EventCRFBean> eventCRFBeans = new ArrayList<EventCRFBean>();
         ArrayList<Integer> eventCRFBeanIds = new ArrayList<Integer>();
-        EventCRFDAO eventCrfDAO = new EventCRFDAO(ds);
-        StudySubjectDAO studySubjectDAO = new StudySubjectDAO(ds);
-        StudyEventDefinitionDAO studyEventDefinitionDAO = new StudyEventDefinitionDAO(ds);
-        StudyDAO studyDAO = new StudyDAO(ds);
-        StudyEventDAO studyEventDAO = new StudyEventDAO(ds);
+        EventCRFDao eventCrfDAO = new EventCRFDAO(ds);
+        IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(ds);
+        IStudyEventDefinitionDAO studyEventDefinitionDAO = new StudyEventDefinitionDAO(ds);
+        IStudyDAO studyDAO = new StudyDAO(ds);
+        IStudyEventDAO studyEventDAO = new StudyEventDAO(ds);
         UpsertOnBean upsert = odmContainer.getCrfDataPostImportContainer().getUpsertOn();
         // If Upsert bean is not present, create one with default settings
         if (upsert == null)
@@ -214,11 +221,11 @@ public class ImportCRFDataService {
     public boolean eventCRFStatusesValid(ODMContainer odmContainer, UserAccountBean ub) {
         ArrayList<EventCRFBean> eventCRFBeans = new ArrayList<EventCRFBean>();
         ArrayList<Integer> eventCRFBeanIds = new ArrayList<Integer>();
-        EventCRFDAO eventCrfDAO = new EventCRFDAO(ds);
-        StudySubjectDAO studySubjectDAO = new StudySubjectDAO(ds);
-        StudyEventDefinitionDAO studyEventDefinitionDAO = new StudyEventDefinitionDAO(ds);
-        StudyDAO studyDAO = new StudyDAO(ds);
-        StudyEventDAO studyEventDAO = new StudyEventDAO(ds);
+        EventCRFDao eventCrfDAO = new EventCRFDAO(ds);
+        IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(ds);
+        IStudyEventDefinitionDAO studyEventDefinitionDAO = new StudyEventDefinitionDAO(ds);
+        IStudyDAO studyDAO = new StudyDAO(ds);
+        IStudyEventDAO studyEventDAO = new StudyEventDAO(ds);
         UpsertOnBean upsert = odmContainer.getCrfDataPostImportContainer().getUpsertOn();
         // If Upsert bean is not present, create one with default settings
         if (upsert == null)
@@ -293,11 +300,11 @@ public class ImportCRFDataService {
      */
     public HashMap<Integer, String> fetchEventCRFStatuses(ODMContainer odmContainer) {
         HashMap<Integer, String> eventCRFStatuses = new HashMap<Integer, String>();
-        EventCRFDAO eventCrfDAO = new EventCRFDAO(ds);
-        StudySubjectDAO studySubjectDAO = new StudySubjectDAO(ds);
-        StudyEventDefinitionDAO studyEventDefinitionDAO = new StudyEventDefinitionDAO(ds);
-        StudyDAO studyDAO = new StudyDAO(ds);
-        StudyEventDAO studyEventDAO = new StudyEventDAO(ds);
+        EventCRFDao eventCrfDAO = new EventCRFDAO(ds);
+        IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(ds);
+        IStudyEventDefinitionDAO studyEventDefinitionDAO = new StudyEventDefinitionDAO(ds);
+        IStudyDAO studyDAO = new StudyDAO(ds);
+        IStudyEventDAO studyEventDAO = new StudyEventDAO(ds);
 
         String studyOID = odmContainer.getCrfDataPostImportContainer().getStudyOID();
         StudyBean studyBean = studyDAO.findByOid(studyOID);
@@ -384,11 +391,11 @@ public class ImportCRFDataService {
         // create a second Validator, this one for hard edit checks
         HashMap<String, String> hardValidator = new HashMap<String, String>();
 
-        StudyEventDAO studyEventDAO = new StudyEventDAO(ds);
-        StudyDAO studyDAO = new StudyDAO(ds);
+        IStudyEventDAO studyEventDAO = new StudyEventDAO(ds);
+        IStudyDAO studyDAO = new StudyDAO(ds);
         StudyBean studyBean = studyDAO.findByOid(odmContainer.getCrfDataPostImportContainer().getStudyOID());
-        StudySubjectDAO studySubjectDAO = new StudySubjectDAO(ds);
-        StudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(ds);
+        IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(ds);
+        IStudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(ds);
         HashMap<String, ItemDataBean> blankCheck = new HashMap<String, ItemDataBean>();
         String hardValidatorErrorMsgs = "";
 
@@ -428,7 +435,7 @@ public class ImportCRFDataService {
                     Map<String,Integer> groupMaxOrdinals = new HashMap<String,Integer>();
                     displayItemBeanWrapper = null;
                     CRFVersionDAO crfVersionDAO = new CRFVersionDAO(ds);
-                    EventCRFDAO eventCRFDAO = new EventCRFDAO(ds);
+                    EventCRFDao eventCRFDAO = new EventCRFDAO(ds);
                     ArrayList<CRFVersionBean> crfVersionBeans = crfVersionDAO.findAllByOid(formDataBean.getFormOID());
                     ArrayList<ImportItemGroupDataBean> itemGroupDataBeans = formDataBean.getItemGroupData();
 
@@ -462,7 +469,7 @@ public class ImportCRFDataService {
 
                     }
                     
-                    EventDefinitionCRFDAO eventDefinitionCRFDAO = new EventDefinitionCRFDAO(ds);
+                    EventDefinitionCRFDao eventDefinitionCRFDAO = new EventDefinitionCRFDAO(ds);
                     EventDefinitionCRFBean eventDefinitionCRF = eventDefinitionCRFDAO.findByStudyEventIdAndCRFVersionId(studyBean, studyEvent.getId(),
                             crfVersion.getId());
                     if (eventCRFBean != null) {
@@ -627,7 +634,7 @@ public class ImportCRFDataService {
 
                         }// matches if on permittedCRFIDs
 
-                        CRFDAO crfDAO = new CRFDAO(ds);
+                        ICrfDAO crfDAO = new CRFDAO(ds);
                         CRFBean crfBean = crfDAO.findByVersionId(crfVersion.getCrfId());
                         // seems like an extravagance, but is not contained in crf
                         // version or event crf bean
@@ -966,7 +973,7 @@ public class ImportCRFDataService {
 
         // throw new OpenClinicaException(mf.format(arguments), "");
         try {
-            StudyDAO studyDAO = new StudyDAO(ds);
+            IStudyDAO studyDAO = new StudyDAO(ds);
             String studyOid = odmContainer.getCrfDataPostImportContainer().getStudyOID();
             StudyBean studyBean = studyDAO.findByOid(studyOid);
             if (studyBean == null) {
@@ -995,8 +1002,8 @@ public class ImportCRFDataService {
             }
             ArrayList<SubjectDataBean> subjectDataBeans = odmContainer.getCrfDataPostImportContainer().getSubjectData();
 
-            StudySubjectDAO studySubjectDAO = new StudySubjectDAO(ds);
-            StudyEventDefinitionDAO studyEventDefinitionDAO = new StudyEventDefinitionDAO(ds);
+            IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(ds);
+            IStudyEventDefinitionDAO studyEventDefinitionDAO = new StudyEventDefinitionDAO(ds);
             CRFVersionDAO crfVersionDAO = new CRFVersionDAO(ds);
             ItemGroupDAO itemGroupDAO = new ItemGroupDAO(ds);
             ItemDAO itemDAO = new ItemDAO(ds);

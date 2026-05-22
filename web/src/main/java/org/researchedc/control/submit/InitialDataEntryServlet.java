@@ -22,7 +22,7 @@ import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.RuleValidator;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -93,7 +93,7 @@ public class InitialDataEntryServlet extends DataEntryServlet {
 //            }
 //        } else if (stage.equals(DataEntryStage.INITIAL_DATA_ENTRY)) {
 //            if (ub.getId() != ecb.getOwnerId() && !r.equals(Role.STUDYDIRECTOR) && !r.equals(Role.COORDINATOR)) {
-//                UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+//                IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
 //                String ownerName = ((UserAccountBean) udao.findByPK(ecb.getOwnerId())).getName();
 //                this.session.setAttribute("mayProcessUploading", "false");
 //                MessageFormat mf = new MessageFormat("");

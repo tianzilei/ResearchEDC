@@ -16,6 +16,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
@@ -67,7 +68,7 @@ public class ViewItemDetailServlet extends SecureController {
         ItemFormMetadataDAO ifmdao = new ItemFormMetadataDAO(sm.getDataSource());
         ItemGroupMetadataDAO igmdao = new ItemGroupMetadataDAO(sm.getDataSource());
         CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        CRFDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
         SectionDAO sectionDao = new SectionDAO(sm.getDataSource());
 
         if (itemId == 0 && itemOid == null) {

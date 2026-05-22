@@ -12,7 +12,9 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -38,7 +40,7 @@ public class DownloadAttachedFileServlet extends SecureController {
         Locale locale = LocaleResolver.getLocale(request);
         FormProcessor fp = new FormProcessor(request);
 /*        int eventCRFId = fp.getInt("eventCRFId");
-        EventCRFDAO edao = new EventCRFDAO(sm.getDataSource());
+        EventCRFDao edao = new EventCRFDAO(sm.getDataSource());
 
         if (eventCRFId > 0) {
             if (!entityIncluded(eventCRFId, ub.getName(), edao, sm.getDataSource())) {

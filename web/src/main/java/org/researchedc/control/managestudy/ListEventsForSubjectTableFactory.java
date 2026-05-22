@@ -1,5 +1,8 @@
 package org.researchedc.control.managestudy;
 
+import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.Role;
@@ -20,20 +23,20 @@ import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.bean.submit.SubjectGroupMapBean;
 import org.researchedc.control.AbstractTableFactory;
 import org.researchedc.control.DefaultActionsEditor;
-import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.ListEventsForSubjectFilter;
 import org.researchedc.dao.managestudy.ListEventsForSubjectSort;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
-import org.researchedc.dao.submit.SubjectDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.StudyGroupDao;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.jmesa.core.filter.FilterMatcher;
@@ -63,23 +66,23 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class ListEventsForSubjectTableFactory extends AbstractTableFactory {
 
-    private StudyEventDefinitionDAO studyEventDefinitionDao;
-    private StudySubjectDAO studySubjectDAO;
-    private SubjectDAO subjectDAO;
-    private StudyEventDAO studyEventDAO;
-    private StudyGroupClassDAO studyGroupClassDAO;
-    private SubjectGroupMapDAO subjectGroupMapDAO;
-    private StudyDAO studyDAO;
-    private StudyGroupDAO studyGroupDAO;
-    private EventCRFDAO eventCRFDAO;
-    private EventDefinitionCRFDAO eventDefintionCRFDAO;
-    private CRFDAO crfDAO;
-    private CRFVersionDAO crfVersionDAO;
-    public CRFVersionDAO getCrfVersionDAO() {
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
+    private IStudySubjectDAO studySubjectDAO;
+    private ISubjectDAO subjectDAO;
+    private IStudyEventDAO studyEventDAO;
+    private StudyGroupClassDao studyGroupClassDAO;
+    private SubjectGroupMapDao subjectGroupMapDAO;
+    private IStudyDAO studyDAO;
+    private StudyGroupDao studyGroupDAO;
+    private EventCRFDao eventCRFDAO;
+    private EventDefinitionCRFDao eventDefintionCRFDAO;
+    private ICrfDAO crfDAO;
+    private ICrfVersionDAO crfVersionDAO;
+    public ICrfVersionDAO getCrfVersionDAO() {
 		return crfVersionDAO;
 	}
 
-	public void setCrfVersionDAO(CRFVersionDAO crfVersionDAO) {
+	public void setCrfVersionDAO(ICrfVersionDAO crfVersionDAO) {
 		this.crfVersionDAO = crfVersionDAO;
 	}
 
@@ -433,11 +436,11 @@ public class ListEventsForSubjectTableFactory extends AbstractTableFactory {
         return studyGroupClasses;
     }
 
-    public StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+    public IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
         return studyEventDefinitionDao;
     }
 
-    public void setStudyEventDefinitionDao(StudyEventDefinitionDAO studyEventDefinitionDao) {
+    public void setStudyEventDefinitionDao(IStudyEventDefinitionDAO studyEventDefinitionDao) {
         this.studyEventDefinitionDao = studyEventDefinitionDao;
     }
 
@@ -449,59 +452,59 @@ public class ListEventsForSubjectTableFactory extends AbstractTableFactory {
         this.studyBean = studyBean;
     }
 
-    public StudySubjectDAO getStudySubjectDAO() {
+    public IStudySubjectDAO getStudySubjectDAO() {
         return studySubjectDAO;
     }
 
-    public void setStudySubjectDAO(StudySubjectDAO studySubjectDAO) {
+    public void setStudySubjectDAO(IStudySubjectDAO studySubjectDAO) {
         this.studySubjectDAO = studySubjectDAO;
     }
 
-    public SubjectDAO getSubjectDAO() {
+    public ISubjectDAO getSubjectDAO() {
         return subjectDAO;
     }
 
-    public void setSubjectDAO(SubjectDAO subjectDAO) {
+    public void setSubjectDAO(ISubjectDAO subjectDAO) {
         this.subjectDAO = subjectDAO;
     }
 
-    public StudyEventDAO getStudyEventDAO() {
+    public IStudyEventDAO getStudyEventDAO() {
         return studyEventDAO;
     }
 
-    public void setStudyEventDAO(StudyEventDAO studyEventDAO) {
+    public void setStudyEventDAO(IStudyEventDAO studyEventDAO) {
         this.studyEventDAO = studyEventDAO;
     }
 
-    public StudyGroupClassDAO getStudyGroupClassDAO() {
+    public StudyGroupClassDao getStudyGroupClassDAO() {
         return studyGroupClassDAO;
     }
 
-    public void setStudyGroupClassDAO(StudyGroupClassDAO studyGroupClassDAO) {
+    public void setStudyGroupClassDAO(StudyGroupClassDao studyGroupClassDAO) {
         this.studyGroupClassDAO = studyGroupClassDAO;
     }
 
-    public SubjectGroupMapDAO getSubjectGroupMapDAO() {
+    public SubjectGroupMapDao getSubjectGroupMapDAO() {
         return subjectGroupMapDAO;
     }
 
-    public void setSubjectGroupMapDAO(SubjectGroupMapDAO subjectGroupMapDAO) {
+    public void setSubjectGroupMapDAO(SubjectGroupMapDao subjectGroupMapDAO) {
         this.subjectGroupMapDAO = subjectGroupMapDAO;
     }
 
-    public StudyDAO getStudyDAO() {
+    public IStudyDAO getStudyDAO() {
         return studyDAO;
     }
 
-    public void setStudyDAO(StudyDAO studyDAO) {
+    public void setStudyDAO(IStudyDAO studyDAO) {
         this.studyDAO = studyDAO;
     }
 
-    public StudyGroupDAO getStudyGroupDAO() {
+    public StudyGroupDao getStudyGroupDAO() {
         return studyGroupDAO;
     }
 
-    public void setStudyGroupDAO(StudyGroupDAO studyGroupDAO) {
+    public void setStudyGroupDAO(StudyGroupDao studyGroupDAO) {
         this.studyGroupDAO = studyGroupDAO;
     }
 
@@ -513,27 +516,27 @@ public class ListEventsForSubjectTableFactory extends AbstractTableFactory {
         this.currentRole = currentRole;
     }
 
-    public EventCRFDAO getEventCRFDAO() {
+    public EventCRFDao getEventCRFDAO() {
         return eventCRFDAO;
     }
 
-    public void setEventCRFDAO(EventCRFDAO eventCRFDAO) {
+    public void setEventCRFDAO(EventCRFDao eventCRFDAO) {
         this.eventCRFDAO = eventCRFDAO;
     }
 
-    public EventDefinitionCRFDAO getEventDefintionCRFDAO() {
+    public EventDefinitionCRFDao getEventDefintionCRFDAO() {
         return eventDefintionCRFDAO;
     }
 
-    public void setEventDefintionCRFDAO(EventDefinitionCRFDAO eventDefintionCRFDAO) {
+    public void setEventDefintionCRFDAO(EventDefinitionCRFDao eventDefintionCRFDAO) {
         this.eventDefintionCRFDAO = eventDefintionCRFDAO;
     }
 
-    public CRFDAO getCrfDAO() {
+    public ICrfDAO getCrfDAO() {
         return crfDAO;
     }
 
-    public void setCrfDAO(CRFDAO crfDAO) {
+    public void setCrfDAO(ICrfDAO crfDAO) {
         this.crfDAO = crfDAO;
     }
 
@@ -654,7 +657,7 @@ public class ListEventsForSubjectTableFactory extends AbstractTableFactory {
         @Override
         protected List<Option> getOptions() {
             List<Option> options = new ArrayList<Option>();
-            StudyGroupDAO studyGroupDAO = getStudyGroupDAO();
+            StudyGroupDao studyGroupDAO = getStudyGroupDAO();
             ArrayList<StudyGroupBean> groups = studyGroupDAO.findAllByGroupClass(this.studyGroupClass);
             for (Object subjectStudyGroup : groups) {
                 options.add(new Option(((StudyGroupBean) subjectStudyGroup).getName(), ((StudyGroupBean) subjectStudyGroup).getName()));

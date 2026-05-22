@@ -7,6 +7,10 @@
  */
 package org.researchedc.control.managestudy;
 
+import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.SubjectEventStatus;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
@@ -25,15 +29,17 @@ import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.AddNewSubjectServlet;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.bean.DisplayStudySubjectRow;
@@ -110,14 +116,14 @@ public abstract class ListStudySubjectServlet extends SecureController {
 
         request.setAttribute(PAGINATING_QUERY, paginatingQuery.toString());
 
-        StudyDAO stdao = new StudyDAO(sm.getDataSource());
-        StudySubjectDAO sdao = new StudySubjectDAO(sm.getDataSource());
-        StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyDAO stdao = new StudyDAO(sm.getDataSource());
+        IStudySubjectDAO sdao = new StudySubjectDAO(sm.getDataSource());
+        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
         SubjectGroupMapDAO sgmdao = new SubjectGroupMapDAO(sm.getDataSource());
         StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
         StudyGroupDAO sgdao = new StudyGroupDAO(sm.getDataSource());
-        StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
 
         // YW << update study parameters of current study.
         // "collectDob" and "genderRequired" are set as the same as the parent
@@ -291,7 +297,7 @@ public abstract class ListStudySubjectServlet extends SecureController {
         // icon (electronic signature)
         // in the JSP view or not
         // Get all event crfs by studyevent id; then use
-        // EventDefinitionCRFDAO.isRequired to
+        // EventDefinitionCRFDao.isRequired to
         // determine whether any uncompleted CRFs are required.
         boolean isRequiredUncomplete = false;
         for (DisplayStudySubjectBean subject : displayStudySubs) {
@@ -382,8 +388,8 @@ public abstract class ListStudySubjectServlet extends SecureController {
         if (studyEvent == null)
             return false;
 
-        EventCRFDAO eventCRFDAO = new EventCRFDAO(sm.getDataSource());
-        EventDefinitionCRFDAO eventDefinitionDAO = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventCRFDao eventCRFDAO = new EventCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao eventDefinitionDAO = new EventDefinitionCRFDAO(sm.getDataSource());
         List<EventCRFBean> crfBeans = new ArrayList<EventCRFBean>();
 
         crfBeans.addAll(eventCRFDAO.findAllByStudyEvent(studyEvent));
@@ -405,10 +411,10 @@ public abstract class ListStudySubjectServlet extends SecureController {
 
     public static DisplayStudyEventBean getDisplayStudyEventsForStudySubject(StudySubjectBean studySub, StudyEventBean event, DataSource ds,
             UserAccountBean ub, StudyUserRoleBean currentRole, StudyBean study) {
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(ds);
-        StudyEventDAO sedao = new StudyEventDAO(ds);
-        EventCRFDAO ecdao = new EventCRFDAO(ds);
-        EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(ds);
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(ds);
+        IStudyEventDAO sedao = new StudyEventDAO(ds);
+        EventCRFDao ecdao = new EventCRFDAO(ds);
+        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(ds);
 
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(event.getStudyEventDefinitionId());
         event.setStudyEventDefinition(sed);

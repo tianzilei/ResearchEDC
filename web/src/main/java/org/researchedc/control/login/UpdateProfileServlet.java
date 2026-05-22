@@ -24,7 +24,9 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.dao.hibernate.ConfigurationDao;
 import org.researchedc.dao.hibernate.PasswordRequirementsDao;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.view.Page;
@@ -53,8 +55,8 @@ public class UpdateProfileServlet extends SecureController {
     public void processRequest() throws Exception {
 
         String action = request.getParameter("action");// action sent by user
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
         UserAccountBean userBean1 = (UserAccountBean) udao.findByUserName(ub.getName());
 
         Collection studies = sdao.findAllByUser(ub.getName());
@@ -81,7 +83,7 @@ public class UpdateProfileServlet extends SecureController {
 
     }
 
-	private void confirmProfile(UserAccountBean userBean1, UserAccountDAO udao) throws Exception {
+	private void confirmProfile(UserAccountBean userBean1, IUserAccountDAO udao) throws Exception {
         Validator v = new Validator(request);
         FormProcessor fp = new FormProcessor(request);
 
@@ -137,7 +139,7 @@ public class UpdateProfileServlet extends SecureController {
         userBean1.setPasswdChallengeAnswer(fp.getString("passwdChallengeAnswer"));
         userBean1.setPhone(fp.getString("phone"));
         userBean1.setActiveStudyId(fp.getInt("activeStudyId"));
-        StudyDAO sdao = new StudyDAO(this.sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(this.sm.getDataSource());
 
         StudyBean newActiveStudy = (StudyBean) sdao.findByPK(userBean1.getActiveStudyId());
         request.setAttribute("newActiveStudy", newActiveStudy);
@@ -176,7 +178,7 @@ public class UpdateProfileServlet extends SecureController {
      * Updates user new profile
      *
      */
-    private void submitProfile(UserAccountDAO udao) {
+    private void submitProfile(IUserAccountDAO udao) {
         logger.info("user bean to be updated:" + ub.getId() + ub.getFirstName());
 
         UserAccountBean userBean1 = (UserAccountBean) session.getAttribute("userBean1");

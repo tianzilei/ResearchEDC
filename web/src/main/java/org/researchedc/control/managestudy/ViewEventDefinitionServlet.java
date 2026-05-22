@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -22,14 +23,17 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.hibernate.EventDefinitionCrfTagDao;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.datamap.CrfBean;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;
 import org.researchedc.service.pmanage.Authorization;
@@ -66,8 +70,8 @@ public class ViewEventDefinitionServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        StudyEventDefinitionDAO sdao = new StudyEventDefinitionDAO(sm.getDataSource());
-        StudyDAO studyDao = new StudyDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO sdao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyDAO studyDao = new StudyDAO(sm.getDataSource());
         FormProcessor fp = new FormProcessor(request);
         int defId = fp.getInt("id", true);
 
@@ -87,11 +91,11 @@ public class ViewEventDefinitionServlet extends SecureController {
             
             checkRoleByUserAndStudy(ub, sed.getStudyId(), 0);
 
-            EventDefinitionCRFDAO edao = new EventDefinitionCRFDAO(sm.getDataSource());
+            EventDefinitionCRFDao edao = new EventDefinitionCRFDAO(sm.getDataSource());
             ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllByDefinition(this.currentStudy, defId);
 
             CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-            CRFDAO cdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
 
             for (int i = 0; i < eventDefinitionCRFs.size(); i++) {
                 EventDefinitionCRFBean edc = (EventDefinitionCRFBean) eventDefinitionCRFs.get(i);

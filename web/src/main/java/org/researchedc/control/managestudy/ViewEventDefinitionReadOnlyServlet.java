@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
@@ -15,9 +16,11 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;
 import org.researchedc.view.Page;
@@ -39,7 +42,7 @@ public class ViewEventDefinitionReadOnlyServlet extends ViewEventDefinitionServl
     @Override
     public void processRequest() throws Exception {
 
-        StudyEventDefinitionDAO sdao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO sdao = new StudyEventDefinitionDAO(sm.getDataSource());
         FormProcessor fp = new FormProcessor(request);
         int defId = fp.getInt(EVENT_ID, true);
         String eventOid = fp.getString(EVENT_OID);
@@ -53,11 +56,11 @@ public class ViewEventDefinitionReadOnlyServlet extends ViewEventDefinitionServl
         // definition id
         StudyEventDefinitionBean sed = defId > 0 ? (StudyEventDefinitionBean) sdao.findByPK(defId) : (StudyEventDefinitionBean) sdao.findByOid(eventOid);
 
-        EventDefinitionCRFDAO edao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edao = new EventDefinitionCRFDAO(sm.getDataSource());
         ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllByDefinition(this.currentStudy, sed.getId());
 
         CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        CRFDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
 
         for (int i = 0; i < eventDefinitionCRFs.size(); i++) {
             EventDefinitionCRFBean edc = (EventDefinitionCRFBean) eventDefinitionCRFs.get(i);

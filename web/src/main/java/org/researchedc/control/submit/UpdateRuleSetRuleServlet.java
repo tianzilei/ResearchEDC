@@ -11,7 +11,7 @@ import org.researchedc.bean.core.Role;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
-import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleAuditDao;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.domain.Status;
@@ -21,6 +21,7 @@ import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.service.rule.RuleSetServiceInterface;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.researchedc.dao.spi.IRuleDAO;
 
 /**
  * @author Krikor Krumlian
@@ -29,7 +30,7 @@ import org.researchedc.web.InsufficientPermissionException;
 public class UpdateRuleSetRuleServlet extends SecureController {
 
     private static final long serialVersionUID = 1L;
-    RuleSetDao ruleSetDao;
+    IRuleSetDAO ruleSetDao;
     RuleSetServiceInterface ruleSetService;
     RuleSetRuleDao ruleSetRuleDao;
     RuleSetRuleAuditDao ruleSetRuleAuditDao;
@@ -111,8 +112,8 @@ public class UpdateRuleSetRuleServlet extends SecureController {
         getRuleSetRuleAuditDao().saveOrUpdate(ruleSetRuleAuditBean);
     }
 
-    private RuleSetDao getRuleSetDao() {
-        ruleSetDao = this.ruleSetDao != null ? ruleSetDao : (RuleSetDao) SpringServletAccess.getApplicationContext(context).getBean("ruleSetDao");
+    private IRuleSetDAO getRuleSetDao() {
+        ruleSetDao = this.ruleSetDao != null ? ruleSetDao : (IRuleSetDAO) SpringServletAccess.getApplicationContext(context).getBean("ruleSetDao");
         return ruleSetDao;
     }
 

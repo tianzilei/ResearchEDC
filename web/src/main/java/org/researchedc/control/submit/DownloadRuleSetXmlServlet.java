@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.servlet.ServletOutputStream;
+import org.researchedc.dao.spi.IRuleDAO;
 
 public class DownloadRuleSetXmlServlet extends SecureController {
 

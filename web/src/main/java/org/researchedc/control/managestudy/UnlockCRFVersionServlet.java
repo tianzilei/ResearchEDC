@@ -19,6 +19,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -59,12 +60,12 @@ public class UnlockCRFVersionServlet extends SecureController {
        }
        
        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-       CRFDAO cdao = new CRFDAO (sm.getDataSource());
+        CRFDAO cdao = new CRFDAO(sm.getDataSource());
        
        CRFVersionBean version = (CRFVersionBean)cvdao.findByPK(crfVersionId);
        CRFBean crf = (CRFBean)cdao.findByPK(version.getCrfId());
        
-       EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+       EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
        ArrayList eventCRFs = ecdao.findAllStudySubjectByCRFVersion(crfVersionId);
        
        if (StringUtil.isBlank(action)) {

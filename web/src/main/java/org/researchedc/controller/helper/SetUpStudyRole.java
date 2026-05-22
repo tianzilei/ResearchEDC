@@ -1,6 +1,7 @@
 package org.researchedc.controller.helper;
 
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.bean.managestudy.StudyBean;
@@ -48,7 +49,7 @@ public class SetUpStudyRole {
         StudyBean currentStudy = new StudyBean();
         StudyInfoPanel panel = new StudyInfoPanel();
 
-        StudyDAO sdao = new StudyDAO(dataSource);
+        IStudyDAO sdao = new StudyDAO(dataSource);
 
         if (userAccountBean.getId() > 0 && userAccountBean.getActiveStudyId() > 0) {
             StudyParameterValueDAO spvdao = new StudyParameterValueDAO(dataSource);

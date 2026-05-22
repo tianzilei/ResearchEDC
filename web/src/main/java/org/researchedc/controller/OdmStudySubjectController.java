@@ -12,19 +12,18 @@ import org.researchedc.bean.odmbeans.StudyEventDefBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.dao.admin.AuditDAO;
-import org.researchedc.dao.admin.AuditEventDAO;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.AuditDao;
+import org.researchedc.dao.spi.IAuditEventDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.StudyDao;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.domain.datamap.Study;
 import org.researchedc.domain.datamap.StudyEvent;
 import org.researchedc.domain.datamap.StudySubject;
@@ -101,7 +100,7 @@ public class OdmStudySubjectController {
 	private ODM getODM(String studyOID, String studySubjectLabel, String crcUserName) {
 
 		StudyDAO studyDAO = new StudyDAO(dataSource);
-		StudySubjectDAO studySubjectDAO = new StudySubjectDAO(dataSource);
+		IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(dataSource);
 		StudyBean studyBean = null;
 		StudySubjectBean studySubjectBean = null;
 		try {

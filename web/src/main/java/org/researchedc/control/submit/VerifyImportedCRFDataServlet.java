@@ -15,6 +15,7 @@ import java.util.Locale;
 
 import javax.sql.DataSource;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.ItemDataType;
@@ -36,9 +37,10 @@ import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -84,7 +86,7 @@ public class VerifyImportedCRFDataServlet extends SecureController {
             Integer parentId, UserAccountBean uab, DataSource ds, StudyBean study) {
         // DisplayItemBean displayItemBean) {
         DiscrepancyNoteBean note = new DiscrepancyNoteBean();
-        StudySubjectDAO ssdao = new StudySubjectDAO(ds);
+        IStudySubjectDAO ssdao = new StudySubjectDAO(ds);
         note.setDescription(message);
         note.setDetailedNotes("Failed Validation Check");
         note.setOwner(uab);
@@ -127,7 +129,7 @@ public class VerifyImportedCRFDataServlet extends SecureController {
     public void processRequest() throws Exception {
         ItemDataDAO itemDataDao = new ItemDataDAO(sm.getDataSource());
         itemDataDao.setFormatDates(false);
-        EventCRFDAO eventCrfDao = new EventCRFDAO(sm.getDataSource());
+        EventCRFDao eventCrfDao = new EventCRFDAO(sm.getDataSource());
         CrfBusinessLogicHelper crfBusinessLogicHelper = new CrfBusinessLogicHelper(sm.getDataSource());
         String action = request.getParameter("action");
 

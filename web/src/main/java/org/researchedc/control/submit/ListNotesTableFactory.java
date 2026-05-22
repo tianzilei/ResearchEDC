@@ -24,22 +24,22 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.control.AbstractTableFactory;
 import org.researchedc.control.DefaultActionsEditor;
 import org.researchedc.control.DropdownFilter;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.hibernate.AuditUserLoginDao;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.ListNotesFilter;
 import org.researchedc.dao.managestudy.ListNotesSort;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
-import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.DiscrepancyNotesSummary;
 import org.researchedc.service.managestudy.ViewNotesFilterCriteria;
@@ -64,19 +64,19 @@ public class ListNotesTableFactory extends AbstractTableFactory {
     private static final Logger LOG = LoggerFactory.getLogger(ListNotesTableFactory.class.getName());
 
     private AuditUserLoginDao auditUserLoginDao;
-    private StudySubjectDAO studySubjectDao;
-    private UserAccountDAO userAccountDao;
-    private DiscrepancyNoteDAO discrepancyNoteDao;
-    private StudyDAO studyDao;
-    private SubjectDAO subjectDao;
-    private CRFVersionDAO crfVersionDao;
-    private CRFDAO crfDao;
-    private StudyEventDAO studyEventDao;
-    private StudyEventDefinitionDAO studyEventDefinitionDao;
-    private EventDefinitionCRFDAO eventDefinitionCRFDao;
+    private IStudySubjectDAO studySubjectDao;
+    private IUserAccountDAO userAccountDao;
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
+    private IStudyDAO studyDao;
+    private ISubjectDAO subjectDao;
+    private ICrfVersionDAO crfVersionDao;
+    private ICrfDAO crfDao;
+    private IStudyEventDAO studyEventDao;
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
+    private EventDefinitionCRFDao eventDefinitionCRFDao;
     private ItemDataDAO itemDataDao;
     private ItemDAO itemDao;
-    private EventCRFDAO eventCRFDao;
+    private EventCRFDao eventCRFDao;
     private StudyBean currentStudy;
     private ResourceBundle resword;
     private ResourceBundle resformat;
@@ -519,27 +519,27 @@ public class ListNotesTableFactory extends AbstractTableFactory {
         return resformat.getString("date_format_string");
     }
 
-    public StudySubjectDAO getStudySubjectDao() {
+    public IStudySubjectDAO getStudySubjectDao() {
         return studySubjectDao;
     }
 
-    public void setStudySubjectDao(StudySubjectDAO studySubjectDao) {
+    public void setStudySubjectDao(IStudySubjectDAO studySubjectDao) {
         this.studySubjectDao = studySubjectDao;
     }
 
-    public SubjectDAO getSubjectDao() {
+    public ISubjectDAO getSubjectDao() {
         return subjectDao;
     }
 
-    public void setSubjectDao(SubjectDAO subjectDao) {
+    public void setSubjectDao(ISubjectDAO subjectDao) {
         this.subjectDao = subjectDao;
     }
 
-    public StudyDAO getStudyDao() {
+    public IStudyDAO getStudyDao() {
         return studyDao;
     }
 
-    public void setStudyDao(StudyDAO studyDao) {
+    public void setStudyDao(IStudyDAO studyDao) {
         this.studyDao = studyDao;
     }
 
@@ -551,51 +551,51 @@ public class ListNotesTableFactory extends AbstractTableFactory {
         this.currentStudy = currentStudy;
     }
 
-    public UserAccountDAO getUserAccountDao() {
+    public IUserAccountDAO getUserAccountDao() {
         return userAccountDao;
     }
 
-    public void setUserAccountDao(UserAccountDAO userAccountDao) {
+    public void setUserAccountDao(IUserAccountDAO userAccountDao) {
         this.userAccountDao = userAccountDao;
     }
 
-    public DiscrepancyNoteDAO getDiscrepancyNoteDao() {
+    public IDiscrepancyNoteDAO getDiscrepancyNoteDao() {
         return discrepancyNoteDao;
     }
 
-    public void setDiscrepancyNoteDao(DiscrepancyNoteDAO discrepancyNoteDao) {
+    public void setDiscrepancyNoteDao(IDiscrepancyNoteDAO discrepancyNoteDao) {
         this.discrepancyNoteDao = discrepancyNoteDao;
     }
 
-    public CRFVersionDAO getCrfVersionDao() {
+    public ICrfVersionDAO getCrfVersionDao() {
         return crfVersionDao;
     }
 
-    public void setCrfVersionDao(CRFVersionDAO crfVersionDao) {
+    public void setCrfVersionDao(ICrfVersionDAO crfVersionDao) {
         this.crfVersionDao = crfVersionDao;
     }
 
-    public CRFDAO getCrfDao() {
+    public ICrfDAO getCrfDao() {
         return crfDao;
     }
 
-    public void setCrfDao(CRFDAO crfDao) {
+    public void setCrfDao(ICrfDAO crfDao) {
         this.crfDao = crfDao;
     }
 
-    public StudyEventDAO getStudyEventDao() {
+    public IStudyEventDAO getStudyEventDao() {
         return studyEventDao;
     }
 
-    public void setStudyEventDao(StudyEventDAO studyEventDao) {
+    public void setStudyEventDao(IStudyEventDAO studyEventDao) {
         this.studyEventDao = studyEventDao;
     }
 
-    public EventDefinitionCRFDAO getEventDefinitionCRFDao() {
+    public EventDefinitionCRFDao getEventDefinitionCRFDao() {
         return eventDefinitionCRFDao;
     }
 
-    public void setEventDefinitionCRFDao(EventDefinitionCRFDAO eventDefinitionCRFDao) {
+    public void setEventDefinitionCRFDao(EventDefinitionCRFDao eventDefinitionCRFDao) {
         this.eventDefinitionCRFDao = eventDefinitionCRFDao;
     }
 
@@ -615,19 +615,19 @@ public class ListNotesTableFactory extends AbstractTableFactory {
         this.itemDao = itemDao;
     }
 
-    public EventCRFDAO getEventCRFDao() {
+    public EventCRFDao getEventCRFDao() {
         return eventCRFDao;
     }
 
-    public void setEventCRFDao(EventCRFDAO eventCRFDao) {
+    public void setEventCRFDao(EventCRFDao eventCRFDao) {
         this.eventCRFDao = eventCRFDao;
     }
 
-    public StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+    public IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
         return studyEventDefinitionDao;
     }
 
-    public void setStudyEventDefinitionDao(StudyEventDefinitionDAO studyEventDefinitionDao) {
+    public void setStudyEventDefinitionDao(IStudyEventDefinitionDAO studyEventDefinitionDao) {
         this.studyEventDefinitionDao = studyEventDefinitionDao;
     }
 

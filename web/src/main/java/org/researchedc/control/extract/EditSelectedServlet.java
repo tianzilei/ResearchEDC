@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.extract;
 
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.extract.DatasetBean;
@@ -17,8 +18,9 @@ import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -71,7 +73,7 @@ public class EditSelectedServlet extends SecureController {
     public void setUpStudyGroups() {
         ArrayList sgclasses = (ArrayList) session.getAttribute("allSelectedGroups");
         if (sgclasses == null || sgclasses.size() == 0) {
-            StudyDAO studydao = new StudyDAO(sm.getDataSource());
+            IStudyDAO studydao = new StudyDAO(sm.getDataSource());
             StudyGroupClassDAO sgclassdao = new StudyGroupClassDAO(sm.getDataSource());
             StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
             sgclasses = sgclassdao.findAllActiveByStudy(theStudy);
@@ -91,9 +93,9 @@ public class EditSelectedServlet extends SecureController {
         request.setAttribute("EditSelectedSubmitted", true);
         // <<
         ItemDAO idao = new ItemDAO(sm.getDataSource());
-        // CRFDAO crfdao = new CRFDAO(sm.getDataSource());
+        // ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
         ItemFormMetadataDAO imfdao = new ItemFormMetadataDAO(sm.getDataSource());
-        CRFDAO crfdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
 
         DatasetBean db = (DatasetBean) session.getAttribute("newDataset");
         if (db == null) {
@@ -149,7 +151,7 @@ public class EditSelectedServlet extends SecureController {
             ArrayList sgclasses = (ArrayList) session.getAttribute("allSelectedGroups");
             //
             ArrayList newsgclasses = new ArrayList();
-            StudyDAO studydao = new StudyDAO(sm.getDataSource());
+            IStudyDAO studydao = new StudyDAO(sm.getDataSource());
             StudyGroupClassDAO sgclassdao = new StudyGroupClassDAO(sm.getDataSource());
             StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
             sgclasses = sgclassdao.findAllActiveByStudy(theStudy);
@@ -186,7 +188,7 @@ public class EditSelectedServlet extends SecureController {
         request.setAttribute("eventlist", events);
 
         ItemDAO idao = new ItemDAO(sm.getDataSource());
-        CRFDAO crfdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
         ArrayList allItems = selectAll(events, crfdao, idao);
         Iterator it = events.keySet().iterator();
         while (it.hasNext()) {
@@ -218,7 +220,7 @@ public class EditSelectedServlet extends SecureController {
      * @param events
      * @return
      */
-    public static ArrayList selectAll(HashMap events, CRFDAO crfdao, ItemDAO idao) {
+    public static ArrayList selectAll(HashMap events, ICrfDAO crfdao, ItemDAO idao) {
 
         ArrayList allItems = new ArrayList();
 

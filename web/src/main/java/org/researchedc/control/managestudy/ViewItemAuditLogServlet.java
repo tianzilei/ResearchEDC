@@ -6,6 +6,7 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.view.Page;
 import org.researchedc.dao.admin.AuditDAO;
+import org.researchedc.dao.spi.AuditDao;
 import java.util.ArrayList;
 
 public class ViewItemAuditLogServlet extends SecureController {
@@ -24,7 +25,7 @@ public class ViewItemAuditLogServlet extends SecureController {
     }
 
     public void processRequest () throws Exception{
-        AuditDAO adao = new AuditDAO(sm.getDataSource());
+        AuditDao adao = new AuditDAO(sm.getDataSource());
         FormProcessor fp = new FormProcessor(request);
         String auditTable = fp.getString("auditTable");
         if(auditTable.equalsIgnoreCase("studysub")){

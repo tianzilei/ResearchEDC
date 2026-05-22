@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.ResolutionStatus;
 import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
@@ -25,18 +26,27 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.ListNotesTableFactory;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.service.DiscrepancyNoteUtil;
 import org.researchedc.service.DiscrepancyNotesSummary;
 import org.researchedc.service.managestudy.ViewNotesService;
@@ -118,7 +128,7 @@ public class ViewNotesServlet extends SecureController {
         boolean isForOneSubjectsNotes = "y".equalsIgnoreCase(viewForOne);
 
         DiscrepancyNoteDAO dndao = new DiscrepancyNoteDAO(sm.getDataSource());
-        StudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+        IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
         dndao.setFetchMapping(true);
 
         int resolutionStatus = 0;
@@ -154,20 +164,20 @@ public class ViewNotesServlet extends SecureController {
             session.setAttribute(RESOLUTION_STATUS, resolutionStatusIds);
         }
 
-        StudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
-        StudyDAO studyDao = new StudyDAO(sm.getDataSource());
+        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+        IStudyDAO studyDao = new StudyDAO(sm.getDataSource());
 
-        SubjectDAO sdao = new SubjectDAO(sm.getDataSource());
+        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
 
-        UserAccountDAO uadao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO uadao = new UserAccountDAO(sm.getDataSource());
         CRFVersionDAO crfVersionDao = new CRFVersionDAO(sm.getDataSource());
-        CRFDAO crfDao = new CRFDAO(sm.getDataSource());
-        StudyEventDAO studyEventDao = new StudyEventDAO(sm.getDataSource());
-        StudyEventDefinitionDAO studyEventDefinitionDao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventDefinitionCRFDAO eventDefinitionCRFDao = new EventDefinitionCRFDAO(sm.getDataSource());
+        ICrfDAO crfDao = new CRFDAO(sm.getDataSource());
+        IStudyEventDAO studyEventDao = new StudyEventDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO studyEventDefinitionDao = new StudyEventDefinitionDAO(sm.getDataSource());
+        EventDefinitionCRFDao eventDefinitionCRFDao = new EventDefinitionCRFDAO(sm.getDataSource());
         ItemDataDAO itemDataDao = new ItemDataDAO(sm.getDataSource());
         ItemDAO itemDao = new ItemDAO(sm.getDataSource());
-        EventCRFDAO eventCRFDao = new EventCRFDAO(sm.getDataSource());
+        EventCRFDao eventCRFDao = new EventCRFDAO(sm.getDataSource());
 
 
 
@@ -279,7 +289,7 @@ public class ViewNotesServlet extends SecureController {
         boolean filterByRes = resolutionStatus >= 1 && resolutionStatus <= 5;
 
         ArrayList<DiscrepancyNoteBean> filteredNotes = new ArrayList<DiscrepancyNoteBean>();
-        StudySubjectDAO subjectDao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO subjectDao = new StudySubjectDAO(sm.getDataSource());
         StudySubjectBean studySubjBean = (StudySubjectBean) subjectDao.findByPK(subjectId);
 
         for (DiscrepancyNoteBean discBean : allNotes) {

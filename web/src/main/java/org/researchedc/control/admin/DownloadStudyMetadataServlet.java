@@ -19,6 +19,7 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
+import org.researchedc.dao.spi.IRuleDAO;
 
 
 public class DownloadStudyMetadataServlet extends SecureController {

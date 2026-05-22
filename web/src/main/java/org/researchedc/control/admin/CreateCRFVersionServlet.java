@@ -22,11 +22,14 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.MeasurementUnitDao;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.exception.CRFReadingException;
@@ -87,9 +90,9 @@ public class CreateCRFVersionServlet extends SecureController {
         resetPanel();
         panel.setStudyInfoShown(true);
 
-        CRFDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
         CRFVersionDAO vdao = new CRFVersionDAO(sm.getDataSource());
-        EventDefinitionCRFDAO edao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edao = new EventDefinitionCRFDAO(sm.getDataSource());
 
         FormProcessor fp = new FormProcessor(request);
         // checks which module the requests are from
@@ -572,7 +575,7 @@ public class CreateCRFVersionServlet extends SecureController {
         // cdao.findItemUsedByOtherVersion(previousVersionId);
         // session.setAttribute("itemsUsedByOtherVersion",itemsUsedByOtherVersion);
         // return false;
-        EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
         ArrayList events = ecdao.findAllByCRFVersion(previousVersionId);
         if (!events.isEmpty()) {
             session.setAttribute("eventsForVersion", events);

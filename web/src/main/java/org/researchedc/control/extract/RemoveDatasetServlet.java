@@ -7,14 +7,15 @@
  */
 package org.researchedc.control.extract;
 
+import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -48,7 +49,7 @@ public class RemoveDatasetServlet extends SecureController {
         DatasetDAO dsDAO = new DatasetDAO(sm.getDataSource());
         DatasetBean dataset = (DatasetBean) dsDAO.findByPK(dsId);
 
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         StudyBean study = (StudyBean)sdao.findByPK(dataset.getStudyId());
         checkRoleByUserAndStudy(ub, study.getParentStudyId(), study.getId());
         if (study.getId() != currentStudy.getId() && study.getParentStudyId() != currentStudy.getId()) {

@@ -14,10 +14,14 @@ import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -52,8 +56,8 @@ public class AnonymousFormControllerV2 {
     ParticipantPortalRegistrar participantPortalRegistrar;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-    UserAccountDAO udao;
-    StudyDAO sdao;
+    IUserAccountDAO udao;
+    IStudyDAO sdao;
 
 
     /**
@@ -94,13 +98,13 @@ public class AnonymousFormControllerV2 {
 
             StudyBean study = getStudy(studyOid);
 
-            EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(dataSource);
+            EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(dataSource);
             ArrayList<EventDefinitionCRFBean> edcBeans = edcdao.findAllSubmissionUriAndStudyId(submissionUri, study.getId());
             if (edcBeans.size() != 0) {
                 EventDefinitionCRFBean edcBean = edcBeans.get(0);
-                CRFDAO crfdao = new CRFDAO(dataSource);
+                ICrfDAO crfdao = new CRFDAO(dataSource);
                 CRFVersionDAO cvdao = new CRFVersionDAO(dataSource);
-                StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(dataSource);
+                IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(dataSource);
 
                 CRFVersionBean crfVersionBean = (CRFVersionBean) cvdao.findByPK(edcBean.getDefaultVersionId());
                 CRFBean crf = (CRFBean) crfdao.findByPK(crfVersionBean.getCrfId());

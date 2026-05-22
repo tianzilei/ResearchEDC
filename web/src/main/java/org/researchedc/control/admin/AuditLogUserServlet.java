@@ -11,7 +11,9 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.AuditEventDAO;
+import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -56,7 +58,7 @@ public class AuditLogUserServlet extends SecureController {
         } else {
             session.setAttribute(ARG_USERID, new Integer(userId));
         }
-        AuditEventDAO aeDAO = new AuditEventDAO(sm.getDataSource());
+        IAuditEventDAO aeDAO = new AuditEventDAO(sm.getDataSource());
         ArrayList al = aeDAO.findAllByUserId(userId);
 
         EntityBeanTable table = fp.getEntityBeanTable();
@@ -86,7 +88,7 @@ public class AuditLogUserServlet extends SecureController {
         table.computeDisplay();
 
         request.setAttribute("table", table);
-        UserAccountDAO uadao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO uadao = new UserAccountDAO(sm.getDataSource());
         UserAccountBean uabean = (UserAccountBean) uadao.findByPK(userId);
         request.setAttribute("auditUserBean", uabean);
         forwardPage(Page.AUDIT_LOG_USER);

@@ -21,7 +21,9 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 
 public class RestODMFilter implements ContainerRequestFilter {
 
@@ -93,17 +95,17 @@ public class RestODMFilter implements ContainerRequestFilter {
 	}
 
 	private StudyBean getStudyByOID(String OID, DataSource ds) {
-		StudyDAO studyDAO = new StudyDAO(ds);
+		IStudyDAO studyDAO = new StudyDAO(ds);
 		return studyDAO.findByOid(OID);
 	}
 
 	private StudyUserRoleBean getRoleByStudy(StudyBean studyBean, DataSource ds, UserAccountBean userBean) {
-		UserAccountDAO userAccountDAO = new UserAccountDAO(ds);
+		IUserAccountDAO userAccountDAO = new UserAccountDAO(ds);
 		return userAccountDAO.findRoleByUserNameAndStudyId(userBean.getName(), studyBean.getId());
 	}
 
 	private StudyBean getStudyByID(int id, DataSource ds) {
-		StudyDAO studyDAO = new StudyDAO(ds);
+		IStudyDAO studyDAO = new StudyDAO(ds);
 		return (StudyBean) studyDAO.findByPK(id);
 	}
 }

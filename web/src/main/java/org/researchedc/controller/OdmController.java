@@ -26,14 +26,19 @@ import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.EventCrfDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.domain.datamap.EventCrf;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -78,7 +83,7 @@ public class OdmController {
 
     public static final String FORM_CONTEXT = "ecid";
     ParticipantPortalRegistrar participantPortalRegistrar;
-    StudyDAO sdao;
+    IStudyDAO sdao;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -232,11 +237,11 @@ public class OdmController {
         }
 
         CRFVersionDAO versionDAO = new CRFVersionDAO(dataSource);
-        StudyDAO studyDAO = new StudyDAO(dataSource);
-        StudySubjectDAO studySubjectDAO = new StudySubjectDAO(dataSource);
-        EventCRFDAO eventCRFDAO = new EventCRFDAO(dataSource);
+        IStudyDAO studyDAO = new StudyDAO(dataSource);
+        IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(dataSource);
+        EventCRFDao eventCRFDAO = new EventCRFDAO(dataSource);
         ItemDataDAO itemDataDAO = new ItemDataDAO(dataSource);
-        CRFDAO crfDAO = new CRFDAO(dataSource);
+        ICrfDAO crfDAO = new CRFDAO(dataSource);
         List<ODMcomplexTypeDefinitionFormData> formDatas = new ArrayList<>();
         try {
             // Retrieve crfs for next event
@@ -290,7 +295,7 @@ public class OdmController {
     }
 
     private StudyEventDefinitionBean getStudyEventDefinitionBean(int ID) {
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(dataSource);
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(dataSource);
         StudyEventDefinitionBean studyEventDefinitionBean = (StudyEventDefinitionBean) seddao.findByPK(ID);
         return studyEventDefinitionBean;
     }
@@ -335,7 +340,7 @@ public class OdmController {
     }
 
     private ODMcomplexTypeDefinitionFormData getFormDataPerCrf(CRFVersionBean crfVersion, StudyEventBean nextEvent, List<EventCRFBean> eventCrfs,
-            CRFDAO crfDAO, String formUrl,boolean itemDataExists) {
+            ICrfDAO crfDAO, String formUrl,boolean itemDataExists) {
         EventCRFBean selectedEventCRFBean = null;
         CRFBean crfBean = (CRFBean) crfDAO.findByVersionId(crfVersion.getId());
         for (EventCRFBean eventCRFBean : eventCrfs) {

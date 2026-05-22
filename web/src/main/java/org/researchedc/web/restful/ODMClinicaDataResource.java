@@ -22,8 +22,10 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -246,13 +248,13 @@ public class ODMClinicaDataResource {
 	 */
 	private String getStudySubjectOID(String subjectIdentifier, String studyOID)
 	{
-		StudySubjectDAO studySubjectDAO = new StudySubjectDAO(getDataSource());
+		IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(getDataSource());
 		StudySubjectBean studySubject = studySubjectDAO.findByOid(subjectIdentifier);
 		if (subjectIdentifier.equals("*") ||
 				(studySubject != null  && studySubject.getOid() != null)) return subjectIdentifier;
 		else
 		{
-			StudyDAO studyDAO = new StudyDAO(getDataSource());
+			IStudyDAO studyDAO = new StudyDAO(getDataSource());
 			StudyBean study = studyDAO.findByOid(studyOID);
 			studySubject = studySubjectDAO.findByLabelAndStudy(subjectIdentifier,study);
 			if (studySubject != null && studySubject.getOid() != null) return studySubject.getOid();

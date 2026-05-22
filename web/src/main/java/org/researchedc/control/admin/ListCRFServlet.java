@@ -13,6 +13,7 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -106,7 +107,7 @@ public class ListCRFServlet extends SecureController {
         // spreadsheet
         logger.debug("found directory: " + dir);
 
-        CRFDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
         CRFVersionDAO vdao = new CRFVersionDAO(sm.getDataSource());
         ArrayList crfs = (ArrayList) cdao.findAll();
         for (int i = 0; i < crfs.size(); i++) {

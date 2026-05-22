@@ -19,12 +19,17 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.StudyModuleStatusDao;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.dao.rule.RuleDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
@@ -79,13 +84,13 @@ public class StudyModuleController {
     @Qualifier("dataSource")
     private BasicDataSource dataSource;
 
-    private EventDefinitionCRFDAO eventDefinitionCRFDao;
-    private StudyEventDefinitionDAO studyEventDefinitionDao;
-    private CRFDAO crfDao;
+    private EventDefinitionCRFDao eventDefinitionCRFDao;
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
+    private ICrfDAO crfDao;
     private StudyGroupClassDAO studyGroupClassDao;
-    private StudyDAO studyDao;
-    private UserAccountDAO userDao;
-    private org.researchedc.dao.rule.RuleDAO ruleDao;
+    private IStudyDAO studyDao;
+    private IUserAccountDAO userDao;
+    private RuleDAO ruleDao;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     public static final String REG_MESSAGE = "regMessages";
     public static ResourceBundle respage;

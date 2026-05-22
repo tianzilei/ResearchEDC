@@ -7,6 +7,8 @@
  */
 package org.researchedc.control.managestudy;
 
+import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.managestudy.DisplayStudyEventBean;
 import org.researchedc.bean.managestudy.DisplayStudySubjectBean;
@@ -22,14 +24,19 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.crfdata.HideCRFManager;
 import org.researchedc.view.Page;
@@ -109,18 +116,18 @@ public class ListEventsForSubjectServlet extends SecureController {
             return;
         }
 
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(definitionId);
 
-        StudySubjectDAO sdao = new StudySubjectDAO(sm.getDataSource());
-        StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        IStudySubjectDAO sdao = new StudySubjectDAO(sm.getDataSource());
+        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
 
         SubjectGroupMapDAO sgmdao = new SubjectGroupMapDAO(sm.getDataSource());
         StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
 
-        EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
-        EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
-        CRFDAO crfdao = new CRFDAO(sm.getDataSource());
+        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
 
         // find all the groups in the current study
         ArrayList studyGroupClasses = sgcdao.findAllActiveByStudy(currentStudy);
@@ -131,7 +138,7 @@ public class ListEventsForSubjectServlet extends SecureController {
 
         if (currentStudy.getParentStudyId() > 0) {
 
-            StudyDAO stdao = new StudyDAO(sm.getDataSource());
+            IStudyDAO stdao = new StudyDAO(sm.getDataSource());
             StudyBean parent = (StudyBean) stdao.findByPK(currentStudy.getParentStudyId());
 
             allDefs = seddao.findAllActiveByStudy(parent);

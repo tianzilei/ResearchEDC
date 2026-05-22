@@ -13,8 +13,11 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.dao.hibernate.AuthoritiesDao;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
@@ -49,9 +52,9 @@ public class UserInfoController {
 
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-	UserAccountDAO udao;
-	StudyDAO sdao;
-	StudySubjectDAO ssdao;
+	IUserAccountDAO udao;
+	IStudyDAO sdao;
+	IStudySubjectDAO ssdao;
 	UserDTO uDTO;
 	AuthoritiesDao authoritiesDao;
 	ParticipantPortalRegistrar participantPortalRegistrar;
@@ -131,7 +134,7 @@ public class UserInfoController {
 	}
 
 public Boolean isApiKeyExist(String uuid) {
-    UserAccountDAO udao = new UserAccountDAO(dataSource);
+    IUserAccountDAO udao = new UserAccountDAO(dataSource);
     UserAccountBean uBean = (UserAccountBean) udao.findByApiKey(uuid);
     if (uBean == null || !uBean.isActive()) {
         return false;

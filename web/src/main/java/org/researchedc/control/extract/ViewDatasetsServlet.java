@@ -7,6 +7,8 @@
  */
 package org.researchedc.control.extract;
 
+import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.managestudy.StudyBean;
@@ -16,12 +18,15 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -67,9 +72,9 @@ public class ViewDatasetsServlet extends SecureController {
         // YW >>
         if (StringUtil.isBlank(action)) {
             // YW 08-2008 << 2529 fix
-            StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-            StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
-            EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+            IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+            IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+            EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
             StudyBean studyWithEventDefinitions = currentStudy;
             if (currentStudy.getParentStudyId() > 0) {
                 studyWithEventDefinitions = new StudyBean();
@@ -77,7 +82,7 @@ public class ViewDatasetsServlet extends SecureController {
 
             }
             ArrayList seds = seddao.findAllActiveByStudy(studyWithEventDefinitions);
-            CRFDAO crfdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
             HashMap events = new LinkedHashMap();
             for (int i = 0; i < seds.size(); i++) {
                 StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seds.get(i);
@@ -153,7 +158,7 @@ public class ViewDatasetsServlet extends SecureController {
                 int datasetId = fp.getInt("datasetId");
 
                 DatasetBean db = initializeAttributes(datasetId);
-                StudyDAO sdao = new StudyDAO(sm.getDataSource());
+                IStudyDAO sdao = new StudyDAO(sm.getDataSource());
                 StudyBean study = (StudyBean)sdao.findByPK(db.getStudyId());
 
                 if (study.getId() != currentStudy.getId() && study.getParentStudyId() != currentStudy.getId()) {
@@ -215,7 +220,7 @@ public class ViewDatasetsServlet extends SecureController {
         session.setAttribute("allItems", db.getItemDefCrf().clone());
         session.setAttribute("allSelectedItems", db.getItemDefCrf().clone());
         StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
-        StudyDAO studydao = new StudyDAO(sm.getDataSource());
+        IStudyDAO studydao = new StudyDAO(sm.getDataSource());
         StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
         ArrayList<StudyGroupClassBean> allSelectedGroups = sgcdao.findAllActiveByStudy(theStudy);
         ArrayList<Integer> selectedSubjectGroupIds = db.getSubjectGroupIds();

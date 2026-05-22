@@ -11,14 +11,21 @@ import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.dao.admin.AuditDAO;
+import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -111,7 +118,7 @@ public class ChangeCRFVersionController {
           }
     	  resetPanel(request); 
         ModelMap gridMap = new ModelMap();
-        /*EventCRFDAO eventCRFDAO = new EventCRFDAO(dataSource);
+        /*EventCRFDao eventCRFDAO = new EventCRFDAO(dataSource);
         List<EventCRFBean> eventCRFBeans = eventCRFDAO.findAllByStudySubject(studySubjectId);*/
 
         request.setAttribute("eventCRFId", eventCRFId);
@@ -136,25 +143,25 @@ public class ChangeCRFVersionController {
         //from event_crf get 
         StudyBean study = (StudyBean) request.getSession().getAttribute("study");
         
-        CRFDAO cdao = new CRFDAO(dataSource);
+        ICrfDAO cdao = new CRFDAO(dataSource);
         CRFBean crfBean = (CRFBean)cdao.findByPK(crfId);
         CRFVersionDAO crfVersionDao = new CRFVersionDAO(dataSource);
         ArrayList<CRFVersionBean> versions = (ArrayList<CRFVersionBean>) crfVersionDao.findAllActiveByCRF(crfId);
-        StudyEventDefinitionDAO sfed = new StudyEventDefinitionDAO(dataSource);
+        IStudyEventDefinitionDAO sfed = new StudyEventDefinitionDAO(dataSource);
     	StudyEventDefinitionBean sedb =   sfed.findByEventDefinitionCRFId(eventDefinitionCRFId);
     	request.setAttribute("eventName", sedb.getName());
     		
-    	 EventCRFDAO ecdao = new EventCRFDAO(dataSource);
+    	 EventCRFDao ecdao = new EventCRFDAO(dataSource);
     	 EventCRFBean ecb = (EventCRFBean) ecdao.findByPK(eventCRFId);
 
-         StudyEventDAO sedao = new StudyEventDAO(dataSource);
+         IStudyEventDAO sedao = new StudyEventDAO(dataSource);
          StudyEventBean seb = (StudyEventBean) sedao.findByPK(ecb.getStudyEventId());
          request.setAttribute("eventCreateDate", formatDate(seb.getCreatedDate()));
        	if ( sedb.isRepeating()){
     		request.setAttribute("eventOrdinal", seb.getSampleOrdinal());
     	}
         if (study.getParentStudyId()>0 ){
-        	EventDefinitionCRFDAO edfdao = new EventDefinitionCRFDAO(dataSource);
+        	EventDefinitionCRFDao edfdao = new EventDefinitionCRFDAO(dataSource);
         	EventDefinitionCRFBean edf = (EventDefinitionCRFBean) edfdao.findByPK(eventDefinitionCRFId);
         	
         	if (!edf.getSelectedVersionIds().equals("")){
@@ -503,8 +510,8 @@ public class ChangeCRFVersionController {
         setupResource(request);
 //update event_crf_id table
         try{
-	        EventCRFDAO event_crf_dao = new EventCRFDAO(dataSource);
-	        StudyEventDAO sedao = new StudyEventDAO(dataSource);
+	        EventCRFDao event_crf_dao = new EventCRFDAO(dataSource);
+	        IStudyEventDAO sedao = new StudyEventDAO(dataSource);
 	        
 	        EventCRFBean ev_bean = (EventCRFBean)event_crf_dao.findByPK(eventCRFId);
 	        StudyEventBean st_event_bean = (StudyEventBean)sedao.findByPK(ev_bean.getStudyEventId());
@@ -515,10 +522,10 @@ public class ChangeCRFVersionController {
 	        	
 	        	String status_before_update = null;
 	        	SubjectEventStatus eventStatus=null; Status subjectStatus = null;
-	        	AuditDAO auditDao = new AuditDAO(dataSource);
+	        	AuditDao auditDao = new AuditDAO(dataSource);
 	            
 	        	//event signed, check if subject is signed as well
-	        	StudySubjectDAO studySubDao = new StudySubjectDAO(dataSource);
+	        	IStudySubjectDAO studySubDao = new StudySubjectDAO(dataSource);
 	        	StudySubjectBean studySubBean = (StudySubjectBean)studySubDao.findByPK(st_event_bean.getStudySubjectId());
 	        	if (studySubBean.getStatus().isSigned() ){
 	        		 status_before_update = auditDao.findLastStatus("study_subject",  studySubBean.getId(), "8");

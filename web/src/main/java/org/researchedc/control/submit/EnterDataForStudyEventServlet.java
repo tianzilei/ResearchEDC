@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.DataEntryStage;
@@ -33,16 +34,23 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.managestudy.ViewStudySubjectServlet;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.crfdata.HideCRFManager;
@@ -80,7 +88,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
     public final static String HAS_END_DATE_NOTE = "hasEndDateNote";
 
     private StudyEventBean getStudyEvent(int eventId) throws Exception {
-        StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
 
         StudyBean studyWithSED = currentStudy;
         if (currentStudy.getParentStudyId() > 0) {
@@ -97,7 +105,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
 
         StudyEventBean seb = (StudyEventBean) aeb;
 
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
         StudyEventDefinitionBean sedb = (StudyEventDefinitionBean) seddao.findByPK(seb.getStudyEventDefinitionId());
         seb.setStudyEventDefinition(sedb);
         //A. Hamid mantis issue 5048
@@ -125,11 +133,11 @@ public class EnterDataForStudyEventServlet extends SecureController {
         StudyEventBean seb = getStudyEvent(eventId);
 
         // so we can display the subject's label
-        StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
         StudySubjectBean studySubjectBean = (StudySubjectBean) ssdao.findByPK(seb.getStudySubjectId());
         int studyId = studySubjectBean.getStudyId();
 
-        StudyDAO studydao = new StudyDAO(sm.getDataSource());
+        IStudyDAO studydao = new StudyDAO(sm.getDataSource());
         StudyBean study = (StudyBean) studydao.findByPK(studyId);
         // If the study subject derives from a site, and is being viewed from a
         // parent study,
@@ -170,7 +178,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
         }
 
         // prepare to figure out what the display should look like
-        EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
         ArrayList<EventCRFBean> eventCRFs = ecdao.findAllByStudyEvent(seb);
         ArrayList<Boolean> doRuleSetsExist = new ArrayList<Boolean>();
         RuleSetDAO ruleSetDao = new RuleSetDAO(sm.getDataSource());
@@ -181,7 +189,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
             // doRuleSetsExist.add(result);
         }
 
-        EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
         ArrayList eventDefinitionCRFs = (ArrayList) edcdao.findAllActiveByEventDefinitionId(study, seb.getStudyEventDefinitionId());
 
         // get the event definition CRFs for which no event CRF exists
@@ -339,7 +347,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
         if (displayEventDefinitionCRFBeans == null || displayEventDefinitionCRFBeans.isEmpty()) {
             return;
         }
-        UserAccountDAO userAccountDAO = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO userAccountDAO = new UserAccountDAO(sm.getDataSource());
         UserAccountBean userAccountBean;
         EventCRFBean eventCRFBean;
         EventDefinitionCRFBean eventDefinitionCRFBean;
@@ -369,7 +377,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
     }
 
     private void populateUncompletedCRFsWithCRFAndVersions(ArrayList uncompletedEventDefinitionCRFs) {
-        CRFDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
         CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
 
         int size = uncompletedEventDefinitionCRFs.size();
@@ -460,7 +468,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
             definitionsByCRFId.put(new Integer(edc.getCrfId()), edc);
         }
 
-        CRFDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
         CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
         ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
 
@@ -542,16 +550,16 @@ public class EnterDataForStudyEventServlet extends SecureController {
      * @param studyEvent
      *            The study event for which we want the Event CRFs.
      * @param ecdao
-     *            An EventCRFDAO from which to grab the study event's Event
+     *            An EventCRFDao from which to grab the study event's Event
      *            CRFs.
      * @param edcdao
-     *            An EventDefinitionCRFDAO from which to grab the Event CRF
+     *            An EventDefinitionCRFDao from which to grab the Event CRF
      *            Definitions which apply to the study event.
      * @return A list of DisplayEventCRFBean objects releated to the study
      *         event, ordered by the EventDefinitionCRF ordinal property, and
      *         with flags already set.
      */
-    public static ArrayList getDisplayEventCRFs(StudyEventBean studyEvent, EventCRFDAO ecdao, EventDefinitionCRFDAO edcdao, CRFVersionDAO crfvdao,
+    public static ArrayList getDisplayEventCRFs(StudyEventBean studyEvent, EventCRFDao ecdao, EventDefinitionCRFDao edcdao, CRFVersionDAO crfvdao,
             UserAccountBean user, StudyUserRoleBean surb) {
         ArrayList answer = new ArrayList();
         HashMap indexByCRFId = new HashMap();

@@ -17,10 +17,15 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -77,9 +82,9 @@ public class ViewRuleAssignmentNewServlet extends SecureController {
 
     private void createStudyEventForInfoPanel() {
 
-        StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
         ItemDAO itemdao = new ItemDAO(sm.getDataSource());
         StudyBean studyWithEventDefinitions = currentStudy;
         if (currentStudy.getParentStudyId() > 0) {
@@ -87,7 +92,7 @@ public class ViewRuleAssignmentNewServlet extends SecureController {
             studyWithEventDefinitions.setId(currentStudy.getParentStudyId());
 
         }
-        CRFDAO crfdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
         ArrayList seds = seddao.findAllActiveByStudy(studyWithEventDefinitions);
 
         HashMap events = new LinkedHashMap();

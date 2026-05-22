@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.extract.ArchivedDatasetFileBean;
 import org.researchedc.bean.extract.CommaReportBean;
@@ -35,9 +36,10 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IRuleDAO;
 import org.researchedc.service.extract.GenerateExtractFileService;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -111,7 +113,7 @@ public class ExportDatasetServlet extends SecureController {
             }
         }
         DatasetBean db = (DatasetBean) dsdao.findByPK(datasetId);
-       StudyDAO sdao = new StudyDAO(sm.getDataSource());
+       IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         StudyBean study = (StudyBean)sdao.findByPK(db.getStudyId());
         checkRoleByUserAndStudy(ub, study.getParentStudyId(), study.getId());
 
@@ -135,7 +137,7 @@ public class ExportDatasetServlet extends SecureController {
 
         StudyBean parentStudy = new StudyBean();
         if (currentStudy.getParentStudyId() > 0) {
-            //StudyDAO sdao = new StudyDAO(sm.getDataSource());
+            //IStudyDAO sdao = new StudyDAO(sm.getDataSource());
             parentStudy = (StudyBean) sdao.findByPK(currentStudy.getParentStudyId());
         }
 

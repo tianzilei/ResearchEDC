@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.hibernate.PasswordRequirementsDao;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 
 /**
  *
@@ -56,7 +56,7 @@ public class PasswordValidator {
 
     public static List<String> validatePassword(
     		PasswordRequirementsDao passwordRequirementsDao,
-    		UserAccountDAO userDao,
+    		IUserAccountDAO userDao,
     		int userId,
     		String newPassword,
     		String newHash,

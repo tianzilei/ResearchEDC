@@ -16,6 +16,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.ResolutionStatus;
@@ -35,20 +40,21 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormDiscrepancyNotes;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.hibernate.RuleSetDao;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.SubjectDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.service.rule.RuleSetService;
@@ -136,8 +142,8 @@ public class AddNewSubjectServlet extends SecureController {
         checkStudyLocked(Page.LIST_STUDY_SUBJECTS, respage.getString("current_study_locked"));
         checkStudyFrozen(Page.LIST_STUDY_SUBJECTS, respage.getString("current_study_frozen"));
 
-        StudySubjectDAO ssd = new StudySubjectDAO(sm.getDataSource());
-        StudyDAO stdao = new StudyDAO(sm.getDataSource());
+        IStudySubjectDAO ssd = new StudySubjectDAO(sm.getDataSource());
+        IStudyDAO stdao = new StudyDAO(sm.getDataSource());
         StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
         ArrayList classes = new ArrayList();
         panel.setStudyInfoShown(false);
@@ -287,7 +293,7 @@ public class AddNewSubjectServlet extends SecureController {
 
             HashMap errors = v.validate();
 
-            SubjectDAO sdao = new SubjectDAO(sm.getDataSource());
+            ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
             String uniqueIdentifier = fp.getString(INPUT_UNIQUE_IDENTIFIER);// global
             // Id
             SubjectBean subjectWithSameId = new SubjectBean();
@@ -864,7 +870,7 @@ public class AddNewSubjectServlet extends SecureController {
 
     
     private RuleSetDao getRuleSetDao() {
-       return (RuleSetDao) SpringServletAccess.getApplicationContext(context).getBean("ruleSetDao");
+       return SpringServletAccess.getApplicationContext(context).getBean(RuleSetDao.class);
         
     }
 
@@ -883,8 +889,8 @@ public class AddNewSubjectServlet extends SecureController {
                 addPageMessage(restext.getString("not_a_valid_location"));
             } else {
                 logger.info("will create event with new subject");
-                StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-                StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+                IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+                IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
                 StudyEventBean se = new StudyEventBean();
                 se.setLocation(location);
                 se.setDateStarted(startDate);
@@ -960,13 +966,13 @@ public class AddNewSubjectServlet extends SecureController {
      * @param entityType
      * @param sb
      */
-    public static void saveFieldNotes(String field, FormDiscrepancyNotes notes, DiscrepancyNoteDAO dndao, int entityId, String entityType, StudyBean sb) {
+    public static void saveFieldNotes(String field, FormDiscrepancyNotes notes, IDiscrepancyNoteDAO dndao, int entityId, String entityType, StudyBean sb) {
     	
     	 saveFieldNotes( field,  notes,  dndao,  entityId,  entityType,  sb, -1) ;
 	
     	}
     public static void saveFieldNotes(String field, FormDiscrepancyNotes notes, 
-    		DiscrepancyNoteDAO dndao, int entityId, String entityType, StudyBean sb,
+    		IDiscrepancyNoteDAO dndao, int entityId, String entityType, StudyBean sb,
     		int event_crf_id) {
 
         if (notes == null || dndao == null || sb == null) {
@@ -1037,7 +1043,7 @@ public class AddNewSubjectServlet extends SecureController {
      * @param displayArray
      * @param subjects
      */
-    public static void displaySubjects(ArrayList displayArray, ArrayList subjects, StudySubjectDAO ssdao, StudyDAO stdao) {
+    public static void displaySubjects(ArrayList displayArray, ArrayList subjects, IStudySubjectDAO ssdao, IStudyDAO stdao) {
 
         for (int i = 0; i < subjects.size(); i++) {
             SubjectBean subject = (SubjectBean) subjects.get(i);

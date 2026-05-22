@@ -56,13 +56,16 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.controller.openrosa.OpenRosaSubmissionController;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.CrfVersionMediaDao;
 import org.researchedc.dao.hibernate.RuleActionPropertyDao;
 import org.researchedc.dao.hibernate.SCDItemMetadataDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.domain.datamap.CrfVersionMedia;
@@ -113,8 +116,8 @@ public class OpenRosaServices {
     private SCDItemMetadataDao scdItemMetadataDao;
     ParticipantPortalRegistrar participantPortalRegistrar;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-    StudyDAO sdao;
-    StudySubjectDAO studySubjectDao;
+    IStudyDAO sdao;
+    IStudySubjectDAO studySubjectDao;
 
     /**
      * @api {get} /rest2/openrosa/:studyOID/formList Get Form List
@@ -161,10 +164,10 @@ public class OpenRosaServices {
         if (!mayProceedPreview(studyOID))
             return null;
 
-        StudyDAO sdao = new StudyDAO(getDataSource());
+        IStudyDAO sdao = new StudyDAO(getDataSource());
         StudyBean study = sdao.findByOid(studyOID);
 
-        CRFDAO cdao = new CRFDAO(getDataSource());
+        ICrfDAO cdao = new CRFDAO(getDataSource());
         Collection<CRFBean> crfs = cdao.findAll();
 
         CRFVersionDAO cVersionDao = new CRFVersionDAO(getDataSource());
@@ -470,7 +473,7 @@ public class OpenRosaServices {
             @PathParam("studyOID") String studyOID, @RequestHeader("Authorization") String authorization) throws Exception {
 
         String ssoid = request.getParameter("studySubjectOID");
-        StudySubjectDAO ssdao = new StudySubjectDAO<String, ArrayList>(dataSource);
+        IStudySubjectDAO ssdao = new org.researchedc.dao.managestudy.StudySubjectDAO<String, java.util.ArrayList>(dataSource);
         StudySubjectBean ssBean = ssdao.findByOid(ssoid);
         if (!mayProceedSubmission(studyOID, ssBean))
             return null;
@@ -483,7 +486,7 @@ public class OpenRosaServices {
 
         try {
             // Need to retrieve crf's for next event
-            StudyEventDAO eventDAO = new StudyEventDAO(getDataSource());
+            IStudyEventDAO eventDAO = new StudyEventDAO(getDataSource());
             StudyEventBean nextEvent = (StudyEventBean) eventDAO.getNextScheduledEvent(ssoid);
             CRFVersionDAO versionDAO = new CRFVersionDAO(getDataSource());
             ArrayList<CRFVersionBean> crfs = versionDAO.findDefCRFVersionsByStudyEvent(nextEvent.getStudyEventDefinitionId());

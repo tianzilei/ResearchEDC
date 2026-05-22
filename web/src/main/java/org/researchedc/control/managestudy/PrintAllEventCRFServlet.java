@@ -22,9 +22,13 @@ import org.researchedc.control.submit.DataEntryServlet;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.core.SessionManager;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
@@ -78,11 +82,11 @@ public class PrintAllEventCRFServlet extends DataEntryServlet {
         ArrayList<SectionBean> allSectionBeans;
         // The PrintDataEntry servlet handles this parameter
         boolean isSubmitted = false;
-        StudyEventDefinitionDAO sedao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventDefinitionCRFDAO edao = new EventDefinitionCRFDAO(sm.getDataSource());
-        EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO sedao = new StudyEventDefinitionDAO(sm.getDataSource());
+        EventDefinitionCRFDao edao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
 
-        StudyDAO studyDao = new StudyDAO(sm.getDataSource());
+        IStudyDAO studyDao = new StudyDAO(sm.getDataSource());
         StudyBean currentStudy = (StudyBean) request.getSession().getAttribute("study");
 
         ArrayList<StudyEventDefinitionBean> seds = new ArrayList<StudyEventDefinitionBean>();
@@ -91,7 +95,7 @@ public class PrintAllEventCRFServlet extends DataEntryServlet {
         //        ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllByStudy(site);
 
         CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        CRFDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
 
         ArrayList<EventDefinitionCRFBean> edcs = new ArrayList();
         for (StudyEventDefinitionBean sed : seds) {
@@ -132,7 +136,7 @@ public class PrintAllEventCRFServlet extends DataEntryServlet {
 
         SectionDAO sdao = new SectionDAO(sm.getDataSource());
         CRFVersionDAO crfVersionDAO = new CRFVersionDAO(sm.getDataSource());
-        CRFDAO crfDao = new CRFDAO(sm.getDataSource());
+        ICrfDAO crfDao = new CRFDAO(sm.getDataSource());
         Map sedCrfBeans = null;
 
         for (Iterator it = eventDefinitionDefaultVersions.keySet().iterator(); it.hasNext();) {

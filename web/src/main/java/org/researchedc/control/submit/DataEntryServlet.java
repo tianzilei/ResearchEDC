@@ -31,6 +31,8 @@ import jakarta.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.researchedc.dao.core.AuditableEntityDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.bean.admin.AuditBean;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.AuditableEntityBean;
@@ -83,17 +85,25 @@ import org.researchedc.core.SecurityManager;
 import org.researchedc.core.SessionManager;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.AuditDAO;
+import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
@@ -101,6 +111,7 @@ import org.researchedc.dao.submit.ItemGroupDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.domain.crfdata.DynamicsItemFormMetadataBean;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.action.RuleActionRunBean.Phase;
@@ -323,7 +334,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         EventCRFDAO ecdao = null;
         FormProcessor fp = new FormProcessor(request);
         logMe("Enterting DataEntry Servlet"+System.currentTimeMillis());
-        EventDefinitionCRFDAO  edcdao = new EventDefinitionCRFDAO(getDataSource());
+        EventDefinitionCRFDao  edcdao = new EventDefinitionCRFDAO(getDataSource());
 
         FormDiscrepancyNotes discNotes;
 
@@ -338,7 +349,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
         if (getCrfLocker().isLocked(ecb.getId())) {
             int userId = getCrfLocker().getLockOwner(ecb.getId());
-            UserAccountDAO udao = new UserAccountDAO(getDataSource());
+            IUserAccountDAO udao = new UserAccountDAO(getDataSource());
             UserAccountBean ubean = (UserAccountBean) udao.findByPK(userId);
             if (ubean.getId() != ub.getId()) {
                 addPageMessage(resword.getString("CRF_unavailable") + " " + ubean.getName() + " " + resword.getString("Currently_entering_data") + " "
@@ -417,7 +428,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
 
         logMe("Entering Create studySubjDao.. ++++stuff"+System.currentTimeMillis());
-        StudySubjectDAO ssdao = new StudySubjectDAO(getDataSource());
+        IStudySubjectDAO ssdao = new StudySubjectDAO(getDataSource());
         StudySubjectBean ssb = (StudySubjectBean) ssdao.findByPK(ecb.getStudySubjectId());
         // YW 11-07-2007, data entry could not be performed if its study subject
         // has been removed.
@@ -518,7 +529,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
         logMe("Entering some EVENT DEF CRF CHECK DONE "+System.currentTimeMillis());
         logMe("Entering some Study EVENT DEF CRF CHECK  "+System.currentTimeMillis());
-        StudyEventDAO seDao = new StudyEventDAO(getDataSource());
+        IStudyEventDAO seDao = new StudyEventDAO(getDataSource());
         EventDefinitionCRFBean edcBean = (EventDefinitionCRFBean) edcdao.findByPK(eventDefinitionCRFId);
         EventDefinitionCRFBean edcb = (EventDefinitionCRFBean) edcdao.findByPK(eventDefinitionCRFId);
         request.setAttribute(EVENT_DEF_CRF_BEAN, edcb);//JN:Putting the event_def_crf_bean in the request attribute.
@@ -526,7 +537,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         StudyEventBean studyEventBean = (StudyEventBean) seDao.findByPK(ecb.getStudyEventId());
         edcBean.setId(eventDefinitionCRFId);
 
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(getDataSource());
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(getDataSource());
         StudyEventDefinitionBean studyEventDefinition = (StudyEventDefinitionBean) seddao.findByPK(edcBean.getStudyEventDefinitionId());
 
         CRFVersionDAO cvdao = new CRFVersionDAO(getDataSource());
@@ -590,8 +601,8 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
         // this is for generating side info panel
         // and the information panel under the Title
-        SubjectDAO subjectDao = new SubjectDAO(getDataSource());
-        StudyDAO studydao = new StudyDAO(getDataSource());
+        ISubjectDAO subjectDao = new SubjectDAO(getDataSource());
+        IStudyDAO studydao = new StudyDAO(getDataSource());
         SubjectBean subject = (SubjectBean) subjectDao.findByPK(ssb.getSubjectId());
 
         // Get the study then the parent study
@@ -1512,7 +1523,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
                 LOGGER.debug("Status of Study Subject {}", ssb.getStatus().getName());
                 if (ssb.getStatus() == Status.SIGNED && changedItemsList.size() > 0) {
                     LOGGER.debug("Status of Study Subject is Signed we are updating");
-                    StudySubjectDAO studySubjectDao = new StudySubjectDAO(getDataSource());
+                    IStudySubjectDAO studySubjectDao = new StudySubjectDAO(getDataSource());
                     ssb.setStatus(Status.AVAILABLE);
                     ssb.setUpdater(ub);
                     ssb.setUpdatedDate(new Date());
@@ -1520,7 +1531,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
                 }
                 if (ecb.isSdvStatus() && changedItemsList.size() > 0) {
                     LOGGER.debug("Status of Study Subject is SDV we are updating");
-                    StudySubjectDAO studySubjectDao = new StudySubjectDAO(getDataSource());
+                    IStudySubjectDAO studySubjectDao = new StudySubjectDAO(getDataSource());
                     ssb.setStatus(Status.AVAILABLE);
                     ssb.setUpdater(ub);
                     ssb.setUpdatedDate(new Date());
@@ -1921,7 +1932,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
                     ecb = (EventCRFBean) ecdao.update(ecb);
                     success = success && ecb.isActive();
 
-                    StudyEventDAO sedao = new StudyEventDAO(getDataSource());
+                    IStudyEventDAO sedao = new StudyEventDAO(getDataSource());
                     StudyEventBean seb = (StudyEventBean) sedao.findByPK(ecb.getStudyEventId());
                     seb.setUpdatedDate(now);
                     seb.setUpdater(ub);
@@ -2153,7 +2164,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         // section IDs
 
             FormProcessor fp = new FormProcessor(request);
-            EventCRFDAO ecdao = new EventCRFDAO(getDataSource());
+            EventCRFDao ecdao = new EventCRFDAO(getDataSource());
 
             SectionDAO sdao = new SectionDAO(getDataSource());
             EventCRFBean   ecb = (EventCRFBean) request.getAttribute(INPUT_EVENT_CRF);
@@ -2178,7 +2189,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
                 int studyEventId = fp.getInt(INPUT_STUDY_EVENT_ID);
                 request.setAttribute(INPUT_EVENT_CRF, ecb);
                 if (studyEventId > 0) {
-                    StudyEventDAO sedao = new StudyEventDAO(getDataSource());
+                    IStudyEventDAO sedao = new StudyEventDAO(getDataSource());
                     StudyEventBean sEvent = (StudyEventBean) sedao.findByPK(studyEventId);
                     ecb = updateECB(sEvent, request);
                 }
@@ -2227,7 +2238,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         int sectionId = fp.getInt(INPUT_SECTION_ID, true);
         ArrayList sections;
         if (sectionId <= 0) {
-            StudyEventDAO studyEventDao = new StudyEventDAO(getDataSource());
+            IStudyEventDAO studyEventDao = new StudyEventDAO(getDataSource());
             int maximumSampleOrdinal = studyEventDao.getMaxSampleOrdinal(displayBean.getStudyEventDefinition(), displayBean.getStudySubject());
             request.setAttribute("maximumSampleOrdinal", maximumSampleOrdinal);
 
@@ -2311,7 +2322,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         UserAccountBean ub =(UserAccountBean) request.getSession().getAttribute(USER_BEAN_NAME);
         StudyBean currentStudy =    (StudyBean)  request.getSession().getAttribute("study");
         EventCRFBean ecb;
-       EventCRFDAO ecdao = new EventCRFDAO(getDataSource());
+       EventCRFDao ecdao = new EventCRFDAO(getDataSource());
 
         int crfVersionId = fp.getInt(INPUT_CRF_VERSION_ID);
 
@@ -2326,7 +2337,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         LOGGER.trace("Creating event CRF.  Study id: " + currentStudy.getId() + "; CRF Version id: " + crfVersionId + "; Study Event id: " + studyEventId
             + "; Event Definition CRF id: " + eventDefinitionCRFId + "; Subject: " + subjectId);
 
-        StudySubjectDAO ssdao = new StudySubjectDAO(getDataSource());
+        IStudySubjectDAO ssdao = new StudySubjectDAO(getDataSource());
         StudySubjectBean ssb = ssdao.findBySubjectIdAndStudy(subjectId, currentStudy);
 
         if (ssb.getId() <= 0) {
@@ -2336,7 +2347,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
             throw new InconsistentStateException(Page.LIST_STUDY_SUBJECTS_SERVLET, resexception.getString("begin_data_entry_without_event_but_subject"));
         }
 
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(getDataSource());
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(getDataSource());
         StudyEventDefinitionBean sedb = seddao.findByEventDefinitionCRFId(eventDefinitionCRFId);
         // logger.trace("study event definition:" + sedb.getId());
         if (sedb.getId() <= 0) {
@@ -2352,7 +2363,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
             throw new InconsistentStateException(Page.LIST_STUDY_SUBJECTS_SERVLET, resexception.getString("begin_data_entry_without_event_but_CRF"));
         }
 
-        StudyEventDAO sedao = new StudyEventDAO(getDataSource());
+        IStudyEventDAO sedao = new StudyEventDAO(getDataSource());
         StudyEventBean sEvent = (StudyEventBean) sedao.findByPK(studyEventId);
         StudyBean studyWithSED = currentStudy;
         if (currentStudy.getParentStudyId() > 0) {
@@ -3234,7 +3245,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
             // many times, need to clean up
             //synchronized(this)
             {
-                EventDefinitionCRFDAO  edcdao = new EventDefinitionCRFDAO(getDataSource());
+                EventDefinitionCRFDao  edcdao = new EventDefinitionCRFDAO(getDataSource());
             EventDefinitionCRFBean edcBean = edcdao.findByStudyEventIdAndCRFVersionId(study, ecb.getStudyEventId(), ecb.getCRFVersionId());
             eventDefinitionCRFId = edcBean.getId();
             }
@@ -3282,11 +3293,11 @@ public abstract class DataEntryServlet extends CoreSecureController {
         CRFVersionBean cvb = (CRFVersionBean) cvdao.findByPK(ecb.getCRFVersionId());
         section.setCrfVersion(cvb);
 
-        CRFDAO cdao = new CRFDAO(getDataSource());
+        ICrfDAO cdao = new CRFDAO(getDataSource());
         CRFBean cb = (CRFBean) cdao.findByPK(cvb.getCrfId());
         section.setCrf(cb);
 
-        EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(getDataSource());
+        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(getDataSource());
         // EventDefinitionCRFBean edcb =
         // edcdao.findByStudyEventIdAndCRFVersionId(study,
         // ecb.getStudyEventId(), cvb.getId());
@@ -3369,12 +3380,12 @@ public abstract class DataEntryServlet extends CoreSecureController {
             CRFVersionBean cvb = (CRFVersionBean) cvdao.findByPK(ecb.getCRFVersionId());
             section.setCrfVersion(cvb);
 
-            CRFDAO cdao = new CRFDAO(getDataSource());
+            ICrfDAO cdao = new CRFDAO(getDataSource());
             CRFBean cb = (CRFBean) cdao.findByPK(cvb.getCrfId());
             section.setCrf(cb);
 
 
-            EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(getDataSource());
+            EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(getDataSource());
            EventDefinitionCRFBean edcb = edcdao.findByStudyEventIdAndCRFVersionId(study, ecb.getStudyEventId(), cvb.getId());
 
             section.setEventDefinitionCRF(edcb);
@@ -3839,7 +3850,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
         logMe("time taken thus far, before audit log check"+(System.currentTimeMillis()-t));
         long t1 = System.currentTimeMillis();
-        AuditDAO adao = new AuditDAO(getDataSource());
+        AuditDao adao = new AuditDAO(getDataSource());
         ArrayList itemAuditEvents = adao.checkItemAuditEventsExist(dib.getItem().getId(), "item_data", ecbId);
         if (itemAuditEvents.size() > 0) {
             AuditBean itemFirstAudit = (AuditBean)itemAuditEvents.get(0);
@@ -3877,7 +3888,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         UserAccountBean ub =(UserAccountBean) request.getSession().getAttribute(USER_BEAN_NAME);
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
         EventDefinitionCRFBean edcb = (EventDefinitionCRFBean)request.getAttribute(EVENT_DEF_CRF_BEAN);
-        EventCRFDAO ecdao = new EventCRFDAO(getDataSource());
+        EventCRFDao ecdao = new EventCRFDAO(getDataSource());
         ItemDataDAO iddao = new ItemDataDAO(getDataSource(),locale);
         // < respage =
         // ResourceBundle.getBundle("org.researchedc.i18n.page_messages",
@@ -3980,12 +3991,12 @@ public abstract class DataEntryServlet extends CoreSecureController {
         iddao.updateStatusByEventCRF(ecb, newStatus);
 
         // change status for study event
-        StudyEventDAO sedao = new StudyEventDAO(getDataSource());
+        IStudyEventDAO sedao = new StudyEventDAO(getDataSource());
         StudyEventBean seb = (StudyEventBean) sedao.findByPK(ecb.getStudyEventId());
         seb.setUpdatedDate(new Date());
         seb.setUpdater(ub);
 
-        EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(getDataSource());
+        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(getDataSource());
         ArrayList allCRFs = ecdao.findAllByStudyEventAndStatus(seb,Status.UNAVAILABLE);
         StudyBean study = (StudyBean) session.getAttribute("study");
         ArrayList allEDCs = (ArrayList) edcdao.findAllActiveByEventDefinitionId(study, seb.getStudyEventDefinitionId());
@@ -4019,7 +4030,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
        FormProcessor fp = new FormProcessor(request);
         int eventCRFId = fp.getInt(INPUT_EVENT_CRF_ID);
 
-        EventCRFDAO  ecdao = new EventCRFDAO(getDataSource());
+        EventCRFDao  ecdao = new EventCRFDAO(getDataSource());
         ecb = (EventCRFBean) ecdao.findByPK(eventCRFId);
     }
 
@@ -4307,7 +4318,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
         EventDefinitionCRFBean edcb = (EventDefinitionCRFBean)request.getAttribute(EVENT_DEF_CRF_BEAN);
      {
-         EventDefinitionCRFDAO   edcdao = new EventDefinitionCRFDAO(getDataSource());
+         EventDefinitionCRFDao   edcdao = new EventDefinitionCRFDAO(getDataSource());
         StudyBean study = (StudyBean) session.getAttribute("study");
         edcb = edcdao.findByStudyEventIdAndCRFVersionId(study, ecb.getStudyEventId(), ecb.getCRFVersionId());
      }
@@ -5531,7 +5542,7 @@ String tempKey = idb.getItemId()+","+idb.getOrdinal();
 
     public void mayAccess(HttpServletRequest request) throws InsufficientPermissionException {
         FormProcessor fp = new FormProcessor(request);
-        EventCRFDAO edao = new EventCRFDAO(getDataSource());
+        AuditableEntityDAO edao = new EventCRFDAO(getDataSource());
         UserAccountBean ub =(UserAccountBean) request.getSession().getAttribute(USER_BEAN_NAME);
         int eventCRFId = fp.getInt("ecId", true);
         if (eventCRFId == 0) {
@@ -5621,7 +5632,7 @@ String tempKey = idb.getItemId()+","+idb.getOrdinal();
             String studyId = (String)request.getParameter("sid");
 
             //retrieve study bean with PK matching studyId
-            StudyDAO studydao = new StudyDAO(getDataSource());
+            IStudyDAO studydao = new StudyDAO(getDataSource());
             StudyBean studyIdStudy = (StudyBean)studydao.findByPK(Integer.parseInt(studyId));
 
             boolean studyIdIsStudy = false;

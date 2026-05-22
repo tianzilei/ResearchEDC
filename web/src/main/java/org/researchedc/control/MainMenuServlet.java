@@ -12,6 +12,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.control.admin.EventStatusStatisticsTableFactory;
@@ -22,18 +27,22 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.ListStudySubjectTableFactory;
 import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.SubjectDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -52,15 +61,15 @@ public class MainMenuServlet extends SecureController {
 
     //Shaoyu Su
     Locale locale;
-    private StudyEventDefinitionDAO studyEventDefinitionDAO;
-	private SubjectDAO subjectDAO;
-    private StudySubjectDAO studySubjectDAO;
-    private StudyEventDAO studyEventDAO;
+    private IStudyEventDefinitionDAO studyEventDefinitionDAO;
+	private ISubjectDAO subjectDAO;
+    private IStudySubjectDAO studySubjectDAO;
+    private IStudyEventDAO studyEventDAO;
     private StudyGroupClassDAO studyGroupClassDAO;
     private SubjectGroupMapDAO subjectGroupMapDAO;
-    private StudyDAO studyDAO;
-    private EventCRFDAO eventCRFDAO;
-    private EventDefinitionCRFDAO eventDefintionCRFDAO;
+    private IStudyDAO studyDAO;
+    private EventCRFDao eventCRFDAO;
+    private EventDefinitionCRFDao eventDefintionCRFDAO;
     private StudyGroupDAO studyGroupDAO;
     private DiscrepancyNoteDAO discrepancyNoteDAO;
     private StudyParameterValueDAO studyParameterValueDAO;
@@ -89,7 +98,7 @@ public class MainMenuServlet extends SecureController {
             return;
         }
 
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         ArrayList studies = null;
 
         long pwdExpireDay = new Long(SQLInitServlet.getField("passwd_expiration_time")).longValue();
@@ -99,7 +108,7 @@ public class MainMenuServlet extends SecureController {
         // time log in or pwd expired
         int pwdChangeRequired = new Integer(SQLInitServlet.getField("change_passwd_required")).intValue();
         // update last visit date to current date
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
         UserAccountBean ub1 = (UserAccountBean) udao.findByPK(ub.getId());
         ub1.setLastVisitDate(new Date(System.currentTimeMillis()));
         // have to actually set the above to a timestamp? tbh
@@ -305,21 +314,21 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
 		return studyParameterValueDAO;
 	}
 
-	public void setStudyParameterValueDAO(StudyParameterValueDAO studyParameterValueDAO) {
+	public void setStudyParameterValueDAO(IStudyParameterValueDAO studyParameterValueDAO) {
 		studyParameterValueDAO = studyParameterValueDAO;
 	}
 
-	public StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+	public IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
         studyEventDefinitionDAO = studyEventDefinitionDAO == null ? new StudyEventDefinitionDAO(sm.getDataSource()) : studyEventDefinitionDAO;
         return studyEventDefinitionDAO;
     }
 
-    public SubjectDAO getSubjectDAO() {
+    public ISubjectDAO getSubjectDAO() {
         subjectDAO = this.subjectDAO == null ? new SubjectDAO(sm.getDataSource()) : subjectDAO;
         return subjectDAO;
     }
 
-    public StudySubjectDAO getStudySubjectDAO() {
+    public IStudySubjectDAO getStudySubjectDAO() {
         studySubjectDAO = this.studySubjectDAO == null ? new StudySubjectDAO(sm.getDataSource()) : studySubjectDAO;
         return studySubjectDAO;
     }
@@ -334,22 +343,22 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
         return subjectGroupMapDAO;
     }
 
-    public StudyEventDAO getStudyEventDAO() {
+    public IStudyEventDAO getStudyEventDAO() {
         studyEventDAO = this.studyEventDAO == null ? new StudyEventDAO(sm.getDataSource()) : studyEventDAO;
         return studyEventDAO;
     }
 
-    public StudyDAO getStudyDAO() {
+    public IStudyDAO getStudyDAO() {
         studyDAO = this.studyDAO == null ? new StudyDAO(sm.getDataSource()) : studyDAO;
         return studyDAO;
     }
 
-    public EventCRFDAO getEventCRFDAO() {
+    public EventCRFDao getEventCRFDAO() {
         eventCRFDAO = this.eventCRFDAO == null ? new EventCRFDAO(sm.getDataSource()) : eventCRFDAO;
         return eventCRFDAO;
     }
 
-    public EventDefinitionCRFDAO getEventDefinitionCRFDAO() {
+    public EventDefinitionCRFDao getEventDefinitionCRFDAO() {
         eventDefintionCRFDAO = this.eventDefintionCRFDAO == null ? new EventDefinitionCRFDAO(sm.getDataSource()) : eventDefintionCRFDAO;
         return eventDefintionCRFDAO;
     }

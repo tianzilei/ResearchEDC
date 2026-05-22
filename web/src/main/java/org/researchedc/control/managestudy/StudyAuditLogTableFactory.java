@@ -8,11 +8,11 @@ import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.control.AbstractTableFactory;
 import org.researchedc.control.DefaultActionsEditor;
 import org.researchedc.dao.hibernate.AuditUserLoginDao;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyAuditLogFilter;
 import org.researchedc.dao.managestudy.StudyAuditLogSort;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.util.I18nFormatUtil;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.jmesa.core.filter.DateFilterMatcher;
@@ -44,9 +44,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class StudyAuditLogTableFactory extends AbstractTableFactory {
 
     private AuditUserLoginDao auditUserLoginDao;
-    private StudySubjectDAO studySubjectDao;
-    private UserAccountDAO userAccountDao;
-    private SubjectDAO subjectDao;
+    private IStudySubjectDAO studySubjectDao;
+    private IUserAccountDAO userAccountDao;
+    private ISubjectDAO subjectDao;
     private StudyBean currentStudy;
     private ResourceBundle resword;
     private ResourceBundle resformat;
@@ -251,19 +251,19 @@ public class StudyAuditLogTableFactory extends AbstractTableFactory {
         return resformat.getString("date_format_string");
     }
 
-    public StudySubjectDAO getStudySubjectDao() {
+    public IStudySubjectDAO getStudySubjectDao() {
         return studySubjectDao;
     }
 
-    public void setStudySubjectDao(StudySubjectDAO studySubjectDao) {
+    public void setStudySubjectDao(IStudySubjectDAO studySubjectDao) {
         this.studySubjectDao = studySubjectDao;
     }
 
-    public SubjectDAO getSubjectDao() {
+    public ISubjectDAO getSubjectDao() {
         return subjectDao;
     }
 
-    public void setSubjectDao(SubjectDAO subjectDao) {
+    public void setSubjectDao(ISubjectDAO subjectDao) {
         this.subjectDao = subjectDao;
     }
 
@@ -275,11 +275,11 @@ public class StudyAuditLogTableFactory extends AbstractTableFactory {
         this.currentStudy = currentStudy;
     }
 
-    public UserAccountDAO getUserAccountDao() {
+    public IUserAccountDAO getUserAccountDao() {
         return userAccountDao;
     }
 
-    public void setUserAccountDao(UserAccountDAO userAccountDao) {
+    public void setUserAccountDao(IUserAccountDAO userAccountDao) {
         this.userAccountDao = userAccountDao;
     }
 

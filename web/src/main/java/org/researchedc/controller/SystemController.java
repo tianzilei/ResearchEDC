@@ -39,7 +39,9 @@ import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.core.EmailEngine;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.exception.OpenClinicaSystemException;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -109,7 +111,7 @@ public class SystemController {
 
         DatabaseMetaData metaData = dataSource.getConnection().getMetaData();
         try {
-            UserAccountDAO udao = new UserAccountDAO(dataSource);
+            IUserAccountDAO udao = new UserAccountDAO(dataSource);
             UserAccountBean uBean = (UserAccountBean) udao.findByPK(1);
 
             if (uBean.getFirstName().equals("Root") && uBean.getLastName().equals("User")) {
@@ -1165,7 +1167,7 @@ public class SystemController {
     }
 
     public ArrayList<StudyBean> getStudyList() {
-        StudyDAO sdao = new StudyDAO(dataSource);
+        IStudyDAO sdao = new StudyDAO(dataSource);
         ArrayList<StudyBean> sBeans = (ArrayList<StudyBean>) sdao.findAllParents();
         return sBeans;
     }

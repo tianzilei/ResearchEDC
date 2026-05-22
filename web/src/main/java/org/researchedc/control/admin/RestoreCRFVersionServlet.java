@@ -18,6 +18,7 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.view.Page;
@@ -76,7 +77,7 @@ public class RestoreCRFVersionServlet extends SecureController {
 
             SectionDAO secdao = new SectionDAO(sm.getDataSource());
 
-            EventCRFDAO evdao = new EventCRFDAO(sm.getDataSource());
+            EventCRFDao evdao = new EventCRFDAO(sm.getDataSource());
             // find all event crfs by version id
             ArrayList eventCRFs = evdao.findAllByCRFVersion(versionId);
             if ("confirm".equalsIgnoreCase(action)) {

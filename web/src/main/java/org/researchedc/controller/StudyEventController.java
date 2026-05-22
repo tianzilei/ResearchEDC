@@ -8,10 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.researchedc.dao.hibernate.EventCrfDao;
 import org.researchedc.dao.hibernate.EventDefinitionCrfDao;
-import org.researchedc.dao.hibernate.StudyEventDao;
-import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
-import org.researchedc.dao.hibernate.StudyParameterValueDao;
-import org.researchedc.dao.hibernate.StudySubjectDao;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.datamap.EventCrf;
 import org.researchedc.domain.datamap.EventDefinitionCrf;
@@ -49,19 +49,19 @@ public class StudyEventController {
     private EventCrfDao eventCrfDao;
 	
 	@Autowired
-    private StudyEventDao studyEventDao;
+    private IStudyEventDAO studyEventDao;
 
 	@Autowired
-    private StudySubjectDao studySubjectDao;
+    private IStudySubjectDAO studySubjectDao;
 
 	@Autowired
-	private StudyEventDefinitionDao studyEventDefinitionDao;
+	private IStudyEventDefinitionDAO studyEventDefinitionDao;
 	
 	@Autowired
     private EventDefinitionCrfDao eventDefinitionCrfDao;
 	
 	@Autowired
-	private StudyParameterValueDao studyParameterValueDao;
+	private IStudyParameterValueDAO studyParameterValueDao;
 	
 	protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 

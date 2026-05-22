@@ -16,8 +16,11 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -71,7 +74,7 @@ public class BatchCRFMigrationServlet extends SecureController {
             addPageMessage(respage.getString("please_choose_a_CRF_to_view"));
             forwardPage(Page.CRF_LIST);
         } else {
-            CRFDAO cdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
             CRFVersionDAO vdao = new CRFVersionDAO(sm.getDataSource());
             CRFBean crf = (CRFBean) cdao.findByPK(crfId);
             request.setAttribute("crfName", crf.getName());
@@ -120,12 +123,12 @@ public class BatchCRFMigrationServlet extends SecureController {
 
 
     @SuppressWarnings("rawtypes")
-    private StudyDAO sdao() {
+    private IStudyDAO sdao() {
         return new StudyDAO(sm.getDataSource());
     }
 
     @SuppressWarnings("rawtypes")
-    private StudyEventDefinitionDAO seddao() {
+    private IStudyEventDefinitionDAO seddao() {
         return new StudyEventDefinitionDAO(sm.getDataSource());
     }
 

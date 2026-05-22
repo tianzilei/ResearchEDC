@@ -11,8 +11,11 @@ import org.researchedc.bean.core.EntityBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -78,10 +81,10 @@ public class FindStudyEventServlet extends SecureController {
             ArrayList allDisplayEntities = new ArrayList();
 
             if (browseBy.equals(ARG_BROWSEBY_SUBJECT)) {
-                StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+                IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
                 allDisplayEntities = ssdao.findAllWithStudyEvent(currentStudy);
             } else {
-                StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+                IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
                 allDisplayEntities = seddao.findAllWithStudyEvent(currentStudy);
             }
 
@@ -110,19 +113,19 @@ public class FindStudyEventServlet extends SecureController {
 
         // User is coming from Step 2, is going to Step 3
         else {
-            StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+            IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
             ArrayList events = new ArrayList();
 
             EntityBean entityWithStudyEvents;
             if (browseBy.equals(ARG_BROWSEBY_SUBJECT)) {
                 events = sedao.findAllByStudyAndStudySubjectId(currentStudy, id);
 
-                StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+                IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
                 entityWithStudyEvents = ssdao.findByPK(id);
             } else {
                 events = sedao.findAllByStudyAndEventDefinitionId(currentStudy, id);
 
-                StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+                IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
                 entityWithStudyEvents = seddao.findByPK(id);
             }
 

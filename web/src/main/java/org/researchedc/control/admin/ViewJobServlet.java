@@ -1,5 +1,6 @@
 package org.researchedc.control.admin;
 
+import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.bean.admin.TriggerBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.extract.DatasetBean;
@@ -7,8 +8,8 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.bean.EntityBeanTable;
@@ -105,7 +106,7 @@ public class ViewJobServlet extends SecureController {
             // setting: frequency, dataset name
             JobDataMap dataMap = new JobDataMap();
             DatasetDAO datasetDAO = new DatasetDAO(sm.getDataSource());
-            StudyDAO studyDao = new StudyDAO(sm.getDataSource());
+            IStudyDAO studyDao = new StudyDAO(sm.getDataSource());
             if (trigger.getJobDataMap().size() > 0) {
                 dataMap = trigger.getJobDataMap();
                 int dsId = dataMap.getInt(ExampleSpringJob.DATASET_ID);

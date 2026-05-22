@@ -20,11 +20,16 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.view.Page;
@@ -59,7 +64,7 @@ public class RemoveCRFServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        CRFDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
         CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
         FormProcessor fp = new FormProcessor(request);
 
@@ -77,15 +82,15 @@ public class RemoveCRFServlet extends SecureController {
             CRFBean crf = (CRFBean) cdao.findByPK(crfId);
             ArrayList versions = cvdao.findAllByCRFId(crfId);
             crf.setVersions(versions);
-            EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+            EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
             ArrayList edcs = (ArrayList) edcdao.findAllByCRF(crfId);
 
             SectionDAO secdao = new SectionDAO(sm.getDataSource());
 
-            EventCRFDAO evdao = new EventCRFDAO(sm.getDataSource());
+            EventCRFDao evdao = new EventCRFDAO(sm.getDataSource());
             ArrayList eventCRFs = evdao.findAllByCRF(crfId);
-            StudyEventDAO seDao = new StudyEventDAO(sm.getDataSource());
-            StudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(sm.getDataSource());
+            IStudyEventDAO seDao = new StudyEventDAO(sm.getDataSource());
+            IStudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(sm.getDataSource());
             for (Object ecBean: eventCRFs) {
                 StudyEventBean seBean = (StudyEventBean) seDao.findByPK(((EventCRFBean)ecBean).getStudyEventId());
                 StudyEventDefinitionBean sedBean = (StudyEventDefinitionBean)sedDao.findByPK(seBean.getStudyEventDefinitionId());

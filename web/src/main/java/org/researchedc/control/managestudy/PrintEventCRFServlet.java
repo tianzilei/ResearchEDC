@@ -21,8 +21,11 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.DataEntryServlet;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
@@ -75,7 +78,7 @@ public class PrintEventCRFServlet extends DataEntryServlet {
         int eventCRFId = fp.getInt("ecId");
         //JN:The following were the the global variables, moved as local.
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
-        StudyEventDefinitionDAO sedao = new StudyEventDefinitionDAO(getDataSource());
+        IStudyEventDefinitionDAO sedao = new StudyEventDefinitionDAO(getDataSource());
         int defId = fp.getInt("id", true);
         boolean isSubmitted = false;
         ArrayList<SectionBean> allSectionBeans;
@@ -86,11 +89,11 @@ public class PrintEventCRFServlet extends DataEntryServlet {
             // definition id
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) sedao.findByPK(defId);
 
-            EventDefinitionCRFDAO edao = new EventDefinitionCRFDAO(getDataSource());
+            EventDefinitionCRFDao edao = new EventDefinitionCRFDAO(getDataSource());
             ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllByDefinition(defId);
 
             CRFVersionDAO cvdao = new CRFVersionDAO(getDataSource());
-            CRFDAO cdao = new CRFDAO(getDataSource());
+            ICrfDAO cdao = new CRFDAO(getDataSource());
             ArrayList defaultVersions = new ArrayList();
 
             for (int i = 0; i < eventDefinitionCRFs.size(); i++) {
@@ -128,7 +131,7 @@ public class PrintEventCRFServlet extends DataEntryServlet {
             // studyEventId, int crfVersionId)
             SectionDAO sdao = new SectionDAO(getDataSource());
             CRFVersionDAO crfVersionDAO = new CRFVersionDAO(getDataSource());
-            CRFDAO crfDao = new CRFDAO(getDataSource());
+            ICrfDAO crfDao = new CRFDAO(getDataSource());
             ArrayList printCrfBeans = new ArrayList();
 
             for (Iterator it = defaultVersions.iterator(); it.hasNext();) {

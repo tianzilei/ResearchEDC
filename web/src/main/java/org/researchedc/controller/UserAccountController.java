@@ -31,8 +31,10 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.dao.hibernate.AuthoritiesDao;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.domain.user.AuthoritiesBean;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -74,7 +76,7 @@ public class UserAccountController {
 	protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 	UserAccountDAO udao;
 	StudyDAO sdao;
-	StudySubjectDAO ssdao;
+	IStudySubjectDAO ssdao;
 	UserAccountBean uBean;
 
 	/**
@@ -367,7 +369,7 @@ public class UserAccountController {
 	}
 
 	public Boolean isApiKeyExist(String uuid) {
-		UserAccountDAO udao = new UserAccountDAO(dataSource);
+		IUserAccountDAO udao = new UserAccountDAO(dataSource);
 		UserAccountBean uBean = (UserAccountBean) udao.findByApiKey(uuid);
 		if (uBean == null || !uBean.isActive()) {
 			return false;

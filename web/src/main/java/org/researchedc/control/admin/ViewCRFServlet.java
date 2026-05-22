@@ -18,7 +18,9 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.util.ItemGroupCrvVersionUtil;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.domain.rule.RuleSetBean;
@@ -100,7 +102,7 @@ public class ViewCRFServlet extends SecureController {
             addPageMessage(respage.getString("please_choose_a_CRF_to_view"));
             forwardPage(Page.CRF_LIST);
         } else {
-            CRFDAO cdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
             CRFVersionDAO vdao = new CRFVersionDAO(sm.getDataSource());
             CRFBean crf = (CRFBean) cdao.findByPK(crfId);
             request.setAttribute("crfName", crf.getName());
@@ -111,7 +113,7 @@ public class ViewCRFServlet extends SecureController {
             
             if ("admin".equalsIgnoreCase(module)) {
                 //BWP 3279: generate a table showing a list of studies associated with the CRF>>
-                StudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+                IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
 
                 studyBeans = findStudiesForCRFId(crfId, studyDAO);
                 //Create the Jmesa table for the studies associated with the CRF
@@ -241,7 +243,7 @@ public class ViewCRFServlet extends SecureController {
     /*
     Fetch the studies associated with a CRF, via an event definition that uses the CRF.
      */
-    private List<StudyBean> findStudiesForCRFId(int crfId, StudyDAO studyDao) {
+    private List<StudyBean> findStudiesForCRFId(int crfId, IStudyDAO studyDao) {
         List<StudyBean> studyBeans = new ArrayList<StudyBean>();
         if (crfId == 0 || studyDao == null) {
             return studyBeans;

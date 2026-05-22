@@ -10,10 +10,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.researchedc.controller.openrosa.SubmissionContainer;
-import org.researchedc.dao.hibernate.StudyDao;
-import org.researchedc.dao.hibernate.StudySubjectDao;
-import org.researchedc.dao.hibernate.SubjectDao;
-import org.researchedc.dao.hibernate.UserAccountDao;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.datamap.Study;
 import org.researchedc.domain.datamap.StudySubject;
@@ -34,13 +34,13 @@ import org.xml.sax.InputSource;
 public class StudySubjectProcessor implements Processor, Ordered {
 
     @Autowired
-    StudySubjectDao studySubjectDao;
+    IStudySubjectDAO studySubjectDao;
     @Autowired
-    UserAccountDao userAccountDao;
+    IUserAccountDAO userAccountDao;
     @Autowired
-    SubjectDao subjectDao;
+    ISubjectDAO subjectDao;
     @Autowired
-    StudyDao studyDao;
+    IStudyDAO studyDao;
     
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     

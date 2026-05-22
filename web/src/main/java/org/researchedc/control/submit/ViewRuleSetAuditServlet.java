@@ -14,6 +14,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.dao.hibernate.RuleSetAuditDao;
 import org.researchedc.dao.hibernate.RuleSetRuleAuditDao;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.rule.RuleSetAuditBean;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleAuditBean;
@@ -35,7 +36,7 @@ public class ViewRuleSetAuditServlet extends SecureController {
     private RuleSetServiceInterface ruleSetService;
     private RuleSetAuditDao ruleSetAuditDao;
     private RuleSetRuleAuditDao ruleSetRuleAuditDao;
-    private UserAccountDAO userAccountDAO;
+    private IUserAccountDAO userAccountDAO;
 
     /**
      * 
@@ -107,7 +108,7 @@ public class ViewRuleSetAuditServlet extends SecureController {
         return ruleSetRuleAuditDao;
     }
 
-    private UserAccountDAO getUserAccountDAO() {
+    private IUserAccountDAO getUserAccountDAO() {
         return userAccountDAO = this.userAccountDAO != null ? userAccountDAO : new UserAccountDAO(sm.getDataSource());
     }
 

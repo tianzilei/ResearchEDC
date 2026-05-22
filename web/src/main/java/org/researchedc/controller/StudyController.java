@@ -24,10 +24,13 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.dao.hibernate.AuthoritiesDao;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.domain.user.AuthoritiesBean;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
@@ -71,9 +74,9 @@ public class StudyController {
 	public static ResourceBundle resadmin, resaudit, resexception, resformat, respage, resterm, restext, resword, resworkflow;
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-	UserAccountDAO udao;
-	StudyDAO sdao;
-	StudyEventDefinitionDAO seddao;
+	IUserAccountDAO udao;
+	IStudyDAO sdao;
+	IStudyEventDefinitionDAO seddao;
 
 	/**
 	 * @api {post} /pages/auth/api/v1/studies/ Create a study
@@ -1021,7 +1024,7 @@ public class StudyController {
 	}
 
 	public void validateUniqueProId(HttpServletRequest request, HashMap errors) {
-		StudyDAO studyDAO = new StudyDAO(dataSource);
+		IStudyDAO studyDAO = new StudyDAO(dataSource);
 		ArrayList<StudyBean> allStudies = (ArrayList<StudyBean>) studyDAO.findAll();
 		for (StudyBean thisBean : allStudies) {
 			if (request.getAttribute("uniqueProId") != null && request.getAttribute("uniqueProId").equals(thisBean.getIdentifier())) {

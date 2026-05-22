@@ -20,6 +20,7 @@ import java.util.ResourceBundle;
 
 import javax.sql.DataSource;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.bean.admin.TriggerBean;
 import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.DiscrepancyNoteType;
@@ -41,12 +42,16 @@ import org.researchedc.bean.submit.crfdata.SummaryStatsBean;
 import org.researchedc.control.submit.ImportCRFInfoContainer;
 import org.researchedc.core.OpenClinicaMailSender;
 import org.researchedc.dao.admin.AuditEventDAO;
+import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.exception.OpenClinicaException;
@@ -111,8 +116,8 @@ public class ImportSpringJob extends QuartzJobBean {
     private OpenClinicaMailSender mailSender;
     private ImportCRFDataService dataService;
     private ItemDataDAO itemDataDao;// = new ItemDataDAO(sm.getDataSource());
-    private EventCRFDAO eventCrfDao;// = new EventCRFDAO(sm.getDataSource());
-    private AuditEventDAO auditEventDAO;
+    private EventCRFDao eventCrfDao;// = new EventCRFDAO(sm.getDataSource());
+    private IAuditEventDAO auditEventDAO;
     private TriggerService triggerService;
 
     @Override
@@ -156,7 +161,7 @@ public class ImportSpringJob extends QuartzJobBean {
             auditEventDAO = new AuditEventDAO(dataSource);
 
             int userId = dataMap.getInt(USER_ID);
-            UserAccountDAO userAccountDAO = new UserAccountDAO(dataSource);
+            IUserAccountDAO userAccountDAO = new UserAccountDAO(dataSource);
 
             UserAccountBean ub = (UserAccountBean) userAccountDAO.findByPK(userId);
             triggerBean.setUserAccount(ub);
@@ -171,7 +176,7 @@ public class ImportSpringJob extends QuartzJobBean {
                 respage = ResourceBundleProvider.getPageMessagesBundle();
                 resword = ResourceBundleProvider.getWordsBundle();
             }
-            StudyDAO studyDAO = new StudyDAO(dataSource);
+            IStudyDAO studyDAO = new StudyDAO(dataSource);
             StudyBean studyBean;
             if (studyOid != null) {
                 studyBean = studyDAO.findByOid(studyOid);
@@ -749,7 +754,7 @@ public class ImportSpringJob extends QuartzJobBean {
             Integer parentId, UserAccountBean uab, DataSource ds, StudyBean study) {
         // DisplayItemBean displayItemBean) {
         DiscrepancyNoteBean note = new DiscrepancyNoteBean();
-        StudySubjectDAO ssdao = new StudySubjectDAO(ds);
+        IStudySubjectDAO ssdao = new StudySubjectDAO(ds);
         note.setDescription(message);
         note.setDetailedNotes("Failed Validation Check");
         note.setOwner(uab);

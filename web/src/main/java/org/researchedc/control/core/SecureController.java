@@ -41,6 +41,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
+import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.Role;
@@ -64,20 +67,23 @@ import org.researchedc.core.EmailEngine;
 import org.researchedc.core.SessionManager;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
 import org.researchedc.dao.hibernate.EventDefinitionCrfTagDao;
-import org.researchedc.dao.hibernate.UserAccountDao;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyConfigService;
-import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.domain.datamap.EventDefinitionCrf;
@@ -165,7 +171,7 @@ public abstract class SecureController extends HttpServlet {
     protected StudyBean currentStudy;
     protected StudyUserRoleBean currentRole;
     protected HashMap errors = new HashMap();
-    protected UserAccountDao userDaoDomain;
+    protected IUserAccountDAO userDaoDomain;
     private static String SCHEDULER = "schedulerFactoryBean";
 
     private Scheduler scheduler;
@@ -427,7 +433,7 @@ public abstract class SecureController extends HttpServlet {
             ub = sm.getUserBean();
             session.setAttribute("userBean", ub);
 
-            StudyDAO sdao = new StudyDAO(sm.getDataSource());
+            IStudyDAO sdao = new StudyDAO(sm.getDataSource());
             if (currentStudy == null || currentStudy.getId() <= 0) {
                 if (ub.getId() > 0 && ub.getActiveStudyId() > 0) {
                     StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
@@ -790,7 +796,7 @@ public abstract class SecureController extends HttpServlet {
      * @param ds javax.sql.DataSource
      */
     protected boolean entityIncluded(int entityId, String userName, AuditableEntityDAO adao, DataSource ds) {
-        StudyDAO sdao = new StudyDAO(ds);
+        IStudyDAO sdao = new StudyDAO(ds);
         ArrayList<StudyBean> studies = (ArrayList<StudyBean>) sdao.findAllByUserNotRemoved(userName);
         for (int i = 0; i < studies.size(); ++i) {
             if (adao.findByPKAndStudy(entityId, studies.get(i)).getId() > 0) {
@@ -873,8 +879,8 @@ public abstract class SecureController extends HttpServlet {
     }
 
     public ArrayList getEventDefinitionsByCurrentStudy() {
-        StudyDAO studyDAO = new StudyDAO(sm.getDataSource());
-        StudyEventDefinitionDAO studyEventDefinitionDAO = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO studyEventDefinitionDAO = new StudyEventDefinitionDAO(sm.getDataSource());
         int parentStudyId = currentStudy.getParentStudyId();
         ArrayList allDefs = new ArrayList();
         if (parentStudyId > 0) {
@@ -888,7 +894,7 @@ public abstract class SecureController extends HttpServlet {
     }
 
     public ArrayList getStudyGroupClassesByCurrentStudy() {
-        StudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+        IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
         StudyGroupClassDAO studyGroupClassDAO = new StudyGroupClassDAO(sm.getDataSource());
         StudyGroupDAO studyGroupDAO = new StudyGroupDAO(sm.getDataSource());
         int parentStudyId = currentStudy.getParentStudyId();
@@ -1049,7 +1055,7 @@ public abstract class SecureController extends HttpServlet {
 
 
     public DiscrepancyNoteBean getNoteInfo(DiscrepancyNoteBean note) {
-        StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
         if ("itemData".equalsIgnoreCase(note.getEntityType())) {
             int itemDataId = note.getEntityId();
             ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
@@ -1060,18 +1066,18 @@ public abstract class SecureController extends HttpServlet {
                 note.setEntityName(item.getName());
                 request.setAttribute("item", item);
             }
-            EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
-            StudyEventDAO svdao = new StudyEventDAO(sm.getDataSource());
+            EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+            IStudyEventDAO svdao = new StudyEventDAO(sm.getDataSource());
 
             EventCRFBean ec = (EventCRFBean) ecdao.findByPK(itemData.getEventCRFId());
             StudyEventBean event = (StudyEventBean) svdao.findByPK(ec.getStudyEventId());
 
-            StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+            IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(event.getStudyEventDefinitionId());
             note.setEventName(sed.getName());
             note.setEventStart(event.getDateStarted());
 
-            CRFDAO cdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
             CRFBean crf = cdao.findByVersionId(ec.getCRFVersionId());
             note.setCrfName(crf.getName());
             note.setEventCRFId(ec.getId());
@@ -1088,18 +1094,18 @@ public abstract class SecureController extends HttpServlet {
 
         } else if ("eventCrf".equalsIgnoreCase(note.getEntityType())) {
             int eventCRFId = note.getEntityId();
-            EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
-            StudyEventDAO svdao = new StudyEventDAO(sm.getDataSource());
+            EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+            IStudyEventDAO svdao = new StudyEventDAO(sm.getDataSource());
 
             EventCRFBean ec = (EventCRFBean) ecdao.findByPK(eventCRFId);
             StudyEventBean event = (StudyEventBean) svdao.findByPK(ec.getStudyEventId());
 
-            StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+            IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(event.getStudyEventDefinitionId());
             note.setEventName(sed.getName());
             note.setEventStart(event.getDateStarted());
 
-            CRFDAO cdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
             CRFBean crf = cdao.findByVersionId(ec.getCRFVersionId());
             note.setCrfName(crf.getName());
             StudySubjectBean ss = (StudySubjectBean) ssdao.findByPK(ec.getStudySubjectId());
@@ -1108,10 +1114,10 @@ public abstract class SecureController extends HttpServlet {
 
         } else if ("studyEvent".equalsIgnoreCase(note.getEntityType())) {
             int eventId = note.getEntityId();
-            StudyEventDAO svdao = new StudyEventDAO(sm.getDataSource());
+            IStudyEventDAO svdao = new StudyEventDAO(sm.getDataSource());
             StudyEventBean event = (StudyEventBean) svdao.findByPK(eventId);
 
-            StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+            IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(event.getStudyEventDefinitionId());
             note.setEventName(sed.getName());
             note.setEventStart(event.getDateStarted());

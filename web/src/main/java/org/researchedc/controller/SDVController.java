@@ -12,7 +12,9 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.controller.helper.SdvFilterDataBean;
 import org.researchedc.controller.helper.table.SubjectSDVContainer;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.view.StudyInfoPanel;
@@ -129,7 +131,7 @@ public class SDVController {
     public ModelMap viewSubjectHandler(HttpServletRequest request, @RequestParam("studySubjectId") int studySubjectId, @RequestParam("studyId") int studyId) {
 
         ModelMap gridMap = new ModelMap();
-        /*EventCRFDAO eventCRFDAO = new EventCRFDAO(dataSource);
+        /*EventCRFDao eventCRFDAO = new EventCRFDAO(dataSource);
         List<EventCRFBean> eventCRFBeans = eventCRFDAO.findAllByStudySubject(studySubjectId);*/
 
         request.setAttribute("studyId", studyId);
@@ -216,8 +218,8 @@ public class SDVController {
     public ModelMap viewAllSubjectFormHandler(HttpServletRequest request, HttpServletResponse response, @RequestParam("studyId") int studyId) {
 
         ModelMap gridMap = new ModelMap();
-        StudyDAO studyDAO = new StudyDAO(dataSource);
-        // StudyEventDAO studyEventDAO = new StudyEventDAO(dataSource);
+        IStudyDAO studyDAO = new StudyDAO(dataSource);
+        // IStudyEventDAO studyEventDAO = new StudyEventDAO(dataSource);
         StudyBean studyBean = (StudyBean) studyDAO.findByPK(studyId);
         String pattern = "MM/dd/yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
@@ -503,7 +505,7 @@ public class SDVController {
     */
     private String renderSubjectsTable(List<EventCRFBean> eventCRFBeans, int studySubjectId, HttpServletRequest request) {
 
-        StudySubjectDAO studySubjectDAO = new StudySubjectDAO(dataSource);
+        IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(dataSource);
         StudySubjectBean subjectBean = (StudySubjectBean) studySubjectDAO.findByPK(studySubjectId);
 
         Collection<SubjectSDVContainer> items = sdvUtil.getSubjectRows(eventCRFBeans, request);

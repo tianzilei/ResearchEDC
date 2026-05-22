@@ -18,6 +18,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.TableOfContentsServlet;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.view.Page;
@@ -76,7 +77,7 @@ public class ViewTableOfContentServlet extends SecureController {
         CRFVersionBean cvb = (CRFVersionBean) cvdao.findByPK(crfVersionId);
         answer.setCrfVersion(cvb);
 
-        CRFDAO cdao = new CRFDAO(ds);
+        ICrfDAO cdao = new CRFDAO(ds);
         CRFBean cb = (CRFBean) cdao.findByPK(cvb.getCrfId());
         answer.setCrf(cb);
 

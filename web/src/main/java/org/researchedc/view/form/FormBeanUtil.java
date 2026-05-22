@@ -19,6 +19,7 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.CoreSecureController;
 import org.researchedc.core.SessionManager;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
@@ -1348,7 +1349,7 @@ public class FormBeanUtil {
         // logger.info("line 923, found event def crf id
         // "+eventDefinitionCRFId);
         if (eventDefinitionCRFId <= 0) {
-            EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+            EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
             EventDefinitionCRFBean edcBean = edcdao.findByStudyEventIdAndCRFVersionId(study, studyEventId, eventCrfBean.getCRFVersionId());
             eventDefinitionCRFId = edcBean.getId();
         }
@@ -1433,7 +1434,7 @@ public class FormBeanUtil {
         // hold the bean's return value
         List<NullValue> nullObjectList = new ArrayList<NullValue>();
         EventDefinitionCRFBean eventCRFDefBean;
-        EventDefinitionCRFDAO eventDefinitionCRFDAO = new EventDefinitionCRFDAO(dataSource);
+        EventDefinitionCRFDao eventDefinitionCRFDAO = new EventDefinitionCRFDAO(dataSource);
         eventCRFDefBean = (EventDefinitionCRFBean) eventDefinitionCRFDAO.findByPK(eventDefinitionCRFId);
         nullObjectList = eventCRFDefBean.getNullValuesList();
         if (nullObjectList == null) {

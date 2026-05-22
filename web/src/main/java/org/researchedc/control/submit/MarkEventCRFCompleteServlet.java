@@ -20,8 +20,11 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -55,11 +58,11 @@ public class MarkEventCRFCompleteServlet extends SecureController {
 
     private FormProcessor fp;
 
-    private EventCRFDAO ecdao;
+    private EventCRFDao ecdao;
 
     private EventCRFBean ecb;
 
-    private EventDefinitionCRFDAO edcdao;
+    private EventDefinitionCRFDao edcdao;
 
     private EventDefinitionCRFBean edcb;
 
@@ -228,12 +231,12 @@ public class MarkEventCRFCompleteServlet extends SecureController {
                 iddao.updateStatusByEventCRF(ecb, newStatus);
 
                 // change status for event
-                StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+                IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
                 StudyEventBean seb = (StudyEventBean) sedao.findByPK(ecb.getStudyEventId());
                 seb.setUpdatedDate(new Date());
                 seb.setUpdater(ub);
 
-                EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+                EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
                 ArrayList allCRFs = ecdao.findAllByStudyEvent(seb);
                 ArrayList allEDCs = edcdao.findAllActiveByEventDefinitionId(seb.getStudyEventDefinitionId());
                 boolean eventCompleted = true;

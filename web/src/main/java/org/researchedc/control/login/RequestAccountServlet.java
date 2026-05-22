@@ -19,6 +19,7 @@ import org.researchedc.core.EmailEngine;
 import org.researchedc.core.SessionManager;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.SQLInitServlet;
@@ -47,7 +48,7 @@ public class RequestAccountServlet extends SecureController {
 
         String action = request.getParameter("action");
 
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         ArrayList studies = (ArrayList) sdao.findAll();
         ArrayList roles = Role.toArrayList();
         roles.remove(Role.ADMIN); // admin is not a user role, only used for
@@ -112,7 +113,7 @@ public class RequestAccountServlet extends SecureController {
             UserAccountBean ubDB = sm.getUserBean();
 
             if (StringUtil.isBlank(ubDB.getName())) {
-                StudyDAO sdao = new StudyDAO(sm.getDataSource());
+                IStudyDAO sdao = new StudyDAO(sm.getDataSource());
                 StudyBean study = (StudyBean) sdao.findByPK(ubForm.getActiveStudyId());
                 String studyName = study.getName();
                 request.setAttribute("studyName", studyName);

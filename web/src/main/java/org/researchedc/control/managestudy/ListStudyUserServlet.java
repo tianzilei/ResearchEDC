@@ -13,6 +13,7 @@ import org.researchedc.bean.odmbeans.UserBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.bean.EntityBeanTable;
@@ -54,7 +55,7 @@ public class ListStudyUserServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
         ArrayList users = udao.findAllAssignedUsersByStudy(currentStudy.getId());
 
         EntityBeanTable table = fp.getEntityBeanTable();

@@ -23,9 +23,11 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -83,7 +85,7 @@ public class RemoveCRFVersionServlet extends SecureController {
 
             SectionDAO secdao = new SectionDAO(sm.getDataSource());
 
-            EventCRFDAO evdao = new EventCRFDAO(sm.getDataSource());
+            EventCRFDao evdao = new EventCRFDAO(sm.getDataSource());
             // find all event crfs by version id
             ArrayList eventCRFs = evdao.findUndeletedWithStudySubjectsByCRFVersion(versionId);
             if ("confirm".equalsIgnoreCase(action)) {
@@ -144,7 +146,7 @@ public class RemoveCRFVersionServlet extends SecureController {
 
                 ArrayList versionList = (ArrayList)cvdao.findAllByCRF(version.getCrfId());
                 if(versionList.size() > 0){
-                    EventDefinitionCRFDAO edCRFDao = new EventDefinitionCRFDAO(sm.getDataSource());
+                    EventDefinitionCRFDao edCRFDao = new EventDefinitionCRFDAO(sm.getDataSource());
                     ArrayList edcList = (ArrayList)edCRFDao.findAllByCRF(version.getCrfId());
                     for(int i = 0; i < edcList.size(); i++){
                         EventDefinitionCRFBean edcBean = (EventDefinitionCRFBean)edcList.get(i);
@@ -168,7 +170,7 @@ public class RemoveCRFVersionServlet extends SecureController {
             return "";
         }
     }
-    public static void updateEventDef(EventDefinitionCRFBean edcBean, EventDefinitionCRFDAO edcDao, ArrayList versionList){
+    public static void updateEventDef(EventDefinitionCRFBean edcBean, EventDefinitionCRFDao edcDao, ArrayList versionList){
         ArrayList<Integer> idList = new ArrayList<Integer>();
         CRFVersionBean temp = (CRFVersionBean)versionList.get(0);
         if (StringUtil.isBlank(edcBean.getSelectedVersionIds())){
@@ -195,7 +197,7 @@ public class RemoveCRFVersionServlet extends SecureController {
     // additional parameter of crf version being locked.
     // These are changes for setting the correct default crf version Id to event
     // when existing default version is locked
-    public static void updateEventDef(EventDefinitionCRFBean edcBean, EventDefinitionCRFDAO edcDao, ArrayList versionList, int crfVIdToLock) {
+    public static void updateEventDef(EventDefinitionCRFBean edcBean, EventDefinitionCRFDao edcDao, ArrayList versionList, int crfVIdToLock) {
         ArrayList<Integer> idList = new ArrayList<Integer>();
         CRFVersionBean temp = null;
         if ((null != versionList) && (versionList.size() > 0)) {

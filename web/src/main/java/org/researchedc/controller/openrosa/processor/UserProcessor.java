@@ -5,9 +5,9 @@ import java.util.Date;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.controller.openrosa.SubmissionContainer;
-import org.researchedc.dao.hibernate.StudyDao;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.hibernate.StudyUserRoleDao;
-import org.researchedc.dao.hibernate.UserAccountDao;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.hibernate.UserTypeDao;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.datamap.Study;
@@ -26,7 +26,7 @@ import org.springframework.validation.Errors;
 public class UserProcessor implements Processor, Ordered {
 
     @Autowired
-    UserAccountDao userAccountDao;
+    IUserAccountDAO userAccountDao;
     
     @Autowired
     UserTypeDao userTypeDao;
@@ -35,7 +35,7 @@ public class UserProcessor implements Processor, Ordered {
     StudyUserRoleDao studyUserRoleDao;
     
     @Autowired
-    StudyDao studyDao;
+    IStudyDAO studyDao;
     
     public static final String INPUT_FIRST_NAME = "Participant";
     public static final String INPUT_LAST_NAME = "User";
@@ -55,7 +55,7 @@ public class UserProcessor implements Processor, Ordered {
         // if study subject oid is not null, just look up user account
         if (contextStudySubjectOid != null) {
             String userName = parentStudyOid + "." + contextStudySubjectOid;
-            UserAccount existingAccount = userAccountDao.findByUserName(userName);
+            UserAccount existingAccount = (UserAccount) (Object) userAccountDao.findByUserName(userName);
             if (existingAccount == null) {
                 logger.info("Could not find existing user account.  Aborting submission.");
                 errors.reject("Could not find existing user account.  Aborting submission.");
@@ -64,7 +64,7 @@ public class UserProcessor implements Processor, Ordered {
             container.setUser(existingAccount);
         } else {
             String userName = parentStudyOid + "." + studySubjectOid;
-            UserAccount existingAccount = userAccountDao.findByUserName(userName);
+            UserAccount existingAccount = (UserAccount) (Object) userAccountDao.findByUserName(userName);
             if (existingAccount != null) {
                 container.setUser(existingAccount);;
             } else {
@@ -94,7 +94,7 @@ public class UserProcessor implements Processor, Ordered {
                 createdUser.setAccountNonLocked(true);
                 createdUser.setAccessCode("");
                 createdUser.setApiKey("");
-                createdUser = userAccountDao.saveOrUpdate(createdUser);
+                createdUser = (UserAccount) (Object) userAccountDao.saveOrUpdate(createdUser);
                 container.setUser(createdUser);
                 
                 //Create study user role

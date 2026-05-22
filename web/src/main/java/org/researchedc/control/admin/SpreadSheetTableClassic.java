@@ -36,6 +36,7 @@ import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.hibernate.MeasurementUnitDao;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
@@ -144,7 +145,7 @@ public class SpreadSheetTableClassic implements SpreadSheetTable {// extends
         ArrayList<String> itemGroupOids = new ArrayList<String>();
         ArrayList<String> itemOids = new ArrayList<String>();
 
-        CRFDAO cdao = new CRFDAO(ds);
+        ICrfDAO cdao = new CRFDAO(ds);
         CRFBean crf = (CRFBean) cdao.findByPK(crfId);
 
         ItemDataDAO iddao = new ItemDataDAO(ds);

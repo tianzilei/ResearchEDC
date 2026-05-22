@@ -10,9 +10,13 @@ package org.researchedc.control.managestudy;
 import org.researchedc.bean.core.Role;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -53,7 +57,7 @@ public class ManageStudyServlet extends SecureController {
         request.setAttribute("openInstructions", true);
 
         // find last 5 modifed sites
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         // ArrayList sites = (ArrayList)
         // sdao.findAllByParentAndLimit(currentStudy.getId(),true);
         ArrayList allSites = (ArrayList) sdao.findAllByParent(currentStudy.getId());
@@ -72,21 +76,21 @@ public class ManageStudyServlet extends SecureController {
             request.setAttribute("studyIdentifier", currentStudy.getIdentifier());
         }
 
-        StudyEventDefinitionDAO edao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO edao = new StudyEventDefinitionDAO(sm.getDataSource());
         ArrayList seds = (ArrayList) edao.findAllByStudyAndLimit(currentStudy.getId());
         ArrayList allSeds = edao.findAllByStudy(currentStudy);
         request.setAttribute("seds", seds);
         request.setAttribute("sedsCount", new Integer(seds.size()));
         request.setAttribute("allSedsCount", new Integer(allSeds.size()));
 
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
         ArrayList users = udao.findAllUsersByStudyIdAndLimit(currentStudy.getId(), true);
         ArrayList allUsers = udao.findAllUsersByStudy(currentStudy.getId());
         request.setAttribute("users", users);
         request.setAttribute("usersCount", new Integer(users.size()));
         request.setAttribute("allUsersCount", new Integer(allUsers.size()));
 
-        StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
         // ArrayList subjects = (ArrayList)
         // ssdao.findAllByStudyIdAndLimit(currentStudy.getId(),true);
         ArrayList allSubjects = ssdao.findAllByStudyId(currentStudy.getId());
@@ -102,7 +106,7 @@ public class ManageStudyServlet extends SecureController {
         request.setAttribute("allSubsCount", new Integer(allSubjects.size()));
 
         // added tbh, 9-21-2005
-        // AuditEventDAO aedao = new AuditEventDAO(sm.getDataSource());
+        // IAuditEventDAO aedao = new AuditEventDAO(sm.getDataSource());
         // ArrayList audits = (ArrayList)
         // aedao.findAllByStudyIdAndLimit(currentStudy.getId());
         // request.setAttribute("audits", audits);

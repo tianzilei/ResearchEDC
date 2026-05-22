@@ -3,6 +3,7 @@ package org.researchedc.control.submit;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.web.util.HtmlUtils;
 
@@ -21,7 +22,7 @@ public class CheckCRFLocked extends SecureController {
             int crfId = Integer.parseInt(ecId);
             if (getCrfLocker().isLocked(crfId)) {
                 userId = getCrfLocker().getLockOwner(crfId);
-                UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+                IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
                 UserAccountBean ubean = (UserAccountBean)udao.findByPK(userId);
                 response.getWriter().print(HtmlUtils.htmlEscape(resword.getString("CRF_unavailable")) +
                         "\n"+HtmlUtils.htmlEscape(ubean.getName()) + " "+ HtmlUtils.htmlEscape(resword.getString("Currently_entering_data"))

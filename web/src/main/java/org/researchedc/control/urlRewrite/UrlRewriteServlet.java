@@ -23,10 +23,15 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.core.CoreSecureController;
 import org.researchedc.control.form.Validator;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
@@ -221,14 +226,14 @@ public class UrlRewriteServlet extends CoreSecureController {
                 String[] tokens = URLPath.split("/");
                 if (tokens.length != 0) {
                     String URLParamValue = "";
-                    StudyDAO stdao = new StudyDAO(getDataSource());
-                    StudySubjectDAO ssubdao = new StudySubjectDAO(getDataSource());
-                    StudyEventDefinitionDAO sedefdao = new StudyEventDefinitionDAO(getDataSource());
-                    CRFDAO crfdao = new CRFDAO(getDataSource());
+                    IStudyDAO stdao = new StudyDAO(getDataSource());
+                    IStudySubjectDAO ssubdao = new StudySubjectDAO(getDataSource());
+                    IStudyEventDefinitionDAO sedefdao = new StudyEventDefinitionDAO(getDataSource());
+                    ICrfDAO crfdao = new CRFDAO(getDataSource());
                     CRFVersionDAO crfvdao = new CRFVersionDAO(getDataSource());
                     ItemDAO idao = new ItemDAO(getDataSource());
                     ItemGroupDAO igdao = new ItemGroupDAO(getDataSource());
-                    StudyEventDAO sedao = new StudyEventDAO(getDataSource());
+                    IStudyEventDAO sedao = new StudyEventDAO(getDataSource());
 
                     StudyBean study = null;
                     StudySubjectBean subject = null;

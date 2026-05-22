@@ -14,6 +14,7 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -41,7 +42,7 @@ public class DeleteStudyUserRoleServlet extends SecureController {
 
     @Override
     protected void processRequest() throws Exception {
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
 
         FormProcessor fp = new FormProcessor(request);
         int studyId = fp.getInt(ARG_STUDYID);
@@ -98,7 +99,7 @@ public class DeleteStudyUserRoleServlet extends SecureController {
     // }
     //
     // SQLFactory factory = SQLFactory.getInstance();
-    // UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+    // IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
     //
     // FormProcessor fp = new FormProcessor(request);
     // int studyId = fp.getInt(ARG_STUDYID);

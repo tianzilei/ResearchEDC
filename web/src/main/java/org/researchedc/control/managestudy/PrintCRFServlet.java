@@ -25,6 +25,7 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.DataEntryServlet;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
@@ -96,7 +97,7 @@ public class PrintCRFServlet extends DataEntryServlet {
         // studyEventId, int crfVersionId)
         SectionDAO sdao = new SectionDAO(getDataSource());
         CRFVersionDAO crfVersionDAO = new CRFVersionDAO(getDataSource());
-        CRFDAO crfDao = new CRFDAO(getDataSource());
+        ICrfDAO crfDao = new CRFDAO(getDataSource());
 
         ArrayList <SectionBean> allSectionBeans = new ArrayList<SectionBean>();
         ArrayList sectionBeans = new ArrayList();

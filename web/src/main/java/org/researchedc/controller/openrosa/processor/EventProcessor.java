@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.researchedc.controller.openrosa.SubmissionContainer;
 import org.researchedc.dao.hibernate.CompletionStatusDao;
-import org.researchedc.dao.hibernate.CrfVersionDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.hibernate.EventCrfDao;
 import org.researchedc.dao.hibernate.EventDefinitionCrfDao;
-import org.researchedc.dao.hibernate.ItemDataDao;
-import org.researchedc.dao.hibernate.StudyDao;
-import org.researchedc.dao.hibernate.StudyEventDao;
-import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.datamap.CrfVersion;
 import org.researchedc.domain.datamap.EventCrf;
@@ -35,16 +35,16 @@ import org.springframework.validation.Errors;
 public class EventProcessor implements Processor, Ordered {
 
     @Autowired
-    StudyEventDao studyEventDao;
+    IStudyEventDAO studyEventDao;
     
     @Autowired
-    StudyEventDefinitionDao studyEventDefinitionDao;
+    IStudyEventDefinitionDAO studyEventDefinitionDao;
     
     @Autowired
     EventCrfDao eventCrfDao;
     
     @Autowired
-    CrfVersionDao crfVersionDao;
+    ICrfVersionDAO crfVersionDao;
     
     @Autowired
     CompletionStatusDao completionStatusDao;
@@ -53,10 +53,10 @@ public class EventProcessor implements Processor, Ordered {
     EventDefinitionCrfDao eventDefinitionCrfDao;
     
     @Autowired
-    ItemDataDao itemDataDao;
+    IItemDataDAO itemDataDao;
     
     @Autowired
-    StudyDao studyDao;
+    IStudyDAO studyDao;
     
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 

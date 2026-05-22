@@ -7,6 +7,8 @@
  */
 package org.researchedc.control.extract;
 
+import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.DatasetBean;
@@ -16,10 +18,12 @@ import org.researchedc.bean.managestudy.StudyGroupClassBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -47,7 +51,7 @@ public class EditDatasetServlet extends SecureController {
         int dsId = fp.getInt("dsId");
         DatasetBean dataset = initializeAttributes(dsId);
 
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         StudyBean study = (StudyBean)sdao.findByPK(dataset.getStudyId());
         // Checking if user has permission to access the current study/site
         checkRoleByUserAndStudy(ub, study.getParentStudyId(), study.getId());
@@ -70,12 +74,12 @@ public class EditDatasetServlet extends SecureController {
 
         HashMap events = (LinkedHashMap) session.getAttribute("eventsForCreateDataset");
         // << tbh
-        CRFDAO crfdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
 
         // >> tbh 11/2009
         if (events == null || events.isEmpty()) {
             events = new LinkedHashMap();
-            StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+            IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
 
             StudyBean studyWithEventDefinitions = currentStudy;
             if (currentStudy.getParentStudyId() > 0) {
@@ -104,7 +108,7 @@ public class EditDatasetServlet extends SecureController {
          * v.addValidation("dsName", Validator.NO_BLANKS); v.addValidation("dsDesc", Validator.NO_BLANKS); v.addValidation("dsStatus", Validator.IS_VALID_TERM,
          * TermType.STATUS); v.addValidation("dsName", Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 255);
          * v.addValidation("dsDesc", Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 2000); //what else to validate?
-         * HashMap errors = v.validate(); if (!StringUtil.isBlank(fp.getString("dsName"))) { //logger.info("dsName" + fp.getString("dsName")); DatasetDAO dsdao
+         * HashMap errors = v.validate(); if (!StringUtil.isBlank(fp.getString("dsName"))) { //logger.info("dsName" + fp.getString("dsName")); DatasetDao dsdao
          * = new DatasetDAO(sm.getDataSource()); DatasetBean dsBean = (DatasetBean) dsdao.findByNameAndStudy(fp.getString("dsName").trim(), currentStudy); if
          * (dsBean.getId() > 0 && (dsBean.getId() != fp.getInt("dsId"))) { Validator.addError(errors, "dsName",
          * restext.getString("dataset_name_used_by_another_choose_unique")); } } if (!errors.isEmpty()) { String fieldNames[] = { "dsName", "dsDesc" };
@@ -166,7 +170,7 @@ public class EditDatasetServlet extends SecureController {
         session.setAttribute("allItems", db.getItemDefCrf().clone());
         session.setAttribute("allSelectedItems", db.getItemDefCrf().clone());
         StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
-        StudyDAO studydao = new StudyDAO(sm.getDataSource());
+        IStudyDAO studydao = new StudyDAO(sm.getDataSource());
         StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
         ArrayList<StudyGroupClassBean> allSelectedGroups = sgcdao.findAllActiveByStudy(theStudy);
         ArrayList<Integer> selectedSubjectGroupIds = db.getSubjectGroupIds();

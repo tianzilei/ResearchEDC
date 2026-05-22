@@ -12,10 +12,14 @@ import org.researchedc.bean.submit.DisplaySectionBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.view.form.FormBeanUtil;
 import org.researchedc.view.form.ViewPersistanceHandler;
@@ -80,7 +84,7 @@ public class DisplaySectionBeanHandler {
         ArrayList<SectionBean> allCrfSections;
         // DAO classes for getting item definitions
         SectionDAO sectionDao;
-        CRFVersionDAO crfVersionDao;
+        ICrfVersionDAO crfVersionDao;
 
         if (displaySectionBeans == null) {
             displaySectionBeans = new ArrayList<DisplaySectionBean>();
@@ -101,13 +105,13 @@ public class DisplaySectionBeanHandler {
             EventDefinitionCRFBean eventDefBean = null;
             EventCRFBean eventCRFBean = new EventCRFBean();
             if (eventCRFId > 0) {
-                EventCRFDAO ecdao = new EventCRFDAO(dataSource);
+                EventCRFDao ecdao = new EventCRFDAO(dataSource);
                 eventCRFBean = (EventCRFBean) ecdao.findByPK(eventCRFId);
-                StudyEventDAO sedao = new StudyEventDAO(dataSource);
+                IStudyEventDAO sedao = new StudyEventDAO(dataSource);
                 StudyEventBean studyEvent = (StudyEventBean) sedao.findByPK(eventCRFBean.getStudyEventId());
 
-                EventDefinitionCRFDAO eventDefinitionCRFDAO = new EventDefinitionCRFDAO(dataSource);
-                StudyDAO sdao = new StudyDAO(dataSource);
+                EventDefinitionCRFDao eventDefinitionCRFDAO = new EventDefinitionCRFDAO(dataSource);
+                IStudyDAO sdao = new StudyDAO(dataSource);
                 StudyBean study = sdao.findByStudySubjectId(eventCRFBean.getStudySubjectId());
                 eventDefBean = eventDefinitionCRFDAO.findByStudyEventIdAndCRFVersionId(study, studyEvent.getId(), this.crfVersionId);
             }

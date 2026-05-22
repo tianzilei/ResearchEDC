@@ -6,7 +6,9 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -82,8 +84,8 @@ public class UpdateJobImportServlet extends SecureController {
 
         Date jobDate = trigger.getNextFireTime();
 
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
 
         // ArrayList studies = udao.findStudyByUser(ub.getName(), (ArrayList)
         // sdao.findAll());
@@ -140,7 +142,7 @@ public class UpdateJobImportServlet extends SecureController {
                 setUpServlet(trigger);
                 forwardPage(Page.UPDATE_JOB_IMPORT);
             } else {
-                StudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+                IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
                 int studyId = fp.getInt(CreateJobImportServlet.STUDY_ID);
                 StudyBean study = (StudyBean) studyDAO.findByPK(studyId);
                 // in the place of a users' current study, tbh

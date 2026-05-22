@@ -17,6 +17,7 @@ import java.util.Locale;
 
 import jakarta.servlet.http.HttpSession;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.NumericComparisonOperator;
@@ -43,18 +44,25 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.core.EmailEngine;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -267,7 +275,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
                 
                 request.setAttribute("entityValue", itemData.getValue());
                 request.setAttribute("entityName", item.getName());
-                EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+                EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
                 EventCRFBean ec = (EventCRFBean) ecdao.findByPK(itemData.getEventCRFId());
                 preUserId = ec.getOwnerId();
             } else if ("studySub".equalsIgnoreCase(entityType)) {
@@ -418,12 +426,12 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
                 // BWP: this doesn't seem correct, because the SubjectId should
                 // be the id for
                 // the SubjectBean, different from StudySubjectBean
-                StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+                IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
                 StudySubjectBean ssub = (StudySubjectBean) ssdao.findByPK(subjectId);
                 dnb.setSubjectName(ssub.getName());
                 dnb.setSubjectId(ssub.getId());
                 dnb.setStudySub(ssub);
-                StudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+                IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
                 int parentStudyForSubject = 0;
                 StudyBean studyBeanSub = (StudyBean) studyDAO.findByPK(ssub.getStudyId());
                 if (null != studyBeanSub) {
@@ -587,7 +595,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
                 logger.debug("assigned owner id: " + parent.getOwnerId());
             } else if (dnb.getEventCRFId() > 0) {
             	logger.debug("found a event crf id: " + dnb.getEventCRFId());
-                EventCRFDAO eventCrfDAO = new EventCRFDAO(sm.getDataSource());
+                EventCRFDao eventCrfDAO = new EventCRFDAO(sm.getDataSource());
                 EventCRFBean eventCrfBean = new EventCRFBean();
                 eventCrfBean = (EventCRFBean) eventCrfDAO.findByPK(dnb.getEventCRFId());
                 request.setAttribute(USER_ACCOUNT_ID,   Integer.valueOf(eventCrfBean.getOwnerId()).toString());
@@ -795,14 +803,14 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
                         StringBuffer message = new StringBuffer();
 
                         // generate message here
-                        UserAccountDAO userAccountDAO = new UserAccountDAO(sm.getDataSource());
+                        IUserAccountDAO userAccountDAO = new UserAccountDAO(sm.getDataSource());
                         ItemDAO itemDAO = new ItemDAO(sm.getDataSource());
                         ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
                         ItemBean item = new ItemBean();
                         ItemDataBean itemData = new ItemDataBean();
                         SectionBean section = new SectionBean();
 
-                        StudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+                        IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
                         UserAccountBean assignedUser = (UserAccountBean) userAccountDAO.findByPK(note.getAssignedUserId());
                         String alertEmail = assignedUser.getEmail();
                         message.append(MessageFormat.format(respage.getString("mailDNHeader"), assignedUser.getFirstName(),assignedUser.getLastName()));
@@ -935,9 +943,9 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
             int itemDataId = entityId;
             ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
             ItemDataBean itemData = (ItemDataBean) iddao.findByPK(itemDataId);
-            EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
-            StudyEventDAO svdao = new StudyEventDAO(sm.getDataSource());
-            StudySubjectDAO studySubjectDAO = new StudySubjectDAO(sm.getDataSource());
+            EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+            IStudyEventDAO svdao = new StudyEventDAO(sm.getDataSource());
+            IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(sm.getDataSource());
             EventCRFBean ec = (EventCRFBean) ecdao.findByPK(itemData.getEventCRFId());
             StudyEventBean event = (StudyEventBean) svdao.findByPK(ec.getStudyEventId());
             StudySubjectBean studySubject = (StudySubjectBean) studySubjectDAO.findByPK(event.getStudySubjectId());
@@ -961,8 +969,8 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
     }
 
     private ArrayList generateUserAccounts(int studyId, int subjectId) {
-        UserAccountDAO userAccountDAO = new UserAccountDAO(sm.getDataSource());
-        StudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+        IUserAccountDAO userAccountDAO = new UserAccountDAO(sm.getDataSource());
+        IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
         StudyBean subjectStudy = studyDAO.findByStudySubjectId(subjectId);
         // study id, tbh 03/2009
         ArrayList userAccounts = new ArrayList();
@@ -981,8 +989,8 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
             int itemDataId = entityId;
             ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
             ItemDataBean itemData = (ItemDataBean) iddao.findByPK(itemDataId);
-            EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
-            StudyEventDAO svdao = new StudyEventDAO(sm.getDataSource());
+            EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+            IStudyEventDAO svdao = new StudyEventDAO(sm.getDataSource());
             EventCRFBean ec = (EventCRFBean) ecdao.findByPK(itemData.getEventCRFId());
             StudyEventBean event = (StudyEventBean) svdao.findByPK(ec.getStudyEventId());
             if (event.getSubjectEventStatus().equals(SubjectEventStatus.SIGNED)) {
@@ -993,8 +1001,8 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
             }
         } else if ("eventCrf".equalsIgnoreCase(entityType)) {
             int eventCRFId = entityId;
-            EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
-            StudyEventDAO svdao = new StudyEventDAO(sm.getDataSource());
+            EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+            IStudyEventDAO svdao = new StudyEventDAO(sm.getDataSource());
 
             EventCRFBean ec = (EventCRFBean) ecdao.findByPK(eventCRFId);
             StudyEventBean event = (StudyEventBean) svdao.findByPK(ec.getStudyEventId());
@@ -1096,27 +1104,27 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
     
     
     private StudyEventBean getStudyEvent(int eventCRFId) {
-        StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
         StudyEventBean event = (StudyEventBean) sedao.findByPK(getEventCrf(eventCRFId).getStudyEventId());
         return event;
     }
 
     private StudyEventDefinitionBean getStudyEventDefinition(int eventCRFId) {
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(getStudyEvent(eventCRFId).getStudyEventDefinitionId());
         return sed;
     }
 
     private CRFBean getCrf(int eventCRFId) {
         CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        CRFDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
         CRFVersionBean cv = (CRFVersionBean) cvdao.findByPK(getEventCrf(eventCRFId).getCRFVersionId());
         CRFBean c = (CRFBean) cdao.findByPK(cv.getCrfId());
         return c;
     }
 
     private EventCRFBean getEventCrf(int eventCRFId) {
-        EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
         EventCRFBean ec = (EventCRFBean) ecdao.findByPK(eventCRFId);
         return ec;
     }

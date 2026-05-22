@@ -16,7 +16,9 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -51,7 +53,7 @@ public class EditStudyUserRoleServlet extends SecureController {
 
     @Override
     protected void processRequest() throws Exception {
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
 
         FormProcessor fp = new FormProcessor(request);
 
@@ -63,7 +65,7 @@ public class EditStudyUserRoleServlet extends SecureController {
         
         techAdminProtect(user);
         
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         StudyBean sb = (StudyBean) sdao.findByPK(studyUserRole.getStudyId());
         if (sb != null) {
             studyUserRole.setStudyName(sb.getName());
@@ -185,7 +187,7 @@ public class EditStudyUserRoleServlet extends SecureController {
     // }
     //
     // SQLFactory factory = SQLFactory.getInstance();
-    // UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+    // IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
     //
     // FormProcessor fp = new FormProcessor(request);
     //
@@ -194,7 +196,7 @@ public class EditStudyUserRoleServlet extends SecureController {
     // StudyUserRoleBean studyUserRole =
     // udao.findRoleByUserNameAndStudyId(uName, studyId);
     //
-    // StudyDAO sdao = new StudyDAO(sm.getDataSource());
+    // IStudyDAO sdao = new StudyDAO(sm.getDataSource());
     // StudyBean sb = (StudyBean) sdao.findByPK(studyUserRole.getStudyId());
     // if (sb != null) {
     // studyUserRole.setStudyName(sb.getName());

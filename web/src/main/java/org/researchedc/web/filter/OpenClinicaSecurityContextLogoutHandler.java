@@ -3,6 +3,7 @@ package org.researchedc.web.filter;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.hibernate.AuditUserLoginDao;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
 import org.researchedc.domain.technicaladmin.LoginStatus;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -26,7 +27,7 @@ import javax.sql.DataSource;
 public class OpenClinicaSecurityContextLogoutHandler extends SecurityContextLogoutHandler {
 
     AuditUserLoginDao auditUserLoginDao;
-    UserAccountDAO userAccountDao;
+    IUserAccountDAO userAccountDao;
     DataSource dataSource;
 
     // ~ Methods ========================================================================================================
@@ -68,7 +69,7 @@ public class OpenClinicaSecurityContextLogoutHandler extends SecurityContextLogo
         this.dataSource = dataSource;
     }
 
-    public UserAccountDAO getUserAccountDao() {
+    public IUserAccountDAO getUserAccountDao() {
         return userAccountDao != null ? userAccountDao : new UserAccountDAO(dataSource);
     }
 

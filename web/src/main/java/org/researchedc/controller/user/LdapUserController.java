@@ -7,7 +7,7 @@ import java.util.Set;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.service.user.LdapUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class LdapUserController {
     private LdapUserService ldapUserService;
 
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
 
     @RequestMapping("/listLdapUsers")
     public String listLdapUsers(HttpServletRequest req,

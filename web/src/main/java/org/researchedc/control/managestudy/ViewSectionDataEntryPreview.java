@@ -42,10 +42,15 @@ import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.DataEntryServlet;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.slf4j.Logger;
@@ -387,19 +392,19 @@ public class ViewSectionDataEntryPreview extends DataEntryServlet {
         String age = "";
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
 
-        StudySubjectDAO ssdao = new StudySubjectDAO(getDataSource());
+        IStudySubjectDAO ssdao = new StudySubjectDAO(getDataSource());
         StudySubjectBean sub = (StudySubjectBean) ssdao.findByPK(ecb.getStudySubjectId());
         // This is the SubjectBean
-        SubjectDAO subjectDao = new SubjectDAO(getDataSource());
+        ISubjectDAO subjectDao = new SubjectDAO(getDataSource());
         int subjectId = sub.getSubjectId();
         int studyId = sub.getStudyId();
         SubjectBean subject = (SubjectBean) subjectDao.findByPK(subjectId);
         StudyBean currentStudy =    (StudyBean)  request.getSession().getAttribute("study");
         // Let us process the age
         if (currentStudy.getStudyParameterConfig().getCollectDob().equals("1")) {
-            StudyEventDAO sedao = new StudyEventDAO(getDataSource());
+            IStudyEventDAO sedao = new StudyEventDAO(getDataSource());
             StudyEventBean se = (StudyEventBean) sedao.findByPK(ecb.getStudyEventId());
-            StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(getDataSource());
+            IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(getDataSource());
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(se.getStudyEventDefinitionId());
             se.setStudyEventDefinition(sed);
             request.setAttribute("studyEvent", se);
@@ -407,7 +412,7 @@ public class ViewSectionDataEntryPreview extends DataEntryServlet {
             age = Utils.getInstacne().processAge(sub.getEnrollmentDate(), subject.getDateOfBirth());
         }
         // Get the study then the parent study
-        StudyDAO studydao = new StudyDAO(getDataSource());
+        IStudyDAO studydao = new StudyDAO(getDataSource());
         StudyBean study = (StudyBean) studydao.findByPK(studyId);
 
         if (study.getParentStudyId() > 0) {

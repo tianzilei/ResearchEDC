@@ -19,9 +19,13 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.TableOfContentsServlet;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -58,7 +62,7 @@ public class ViewEventCRFContentServlet extends SecureController {
      */
     private StudyEventBean getStudyEvent(int eventId) throws Exception {
 
-        StudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
         StudyBean studyWithSED = currentStudy;
         if (currentStudy.getParentStudyId() > 0) {
             studyWithSED = new StudyBean();
@@ -76,7 +80,7 @@ public class ViewEventCRFContentServlet extends SecureController {
 
         StudyEventBean seb = (StudyEventBean) aeb;
 
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
         StudyEventDefinitionBean sedb = (StudyEventDefinitionBean) seddao.findByPK(seb.getStudyEventDefinitionId());
         seb.setStudyEventDefinition(sedb);
         return seb;
@@ -96,11 +100,11 @@ public class ViewEventCRFContentServlet extends SecureController {
 
         StudyEventBean seb = getStudyEvent(eventId);
 
-        StudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
         StudySubjectBean studySub = (StudySubjectBean) subdao.findByPK(studySubId);
         request.setAttribute("studySub", studySub);
 
-        EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
         EventCRFBean eventCRF = (EventCRFBean) ecdao.findByPK(eventCRFId);
         DisplayTableOfContentsBean displayBean = TableOfContentsServlet.getDisplayBean(eventCRF, sm.getDataSource(), currentStudy);
         request.setAttribute("toc", displayBean);

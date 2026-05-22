@@ -14,7 +14,9 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.bean.EntityBeanTable;
@@ -42,7 +44,7 @@ public class ListUserAccountsServlet extends SecureController {
     protected void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
 
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
         EntityBeanTable table = fp.getEntityBeanTable();
         // table.setSortingIfNotExplicitlySet(1, false);
 
@@ -78,7 +80,7 @@ public class ListUserAccountsServlet extends SecureController {
         forwardPage(Page.LIST_USER_ACCOUNTS);
     }
 
-    private ArrayList getAllUsers(UserAccountDAO udao) {
+    private ArrayList getAllUsers(IUserAccountDAO udao) {
         ArrayList result = (ArrayList) udao.findAll();
         return result;
     }
@@ -92,7 +94,7 @@ public class ListUserAccountsServlet extends SecureController {
      *            UserAccountBean.
      */
     private void setStudyNamesInStudyUserRoles(ArrayList users) {
-        StudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
         ArrayList allStudies = (ArrayList) sdao.findAll();
         HashMap studiesById = new HashMap();
 

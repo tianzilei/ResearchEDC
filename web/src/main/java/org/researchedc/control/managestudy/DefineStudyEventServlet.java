@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.NullValue;
 import org.researchedc.bean.core.NumericComparisonOperator;
@@ -21,11 +22,13 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.domain.SourceDataVerification;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;
@@ -95,7 +98,7 @@ public class DefineStudyEventServlet extends SecureController {
         ArrayList crfsWithVersion = (ArrayList) session.getAttribute("crfsWithVersion");
         if (crfsWithVersion == null) {
             crfsWithVersion = new ArrayList();
-            CRFDAO cdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
             CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
             ArrayList crfs = (ArrayList) cdao.findAllByStatus(Status.AVAILABLE);
 
@@ -400,7 +403,7 @@ public class DefineStudyEventServlet extends SecureController {
     
         ArrayList <EventDefinitionCRFBean>  edcsInSession = (ArrayList<EventDefinitionCRFBean>) session.getAttribute("edCRFs");
         int parentStudyId=sed.getStudyId();
-        EventDefinitionCRFDAO edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
         ArrayList <EventDefinitionCRFBean> eventDefCrfList =(ArrayList <EventDefinitionCRFBean>) edcdao.findAllActiveSitesAndStudiesPerParentStudy(parentStudyId);
        
         if(eventDefCrfList.size()!=0)
@@ -566,7 +569,7 @@ public class DefineStudyEventServlet extends SecureController {
      * 
      */
     private void submitDefinition() throws NullPointerException {
-        StudyEventDefinitionDAO edao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO edao = new StudyEventDefinitionDAO(sm.getDataSource());
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) session.getAttribute("definition");
         // added tbh 092007, to catch bug # 1531
         if (sed.getName() == "" || sed.getName() == null) {
@@ -588,9 +591,9 @@ public class DefineStudyEventServlet extends SecureController {
         sed.setStatus(Status.AVAILABLE);
         StudyEventDefinitionBean sed1 = (StudyEventDefinitionBean) edao.create(sed);
 
-        EventDefinitionCRFDAO cdao = new EventDefinitionCRFDAO(sm.getDataSource());
-        CRFDAO crfdao = new CRFDAO(sm.getDataSource());
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        EventDefinitionCRFDao cdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
         ArrayList eventDefinitionCRFs = new ArrayList();
         if (session.getAttribute("edCRFs") != null) {
             eventDefinitionCRFs = (ArrayList) session.getAttribute("edCRFs");

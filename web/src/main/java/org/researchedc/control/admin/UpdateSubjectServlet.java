@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.control.AbstractTableFactory;
@@ -23,8 +24,8 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.control.managestudy.ViewNotesServlet;
 import org.researchedc.control.submit.AddNewSubjectServlet;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +63,7 @@ public class UpdateSubjectServlet extends SecureController {
 
     @Override
     public void processRequest() throws Exception {
-        SubjectDAO sdao = new SubjectDAO(sm.getDataSource());
+        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
         FormProcessor fp = new FormProcessor(request);
         FormDiscrepancyNotes discNotes = new FormDiscrepancyNotes();
 
@@ -294,7 +295,7 @@ public class UpdateSubjectServlet extends SecureController {
 	        		Validator.addError(errors, "uniqueIdentifier", descr);
 	        		
 	        	}
-	            SubjectDAO sdao = new SubjectDAO(sm.getDataSource());
+	            ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
 	            SubjectBean sub1 = (SubjectBean) sdao.findAnotherByIdentifier(uniqueIdentifier, subject.getId());
 	            if (sub1.getId() > 0) {
 	            	  Validator.addError(errors, "uniqueIdentifier", resexception.getString("person_ID_used_by_another_choose_unique"));

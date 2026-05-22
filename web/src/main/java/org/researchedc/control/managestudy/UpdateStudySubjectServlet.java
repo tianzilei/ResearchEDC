@@ -13,6 +13,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -28,13 +32,13 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.control.submit.AddNewSubjectServlet;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.SubjectDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -64,8 +68,8 @@ public class UpdateStudySubjectServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
         FormDiscrepancyNotes discNotes = null;
-        SubjectDAO sdao = new SubjectDAO(sm.getDataSource());
-        StudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
+        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
         FormProcessor fp = new FormProcessor(request);
 
         String fromResolvingNotes = fp.getString("fromResolvingNotes",true);
@@ -103,7 +107,7 @@ public class UpdateStudySubjectServlet extends SecureController {
 
             }
 
-            StudyDAO stdao = new StudyDAO(sm.getDataSource());
+            IStudyDAO stdao = new StudyDAO(sm.getDataSource());
             ArrayList classes = new ArrayList();
             if (!"submit".equalsIgnoreCase(action)) {
                 // YW <<
@@ -209,7 +213,7 @@ public class UpdateStudySubjectServlet extends SecureController {
      * @param sub
      * @throws Exception
      */
-    private void confirm(StudyGroupDAO sgdao) throws Exception {
+    private void confirm(StudyGroupDao sgdao) throws Exception {
         ArrayList classes = (ArrayList) session.getAttribute("groups");
         StudySubjectBean sub = (StudySubjectBean) session.getAttribute("studySub");
         StudyBean study= (StudyBean) session.getAttribute("study");
@@ -234,7 +238,7 @@ public class UpdateStudySubjectServlet extends SecureController {
             errors = v.validate();
 
             if (!StringUtil.isBlank(fp.getString("label"))) {
-                StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+                IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
 
                 StudySubjectBean sub1 = (StudySubjectBean) ssdao.findAnotherBySameLabel(fp.getString("label").trim(), currentStudy.getId(), sub.getId());
 
@@ -298,7 +302,7 @@ public class UpdateStudySubjectServlet extends SecureController {
                     + respage.getString("you_may_enter_study_subject_ID_listed")
                     + respage.getString("study_subject_ID_should_not_contain_protected_information"));
             } else {
-                StudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+                IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
                 StudySubjectBean sub1 = (StudySubjectBean) subdao.findAnotherBySameLabel(sub.getLabel(), sub.getStudyId(), sub.getId());
                 if (sub1.getId() > 0) {
                     addPageMessage(resexception.getString("subject_ID_used_by_another_choose_unique"));

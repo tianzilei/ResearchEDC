@@ -25,6 +25,7 @@ import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.managestudy.CRFVersionMetadataUtil;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.RuleActionPropertyDao;
 import org.researchedc.dao.submit.CRFVersionDAO;
@@ -103,7 +104,7 @@ public class OpenRosaXmlGenerator {
         try {
             CRFVersionDAO versionDAO = new CRFVersionDAO(dataSource);
             CRFVersionBean crfVersion = versionDAO.findByOid(formId);
-            CRFDAO crfDAO = new CRFDAO(dataSource);
+            ICrfDAO crfDAO = new CRFDAO(dataSource);
             CRFBean crf = (CRFBean) crfDAO.findByPK(crfVersion.getCrfId());
             CRFVersionMetadataUtil metadataUtil = new CRFVersionMetadataUtil(dataSource);
             ArrayList<SectionBean> crfSections = metadataUtil.retrieveFormMetadata(crfVersion);

@@ -39,20 +39,31 @@ import org.researchedc.controller.helper.TransferObject;
 import org.researchedc.core.EmailEngine;
 import org.researchedc.core.OpenClinicaMailSender;
 import org.researchedc.dao.admin.AuditDAO;
+import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
+import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.hibernate.CrfVersionDao;
 import org.researchedc.dao.hibernate.EventCrfDao;
 import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudySubjectDao;
+
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.datamap.CrfVersion;
 import org.researchedc.domain.datamap.EventCrf;
@@ -89,11 +100,7 @@ public class BatchCRFMigrationController implements Runnable {
 
     @Autowired
     private StudySubjectDao studySubjectDao;
-
-    @Autowired
     private StudyEventDao studyEventDao;
-
-    @Autowired
     private CrfVersionDao crfVersionDao;
 
     @Autowired
@@ -510,39 +517,39 @@ public class BatchCRFMigrationController implements Runnable {
     }
 
     @SuppressWarnings("rawtypes")
-    private StudyDAO sdao() {
+    private IStudyDAO sdao() {
         return new StudyDAO(dataSource);
     }
 
     @SuppressWarnings("rawtypes")
-    private EventCRFDAO ecdao() {
+    private EventCRFDao ecdao() {
         return new EventCRFDAO(dataSource);
     }
 
-    private StudyEventDAO sedao() {
+    private IStudyEventDAO sedao() {
         return new StudyEventDAO(dataSource);
     }
 
     @SuppressWarnings("rawtypes")
-    private StudyEventDefinitionDAO seddao() {
+    private IStudyEventDefinitionDAO seddao() {
         return new StudyEventDefinitionDAO(dataSource);
     }
 
     @SuppressWarnings("rawtypes")
-    private StudySubjectDAO ssdao() {
+    private IStudySubjectDAO ssdao() {
         return new StudySubjectDAO(dataSource);
     }
 
-    private EventDefinitionCRFDAO edcdao() {
+    private EventDefinitionCRFDao edcdao() {
         return new EventDefinitionCRFDAO(dataSource);
     }
 
-    private UserAccountDAO uadao() {
+    private IUserAccountDAO uadao() {
         return new UserAccountDAO(dataSource);
     }
 
     @SuppressWarnings("rawtypes")
-    private CRFDAO cdao() {
+    private ICrfDAO cdao() {
         return new CRFDAO(dataSource);
     }
 
@@ -551,7 +558,7 @@ public class BatchCRFMigrationController implements Runnable {
         return new CRFVersionDAO(dataSource);
     }
 
-    private AuditDAO auditDao() {
+    private AuditDao auditDao() {
         return new AuditDAO(dataSource);
     }
 

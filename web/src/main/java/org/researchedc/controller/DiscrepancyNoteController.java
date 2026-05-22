@@ -19,14 +19,18 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.dao.hibernate.AuthoritiesDao;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.domain.user.AuthoritiesBean;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
@@ -66,7 +70,7 @@ public class DiscrepancyNoteController {
 	public static final String FORM_CONTEXT = "ecid";
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-	StudyDAO sdao;
+	IStudyDAO sdao;
 	DiscrepancyNoteDAO dnDao;
 
 	@RequestMapping(value = "/dnote", method = RequestMethod.POST)
@@ -88,10 +92,10 @@ public class DiscrepancyNoteController {
 		String dn_id = map.get("DN_Id");
 		dn_id = dn_id != null ? dn_id.replaceFirst("DN_",""): dn_id;
 
-		UserAccountDAO udao = new UserAccountDAO(dataSource);
-		StudySubjectDAO ssdao = new StudySubjectDAO(dataSource);
-		StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(dataSource);
-		StudyEventDAO sedao = new StudyEventDAO(dataSource);
+		IUserAccountDAO udao = new UserAccountDAO(dataSource);
+		IStudySubjectDAO ssdao = new StudySubjectDAO(dataSource);
+		IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(dataSource);
+		IStudyEventDAO sedao = new StudyEventDAO(dataSource);
 		DiscrepancyNoteDAO dndao = new DiscrepancyNoteDAO(dataSource);
 
 		UserAccountBean assignedUserBean = (UserAccountBean) udao.findByUserName(assignedUser);

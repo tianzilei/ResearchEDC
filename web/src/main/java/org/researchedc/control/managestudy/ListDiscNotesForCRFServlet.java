@@ -4,6 +4,10 @@ package org.researchedc.control.managestudy;
  *
  */
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
@@ -13,17 +17,21 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.ListDiscNotesForCRFTableFactory;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.SubjectDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -31,6 +39,10 @@ import org.researchedc.web.InsufficientPermissionException;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
+import org.researchedc.dao.spi.StudyGroupDao;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 
 public class ListDiscNotesForCRFServlet extends SecureController {
 
@@ -38,18 +50,18 @@ public class ListDiscNotesForCRFServlet extends SecureController {
     public static final String RESOLUTION_STATUS = "resolutionStatus";
     public static final String FILTER_SUMMARY = "filterSummary";
     Locale locale;
-    private StudyEventDefinitionDAO studyEventDefinitionDAO;
-    private SubjectDAO subjectDAO;
-    private StudySubjectDAO studySubjectDAO;
-    private StudyEventDAO studyEventDAO;
-    private StudyGroupClassDAO studyGroupClassDAO;
-    private SubjectGroupMapDAO subjectGroupMapDAO;
-    private StudyDAO studyDAO;
-    private StudyGroupDAO studyGroupDAO;
-    private EventCRFDAO eventCRFDAO;
-    private EventDefinitionCRFDAO eventDefintionCRFDAO;
-    private DiscrepancyNoteDAO discrepancyNoteDAO;
-    private CRFDAO crfDAO;
+    private IStudyEventDefinitionDAO studyEventDefinitionDAO;
+    private ISubjectDAO subjectDAO;
+    private IStudySubjectDAO studySubjectDAO;
+    private IStudyEventDAO studyEventDAO;
+    private StudyGroupClassDao studyGroupClassDAO;
+    private SubjectGroupMapDao subjectGroupMapDAO;
+    private IStudyDAO studyDAO;
+    private StudyGroupDao studyGroupDAO;
+    private EventCRFDao eventCRFDAO;
+    private EventDefinitionCRFDao eventDefintionCRFDAO;
+    private IDiscrepancyNoteDAO discrepancyNoteDAO;
+    private ICrfDAO crfDAO;
 
     // < ResourceBundleresword;
     /*
@@ -188,64 +200,64 @@ public class ListDiscNotesForCRFServlet extends SecureController {
         forwardPage(Page.LIST_DNOTES_FOR_CRF);
     }
 
-    public StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+    public IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
         studyEventDefinitionDAO = studyEventDefinitionDAO == null ? new StudyEventDefinitionDAO(sm.getDataSource()) : studyEventDefinitionDAO;
         return studyEventDefinitionDAO;
     }
 
-    public SubjectDAO getSubjectDAO() {
+    public ISubjectDAO getSubjectDAO() {
         subjectDAO = this.subjectDAO == null ? new SubjectDAO(sm.getDataSource()) : subjectDAO;
         return subjectDAO;
     }
 
-    public StudySubjectDAO getStudySubjectDAO() {
+    public IStudySubjectDAO getStudySubjectDAO() {
         studySubjectDAO = this.studySubjectDAO == null ? new StudySubjectDAO(sm.getDataSource()) : studySubjectDAO;
         return studySubjectDAO;
     }
 
     public StudyGroupClassDAO getStudyGroupClassDAO() {
         studyGroupClassDAO = this.studyGroupClassDAO == null ? new StudyGroupClassDAO(sm.getDataSource()) : studyGroupClassDAO;
-        return studyGroupClassDAO;
+        return (StudyGroupClassDAO) studyGroupClassDAO;
     }
 
     public SubjectGroupMapDAO getSubjectGroupMapDAO() {
         subjectGroupMapDAO = this.subjectGroupMapDAO == null ? new SubjectGroupMapDAO(sm.getDataSource()) : subjectGroupMapDAO;
-        return subjectGroupMapDAO;
+        return (SubjectGroupMapDAO) subjectGroupMapDAO;
     }
 
-    public StudyEventDAO getStudyEventDAO() {
+    public IStudyEventDAO getStudyEventDAO() {
         studyEventDAO = this.studyEventDAO == null ? new StudyEventDAO(sm.getDataSource()) : studyEventDAO;
         return studyEventDAO;
     }
 
-    public StudyDAO getStudyDAO() {
+    public IStudyDAO getStudyDAO() {
         studyDAO = this.studyDAO == null ? new StudyDAO(sm.getDataSource()) : studyDAO;
         return studyDAO;
     }
 
-    public EventCRFDAO getEventCRFDAO() {
+    public EventCRFDao getEventCRFDAO() {
         eventCRFDAO = this.eventCRFDAO == null ? new EventCRFDAO(sm.getDataSource()) : eventCRFDAO;
         return eventCRFDAO;
     }
 
-    public EventDefinitionCRFDAO getEventDefinitionCRFDAO() {
+    public EventDefinitionCRFDao getEventDefinitionCRFDAO() {
         eventDefintionCRFDAO = this.eventDefintionCRFDAO == null ? new EventDefinitionCRFDAO(sm.getDataSource()) : eventDefintionCRFDAO;
         return eventDefintionCRFDAO;
     }
 
-    public CRFDAO getCrfDAO() {
+    public ICrfDAO getCrfDAO() {
         crfDAO = this.crfDAO == null ? new CRFDAO(sm.getDataSource()) : crfDAO;
         return crfDAO;
     }
 
     public StudyGroupDAO getStudyGroupDAO() {
         studyGroupDAO = this.studyGroupDAO == null ? new StudyGroupDAO(sm.getDataSource()) : studyGroupDAO;
-        return studyGroupDAO;
+        return (StudyGroupDAO) studyGroupDAO;
     }
 
     public DiscrepancyNoteDAO getDiscrepancyNoteDAO() {
         discrepancyNoteDAO = this.discrepancyNoteDAO == null ? new DiscrepancyNoteDAO(sm.getDataSource()) : discrepancyNoteDAO;
-        return discrepancyNoteDAO;
+        return (DiscrepancyNoteDAO) discrepancyNoteDAO;
     }
 
 }

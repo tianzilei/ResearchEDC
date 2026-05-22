@@ -11,6 +11,7 @@ import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.extract.ExtractPropertyBean;
 import org.researchedc.bean.login.UserAccountBean;
@@ -21,8 +22,8 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.extract.ExtractUtils;
 import org.researchedc.service.extract.XsltTriggerService;
@@ -154,7 +155,7 @@ public class UpdateJobExportServlet extends SecureController {
                 forwardPage(Page.UPDATE_JOB_EXPORT);
             } else {
                 // change trigger, update in database
-                StudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+                IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
                 StudyBean study = (StudyBean) studyDAO.findByPK(sm.getUserBean().getActiveStudyId());
                 DatasetDAO datasetDao = new DatasetDAO(sm.getDataSource());
                 CoreResources cr =  new CoreResources();

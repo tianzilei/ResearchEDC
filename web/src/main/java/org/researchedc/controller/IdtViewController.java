@@ -17,14 +17,15 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.dao.hibernate.AuthoritiesDao;
 import org.researchedc.dao.hibernate.EventCrfFlagDao;
 import org.researchedc.dao.hibernate.EventCrfFlagWorkflowDao;
-import org.researchedc.dao.hibernate.ItemDataDao;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.hibernate.IdtViewDao;
 import org.researchedc.dao.hibernate.ItemDataFlagDao;
 import org.researchedc.dao.hibernate.ItemDataFlagWorkflowDao;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.domain.datamap.EventCrfFlag;
 import org.researchedc.domain.datamap.EventCrfFlagWorkflow;
@@ -95,7 +96,7 @@ public class IdtViewController {
     EventCrfFlagDao eventCrfFlagDao;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-    StudyDAO sdao;
+    IStudyDAO sdao;
 
     @RequestMapping(value = "/sdv/{filternumber}/{studyoid}/paginated", params = { "page", "per_page" }, method = RequestMethod.GET)
     public ResponseEntity<List<IdtView>> getPaginatedIdtViewData(@PathVariable("filternumber") String filterNumber, @PathVariable("studyoid") String studyOid,

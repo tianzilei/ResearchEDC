@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.submit;
 
+import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
@@ -16,6 +17,7 @@ import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.service.rule.RuleSetServiceInterface;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.researchedc.dao.spi.IRuleSetDAO;
 
 /**
  * @author Krikor Krumlian

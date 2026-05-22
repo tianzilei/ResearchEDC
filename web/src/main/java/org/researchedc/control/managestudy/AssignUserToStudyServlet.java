@@ -17,7 +17,9 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.EmailEngine;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.bean.EntityBeanTable;
@@ -134,7 +136,7 @@ public class AssignUserToStudyServlet extends SecureController {
 
     private void addUser(ArrayList users) throws Exception {
         String pageMass = "";
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
         FormProcessor fp = new FormProcessor(request);
         Map tmpSelectedUsersMap = (HashMap) session.getAttribute("tmpSelectedUsersMap");
         Set addedUsers = new HashSet();
@@ -242,7 +244,7 @@ public class AssignUserToStudyServlet extends SecureController {
      * @return
      */
     private ArrayList findUsers() {
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
         ArrayList userList = (ArrayList) udao.findAll();
         ArrayList userAvailable = new ArrayList();
         for (int i = 0; i < userList.size(); i++) {
@@ -267,7 +269,7 @@ public class AssignUserToStudyServlet extends SecureController {
 
                 } else {
                     // find all the sites for this top study
-                    StudyDAO sdao = new StudyDAO(sm.getDataSource());
+                    IStudyDAO sdao = new StudyDAO(sm.getDataSource());
                     ArrayList sites = (ArrayList) sdao.findAllByParent(currentStudy.getId());
                     String notes = "";
                     for (int j = 0; j < sites.size(); j++) {

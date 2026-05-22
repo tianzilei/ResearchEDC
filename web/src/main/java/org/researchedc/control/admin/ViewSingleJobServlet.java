@@ -1,5 +1,6 @@
 package org.researchedc.control.admin;
 
+import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.bean.admin.AuditEventBean;
 import org.researchedc.bean.admin.TriggerBean;
 import org.researchedc.bean.extract.DatasetBean;
@@ -8,8 +9,9 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.AuditEventDAO;
-import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.bean.AuditEventRow;
@@ -91,7 +93,7 @@ public class ViewSingleJobServlet extends SecureController {
         logger.debug("found group name: " + groupName);
           TriggerBean triggerBean = new TriggerBean();
         JobDataMap dataMap = new JobDataMap();
-        AuditEventDAO auditEventDAO = new AuditEventDAO(sm.getDataSource());
+        IAuditEventDAO auditEventDAO = new AuditEventDAO(sm.getDataSource());
 
         try {
             triggerBean.setFullName(trigger.getKey().getName());
@@ -130,7 +132,7 @@ public class ViewSingleJobServlet extends SecureController {
                 int userId = dataMap.getInt(ExampleSpringJob.USER_ID);
                 // need to set information, extract bean, user account bean
 
-                UserAccountDAO userAccountDAO = new UserAccountDAO(sm.getDataSource());
+                IUserAccountDAO userAccountDAO = new UserAccountDAO(sm.getDataSource());
 
                 triggerBean.setContactEmail(contactEmail);
 

@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.submit;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.SubjectEventStatus;
@@ -22,10 +23,12 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.hibernate.RuleSetDao;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -103,7 +106,7 @@ public class CreateNewStudyEventServlet extends SecureController {
         int studyEventDefinitionId = fp.getInt(INPUT_STUDY_EVENT_DEFINITION);
 
         // TODO: make this sensitive to permissions
-        StudySubjectDAO sdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO sdao = new StudySubjectDAO(sm.getDataSource());
         StudySubjectBean ssb;
         if (studySubjectId <= 0) {
             ssb = (StudySubjectBean) request.getAttribute(INPUT_STUDY_SUBJECT);
@@ -136,8 +139,8 @@ public class CreateNewStudyEventServlet extends SecureController {
         }
         // find all active definitions with CRFs
         ArrayList eventDefinitions = seddao.findAllActiveByStudy(studyWithEventDefinitions);
-        // EventDefinitionCRFDAO edcdao = new
-        // EventDefinitionCRFDAO(sm.getDataSource());
+        // EventDefinitionCRFDao edcdao = new
+        // EventDefinitionCRFDao(sm.getDataSource());
         // ArrayList definitionsWithCRF = new ArrayList();
         // for (int i=0; i<eventDefinitions.size(); i++) {
         // StudyEventDefinitionBean sed =
@@ -163,7 +166,7 @@ public class CreateNewStudyEventServlet extends SecureController {
         ArrayList eventDefinitionsScheduled = eventDefinitions;
 
         if (!fp.isSubmitted()) {
-            // StudyEventDAO sed = new StudyEventDAO(sm.getDataSource());
+            // IStudyEventDAO sed = new StudyEventDAO(sm.getDataSource());
             // sed.updateSampleOrdinals_v092();
 
             HashMap presetValues = new HashMap();
@@ -474,7 +477,7 @@ public class CreateNewStudyEventServlet extends SecureController {
                 forwardPage(Page.CREATE_NEW_STUDY_EVENT);
             } else {
             	logger.debug("error is empty");
-                StudyEventDAO sed = new StudyEventDAO(sm.getDataSource());
+                IStudyEventDAO sed = new StudyEventDAO(sm.getDataSource());
 
                 StudyEventBean studyEvent = new StudyEventBean();
                 studyEvent.setStudyEventDefinitionId(definition.getId());
@@ -670,7 +673,7 @@ public class CreateNewStudyEventServlet extends SecureController {
             return true;
         }
 
-        StudyEventDAO sedao = new StudyEventDAO(ds);
+        IStudyEventDAO sedao = new StudyEventDAO(ds);
         ArrayList allEvents = sedao.findAllByDefinitionAndSubject(studyEventDefinition, studySubject);
 
         if (allEvents.size() > 0) {
@@ -745,7 +748,7 @@ public class CreateNewStudyEventServlet extends SecureController {
 
     
     private RuleSetDao getRuleSetDao() {
-       return (RuleSetDao) SpringServletAccess.getApplicationContext(context).getBean("ruleSetDao");
+       return SpringServletAccess.getApplicationContext(context).getBean(RuleSetDao.class);
         
     }
 

@@ -7,6 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.login.UserAccountBean;
@@ -24,17 +25,24 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -105,18 +113,18 @@ public class ViewNoteServlet extends SecureController {
                     //Mantis Issue 5165. It should be itemData.getId() instead of item.getId()
                     note.setEntityId(itemData.getId());
 
-                    EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+                    EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
                     EventCRFBean ec = (EventCRFBean) ecdao.findByPK(itemData.getEventCRFId());
 
-                    StudyEventDAO sed = new StudyEventDAO(sm.getDataSource());
+                    IStudyEventDAO sed = new StudyEventDAO(sm.getDataSource());
                     StudyEventBean se = (StudyEventBean) sed.findByPK(ec.getStudyEventId());
 
-                    StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+                    IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
                     StudySubjectBean ssub = (StudySubjectBean) ssdao.findByPK(se.getStudySubjectId());
 
                     note.setStudySub(ssub);
 
-                    StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+                    IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
                     StudyEventDefinitionBean sedb = (StudyEventDefinitionBean) seddao.findByPK(se.getStudyEventDefinitionId());
 
                     se.setName(sedb.getName());
@@ -125,17 +133,17 @@ public class ViewNoteServlet extends SecureController {
                     CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
                     CRFVersionBean cv = (CRFVersionBean) cvdao.findByPK(ec.getCRFVersionId());
 
-                    CRFDAO cdao = new CRFDAO(sm.getDataSource());
+                    ICrfDAO cdao = new CRFDAO(sm.getDataSource());
                     CRFBean crf = (CRFBean) cdao.findByPK(cv.getCrfId());
                     note.setCrfName(crf.getName());
 
                 } else if ("studySub".equalsIgnoreCase(entityType)) {
-                    StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+                    IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
                     StudySubjectBean ssub = (StudySubjectBean) ssdao.findByPK(note.getEntityId());
 
                     note.setStudySub(ssub);
                     // System.out.println("column" + note.getColumn());
-                    SubjectDAO sdao = new SubjectDAO(sm.getDataSource());
+                    ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
                     SubjectBean sub = (SubjectBean) sdao.findByPK(ssub.getSubjectId());
 
                     if (!StringUtil.isBlank(note.getColumn())) {
@@ -157,7 +165,7 @@ public class ViewNoteServlet extends SecureController {
 
                 } else if ("subject".equalsIgnoreCase(entityType)) {
 
-                    SubjectDAO sdao = new SubjectDAO(sm.getDataSource());
+                    ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
                     SubjectBean sub = (SubjectBean) sdao.findByPK(note.getEntityId());
                     StudySubjectBean ssub = new StudySubjectBean();
                     ssub.setLabel(sub.getUniqueIdentifier());
@@ -180,15 +188,15 @@ public class ViewNoteServlet extends SecureController {
 
                 } else if ("studyEvent".equalsIgnoreCase(entityType)) {
 
-                    StudyEventDAO sed = new StudyEventDAO(sm.getDataSource());
+                    IStudyEventDAO sed = new StudyEventDAO(sm.getDataSource());
                     StudyEventBean se = (StudyEventBean) sed.findByPK(note.getEntityId());
 
-                    StudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+                    IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
                     StudySubjectBean ssub = (StudySubjectBean) ssdao.findByPK(se.getStudySubjectId());
 
                     note.setStudySub(ssub);
 
-                    StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+                    IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
                     StudyEventDefinitionBean sedb = (StudyEventDefinitionBean) seddao.findByPK(se.getStudyEventDefinitionId());
 
                     se.setName(sedb.getName());
@@ -216,7 +224,7 @@ public class ViewNoteServlet extends SecureController {
                     }
 
                 } else if ("eventCrf".equalsIgnoreCase(entityType)) {
-                    EventCRFDAO ecdao = new EventCRFDAO(sm.getDataSource());
+                    EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
                     EventCRFBean ec = (EventCRFBean) ecdao.findByPK(note.getEntityId());
                     StudySubjectBean ssub = (StudySubjectBean) new StudySubjectDAO(sm.getDataSource()).findByPK(ec.getStudySubjectId());
                     note.setStudySub(ssub);
@@ -252,7 +260,7 @@ public class ViewNoteServlet extends SecureController {
                 }
             } else {
                 // The SubjectStudy is not belong to currentstudy and current study is not a site.
-                StudyDAO studydao = new StudyDAO(sm.getDataSource());
+                IStudyDAO studydao = new StudyDAO(sm.getDataSource());
                 Collection sites;
                 sites = studydao.findOlnySiteIdsByStudy(currentStudy);
                 if (!sites.contains(note.getStudySub().getStudyId())) {
@@ -267,7 +275,7 @@ public class ViewNoteServlet extends SecureController {
 
 
 
-        UserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
 
         ArrayList<DiscrepancyNoteBean> notes = dndao.findAllEntityByPK(note.getEntityType(), noteId);
 

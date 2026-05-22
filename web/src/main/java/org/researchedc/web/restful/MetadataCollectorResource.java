@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 import net.sf.json.JSON;
 import net.sf.json.xml.XMLSerializer;
 
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.extract.odm.ClinicalDataReportBean;
 import org.researchedc.bean.extract.odm.FullReportBean;
 import org.researchedc.bean.extract.odm.MetaDataReportBean;
@@ -15,15 +16,15 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.odmbeans.ODMBean;
 import org.researchedc.bean.odmbeans.OdmClinicalDataBean;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
-import org.researchedc.dao.hibernate.StudyDao;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.service.StudyConfigService;
-import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.domain.datamap.Study;
 import org.researchedc.logic.odmExport.AdminDataCollector;
 import org.researchedc.logic.odmExport.MetaDataCollector;
+import org.researchedc.dao.spi.IRuleDAO;
 
 /**
  * R
@@ -35,21 +36,21 @@ public class MetadataCollectorResource {
     private static final int INDENT_LEVEL = 2;
 	private DataSource dataSource;
 	
-	private StudyDAO studyDao;
+	private IStudyDAO studyDao;
 	
 private RuleSetRuleDao ruleSetRuleDao;	
 
 private CoreResources coreResources;
 //Testing purposes TODO:remove me 
-private StudyDao studyDaoHib;
+private IStudyDAO studyDaoHib;
 
-	public StudyDao getStudyDaoHib() {
+	public IStudyDAO getStudyDaoHib() {
 	return studyDaoHib;
 }
 
 
 
-public void setStudyDaoHib(StudyDao studyDaoHib) {
+public void setStudyDaoHib(IStudyDAO studyDaoHib) {
 	this.studyDaoHib = studyDaoHib;
 }
 
@@ -79,13 +80,13 @@ public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
 
 
 
-	public StudyDAO getStudyDao() {
+	public IStudyDAO getStudyDao() {
 		return new StudyDAO(dataSource);
 	}
 
 
 
-	public void setStudyDao(StudyDAO studyDao) {
+	public void setStudyDao(IStudyDAO studyDao) {
 		this.studyDao = studyDao;
 	}
 
