@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: Schema Ownership — module-owned study_subject table -->
+    <!-- The module_study_subject table replaces the shared study_subject table for the Subject Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-subject-seq-1">
+        <comment>Create sequence for module_study_subject PK</comment>
+        <createSequence sequenceName="module_study_subject_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-subject-table-2">
+        <comment>Create module_study_subject table with all columns matching StudySubjectEntity</comment>
+        <createTable tableName="module_study_subject">
+            <column name="study_subject_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_id" type="INT"/>
+            <column name="subject_id" type="INT"/>
+            <column name="label" type="VARCHAR(30)"/>
+            <column name="secondary_label" type="VARCHAR(30)"/>
+            <column name="enrollment_date" type="TIMESTAMP"/>
+            <column name="oc_oid" type="VARCHAR(40)"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="owner_id" type="INT"/>
+            <column name="update_id" type="INT"/>
+            <column name="status_id" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-subject-pk-3">
+        <comment>Add primary key on study_subject_id</comment>
+        <addPrimaryKey columnNames="study_subject_id" constraintName="pk_module_study_subject" tableName="module_study_subject"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-subject-copy-4">
+        <comment>Copy existing data from legacy study_subject table to module_study_subject</comment>
+        <sql>
+            INSERT INTO module_study_subject (
+                study_subject_id, study_id, subject_id, label,
+                secondary_label, enrollment_date, oc_oid,
+                date_created, date_updated, owner_id, update_id, status_id
+            )
+            SELECT
+                study_subject_id, study_id, subject_id, label,
+                secondary_label, enrollment_date, oc_oid,
+                date_created, date_updated, owner_id, update_id, status_id
+            FROM study_subject
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-subject-seq-val-5">
+        <comment>Set sequence to max existing study_subject_id</comment>
+        <sql>
+            SELECT setval('module_study_subject_id_seq', COALESCE((SELECT MAX(study_subject_id) FROM study_subject), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

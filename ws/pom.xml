@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>research-edc-core</artifactId>
+            <artifactId>research-edc-shared</artifactId>
             <version>${project.version}</version>
         </dependency>
 

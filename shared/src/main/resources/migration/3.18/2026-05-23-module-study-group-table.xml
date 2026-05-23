@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: Schema Ownership — module-owned study_group table -->
+    <!-- The module_study_group table replaces the shared study_group table for the SubjectGroup Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-group-seq-1">
+        <comment>Create sequence for module_study_group PK</comment>
+        <createSequence sequenceName="module_study_group_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-group-table-2">
+        <comment>Create module_study_group table with all columns matching StudyGroupEntity</comment>
+        <createTable tableName="module_study_group">
+            <column name="study_group_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(1000)"/>
+            <column name="study_group_class_id" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-group-pk-3">
+        <comment>Add primary key on study_group_id</comment>
+        <addPrimaryKey columnNames="study_group_id" constraintName="pk_module_study_group" tableName="module_study_group"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-group-copy-4">
+        <comment>Copy existing data from legacy study_group table to module_study_group</comment>
+        <sql>
+            INSERT INTO module_study_group (
+                study_group_id, name, description, study_group_class_id
+            )
+            SELECT
+                study_group_id, name, description, study_group_class_id
+            FROM study_group
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-group-seq-val-5">
+        <comment>Set sequence to max existing study_group_id</comment>
+        <sql>
+            SELECT setval('module_study_group_id_seq', COALESCE((SELECT MAX(study_group_id) FROM study_group), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

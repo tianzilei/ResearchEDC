@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Backward-compatibility sync: module_response_set → legacy response_set table -->
+    <!-- Ensures legacy JSP pages reading via EntityDAO see module-written data -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-response-set-sync-trigger" dbms="postgresql">
+        <comment>Create sync function and trigger: module_response_set → response_set</comment>
+        <sql>
+            CREATE OR REPLACE FUNCTION sync_module_response_set_to_response_set()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO response_set (
+                        response_set_id, response_type_id, label,
+                        options_text, options_values, version_id
+                    )
+                    VALUES (
+                        NEW.response_set_id, NEW.response_type_id, NEW.label,
+                        NEW.options_text, NEW.options_values, NEW.version_id
+                    );
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE response_set SET
+                        response_type_id = NEW.response_type_id,
+                        label = NEW.label,
+                        options_text = NEW.options_text,
+                        options_values = NEW.options_values,
+                        version_id = NEW.version_id
+                    WHERE response_set_id = OLD.response_set_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM response_set WHERE response_set_id = OLD.response_set_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_sync_module_response_set
+            AFTER INSERT OR UPDATE OR DELETE ON module_response_set
+            FOR EACH ROW EXECUTE FUNCTION sync_module_response_set_to_response_set();
+        </sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_module_response_set ON module_response_set;
+            DROP FUNCTION IF EXISTS sync_module_response_set_to_response_set();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

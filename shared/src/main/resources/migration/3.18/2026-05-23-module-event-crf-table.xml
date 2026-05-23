@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: Schema Ownership — module-owned event_crf table -->
+    <!-- The module_event_crf table replaces the shared event_crf table for the Event Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-event-crf-seq-1">
+        <comment>Create sequence for module_event_crf PK</comment>
+        <createSequence sequenceName="module_event_crf_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-event-crf-table-2">
+        <comment>Create module_event_crf table with all columns matching EventCrfEntity</comment>
+        <createTable tableName="module_event_crf">
+            <column name="event_crf_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_event_id" type="INT"/>
+            <column name="study_subject_id" type="INT"/>
+            <column name="crf_version_id" type="INT"/>
+            <column name="status_id" type="INT"/>
+            <column name="date_interviewed" type="TIMESTAMP"/>
+            <column name="interviewer_name" type="VARCHAR(255)"/>
+            <column name="annotations" type="VARCHAR(4000)"/>
+            <column name="date_completed" type="TIMESTAMP"/>
+            <column name="validator_id" type="INT"/>
+            <column name="date_validate" type="TIMESTAMP"/>
+            <column name="date_validate_completed" type="TIMESTAMP"/>
+            <column name="validator_annotations" type="VARCHAR(4000)"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="owner_id" type="INT"/>
+            <column name="update_id" type="INT"/>
+            <column name="electronic_signature_status" type="BOOLEAN"/>
+            <column name="sdv_status" type="BOOLEAN"/>
+            <column name="old_status_id" type="INT"/>
+            <column name="sdv_update_id" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-event-crf-pk-3">
+        <comment>Add primary key on event_crf_id</comment>
+        <addPrimaryKey columnNames="event_crf_id" constraintName="pk_module_event_crf" tableName="module_event_crf"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-event-crf-copy-4">
+        <comment>Copy existing data from legacy event_crf table to module_event_crf</comment>
+        <sql>
+            INSERT INTO module_event_crf (
+                event_crf_id, study_event_id, study_subject_id, crf_version_id,
+                status_id, date_interviewed, interviewer_name, annotations,
+                date_completed, validator_id, date_validate, date_validate_completed,
+                validator_annotations, date_created, date_updated, owner_id, update_id,
+                electronic_signature_status, sdv_status, old_status_id, sdv_update_id
+            )
+            SELECT
+                event_crf_id, study_event_id, study_subject_id, crf_version_id,
+                status_id, date_interviewed, interviewer_name, annotations,
+                date_completed, validator_id, date_validate, date_validate_completed,
+                validator_annotations, date_created, date_updated, owner_id, update_id,
+                electronic_signature_status, sdv_status, old_status_id, sdv_update_id
+            FROM event_crf
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-event-crf-seq-val-5">
+        <comment>Set sequence to max existing event_crf_id</comment>
+        <sql>
+            SELECT setval('module_event_crf_id_seq', COALESCE((SELECT MAX(event_crf_id) FROM event_crf), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

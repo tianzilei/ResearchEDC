@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: Schema Ownership — module-owned response_set table -->
+    <!-- The module_response_set table replaces the shared response_set table for the DataCapture Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-response-set-seq-1">
+        <comment>Create sequence for module_response_set PK</comment>
+        <createSequence sequenceName="module_response_set_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-response-set-table-2">
+        <comment>Create module_response_set table with all columns matching ResponseSetEntity</comment>
+        <createTable tableName="module_response_set">
+            <column name="response_set_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="response_type_id" type="INT"/>
+            <column name="label" type="VARCHAR(255)"/>
+            <column name="options_text" type="TEXT"/>
+            <column name="options_values" type="TEXT"/>
+            <column name="version_id" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-response-set-pk-3">
+        <comment>Add primary key on response_set_id</comment>
+        <addPrimaryKey columnNames="response_set_id" constraintName="pk_module_response_set" tableName="module_response_set"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-response-set-copy-4">
+        <comment>Copy existing data from legacy response_set table to module_response_set</comment>
+        <sql>
+            INSERT INTO module_response_set (
+                response_set_id, response_type_id, label,
+                options_text, options_values, version_id
+            )
+            SELECT
+                response_set_id, response_type_id, label,
+                options_text, options_values, version_id
+            FROM response_set
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-response-set-seq-val-5">
+        <comment>Set sequence to max existing response_set_id</comment>
+        <sql>
+            SELECT setval('module_response_set_id_seq', COALESCE((SELECT MAX(response_set_id) FROM response_set), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

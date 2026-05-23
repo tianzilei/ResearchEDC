@@ -10,7 +10,7 @@
 
 	<modules>
 		<module>research-edc-bom</module>
-		<module>legacy-core</module>
+		<module>shared</module>
 		<module>web</module>
 		<module>ws</module>
 		<module>app</module>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: Schema Ownership — module-owned user_account table -->
+    <!-- The module_user_account table replaces the shared user_account table for the Identity Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-user-account-seq-1">
+        <comment>Create sequence for module_user_account PK</comment>
+        <createSequence sequenceName="module_user_account_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-user-account-table-2">
+        <comment>Create module_user_account table with all columns matching UserAccountEntity</comment>
+        <createTable tableName="module_user_account">
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_name" type="VARCHAR(40)"/>
+            <column name="first_name" type="VARCHAR(60)"/>
+            <column name="last_name" type="VARCHAR(60)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="phone" type="VARCHAR(255)"/>
+            <column name="institutional_affiliation" type="VARCHAR(255)"/>
+            <column name="user_type_id" type="INT"/>
+            <column name="status_id" type="INT"/>
+            <column name="active_study_id" type="INT"/>
+            <column name="enabled" type="BOOLEAN"/>
+            <column name="account_non_locked" type="BOOLEAN"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="owner_id" type="INT"/>
+            <column name="update_id" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-user-account-pk-3">
+        <comment>Add primary key on user_id</comment>
+        <addPrimaryKey columnNames="user_id" constraintName="pk_module_user_account" tableName="module_user_account"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-user-account-copy-4">
+        <comment>Copy existing data from legacy user_account table to module_user_account</comment>
+        <sql>
+            INSERT INTO module_user_account (
+                user_id, user_name, first_name, last_name, email, phone,
+                institutional_affiliation, user_type_id, status_id, active_study_id,
+                enabled, account_non_locked, date_created, date_updated, owner_id, update_id
+            )
+            SELECT
+                user_id, user_name, first_name, last_name, email, phone,
+                institutional_affiliation, user_type_id, status_id, active_study,
+                enabled, account_non_locked, date_created, date_updated, owner_id, update_id
+            FROM user_account
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-user-account-seq-val-5">
+        <comment>Set sequence to max existing user_id</comment>
+        <sql>
+            SELECT setval('module_user_account_id_seq', COALESCE((SELECT MAX(user_id) FROM user_account), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

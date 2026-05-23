@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: Schema Ownership — module-owned study table -->
+    <!-- The module_study table replaces the shared study table for the Study Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-seq-1">
+        <comment>Create sequence for module_study PK</comment>
+        <createSequence sequenceName="module_study_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-table-2">
+        <comment>Create module_study table with all columns matching StudyEntity</comment>
+        <createTable tableName="module_study">
+            <column name="study_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_study_id" type="INT"/>
+            <column name="unique_identifier" type="VARCHAR(30)"/>
+            <column name="secondary_identifier" type="VARCHAR(255)"/>
+            <column name="name" type="VARCHAR(60)"/>
+            <column name="summary" type="VARCHAR(255)"/>
+            <column name="date_planned_start" type="TIMESTAMP"/>
+            <column name="date_planned_end" type="TIMESTAMP"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="owner_id" type="INT"/>
+            <column name="update_id" type="INT"/>
+            <column name="type_id" type="INT"/>
+            <column name="status_id" type="INT"/>
+            <column name="principal_investigator" type="VARCHAR(255)"/>
+            <column name="facility_name" type="VARCHAR(255)"/>
+            <column name="facility_city" type="VARCHAR(255)"/>
+            <column name="facility_state" type="VARCHAR(20)"/>
+            <column name="facility_zip" type="VARCHAR(64)"/>
+            <column name="facility_country" type="VARCHAR(64)"/>
+            <column name="facility_recruitment_status" type="VARCHAR(60)"/>
+            <column name="facility_contact_name" type="VARCHAR(255)"/>
+            <column name="facility_contact_degree" type="VARCHAR(255)"/>
+            <column name="facility_contact_phone" type="VARCHAR(255)"/>
+            <column name="facility_contact_email" type="VARCHAR(255)"/>
+            <column name="protocol_type" type="VARCHAR(30)"/>
+            <column name="protocol_description" type="VARCHAR(1000)"/>
+            <column name="protocol_date_verification" type="TIMESTAMP"/>
+            <column name="phase" type="VARCHAR(30)"/>
+            <column name="expected_total_enrollment" type="INT"/>
+            <column name="sponsor" type="VARCHAR(255)"/>
+            <column name="collaborators" type="VARCHAR(1000)"/>
+            <column name="medline_identifier" type="VARCHAR(255)"/>
+            <column name="url" type="VARCHAR(255)"/>
+            <column name="url_description" type="VARCHAR(255)"/>
+            <column name="conditions" type="VARCHAR(1000)"/>
+            <column name="keywords" type="VARCHAR(1000)"/>
+            <column name="eligibility" type="VARCHAR(1000)"/>
+            <column name="gender" type="VARCHAR(1)"/>
+            <column name="age_max" type="VARCHAR(3)"/>
+            <column name="age_min" type="VARCHAR(3)"/>
+            <column name="healthy_volunteer_accepted" type="BOOLEAN"/>
+            <column name="purpose" type="VARCHAR(100)"/>
+            <column name="allocation" type="VARCHAR(100)"/>
+            <column name="masking" type="VARCHAR(100)"/>
+            <column name="control" type="VARCHAR(100)"/>
+            <column name="assignment" type="VARCHAR(100)"/>
+            <column name="endpoint" type="VARCHAR(100)"/>
+            <column name="interventions" type="VARCHAR(100)"/>
+            <column name="duration" type="VARCHAR(100)"/>
+            <column name="selection" type="VARCHAR(100)"/>
+            <column name="timing" type="VARCHAR(100)"/>
+            <column name="official_title" type="VARCHAR(1000)"/>
+            <column name="results_reference" type="BOOLEAN"/>
+            <column name="oc_oid" type="VARCHAR(40)"/>
+            <column name="old_status_id" type="INT"/>
+            <column name="version" type="INT"/>
+            <column name="feature_flags" type="JSONB"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-pk-3">
+        <comment>Add primary key on study_id</comment>
+        <addPrimaryKey columnNames="study_id" constraintName="pk_module_study" tableName="module_study"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-copy-4">
+        <comment>Copy existing data from legacy study table to module_study</comment>
+        <sql>
+            INSERT INTO module_study (
+                study_id, parent_study_id, unique_identifier, secondary_identifier,
+                name, summary, date_planned_start, date_planned_end,
+                date_created, date_updated, owner_id, update_id,
+                type_id, status_id, principal_investigator,
+                facility_name, facility_city, facility_state, facility_zip, facility_country,
+                facility_recruitment_status, facility_contact_name, facility_contact_degree,
+                facility_contact_phone, facility_contact_email,
+                protocol_type, protocol_description, protocol_date_verification,
+                phase, expected_total_enrollment, sponsor, collaborators,
+                medline_identifier, url, url_description,
+                conditions, keywords, eligibility,
+                gender, age_max, age_min, healthy_volunteer_accepted,
+                purpose, allocation, masking, control, assignment, endpoint,
+                interventions, duration, selection, timing,
+                official_title, results_reference, oc_oid, old_status_id, version,
+                feature_flags
+            )
+            SELECT
+                study_id, parent_study_id, unique_identifier, secondary_identifier,
+                name, summary, date_planned_start, date_planned_end,
+                date_created, date_updated, owner_id, update_id,
+                type_id, status_id, principal_investigator,
+                facility_name, facility_city, facility_state, facility_zip, facility_country,
+                facility_recruitment_status, facility_contact_name, facility_contact_degree,
+                facility_contact_phone, facility_contact_email,
+                protocol_type, protocol_description, protocol_date_verification,
+                phase, expected_total_enrollment, sponsor, collaborators,
+                medline_identifier, url, url_description,
+                conditions, keywords, eligibility,
+                gender, age_max, age_min, healthy_volunteer_accepted,
+                purpose, allocation, masking, control, assignment, endpoint,
+                interventions, duration, selection, timing,
+                official_title, results_reference, oc_oid, old_status_id, version,
+                feature_flags
+            FROM study
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-seq-val-5">
+        <comment>Set sequence to max existing study_id</comment>
+        <sql>
+            SELECT setval('module_study_id_seq', COALESCE((SELECT MAX(study_id) FROM study), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

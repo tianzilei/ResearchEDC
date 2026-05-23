@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Backward-compatibility sync: module_user_account → legacy user_account table -->
+    <!-- Ensures legacy JSP pages reading via EntityDAO see module-written data -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-user-account-sync-trigger" dbms="postgresql">
+        <comment>Create sync function and trigger: module_user_account → user_account</comment>
+        <sql>
+            CREATE OR REPLACE FUNCTION sync_module_user_account_to_user_account()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO user_account (
+                        user_id, user_name, first_name, last_name, email, phone,
+                        institutional_affiliation, user_type_id, status_id, active_study,
+                        enabled, account_non_locked, date_created, date_updated, owner_id, update_id
+                    )
+                    VALUES (
+                        NEW.user_id, NEW.user_name, NEW.first_name, NEW.last_name, NEW.email, NEW.phone,
+                        NEW.institutional_affiliation, NEW.user_type_id, NEW.status_id, NEW.active_study_id,
+                        NEW.enabled, NEW.account_non_locked, NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id
+                    );
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE user_account SET
+                        user_name = NEW.user_name,
+                        first_name = NEW.first_name,
+                        last_name = NEW.last_name,
+                        email = NEW.email,
+                        phone = NEW.phone,
+                        institutional_affiliation = NEW.institutional_affiliation,
+                        user_type_id = NEW.user_type_id,
+                        status_id = NEW.status_id,
+                        active_study = NEW.active_study_id,
+                        enabled = NEW.enabled,
+                        account_non_locked = NEW.account_non_locked,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id
+                    WHERE user_id = OLD.user_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM user_account WHERE user_id = OLD.user_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_sync_module_user_account
+            AFTER INSERT OR UPDATE OR DELETE ON module_user_account
+            FOR EACH ROW EXECUTE FUNCTION sync_module_user_account_to_user_account();
+        </sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_module_user_account ON module_user_account;
+            DROP FUNCTION IF EXISTS sync_module_user_account_to_user_account();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-set-rule-seq-1">
+        <comment>Create sequence for module_rule_set_rule PK</comment>
+        <createSequence sequenceName="module_rule_set_rule_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-set-rule-table-2">
+        <createTable tableName="module_rule_set_rule">
+            <column name="rule_set_rule_id" type="INT"><constraints nullable="false"/></column>
+            <column name="rule_set_id" type="INT"/>
+            <column name="rule_id" type="INT"/>
+            <column name="status_id" type="INT"/>
+            <column name="owner_id" type="INT"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="update_id" type="INT"/>
+            <column name="version" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-set-rule-pk-3">
+        <addPrimaryKey columnNames="rule_set_rule_id" constraintName="pk_module_rule_set_rule" tableName="module_rule_set_rule"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-set-rule-copy-4">
+        <sql>INSERT INTO module_rule_set_rule (rule_set_rule_id, rule_set_id, rule_id, status_id, owner_id, date_created, date_updated, update_id, version) SELECT rule_set_rule_id, rule_set_id, rule_id, status_id, owner_id, date_created, date_updated, update_id, version FROM rule_set_rule</sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-set-rule-seq-val-5">
+        <sql>SELECT setval('module_rule_set_rule_id_seq', COALESCE((SELECT MAX(rule_set_rule_id) FROM rule_set_rule), 1))</sql>
+    </changeSet>
+</databaseChangeLog>

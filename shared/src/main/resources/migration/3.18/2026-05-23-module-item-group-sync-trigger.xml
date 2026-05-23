@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Backward-compatibility sync: module_item_group → legacy item_group table -->
+    <!-- Ensures legacy JSP pages reading via EntityDAO see module-written data -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-item-group-sync-trigger" dbms="postgresql">
+        <comment>Create sync function and trigger: module_item_group → item_group</comment>
+        <sql>
+            CREATE OR REPLACE FUNCTION sync_module_item_group_to_item_group()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO item_group (
+                        item_group_id, crf_id, name, oc_oid,
+                        status_id, date_created, date_updated,
+                        owner_id, update_id
+                    )
+                    VALUES (
+                        NEW.item_group_id, NEW.crf_id, NEW.name, NEW.oc_oid,
+                        NEW.status_id, NEW.date_created, NEW.date_updated,
+                        NEW.owner_id, NEW.update_id
+                    );
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE item_group SET
+                        crf_id = NEW.crf_id,
+                        name = NEW.name,
+                        oc_oid = NEW.oc_oid,
+                        status_id = NEW.status_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id
+                    WHERE item_group_id = OLD.item_group_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM item_group WHERE item_group_id = OLD.item_group_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_sync_module_item_group
+            AFTER INSERT OR UPDATE OR DELETE ON module_item_group
+            FOR EACH ROW EXECUTE FUNCTION sync_module_item_group_to_item_group();
+        </sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_module_item_group ON module_item_group;
+            DROP FUNCTION IF EXISTS sync_module_item_group_to_item_group();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

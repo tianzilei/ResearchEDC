@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="research-edc" id="2026-05-23-module-rule-expression-sync-trigger" dbms="postgresql">
+        <sql>CREATE OR REPLACE FUNCTION sync_module_rule_expression_to_rule_expression() RETURNS TRIGGER AS $$ BEGIN IF (TG_OP = 'INSERT') THEN INSERT INTO rule_expression (rule_expression_id, value, context, status_id, owner_id, date_created, date_updated, update_id, version) VALUES (NEW.rule_expression_id, NEW.value, NEW.context, NEW.status_id, NEW.owner_id, NEW.date_created, NEW.date_updated, NEW.update_id, NEW.version); RETURN NEW; ELSIF (TG_OP = 'UPDATE') THEN UPDATE rule_expression SET value=NEW.value, context=NEW.context, status_id=NEW.status_id, owner_id=NEW.owner_id, date_created=NEW.date_created, date_updated=NEW.date_updated, update_id=NEW.update_id, version=NEW.version WHERE rule_expression_id=OLD.rule_expression_id; RETURN NEW; ELSIF (TG_OP = 'DELETE') THEN DELETE FROM rule_expression WHERE rule_expression_id=OLD.rule_expression_id; RETURN OLD; END IF; END; $$ LANGUAGE plpgsql; CREATE TRIGGER trg_sync_module_rule_expression AFTER INSERT OR UPDATE OR DELETE ON module_rule_expression FOR EACH ROW EXECUTE FUNCTION sync_module_rule_expression_to_rule_expression();</sql>
+        <rollback>DROP TRIGGER IF EXISTS trg_sync_module_rule_expression ON module_rule_expression; DROP FUNCTION IF EXISTS sync_module_rule_expression_to_rule_expression();</rollback>
+    </changeSet>
+</databaseChangeLog>

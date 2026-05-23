@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Backward-compatibility sync: module_study → legacy study table -->
+    <!-- Ensures legacy JSP pages reading via EntityDAO see module-written data -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-sync-trigger" dbms="postgresql">
+        <comment>Create sync function and trigger: module_study → study</comment>
+        <sql>
+            CREATE OR REPLACE FUNCTION sync_module_study_to_study()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO study (
+                        study_id, parent_study_id, unique_identifier, secondary_identifier,
+                        name, summary, date_planned_start, date_planned_end,
+                        date_created, date_updated, owner_id, update_id,
+                        type_id, status_id, principal_investigator,
+                        facility_name, facility_city, facility_state, facility_zip, facility_country,
+                        facility_recruitment_status, facility_contact_name, facility_contact_degree,
+                        facility_contact_phone, facility_contact_email,
+                        protocol_type, protocol_description, protocol_date_verification,
+                        phase, expected_total_enrollment, sponsor, collaborators,
+                        medline_identifier, url, url_description,
+                        conditions, keywords, eligibility,
+                        gender, age_max, age_min, healthy_volunteer_accepted,
+                        purpose, allocation, masking, control, assignment, endpoint,
+                        interventions, duration, selection, timing,
+                        official_title, results_reference, oc_oid, old_status_id, version,
+                        feature_flags
+                    )
+                    VALUES (
+                        NEW.study_id, NEW.parent_study_id, NEW.unique_identifier, NEW.secondary_identifier,
+                        NEW.name, NEW.summary, NEW.date_planned_start, NEW.date_planned_end,
+                        NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id,
+                        NEW.type_id, NEW.status_id, NEW.principal_investigator,
+                        NEW.facility_name, NEW.facility_city, NEW.facility_state, NEW.facility_zip, NEW.facility_country,
+                        NEW.facility_recruitment_status, NEW.facility_contact_name, NEW.facility_contact_degree,
+                        NEW.facility_contact_phone, NEW.facility_contact_email,
+                        NEW.protocol_type, NEW.protocol_description, NEW.protocol_date_verification,
+                        NEW.phase, NEW.expected_total_enrollment, NEW.sponsor, NEW.collaborators,
+                        NEW.medline_identifier, NEW.url, NEW.url_description,
+                        NEW.conditions, NEW.keywords, NEW.eligibility,
+                        NEW.gender, NEW.age_max, NEW.age_min, NEW.healthy_volunteer_accepted,
+                        NEW.purpose, NEW.allocation, NEW.masking, NEW.control, NEW.assignment, NEW.endpoint,
+                        NEW.interventions, NEW.duration, NEW.selection, NEW.timing,
+                        NEW.official_title, NEW.results_reference, NEW.oc_oid, NEW.old_status_id, NEW.version,
+                        NEW.feature_flags
+                    );
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE study SET
+                        parent_study_id = NEW.parent_study_id,
+                        unique_identifier = NEW.unique_identifier,
+                        secondary_identifier = NEW.secondary_identifier,
+                        name = NEW.name,
+                        summary = NEW.summary,
+                        date_planned_start = NEW.date_planned_start,
+                        date_planned_end = NEW.date_planned_end,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        type_id = NEW.type_id,
+                        status_id = NEW.status_id,
+                        principal_investigator = NEW.principal_investigator,
+                        facility_name = NEW.facility_name,
+                        facility_city = NEW.facility_city,
+                        facility_state = NEW.facility_state,
+                        facility_zip = NEW.facility_zip,
+                        facility_country = NEW.facility_country,
+                        facility_recruitment_status = NEW.facility_recruitment_status,
+                        facility_contact_name = NEW.facility_contact_name,
+                        facility_contact_degree = NEW.facility_contact_degree,
+                        facility_contact_phone = NEW.facility_contact_phone,
+                        facility_contact_email = NEW.facility_contact_email,
+                        protocol_type = NEW.protocol_type,
+                        protocol_description = NEW.protocol_description,
+                        protocol_date_verification = NEW.protocol_date_verification,
+                        phase = NEW.phase,
+                        expected_total_enrollment = NEW.expected_total_enrollment,
+                        sponsor = NEW.sponsor,
+                        collaborators = NEW.collaborators,
+                        medline_identifier = NEW.medline_identifier,
+                        url = NEW.url,
+                        url_description = NEW.url_description,
+                        conditions = NEW.conditions,
+                        keywords = NEW.keywords,
+                        eligibility = NEW.eligibility,
+                        gender = NEW.gender,
+                        age_max = NEW.age_max,
+                        age_min = NEW.age_min,
+                        healthy_volunteer_accepted = NEW.healthy_volunteer_accepted,
+                        purpose = NEW.purpose,
+                        allocation = NEW.allocation,
+                        masking = NEW.masking,
+                        control = NEW.control,
+                        assignment = NEW.assignment,
+                        endpoint = NEW.endpoint,
+                        interventions = NEW.interventions,
+                        duration = NEW.duration,
+                        selection = NEW.selection,
+                        timing = NEW.timing,
+                        official_title = NEW.official_title,
+                        results_reference = NEW.results_reference,
+                        oc_oid = NEW.oc_oid,
+                        old_status_id = NEW.old_status_id,
+                        version = NEW.version,
+                        feature_flags = NEW.feature_flags
+                    WHERE study_id = OLD.study_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM study WHERE study_id = OLD.study_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_sync_module_study
+            AFTER INSERT OR UPDATE OR DELETE ON module_study
+            FOR EACH ROW EXECUTE FUNCTION sync_module_study_to_study();
+        </sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_module_study ON module_study;
+            DROP FUNCTION IF EXISTS sync_module_study_to_study();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

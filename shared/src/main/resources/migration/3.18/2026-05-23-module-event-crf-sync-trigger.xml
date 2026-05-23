@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Backward-compatibility sync: module_event_crf → legacy event_crf table -->
+    <!-- Ensures legacy JSP pages reading via EntityDAO see module-written data -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-event-crf-sync-trigger" dbms="postgresql">
+        <comment>Create sync function and trigger: module_event_crf → event_crf</comment>
+        <sql>
+            CREATE OR REPLACE FUNCTION sync_module_event_crf_to_event_crf()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO event_crf (
+                        event_crf_id, study_event_id, study_subject_id, crf_version_id,
+                        status_id, date_interviewed, interviewer_name, annotations,
+                        date_completed, validator_id, date_validate, date_validate_completed,
+                        validator_annotations, date_created, date_updated, owner_id, update_id,
+                        electronic_signature_status, sdv_status, old_status_id, sdv_update_id
+                    )
+                    VALUES (
+                        NEW.event_crf_id, NEW.study_event_id, NEW.study_subject_id, NEW.crf_version_id,
+                        NEW.status_id, NEW.date_interviewed, NEW.interviewer_name, NEW.annotations,
+                        NEW.date_completed, NEW.validator_id, NEW.date_validate, NEW.date_validate_completed,
+                        NEW.validator_annotations, NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id,
+                        NEW.electronic_signature_status, NEW.sdv_status, NEW.old_status_id, NEW.sdv_update_id
+                    );
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE event_crf SET
+                        study_event_id = NEW.study_event_id,
+                        study_subject_id = NEW.study_subject_id,
+                        crf_version_id = NEW.crf_version_id,
+                        status_id = NEW.status_id,
+                        date_interviewed = NEW.date_interviewed,
+                        interviewer_name = NEW.interviewer_name,
+                        annotations = NEW.annotations,
+                        date_completed = NEW.date_completed,
+                        validator_id = NEW.validator_id,
+                        date_validate = NEW.date_validate,
+                        date_validate_completed = NEW.date_validate_completed,
+                        validator_annotations = NEW.validator_annotations,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        electronic_signature_status = NEW.electronic_signature_status,
+                        sdv_status = NEW.sdv_status,
+                        old_status_id = NEW.old_status_id,
+                        sdv_update_id = NEW.sdv_update_id
+                    WHERE event_crf_id = OLD.event_crf_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM event_crf WHERE event_crf_id = OLD.event_crf_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_sync_module_event_crf
+            AFTER INSERT OR UPDATE OR DELETE ON module_event_crf
+            FOR EACH ROW EXECUTE FUNCTION sync_module_event_crf_to_event_crf();
+        </sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_module_event_crf ON module_event_crf;
+            DROP FUNCTION IF EXISTS sync_module_event_crf_to_event_crf();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

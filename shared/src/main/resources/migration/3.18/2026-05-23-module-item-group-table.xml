@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: Schema Ownership — module-owned item_group table -->
+    <!-- The module_item_group table replaces the shared item_group table for the DataCapture Modulith module -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-item-group-seq-1">
+        <comment>Create sequence for module_item_group PK</comment>
+        <createSequence sequenceName="module_item_group_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-item-group-table-2">
+        <comment>Create module_item_group table with all columns matching ItemGroupEntity</comment>
+        <createTable tableName="module_item_group">
+            <column name="item_group_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="crf_id" type="INT"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="oc_oid" type="VARCHAR(40)"/>
+            <column name="status_id" type="INT"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="owner_id" type="INT"/>
+            <column name="update_id" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-item-group-pk-3">
+        <comment>Add primary key on item_group_id</comment>
+        <addPrimaryKey columnNames="item_group_id" constraintName="pk_module_item_group" tableName="module_item_group"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-item-group-copy-4">
+        <comment>Copy existing data from legacy item_group table to module_item_group</comment>
+        <sql>
+            INSERT INTO module_item_group (
+                item_group_id, crf_id, name, oc_oid,
+                status_id, date_created, date_updated,
+                owner_id, update_id
+            )
+            SELECT
+                item_group_id, crf_id, name, oc_oid,
+                status_id, date_created, date_updated,
+                owner_id, update_id
+            FROM item_group
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-item-group-seq-val-5">
+        <comment>Set sequence to max existing item_group_id</comment>
+        <sql>
+            SELECT setval('module_item_group_id_seq', COALESCE((SELECT MAX(item_group_id) FROM item_group), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

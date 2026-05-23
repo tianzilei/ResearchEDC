@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Backward-compatibility sync: module_study_user_role → legacy study_user_role table -->
+    <!-- Ensures legacy JSP pages reading via EntityDAO see module-written data -->
+    <!-- NOTE: Legacy table has extra columns (date_created, date_updated, update_id) not in module entity — set to NULL -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-user-role-sync-trigger" dbms="postgresql">
+        <comment>Create sync function and trigger: module_study_user_role → study_user_role</comment>
+        <sql>
+            CREATE OR REPLACE FUNCTION sync_module_study_user_role_to_study_user_role()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO study_user_role (
+                        study_user_role_id, role_name, study_id, user_name, status_id, owner_id,
+                        date_created, date_updated, update_id
+                    )
+                    VALUES (
+                        NEW.study_user_role_id, NEW.role_name, NEW.study_id, NEW.user_name, NEW.status_id, NEW.owner_id,
+                        NULL, NULL, NULL
+                    );
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE study_user_role SET
+                        role_name = NEW.role_name,
+                        study_id = NEW.study_id,
+                        user_name = NEW.user_name,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id
+                    WHERE study_user_role_id = OLD.study_user_role_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM study_user_role WHERE study_user_role_id = OLD.study_user_role_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_sync_module_study_user_role
+            AFTER INSERT OR UPDATE OR DELETE ON module_study_user_role
+            FOR EACH ROW EXECUTE FUNCTION sync_module_study_user_role_to_study_user_role();
+        </sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_module_study_user_role ON module_study_user_role;
+            DROP FUNCTION IF EXISTS sync_module_study_user_role_to_study_user_role();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

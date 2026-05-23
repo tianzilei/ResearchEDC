@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Backward-compatibility sync: module_section → legacy section table -->
+    <!-- Ensures legacy JSP pages reading via EntityDAO see module-written data -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-section-sync-trigger" dbms="postgresql">
+        <comment>Create sync function and trigger: module_section → section</comment>
+        <sql>
+            CREATE OR REPLACE FUNCTION sync_module_section_to_section()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO section (
+                        section_id, crf_version_id, label, title, subtitle, instructions,
+                        ordinal, parent_id, status_id, owner_id, date_created, date_updated,
+                        update_id, borders, page_number_label
+                    )
+                    VALUES (
+                        NEW.section_id, NEW.crf_version_id, NEW.label, NEW.title, NEW.subtitle, NEW.instructions,
+                        NEW.ordinal, NEW.parent_id, NEW.status_id, NEW.owner_id, NEW.date_created, NEW.date_updated,
+                        NEW.update_id, NEW.borders, NEW.page_number_label
+                    );
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE section SET
+                        crf_version_id = NEW.crf_version_id,
+                        label = NEW.label,
+                        title = NEW.title,
+                        subtitle = NEW.subtitle,
+                        instructions = NEW.instructions,
+                        ordinal = NEW.ordinal,
+                        parent_id = NEW.parent_id,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        borders = NEW.borders,
+                        page_number_label = NEW.page_number_label
+                    WHERE section_id = OLD.section_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM section WHERE section_id = OLD.section_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_sync_module_section
+            AFTER INSERT OR UPDATE OR DELETE ON module_section
+            FOR EACH ROW EXECUTE FUNCTION sync_module_section_to_section();
+        </sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_module_section ON module_section;
+            DROP FUNCTION IF EXISTS sync_module_section_to_section();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

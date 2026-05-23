@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <!-- v3.18 Database Updates - Randomization System -->
+    <include file="migration/3.18/2026-05-17-randomization-tables.xml"/>
+    <include file="migration/3.18/2026-05-17-export-tables.xml"/>
+    <include file="migration/3.18/2026-05-18-audit-tables.xml"/>
+    <include file="migration/3.18/2026-05-20-audit-migration.xml"/>
+    <include file="migration/3.18/2026-05-20-feature-flags.xml"/>
+    <!-- Schema alignment for Modulith modules -->
+    <include file="migration/3.18/2026-05-22-study-user-role-pk.xml"/>
+    <!-- Module-owned fork tables (Phase B: Schema Ownership) -->
+    <include file="migration/3.18/2026-05-22-module-crf-table.xml"/>
+    <include file="migration/3.18/2026-05-22-module-crf-version-table.xml"/>
+    <include file="migration/3.18/2026-05-22-module-item-table.xml"/>
+    <include file="migration/3.18/2026-05-22-module-item-form-metadata-table.xml"/>
+    <include file="migration/3.18/2026-05-22-module-section-table.xml"/>
+    <include file="migration/3.18/2026-05-22-module-dataset-table.xml"/>
+    <include file="migration/3.18/2026-05-22-module-filter-table.xml"/>
+    <!-- Module-owned fork tables (Phase B: Schema Ownership — study module) -->
+    <include file="migration/3.18/2026-05-23-module-study-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-study-sync-trigger.xml"/>
+    <!-- Module-owned fork tables (Phase B: Schema Ownership — CRF sync triggers) -->
+    <include file="migration/3.18/2026-05-23-module-crf-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-crf-version-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-item-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-ifm-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-section-sync-trigger.xml"/>
+    <!-- Module-owned fork tables (Phase B: Schema Ownership — discrepancy_note module) -->
+    <include file="migration/3.18/2026-05-23-module-discrepancy-note-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-discrepancy-note-sync-trigger.xml"/>
+    <!-- Module-owned fork tables (Phase B: Schema Ownership — subjectgroup module) -->
+    <include file="migration/3.18/2026-05-23-module-study-group-class-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-study-group-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-study-group-class-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-study-group-sync-trigger.xml"/>
+    <!-- Module-owned fork tables (Phase B: Schema Ownership — subject module) -->
+    <include file="migration/3.18/2026-05-23-module-subject-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-subject-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-study-subject-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-study-subject-sync-trigger.xml"/>
+    <!-- Module-owned fork tables (Phase B: Schema Ownership — event module) -->
+    <include file="migration/3.18/2026-05-23-module-study-event-definition-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-study-event-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-event-crf-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-study-event-definition-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-study-event-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-event-crf-sync-trigger.xml"/>
+    <!-- Module-owned fork tables (Phase B: Schema Ownership — datacapture module) -->
+    <include file="migration/3.18/2026-05-23-module-item-data-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-item-data-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-item-group-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-item-group-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-response-set-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-response-set-sync-trigger.xml"/>
+    <!-- Module-owned fork tables (Phase B: Schema Ownership — identity module) -->
+    <include file="migration/3.18/2026-05-23-module-user-account-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-user-account-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-study-user-role-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-study-user-role-sync-trigger.xml"/>
+    <!-- Module-owned fork tables (Phase B: Schema Ownership — rule module) -->
+    <include file="migration/3.18/2026-05-23-module-rule-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-rule-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-rule-set-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-rule-set-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-rule-set-rule-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-rule-set-rule-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-05-23-module-rule-expression-table.xml"/>
+    <include file="migration/3.18/2026-05-23-module-rule-expression-sync-trigger.xml"/>
+</databaseChangeLog>

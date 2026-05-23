@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Backward-compatibility sync: module_item_form_metadata → legacy item_form_metadata table -->
+    <!-- Ensures legacy JSP pages reading via EntityDAO see module-written data -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-ifm-sync-trigger" dbms="postgresql">
+        <comment>Create sync function and trigger: module_item_form_metadata → item_form_metadata</comment>
+        <sql>
+            CREATE OR REPLACE FUNCTION sync_module_ifm_to_item_form_metadata()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO item_form_metadata (
+                        item_form_metadata_id, item_id, section_id, crf_version_id, ordinal,
+                        required, default_value, regexp, regexp_error_msg,
+                        response_layout, width_decimal, show_item
+                    )
+                    VALUES (
+                        NEW.item_form_metadata_id, NEW.item_id, NEW.section_id, NEW.crf_version_id, NEW.ordinal,
+                        NEW.required, NEW.default_value, NEW.regexp, NEW.regexp_error_msg,
+                        NEW.response_layout, NEW.width_decimal, NEW.show_item
+                    );
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE item_form_metadata SET
+                        item_id = NEW.item_id,
+                        section_id = NEW.section_id,
+                        crf_version_id = NEW.crf_version_id,
+                        ordinal = NEW.ordinal,
+                        required = NEW.required,
+                        default_value = NEW.default_value,
+                        regexp = NEW.regexp,
+                        regexp_error_msg = NEW.regexp_error_msg,
+                        response_layout = NEW.response_layout,
+                        width_decimal = NEW.width_decimal,
+                        show_item = NEW.show_item
+                    WHERE item_form_metadata_id = OLD.item_form_metadata_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM item_form_metadata WHERE item_form_metadata_id = OLD.item_form_metadata_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_sync_module_ifm
+            AFTER INSERT OR UPDATE OR DELETE ON module_item_form_metadata
+            FOR EACH ROW EXECUTE FUNCTION sync_module_ifm_to_item_form_metadata();
+        </sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_module_ifm ON module_item_form_metadata;
+            DROP FUNCTION IF EXISTS sync_module_ifm_to_item_form_metadata();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

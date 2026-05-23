@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Backward-compatibility sync: module_study_subject → legacy study_subject table -->
+    <!-- Ensures legacy JSP pages reading via EntityDAO see module-written data -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-subject-sync-trigger" dbms="postgresql">
+        <comment>Create sync function and trigger: module_study_subject → study_subject</comment>
+        <sql>
+            CREATE OR REPLACE FUNCTION sync_module_study_subject_to_study_subject()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO study_subject (
+                        study_subject_id, study_id, subject_id, label,
+                        secondary_label, enrollment_date, oc_oid,
+                        date_created, date_updated, owner_id, update_id, status_id
+                    )
+                    VALUES (
+                        NEW.study_subject_id, NEW.study_id, NEW.subject_id, NEW.label,
+                        NEW.secondary_label, NEW.enrollment_date, NEW.oc_oid,
+                        NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id, NEW.status_id
+                    );
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE study_subject SET
+                        study_id = NEW.study_id,
+                        subject_id = NEW.subject_id,
+                        label = NEW.label,
+                        secondary_label = NEW.secondary_label,
+                        enrollment_date = NEW.enrollment_date,
+                        oc_oid = NEW.oc_oid,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        status_id = NEW.status_id
+                    WHERE study_subject_id = OLD.study_subject_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM study_subject WHERE study_subject_id = OLD.study_subject_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_sync_module_study_subject
+            AFTER INSERT OR UPDATE OR DELETE ON module_study_subject
+            FOR EACH ROW EXECUTE FUNCTION sync_module_study_subject_to_study_subject();
+        </sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_module_study_subject ON module_study_subject;
+            DROP FUNCTION IF EXISTS sync_module_study_subject_to_study_subject();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

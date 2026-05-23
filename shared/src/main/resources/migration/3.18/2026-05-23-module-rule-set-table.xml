@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-set-seq-1">
+        <comment>Create sequence for module_rule_set PK</comment>
+        <createSequence sequenceName="module_rule_set_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-set-table-2">
+        <createTable tableName="module_rule_set">
+            <column name="rule_set_id" type="INT"><constraints nullable="false"/></column>
+            <column name="rule_expression_id" type="INT"/>
+            <column name="study_event_definition_id" type="INT"/>
+            <column name="crf_id" type="INT"/>
+            <column name="crf_version_id" type="INT"/>
+            <column name="study_id" type="INT"/>
+            <column name="run_schedule" type="BOOLEAN"/>
+            <column name="run_time" type="VARCHAR(255)"/>
+            <column name="status_id" type="INT"/>
+            <column name="owner_id" type="INT"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="update_id" type="INT"/>
+            <column name="version" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-set-pk-3">
+        <addPrimaryKey columnNames="rule_set_id" constraintName="pk_module_rule_set" tableName="module_rule_set"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-set-copy-4">
+        <sql>INSERT INTO module_rule_set (rule_set_id, rule_expression_id, study_event_definition_id, crf_id, crf_version_id, study_id, run_schedule, run_time, status_id, owner_id, date_created, date_updated, update_id, version) SELECT rule_set_id, rule_expression_id, study_event_definition_id, crf_id, crf_version_id, study_id, run_schedule, run_time, status_id, owner_id, date_created, date_updated, update_id, version FROM rule_set</sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-set-seq-val-5">
+        <sql>SELECT setval('module_rule_set_id_seq', COALESCE((SELECT MAX(rule_set_id) FROM rule_set), 1))</sql>
+    </changeSet>
+</databaseChangeLog>

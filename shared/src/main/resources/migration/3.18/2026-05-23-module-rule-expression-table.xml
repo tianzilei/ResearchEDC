@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-expression-seq-1">
+        <comment>Create sequence for module_rule_expression PK</comment>
+        <createSequence sequenceName="module_rule_expression_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-expression-table-2">
+        <createTable tableName="module_rule_expression">
+            <column name="rule_expression_id" type="INT"><constraints nullable="false"/></column>
+            <column name="value" type="VARCHAR(2040)"/>
+            <column name="context" type="INT"/>
+            <column name="status_id" type="INT"/>
+            <column name="owner_id" type="INT"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="update_id" type="INT"/>
+            <column name="version" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-expression-pk-3">
+        <addPrimaryKey columnNames="rule_expression_id" constraintName="pk_module_rule_expression" tableName="module_rule_expression"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-expression-copy-4">
+        <sql>INSERT INTO module_rule_expression (rule_expression_id, value, context, status_id, owner_id, date_created, date_updated, update_id, version) SELECT rule_expression_id, value, context, status_id, owner_id, date_created, date_updated, update_id, version FROM rule_expression</sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-rule-expression-seq-val-5">
+        <sql>SELECT setval('module_rule_expression_id_seq', COALESCE((SELECT MAX(rule_expression_id) FROM rule_expression), 1))</sql>
+    </changeSet>
+</databaseChangeLog>

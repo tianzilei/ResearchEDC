@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: Schema Ownership — module-owned study_user_role table -->
+    <!-- The module_study_user_role table replaces the shared study_user_role table for the Identity Modulith module -->
+    <!-- NOTE: Uses BIGSERIAL (IDENTITY) for PK — no separate sequence needed -->
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-user-role-table-1">
+        <comment>Create module_study_user_role table with BIGSERIAL PK (IDENTITY strategy)</comment>
+        <createTable tableName="module_study_user_role">
+            <column name="study_user_role_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_name" type="VARCHAR(40)"/>
+            <column name="study_id" type="INT"/>
+            <column name="user_name" type="VARCHAR(40)"/>
+            <column name="status_id" type="INT"/>
+            <column name="owner_id" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-user-role-pk-2">
+        <comment>Add primary key on study_user_role_id</comment>
+        <addPrimaryKey columnNames="study_user_role_id" constraintName="pk_module_study_user_role" tableName="module_study_user_role"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-user-role-seq-3">
+        <comment>Create sequence for BIGSERIAL PK and set default</comment>
+        <sql>CREATE SEQUENCE IF NOT EXISTS module_study_user_role_id_seq START 1</sql>
+        <sql>
+            ALTER TABLE module_study_user_role ALTER COLUMN study_user_role_id SET DEFAULT nextval('module_study_user_role_id_seq'::regclass)
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-user-role-copy-4">
+        <comment>Copy existing data from legacy study_user_role table (PK auto-generated)</comment>
+        <sql>
+            INSERT INTO module_study_user_role (role_name, study_id, user_name, status_id, owner_id)
+            SELECT role_name, study_id, user_name, status_id, owner_id
+            FROM study_user_role
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-23-module-study-user-role-seq-val-5">
+        <comment>Set sequence to max existing study_user_role_id</comment>
+        <sql>
+            SELECT setval('module_study_user_role_id_seq', COALESCE((SELECT MAX(study_user_role_id) FROM study_user_role), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
