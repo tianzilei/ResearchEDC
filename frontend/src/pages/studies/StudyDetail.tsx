@@ -69,35 +69,35 @@ export default function StudyDetail() {
 
   const overviewItems = [
     { label: "Name", children: study.name },
-    { label: "Unique Identifier", children: study.uniqueIdentifier || "-" },
-    { label: "Official Title", children: study.officialTitle || "-" },
+    { label: "Unique Identifier", children: study.uniqueIdentifier ?? "-" },
+    { label: "Official Title", children: study.officialTitle ?? "-" },
     { label: "Phase", children: study.phase ? <Tag>{study.phase}</Tag> : "-" },
     { label: "Status", children: <Tag color={statusColor(study.status)}>{study.status}</Tag> },
-    { label: "Principal Investigator", children: study.principalInvestigator || "-" },
-    { label: "Sponsor", children: study.sponsor || "-" },
-    { label: "Collaborators", children: study.collaborators || "-" },
-    { label: "Summary", children: study.summary || "-", span: 2 },
+    { label: "Principal Investigator", children: study.principalInvestigator ?? "-" },
+    { label: "Sponsor", children: study.sponsor ?? "-" },
+    { label: "Collaborators", children: study.collaborators ?? "-" },
+    { label: "Summary", children: study.summary ?? "-", span: 2 },
   ];
 
   const designItems = [
-    { label: "Purpose", children: study.purpose || "-" },
-    { label: "Allocation", children: study.allocation || "-" },
-    { label: "Masking", children: study.masking || "-" },
-    { label: "Gender", children: study.gender || "-" },
-    { label: "Conditions", children: study.conditions || "-" },
-    { label: "Keywords", children: study.keywords || "-" },
-    { label: "Eligibility", children: study.eligibility || "-", span: 2 },
+    { label: "Purpose", children: study.purpose ?? "-" },
+    { label: "Allocation", children: study.allocation ?? "-" },
+    { label: "Masking", children: study.masking ?? "-" },
+    { label: "Gender", children: study.gender ?? "-" },
+    { label: "Conditions", children: study.conditions ?? "-" },
+    { label: "Keywords", children: study.keywords ?? "-" },
+    { label: "Eligibility", children: study.eligibility ?? "-", span: 2 },
   ];
 
   const facilityItems = [
-    { label: "Facility Name", children: study.facilityName || "-" },
-    { label: "City", children: study.facilityCity || "-" },
-    { label: "State", children: study.facilityState || "-" },
-    { label: "Country", children: study.facilityCountry || "-" },
+    { label: "Facility Name", children: study.facilityName ?? "-" },
+    { label: "City", children: study.facilityCity ?? "-" },
+    { label: "State", children: study.facilityState ?? "-" },
+    { label: "Country", children: study.facilityCountry ?? "-" },
     { label: "Planned Start", children: study.datePlannedStart ? new Date(study.datePlannedStart).toLocaleDateString() : "-" },
     { label: "Planned End", children: study.datePlannedEnd ? new Date(study.datePlannedEnd).toLocaleDateString() : "-" },
     { label: "Expected Enrollment", children: study.expectedTotalEnrollment ?? "-" },
-    { label: "Protocol Type", children: study.protocolType || "-" },
+    { label: "Protocol Type", children: study.protocolType ?? "-" },
   ];
 
   const siteColumns = [
@@ -106,8 +106,8 @@ export default function StudyDetail() {
         <Link to={`/app/studies/${record.studyId}`}>{name}</Link>
       ),
     },
-    { title: "Identifier", dataIndex: "uniqueIdentifier", key: "uid", render: (v: string) => v || "-" },
-    { title: "PI", dataIndex: "principalInvestigator", key: "pi", render: (v: string) => v || "-" },
+    { title: "Identifier", dataIndex: "uniqueIdentifier", key: "uid", render: (v: string) => v ?? "-" },
+    { title: "PI", dataIndex: "principalInvestigator", key: "pi", render: (v: string) => v ?? "-" },
     {
       title: "Status", dataIndex: "status", key: "status",
       render: (s: string) => <Tag color={statusColor(s)}>{s}</Tag>,
@@ -198,7 +198,7 @@ export default function StudyDetail() {
             <div>
               <Title level={4} style={{ margin: 0 }}>{study.name}</Title>
               <Space split={<Text type="secondary">|</Text>} style={{ marginTop: 2 }}>
-                <Text type="secondary">{study.uniqueIdentifier || "No identifier"}</Text>
+                <Text type="secondary">{study.uniqueIdentifier ?? "No identifier"}</Text>
                 <Tag color={statusColor(study.status)}>{study.status}</Tag>
                 {study.site && <Tag>Site</Tag>}
               </Space>

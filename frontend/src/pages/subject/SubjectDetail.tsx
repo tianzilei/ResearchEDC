@@ -186,7 +186,7 @@ export default function SubjectDetail() {
         <Descriptions column={2} size="small" bordered>
           <Descriptions.Item label="Study Label">{enrollment.label}</Descriptions.Item>
           <Descriptions.Item label="Subject ID">{enrollment.subjectId}</Descriptions.Item>
-          <Descriptions.Item label="OC OID">{enrollment.ocOid || "-"}</Descriptions.Item>
+          <Descriptions.Item label="OC OID">{enrollment.ocOid ?? "-"}</Descriptions.Item>
           <Descriptions.Item label="Gender">
             {subject?.gender === "m" ? "Male" : subject?.gender === "f" ? "Female" : "Not specified"}
           </Descriptions.Item>

@@ -59,13 +59,13 @@ export default function StudyList() {
         </a>
       ),
     },
-    { title: "Identifier", dataIndex: "uniqueIdentifier", key: "uid", render: (v: string) => v || "-" },
-    { title: "PI", dataIndex: "principalInvestigator", key: "pi", render: (v: string) => v || "-" },
+    { title: "Identifier", dataIndex: "uniqueIdentifier", key: "uid", render: (v: string) => v ?? "-" },
+    { title: "PI", dataIndex: "principalInvestigator", key: "pi", render: (v: string) => v ?? "-" },
     { title: "Phase", dataIndex: "phase", key: "phase", render: (v: string) => v ? <Tag>{v}</Tag> : "-" },
-    { title: "Sponsor", dataIndex: "sponsor", key: "sponsor", render: (v: string) => v || "-" },
+    { title: "Sponsor", dataIndex: "sponsor", key: "sponsor", render: (v: string) => v ?? "-" },
     {
       title: "Enrollment", dataIndex: "expectedTotalEnrollment", key: "enrollment",
-      render: (v: number) => v != null ? v : "-",
+      render: (v: number) => v ?? "-",
     },
     {
       title: "", key: "actions",

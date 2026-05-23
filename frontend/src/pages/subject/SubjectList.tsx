@@ -58,7 +58,7 @@ export default function SubjectList() {
         body: JSON.stringify({
           studyId: currentStudy!.id,
           subjectId: newSubject.subjectId,
-          label: vals.label || newSubject.uniqueIdentifier,
+          label: vals.label ?? newSubject.uniqueIdentifier,
           enrollmentDate: vals.enrollmentDate?.toISOString?.() ?? null,
           eventDefinitionId: null,
         }),
@@ -95,7 +95,7 @@ export default function SubjectList() {
       ),
     },
     { title: "Subject ID", dataIndex: "subjectId", key: "subjectId" },
-    { title: "OC OID", dataIndex: "ocOid", key: "ocOid" },
+    { title: "OC OID", dataIndex: "ocOid", key: "ocOid", render: (v: string) => v ?? "-" },
     {
       title: "Enrolled",
       dataIndex: "enrollmentDate",

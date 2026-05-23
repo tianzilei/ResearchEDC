@@ -47,13 +47,13 @@ export default function RulesListPage() {
       title: "CRF",
       dataIndex: "crfName",
       key: "crfName",
-      render: (val) => val || "-",
+      render: (val) => val ?? "-",
     },
     {
       title: "Event Definition",
       dataIndex: "eventDefinitionName",
       key: "eventDefinitionName",
-      render: (val) => val || "-",
+      render: (val) => val ?? "-",
     },
     {
       title: "Target",
