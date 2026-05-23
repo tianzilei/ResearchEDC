@@ -1,8 +1,8 @@
 # ResearchEDC
 
 **版本:** 3.18-SNAPSHOT  
-**最后更新:** 2026-05-20  
-**JSP 迁移进度:** 280/417 (67%) — 137 页通过 LegacyFrame 向后兼容  
+**最后更新:** 2026-05-23  
+**JSP 迁移进度:** 225/419 (54%) — 194 页通过 LegacyFrame 向后兼容  
 **许可证:** GNU LGPL
 
 ResearchEDC is an independently maintained research electronic data capture and clinical research data management platform derived from OpenClinica v3.x.
@@ -49,7 +49,7 @@ ResearchEDC is an independently maintained research electronic data capture and 
 
 ```
 ResearchEDC/
-├── pom.xml             # Maven 父 POM
+├── pom.xml             # Maven 父 POM (5 子模块: bom, shared, web, ws, app)
 ├── frontend/           # React 19 SPA (pnpm workspace, 28 pages)
 │   ├── src/
 │   │   ├── api/        # API 客户端 + 类型
@@ -74,7 +74,7 @@ ResearchEDC/
 │   ├── src/main/java/
 │   │   └── org/researchedc/
 │   │       ├── config/      # WebMvcConfig (SPA fallback), WebServiceConfig, OpenApiConfig
-│   │       └── module/      # Spring Modulith 模块 (16 个)
+│   │       └── module/      # Spring Modulith 模块 (16 个, 244 文件)
 │   │           ├── randomization/  # 随机化系统 (算法 + API)
 │   │           ├── export/         # 导出中心 (异步任务)
 │   │           ├── crf/            # CRF 元数据 (REST API)
@@ -94,24 +94,28 @@ ResearchEDC/
 │   └── src/main/resources/
 │       ├── application.yml # profile 配置
 │       └── static/         # 前端构建产物 (自动生成)
-├── legacy-core/        # 遗留领域逻辑 & 数据访问 (736 源文件)
-│   ├── dao/            # 数据访问层 (EntityDAO 模式)
-│   ├── domain/         # Hibernate 实体 (@Entity)
-│   ├── service/        # 业务服务层
-│   ├── logic/          # 规则引擎
-│   ├── job/            # Quartz 定时任务
-│   └── migration/      # Liquibase 迁移脚本
-├── web/                # Web UI & REST API (481 源文件, 417 JSP — ~225 replaced via React)
+├── shared/              # 共享领域逻辑 & 数据访问 (770 源文件, 取代 legacy-core)
+│   ├── dao/             # 数据访问层 (169 文件: hibernate 67, spi 29, 各子域 DAOs)
+│   ├── domain/          # Hibernate 实体 (166 文件, 含 datamap/ 62 实体)
+│   ├── service/         # 业务服务层 (60 文件)
+│   ├── bean/            # DTOs (253 文件)
+│   ├── logic/           # 规则引擎 (57 文件)
+│   ├── job/             # Quartz 定时任务 (9 文件)
+│   └── migration/       # Liquibase 迁移脚本 (193 文件)
+├── web/                # Web UI & REST API (484 源文件, 419 JSP — ~225 replaced via React)
 │   ├── control/        # Servlet 控制器 (SecureController)
 │   ├── controller/     # Spring MVC REST 控制器
-│   └── webapp/         # JSP 页面 (剩余 192 页通过 LegacyFrame iframe 访问)
-├── ws/                 # SOAP Web 服务 (57 源文件)
+│   └── webapp/         # JSP 页面 (剩余 194 页通过 LegacyFrame iframe 访问)
+├── ws/                 # SOAP Web 服务 (75 源文件)
 │   └── endpoint/       # Spring WS 端点
 ├── deploy/             # Docker Compose + Nginx 配置
 │   ├── compose/        # dev/test/prod 三层 Compose
 │   └── nginx/          # 生产级 Nginx 配置
+├── research-edc-bom/   # Maven BOM 版本管理
+|── scripts/            # 构建/部署/发布脚本
 ├── .dockerignore       # Docker 构建忽略规则
-└── scripts/            # 构建/部署/发布脚本
+├── Makefile            # 常用开发/部署命令
+└── .github/workflows/  # CI 工作流 (5 个: backend, frontend, docker, legacy-refactor)
 ```
 
 ---
@@ -119,7 +123,7 @@ ResearchEDC/
 ## 路由架构
 
 ```
-/legacy/*       → 旧 OpenClinica JSP (192 页向后兼容)
+/legacy/*       → 旧 OpenClinica JSP (194 页向后兼容)
 /app/*          → 新 React SPA (28 页面, 30+ 路由, index.html fallback)
 /app/studies/create  → 研究创建 8 步向导
 /app/studies/:id          → 研究详情/编辑/站点/事件定义/规则/分组
@@ -174,13 +178,11 @@ python -m pytest app/tests/ -v               # 运行 31 个测试
 
 | 层级 | 基类 | 数据库 | 当前状态 |
 |------|------|--------|---------|
-| 纯单元测试 | `junit.framework.TestCase` | ❌ | ✅ 8 tests pass (core) |
-| Mockito 测试 | `junit.framework.TestCase` | ❌ | ✅ 3 tests pass (web) |
-| DAO 集成测试 | `HibernateOcDbTestCase` (DBUnit) | ✅ | ⚠️ 待启用 (测试方法被注释) |
-| Service 集成测试 | `HibernateOcDbTestCase` | ✅ | ⚠️ 同上 |
+| 模块单元测试 | JUnit 5 + Mockito `@SpringBootTest` | ❌ | ✅ ~150 tests pass (app) |
 | Modulith 验证 | JUnit 5 + `ApplicationModules` | ❌ | ✅ 1 test pass |
-| **模块单元测试** | JUnit 5 + `@SpringBootTest` | ✅ | **✅ 150 Java tests pass** |
-| **前端测试** | Vitest + React Testing Library | ❌ | **✅ 25 Vitest tests pass** |
+| Servlet 单元测试 | `junit.framework.TestCase` + Mockito | ❌ | ✅ 3 tests pass (web) |
+| DAO 集成测试 | `HibernateOcDbTestCase` (DBUnit) | ✅ | ⚠️ 待启用 (shared 模块) |
+| **前端测试** | Vitest + React Testing Library | ❌ | **✅ 25 tests pass** |
 | **问卷服务单元测试** | **pytest** | ❌ | **✅ 31 tests pass** |
 | **问卷服务 E2E** | **curl + pytest** | ✅ | **✅ Docker Compose + API** |
 
@@ -208,10 +210,10 @@ python -m pytest app/tests/ -v  # 31 tests
 ### 前端质量门禁
 | 检查 | 命令 | 状态 |
 |------|------|------|
-| TypeScript strict | `pnpm typecheck` | ✅ 0 errors |
+| TypeScript strict | `pnpm typecheck` | ⚠️ **41 errors, 79 warnings** |
 | ESLint | `pnpm lint` | ✅ 0 errors |
 | 构建 | `pnpm build` | ✅ |
-| 测试 | `pnpm test` | ⏳ Vitest 待编写 |
+| 测试 | `pnpm test --run` | ✅ **25/25 tests pass** |
 
 ### 设计系统 (2026-05-18 "Precision Clinical" 重构)
 - **配色**: Jade teal (`#099A87`) 主色 + warm brass (`#D4A854`) 点缀 + deep slate (`#0F1A2E`) 基底 + warm paper (`#F8F5F0`) 表面色
@@ -220,13 +222,13 @@ python -m pytest app/tests/ -v  # 31 tests
 - **背景**: 全局 dot-grid 图纸纹理 (radial-gradient)
 - **组件**: AppLayout 精修 (brass 边框 header, max-width 内容区), Dashboard 重设计 (问候头像、彩色统计卡片、活动时间线、SVG 环形图、快捷操作), ErrorPage/NotFound 定制页面
 
-测试数据文件: `legacy-core/src/test/resources/org/akaza/openclinica/{dao,service}/testdata/`
+测试数据文件: `shared/src/test/resources/org/researchedc/{dao,service}/testdata/`
 
 ---
 
 ## 核心架构模式
 
-- **DAO 模式:** 所有数据库访问通过 `EntityDAO<K>` 子类
+- **DAO 模式:** 所有数据库访问通过 `EntityDAO<K>` 子类或 SPI 接口
 - **Bean 模式:** DTO 继承 `EntityBean` 含审计字段 (id, createdDate, ownerId...)
 - **SecureController:** 所有 Servlet 继承此类自动处理会话/权限
 - **服务层:** `@Service` + `@Transactional` 封装业务编排
@@ -243,7 +245,7 @@ python -m pytest app/tests/ -v  # 31 tests
 - 禁止修改已发布的 Liquibase 迁移文件
 - 禁止 `as any` / `@ts-expect-error` — 前端强制 strict 模式
 - 包结构: `bean.*` (DTO), `dao.*` (数据访问), `service.*` (业务), `domain.*` (实体)
-- 新代码应写入 `module/<name>/` 而非遗留包
+- 新代码应写入 `module/<name>/` 而非 `shared/`
 
 ---
 
@@ -251,9 +253,10 @@ python -m pytest app/tests/ -v  # 31 tests
 
 | 模块 | 位置 | 功能 |
 |------|------|------|
-| 研究管理 (遗留) | `control/managestudy/` | 研究/Site/Subject 管理 (186 Servlet) |
-| 数据录入 (遗留) | `control/submit/` | CRF 数据录入、双录入、电子签名 |
-| 规则引擎 (遗留) | `logic/rule/` | 表达式验证、自动计算 |
+| 共享领域逻辑 | `shared/` | DAO、Domain、Service、规则引擎 (770 文件) |
+| 研究管理 (遗留) | `web/.../control/managestudy/` | 研究/Site/Subject 管理 (186 Servlet) |
+| 数据录入 (遗留) | `web/.../control/submit/` | CRF 数据录入、双录入、电子签名 |
+| 规则引擎 (遗留) | `shared/.../logic/` | 表达式验证、自动计算 |
 | SOAP API (遗留) | `ws/` | 研究/Subject/CRUD |
 | **随机化系统** | `module/randomization/` | 3 种算法, 8 表 REST API |
 | **导出中心** | `module/export/` | 异步任务, 取消/重试 |
@@ -334,7 +337,7 @@ python -m pytest app/tests/ -v  # 31 tests
 ## 国际化
 
 支持 6 种语言: en, de, es, fr, pt, zh  
-资源文件: `legacy-core/src/main/resources/org/akaza/openclinica/i18n/`
+资源文件: `shared/src/main/resources/org/researchedc/i18n/`
 
 ---
 
@@ -356,10 +359,10 @@ OpenClinica is a trademark of its respective owner. ResearchEDC is not an offici
 ### 相关文档
 
 - [AGENTS.md](./AGENTS.md) — AI 助手知识库 (含 app, frontend, questionnaire-service 等子模块)
+- [shared/AGENTS.md](./shared/AGENTS.md) — 共享领域逻辑与数据访问
 - [app/AGENTS.md](./app/AGENTS.md) — Spring Boot 配置与 Modulith 模块
 - [frontend/AGENTS.md](./frontend/AGENTS.md) — React 19 SPA 前后端交互
 - [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) — Python FastAPI 微服务
-- [legacy-core/AGENTS.md](./legacy-core/AGENTS.md) — 领域逻辑与数据访问
 - [web/AGENTS.md](./web/AGENTS.md) — Web UI 与控制器
 - [ws/AGENTS.md](./ws/AGENTS.md) — SOAP Web 服务
 - [MODIFICATIONS.md](./MODIFICATIONS.md) — 修改记录

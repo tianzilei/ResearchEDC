@@ -1,7 +1,7 @@
 # app/ - Spring Boot Modular Monolith Entry Point
 
 **Module:** Application entry point, configuration, and Modulith modules  
-**Files:** ~269 Java files, 16 Modulith modules  
+**Files:** ~244 Java files (module/) + config classes, 16 Modulith modules  
 
 > Entry point: `OpenClinicaApplication.java` — Spring Boot WAR packaging.  
 > Config classes in `org.researchedc.config.*` handle Hibernate, security (Keycloak OIDC + legacy Spring Security), mail, scheduling, and OpenAPI.
@@ -65,7 +65,7 @@ app/src/main/java/org/researchedc/
 ## ANTI-PATTERNS
 
 - **NEVER** `@Autowired` beans from another module — use `ApplicationEvents`
-- **NEVER** import `core.dao.*` / `core.bean.*` / `core.domain.*` in module public classes
+- **NEVER** import `shared.dao.*` / `shared.bean.*` / `shared.domain.*` in module public classes
 - **NEVER** bypass `LegacyGateway` to call legacy DAOs from module controllers
 - **ALWAYS** put legacy access in `internal/adapter/` classes
-- **DO NOT** add new code to `legacy-core` — add new functionality as a module here
+- **DO NOT** add new code to `shared/` — add new functionality as a module here

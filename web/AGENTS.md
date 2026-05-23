@@ -1,7 +1,7 @@
 # web/ - Web UI Layer
 
 **Module:** Web interface, JSP pages, servlets, REST controllers  
-**Files:** ~481 Java files, ~419 JSP files  
+**Files:** ~484 Java files, ~419 JSP files  
 
 > **前端共存:** 新 React SPA 运行于 `/app/*` 路径，旧 JSP 继续运行于 `/legacy/*`（通过 Nginx 路由）。
 > 新前端代码位于 `frontend/src/`，与 web 模块无关。REST 控制器仍在此模块中供新旧前端共用。
@@ -46,7 +46,7 @@ web/src/main/webapp/
 
 **Base class:** `junit.framework.TestCase` (no Spring context, no database)
 
-**Tests in web module** (e.g., `SubmitDataServletTest`, `ListDiscNotesForCRFServletTest`):
+**Tests in web module** (2 test files: `SubmitDataServletTest`, `ListDiscNotesForCRFServletTest`):
 - Pure JUnit unit tests — no DB, no Spring context
 - Use **Mockito** (`import static org.mockito.Mockito.*`) for mocking role/permission objects
 - Test authorization logic like `mayViewData()`, `maySubmitData()` with different roles

@@ -6,44 +6,76 @@
 
 ---
 
-## 2026-05-22 — AGENTS.md 知识库扩展与清理
+## 2026-05-23 — 全项目文档更新 & legacy-core → shared 合并反映
 
 - **模块:** 全项目
-- **原因:** 完善 AI 助手的项目知识体系，清理已完成的历史文档
+- **原因:** `legacy-core/` 模块已合并到 `shared/`，需更新所有文档反映当前项目结构。同时统计并记录最新项目状态。
 
 ### 变更内容
 
-1. **新增 AGENTS.md (3 个):**
-   - `app/AGENTS.md` — Spring Boot 入口点、配置类、Modulith 模块结构
-   - `frontend/AGENTS.md` — React 19 SPA 结构、API 层、组件/页面清单
-   - `questionnaire-service/AGENTS.md` — Python FastAPI 微服务架构、评分引擎
+1. **新增 shared/AGENTS.md:**
+   - 770 文件的共享领域逻辑模块完整文档
+   - 涵盖 DAO (169)、Domain (166)、Bean (253)、Service (60)、Logic (57) 等内容
+   - 记录 `legacy-core` 到 `shared` 的历史和状态
 
-2. **更新 AGENTS.md (1 个):**
-   - 根 `AGENTS.md` — 新增子模块引用 (app, frontend, questionnaire-service)
+2. **更新根 AGENTS.md:**
+   - 分支修正: `refactor/research-edc-rename` → `master`
+   - 所有 `legacy-core/` 引用 → `shared/`
+   - 模块文件数从实际数据刷新 (app/module 244, shared 770, frontend 94, etc.)
+   - 模块文件数明细按子模块实际计数更新
+   - 加上 ⚠️ Frontend TypeScript 状态 (41 errors, 79 warnings)
+   - 添加 `shared/` 到 WHERE TO LOOK 表
+   - 更新 ANTI-PATTERNS: LEGACY_REFACTOR_PLAN.md 引用更新
+   - 子模块引用: `legacy-core/AGENTS.md` → `shared/AGENTS.md`
+   - 更新状态行: 增加 `legacy-core → shared 合并 ✅`
 
-3. **删除无用文档 (4 个):**
-   - `PLAN.md` — 架构债务治理计划（所有 4 阶段已完成，全部项目标 ✅）
-   - `legacy-core/README.txt` — 2010 年 OpenClinica 3.1-beta 发布说明（完全过时）
-   - `web/README.txt` — 过时的模板发布说明（Maven 变量未解析）
-   - `ws/README.txt` — 同上
+3. **更新 README.md:**
+   - 最后更新: 2026-05-23
+   - 项目结构: `shared/` 取代 `legacy-core/`
+   - 文件计数全面更新 (shared 770, web 484, ws 75)
+   - Maven 模块从 5 → 5 (bom, shared, web, ws, app) — 更新了模块列表
+   - 前端质量门禁: `pnpm typecheck` ⚠️ 41 errors, 79 warnings
+   - 添加 GitHub Actions 和 Makefile 引用
+   - 测试架构表简化: DAO 集成测试状态调整
+   - 子模块引用: `legacy-core/AGENTS.md` → `shared/AGENTS.md`
 
-4. **更新 README.md:**
-   - 修正 app 模块包路径 (`org.researchedc` 而非 `org.akaza.openclinica`)
-   - 更新 JSP 迁移进度 (280/417 已替换)
-   - 补充 5 个新 Modulith 模块 (rule, dataset, filter, subjectgroup, discrepancynote)
-   - 补充 AGENTS.md 子模块引用
-   - 移除已删除 `PLAN.md` 的引用
-   - 更新测试架构表 (150 Java + 25 Vitest + 31 pytest)
+4. **更新 app/AGENTS.md:**
+   - 文件数: 269 → 244 (module Java files)
+   - 包路径: 更新为 `org.researchedc`
+   - 配置类: 补充 CurrentUserUtils 引用
 
-### 验证
-- `rm PLAN.md legacy-core/README.txt web/README.txt ws/README.txt` ✅
-- README.md 内容与项目实际状态一致 ✅
-- AGENTS.md 层次结构完整 (root → 6 个子模块) ✅
+5. **更新 frontend/AGENTS.md:**
+   - 质量状态: `pnpm typecheck` 从 0 errors → ⚠️ 41 errors, 79 warnings
 
-### 后续清理 (2026-05-22)
-- 删除 2 个已执行的 `.sisyphus/plans/` 文件（`jsp-strangulation-plan.md`, `questionnaire-python-backend.md`）
-- 修正 `frontend/AGENTS.md` 构建输出路径（`frontend/dist/`，Vite 实际配置）
-- 4 个原子提交 ✅ | push 因 TLS 网络问题暂缓
+6. **更新 web/AGENTS.md:**
+   - 文件数: 481 → 484 Java + 417 → 419 JSP
+
+7. **更新 ws/AGENTS.md:**
+   - 文件数: 57 → 75
+
+### 当前项目状态统计
+
+| 指标 | 数值 |
+|------|------|
+| Maven 编译 | ✅ `mvn clean compile` 通过 |
+| ModulithVerificationTest | ✅ 1 测试通过 |
+| 前端 Vitest | ✅ 25/25 通过 |
+| 前端 TypeScript | ⚠️ 41 errors, 79 warnings |
+| 前端 ESLint | ✅ 0 errors |
+| 问卷服务 pytest | ✅ 31/31 通过 |
+| Java 模块测试文件 | 22 个测试文件 (~150 tests) |
+| Spring Modulith 模块 | 16 个 (244 Java 文件) |
+| shared 模块 | 770 Java 文件 (DAO 169, Domain 166, Bean 253, Service 60, Logic 57) |
+| web 模块 | 484 Java + 419 JSP |
+| ws 模块 | 75 Java 文件 |
+| frontend | 94 TypeScript/TSX 文件 |
+| questionnaire-service | 74 Python 文件 |
+| Liquibase 迁移 | 193 个 XML 文件 |
+| Docker Compose | dev/test/prod 三层 |
+| GitHub Workflows | 5 个 CI 工作流 |
+
+### 文档完整性
+- AGENTS.md 层次结构完整 (root → 7 个子模块: shared, app, frontend, questionnaire-service, web, ws, LEGACY_REFACTOR_PLAN) ✅
 
 ---
 

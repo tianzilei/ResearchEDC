@@ -57,8 +57,8 @@ frontend/src/
 - **Data fetching:** TanStack Query 5 via typed `useAppQuery`/`useAppMutation` (see `useQuery.ts`)
 - **API client:** Fetch-based `ApiClient` class supporting JSON and FormData
 - **Auth:** Keycloak OIDC via `AuthProvider` context (session token flow)
-- **Quality:** `pnpm typecheck` (0 errors) | `pnpm lint` (0 errors) | `pnpm build` (no warnings)
-- **Testing:** Vitest + `test-setup.ts`, 4 test files (`.test.tsx`)
+- **Quality:** `pnpm typecheck` (⚠️ 41 errors, 79 warnings) | `pnpm lint` (0 errors) | `pnpm build` (no warnings)
+- **Testing:** Vitest + `test-setup.ts`, 4 test files (`.test.tsx`), 25 tests pass
 
 ## API LAYER
 

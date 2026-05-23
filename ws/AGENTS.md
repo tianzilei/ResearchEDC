@@ -1,7 +1,7 @@
 # ws/ - Web Services
 
 **Module:** SOAP web services for study/subject/event management  
-**Files:** ~57 Java files  
+**Files:** ~75 Java files  
 
 ## STRUCTURE
 
