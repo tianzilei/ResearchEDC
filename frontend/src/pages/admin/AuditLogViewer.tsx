@@ -79,7 +79,7 @@ export default function AuditLogViewer() {
             onChange={(v) => setFilterModule(v ?? "")}
             style={{ width: 180 }}
           >
-            {modules.map(m => <Select.Option key={m!} value={m!}>{m}</Select.Option>)}
+            {modules.map(m => <Select.Option key={m} value={m}>{m}</Select.Option>)}
           </Select>
         </Space>
       </div>

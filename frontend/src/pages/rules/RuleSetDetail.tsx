@@ -73,6 +73,11 @@ export default function RuleSetDetail() {
   const parsedRuleSetId = ruleSetId ? Number(ruleSetId) : undefined;
   const { data: ruleSet, isLoading } = useRuleSet(parsedRuleSetId);
 
+  const [addOpen, setAddOpen] = useState(false);
+  const [addForm] = Form.useForm();
+  const queryClient = useQueryClient();
+  const parsedRuleSetIdNum = ruleSetId ? Number(ruleSetId) : 0;
+
   if (isLoading) {
     return (
       <div style={{ display: "flex", justifyContent: "center", padding: 80 }}>
@@ -147,11 +152,6 @@ export default function RuleSetDetail() {
     enabled: null,
     ruleId: rid,
   }));
-
-  const [addOpen, setAddOpen] = useState(false);
-  const [addForm] = Form.useForm();
-  const queryClient = useQueryClient();
-  const parsedRuleSetIdNum = ruleSetId ? Number(ruleSetId) : 0;
 
   const handleAddRule = async () => {
     try {

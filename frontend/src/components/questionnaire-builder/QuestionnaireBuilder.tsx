@@ -419,7 +419,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                   <Space key={ci} style={{ display: "flex", marginBottom: 4 }}>
                     <Input
                       size="small"
-                      value={String(choice.value)}
+                      value={choice.value}
                       onChange={(e) => {
                         updateQuestion(selectedQIdx!, {
                           choices: selectedQ.choices.map((ch, i) =>

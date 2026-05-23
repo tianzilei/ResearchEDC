@@ -120,7 +120,7 @@ export default function StudyUserRoleEditor() {
             <Select style={{ width: "100%", marginTop: 4 }}
               placeholder="Select user" showSearch value={selectedUser || undefined}
               onChange={setSelectedUser}
-              filterOption={(input, option) => (option?.label as string ?? "").toLowerCase().includes(input.toLowerCase())}
+              filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
               options={userList.map(u => ({
                 value: u.userName,
                 label: `${u.userName} (${u.firstName} ${u.lastName})`,

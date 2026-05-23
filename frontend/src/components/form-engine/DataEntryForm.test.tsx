@@ -73,7 +73,7 @@ describe("DataEntryForm", () => {
       <DataEntryForm
         items={mockItems}
         statusConfig={{ status: "INITIAL" }}
-        onSave={async () => {}}
+        onSave={() => Promise.resolve()}
       />,
     );
     expect(screen.getByText("Save")).toBeInTheDocument();

@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:8080/OpenClinica',
+    baseURL: process.env.BASE_URL ?? 'http://localhost:8080/OpenClinica',
     trace: 'on-first-retry',
   },
   projects: [

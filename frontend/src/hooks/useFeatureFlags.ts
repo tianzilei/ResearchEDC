@@ -1,9 +1,7 @@
 import { useAppQuery, useAppMutation, useQueryClient } from "@/hooks/useQuery";
 import type { Study } from "@/types/study";
 
-interface FeatureFlags {
-  [key: string]: boolean;
-}
+type FeatureFlags = Record<string, boolean>;
 
 interface FeatureFlagsResponse {
   flags: FeatureFlags;

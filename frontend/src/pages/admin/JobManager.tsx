@@ -31,13 +31,13 @@ export default function JobManager() {
     setLoading(true);
     setError(null);
     Promise.all([
-      fetch("/api/v1/exports?studyId=1").then(r => r.ok ? r.json() : Promise.reject("API unavailable")),
+      fetch("/api/v1/exports?studyId=1").then(r => r.ok ? r.json() : Promise.reject(new Error("API unavailable"))),
       fetch("/api/v1/studies").then(r => r.ok ? r.json() : []),
     ]).then(([data, ss]) => {
       setJobs(data);
       setStudies(Array.isArray(ss) ? ss.map((s: any) => ({ studyId: s.studyId ?? s.id, name: s.name })) : []);
       setLoading(false);
-    }).catch((e) => { setError(e?.message ?? "Error"); setLoading(false); });
+    }).catch((e: unknown) => { setError(e instanceof Error ? e.message : "Error"); setLoading(false); });
   };
 
   useEffect(() => { fetchJobs(); }, []);

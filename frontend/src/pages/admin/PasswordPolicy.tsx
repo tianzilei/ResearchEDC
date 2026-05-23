@@ -12,7 +12,7 @@ export default function PasswordPolicy() {
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
 
-  const handleSave = async () => {
+  const handleSave = () => {
     setSaving(true);
     message.success("Password policy updated (local state only — no backend API)");
     setSaving(false);
