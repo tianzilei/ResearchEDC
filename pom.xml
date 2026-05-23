@@ -818,7 +818,7 @@
 								<exclude>javassist:javassist</exclude>
 							</excludes>
 							<includes>
-								<!-- allow in legacy-core only, not in new modules -->
+								<!-- allow in shared module only, not in new modulith modules -->
 								<include>*:*</include>
 							</includes>
 						</bannedDependencies>

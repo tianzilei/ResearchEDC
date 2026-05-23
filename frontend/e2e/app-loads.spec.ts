@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('OpenClinica SPA', () => {
+test.describe('ResearchEDC SPA', () => {
 
   test('SPA shell loads and renders login redirect', async ({ page }) => {
     const response = await page.goto('/app/dashboard');

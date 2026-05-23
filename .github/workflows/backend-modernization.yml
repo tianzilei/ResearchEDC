@@ -8,7 +8,7 @@ on:
       - "pom.xml"
       - "**/pom.xml"
       - "app/**"
-      - "legacy-core/**"
+      - "shared/**"
       - "web/**"
       - "ws/**"
       - "scripts/**"

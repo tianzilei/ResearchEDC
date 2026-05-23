@@ -10,7 +10,7 @@ updates:
       - "dependencies"
       - "automerge"
     ignore:
-      # Legacy deps frozen in legacy-core - only security patches
+      # Legacy deps frozen in shared module - only security patches
       - dependency-name: "net.sf.ehcache:ehcache"
       - dependency-name: "org.quartz-scheduler:quartz"
     registries: "*"
