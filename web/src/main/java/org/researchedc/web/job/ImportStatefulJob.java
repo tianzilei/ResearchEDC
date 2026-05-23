@@ -2,6 +2,7 @@ package org.researchedc.web.job;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.PersistJobDataAfterExecution;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Import Stateful Job, by Tom Hickerson 04/2009

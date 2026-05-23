@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.researchedc.bean.admin.TriggerBean;
 import org.researchedc.bean.login.UserAccountBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 

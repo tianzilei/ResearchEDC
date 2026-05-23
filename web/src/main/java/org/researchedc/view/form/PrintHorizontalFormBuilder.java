@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class is used to generate the markup for a group-type printable table.

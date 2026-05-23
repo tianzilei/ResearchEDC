@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import javax.xml.transform.Result;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class generates a horizontal HTML table with multiple columns and

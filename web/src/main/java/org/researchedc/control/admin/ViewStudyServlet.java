@@ -11,6 +11,7 @@ import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.control.core.SecureController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.core.CoreResources;
@@ -18,11 +19,8 @@ import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
@@ -32,6 +30,12 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
+import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -39,6 +43,11 @@ import java.util.ArrayList;
  * Processes the reuqest of 'view study details'
  */
 public class ViewStudyServlet extends SecureController {
+    @Autowired
+    private UserAccountDAO userAccountDao;
+    @Autowired
+    private EventDefinitionCRFDAO eventDefinitionCrfDao;
+
     /**
      * Checks whether the user has the correct privilege
      */
@@ -60,7 +69,7 @@ public class ViewStudyServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         FormProcessor fp = new FormProcessor(request);
         int studyId = fp.getInt("id");
         if (studyId == 0) {
@@ -78,7 +87,7 @@ public class ViewStudyServlet extends SecureController {
             StudyConfigService scs = new StudyConfigService(sm.getDataSource());
             study = scs.setParametersForStudy(study);
 
-            StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
+            IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
             String randomizationStatusInOC = spvdao.findByHandleAndStudy(study.getId(), "randomization").getValue();
             String participantStatusInOC = spvdao.findByHandleAndStudy(study.getId(), "participantPortal").getValue();
             if(participantStatusInOC=="") participantStatusInOC="disabled";
@@ -105,8 +114,8 @@ public class ViewStudyServlet extends SecureController {
 
             request.setAttribute("studyToView", study);
             if ("yes".equalsIgnoreCase(viewFullRecords)) {
-                IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
-                IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+                IUserAccountDAO udao = this.userAccountDao;
+                IStudySubjectDAO ssdao = this.studySubjectDao;
                 ArrayList sites = new ArrayList();
                 ArrayList userRoles = new ArrayList();
                 ArrayList subjects = new ArrayList();
@@ -121,9 +130,9 @@ public class ViewStudyServlet extends SecureController {
                 }
 
                 // find all subjects in the study, include ones in sites
-                IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
-                EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
-                // IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+                IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
+                EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
+                // IStudyEventDAO sedao = this.studyEventDao;
 
 //                ArrayList displayStudySubs = new ArrayList();
 //                for (int i = 0; i < subjects.size(); i++) {
@@ -132,7 +141,7 @@ public class ViewStudyServlet extends SecureController {
 //                    ArrayList events = sedao.findAllByStudySubject(studySub);
 //
 //                    // find all eventcrfs for each event
-//                    EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+//                    EventCRFDao ecdao = this.eventCrfDao;
 //
 //                    DisplayStudySubjectBean dssb = new DisplayStudySubjectBean();
 //                    dssb.setStudyEvents(events);

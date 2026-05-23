@@ -30,6 +30,8 @@ import org.researchedc.web.InsufficientPermissionException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -37,7 +39,13 @@ import java.util.Date;
  * Assigns a study subject to another study
  */
 public class ReassignStudySubjectServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private ISubjectDAO subjectDao;
+    @Autowired
+    private SubjectGroupMapDAO subjectGroupMapDao;
+
+/**
      *
      */
     @Override
@@ -60,9 +68,9 @@ public class ReassignStudySubjectServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
         String action = request.getParameter("action");
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
-        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
-        ISubjectDAO subdao = new SubjectDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
+        IStudySubjectDAO ssdao = this.studySubjectDao;
+        ISubjectDAO subdao = this.subjectDao;
         FormProcessor fp = new FormProcessor(request);
 
         int studySubId = fp.getInt("id");
@@ -77,7 +85,7 @@ public class ReassignStudySubjectServlet extends SecureController {
             SubjectBean subject = (SubjectBean) subdao.findByPK(subjectId);
             request.setAttribute("subject", subject);
 
-            SubjectGroupMapDAO sgmdao = new SubjectGroupMapDAO(sm.getDataSource());
+            SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
             ArrayList groupMaps = (ArrayList) sgmdao.findAllByStudySubject(studySubId);
 
             if (StringUtil.isBlank(action)) {

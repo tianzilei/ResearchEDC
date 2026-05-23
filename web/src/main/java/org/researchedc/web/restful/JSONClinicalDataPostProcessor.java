@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Runs a set of post-processing operations on JSON clinical data.

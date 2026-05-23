@@ -16,6 +16,8 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Prepares to process request of updating a study object
@@ -45,7 +47,7 @@ public class InitUpdateStudyServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         String idString = request.getParameter("id");
         logger.info("study id:" + idString);
         if (StringUtil.isBlank(idString)) {

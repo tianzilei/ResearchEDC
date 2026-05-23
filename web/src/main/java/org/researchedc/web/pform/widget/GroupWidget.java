@@ -9,6 +9,7 @@ import org.researchedc.web.pform.dto.Hint;
 import org.researchedc.web.pform.dto.Input;
 import org.researchedc.web.pform.dto.Label;
 import org.researchedc.web.pform.dto.UserControl;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class GroupWidget extends BaseWidget {
 	private ItemGroupBean itemGroup = null;

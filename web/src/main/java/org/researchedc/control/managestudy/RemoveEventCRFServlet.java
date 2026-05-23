@@ -38,6 +38,9 @@ import org.researchedc.web.InsufficientPermissionException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 
 /**
  * Removes an Event CRF
@@ -46,7 +49,15 @@ import java.util.List;
  * 
  */
 public class RemoveEventCRFServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+
+/**
      * 
      */
     @Override
@@ -73,10 +84,10 @@ public class RemoveEventCRFServlet extends SecureController {
         int eventCRFId = fp.getInt("id");// eventCRFId
         int studySubId = fp.getInt("studySubId");// studySubjectId
         checkStudyLocked("ViewStudySubject?id" + studySubId, respage.getString("current_study_locked"));
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
+        IStudySubjectDAO subdao = this.studySubjectDao;
+        EventCRFDao ecdao = this.eventCrfDao;
+        IStudyDAO sdao = this.studyDao;
 
         if (eventCRFId == 0) {
             addPageMessage(respage.getString("please_choose_an_event_CRF_to_remove"));
@@ -89,8 +100,8 @@ public class RemoveEventCRFServlet extends SecureController {
             request.setAttribute("studySub", studySub);
 
             // construct info needed on view event crf page
-            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-            CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+            ICrfDAO cdao = this.crfDao;
+            CRFVersionDAO cvdao = this.crfVersionDao;
 
             int crfVersionId = eventCRF.getCRFVersionId();
             CRFBean cb = cdao.findByVersionId(crfVersionId);
@@ -106,12 +117,12 @@ public class RemoveEventCRFServlet extends SecureController {
             StudyEventBean event = (StudyEventBean) sedao.findByPK(studyEventId);
 
             int studyEventDefinitionId = sedao.getDefinitionIdFromStudyEventId(studyEventId);
-            IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+            IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(studyEventDefinitionId);
             event.setStudyEventDefinition(sed);
             request.setAttribute("event", event);
 
-            EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+            EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
 
             StudyBean study = (StudyBean) sdao.findByPK(studySub.getStudyId());
             EventDefinitionCRFBean edc = edcdao.findByStudyEventDefinitionIdAndCRFId(study, studyEventDefinitionId, cb.getId());
@@ -121,7 +132,7 @@ public class RemoveEventCRFServlet extends SecureController {
             dec.setFlags(eventCRF, ub, currentRole, edc.isDoubleEntry());
 
             // find all item data
-            ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+            IItemDataDAO iddao = this.itemDataDao;
 
             ArrayList itemData = iddao.findAllByEventCRFId(eventCRF.getId());
 
@@ -156,7 +167,7 @@ public class RemoveEventCRFServlet extends SecureController {
                         item.setUpdater(ub);
                         item.setUpdatedDate(new Date());
                         iddao.update(item);
-                        DiscrepancyNoteDAO dnDao = new DiscrepancyNoteDAO(sm.getDataSource());
+                        DiscrepancyNoteDAO dnDao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
                         List dnNotesOfRemovedItem = dnDao.findExistingNotesForItemData(item.getId());
                         if (!dnNotesOfRemovedItem.isEmpty()) {
                             DiscrepancyNoteBean itemParentNote = null;

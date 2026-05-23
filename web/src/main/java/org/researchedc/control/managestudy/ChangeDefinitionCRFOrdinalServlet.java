@@ -17,6 +17,8 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Processes request to change CRF ordinals in a study event definition
@@ -25,7 +27,14 @@ import java.util.ArrayList;
  */
 public class ChangeDefinitionCRFOrdinalServlet extends ChangeOrdinalServlet {
 
-    /**
+    @Autowired
+    protected IStudyDAO studyDao;
+
+    
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+
+/**
      * Override processRequest in super class
      */
     @Override
@@ -37,9 +46,9 @@ public class ChangeDefinitionCRFOrdinalServlet extends ChangeOrdinalServlet {
         int prevOrdinal = fp.getInt("previousOrdinal");
 
         int definitionId = fp.getInt("id");
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
         increase(current, previous, currOrdinal, prevOrdinal, definitionId, edcdao);
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         int siteId = fp.getInt("siteId");
         if (siteId > 0) {
             request.setAttribute("idToSort", new Integer(definitionId).toString());
@@ -116,6 +125,5 @@ public class ChangeDefinitionCRFOrdinalServlet extends ChangeOrdinalServlet {
             }
         }
     }
-
 
 }

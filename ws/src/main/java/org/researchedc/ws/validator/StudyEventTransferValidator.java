@@ -12,6 +12,8 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.ws.bean.StudyEventTransferBean;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -23,10 +25,14 @@ import javax.sql.DataSource;
 public class StudyEventTransferValidator implements Validator {
 
     DataSource dataSource;
-    StudyDAO studyDAO;
-    StudySubjectDAO studySubjectDAO;
-    StudyEventDefinitionDAO studyEventDefinitionDAO;
+    @Autowired
+    private StudyDAO studyDAO;
+    @Autowired
+    private StudySubjectDAO studySubjectDAO;
+    @Autowired
+    private StudyEventDefinitionDAO studyEventDefinitionDAO;
     BaseVSValidatorImplementation helper;
+    @Autowired
     private IStudyParameterValueDAO studyParameterValueDAO;
     private static String TRUE ="true";    
     private static String REQUIRED ="required";
@@ -53,13 +59,13 @@ public class StudyEventTransferValidator implements Validator {
 
         // Business Validation
         Status[] included_status= new Status[]{Status.AVAILABLE ,  Status.PENDING};
-        StudyBean study = helper.verifyStudy( getStudyDAO(), studyEventTransferBean.getStudyUniqueId(), 
+        StudyBean study = helper.verifyStudy( studyDAO, studyEventTransferBean.getStudyUniqueId(), 
         		included_status, e);
         if (study == null) {return; }
         studyEventTransferBean.setStudy(study);
         StudyBean site=null; int site_id = -1;
         if (studyEventTransferBean.getSiteUniqueId() != null) {
-        	site = helper.verifySite(getStudyDAO(), studyEventTransferBean.getStudyUniqueId(),
+        	site = helper.verifySite(studyDAO, studyEventTransferBean.getStudyUniqueId(),
         			 studyEventTransferBean.getSiteUniqueId(), included_status, e);
         	if (site == null){return;}
         	site_id = site.getId();
@@ -120,7 +126,7 @@ public class StudyEventTransferValidator implements Validator {
             return;
         }
         
-        StudySubjectBean studySubject = getStudySubjectDAO().findByLabelAndStudy(studyEventTransferBean.getSubjectLabel(), studyEventTransferBean.getStudy());
+        StudySubjectBean studySubject = studySubjectDAO.findByLabelAndStudy(studyEventTransferBean.getSubjectLabel(), studyEventTransferBean.getStudy());
         //it is not null but label null
         if (studySubject == null || studySubject.getOid()== null) {
             e.reject("studyEventTransferValidator.study_subject_does_not_exist", new Object[] { studyEventTransferBean.getSubjectLabel(), studyEventTransferBean.getStudy().getName() },
@@ -139,7 +145,7 @@ public class StudyEventTransferValidator implements Validator {
             e.reject("studyEventTransferValidator.startDateTime_required");
             return;
         }
-        StudyParameterValueBean eventLocationRequiredSetting = getStudyParameterValueDAO().findByHandleAndStudy(studyEventTransferBean.getStudy().getId(), "eventLocationRequired");
+        StudyParameterValueBean eventLocationRequiredSetting = studyParameterValueDAO.findByHandleAndStudy(studyEventTransferBean.getStudy().getId(), "eventLocationRequired");
         
 //        if ("true".equals(eventLocationRequiredSetting.getValue()) && (studyEventTransferBean.getLocation() == null || studyEventTransferBean.getLocation().length() < 1)) {
         if (REQUIRED.equals(eventLocationRequiredSetting.getValue()) && (studyEventTransferBean.getLocation() == null || studyEventTransferBean.getLocation().length() < 1)) {
@@ -157,7 +163,7 @@ public class StudyEventTransferValidator implements Validator {
         }
         int parentStudyId = study.getParentStudyId();
         StudyEventDefinitionBean studyEventDefinition =
-            getStudyEventDefinitionDAO().findByOidAndStudy(studyEventTransferBean.getEventDefinitionOID(), study.getId(), parentStudyId);
+            studyEventDefinitionDAO.findByOidAndStudy(studyEventTransferBean.getEventDefinitionOID(), study.getId(), parentStudyId);
         if (studyEventDefinition == null) {
             e.reject("studyEventTransferValidator.invalid_eventDefinitionOID", new Object[] { studyEventTransferBean.getEventDefinitionOID() },
                     "EventDefinitionOID you specified " + studyEventTransferBean.getEventDefinitionOID() + " is not valid.");
@@ -167,20 +173,4 @@ public class StudyEventTransferValidator implements Validator {
 
     }
 
-    public StudyDAO getStudyDAO() {
-        return this.studyDAO != null ? studyDAO : new StudyDAO(dataSource);
-    }
-
-    public StudySubjectDAO getStudySubjectDAO() {
-        return this.studySubjectDAO != null ? studySubjectDAO : new StudySubjectDAO(dataSource);
-    }
-
-    public StudyEventDefinitionDAO getStudyEventDefinitionDAO() {
-        return this.studyEventDefinitionDAO != null ? studyEventDefinitionDAO : new StudyEventDefinitionDAO(dataSource);
-    }
-
-    public IStudyParameterValueDAO getStudyParameterValueDAO() {
-    	    	return this.studyParameterValueDAO != null ? studyParameterValueDAO : new StudyParameterValueDAO(dataSource);
-    	 }
-    	
 }

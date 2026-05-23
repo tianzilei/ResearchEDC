@@ -2,6 +2,7 @@ package org.researchedc.controller.openrosa;
 
 import org.researchedc.domain.datamap.Item;
 import org.researchedc.domain.datamap.ItemData;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ItemItemDataContainer {
     private Item item;

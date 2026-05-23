@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class OCCsvViewExporter implements ViewExporter, CoreContextSupport {
 

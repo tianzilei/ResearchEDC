@@ -9,6 +9,7 @@ package org.researchedc.control.form.spreadsheet;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <p>Abstract class contains final SheetCell initialized in Constructor.

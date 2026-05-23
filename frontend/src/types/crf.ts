@@ -37,6 +37,21 @@ export interface SectionDTO {
   ordinal: number;
 }
 
+export interface CrfVersionEntity {
+  crfVersionId: number;
+  crfId: number;
+  name: string;
+  description: string;
+  revisionNotes: string;
+  statusId: number;
+  ownerId: number;
+  dateCreated: string;
+  dateUpdated: string;
+  updateId: number;
+  xform: string;
+  xformName: string;
+}
+
 export interface ItemDTO {
   itemId: number;
   name: string;

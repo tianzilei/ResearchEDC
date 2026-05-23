@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * <P>
@@ -38,6 +40,9 @@ import java.util.Locale;
  */
 public class RemoveFilterServlet extends SecureController {
 
+    @Autowired
+    protected FilterDAO filterDao;
+
     Locale locale;
     // < ResourceBundleresmessage,restext,resword,resexception;
 
@@ -52,7 +57,7 @@ public class RemoveFilterServlet extends SecureController {
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
         int filterId = fp.getInt("filterId");
-        FilterDAO fDAO = new FilterDAO(sm.getDataSource());
+        FilterDAO fDAO = this.filterDao;
         FilterBean filter = (FilterBean) fDAO.findByPK(filterId);
 
         String action = request.getParameter("action");
@@ -103,7 +108,7 @@ public class RemoveFilterServlet extends SecureController {
 
     private EntityBeanTable getFilterTable() {
         FormProcessor fp = new FormProcessor(request);
-        FilterDAO fdao = new FilterDAO(sm.getDataSource());
+        FilterDAO fdao = this.filterDao;
         EntityBeanTable table = fp.getEntityBeanTable();
 
         ArrayList filters = (ArrayList) fdao.findAll();

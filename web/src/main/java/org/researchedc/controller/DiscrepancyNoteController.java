@@ -54,11 +54,30 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 
 @Controller
 @RequestMapping(value = "/auth/api/v1/discrepancynote")
 @ResponseStatus(value = org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
 public class DiscrepancyNoteController {
+
+    @Autowired
+    protected IDiscrepancyNoteDAO discrepancyNoteDao;
+
+    @Autowired
+    protected IStudyEventDefinitionDAO studyEventDefinitionDao;
+
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
+
+    @Autowired
+    protected IStudySubjectDAO studySubjectDao;
+
+    @Autowired
+    protected IStudyEventDAO studyEventDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
 
 	@Autowired
 	@Qualifier("dataSource")
@@ -71,7 +90,7 @@ public class DiscrepancyNoteController {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 	IStudyDAO sdao;
-	DiscrepancyNoteDAO dnDao;
+	IDiscrepancyNoteDAO dnDao;
 
 	@RequestMapping(value = "/dnote", method = RequestMethod.POST)
 	public ResponseEntity buidDiscrepancyNote(@RequestBody HashMap<String, String> map, HttpServletRequest request) throws Exception {
@@ -92,11 +111,11 @@ public class DiscrepancyNoteController {
 		String dn_id = map.get("DN_Id");
 		dn_id = dn_id != null ? dn_id.replaceFirst("DN_",""): dn_id;
 
-		IUserAccountDAO udao = new UserAccountDAO(dataSource);
-		IStudySubjectDAO ssdao = new StudySubjectDAO(dataSource);
-		IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(dataSource);
-		IStudyEventDAO sedao = new StudyEventDAO(dataSource);
-		DiscrepancyNoteDAO dndao = new DiscrepancyNoteDAO(dataSource);
+		IUserAccountDAO udao = this.userAccountDao;
+		IStudySubjectDAO ssdao = this.studySubjectDao;
+		IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
+		IStudyEventDAO sedao = this.studyEventDao;
+		DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
 
 		UserAccountBean assignedUserBean = (UserAccountBean) udao.findByUserName(assignedUser);
 		UserAccountBean ownerBean = (UserAccountBean)request.getSession().getAttribute("userBean");
@@ -146,13 +165,13 @@ public class DiscrepancyNoteController {
 	}
 
 	private StudyBean getStudy(Integer id) {
-		sdao = new StudyDAO(dataSource);
+		sdao = this.studyDao;
 		StudyBean studyBean = (StudyBean) sdao.findByPK(id);
 		return studyBean;
 	}
 
 	private StudyBean getStudy(String oid) {
-		sdao = new StudyDAO(dataSource);
+		sdao = this.studyDao;
 		StudyBean studyBean = (StudyBean) sdao.findByOid(oid);
 		return studyBean;
 	}
@@ -216,12 +235,12 @@ public class DiscrepancyNoteController {
 
 	}
 
-	public DiscrepancyNoteDAO getDnDao() {
-		dnDao = new DiscrepancyNoteDAO(dataSource);
+	public IDiscrepancyNoteDAO getDnDao() {
+		dnDao = this.discrepancyNoteDao;
 		return dnDao;
 	}
 
-	public void setDnDao(DiscrepancyNoteDAO dnDao) {
+	public void setDnDao(IDiscrepancyNoteDAO dnDao) {
 		this.dnDao = dnDao;
 	}
 

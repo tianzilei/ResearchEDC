@@ -1,6 +1,7 @@
 package org.researchedc.control.admin;
 
 import org.researchedc.dao.extract.DatasetDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.bean.admin.TriggerBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.extract.DatasetBean;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * 
@@ -37,6 +39,9 @@ public class ViewJobServlet extends SecureController {
    
     private static String SCHEDULER = "schedulerFactoryBean";
     private static String EXPORT_TRIGGER = "exportTrigger";
+
+    @Autowired
+    private DatasetDAO datasetDao;
 
     private SchedulerFactoryBean schedulerFactoryBean;
     private Scheduler scheduler;
@@ -105,8 +110,8 @@ public class ViewJobServlet extends SecureController {
             }
             // setting: frequency, dataset name
             JobDataMap dataMap = new JobDataMap();
-            DatasetDAO datasetDAO = new DatasetDAO(sm.getDataSource());
-            IStudyDAO studyDao = new StudyDAO(sm.getDataSource());
+            DatasetDAO datasetDAO = this.datasetDao;
+            IStudyDAO studyDao = this.studyDao;
             if (trigger.getJobDataMap().size() > 0) {
                 dataMap = trigger.getJobDataMap();
                 int dsId = dataMap.getInt(ExampleSpringJob.DATASET_ID);

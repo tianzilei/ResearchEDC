@@ -17,6 +17,8 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Builds on top of PrintCRFServlet
@@ -25,7 +27,14 @@ import org.researchedc.web.InsufficientPermissionException;
  */
 public class PrintCRFByIdServlet extends PrintCRFServlet {
 
-    private static final long serialVersionUID = 1L;
+    @Autowired
+    protected IStudyDAO studyDao;
+
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+
+private static final long serialVersionUID = 1L;
 
     /*
      * (non-Javadoc)
@@ -44,9 +53,9 @@ public class PrintCRFByIdServlet extends PrintCRFServlet {
     public void processRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         
         StudyBean currentStudy =    (StudyBean) request.getSession().getAttribute("study");
-        IStudyDAO studyDao = new StudyDAO(getDataSource());
+        IStudyDAO studyDao = this.studyDao;
         currentStudy = (StudyBean) studyDao.findByPK(1);
-        CRFVersionDAO crfVersionDao = new CRFVersionDAO(getDataSource());
+        CRFVersionDAO crfVersionDao = this.crfVersionDao;
         if (request.getParameter("id") == null) {
             forwardPage(Page.LOGIN, request, response);
         }

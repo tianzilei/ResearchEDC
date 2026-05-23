@@ -5,6 +5,7 @@ import org.quartz.SimpleTrigger;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class XalanTriggerService {
     public XalanTriggerService() {

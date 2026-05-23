@@ -12,6 +12,7 @@ import org.researchedc.web.bean.UserAccountRow;
 
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <p>

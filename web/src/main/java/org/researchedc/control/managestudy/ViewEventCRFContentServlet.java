@@ -28,6 +28,8 @@ import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -62,7 +64,7 @@ public class ViewEventCRFContentServlet extends SecureController {
      */
     private StudyEventBean getStudyEvent(int eventId) throws Exception {
 
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
         StudyBean studyWithSED = currentStudy;
         if (currentStudy.getParentStudyId() > 0) {
             studyWithSED = new StudyBean();
@@ -80,7 +82,7 @@ public class ViewEventCRFContentServlet extends SecureController {
 
         StudyEventBean seb = (StudyEventBean) aeb;
 
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         StudyEventDefinitionBean sedb = (StudyEventDefinitionBean) seddao.findByPK(seb.getStudyEventDefinitionId());
         seb.setStudyEventDefinition(sedb);
         return seb;
@@ -100,11 +102,11 @@ public class ViewEventCRFContentServlet extends SecureController {
 
         StudyEventBean seb = getStudyEvent(eventId);
 
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO subdao = this.studySubjectDao;
         StudySubjectBean studySub = (StudySubjectBean) subdao.findByPK(studySubId);
         request.setAttribute("studySub", studySub);
 
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+        EventCRFDao ecdao = this.eventCrfDao;
         EventCRFBean eventCRF = (EventCRFBean) ecdao.findByPK(eventCRFId);
         DisplayTableOfContentsBean displayBean = TableOfContentsServlet.getDisplayBean(eventCRF, sm.getDataSource(), currentStudy);
         request.setAttribute("toc", displayBean);

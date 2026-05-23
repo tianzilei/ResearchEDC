@@ -28,6 +28,8 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -35,6 +37,18 @@ import java.util.Locale;
  * View all related metadata for an item
  */
 public class ViewItemDetailServlet extends SecureController {
+
+    @Autowired
+    protected SectionDAO sectionDao;
+
+    @Autowired
+    protected ItemFormMetadataDAO itemFormMetadataDao;
+
+    @Autowired
+    protected ItemGroupMetadataDAO itemGroupMetadataDao;
+
+    @Autowired
+    protected CRFVersionDAO crfVersionDao;
 
     Locale locale;
     // < ResourceBundle respage;
@@ -64,12 +78,12 @@ public class ViewItemDetailServlet extends SecureController {
         FormProcessor fp = new FormProcessor(request);
         int itemId = fp.getInt(ITEM_ID);
         String itemOid = fp.getString(ITEM_OID);
-        ItemDAO idao = new ItemDAO(sm.getDataSource());
-        ItemFormMetadataDAO ifmdao = new ItemFormMetadataDAO(sm.getDataSource());
-        ItemGroupMetadataDAO igmdao = new ItemGroupMetadataDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        SectionDAO sectionDao = new SectionDAO(sm.getDataSource());
+        ItemDAO idao = this.itemDao;
+        ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
+        ItemGroupMetadataDAO igmdao = this.itemGroupMetadataDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfDAO cdao = this.crfDao;
+        SectionDAO sectionDao = this.sectionDao;
 
         if (itemId == 0 && itemOid == null) {
             addPageMessage(respage.getString("please_choose_an_item_first"));

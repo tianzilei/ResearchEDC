@@ -35,6 +35,9 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -42,7 +45,11 @@ import java.util.Date;
  * Restores a removed subject to a study
  */
 public class RestoreStudySubjectServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private ISubjectDAO subjectDao;
+
+/**
      *
      */
     @Override
@@ -69,8 +76,8 @@ public class RestoreStudySubjectServlet extends SecureController {
         String subIdString = request.getParameter("subjectId");
         String studyIdString = request.getParameter("studyId");
 
-        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+        ISubjectDAO sdao = this.subjectDao;
+        IStudySubjectDAO subdao = this.studySubjectDao;
 
         if (StringUtil.isBlank(studySubIdString) || StringUtil.isBlank(subIdString) || StringUtil.isBlank(studyIdString)) {
             addPageMessage(respage.getString("please_choose_study_subject_to_restore"));
@@ -84,11 +91,11 @@ public class RestoreStudySubjectServlet extends SecureController {
 
             StudySubjectBean studySub = (StudySubjectBean) subdao.findByPK(studySubId);
 
-            IStudyDAO studydao = new StudyDAO(sm.getDataSource());
+            IStudyDAO studydao = this.studyDao;
             StudyBean study = (StudyBean) studydao.findByPK(studyId);
 
             // find study events
-            IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+            IStudyEventDAO sedao = this.studyEventDao;
 //            ArrayList events = sedao.findAllByStudyAndStudySubjectId(study, studySubId);
             ArrayList<DisplayStudyEventBean> displayEvents = ViewStudySubjectServlet.getDisplayStudyEventsForStudySubject(studySub, sm.getDataSource(), ub, currentRole);
             String action = request.getParameter("action");
@@ -116,7 +123,7 @@ public class RestoreStudySubjectServlet extends SecureController {
 
                 // restore all study events
                 // restore all event crfs
-                EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+                EventCRFDao ecdao = this.eventCrfDao;
 
                 for (int j = 0; j < displayEvents.size(); j++) {
                     DisplayStudyEventBean dispEvent = displayEvents.get(j);
@@ -130,7 +137,7 @@ public class RestoreStudySubjectServlet extends SecureController {
 
                     ArrayList eventCRFs = ecdao.findAllByStudyEvent(event);
 
-                    ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+                    IItemDataDAO iddao = this.itemDataDao;
                     for (int k = 0; k < eventCRFs.size(); k++) {
                         EventCRFBean eventCRF = (EventCRFBean) eventCRFs.get(k);
                         if (eventCRF.getStatus().equals(Status.AUTO_DELETED)) {

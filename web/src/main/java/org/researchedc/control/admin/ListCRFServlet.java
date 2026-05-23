@@ -12,13 +12,14 @@ import org.researchedc.bean.core.Role;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.web.SQLInitServlet;
 import org.researchedc.web.bean.EntityBeanTable;
 import org.researchedc.web.bean.ListCRFRow;
@@ -36,6 +37,8 @@ import java.util.Locale;
  * @author jxu
  */
 public class ListCRFServlet extends SecureController {
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
     Locale locale;
 
     // < ResourceBundle resexception,respage,resword,restext,resworkflow;
@@ -107,8 +110,8 @@ public class ListCRFServlet extends SecureController {
         // spreadsheet
         logger.debug("found directory: " + dir);
 
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        CRFVersionDAO vdao = new CRFVersionDAO(sm.getDataSource());
+        ICrfDAO cdao = this.crfDao;
+        CRFVersionDAO vdao = this.crfVersionDao;
         ArrayList crfs = (ArrayList) cdao.findAll();
         for (int i = 0; i < crfs.size(); i++) {
             CRFBean eb = (CRFBean) crfs.get(i);

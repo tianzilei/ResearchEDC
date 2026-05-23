@@ -8,6 +8,7 @@ import org.researchedc.bean.submit.DisplayEventCRFBean;
 import org.researchedc.bean.submit.SubjectGroupMapBean;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author sshamim

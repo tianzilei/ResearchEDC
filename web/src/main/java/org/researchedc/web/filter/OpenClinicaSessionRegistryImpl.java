@@ -17,10 +17,12 @@ import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.ldap.userdetails.LdapUserDetails;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class OpenClinicaSessionRegistryImpl extends SessionRegistryImpl {
 
     AuditUserLoginDao auditUserLoginDao;
+    @Autowired
     IUserAccountDAO userAccountDao;
     DataSource dataSource;
     CRFLocker crfLocker;
@@ -65,7 +67,7 @@ public class OpenClinicaSessionRegistryImpl extends SessionRegistryImpl {
     }
 
     public IUserAccountDAO getUserAccountDao() {
-        return userAccountDao != null ? userAccountDao : new UserAccountDAO(dataSource);
+        return userAccountDao != null ? userAccountDao : this.userAccountDao;
     }
 
     public AuditUserLoginDao getAuditUserLoginDao() {

@@ -23,12 +23,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author thickerson
  *
  */
 public class RestoreDatasetServlet extends SecureController {
+
+    @Autowired
+    protected DatasetDAO datasetDao;
 
     Locale locale;
 
@@ -42,7 +47,7 @@ public class RestoreDatasetServlet extends SecureController {
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
         int dsId = fp.getInt("dsId");
-        DatasetDAO dsDAO = new DatasetDAO(sm.getDataSource());
+        DatasetDAO dsDAO = this.datasetDao;
         DatasetBean dataset = (DatasetBean) dsDAO.findByPK(dsId);
 
         String action = request.getParameter("action");
@@ -90,7 +95,7 @@ public class RestoreDatasetServlet extends SecureController {
         FormProcessor fp = new FormProcessor(request);
 
         EntityBeanTable table = fp.getEntityBeanTable();
-        DatasetDAO dsdao = new DatasetDAO(sm.getDataSource());
+        DatasetDAO dsdao = this.datasetDao;
         ArrayList datasets = new ArrayList();
         // if (ub.isSysAdmin()) {
         // datasets =

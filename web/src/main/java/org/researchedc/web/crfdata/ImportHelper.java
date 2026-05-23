@@ -10,6 +10,7 @@ import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.Validation;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /*
  * Helper methods will be placed in this class - DRY

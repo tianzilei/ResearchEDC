@@ -19,6 +19,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Krikor Krumlian

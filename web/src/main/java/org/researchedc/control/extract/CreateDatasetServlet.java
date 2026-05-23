@@ -55,6 +55,8 @@ import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.SQLInitServlet;
 import org.researchedc.web.bean.EntityBeanTable;
 import org.researchedc.web.bean.FilterRow;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Creates a dataset by building a query based on study events, CRFs and items
@@ -64,6 +66,12 @@ import org.researchedc.web.bean.FilterRow;
  *
  */
 public class CreateDatasetServlet extends SecureController {
+
+    @Autowired
+    protected FilterDAO filterDao;
+
+    @Autowired
+    protected DatasetDAO datasetDao;
     public static final String BEAN_YEARS = "years";
 
     public static final String BEAN_MONTHS = "months";
@@ -129,8 +137,8 @@ public class CreateDatasetServlet extends SecureController {
      */
 
     public ArrayList setUpStudyGroups() {
-        IStudyDAO studydao = new StudyDAO(sm.getDataSource());
-        StudyGroupClassDAO sgclassdao = new StudyGroupClassDAO(sm.getDataSource());
+        IStudyDAO studydao = this.studyDao;
+        StudyGroupClassDAO sgclassdao = this.studyGroupClassDao;
         StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
         ArrayList sgclasses = sgclassdao.findAllActiveByStudy(theStudy);
         // StudyGroupClassBean sgclass = (StudyGroupClassBean)sgclasses.get(0);
@@ -162,9 +170,9 @@ public class CreateDatasetServlet extends SecureController {
             if ("begin".equalsIgnoreCase(action)) {
                 // step 2 -- select study events/crfs
 
-                IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-                IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
-                EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+                IStudyEventDAO sedao = this.studyEventDao;
+                IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
+                EventCRFDao ecdao = this.eventCrfDao;
                 StudyBean studyWithEventDefinitions = currentStudy;
                 if (currentStudy.getParentStudyId() > 0) {
                     studyWithEventDefinitions = new StudyBean();
@@ -173,7 +181,7 @@ public class CreateDatasetServlet extends SecureController {
                 }
                 ArrayList seds = seddao.findAllActiveByStudy(studyWithEventDefinitions);
 
-                ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
+                ICrfDAO crfdao = this.crfDao;
                 HashMap events = new LinkedHashMap();
                 for (int i = 0; i < seds.size(); i++) {
                     StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seds.get(i);
@@ -197,8 +205,8 @@ public class CreateDatasetServlet extends SecureController {
                     addPageMessage(respage.getString("not_have_study_definitions_assigned"));
                     forwardPage(Page.CREATE_DATASET_1);
                 } else {
-                    crfdao = new CRFDAO(sm.getDataSource());
-                    ItemDAO idao = new ItemDAO(sm.getDataSource());
+                    crfdao = this.crfDao;
+                    ItemDAO idao = this.itemDao;
                     ArrayList sedItemIds = CreateDatasetServlet.allSedItemIdsInStudy(events, crfdao, idao);
 
                     session.setAttribute("numberOfStudyItems", Integer.toString(sedItemIds.size()));
@@ -325,7 +333,7 @@ public class CreateDatasetServlet extends SecureController {
                     session.setAttribute("newDataset", dsb);
 
                     if (fp.getString("submit").equals(resword.getString("continue_to_apply_filter"))) {
-                        // FilterDAO fdao = new FilterDAO(sm.getDataSource());
+                        // FilterDAO fdao = this.filterDao;
                         // Collection filters = fdao.findAll();
                         // TODO make findAllByProject
                         // request.setAttribute("filters",filters);
@@ -379,7 +387,7 @@ public class CreateDatasetServlet extends SecureController {
                     if (((DatasetBean) session.getAttribute("newDataset")).getId() <= 0) {
                         // YW >>
                         // logger.info("dsName" + fp.getString("dsName"));
-                        DatasetDAO dsdao = new DatasetDAO(sm.getDataSource());
+                        DatasetDAO dsdao = this.datasetDao;
                         DatasetBean dsBean = (DatasetBean) dsdao.findByNameAndStudy(fp.getString("dsName").trim(), currentStudy);
                         if (dsBean.getId() > 0) {
                             Validator.addError(errors, "dsName", restext.getString("dataset_name_used_by_another_choose_unique"));
@@ -427,7 +435,7 @@ public class CreateDatasetServlet extends SecureController {
                     // possibly done need to test, tbh 1/7/2005
                     FilterBean fb = (FilterBean) session.getAttribute("newFilter");
                     if (fb != null) {
-                        // FilterDAO fDAO = new FilterDAO(sm.getDataSource());
+                        // FilterDAO fDAO = this.filterDao;
                         dsb.setSQLStatement(dsb.getSQLStatement() + " " + fb.getSQLStatement());
                     }
                     // YW 2-21-2008 << editing dataset becomes creating a new
@@ -466,7 +474,7 @@ public class CreateDatasetServlet extends SecureController {
                     // session.removeAttribute("newFilter");
                     forwardPage(Page.CREATE_DATASET_4);
                 } else {
-                    DatasetDAO ddao = new DatasetDAO(sm.getDataSource());
+                    DatasetDAO ddao = this.datasetDao;
                     DatasetBean dsb = (DatasetBean) session.getAttribute("newDataset");
                     dsb.setStudyId(this.currentStudy.getId());
 
@@ -537,7 +545,7 @@ public class CreateDatasetServlet extends SecureController {
             db.getEventIds().add(new Integer(defId));
         }
 
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         String defName = "";
         if (defId > 0 && crfId != -1) {
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(defId);
@@ -572,7 +580,7 @@ public class CreateDatasetServlet extends SecureController {
         }
 
         if (crfId != 0 && allItems != null) {
-            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO cdao = this.crfDao;
             CRFBean crf = (CRFBean) cdao.findByPK(crfId);
 
             ArrayList newSelectItems = new ArrayList();
@@ -747,7 +755,7 @@ public class CreateDatasetServlet extends SecureController {
 
     private EntityBeanTable getFilterTable() {
         FormProcessor fp = new FormProcessor(request);
-        FilterDAO fdao = new FilterDAO(sm.getDataSource());
+        FilterDAO fdao = this.filterDao;
         EntityBeanTable table = fp.getEntityBeanTable();
 
         ArrayList filters = (ArrayList) fdao.findAll();

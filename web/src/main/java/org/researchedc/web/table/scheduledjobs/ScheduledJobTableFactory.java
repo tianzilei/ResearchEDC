@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 /**
  * View builder for the list of scheduled jobs with an ability to cancel the job
  * @author jnyayapathi

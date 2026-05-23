@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class creates various types of input fields such as text inputs and

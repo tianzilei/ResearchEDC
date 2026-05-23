@@ -11,6 +11,7 @@ import org.researchedc.dao.hibernate.OpenClinicaVersionDAO;
 import org.researchedc.dao.hibernate.UsageStatsServiceDAO;
 import org.researchedc.domain.OpenClinicaVersionBean;
 import org.researchedc.service.usageStats.LogUsageStatsService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * ServletContextListener used as a controller for throwing an error when

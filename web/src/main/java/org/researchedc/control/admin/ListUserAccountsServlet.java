@@ -17,6 +17,7 @@ import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.bean.EntityBeanTable;
@@ -27,6 +28,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class ListUserAccountsServlet extends SecureController {
+
+    @Autowired
+    private UserAccountDAO userAccountDao;
     public static final String PATH = "ListUserAccounts";
     public static final String ARG_MESSAGE = "message";
 
@@ -44,7 +48,7 @@ public class ListUserAccountsServlet extends SecureController {
     protected void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
 
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
         EntityBeanTable table = fp.getEntityBeanTable();
         // table.setSortingIfNotExplicitlySet(1, false);
 
@@ -94,7 +98,7 @@ public class ListUserAccountsServlet extends SecureController {
      *            UserAccountBean.
      */
     private void setStudyNamesInStudyUserRoles(ArrayList users) {
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         ArrayList allStudies = (ArrayList) sdao.findAll();
         HashMap studiesById = new HashMap();
 

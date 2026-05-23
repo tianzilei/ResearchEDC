@@ -10,14 +10,16 @@ package org.researchedc.control.admin;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.SubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -26,6 +28,8 @@ import java.util.ArrayList;
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class ViewSubjectServlet extends SecureController {
+    @Autowired
+    private SubjectDAO subjectDao;
     /**
      *
      */
@@ -43,7 +47,7 @@ public class ViewSubjectServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
+        ISubjectDAO sdao = this.subjectDao;
         FormProcessor fp = new FormProcessor(request);
         int subjectId = fp.getInt("id");
 
@@ -54,7 +58,7 @@ public class ViewSubjectServlet extends SecureController {
             SubjectBean subject = (SubjectBean) sdao.findByPK(subjectId);
 
             // find all study subjects
-            IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+            IStudySubjectDAO ssdao = this.studySubjectDao;
             ArrayList studySubs = ssdao.findAllBySubjectId(subjectId);
 
             request.setAttribute("subject", subject);

@@ -11,6 +11,7 @@ import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
@@ -22,8 +23,14 @@ import org.researchedc.web.InconsistentStateException;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class ViewUserAccountServlet extends SecureController {
+    @Autowired
+    IStudyDAO studyDao;
+
+    @Autowired
+    private UserAccountDAO userAccountDao;
     public static final String PATH = "ViewUserAccount";
     public static final String ARG_USER_ID = "userId";
 
@@ -50,7 +57,7 @@ public class ViewUserAccountServlet extends SecureController {
     protected void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
         int userId = fp.getInt(ARG_USER_ID, true);
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
 
         UserAccountBean user = getBean(udao, userId);
 
@@ -88,7 +95,7 @@ public class ViewUserAccountServlet extends SecureController {
     // int userId = fp.getInt(ARG_USER_ID);
     //
     // SQLFactory factory = SQLFactory.getInstance();
-    // IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+    // IUserAccountDAO udao = this.userAccountDao;
     //
     // UserAccountBean user = getBean(udao, userId);
     //
@@ -113,7 +120,7 @@ public class ViewUserAccountServlet extends SecureController {
 
     private UserAccountBean getBean(IUserAccountDAO udao, int id) {
         UserAccountBean answer = (UserAccountBean) udao.findByPK(id);
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
 
         ArrayList roles = answer.getRoles();
 

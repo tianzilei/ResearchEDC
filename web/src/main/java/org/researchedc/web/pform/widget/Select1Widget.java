@@ -15,6 +15,7 @@ import org.researchedc.web.pform.dto.Item;
 import org.researchedc.web.pform.dto.Label;
 import org.researchedc.web.pform.dto.Select1;
 import org.researchedc.web.pform.dto.UserControl;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class Select1Widget extends BaseWidget {
 

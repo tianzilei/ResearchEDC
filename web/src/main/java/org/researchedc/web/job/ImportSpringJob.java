@@ -79,6 +79,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.researchedc.dao.spi.DaoProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Import Spring Job, a job running asynchronously on the Tomcat server using Spring and Quartz.
@@ -87,6 +89,18 @@ import org.springframework.transaction.support.TransactionTemplate;
  * 
  */
 public class ImportSpringJob extends QuartzJobBean {
+
+    @Autowired
+    protected ItemDAO itemDao;
+
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
+
+    @Autowired
+    protected AuditEventDAO auditEventDao;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -115,8 +129,8 @@ public class ImportSpringJob extends QuartzJobBean {
     private DataSource dataSource;
     private OpenClinicaMailSender mailSender;
     private ImportCRFDataService dataService;
-    private ItemDataDAO itemDataDao;// = new ItemDataDAO(sm.getDataSource());
-    private EventCRFDao eventCrfDao;// = new EventCRFDAO(sm.getDataSource());
+    private ItemDataDAO itemDataDao;// = this.itemDataDao;
+    private EventCRFDao eventCrfDao;// = this.eventCrfDao;
     private IAuditEventDAO auditEventDAO;
     private TriggerService triggerService;
 
@@ -156,12 +170,12 @@ public class ImportSpringJob extends QuartzJobBean {
             mailSender = (OpenClinicaMailSender) appContext.getBean("openClinicaMailSender");
             RuleSetServiceInterface ruleSetService = (RuleSetServiceInterface) appContext.getBean("ruleSetService");
 
-            itemDataDao = new ItemDataDAO(dataSource);
-            eventCrfDao = new EventCRFDAO(dataSource);
-            auditEventDAO = new AuditEventDAO(dataSource);
+            itemDataDao = this.itemDataDao;
+            eventCrfDao = this.eventCrfDao;
+            auditEventDAO = this.auditEventDao;
 
             int userId = dataMap.getInt(USER_ID);
-            IUserAccountDAO userAccountDAO = new UserAccountDAO(dataSource);
+            IUserAccountDAO userAccountDAO = this.userAccountDao;
 
             UserAccountBean ub = (UserAccountBean) userAccountDAO.findByPK(userId);
             triggerBean.setUserAccount(ub);
@@ -176,7 +190,7 @@ public class ImportSpringJob extends QuartzJobBean {
                 respage = ResourceBundleProvider.getPageMessagesBundle();
                 resword = ResourceBundleProvider.getWordsBundle();
             }
-            IStudyDAO studyDAO = new StudyDAO(dataSource);
+            IStudyDAO studyDAO = this.studyDao;
             StudyBean studyBean;
             if (studyOid != null) {
                 studyBean = studyDAO.findByOid(studyOid);
@@ -674,7 +688,7 @@ public class ImportSpringJob extends QuartzJobBean {
                                 logger.debug("found: id " + itemDataBean2.getId() + " name " + itemDataBean2.getName());
                                 displayItemBean.getData().setId(itemDataBean2.getId());
                             }
-                            ItemDAO idao = new ItemDAO(dataSource);
+                            ItemDAO idao = this.itemDao;
                             ItemBean ibean = (ItemBean) idao.findByPK(displayItemBean.getData().getItemId());
                             logger.debug("*** checking for validation errors: " + ibean.getName());
                             String itemOid = displayItemBean.getItem().getOid() + "_" + wrapper.getStudyEventRepeatKey() + "_"
@@ -754,7 +768,7 @@ public class ImportSpringJob extends QuartzJobBean {
             Integer parentId, UserAccountBean uab, DataSource ds, StudyBean study) {
         // DisplayItemBean displayItemBean) {
         DiscrepancyNoteBean note = new DiscrepancyNoteBean();
-        IStudySubjectDAO ssdao = new StudySubjectDAO(ds);
+        IStudySubjectDAO ssdao = DaoProvider.getDao(StudySubjectDAO.class);
         note.setDescription(message);
         note.setDetailedNotes("Failed Validation Check");
         note.setOwner(uab);
@@ -781,7 +795,7 @@ public class ImportSpringJob extends QuartzJobBean {
         note.setEntityId(displayItemBean.getData().getId());
         note.setColumn("value");
 
-        DiscrepancyNoteDAO dndao = new DiscrepancyNoteDAO(ds);
+        DiscrepancyNoteDAO dndao = DaoProvider.getDao(DiscrepancyNoteDAO.class);
         note = (DiscrepancyNoteBean) dndao.create(note);
         // so that the below method works, need to set the entity above
         // System.out.println("trying to create mapping with " + note.getId() +

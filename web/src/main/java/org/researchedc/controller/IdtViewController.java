@@ -65,11 +65,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 @Controller
 @RequestMapping(value = "auth/api/itemdata")
 @ResponseStatus(value = org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
 public class IdtViewController {
+
+    @Autowired
+    protected IStudyDAO studyDao;
     @Autowired
     @Qualifier("dataSource")
     private BasicDataSource dataSource;
@@ -245,13 +249,13 @@ public class IdtViewController {
     }
 
     private StudyBean getStudy(String oid) {
-        sdao = new StudyDAO(dataSource);
+        sdao = this.studyDao;
         StudyBean studyBean = (StudyBean) sdao.findByOid(oid);
         return studyBean;
     }
 
     private StudyBean getStudy(Integer id) {
-        sdao = new StudyDAO(dataSource);
+        sdao = this.studyDao;
         StudyBean studyBean = (StudyBean) sdao.findByPK(id);
         return studyBean;
     }

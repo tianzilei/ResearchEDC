@@ -51,6 +51,8 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.job.CrfBusinessLogicHelper;
 import org.researchedc.web.job.ImportSpringJob;
+import org.researchedc.dao.spi.DaoProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * View the uploaded data and verify what is going to be saved into the system and what is not.
@@ -86,7 +88,7 @@ public class VerifyImportedCRFDataServlet extends SecureController {
             Integer parentId, UserAccountBean uab, DataSource ds, StudyBean study) {
         // DisplayItemBean displayItemBean) {
         DiscrepancyNoteBean note = new DiscrepancyNoteBean();
-        IStudySubjectDAO ssdao = new StudySubjectDAO(ds);
+        IStudySubjectDAO ssdao = DaoProvider.getDao(StudySubjectDAO.class);
         note.setDescription(message);
         note.setDetailedNotes("Failed Validation Check");
         note.setOwner(uab);
@@ -113,7 +115,7 @@ public class VerifyImportedCRFDataServlet extends SecureController {
         note.setEntityId(displayItemBean.getData().getId());
         note.setColumn("value");
 
-        DiscrepancyNoteDAO dndao = new DiscrepancyNoteDAO(ds);
+        DiscrepancyNoteDAO dndao = DaoProvider.getDao(DiscrepancyNoteDAO.class);
         note = (DiscrepancyNoteBean) dndao.create(note);
         // so that the below method works, need to set the entity above
         // System.out.println("trying to create mapping with " + note.getId() +
@@ -127,9 +129,9 @@ public class VerifyImportedCRFDataServlet extends SecureController {
     @Override
     @SuppressWarnings(value = "unchecked")
     public void processRequest() throws Exception {
-        ItemDataDAO itemDataDao = new ItemDataDAO(sm.getDataSource());
+        ItemDataDAO itemDataDao = this.itemDataDao;
         itemDataDao.setFormatDates(false);
-        EventCRFDao eventCrfDao = new EventCRFDAO(sm.getDataSource());
+        EventCRFDao eventCrfDao = this.eventCrfDao;
         CrfBusinessLogicHelper crfBusinessLogicHelper = new CrfBusinessLogicHelper(sm.getDataSource());
         String action = request.getParameter("action");
 
@@ -271,7 +273,7 @@ public class VerifyImportedCRFDataServlet extends SecureController {
                         // "+displayItemBean.getData().getName());
                         // logger.info("continued:
                         // "+displayItemBean.getData().getItemId());
-                        ItemDAO idao = new ItemDAO(sm.getDataSource());
+                        ItemDAO idao = this.itemDao;
                         ItemBean ibean = (ItemBean) idao.findByPK(displayItemBean.getData().getItemId());
                         // logger.info("continued2: getName " +
                         // ibean.getName());

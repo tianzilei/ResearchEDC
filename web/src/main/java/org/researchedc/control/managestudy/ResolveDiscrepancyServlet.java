@@ -48,6 +48,9 @@ import org.researchedc.service.DiscrepancyNoteUtil;
 import org.researchedc.view.Page;
 import org.researchedc.web.InconsistentStateException;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 
 /**
  * @author ssachs
@@ -57,7 +60,13 @@ import org.researchedc.web.InsufficientPermissionException;
  */
 public class ResolveDiscrepancyServlet extends SecureController {
 
-    private static final String INPUT_NOTE_ID = "noteId";
+    
+    @Autowired
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
+    @Autowired
+    private ItemFormMetadataDAO itemFormMetadataDao;
+
+private static final String INPUT_NOTE_ID = "noteId";
     private static final String CAN_ADMIN_EDIT = "canAdminEdit";
     private static final String EVENT_CRF_ID = "ecId";
     private static final String STUDY_SUB_ID = "studySubjectId";
@@ -114,7 +123,7 @@ public class ResolveDiscrepancyServlet extends SecureController {
         String entityType = note.getEntityType().toLowerCase();
         int id = note.getEntityId();
         if ("subject".equalsIgnoreCase(entityType)) {
-            IStudySubjectDAO ssdao = new StudySubjectDAO(ds);
+            IStudySubjectDAO ssdao = this.studySubjectDao;
             StudySubjectBean ssb = ssdao.findBySubjectIdAndStudy(id, currentStudy);
 
             request.setAttribute("action", "show");
@@ -126,7 +135,7 @@ public class ResolveDiscrepancyServlet extends SecureController {
         } else if ("eventcrf".equalsIgnoreCase(entityType)) {
             request.setAttribute("editInterview", "1");
 
-            EventCRFDao ecdao = new EventCRFDAO(ds);
+            EventCRFDao ecdao = this.eventCrfDao;
             EventCRFBean ecb = (EventCRFBean) ecdao.findByPK(id);
             request.setAttribute(TableOfContentsServlet.INPUT_EVENT_CRF_BEAN, ecb);
             // If the request is passed along to ViewSectionDataEntryServlet,
@@ -136,7 +145,7 @@ public class ResolveDiscrepancyServlet extends SecureController {
             // a ClassCastException without the casting to a String
             request.setAttribute(ViewSectionDataEntryServlet.EVENT_CRF_ID, ecb.getId() + "");
         } else if ("studyevent".equalsIgnoreCase(entityType)) {
-            IStudyEventDAO sedao = new StudyEventDAO(ds);
+            IStudyEventDAO sedao = this.studyEventDao;
             StudyEventBean seb = (StudyEventBean) sedao.findByPK(id);
             request.setAttribute(EnterDataForStudyEventServlet.INPUT_EVENT_ID, String.valueOf(id));
             request.setAttribute(UpdateStudyEventServlet.EVENT_ID, String.valueOf(id));
@@ -145,22 +154,22 @@ public class ResolveDiscrepancyServlet extends SecureController {
 
         // this is for item data
         else if ("itemdata".equalsIgnoreCase(entityType)) {
-            ItemDataDAO iddao = new ItemDataDAO(ds);
+            ItemDataDAO iddao = this.itemDataDao;
             ItemDataBean idb = (ItemDataBean) iddao.findByPK(id);
 
-            EventCRFDao ecdao = new EventCRFDAO(ds);
+            EventCRFDao ecdao = this.eventCrfDao;
 
             EventCRFBean ecb = (EventCRFBean) ecdao.findByPK(idb.getEventCRFId());
 
-            IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+            IStudySubjectDAO ssdao = this.studySubjectDao;
 
             StudySubjectBean ssb = (StudySubjectBean) ssdao.findByPK(ecb.getStudySubjectId());
 
-            ItemFormMetadataDAO ifmdao = new ItemFormMetadataDAO(ds);
+            ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
             ItemFormMetadataBean ifmb = ifmdao.findByItemIdAndCRFVersionId(idb.getItemId(), ecb.getCRFVersionId());
 
             if (currentRole.getRole().equals(Role.MONITOR) || !isCompleted) {
-                IStudyEventDAO sedao = new StudyEventDAO(ds);
+                IStudyEventDAO sedao = this.studyEventDao;
                 StudyEventBean seb = (StudyEventBean) sedao.findByPK(id);
                 request.setAttribute(EVENT_CRF_ID, String.valueOf(idb.getEventCRFId()));
                 request.setAttribute(STUDY_SUB_ID, String.valueOf(seb.getStudySubjectId()));
@@ -194,9 +203,9 @@ public class ResolveDiscrepancyServlet extends SecureController {
         String module = (String) session.getAttribute("module");
         // Integer subjectId = (Integer) session.getAttribute("subjectId");
 
-        IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
 
-        DiscrepancyNoteDAO dndao = new DiscrepancyNoteDAO(sm.getDataSource());
+        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
         dndao.setFetchMapping(true);
 
         // check that the note exists
@@ -238,10 +247,10 @@ public class ResolveDiscrepancyServlet extends SecureController {
         boolean toView = false;
         boolean isCompleted = false;
         if ("itemdata".equalsIgnoreCase(entityType)) {
-            ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+                ItemDataDAO iddao = this.itemDataDao;
             ItemDataBean idb = (ItemDataBean) iddao.findByPK(discrepancyNoteBean.getEntityId());
 
-            EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+            EventCRFDao ecdao = this.eventCrfDao;
 
             EventCRFBean ecb = (EventCRFBean) ecdao.findByPK(idb.getEventCRFId());
             StudySubjectBean studySubjectBean = (StudySubjectBean) studySubjectDAO.findByPK(ecb.getStudySubjectId());
@@ -269,7 +278,7 @@ public class ResolveDiscrepancyServlet extends SecureController {
                     .getString("the_discrepancy_note_triying_resolve_has_invalid_type"));
         }else if(p.getFileName().contains("InitialDataEntry")){ //Open form in data entry mode from dn page
 
-            EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+            EventCRFDao ecdao = this.eventCrfDao;
             EventCRFBean ecb = (EventCRFBean) ecdao.findByPK(discrepancyNoteBean.getEventCRFId());
 
             request.setAttribute("event", ecb);

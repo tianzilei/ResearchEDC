@@ -3,6 +3,7 @@ package org.researchedc.control.admin;
 import org.researchedc.domain.rule.action.RuleActionBean;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TableColumnHolder {
 

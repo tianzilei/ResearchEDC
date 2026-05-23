@@ -12,6 +12,8 @@ import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.ws.bean.BaseStudyDefinitionBean;
 import org.researchedc.ws.validator.StudyEventDefinitionRequestValidator;
@@ -48,12 +50,18 @@ public class StudyEventDefinitionEndpoint {
     private final DataSource dataSource;
     private final MessageSource messages;
     private final Locale locale;
-    StudyDAO studyDao;
-    UserAccountDAO userAccountDao;
-    CRFDAO crfDao;
-    CRFVersionDAO crfVersionDao;
-    StudyEventDefinitionDAO studyEventDefinitionDao;
-    EventDefinitionCRFDAO eventDefinitionCRFDao;
+    @Autowired
+    private StudyDAO studyDao;
+    @Autowired
+    private UserAccountDAO userAccountDao;
+    @Autowired
+    private CRFDAO crfDao;
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private StudyEventDefinitionDAO studyEventDefinitionDao;
+    @Autowired
+    private EventDefinitionCRFDAO eventDefinitionCRFDao;
 
     public StudyEventDefinitionEndpoint(DataSource dataSource, MessageSource messages) {
         this.dataSource = dataSource;
@@ -92,10 +100,10 @@ public class StudyEventDefinitionEndpoint {
     	 StudyBean getStudy(BaseStudyDefinitionBean studyEventDefinitionRequestBean) {
     		         StudyBean study = null;
         if (studyEventDefinitionRequestBean.getStudyUniqueId() != null && studyEventDefinitionRequestBean.getSiteUniqueId() == null) {
-            study = getStudyDao().findByUniqueIdentifier(studyEventDefinitionRequestBean.getStudyUniqueId());
+            study = studyDao.findByUniqueIdentifier(studyEventDefinitionRequestBean.getStudyUniqueId());
         }
         if (studyEventDefinitionRequestBean.getStudyUniqueId() != null && studyEventDefinitionRequestBean.getSiteUniqueId() != null) {
-            study = getStudyDao().findByUniqueIdentifier(studyEventDefinitionRequestBean.getSiteUniqueId());
+            study = studyDao.findByUniqueIdentifier(studyEventDefinitionRequestBean.getSiteUniqueId());
         }
         return study;
 
@@ -114,7 +122,7 @@ public class StudyEventDefinitionEndpoint {
         } else {
             username = principal.toString();
         }
-        return (UserAccountBean) getUserAccountDao().findByUserName(username);
+        return (UserAccountBean) userAccountDao.findByUserName(username);
     }
 
   // private StudyEventDefinitionRequestBean unMarshallRequest(Element studyEventDefinitionListAll) {
@@ -157,7 +165,7 @@ public class StudyEventDefinitionEndpoint {
         Element studyListElement = document.createElementNS(NAMESPACE_URI_V1, "studyEventDefinitions");
         responseElement.appendChild(studyListElement);
 
-        List<StudyEventDefinitionBean> eventList = getStudyEventDefinitionDao().findAllByStudy(study);
+        List<StudyEventDefinitionBean> eventList = studyEventDefinitionDao.findAllByStudy(study);
         for (int index = 0; index < eventList.size(); index++) {
             StudyEventDefinitionBean event = eventList.get(index);
 
@@ -173,7 +181,7 @@ public class StudyEventDefinitionEndpoint {
 
             studyListElement.appendChild(studyElement);
 
-            List<EventDefinitionCRFBean> eventCrfs = (List<EventDefinitionCRFBean>) getEventDefinitionCRFDao().findAllByDefinition(study, event.getId());
+            List<EventDefinitionCRFBean> eventCrfs = (List<EventDefinitionCRFBean>) eventDefinitionCRFDao.findAllByDefinition(study, event.getId());
 
             Element eventDefinitionCrfListElement = document.createElementNS(NAMESPACE_URI_V1, "eventDefinitionCrfs");
             studyElement.appendChild(eventDefinitionCrfListElement);
@@ -223,7 +231,7 @@ public class StudyEventDefinitionEndpoint {
                 Element crfElement = document.createElementNS(NAMESPACE_URI_V1, "crf");
                 eventDefinitionCrfElement.appendChild(crfElement);
 
-                CRFBean crfBean = (CRFBean) getCrfDao().findByPK(eventCrf.getCrfId());
+                CRFBean crfBean = (CRFBean) crfDao.findByPK(eventCrf.getCrfId());
 
                 element = document.createElementNS(NAMESPACE_URI_V1, "oid");
                 element.setTextContent(crfBean.getOid());
@@ -236,7 +244,7 @@ public class StudyEventDefinitionEndpoint {
                 Element crfVersionElement = document.createElementNS(NAMESPACE_URI_V1, "defaultCrfVersion");
                 eventDefinitionCrfElement.appendChild(crfVersionElement);
 
-                CRFVersionBean crfVersionBean = (CRFVersionBean) getCrfVersionDao().findByPK(eventCrf.getDefaultVersionId());
+                CRFVersionBean crfVersionBean = (CRFVersionBean) crfVersionDao.findByPK(eventCrf.getDefaultVersionId());
                 element = document.createElementNS(NAMESPACE_URI_V1, "oid");
                 element.setTextContent(crfVersionBean.getOid());
                 crfVersionElement.appendChild(element);
@@ -274,36 +282,6 @@ public class StudyEventDefinitionEndpoint {
 
     public DataSource getDataSource() {
         return dataSource;
-    }
-
-    public StudyDAO getStudyDao() {
-        studyDao = studyDao != null ? studyDao : new StudyDAO(dataSource);
-        return studyDao;
-    }
-
-    public CRFDAO getCrfDao() {
-        crfDao = crfDao != null ? crfDao : new CRFDAO(dataSource);
-        return crfDao;
-    }
-
-    public CRFVersionDAO getCrfVersionDao() {
-        crfVersionDao = crfVersionDao != null ? crfVersionDao : new CRFVersionDAO(dataSource);
-        return crfVersionDao;
-    }
-
-    public StudyEventDefinitionDAO getStudyEventDefinitionDao() {
-        studyEventDefinitionDao = studyEventDefinitionDao != null ? studyEventDefinitionDao : new StudyEventDefinitionDAO(dataSource);
-        return studyEventDefinitionDao;
-    }
-
-    public EventDefinitionCRFDAO getEventDefinitionCRFDao() {
-        eventDefinitionCRFDao = eventDefinitionCRFDao != null ? eventDefinitionCRFDao : new EventDefinitionCRFDAO(dataSource);
-        return eventDefinitionCRFDao;
-    }
-
-    public UserAccountDAO getUserAccountDao() {
-        userAccountDao = userAccountDao != null ? userAccountDao : new UserAccountDAO(dataSource);
-        return userAccountDao;
     }
 
 }

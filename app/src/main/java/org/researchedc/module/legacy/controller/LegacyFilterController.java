@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.researchedc.module.filter.entity.FilterEntity;
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.filter.service.FilterService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class LegacyFilterController {
 
     private final FilterService filterService;
+    private final CurrentUserUtils currentUserUtils;
 
-    public LegacyFilterController(FilterService filterService) {
+    public LegacyFilterController(FilterService filterService, CurrentUserUtils currentUserUtils) {
         this.filterService = filterService;
+        this.currentUserUtils = currentUserUtils;
     }
 
     @GetMapping
@@ -46,7 +49,7 @@ public class LegacyFilterController {
 
     @PostMapping
     public ResponseEntity<FilterDTO> createFilter(@RequestBody FilterDTO request) {
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         FilterEntity entity = filterService.create(request.getName(), request.getDescription(), ownerId);
         return ResponseEntity.ok(toDto(entity));
     }

@@ -38,6 +38,9 @@ import org.researchedc.web.InsufficientPermissionException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -46,7 +49,13 @@ import java.util.ArrayList;
  * Preferences - Java - Code Style - Code Templates
  */
 public class ViewSiteServlet extends SecureController {
-    EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+
+EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
 
     /**
      * Checks whether the user has the correct privilege
@@ -71,7 +80,7 @@ public class ViewSiteServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         String idString = "";
         if (request.getAttribute("siteId") == null) {
             idString = request.getParameter("id");
@@ -90,7 +99,7 @@ public class ViewSiteServlet extends SecureController {
             // if (currentStudy.getId() != study.getId()) {
 
             ArrayList configs = new ArrayList();
-            StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
+            IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
             configs = spvdao.findParamConfigByStudy(study);
             study.setStudyParameters(configs);
 
@@ -113,14 +122,14 @@ public class ViewSiteServlet extends SecureController {
     private void viewSiteEventDefinitions(StudyBean siteToView) throws MalformedURLException {
         int siteId = siteToView.getId();
         ArrayList<StudyEventDefinitionBean> seds = new ArrayList<StudyEventDefinitionBean>();
-        IStudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO sedDao = this.studyEventDefinitionDao;
+        EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfDAO cdao = this.crfDao;
         seds = sedDao.findAllByStudy(siteToView);
         int start = 0;
         for (StudyEventDefinitionBean sed : seds) {
-            StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());    
+            IStudyParameterValueDAO spvdao = this.studyParameterValueDao;    
             String participateFormStatus = spvdao.findByHandleAndStudy(sed.getStudyId(), "participantPortal").getValue();       
             request.setAttribute("participateFormStatus",participateFormStatus );            
             if (participateFormStatus.equals("enabled")) baseUrl();

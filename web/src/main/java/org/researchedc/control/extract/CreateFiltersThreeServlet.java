@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <P>
@@ -38,6 +39,9 @@ import java.util.Locale;
  *
  */
 public class CreateFiltersThreeServlet extends SecureController {
+
+    @Autowired
+    protected FilterDAO filterDao;
 
     Locale locale;
 
@@ -83,7 +87,7 @@ public class CreateFiltersThreeServlet extends SecureController {
                 fb.setOwner(ub);
                 // fb.setOwnerId(ub.getId());
                 logger.info("found owner id: " + fb.getOwner().getId());
-                FilterDAO fDAO = new FilterDAO(sm.getDataSource());
+                FilterDAO fDAO = this.filterDao;
                 FilterBean fbFinal = (FilterBean) fDAO.create(fb);
                 addPageMessage(restext.getString("the_filter_named") +
                 // fp.getString("fName")+
@@ -97,7 +101,7 @@ public class CreateFiltersThreeServlet extends SecureController {
                     forwardPage(Page.CREATE_DATASET_4);
                 } else {
                     session.removeAttribute("newFilter");
-                    FilterDAO fdao = new FilterDAO(sm.getDataSource());
+                    FilterDAO fdao = this.filterDao;
                     EntityBeanTable table = fp.getEntityBeanTable();
 
                     ArrayList filters = (ArrayList) fdao.findAll();

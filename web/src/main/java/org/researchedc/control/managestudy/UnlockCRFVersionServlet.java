@@ -22,9 +22,16 @@ import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class UnlockCRFVersionServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+
+/**
     *
     */
    @Override
@@ -59,13 +66,13 @@ public class UnlockCRFVersionServlet extends SecureController {
            return;
        }
        
-       CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        CRFDAO cdao = new CRFDAO(sm.getDataSource());
+       CRFVersionDAO cvdao = this.crfVersionDao;
+        CRFDAO cdao = (CRFDAO) this.crfDao;
        
        CRFVersionBean version = (CRFVersionBean)cvdao.findByPK(crfVersionId);
        CRFBean crf = (CRFBean)cdao.findByPK(version.getCrfId());
        
-       EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+       EventCRFDao ecdao = this.eventCrfDao;
        ArrayList eventCRFs = ecdao.findAllStudySubjectByCRFVersion(crfVersionId);
        
        if (StringUtil.isBlank(action)) {

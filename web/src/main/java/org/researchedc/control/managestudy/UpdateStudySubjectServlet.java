@@ -41,12 +41,22 @@ import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 
 /**
  * @author jxu Processes request to update a study subject
  */
 public class UpdateStudySubjectServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
+    @Autowired
+    private ISubjectDAO subjectDao;
+    @Autowired
+    private SubjectGroupMapDAO subjectGroupMapDao;
+
+/**
      * Checks whether the user has the right permission to proceed function
      */
     @Override
@@ -68,8 +78,8 @@ public class UpdateStudySubjectServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
         FormDiscrepancyNotes discNotes = null;
-        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+        ISubjectDAO sdao = this.subjectDao;
+        IStudySubjectDAO subdao = this.studySubjectDao;
         FormProcessor fp = new FormProcessor(request);
 
         String fromResolvingNotes = fp.getString("fromResolvingNotes",true);
@@ -95,9 +105,9 @@ public class UpdateStudySubjectServlet extends SecureController {
 
             StudySubjectBean sub = (StudySubjectBean) subdao.findByPK(studySubId);
 
-            StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
-            StudyGroupDAO sgdao = new StudyGroupDAO(sm.getDataSource());
-            SubjectGroupMapDAO sgmdao = new SubjectGroupMapDAO(sm.getDataSource());
+            StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
+            StudyGroupDAO sgdao = this.studyGroupDao;
+            SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
             ArrayList groupMaps = (ArrayList) sgmdao.findAllByStudySubject(studySubId);
 
             HashMap gMaps = new HashMap();
@@ -107,7 +117,7 @@ public class UpdateStudySubjectServlet extends SecureController {
 
             }
 
-            IStudyDAO stdao = new StudyDAO(sm.getDataSource());
+            IStudyDAO stdao = this.studyDao;
             ArrayList classes = new ArrayList();
             if (!"submit".equalsIgnoreCase(action)) {
                 // YW <<
@@ -155,7 +165,7 @@ public class UpdateStudySubjectServlet extends SecureController {
 
                 // save discrepancy notes into DB
                 FormDiscrepancyNotes fdn = (FormDiscrepancyNotes) session.getAttribute(AddNewSubjectServlet.FORM_DISCREPANCY_NOTES_NAME);
-                DiscrepancyNoteDAO dndao = new DiscrepancyNoteDAO(sm.getDataSource());
+                DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
                 AddNewSubjectServlet.saveFieldNotes("enrollmentDate", fdn, dndao, subject.getId(), "studySub", currentStudy);
 
                 ArrayList groups = (ArrayList) session.getAttribute("groups");
@@ -238,7 +248,7 @@ public class UpdateStudySubjectServlet extends SecureController {
             errors = v.validate();
 
             if (!StringUtil.isBlank(fp.getString("label"))) {
-                IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+                IStudySubjectDAO ssdao = this.studySubjectDao;
 
                 StudySubjectBean sub1 = (StudySubjectBean) ssdao.findAnotherBySameLabel(fp.getString("label").trim(), currentStudy.getId(), sub.getId());
 
@@ -302,7 +312,7 @@ public class UpdateStudySubjectServlet extends SecureController {
                     + respage.getString("you_may_enter_study_subject_ID_listed")
                     + respage.getString("study_subject_ID_should_not_contain_protected_information"));
             } else {
-                IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+                IStudySubjectDAO subdao = this.studySubjectDao;
                 StudySubjectBean sub1 = (StudySubjectBean) subdao.findAnotherBySameLabel(sub.getLabel(), sub.getStudyId(), sub.getId());
                 if (sub1.getId() > 0) {
                     addPageMessage(resexception.getString("subject_ID_used_by_another_choose_unique"));

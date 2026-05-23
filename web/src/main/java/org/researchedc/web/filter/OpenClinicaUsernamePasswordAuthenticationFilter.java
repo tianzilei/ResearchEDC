@@ -47,6 +47,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.TextEscapeUtils;
 import org.springframework.util.Assert;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Processes an authentication form submission. Called {@code AuthenticationProcessingFilter} prior to Spring Security
@@ -313,7 +314,7 @@ public class OpenClinicaUsernamePasswordAuthenticationFilter extends AbstractAut
     }
 
     public IUserAccountDAO getUserAccountDao() {
-        return userAccountDao != null ? userAccountDao : new UserAccountDAO(dataSource);
+        return userAccountDao != null ? userAccountDao : this.userAccountDao;
     }
 
     public CRFLocker getCrfLocker() {

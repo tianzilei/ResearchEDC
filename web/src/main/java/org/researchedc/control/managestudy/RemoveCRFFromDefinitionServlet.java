@@ -18,6 +18,8 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Remove the reference to a CRF from a study event definition
@@ -50,7 +52,7 @@ public class RemoveCRFFromDefinitionServlet extends SecureController {
         String crfName = "";
 
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) session.getAttribute("definition");
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());    
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;    
         String participateFormStatus = spvdao.findByHandleAndStudy(sed.getStudyId(), "participantPortal").getValue();
     
         request.setAttribute("participateFormStatus",participateFormStatus );

@@ -8,6 +8,7 @@ import org.researchedc.web.pform.dto.Bind;
 import org.researchedc.web.pform.dto.Input;
 import org.researchedc.web.pform.dto.Label;
 import org.researchedc.web.pform.dto.UserControl;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class HeaderWidget extends BaseWidget {
 	private ItemBean item = null;

@@ -21,6 +21,8 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -28,7 +30,11 @@ import java.util.ArrayList;
  * Restores a removed subject group class
  */
 public class RestoreSubjectGroupClassServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private SubjectGroupMapDAO subjectGroupMapDao;
+
+/**
      *
      */
     @Override
@@ -58,9 +64,9 @@ public class RestoreSubjectGroupClassServlet extends SecureController {
             addPageMessage(respage.getString("please_choose_a_subject_group_class_to_restore"));
             forwardPage(Page.SUBJECT_GROUP_CLASS_LIST_SERVLET);
         } else {
-            StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
-            StudyGroupDAO sgdao = new StudyGroupDAO(sm.getDataSource());
-            SubjectGroupMapDAO sgmdao = new SubjectGroupMapDAO(sm.getDataSource());
+            StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
+            StudyGroupDAO sgdao = this.studyGroupDao;
+            SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
 
             if (action.equalsIgnoreCase("confirm")) {
                 StudyGroupClassBean sgcb = (StudyGroupClassBean) sgcdao.findByPK(classId);

@@ -1,6 +1,7 @@
 package org.researchedc.control.submit;
 
 import org.researchedc.bean.core.DataEntryStage;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ImportCRFInfo {
     private String studyOID;

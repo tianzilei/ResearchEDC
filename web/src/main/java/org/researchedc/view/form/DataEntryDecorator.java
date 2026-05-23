@@ -6,6 +6,7 @@ import org.jdom.Element;
 
 import java.util.List;
 import java.util.Random;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Using the Decorator design pattern, this class adds functionality to

@@ -15,12 +15,13 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.admin.CRFDAO;
+
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author jxu
@@ -133,7 +134,7 @@ public class UpdateCRFServlet extends SecureController {
         errors = v.validate();
 
         if (!StringUtil.isBlank(fp.getString("name"))) {
-            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO cdao = this.crfDao;
 
             CRFBean crf = (CRFBean) session.getAttribute(CRF);
             CRFBean crf1 = (CRFBean) cdao.findAnotherByName(fp.getString("name").trim(), crf.getId());
@@ -167,7 +168,7 @@ public class UpdateCRFServlet extends SecureController {
      *
      */
     private void submitCRF() {
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = this.crfDao;
         CRFBean crf = (CRFBean) session.getAttribute(CRF);
         logger.info("CRF bean to be updated:" + crf.getName());
 

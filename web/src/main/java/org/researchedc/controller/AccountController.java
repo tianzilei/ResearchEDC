@@ -49,11 +49,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 @Controller
 @RequestMapping(value = "/accounts")
 @ResponseStatus(value = org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
 public class AccountController {
+
+    @Autowired
+    protected StudyParameterValueDAO studyParameterValueDao;
+
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
+
+    @Autowired
+    protected IStudySubjectDAO studySubjectDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
 
     @Autowired
     @Qualifier("dataSource")
@@ -123,8 +136,8 @@ public class AccountController {
         }
 
         ResourceBundleProvider.updateLocale(new Locale("en_US"));
-        IUserAccountDAO userAccountDAO = new UserAccountDAO(dataSource);
-        IStudyDAO studyDAO = new StudyDAO(dataSource);
+        IUserAccountDAO userAccountDAO = this.userAccountDao;
+        IStudyDAO studyDAO = this.studyDao;
         HashMap<String, Object> userDTO = new HashMap<String, Object>();
 
         UserAccountBean userAccountBean = (UserAccountBean) userAccountDAO.findByUserName(userName);
@@ -184,7 +197,7 @@ public class AccountController {
     @RequestMapping(value = "/study/{studyOid}/crc/{crcUserName}", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getAccount1(@PathVariable("studyOid") String studyOid, @PathVariable("crcUserName") String crcUserName) throws Exception {
         ResourceBundleProvider.updateLocale(new Locale("en_US"));
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
         uDTO = null;
 
         StudyBean parentStudy = getParentStudy(studyOid);
@@ -350,7 +363,7 @@ public class AccountController {
         HashMap<String, String> mapValues = buildParticipantUserName(studySubjectBean);
         String pUserName = mapValues.get("pUserName"); // Participant User Name
 
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
         UserAccountBean userAccountBean = (UserAccountBean) udao.findByUserName(pUserName);
         if (!userAccountBean.isActive()) {
             uDTO = new UserDTO();
@@ -550,13 +563,13 @@ public class AccountController {
         String timeZone = map.get("timeZone");
 
         ResourceBundleProvider.updateLocale(new Locale("en_US"));
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
 
         StudySubjectBean studySubjectBean = getStudySubjectByOidAndStudy(studySubjectId, parentStudy.getId());
         HashMap<String, String> mapValues = buildParticipantUserName(studySubjectBean);
         String pUserName = mapValues.get("pUserName"); // Participant User Name
 
-        udao = new UserAccountDAO(dataSource);
+        udao = this.userAccountDao;
         UserAccountBean userAccountBean = (UserAccountBean) udao.findByUserName(pUserName);
 
         if (studySubjectBean.isActive()) {
@@ -623,17 +636,17 @@ public class AccountController {
     }
 
     private void createUserAccount(UserAccountBean userAccountBean) {
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
         udao.create(userAccountBean);
     }
 
     private void updateUserAccount(UserAccountBean userAccountBean) {
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
         udao.update(userAccountBean);
     }
 
     private void disableUserAccount(UserAccountBean userAccountBean) {
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
         udao.delete(userAccountBean);
     }
 
@@ -650,55 +663,55 @@ public class AccountController {
     }
 
     private ArrayList<UserAccountBean> getUserAccountByStudy(String userName, ArrayList allStudies) {
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
         ArrayList<UserAccountBean> userAccountBeans = udao.findStudyByUser(userName, allStudies);
         return userAccountBeans;
     }
 
     private UserAccountBean getUserAccount(String userName) {
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
         UserAccountBean userAccountBean = (UserAccountBean) udao.findByUserName(userName);
         return userAccountBean;
     }
 
     private UserAccountBean getAccessCodeAccount(String accessCode) {
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
         UserAccountBean userAccountBean = (UserAccountBean) udao.findByAccessCode(accessCode);
         return userAccountBean;
     }
 
     private StudyBean getStudy(String oid) {
-        IStudyDAO sdao = new StudyDAO(dataSource);
+        IStudyDAO sdao = this.studyDao;
         StudyBean studyBean = (StudyBean) sdao.findByOid(oid);
         return studyBean;
     }
 
     private StudyBean getStudy(Integer id) {
-        IStudyDAO sdao = new StudyDAO(dataSource);
+        IStudyDAO sdao = this.studyDao;
         StudyBean studyBean = (StudyBean) sdao.findByPK(id);
         return studyBean;
     }
 
     private StudySubjectBean getStudySubjectByOidAndStudy(String oid, int studyId) {
-        IStudySubjectDAO ssdao = new StudySubjectDAO(dataSource);
+        IStudySubjectDAO ssdao = this.studySubjectDao;
         StudySubjectBean studySubjectBean = (StudySubjectBean) ssdao.findByOidAndStudy(oid, studyId);
         return studySubjectBean;
     }
 
     private StudySubjectBean getStudySubject(String label, StudyBean study) {
-        IStudySubjectDAO ssdao = new StudySubjectDAO(dataSource);
+        IStudySubjectDAO ssdao = this.studySubjectDao;
         StudySubjectBean studySubjectBean = (StudySubjectBean) ssdao.findByLabelAndStudy(label, study);
         return studySubjectBean;
     }
 
     private StudySubjectBean getStudySubject(String oid) {
-        IStudySubjectDAO ssdao = new StudySubjectDAO(dataSource);
+        IStudySubjectDAO ssdao = this.studySubjectDao;
         StudySubjectBean studySubjectBean = (StudySubjectBean) ssdao.findByOid(oid);
         return studySubjectBean;
     }
 
     private void updateStudySubjectBean(StudySubjectBean sBean) {
-        IStudySubjectDAO ssdao = new StudySubjectDAO(dataSource);
+        IStudySubjectDAO ssdao = this.studySubjectDao;
         ssdao.update(sBean);
     }
 
@@ -795,7 +808,7 @@ public class AccountController {
     }
 
     private Boolean doesCRCNotHaveStudyAccessRole(String crcUserName, Integer pStudyId) {
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
         boolean found = false;
         ArrayList<StudyUserRoleBean> studyUserRoleBeans = (ArrayList<StudyUserRoleBean>) udao.findAllRolesByUserName(crcUserName);
         for (StudyUserRoleBean studyUserRoleBean : studyUserRoleBeans) {
@@ -817,7 +830,7 @@ public class AccountController {
 
     private Boolean doesStudySubjecAndCRCRolesMatch(String crcUserName, Integer subjectStudyId) {
         boolean found = false;
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
         ArrayList<StudyUserRoleBean> studyUserRoleBeans = (ArrayList<StudyUserRoleBean>) udao.findAllRolesByUserName(crcUserName);
         for (StudyUserRoleBean studyUserRoleBean : studyUserRoleBeans) {
 
@@ -859,7 +872,7 @@ public class AccountController {
     }
 
     private StudyBean getParentStudy(Integer studyId) {
-        IStudyDAO sdao = new StudyDAO(dataSource);
+        IStudyDAO sdao = this.studyDao;
         StudyBean study = getStudy(studyId);
         if (study.getParentStudyId() == 0) {
             return study;
@@ -871,7 +884,7 @@ public class AccountController {
     }
 
     private StudyBean getParentStudy(String studyOid) {
-        IStudyDAO sdao = new StudyDAO(dataSource);
+        IStudyDAO sdao = this.studyDao;
         StudyBean study = getStudy(studyOid);
         if (study.getParentStudyId() == 0) {
             return study;
@@ -896,7 +909,7 @@ public class AccountController {
         boolean accessPermission = false;
         StudyBean siteStudy = getStudy(studyOid);
         StudyBean study = getParentStudy(studyOid);
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(dataSource);
+        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
         participantPortalRegistrar = new ParticipantPortalRegistrar();
         String pManageStatus = participantPortalRegistrar.getRegistrationStatus(study.getOid()).toString(); // ACTIVE ,
@@ -918,7 +931,7 @@ public class AccountController {
     @RequestMapping(value = "/study/{studyOid}", method = RequestMethod.GET)
     public ResponseEntity<ArrayList<UserDTO>> getAllParticipantPerStudy(@PathVariable("studyOid") String studyOid) throws Exception {
         ResourceBundleProvider.updateLocale(new Locale("en_US"));
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
         ArrayList<UserDTO> uDTOs = null;
 
         StudyBean parentStudy = getParentStudy(studyOid);
@@ -927,7 +940,7 @@ public class AccountController {
         if (isStudyDoesNotExist(oid))
             return new ResponseEntity<ArrayList<UserDTO>>(uDTOs, org.springframework.http.HttpStatus.NOT_ACCEPTABLE);
 
-        udao = new UserAccountDAO(dataSource);
+        udao = this.userAccountDao;
         ArrayList<UserAccountBean> uBeans = (ArrayList<UserAccountBean>) udao.findAllParticipantsByStudyOid(oid);
         if (uBeans != null) {
             uDTOs = new ArrayList<>();
@@ -936,7 +949,7 @@ public class AccountController {
 
                 String username = uBean.getName();
                 String studySubjectOid = username.substring(username.indexOf(".") + 1);
-                IStudySubjectDAO ssdao = new StudySubjectDAO(dataSource);
+                IStudySubjectDAO ssdao = this.studySubjectDao;
                 String studySubjectId = ssdao.findByOid(studySubjectOid).getLabel();
 
                 uDTO.setfName(uBean.getFirstName());
@@ -1041,7 +1054,7 @@ public class AccountController {
     }
 
     public Boolean isApiKeyExist(String uuid) {
-        IUserAccountDAO udao = new UserAccountDAO(dataSource);
+        IUserAccountDAO udao = this.userAccountDao;
         UserAccountBean uBean = (UserAccountBean) udao.findByApiKey(uuid);
         if (uBean == null || !uBean.isActive()) {
             return false;

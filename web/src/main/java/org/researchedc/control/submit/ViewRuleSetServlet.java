@@ -23,6 +23,7 @@ import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.service.rule.RuleSetServiceInterface;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Krikor Krumlian

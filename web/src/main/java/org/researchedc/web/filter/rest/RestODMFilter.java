@@ -24,8 +24,16 @@ import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class RestODMFilter implements ContainerRequestFilter {
+
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
 
 	@Context
 	HttpServletRequest request;
@@ -95,17 +103,17 @@ public class RestODMFilter implements ContainerRequestFilter {
 	}
 
 	private StudyBean getStudyByOID(String OID, DataSource ds) {
-		IStudyDAO studyDAO = new StudyDAO(ds);
+		IStudyDAO studyDAO = this.studyDao;
 		return studyDAO.findByOid(OID);
 	}
 
 	private StudyUserRoleBean getRoleByStudy(StudyBean studyBean, DataSource ds, UserAccountBean userBean) {
-		IUserAccountDAO userAccountDAO = new UserAccountDAO(ds);
+		IUserAccountDAO userAccountDAO = this.userAccountDao;
 		return userAccountDAO.findRoleByUserNameAndStudyId(userBean.getName(), studyBean.getId());
 	}
 
 	private StudyBean getStudyByID(int id, DataSource ds) {
-		IStudyDAO studyDAO = new StudyDAO(ds);
+		IStudyDAO studyDAO = this.studyDao;
 		return (StudyBean) studyDAO.findByPK(id);
 	}
 }

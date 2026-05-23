@@ -10,5 +10,6 @@ export interface RuleSetDTO {
   target: string;
   ownerId: number;
   dateCreated: string;
+  ruleIds: number[];
   ruleNames: string[];
 }

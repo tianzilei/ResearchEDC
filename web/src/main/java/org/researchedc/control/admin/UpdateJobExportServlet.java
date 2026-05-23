@@ -12,6 +12,8 @@ import java.util.Set;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.extract.ExtractPropertyBean;
 import org.researchedc.bean.login.UserAccountBean;
@@ -22,8 +24,6 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.extract.ExtractUtils;
 import org.researchedc.service.extract.XsltTriggerService;
@@ -43,8 +43,12 @@ import org.quartz.TriggerKey;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class UpdateJobExportServlet extends SecureController {
+
+    @Autowired
+    private DatasetDAO datasetDao;
 
     private static String SCHEDULER = "schedulerFactoryBean";
 
@@ -86,7 +90,7 @@ public class UpdateJobExportServlet extends SecureController {
     private void setUpServlet(Trigger trigger) {
         FormProcessor fp2 = new FormProcessor(request);
 
-        DatasetDAO dsdao = new DatasetDAO(sm.getDataSource());
+        DatasetDAO dsdao = this.datasetDao;
         Collection dsList = dsdao.findAllOrderByStudyIdAndName();
         // TODO will have to dress this up to allow for sites then datasets
         request.setAttribute("datasets", dsList);
@@ -155,9 +159,9 @@ public class UpdateJobExportServlet extends SecureController {
                 forwardPage(Page.UPDATE_JOB_EXPORT);
             } else {
                 // change trigger, update in database
-                IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+                IStudyDAO studyDAO = this.studyDao;
                 StudyBean study = (StudyBean) studyDAO.findByPK(sm.getUserBean().getActiveStudyId());
-                DatasetDAO datasetDao = new DatasetDAO(sm.getDataSource());
+                DatasetDAO datasetDao = this.datasetDao;
                 CoreResources cr =  new CoreResources();
                 UserAccountBean userBean = (UserAccountBean) request.getSession().getAttribute("userBean");
 

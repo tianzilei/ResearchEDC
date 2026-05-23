@@ -36,6 +36,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Processes request to create a new study
@@ -46,7 +49,11 @@ import java.util.Locale;
  *
  */
 public class CreateStudyServlet extends SecureController {
-    public static final String INPUT_START_DATE = "startDate";
+    
+    @Autowired
+    private IUserAccountDAO userAccountDao;
+
+public static final String INPUT_START_DATE = "startDate";
 
     public static final String INPUT_END_DATE = "endDate";
 
@@ -282,7 +289,7 @@ public class CreateStudyServlet extends SecureController {
 
             // request.setAttribute("facRecruitStatusMap", facRecruitStatusMap);
             // request.setAttribute("statuses", Status.toActiveArrayList());
-            IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+            IUserAccountDAO udao = this.userAccountDao;
             Collection users = udao.findAllByRole("coordinator", "director");
             request.setAttribute("users", users);
 
@@ -309,7 +316,7 @@ public class CreateStudyServlet extends SecureController {
                 session.removeAttribute("newStudy");
                 currentStudy = (StudyBean) session.getAttribute("study");
 
-                IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+                IUserAccountDAO udao = this.userAccountDao;
 
                 StudyUserRoleBean sub = new StudyUserRoleBean();
                 sub.setRole(Role.COORDINATOR);
@@ -348,7 +355,7 @@ public class CreateStudyServlet extends SecureController {
                         session.setAttribute("newStudy", new StudyBean());
                     }
 
-                    IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+                    IUserAccountDAO udao = this.userAccountDao;
                     Collection users = udao.findAllByRole("coordinator", "director");
                     request.setAttribute("users", users);
 
@@ -381,7 +388,7 @@ public class CreateStudyServlet extends SecureController {
 
         errors = v.validate();
         // check to see if name and uniqueProId are unique, tbh
-        IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+        IStudyDAO studyDAO = this.studyDao;
         ArrayList<StudyBean> allStudies = (ArrayList<StudyBean>) studyDAO.findAll();
         for (StudyBean thisBean : allStudies) {
             if (fp.getString("name").trim().equals(thisBean.getName())) {
@@ -422,14 +429,14 @@ public class CreateStudyServlet extends SecureController {
             request.setAttribute("statuses", Status.toActiveArrayList());
             logger.info("setting arrays to request, size of list: " + Status.toArrayList().size());
             if (request.getParameter("Save") != null && request.getParameter("Save").length() > 0) {
-                IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+                IStudyDAO sdao = this.studyDao;
                 studyBean.setOwner(ub);
                 studyBean.setCreatedDate(new Date());
                 studyBean.setStatus(Status.PENDING);
                 studyBean = (StudyBean) sdao.create(studyBean);
                 StudyBean newstudyBean = (StudyBean) sdao.findByName(studyBean.getName());
 
-                IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+                IUserAccountDAO udao = this.userAccountDao;
                 String selectedUserIdStr = fp.getString("selectedUser");
                 int selectedUserId = 0;
                 if (selectedUserIdStr != null && selectedUserIdStr.length() > 0) {
@@ -473,7 +480,7 @@ public class CreateStudyServlet extends SecureController {
             logger.info("has validation errors in the first section");
             request.setAttribute("formMessages", errors);
             // request.setAttribute("facRecruitStatusMap", facRecruitStatusMap);
-            IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+            IUserAccountDAO udao = this.userAccountDao;
             Collection users = udao.findAllByRole("coordinator", "director");
             request.setAttribute("users", users);
 
@@ -796,8 +803,8 @@ public class CreateStudyServlet extends SecureController {
      *
      */
     private void submitStudy() {
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyBean newStudy = (StudyBean) session.getAttribute("newStudy");
 
         logger.info("study bean to be created:" + newStudy.getName() + newStudy.getProtocolDateVerification());

@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -42,6 +44,9 @@ import java.util.Locale;
  *
  */
 public class SelectItemsServlet extends SecureController {
+
+    @Autowired
+    protected ItemFormMetadataDAO itemFormMetadataDao;
 
     Locale locale;
     // < ResourceBundlerestext,resexception,respage;
@@ -77,12 +82,12 @@ public class SelectItemsServlet extends SecureController {
     public void setUpStudyGroupPage() {
         ArrayList sgclasses = (ArrayList) session.getAttribute("allSelectedGroups");
         if (sgclasses == null || sgclasses.size() == 0) {
-            IStudyDAO studydao = new StudyDAO(sm.getDataSource());
-            StudyGroupClassDAO sgclassdao = new StudyGroupClassDAO(sm.getDataSource());
+            IStudyDAO studydao = this.studyDao;
+            StudyGroupClassDAO sgclassdao = this.studyGroupClassDao;
             StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
             sgclasses = sgclassdao.findAllActiveByStudy(theStudy);
 
-            StudyGroupDAO sgdao = new StudyGroupDAO(sm.getDataSource());
+            StudyGroupDAO sgdao = this.studyGroupDao;
 
             for (int i = 0; i < sgclasses.size(); i++) {
                 StudyGroupClassBean sgclass = (StudyGroupClassBean) sgclasses.get(i);
@@ -105,10 +110,10 @@ public class SelectItemsServlet extends SecureController {
         int CRFAttr = fp.getInt("CRFAttr");
         int groupAttr = fp.getInt("groupAttr");
         int discAttr = fp.getInt("discAttr");
-        ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
-        ItemDAO idao = new ItemDAO(sm.getDataSource());
-        ItemFormMetadataDAO imfdao = new ItemFormMetadataDAO(sm.getDataSource());
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        ICrfDAO crfdao = this.crfDao;
+        ItemDAO idao = this.itemDao;
+        ItemFormMetadataDAO imfdao = this.itemFormMetadataDao;
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
 
         HashMap events = (HashMap) session.getAttribute(CreateDatasetServlet.EVENTS_FOR_CREATE_DATASET);
         if (events == null) {

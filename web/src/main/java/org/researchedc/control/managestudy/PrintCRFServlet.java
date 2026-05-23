@@ -40,6 +40,9 @@ import java.util.Locale;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author Krikor Krumlian 10/26/2006
@@ -49,7 +52,18 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class PrintCRFServlet extends DataEntryServlet {
 
-    Locale locale;
+    @Autowired
+    protected ICrfDAO crfDao;
+
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private ItemGroupDAO itemGroupDao;
+    @Autowired
+    private SectionDAO sectionDao;
+
+Locale locale;
 
     // < ResourceBundlerespage,resexception;
 
@@ -95,9 +109,9 @@ public class PrintCRFServlet extends DataEntryServlet {
         int eventDefinitionCRFId = fp.getInt("eventDefinitionCRFId");
         // EventDefinitionCRFDao findByStudyEventIdAndCRFVersionId(int
         // studyEventId, int crfVersionId)
-        SectionDAO sdao = new SectionDAO(getDataSource());
-        CRFVersionDAO crfVersionDAO = new CRFVersionDAO(getDataSource());
-        ICrfDAO crfDao = new CRFDAO(getDataSource());
+        SectionDAO sdao = this.sectionDao;
+        CRFVersionDAO crfVersionDAO = this.crfVersionDao;
+        ICrfDAO crfDao = this.crfDao;
 
         ArrayList <SectionBean> allSectionBeans = new ArrayList<SectionBean>();
         ArrayList sectionBeans = new ArrayList();
@@ -112,7 +126,7 @@ public class PrintCRFServlet extends DataEntryServlet {
             // BWP 2/7/2008>> Find out if the CRF has grouped tables, and if so,
             // use
             // that dedicated JSP
-            ItemGroupDAO itemGroupDao = new ItemGroupDAO(getDataSource());
+            ItemGroupDAO itemGroupDao = this.itemGroupDao;
             // Find truely grouped tables, not groups with a name of 'Ungrouped'
             List<ItemGroupBean> itemGroupBeans = itemGroupDao.findOnlyGroupsByCRFVersionID(crfVersionId);
 

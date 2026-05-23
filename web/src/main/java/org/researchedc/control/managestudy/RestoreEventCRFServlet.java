@@ -44,6 +44,9 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -51,7 +54,13 @@ import java.util.Date;
  * Processes request of 'restore an event CRF from a event'
  */
 public class RestoreEventCRFServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+
+/**
      * 
      */
     @Override
@@ -75,10 +84,10 @@ public class RestoreEventCRFServlet extends SecureController {
         int eventCRFId = fp.getInt("id");// eventCRFId
         int studySubId = fp.getInt("studySubId");// studySubjectId
         checkStudyLocked("ViewStudySubject?id" + studySubId, respage.getString("current_study_locked"));
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
+        IStudySubjectDAO subdao = this.studySubjectDao;
+        EventCRFDao ecdao = this.eventCrfDao;
+        IStudyDAO sdao = this.studyDao;
 
         if (eventCRFId == 0) {
             addPageMessage(respage.getString("please_choose_an_event_CRF_to_restore"));
@@ -101,8 +110,8 @@ public class RestoreEventCRFServlet extends SecureController {
             request.setAttribute("studySub", studySub);
 
             // construct info needed on view event crf page
-            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-            CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+            ICrfDAO cdao = this.crfDao;
+            CRFVersionDAO cvdao = this.crfVersionDao;
 
             int crfVersionId = eventCRF.getCRFVersionId();
             CRFBean cb = cdao.findByVersionId(crfVersionId);
@@ -118,12 +127,12 @@ public class RestoreEventCRFServlet extends SecureController {
             StudyEventBean event = (StudyEventBean) sedao.findByPK(studyEventId);
 
             int studyEventDefinitionId = sedao.getDefinitionIdFromStudyEventId(studyEventId);
-            IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+            IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(studyEventDefinitionId);
             event.setStudyEventDefinition(sed);
             request.setAttribute("event", event);
 
-            EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+            EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
 
             StudyBean study = (StudyBean) sdao.findByPK(studySub.getStudyId());
             EventDefinitionCRFBean edc = edcdao.findByStudyEventDefinitionIdAndCRFId(study, studyEventDefinitionId, cb.getId());
@@ -133,7 +142,7 @@ public class RestoreEventCRFServlet extends SecureController {
             dec.setFlags(eventCRF, ub, currentRole, edc.isDoubleEntry());
 
             // find all item data
-            ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+            IItemDataDAO iddao = this.itemDataDao;
 
             ArrayList itemData = iddao.findAllByEventCRFId(eventCRF.getId());
 

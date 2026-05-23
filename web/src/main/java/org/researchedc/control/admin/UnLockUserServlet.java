@@ -18,14 +18,19 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.SQLInitServlet;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 // allows both deletion and restoration of a study user role
 
 public class UnLockUserServlet extends SecureController {
+
+    @Autowired
+    private UserAccountDAO userAccountDao;
 
     private static final long serialVersionUID = 5028384981301316490L;
 
@@ -56,7 +61,7 @@ public class UnLockUserServlet extends SecureController {
 
     @Override
     protected void processRequest() throws Exception {
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
 
         FormProcessor fp = new FormProcessor(request);
         int userId = fp.getInt(ARG_USERID);

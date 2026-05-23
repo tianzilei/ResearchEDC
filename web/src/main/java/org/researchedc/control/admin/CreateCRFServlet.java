@@ -24,6 +24,7 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.Date;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Creates a new CRF
@@ -66,7 +67,7 @@ public class CreateCRFServlet extends SecureController {
 
     @Override
     public void processRequest() throws Exception {
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = this.crfDao;
         String action = request.getParameter("action");
 
         FormProcessor fp = new FormProcessor(request);

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.researchedc.module.discrepancynote.entity.DiscrepancyNoteEntity;
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.discrepancynote.service.DiscrepancyNoteService;
 import org.researchedc.module.legacy.dto.CreateDiscrepancyNoteRequest;
 import org.researchedc.module.legacy.dto.DiscrepancyNoteDTO;
@@ -24,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class LegacyDiscrepancyNoteController {
 
     private final DiscrepancyNoteService discrepancyNoteService;
+    private final CurrentUserUtils currentUserUtils;
 
-    public LegacyDiscrepancyNoteController(DiscrepancyNoteService discrepancyNoteService) {
+    public LegacyDiscrepancyNoteController(DiscrepancyNoteService discrepancyNoteService, CurrentUserUtils currentUserUtils) {
         this.discrepancyNoteService = discrepancyNoteService;
+        this.currentUserUtils = currentUserUtils;
     }
 
     @GetMapping
@@ -71,7 +74,7 @@ public class LegacyDiscrepancyNoteController {
     @PostMapping
     public ResponseEntity<DiscrepancyNoteDTO> createNote(
             @RequestBody CreateDiscrepancyNoteRequest request) {
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         DiscrepancyNoteEntity entity = discrepancyNoteService.create(
                 request.getDescription(), 1, 1,
                 request.getDetailedNotes(), ownerId, null,

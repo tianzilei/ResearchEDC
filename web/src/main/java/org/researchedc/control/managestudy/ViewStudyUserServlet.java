@@ -20,6 +20,8 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -28,7 +30,11 @@ import org.researchedc.web.InsufficientPermissionException;
  * Preferences - Java - Code Style - Code Templates
  */
 public class ViewStudyUserServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private IUserAccountDAO userAccountDao;
+
+/**
      *
      */
     @Override
@@ -48,7 +54,7 @@ public class ViewStudyUserServlet extends SecureController {
 
     @Override
     public void processRequest() throws Exception {
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
         String name = request.getParameter("name");
         String studyIdString = request.getParameter("studyId");
        
@@ -67,7 +73,7 @@ public class ViewStudyUserServlet extends SecureController {
             StudyUserRoleBean uRole = udao.findRoleByUserNameAndStudyId(name, studyId);
             request.setAttribute("uRole", uRole);
 
-            IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+            IStudyDAO sdao = this.studyDao;
             StudyBean study = (StudyBean) sdao.findByPK(studyId);
             request.setAttribute("uStudy", study);
             request.setAttribute("siteRoleMap", Role.siteRoleMap);

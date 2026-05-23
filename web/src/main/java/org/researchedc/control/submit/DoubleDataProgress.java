@@ -3,6 +3,7 @@ package org.researchedc.control.submit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class tracks the progress of a user when viewing CRF sections during

@@ -26,6 +26,7 @@ import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.DaoProvider;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.domain.rule.action.DiscrepancyNoteActionBean;
@@ -57,6 +58,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.researchedc.dao.spi.IRuleDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.rule.RuleSetDAO;
 
 /**
  * Verify the Rule import , show records that have Errors as well as records that will be saved.
@@ -71,6 +74,7 @@ public class TestRuleServlet extends SecureController {
     Locale locale;
     XmlSchemaValidationHelper schemaValidator = new XmlSchemaValidationHelper();
     RuleSetRuleDao ruleSetRuleDao;
+    @Autowired
     IRuleSetDAO ruleSetDao;
     ItemDAO itemDAO;
     ItemFormMetadataDAO itemFormMetadataDAO;
@@ -489,12 +493,12 @@ else
     }
 
     private ItemDAO getItemDAO() {
-        itemDAO = this.itemDAO != null ? itemDAO : new ItemDAO(sm.getDataSource());
+        itemDAO = this.itemDAO != null ? itemDAO : this.itemDao;
         return itemDAO;
     }
 
     private ItemFormMetadataDAO getItemFormMetadataDAO() {
-        itemFormMetadataDAO = this.itemFormMetadataDAO != null ? itemFormMetadataDAO : new ItemFormMetadataDAO(sm.getDataSource());
+        itemFormMetadataDAO = this.itemFormMetadataDAO != null ? itemFormMetadataDAO : DaoProvider.getDao(ItemFormMetadataDAO.class);
         return itemFormMetadataDAO;
     }
 

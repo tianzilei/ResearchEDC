@@ -40,6 +40,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class StudyAuditLogTableFactory extends AbstractTableFactory {
 

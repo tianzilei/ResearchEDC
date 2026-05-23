@@ -40,6 +40,7 @@ import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.dao.spi.StudyGroupDao;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Servlet for creating a table.
@@ -168,7 +169,7 @@ public class ListStudySubjectsServlet extends SecureController {
     }
     
     public IStudyParameterValueDAO getStudyParameterValueDao() {
-        studyParameterValueDAO = this.studyParameterValueDAO == null ? new StudyParameterValueDAO(sm.getDataSource()) : studyParameterValueDAO;
+        studyParameterValueDAO = this.studyParameterValueDAO == null ? this.studyParameterValueDao : studyParameterValueDAO;
 		return studyParameterValueDAO;
 	}
 
@@ -177,52 +178,52 @@ public class ListStudySubjectsServlet extends SecureController {
 	}
 
 	public IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
-        studyEventDefinitionDAO = studyEventDefinitionDAO == null ? new StudyEventDefinitionDAO(sm.getDataSource()) : studyEventDefinitionDAO;
+        studyEventDefinitionDAO = studyEventDefinitionDAO == null ? this.studyEventDefinitionDao : studyEventDefinitionDAO;
         return studyEventDefinitionDAO;
     }
 
     public ISubjectDAO getSubjectDAO() {
-        subjectDAO = this.subjectDAO == null ? new SubjectDAO(sm.getDataSource()) : subjectDAO;
+        subjectDAO = this.subjectDAO == null ? this.subjectDao : subjectDAO;
         return subjectDAO;
     }
 
     public IStudySubjectDAO getStudySubjectDAO() {
-        studySubjectDAO = this.studySubjectDAO == null ? new StudySubjectDAO(sm.getDataSource()) : studySubjectDAO;
+        studySubjectDAO = this.studySubjectDAO == null ? this.studySubjectDao : studySubjectDAO;
         return studySubjectDAO;
     }
 
     public StudyGroupClassDao getStudyGroupClassDao() {
-        studyGroupClassDAO = this.studyGroupClassDAO == null ? new StudyGroupClassDAO(sm.getDataSource()) : studyGroupClassDAO;
+        studyGroupClassDAO = this.studyGroupClassDAO == null ? this.studyGroupClassDao : studyGroupClassDAO;
         return studyGroupClassDAO;
     }
 
     public SubjectGroupMapDao getSubjectGroupMapDao() {
-        subjectGroupMapDAO = this.subjectGroupMapDAO == null ? new SubjectGroupMapDAO(sm.getDataSource()) : subjectGroupMapDAO;
+        subjectGroupMapDAO = this.subjectGroupMapDAO == null ? this.subjectGroupMapDao : subjectGroupMapDAO;
         return subjectGroupMapDAO;
     }
 
     public IStudyEventDAO getStudyEventDAO() {
-        studyEventDAO = this.studyEventDAO == null ? new StudyEventDAO(sm.getDataSource()) : studyEventDAO;
+        studyEventDAO = this.studyEventDAO == null ? this.studyEventDao : studyEventDAO;
         return studyEventDAO;
     }
 
     public IStudyDAO getStudyDAO() {
-        studyDAO = this.studyDAO == null ? new StudyDAO(sm.getDataSource()) : studyDAO;
+        studyDAO = this.studyDAO == null ? this.studyDao : studyDAO;
         return studyDAO;
     }
 
     public EventCRFDao getEventCRFDAO() {
-        eventCRFDAO = this.eventCRFDAO == null ? new EventCRFDAO(sm.getDataSource()) : eventCRFDAO;
+        eventCRFDAO = this.eventCRFDAO == null ? this.eventCrfDao : eventCRFDAO;
         return eventCRFDAO;
     }
 
     public EventDefinitionCRFDao getEventDefinitionCRFDAO() {
-        eventDefintionCRFDAO = this.eventDefintionCRFDAO == null ? new EventDefinitionCRFDAO(sm.getDataSource()) : eventDefintionCRFDAO;
+        eventDefintionCRFDAO = this.eventDefintionCRFDAO == null ? this.eventDefinitionCrfDao : eventDefintionCRFDAO;
         return eventDefintionCRFDAO;
     }
 
     public StudyGroupDao getStudyGroupDao() {
-        studyGroupDAO = this.studyGroupDAO == null ? new StudyGroupDAO(sm.getDataSource()) : studyGroupDAO;
+        studyGroupDAO = this.studyGroupDAO == null ? this.studyGroupDao : studyGroupDAO;
         return studyGroupDAO;
     }
 

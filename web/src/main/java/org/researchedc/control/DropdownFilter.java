@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jmesa.view.html.editor.DroplistFilterEditor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Extends JMesa's {@link DroplistFilterEditor} to display in the text box the label of the selected option (not its

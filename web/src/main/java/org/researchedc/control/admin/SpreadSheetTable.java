@@ -11,6 +11,7 @@ import org.researchedc.bean.admin.NewCRFBean;
 import org.researchedc.exception.CRFReadingException;
 import java.io.IOException;
 import java.util.ResourceBundle;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * SpreadSheetTable, an abstract superclass of spreadsheet classes used in

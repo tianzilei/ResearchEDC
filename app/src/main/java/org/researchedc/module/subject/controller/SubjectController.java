@@ -6,6 +6,7 @@ import org.researchedc.module.subject.dto.CreateSubjectRequest;
 import org.researchedc.module.subject.dto.EnrollSubjectRequest;
 import org.researchedc.module.subject.dto.StudySubjectDTO;
 import org.researchedc.module.subject.dto.SubjectDTO;
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.subject.service.SubjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class SubjectController {
 
     private final SubjectService subjectService;
+    private final CurrentUserUtils currentUserUtils;
 
-    public SubjectController(SubjectService subjectService) {
+    public SubjectController(SubjectService subjectService, CurrentUserUtils currentUserUtils) {
         this.subjectService = subjectService;
+        this.currentUserUtils = currentUserUtils;
     }
 
     @GetMapping("/search")
@@ -55,8 +58,7 @@ public class SubjectController {
     @PostMapping
     public ResponseEntity<SubjectDTO> createSubject(
             @Valid @RequestBody CreateSubjectRequest request) {
-        // TODO: extract ownerId from security context / JWT token
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         SubjectDTO dto = subjectService.createSubject(request, ownerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
@@ -64,8 +66,7 @@ public class SubjectController {
     @PostMapping("/enroll")
     public ResponseEntity<StudySubjectDTO> enrollSubject(
             @Valid @RequestBody EnrollSubjectRequest request) {
-        // TODO: extract ownerId from security context / JWT token
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         StudySubjectDTO dto = subjectService.enrollSubject(request, ownerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }

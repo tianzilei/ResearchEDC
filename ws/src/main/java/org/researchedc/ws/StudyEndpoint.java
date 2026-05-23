@@ -10,6 +10,8 @@ import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.logic.odmExport.AdminDataCollector;
 import org.researchedc.logic.odmExport.MetaDataCollector;
@@ -50,8 +52,10 @@ public class StudyEndpoint {
     private static final String NAMESPACE_URI_V1 = "http://openclinica.org/ws/study/v1";
 
     private final DataSource dataSource;
-    StudyDAO studyDao;
-    UserAccountDAO userAccountDao;
+    @Autowired
+    private StudyDAO studyDao;
+    @Autowired
+    private UserAccountDAO userAccountDao;
     private final MessageSource messages;
     private final CoreResources coreResources;
     private final RuleSetRuleDao ruleSetRuleDao;
@@ -178,10 +182,10 @@ public class StudyEndpoint {
     StudyBean getStudy(BaseStudyDefinitionBean studyMetadataRequest) {
         StudyBean study = null;
         if (studyMetadataRequest.getStudyUniqueId() != null && studyMetadataRequest.getSiteUniqueId() == null) {
-            study = getStudyDao().findByUniqueIdentifier(studyMetadataRequest.getStudyUniqueId());
+            study = studyDao.findByUniqueIdentifier(studyMetadataRequest.getStudyUniqueId());
         }
         if (studyMetadataRequest.getStudyUniqueId() != null && studyMetadataRequest.getSiteUniqueId() != null) {
-            study = getStudyDao().findByUniqueIdentifier(studyMetadataRequest.getSiteUniqueId());
+            study = studyDao.findByUniqueIdentifier(studyMetadataRequest.getSiteUniqueId());
         }
         return study;
 
@@ -212,12 +216,12 @@ public class StudyEndpoint {
         } else {
             username = principal.toString();
         }
-        return (UserAccountBean) getUserAccountDao().findByUserName(username);
+        return (UserAccountBean) userAccountDao.findByUserName(username);
     }
 
     private HashMap<Integer, ArrayList<StudyBean>> getStudies() {
 
-        ArrayList<StudyUserRoleBean> studyUserRoleBeans = getUserAccountDao().findStudyByUser(getUserAccount().getName(), (ArrayList) getStudyDao().findAll());
+        ArrayList<StudyUserRoleBean> studyUserRoleBeans = userAccountDao.findStudyByUser(getUserAccount().getName(), (ArrayList) studyDao.findAll());
 
         HashMap<Integer, ArrayList<StudyBean>> validStudySiteMap = new HashMap<Integer, ArrayList<StudyBean>>();
         for (int i = 0; i < studyUserRoleBeans.size(); i++) {
@@ -265,7 +269,7 @@ public class StudyEndpoint {
         responseElement.appendChild(studyListElement);
 
         for (Map.Entry<Integer, ArrayList<StudyBean>> entry : getStudies().entrySet()) {
-            StudyBean study = (StudyBean) getStudyDao().findByPK(entry.getKey());
+            StudyBean study = (StudyBean) studyDao.findByPK(entry.getKey());
             studyListElement.appendChild(createStudyWithSiteElement(document, study, entry.getValue()));
         }
 
@@ -306,15 +310,7 @@ public class StudyEndpoint {
 
     }
 
-    public StudyDAO getStudyDao() {
-        studyDao = studyDao != null ? studyDao : new StudyDAO(dataSource);
-        return studyDao;
-    }
 
-    public UserAccountDAO getUserAccountDao() {
-        userAccountDao = userAccountDao != null ? userAccountDao : new UserAccountDAO(dataSource);
-        return userAccountDao;
-    }
     
    
 

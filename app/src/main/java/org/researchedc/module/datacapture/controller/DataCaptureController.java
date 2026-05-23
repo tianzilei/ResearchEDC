@@ -7,6 +7,7 @@ import org.researchedc.module.datacapture.dto.ItemDataDTO;
 import org.researchedc.module.datacapture.dto.ItemGroupDTO;
 import org.researchedc.module.datacapture.dto.ResponseSetDTO;
 import org.researchedc.module.datacapture.dto.SaveItemDataRequest;
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.datacapture.service.DataCaptureService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class DataCaptureController {
 
     private final DataCaptureService dataCaptureService;
+    private final CurrentUserUtils currentUserUtils;
 
-    public DataCaptureController(DataCaptureService dataCaptureService) {
+    public DataCaptureController(DataCaptureService dataCaptureService, CurrentUserUtils currentUserUtils) {
         this.dataCaptureService = dataCaptureService;
+        this.currentUserUtils = currentUserUtils;
     }
 
     @GetMapping("/items")
@@ -48,7 +51,7 @@ public class DataCaptureController {
     @PostMapping("/items")
     public ResponseEntity<ItemDataDTO> saveItemData(
             @Valid @RequestBody SaveItemDataRequest request) {
-        Integer userId = 1;
+        Integer userId = currentUserUtils.getCurrentUserId();
         ItemDataDTO dto = dataCaptureService.saveItemData(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
@@ -56,7 +59,7 @@ public class DataCaptureController {
     @PostMapping("/items/batch")
     public ResponseEntity<List<ItemDataDTO>> batchSaveItems(
             @Valid @RequestBody BatchSaveItemsRequest request) {
-        Integer userId = 1;
+        Integer userId = currentUserUtils.getCurrentUserId();
         List<ItemDataDTO> dtos = dataCaptureService.batchSaveItems(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
     }

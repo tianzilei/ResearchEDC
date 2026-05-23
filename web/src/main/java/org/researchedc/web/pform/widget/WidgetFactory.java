@@ -14,6 +14,7 @@ import org.researchedc.domain.rule.expression.ExpressionBean;
 import org.researchedc.web.pform.OpenRosaXmlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class WidgetFactory {
 

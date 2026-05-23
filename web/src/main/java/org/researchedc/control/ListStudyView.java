@@ -12,6 +12,7 @@ import org.jmesa.view.editor.CellEditor;
 import org.jmesa.view.editor.GroupCellEditor;
 import org.jmesa.view.html.HtmlBuilder;
 import org.jmesa.view.html.HtmlSnippets;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ListStudyView  extends DefaultView{
 	

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <P>
@@ -35,6 +36,9 @@ import java.util.Locale;
  *
  */
 public class CreateFiltersOneServlet extends SecureController {
+
+    @Autowired
+    protected FilterDAO filterDao;
 
     Locale locale;
 
@@ -53,7 +57,7 @@ public class CreateFiltersOneServlet extends SecureController {
             // note that this is now set up to accept the
             // tabling classes created in View.
             FormProcessor fp = new FormProcessor(request);
-            FilterDAO fdao = new FilterDAO(sm.getDataSource());
+            FilterDAO fdao = this.filterDao;
             EntityBeanTable table = fp.getEntityBeanTable();
 
             ArrayList filters = new ArrayList();

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.researchedc.module.crf.entity.CrfEntity;
 import org.researchedc.module.crf.entity.CrfVersionEntity;
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.crf.service.CrfService;
 import org.researchedc.module.legacy.dto.CreateCrfRequest;
 import org.researchedc.module.legacy.dto.CrfManageDTO;
@@ -26,9 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class LegacyCrfManageController {
 
     private final CrfService crfService;
+    private final CurrentUserUtils currentUserUtils;
 
-    public LegacyCrfManageController(CrfService crfService) {
+    public LegacyCrfManageController(CrfService crfService, CurrentUserUtils currentUserUtils) {
         this.crfService = crfService;
+        this.currentUserUtils = currentUserUtils;
     }
 
     @GetMapping
@@ -52,7 +55,7 @@ public class LegacyCrfManageController {
 
     @PostMapping
     public ResponseEntity<CrfManageDTO> createCrf(@RequestBody CreateCrfRequest request) {
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         CrfEntity entity = crfService.createCrf(request.getName(), request.getDescription(), ownerId);
         return ResponseEntity.ok(toCrfDto(entity));
     }
@@ -90,7 +93,7 @@ public class LegacyCrfManageController {
     @PostMapping("/{crfId}/versions")
     public ResponseEntity<CrfVersionManageDTO> createVersion(@PathVariable int crfId,
             @RequestBody CrfVersionManageDTO request) {
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         CrfVersionEntity entity = crfService.createVersion(
                 crfId, request.getName(), request.getDescription(),
                 request.getRevisionNotes(), ownerId);

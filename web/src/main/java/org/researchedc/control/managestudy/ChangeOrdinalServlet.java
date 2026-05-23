@@ -11,6 +11,7 @@ import org.researchedc.bean.core.Role;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A super class of ChangeDefinitionOrdinal and Change DefinitionCRFOrdinal

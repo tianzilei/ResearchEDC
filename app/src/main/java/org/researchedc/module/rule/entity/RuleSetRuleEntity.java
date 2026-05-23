@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "ModuleRuleSetRule")
-@Table(name = "rule_set_rule")
+@Table(name = "module_rule_set_rule")
 public class RuleSetRuleEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rsr_seq")
-    @SequenceGenerator(name = "rsr_seq", sequenceName = "rule_set_rule_id_seq", allocationSize = 1)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "module_rule_set_rule_seq")
+    @SequenceGenerator(name = "module_rule_set_rule_seq", sequenceName = "module_rule_set_rule_id_seq", allocationSize = 1)
+    @Column(name = "rule_set_rule_id")
     private Integer ruleSetRuleId;
 
     @Column(name = "rule_set_id")

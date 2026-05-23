@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Updates a top-level study
@@ -68,7 +69,7 @@ public class UpdateStudyServlet extends SecureController {
         panel.setIconInfoShown(true);
         panel.setManageSubject(false);
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         StudyBean study = (StudyBean) session.getAttribute("newStudy");
 
         if (study == null) {
@@ -437,8 +438,8 @@ public class UpdateStudyServlet extends SecureController {
     }
 
     private void submitStudy() {
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
 
         StudyBean study1 = (StudyBean) session.getAttribute("newStudy");
         logger.info("study bean to be updated:" + study1.getName());

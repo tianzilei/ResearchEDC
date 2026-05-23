@@ -14,6 +14,7 @@ import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.web.bean.AuditEventRow;
 import org.researchedc.web.bean.EntityBeanTable;
 import org.researchedc.web.job.ExampleSpringJob;
@@ -27,8 +28,16 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class ViewSingleJobServlet extends SecureController {
+
+    @Autowired
+    private AuditEventDAO auditEventDao;
+    @Autowired
+    private DatasetDAO datasetDao;
+    @Autowired
+    private UserAccountDAO userAccountDao;
 
     // DRY consolidate from other servlet?
     private static String TRIGGER_GROUP = "DEFAULT";
@@ -93,7 +102,7 @@ public class ViewSingleJobServlet extends SecureController {
         logger.debug("found group name: " + groupName);
           TriggerBean triggerBean = new TriggerBean();
         JobDataMap dataMap = new JobDataMap();
-        IAuditEventDAO auditEventDAO = new AuditEventDAO(sm.getDataSource());
+        IAuditEventDAO auditEventDAO = this.auditEventDao;
 
         try {
             triggerBean.setFullName(trigger.getKey().getName());
@@ -125,14 +134,14 @@ public class ViewSingleJobServlet extends SecureController {
                     int dsId = dataMap.getInt(ExampleSpringJob.DATASET_ID);
                     triggerBean.setExportFormat(exportFormat);
                     triggerBean.setPeriodToRun(periodToRun);
-                    DatasetDAO datasetDAO = new DatasetDAO(sm.getDataSource());
+                    DatasetDAO datasetDAO = this.datasetDao;
                     DatasetBean dataset = (DatasetBean) datasetDAO.findByPK(dsId);
                     triggerBean.setDataset(dataset);
                 }
                 int userId = dataMap.getInt(ExampleSpringJob.USER_ID);
                 // need to set information, extract bean, user account bean
 
-                IUserAccountDAO userAccountDAO = new UserAccountDAO(sm.getDataSource());
+                IUserAccountDAO userAccountDAO = this.userAccountDao;
 
                 triggerBean.setContactEmail(contactEmail);
 

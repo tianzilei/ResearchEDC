@@ -2,6 +2,7 @@ package org.researchedc.web.pform.manifest;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class Manifest {
     private ArrayList<MediaFile> mediaFile = null;

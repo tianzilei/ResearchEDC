@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "ModuleRuleExpression")
-@Table(name = "rule_expression")
+@Table(name = "module_rule_expression")
 public class RuleExpressionEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rexpr_seq")
-    @SequenceGenerator(name = "rexpr_seq", sequenceName = "rule_expression_id_seq", allocationSize = 1)
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "module_rule_expression_seq")
+    @SequenceGenerator(name = "module_rule_expression_seq", sequenceName = "module_rule_expression_id_seq", allocationSize = 1)
+    @Column(name = "rule_expression_id")
     private Integer ruleExpressionId;
 
     @Column(name = "value", length = 2040)

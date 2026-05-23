@@ -18,12 +18,19 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  *This class has been created from the existing SecureController to implement the
  * set-up code for the existing view-related JSPs (sidebars, etc.).
  */
 public class SetUpStudyRole {
+
+    @Autowired
+    protected StudyParameterValueDAO studyParameterValueDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
 /*
     @Autowired
     @Qualifier("dataSource")*/
@@ -49,10 +56,10 @@ public class SetUpStudyRole {
         StudyBean currentStudy = new StudyBean();
         StudyInfoPanel panel = new StudyInfoPanel();
 
-        IStudyDAO sdao = new StudyDAO(dataSource);
+        IStudyDAO sdao = this.studyDao;
 
         if (userAccountBean.getId() > 0 && userAccountBean.getActiveStudyId() > 0) {
-            StudyParameterValueDAO spvdao = new StudyParameterValueDAO(dataSource);
+            StudyParameterValueDAO spvdao = this.studyParameterValueDao;
             currentStudy = (StudyBean) sdao.findByPK(userAccountBean.getActiveStudyId());
 
             ArrayList studyParameters = spvdao.findParamConfigByStudy(currentStudy);

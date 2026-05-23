@@ -23,6 +23,8 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author ssachs
@@ -53,7 +55,7 @@ public class EditStudyUserRoleServlet extends SecureController {
 
     @Override
     protected void processRequest() throws Exception {
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
 
         FormProcessor fp = new FormProcessor(request);
 
@@ -65,7 +67,7 @@ public class EditStudyUserRoleServlet extends SecureController {
         
         techAdminProtect(user);
         
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         StudyBean sb = (StudyBean) sdao.findByPK(studyUserRole.getStudyId());
         if (sb != null) {
             studyUserRole.setStudyName(sb.getName());
@@ -187,7 +189,7 @@ public class EditStudyUserRoleServlet extends SecureController {
     // }
     //
     // SQLFactory factory = SQLFactory.getInstance();
-    // IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+    // IUserAccountDAO udao = this.userAccountDao;
     //
     // FormProcessor fp = new FormProcessor(request);
     //
@@ -196,7 +198,7 @@ public class EditStudyUserRoleServlet extends SecureController {
     // StudyUserRoleBean studyUserRole =
     // udao.findRoleByUserNameAndStudyId(uName, studyId);
     //
-    // IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+    // IStudyDAO sdao = this.studyDao;
     // StudyBean sb = (StudyBean) sdao.findByPK(studyUserRole.getStudyId());
     // if (sb != null) {
     // studyUserRole.setStudyName(sb.getName());

@@ -46,6 +46,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Processes user reuqest to generate study event definition list
@@ -55,7 +58,15 @@ import java.util.Map;
  */
 public class ListEventDefinitionServlet extends SecureController {
 
-    Locale locale;
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+    @Autowired
+    private IUserAccountDAO userAccountDao;
+
+Locale locale;
 
     // < ResourceBundleresword, resworkflow, respage,resexception;
 
@@ -100,18 +111,18 @@ public class ListEventDefinitionServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        IStudyEventDefinitionDAO edao = new StudyEventDefinitionDAO(sm.getDataSource());
-        IUserAccountDAO sdao = new UserAccountDAO(sm.getDataSource());
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
-        ICrfDAO crfDao = new CRFDAO(sm.getDataSource());
-        CRFVersionDAO crfVersionDao = new CRFVersionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO edao = this.studyEventDefinitionDao;
+        IUserAccountDAO sdao = this.userAccountDao;
+        EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
+        ICrfDAO crfDao = this.crfDao;
+        CRFVersionDAO crfVersionDao = this.crfVersionDao;
         ArrayList seds = edao.findAllByStudy(currentStudy);
 
         // request.setAttribute("seds", seds);
 
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
-        ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
+        EventCRFDao ecdao = this.eventCrfDao;
+        IItemDataDAO iddao = this.itemDataDao;
         for (int i = 0; i < seds.size(); i++) {
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seds.get(i);
             Collection eventDefinitionCRFlist = edcdao.findAllParentsByDefinition(sed.getId());

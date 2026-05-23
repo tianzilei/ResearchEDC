@@ -18,6 +18,7 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.core.SecureController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
@@ -31,12 +32,14 @@ import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Removes a crf
@@ -44,6 +47,23 @@ import java.util.Date;
  * @author jxu
  */
 public class RemoveCRFServlet extends SecureController {
+    @Autowired
+    IStudyEventDAO studyEventDao;
+    @Autowired
+    IStudyEventDefinitionDAO studyEventDefinitionDao;
+    @Autowired
+    ICrfDAO crfDao;
+    @Autowired
+    EventCRFDao eventCrfDao;
+    @Autowired
+    ItemDataDAO itemDataDao;
+
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+    @Autowired
+    private SectionDAO sectionDao;
     /**
      *
      */
@@ -64,8 +84,8 @@ public class RemoveCRFServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+        ICrfDAO cdao = this.crfDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
         FormProcessor fp = new FormProcessor(request);
 
         // checks which module the requests are from
@@ -82,15 +102,15 @@ public class RemoveCRFServlet extends SecureController {
             CRFBean crf = (CRFBean) cdao.findByPK(crfId);
             ArrayList versions = cvdao.findAllByCRFId(crfId);
             crf.setVersions(versions);
-            EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+            EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
             ArrayList edcs = (ArrayList) edcdao.findAllByCRF(crfId);
 
-            SectionDAO secdao = new SectionDAO(sm.getDataSource());
+            SectionDAO secdao = this.sectionDao;
 
-            EventCRFDao evdao = new EventCRFDAO(sm.getDataSource());
+            EventCRFDao evdao = this.eventCrfDao;
             ArrayList eventCRFs = evdao.findAllByCRF(crfId);
-            IStudyEventDAO seDao = new StudyEventDAO(sm.getDataSource());
-            IStudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(sm.getDataSource());
+            IStudyEventDAO seDao = this.studyEventDao;
+            IStudyEventDefinitionDAO sedDao = this.studyEventDefinitionDao;
             for (Object ecBean: eventCRFs) {
                 StudyEventBean seBean = (StudyEventBean) seDao.findByPK(((EventCRFBean)ecBean).getStudyEventId());
                 StudyEventDefinitionBean sedBean = (StudyEventDefinitionBean)sedDao.findByPK(seBean.getStudyEventDefinitionId());
@@ -138,7 +158,7 @@ public class RemoveCRFServlet extends SecureController {
                     }
                 }
 
-                ItemDataDAO idao = new ItemDataDAO(sm.getDataSource());
+                IItemDataDAO idao = this.itemDataDao;
                 for (int i = 0; i < eventCRFs.size(); i++) {
                     EventCRFBean eventCRF = (EventCRFBean) eventCRFs.get(i);
                     if (!eventCRF.getStatus().equals(Status.DELETED)) {

@@ -53,13 +53,23 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.DaoProvider;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
  */
 public abstract class ListStudySubjectServlet extends SecureController {
 
-    // Shaoyu Su
+    
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+    @Autowired
+    private SubjectGroupMapDAO subjectGroupMapDao;
+
+// Shaoyu Su
     Locale locale;
     // BWP Issue 3195, 3330 <<
     public static String SUBJECT_PAGE_NUMBER = "ebl_page";
@@ -116,14 +126,14 @@ public abstract class ListStudySubjectServlet extends SecureController {
 
         request.setAttribute(PAGINATING_QUERY, paginatingQuery.toString());
 
-        IStudyDAO stdao = new StudyDAO(sm.getDataSource());
-        IStudySubjectDAO sdao = new StudySubjectDAO(sm.getDataSource());
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
-        SubjectGroupMapDAO sgmdao = new SubjectGroupMapDAO(sm.getDataSource());
-        StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
-        StudyGroupDAO sgdao = new StudyGroupDAO(sm.getDataSource());
-        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudyDAO stdao = this.studyDao;
+        IStudySubjectDAO sdao = this.studySubjectDao;
+        IStudyEventDAO sedao = this.studyEventDao;
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
+        SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+        StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
+        StudyGroupDAO sgdao = this.studyGroupDao;
+        IStudySubjectDAO ssdao = this.studySubjectDao;
 
         // YW << update study parameters of current study.
         // "collectDob" and "genderRequired" are set as the same as the parent
@@ -144,7 +154,7 @@ public abstract class ListStudySubjectServlet extends SecureController {
             studyGroupClasses = sgcdao.findAllActiveByStudy(currentStudy);
             allDefs = seddao.findAllActiveByStudy(currentStudy);
         }
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean parentSPV = spvdao.findByHandleAndStudy(parentStudyId, "collectDob");
         currentStudy.getStudyParameterConfig().setCollectDob(parentSPV.getValue());
         parentSPV = spvdao.findByHandleAndStudy(parentStudyId, "genderRequired");
@@ -388,8 +398,8 @@ public abstract class ListStudySubjectServlet extends SecureController {
         if (studyEvent == null)
             return false;
 
-        EventCRFDao eventCRFDAO = new EventCRFDAO(sm.getDataSource());
-        EventDefinitionCRFDao eventDefinitionDAO = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventCRFDao eventCRFDAO = this.eventCrfDao;
+        EventDefinitionCRFDao eventDefinitionDAO = this.eventDefinitionCrfDao;
         List<EventCRFBean> crfBeans = new ArrayList<EventCRFBean>();
 
         crfBeans.addAll(eventCRFDAO.findAllByStudyEvent(studyEvent));
@@ -411,10 +421,10 @@ public abstract class ListStudySubjectServlet extends SecureController {
 
     public static DisplayStudyEventBean getDisplayStudyEventsForStudySubject(StudySubjectBean studySub, StudyEventBean event, DataSource ds,
             UserAccountBean ub, StudyUserRoleBean currentRole, StudyBean study) {
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(ds);
-        IStudyEventDAO sedao = new StudyEventDAO(ds);
-        EventCRFDao ecdao = new EventCRFDAO(ds);
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(ds);
+        IStudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
+        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
+        EventCRFDao ecdao = DaoProvider.getDao(EventCRFDAO.class);
+        EventDefinitionCRFDao edcdao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
 
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(event.getStudyEventDefinitionId());
         event.setStudyEventDefinition(sed);

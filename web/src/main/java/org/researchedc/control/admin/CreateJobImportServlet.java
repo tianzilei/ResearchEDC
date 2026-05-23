@@ -6,8 +6,8 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Create Job Import Servlet, by Tom Hickerson, 2009
@@ -36,6 +37,9 @@ import java.util.Set;
  *         which will be meant to run the ImportStatefulJob.
  */
 public class CreateJobImportServlet extends SecureController {
+
+    @Autowired
+    private UserAccountDAO userAccountDao;
 
     private static String SCHEDULER = "schedulerFactoryBean";
     private static String IMPORT_TRIGGER = "importTrigger";
@@ -87,8 +91,8 @@ public class CreateJobImportServlet extends SecureController {
         // find all the form items and re-populate them if necessary
         FormProcessor fp2 = new FormProcessor(request);
 
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
+        IStudyDAO sdao = this.studyDao;
 
         // ArrayList studies = udao.findStudyByUser(ub.getName(), (ArrayList)
         // sdao.findAll());
@@ -149,7 +153,7 @@ public class CreateJobImportServlet extends SecureController {
             } else {
                 logger.info("found no validation errors, continuing");
                 int studyId = fp.getInt(STUDY_ID);
-                IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+                IStudyDAO studyDAO = this.studyDao;
                 StudyBean studyBean = (StudyBean) studyDAO.findByPK(studyId);
                 SimpleTrigger trigger = triggerService.generateImportTrigger(fp, sm.getUserBean(), studyBean, LocaleResolver.getLocale(request).getLanguage());
 

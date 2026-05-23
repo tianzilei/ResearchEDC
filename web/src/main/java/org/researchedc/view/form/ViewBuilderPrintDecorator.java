@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This is a Decorator design pattern for the ViewBuilderUtil Class. It adds

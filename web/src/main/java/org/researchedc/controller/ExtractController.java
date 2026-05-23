@@ -37,6 +37,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 @Controller("extractController")
 @RequestMapping("/extract")
@@ -89,7 +90,7 @@ public class ExtractController {
         // get extract id
         // get dataset id
         // if id is a number and dataset id is a number ...
-        datasetDao = new DatasetDAO(dataSource);
+        datasetDao = this.datasetDao;
         UserAccountBean userBean = (UserAccountBean) request.getSession().getAttribute("userBean");
         CoreResources cr =  new CoreResources();
 

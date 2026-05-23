@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReportLog {
 

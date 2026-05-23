@@ -22,6 +22,8 @@ import javax.xml.transform.dom.DOMSource;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.exception.OpenClinicaSystemException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.EventServiceInterface;
 import org.researchedc.ws.bean.StudyEventTransferBean;
@@ -60,6 +62,8 @@ public class EventEndpoint {
     private final EventServiceInterface eventService;
     private final MessageSource messages;
     private final DataSource dataSource;
+    @Autowired
+    private UserAccountDAO userAccountDao;
     Locale locale;
 
     private TransactionTemplate transactionTemplate;
@@ -267,7 +271,6 @@ public class EventEndpoint {
         } else {
             username = principal.toString();
         }
-        UserAccountDAO userAccountDao = new UserAccountDAO(dataSource);
         return (UserAccountBean) userAccountDao.findByUserName(username);
     }
 

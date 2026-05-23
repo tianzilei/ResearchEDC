@@ -11,6 +11,7 @@ import org.jmesa.view.html.HtmlSnippets;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class StatisticsView extends AbstractHtmlView {
 

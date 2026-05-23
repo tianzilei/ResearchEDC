@@ -48,6 +48,9 @@ import org.researchedc.service.pmanage.Authorization;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Prepares to update study event definition
@@ -56,7 +59,13 @@ import org.researchedc.web.InsufficientPermissionException;
  *
  */
 public class InitUpdateEventDefinitionServlet extends SecureController {
-    EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+
+EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
 
     /**
      * Checks whether the user has the correct privilege
@@ -68,7 +77,7 @@ public class InitUpdateEventDefinitionServlet extends SecureController {
             return;
         }
 
-        IStudyEventDAO sdao = new StudyEventDAO(sm.getDataSource());
+        IStudyEventDAO sdao = this.studyEventDao;
         // get current studyid
         int studyId = currentStudy.getId();
 
@@ -106,7 +115,7 @@ public class InitUpdateEventDefinitionServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        IStudyEventDefinitionDAO sdao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO sdao = this.studyEventDefinitionDao;
         String idString = request.getParameter("id");
         logger.info("definition id: " + idString);
         if (StringUtil.isBlank(idString)) {
@@ -116,7 +125,7 @@ public class InitUpdateEventDefinitionServlet extends SecureController {
             // definition id
             int defId = Integer.valueOf(idString.trim()).intValue();
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) sdao.findByPK(defId);
-            StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());    
+            IStudyParameterValueDAO spvdao = this.studyParameterValueDao;    
             String participateFormStatus = spvdao.findByHandleAndStudy(sed.getStudyId(), "participantPortal").getValue();
               if (participateFormStatus.equals("enabled")) 	baseUrl();
             request.setAttribute("participateFormStatus",participateFormStatus );
@@ -128,11 +137,11 @@ public class InitUpdateEventDefinitionServlet extends SecureController {
                 return;
             }
 
-            EventDefinitionCRFDao edao = new EventDefinitionCRFDAO(sm.getDataSource());
+            EventDefinitionCRFDao edao = this.eventDefinitionCrfDao;
             ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllParentsByDefinition(defId);
 
-            CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+            CRFVersionDAO cvdao = this.crfVersionDao;
+            ICrfDAO cdao = this.crfDao;
             ArrayList newEventDefinitionCRFs = new ArrayList();
             for (int i = 0; i < eventDefinitionCRFs.size(); i++) {
                 EventDefinitionCRFBean edc = (EventDefinitionCRFBean) eventDefinitionCRFs.get(i);

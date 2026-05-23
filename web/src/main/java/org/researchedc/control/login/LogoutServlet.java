@@ -10,6 +10,7 @@ package org.researchedc.control.login;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author jxu

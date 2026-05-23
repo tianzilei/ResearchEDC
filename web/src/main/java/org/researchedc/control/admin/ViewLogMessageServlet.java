@@ -10,6 +10,7 @@ import org.researchedc.web.job.ImportSpringJob;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * view Import File Server, by Tom Hickerson, 2010

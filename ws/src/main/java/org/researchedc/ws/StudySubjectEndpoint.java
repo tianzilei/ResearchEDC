@@ -22,6 +22,8 @@ import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.submit.SubjectDAO;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.exception.OpenClinicaSystemException;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.subject.SubjectServiceInterface;
@@ -85,9 +87,18 @@ public class StudySubjectEndpoint {
     private final SubjectServiceInterface subjectService;
     private final DataSource dataSource;
     private final MessageSource messages;
-    StudyDAO studyDao;
-    UserAccountDAO userAccountDao;
-    SubjectDAO subjectDao;
+    @Autowired
+    private StudyDAO studyDao;
+    @Autowired
+    private UserAccountDAO userAccountDao;
+    @Autowired
+    private SubjectDAO subjectDao;
+    @Autowired
+    private StudySubjectDAO studySubjectDao;
+    @Autowired
+    private StudyEventDAO studyEventDao;
+    @Autowired
+    private StudyEventDefinitionDAO studyEventDefinitionDao;
     private final Locale locale;
 
     /**
@@ -229,7 +240,7 @@ public class StudySubjectEndpoint {
             if ( studySubjectBean.getEnrollmentDate() != null){
             	studySubjectType.setEnrollmentDate(getXMLGregorianCalendarDate(studySubjectBean.getEnrollmentDate()));
             }
-            SubjectBean subjectBean = (SubjectBean) getSubjectDao().findByPK(studySubjectBean.getSubjectId());
+            SubjectBean subjectBean = (SubjectBean) subjectDao.findByPK(studySubjectBean.getSubjectId());
             subjectType.setUniqueIdentifier(subjectBean.getUniqueIdentifier());
             String genderStr = String.valueOf(subjectBean.getGender());
             if (!"".equals(genderStr.trim())){
@@ -256,10 +267,8 @@ public class StudySubjectEndpoint {
      * @throws Exception
      */
     private EventsType getEvents(StudySubjectBean studySubject) throws Exception {
-        StudyEventDAO eventDao = new StudyEventDAO(dataSource);
-        StudyEventDefinitionDAO studyEventDefinitionDao = new StudyEventDefinitionDAO(dataSource);
         EventsType eventsType = new EventsType();
-        List<StudyEventBean> events = eventDao.findAllByStudySubject(studySubject);
+        List<StudyEventBean> events = studyEventDao.findAllByStudySubject(studySubject);
         StudyEventDefinitionBean eb=null;
         for (StudyEventBean studyEventBean : events) {
         	 StudyEventDefinitionBean sed = (StudyEventDefinitionBean) studyEventDefinitionDao.findByPK(studyEventBean.getStudyEventDefinitionId());
@@ -300,11 +309,11 @@ public class StudySubjectEndpoint {
             throw new OpenClinicaSystemException("studySubjectEndpoint.provide_valid_study_site", "Provide a valid study/site.");
         }
         if (studyIdentifier != null && siteIdentifier == null) {
-            StudyBean study = getStudyDao().findByUniqueIdentifier(studyIdentifier);
+            StudyBean study = studyDao.findByUniqueIdentifier(studyIdentifier);
             if (study == null) {
                 throw new OpenClinicaSystemException("studySubjectEndpoint.invalid_study_identifier", "The study identifier you provided is not valid.");
             }
-            StudyUserRoleBean studySur = getUserAccountDao().findRoleByUserNameAndStudyId(getUserAccount().getName(), study.getId());
+            StudyUserRoleBean studySur = userAccountDao.findRoleByUserNameAndStudyId(getUserAccount().getName(), study.getId());
             if (studySur.getStatus() != Status.AVAILABLE) {
                 throw new OpenClinicaSystemException("studySubjectEndpoint.insufficient_permissions",
                         "You do not have sufficient privileges to proceed with this operation.");
@@ -312,13 +321,13 @@ public class StudySubjectEndpoint {
             return study;
         }
         if (studyIdentifier != null && siteIdentifier != null) {
-            StudyBean study = getStudyDao().findByUniqueIdentifier(studyIdentifier);
-            StudyBean site = getStudyDao().findByUniqueIdentifier(siteIdentifier);
+            StudyBean study = studyDao.findByUniqueIdentifier(studyIdentifier);
+            StudyBean site = studyDao.findByUniqueIdentifier(siteIdentifier);
             if (study == null || site == null || site.getParentStudyId() != study.getId()) {
                 throw new OpenClinicaSystemException("studySubjectEndpoint.invalid_study_site_identifier",
                         "The study/site identifier you provided is not valid.");
             }
-            StudyUserRoleBean siteSur = getUserAccountDao().findRoleByUserNameAndStudyId(getUserAccount().getName(), site.getId());
+            StudyUserRoleBean siteSur = userAccountDao.findRoleByUserNameAndStudyId(getUserAccount().getName(), site.getId());
             if (siteSur.getStatus() != Status.AVAILABLE) {
                 throw new OpenClinicaSystemException("studySubjectEndpoint.insufficient_permissions",
                         "You do not have sufficient privileges to proceed with this operation.");
@@ -432,10 +441,8 @@ public class StudySubjectEndpoint {
      */
     private boolean doesSubjectExist(SubjectTransferBean subjectTransferBean) {
         // TODO: Implement this
-        StudySubjectDAO ssdao = new StudySubjectDAO(dataSource);
-        StudyDAO studyDao = new StudyDAO(dataSource);
         StudyBean studyBean = studyDao.findByUniqueIdentifier(subjectTransferBean.getStudy().getIdentifier());
-        StudySubjectBean ssbean = ssdao.findByLabelAndStudy(subjectTransferBean.getStudySubjectId(), studyBean);
+        StudySubjectBean ssbean = studySubjectDao.findByLabelAndStudy(subjectTransferBean.getStudySubjectId(), studyBean);
         return ssbean.getId() > 0 ? true : false;
     }
 
@@ -584,7 +591,6 @@ public class StudySubjectEndpoint {
         } else {
             username = principal.toString();
         }
-        UserAccountDAO userAccountDao = new UserAccountDAO(dataSource);
         return (UserAccountBean) userAccountDao.findByUserName(username);
     }
 
@@ -594,21 +600,6 @@ public class StudySubjectEndpoint {
 
     public void setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
-    }
-
-    public StudyDAO getStudyDao() {
-        studyDao = studyDao != null ? studyDao : new StudyDAO(dataSource);
-        return studyDao;
-    }
-
-    public UserAccountDAO getUserAccountDao() {
-        userAccountDao = userAccountDao != null ? userAccountDao : new UserAccountDAO(dataSource);
-        return userAccountDao;
-    }
-
-    public SubjectDAO getSubjectDao() {
-        subjectDao = subjectDao != null ? subjectDao : new SubjectDAO(dataSource);
-        return subjectDao;
     }
 
     public MessageSource getMessages() {

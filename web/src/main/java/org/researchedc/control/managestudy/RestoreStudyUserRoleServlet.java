@@ -23,6 +23,8 @@ import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -30,7 +32,11 @@ import org.researchedc.web.InsufficientPermissionException;
  * Restores a removed study user role
  */
 public class RestoreStudyUserRoleServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private IUserAccountDAO userAccountDao;
+
+/**
      * Checks whether the user has the right permission to proceed function
      */
     @Override
@@ -51,8 +57,8 @@ public class RestoreStudyUserRoleServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
+        IUserAccountDAO udao = this.userAccountDao;
         String name = request.getParameter("name");
         String studyIdString = request.getParameter("studyId");
         if (StringUtil.isBlank(name) || StringUtil.isBlank(studyIdString)) {

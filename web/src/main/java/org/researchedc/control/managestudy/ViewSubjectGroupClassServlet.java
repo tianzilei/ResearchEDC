@@ -24,6 +24,8 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu, modified by ywang
@@ -31,7 +33,11 @@ import java.util.ArrayList;
  * Views details of a Subject Group Class
  */
 public class ViewSubjectGroupClassServlet extends SecureController {
-    @Override
+    
+    @Autowired
+    private SubjectGroupMapDAO subjectGroupMapDao;
+
+@Override
     public void mayProceed() throws InsufficientPermissionException {
         if (ub.isSysAdmin()) {
             return;
@@ -55,10 +61,10 @@ public class ViewSubjectGroupClassServlet extends SecureController {
             addPageMessage(respage.getString("please_choose_a_subject_group_class_to_view"));
             forwardPage(Page.SUBJECT_GROUP_CLASS_LIST_SERVLET);
         } else {
-            StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
-            StudyGroupDAO sgdao = new StudyGroupDAO(sm.getDataSource());
-            SubjectGroupMapDAO sgmdao = new SubjectGroupMapDAO(sm.getDataSource());
-            IStudyDAO studyDao = new StudyDAO(sm.getDataSource());
+            StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
+            StudyGroupDAO sgdao = this.studyGroupDao;
+            SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+            IStudyDAO studyDao = this.studyDao;
 
             StudyGroupClassBean sgcb = (StudyGroupClassBean) sgcdao.findByPK(classId);
             StudyBean study = (StudyBean)studyDao.findByPK(sgcb.getStudyId());

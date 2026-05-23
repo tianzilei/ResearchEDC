@@ -11,6 +11,7 @@ package org.researchedc.web.bean;
 import org.researchedc.bean.admin.CRFBean;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A help class for displaying CRF object in show table class

@@ -42,6 +42,7 @@ import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.exception.CRFReadingException;
 import org.researchedc.logic.score.ScoreValidator;
 import org.researchedc.web.SQLInitServlet;
@@ -51,6 +52,8 @@ import org.apache.poi.ss.usermodel.CellType;import org.apache.poi.hssf.usermodel
 import org.apache.poi.ss.usermodel.CellType;import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CellType;import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * <P>
@@ -67,7 +70,10 @@ import org.slf4j.LoggerFactory;
  * @version CVS: $Id: SpreadSheetTable.java,v 1.28 2006/09/01 00:37:19 jxu Exp $
  */
 
-public class SpreadSheetTableClassic implements SpreadSheetTable {// extends
+public class SpreadSheetTableClassic implements SpreadSheetTable {
+
+    @Autowired
+    protected ItemGroupDAO itemGroupDao;// extends
     // SpreadSheetTable
     // {
 
@@ -91,7 +97,18 @@ public class SpreadSheetTableClassic implements SpreadSheetTable {// extends
 
     private Set<String> existingOIDs = new TreeSet<String>();
 
-    private MeasurementUnitDao measurementUnitDao = new MeasurementUnitDao();
+    private MeasurementUnitDao measurementUnitDao = this.measurementUnitDao;
+
+    @Autowired
+    private ICrfDAO crfDao;
+    @Autowired
+    private ItemDataDAO itemDataDao;
+    @Autowired
+    private ItemDAO itemDao;
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private ItemGroupDAO itemGroupDaoField;
 
     // the default; all crf ids should be > 0, tbh 8-29 :-)
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
@@ -145,13 +162,13 @@ public class SpreadSheetTableClassic implements SpreadSheetTable {// extends
         ArrayList<String> itemGroupOids = new ArrayList<String>();
         ArrayList<String> itemOids = new ArrayList<String>();
 
-        ICrfDAO cdao = new CRFDAO(ds);
+        ICrfDAO cdao = this.crfDao;
         CRFBean crf = (CRFBean) cdao.findByPK(crfId);
 
-        ItemDataDAO iddao = new ItemDataDAO(ds);
-        ItemDAO idao = new ItemDAO(ds);
-        CRFVersionDAO cvdao = new CRFVersionDAO(ds);
-        ItemGroupDAO itemGroupDao = new ItemGroupDAO(ds);
+        IItemDataDAO iddao = this.itemDataDao;
+        ItemDAO idao = this.itemDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ItemGroupDAO itemGroupDao = this.itemGroupDaoField;
 
         int validSheetNum = 0;
         for (int j = 0; j < numSheets; j++) {

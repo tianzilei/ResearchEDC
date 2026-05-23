@@ -49,6 +49,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 
 /**
@@ -57,6 +60,18 @@ import javax.sql.DataSource;
  */
 @Controller("sdvController")
 public class SDVController {
+
+    @Autowired
+    protected IStudySubjectDAO studySubjectDao;
+
+    @Autowired
+    protected EventCRFDao eventCrfDao;
+
+    @Autowired
+    protected IStudyEventDAO studyEventDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
     public final static String SUBJECT_SDV_TABLE_ATTRIBUTE = "sdvTableAttribute";
     @Autowired
     @Qualifier("dataSource")
@@ -131,7 +146,7 @@ public class SDVController {
     public ModelMap viewSubjectHandler(HttpServletRequest request, @RequestParam("studySubjectId") int studySubjectId, @RequestParam("studyId") int studyId) {
 
         ModelMap gridMap = new ModelMap();
-        /*EventCRFDao eventCRFDAO = new EventCRFDAO(dataSource);
+        /*EventCRFDao eventCRFDAO = this.eventCrfDao;
         List<EventCRFBean> eventCRFBeans = eventCRFDAO.findAllByStudySubject(studySubjectId);*/
 
         request.setAttribute("studyId", studyId);
@@ -218,8 +233,8 @@ public class SDVController {
     public ModelMap viewAllSubjectFormHandler(HttpServletRequest request, HttpServletResponse response, @RequestParam("studyId") int studyId) {
 
         ModelMap gridMap = new ModelMap();
-        IStudyDAO studyDAO = new StudyDAO(dataSource);
-        // IStudyEventDAO studyEventDAO = new StudyEventDAO(dataSource);
+        IStudyDAO studyDAO = this.studyDao;
+        // IStudyEventDAO studyEventDAO = this.studyEventDao;
         StudyBean studyBean = (StudyBean) studyDAO.findByPK(studyId);
         String pattern = "MM/dd/yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
@@ -505,7 +520,7 @@ public class SDVController {
     */
     private String renderSubjectsTable(List<EventCRFBean> eventCRFBeans, int studySubjectId, HttpServletRequest request) {
 
-        IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(dataSource);
+        IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
         StudySubjectBean subjectBean = (StudySubjectBean) studySubjectDAO.findByPK(studySubjectId);
 
         Collection<SubjectSDVContainer> items = sdvUtil.getSubjectRows(eventCRFBeans, request);

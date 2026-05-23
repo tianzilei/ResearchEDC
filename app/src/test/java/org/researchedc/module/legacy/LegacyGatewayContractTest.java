@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.crf.entity.CrfEntity;
 import org.researchedc.module.crf.entity.CrfVersionEntity;
 import org.researchedc.module.crf.service.CrfService;
@@ -341,7 +342,7 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacyDiscrepancyNoteController(discrepancyNoteService)).build();
+                    new LegacyDiscrepancyNoteController(discrepancyNoteService, mock(CurrentUserUtils.class))).build();
         }
 
         private static org.researchedc.module.discrepancynote.entity.DiscrepancyNoteEntity createDNEntity(int id) {
@@ -427,7 +428,7 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacyDatasetController(datasetService)).build();
+                    new LegacyDatasetController(datasetService, mock(CurrentUserUtils.class))).build();
         }
 
         @Test
@@ -479,7 +480,7 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacyCrfManageController(crfService)).build();
+                    new LegacyCrfManageController(crfService, mock(CurrentUserUtils.class))).build();
         }
 
         private static CrfEntity createCrfEntity(int id, String name) {
@@ -630,7 +631,7 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacySubjectGroupController(subjectGroupService)).build();
+                    new LegacySubjectGroupController(subjectGroupService, mock(CurrentUserUtils.class))).build();
         }
 
         @Test
@@ -748,7 +749,7 @@ class LegacyGatewayContractTest {
         @BeforeEach
         void setUp() {
             mockMvc = MockMvcBuilders.standaloneSetup(
-                    new LegacyFilterController(filterService)).build();
+                    new LegacyFilterController(filterService, mock(CurrentUserUtils.class))).build();
         }
 
         @Test

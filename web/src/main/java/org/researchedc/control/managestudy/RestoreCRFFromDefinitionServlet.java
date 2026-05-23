@@ -18,6 +18,8 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author jxu
@@ -53,7 +55,7 @@ public class RestoreCRFFromDefinitionServlet extends SecureController {
         logger.info("crf id:" + idString);
 
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) session.getAttribute("definition");
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());    
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;    
         String participateFormStatus = spvdao.findByHandleAndStudy(sed.getStudyId(), "participantPortal").getValue();
     
         request.setAttribute("participateFormStatus",participateFormStatus );

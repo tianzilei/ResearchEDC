@@ -48,13 +48,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
  */
 public class ListEventsForSubjectServlet extends SecureController {
 
-    Locale locale;
+    
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+    @Autowired
+    private SubjectGroupMapDAO subjectGroupMapDao;
+
+Locale locale;
 
     // < ResourceBundleresword;
     /*
@@ -116,18 +124,18 @@ public class ListEventsForSubjectServlet extends SecureController {
             return;
         }
 
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(definitionId);
 
-        IStudySubjectDAO sdao = new StudySubjectDAO(sm.getDataSource());
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        IStudySubjectDAO sdao = this.studySubjectDao;
+        IStudyEventDAO sedao = this.studyEventDao;
 
-        SubjectGroupMapDAO sgmdao = new SubjectGroupMapDAO(sm.getDataSource());
-        StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
+        SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+        StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
 
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
-        ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
+        EventCRFDao ecdao = this.eventCrfDao;
+        EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
+        ICrfDAO crfdao = this.crfDao;
 
         // find all the groups in the current study
         ArrayList studyGroupClasses = sgcdao.findAllActiveByStudy(currentStudy);
@@ -138,7 +146,7 @@ public class ListEventsForSubjectServlet extends SecureController {
 
         if (currentStudy.getParentStudyId() > 0) {
 
-            IStudyDAO stdao = new StudyDAO(sm.getDataSource());
+            IStudyDAO stdao = this.studyDao;
             StudyBean parent = (StudyBean) stdao.findByPK(currentStudy.getParentStudyId());
 
             allDefs = seddao.findAllActiveByStudy(parent);

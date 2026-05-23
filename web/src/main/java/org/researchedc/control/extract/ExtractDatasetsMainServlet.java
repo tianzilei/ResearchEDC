@@ -19,6 +19,7 @@ import org.researchedc.web.bean.EntityBeanTable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <P>
@@ -32,6 +33,9 @@ import java.util.HashMap;
  */
 public class ExtractDatasetsMainServlet extends SecureController {
 
+    @Autowired
+    protected DatasetDAO datasetDao;
+
     public static final String PATH = "ExtractDatasetsMain";
     public static final String ARG_USER_ID = "userId";
 
@@ -42,7 +46,7 @@ public class ExtractDatasetsMainServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
-        DatasetDAO dsdao = new DatasetDAO(sm.getDataSource());
+        DatasetDAO dsdao = this.datasetDao;
         EntityBeanTable table = fp.getEntityBeanTable();
 
         ArrayList datasets = (ArrayList) dsdao.findTopFive(currentStudy);
@@ -63,7 +67,7 @@ public class ExtractDatasetsMainServlet extends SecureController {
 
         request.setAttribute("table", table);
         // the code above replaces the following lines:
-        // DatasetDAO dsdao = new DatasetDAO(sm.getDataSource());
+        // DatasetDAO dsdao = this.datasetDao;
         // ArrayList datasets = (ArrayList)dsdao.findTopFive();
         // request.setAttribute("datasets", datasets);
         resetPanel();

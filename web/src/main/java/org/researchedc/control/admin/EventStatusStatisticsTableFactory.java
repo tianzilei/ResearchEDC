@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class EventStatusStatisticsTableFactory extends AbstractTableFactory {
 

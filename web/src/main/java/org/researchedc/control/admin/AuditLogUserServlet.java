@@ -14,6 +14,7 @@ import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author thickerson
@@ -31,6 +33,11 @@ import java.util.Locale;
  *
  */
 public class AuditLogUserServlet extends SecureController {
+
+    @Autowired
+    private AuditEventDAO auditEventDao;
+    @Autowired
+    private UserAccountDAO userAccountDao;
 
     Locale locale;
     // < ResourceBundleresword,resexception;
@@ -58,7 +65,7 @@ public class AuditLogUserServlet extends SecureController {
         } else {
             session.setAttribute(ARG_USERID, new Integer(userId));
         }
-        IAuditEventDAO aeDAO = new AuditEventDAO(sm.getDataSource());
+        IAuditEventDAO aeDAO = this.auditEventDao;
         ArrayList al = aeDAO.findAllByUserId(userId);
 
         EntityBeanTable table = fp.getEntityBeanTable();
@@ -88,7 +95,7 @@ public class AuditLogUserServlet extends SecureController {
         table.computeDisplay();
 
         request.setAttribute("table", table);
-        IUserAccountDAO uadao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO uadao = this.userAccountDao;
         UserAccountBean uabean = (UserAccountBean) uadao.findByPK(userId);
         request.setAttribute("auditUserBean", uabean);
         forwardPage(Page.AUDIT_LOG_USER);

@@ -24,6 +24,8 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -31,7 +33,11 @@ import java.util.Date;
  * Removes a study user role
  */
 public class RemoveStudyUserRoleServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private IUserAccountDAO userAccountDao;
+
+/**
      * Checks whether the user has the right permission to proceed function
      */
     @Override
@@ -52,7 +58,7 @@ public class RemoveStudyUserRoleServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
         String name = request.getParameter("name");
         String studyIdString = request.getParameter("studyId");
         if (StringUtil.isBlank(name) || StringUtil.isBlank(studyIdString)) {
@@ -69,7 +75,7 @@ public class RemoveStudyUserRoleServlet extends SecureController {
                 StudyUserRoleBean uRole = udao.findRoleByUserNameAndStudyId(name, studyId);
                 request.setAttribute("uRole", uRole);
 
-                IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+                IStudyDAO sdao = this.studyDao;
                 StudyBean study = (StudyBean) sdao.findByPK(studyId);
                 request.setAttribute("uStudy", study);
                 forwardPage(Page.REMOVE_USER_ROLE_IN_STUDY);
@@ -105,7 +111,7 @@ public class RemoveStudyUserRoleServlet extends SecureController {
      */
     private String sendEmail(UserAccountBean u, StudyUserRoleBean sub) throws Exception {
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         StudyBean study = (StudyBean) sdao.findByPK(sub.getStudyId());
         logger.info("Sending email...");
         String body =

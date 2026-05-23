@@ -8,10 +8,16 @@
 package org.researchedc.control.login;
 
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
+import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.StudyUserRoleBean;
@@ -27,28 +33,23 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.control.submit.ListStudySubjectTableFactory;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyConfigService;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.SubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.table.sdv.SDVUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -61,23 +62,19 @@ import java.util.Locale;
  * Processes the request of changing current study
  */
 public class ChangeStudyServlet extends SecureController {
-    /**
-     * Checks whether the user has the correct privilege
-     */
 
     Locale locale;
-    private IStudyEventDefinitionDAO studyEventDefinitionDAO;
-    private ISubjectDAO subjectDAO;
-    private IStudySubjectDAO studySubjectDAO;
-    private IStudyEventDAO studyEventDAO;
-    private StudyGroupClassDAO studyGroupClassDAO;
-    private SubjectGroupMapDAO subjectGroupMapDAO;
-    private IStudyDAO studyDAO;
-    private EventCRFDao eventCRFDAO;
-    private EventDefinitionCRFDao eventDefintionCRFDAO;
-    private StudyGroupDAO studyGroupDAO;
-    private DiscrepancyNoteDAO discrepancyNoteDAO;
-    private IStudyParameterValueDAO studyParameterValueDAO;
+
+    @Autowired
+    protected ISubjectDAO subjectDao;
+    @Autowired
+    protected SubjectGroupMapDAO subjectGroupMapDao;
+    @Autowired
+    protected EventDefinitionCRFDao eventDefinitionCrfDao;
+    @Autowired
+    protected DiscrepancyNoteDAO discrepancyNoteDao;
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
 
     // < ResourceBundlerestext;
 
@@ -94,10 +91,7 @@ public class ChangeStudyServlet extends SecureController {
     public void processRequest() throws Exception {
 
         String action = request.getParameter("action");// action sent by user
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
-
-        ArrayList studies = udao.findStudyByUser(ub.getName(), (ArrayList) sdao.findAll());
+        ArrayList studies = userAccountDao.findStudyByUser(ub.getName(), (ArrayList) studyDao.findAll());
         request.setAttribute("siteRoleMap", Role.siteRoleMap);
         request.setAttribute("studyRoleMap", Role.studyRoleMap);
         if(request.getAttribute("label")!=null) {
@@ -110,7 +104,7 @@ public class ChangeStudyServlet extends SecureController {
         ArrayList validStudies = new ArrayList();
         for (int i = 0; i < studies.size(); i++) {
             StudyUserRoleBean sr = (StudyUserRoleBean) studies.get(i);
-            StudyBean study = (StudyBean) sdao.findByPK(sr.getStudyId());
+            StudyBean study = (StudyBean) studyDao.findByPK(sr.getStudyId());
             if (study != null && study.getStatus().equals(Status.PENDING)) {
                 sr.setStatus(study.getStatus());
             }
@@ -130,7 +124,7 @@ public class ChangeStudyServlet extends SecureController {
                 logger.info("confirm");
                 
                 // pull out/update the roles and privs here               
-                ArrayList userRoleBeans = (ArrayList) udao.findAllRolesByUserName(ub.getName());
+                ArrayList userRoleBeans = (ArrayList) userAccountDao.findAllRolesByUserName(ub.getName());
                 ub.setRoles(userRoleBeans);
                
                 confirmChangeStudy(studies);
@@ -179,16 +173,13 @@ public class ChangeStudyServlet extends SecureController {
         int studyId = fp.getInt("studyId");
         int prevStudyId = currentStudy.getId();
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
-        StudyBean current = (StudyBean) sdao.findByPK(studyId);
+        StudyBean current = (StudyBean) studyDao.findByPK(studyId);
 
         // reset study parameters -jxu 02/09/2007
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
-
-        ArrayList studyParameters = spvdao.findParamConfigByStudy(current);
+        ArrayList studyParameters = studyParameterValueDao.findParamConfigByStudy(current);
         current.setStudyParameters(studyParameters);
         int parentStudyId = currentStudy.getParentStudyId()>0?currentStudy.getParentStudyId():currentStudy.getId();
-        StudyParameterValueBean parentSPV = spvdao.findByHandleAndStudy(parentStudyId, "subjectIdGeneration");
+        StudyParameterValueBean parentSPV = studyParameterValueDao.findByHandleAndStudy(parentStudyId, "subjectIdGeneration");
         current.getStudyParameterConfig().setSubjectIdGeneration(parentSPV.getValue());
         String idSetting = current.getStudyParameterConfig().getSubjectIdGeneration();
         if (idSetting.equals("auto editable") || idSetting.equals("auto non-editable")) {
@@ -203,7 +194,7 @@ public class ChangeStudyServlet extends SecureController {
         } else {
             // YW <<
             if (current.getParentStudyId() > 0) {
-                current.setParentStudyName(((StudyBean) sdao.findByPK(current.getParentStudyId())).getName());
+                current.setParentStudyName(((StudyBean) studyDao.findByPK(current.getParentStudyId())).getName());
 
             }
             // YW 06-12-2007>>
@@ -217,11 +208,10 @@ public class ChangeStudyServlet extends SecureController {
             session.setAttribute("study", current);
             currentStudy = current;
             // change user's active study id
-            IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
             ub.setActiveStudyId(current.getId());
             ub.setUpdater(ub);
             ub.setUpdatedDate(new java.util.Date());
-            udao.update(ub);
+            userAccountDao.update(ub);
 
             if (current.getParentStudyId() > 0) {
                 /*
@@ -398,72 +388,60 @@ public class ChangeStudyServlet extends SecureController {
     }
 
     public IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
-        studyEventDefinitionDAO = studyEventDefinitionDAO == null ? new StudyEventDefinitionDAO(sm.getDataSource()) : studyEventDefinitionDAO;
-        return studyEventDefinitionDAO;
+        return studyEventDefinitionDao;
     }
 
     public ISubjectDAO getSubjectDAO() {
-        subjectDAO = this.subjectDAO == null ? new SubjectDAO(sm.getDataSource()) : subjectDAO;
-        return subjectDAO;
+        return subjectDao;
     }
 
     public IStudySubjectDAO getStudySubjectDAO() {
-        studySubjectDAO = this.studySubjectDAO == null ? new StudySubjectDAO(sm.getDataSource()) : studySubjectDAO;
-        return studySubjectDAO;
+        return studySubjectDao;
     }
 
     public StudyGroupClassDAO getStudyGroupClassDAO() {
-        studyGroupClassDAO = this.studyGroupClassDAO == null ? new StudyGroupClassDAO(sm.getDataSource()) : studyGroupClassDAO;
-        return studyGroupClassDAO;
+        return studyGroupClassDao;
     }
 
     public SubjectGroupMapDAO getSubjectGroupMapDAO() {
-        subjectGroupMapDAO = this.subjectGroupMapDAO == null ? new SubjectGroupMapDAO(sm.getDataSource()) : subjectGroupMapDAO;
-        return subjectGroupMapDAO;
+        return subjectGroupMapDao;
     }
 
     public IStudyEventDAO getStudyEventDAO() {
-        studyEventDAO = this.studyEventDAO == null ? new StudyEventDAO(sm.getDataSource()) : studyEventDAO;
-        return studyEventDAO;
+        return studyEventDao;
     }
 
     public IStudyDAO getStudyDAO() {
-        studyDAO = this.studyDAO == null ? new StudyDAO(sm.getDataSource()) : studyDAO;
-        return studyDAO;
+        return studyDao;
     }
 
     public EventCRFDao getEventCRFDAO() {
-        eventCRFDAO = this.eventCRFDAO == null ? new EventCRFDAO(sm.getDataSource()) : eventCRFDAO;
-        return eventCRFDAO;
+        return eventCrfDao;
     }
 
     public EventDefinitionCRFDao getEventDefinitionCRFDAO() {
-        eventDefintionCRFDAO = this.eventDefintionCRFDAO == null ? new EventDefinitionCRFDAO(sm.getDataSource()) : eventDefintionCRFDAO;
-        return eventDefintionCRFDAO;
+        return eventDefinitionCrfDao;
     }
 
     public StudyGroupDAO getStudyGroupDAO() {
-        studyGroupDAO = this.studyGroupDAO == null ? new StudyGroupDAO(sm.getDataSource()) : studyGroupDAO;
-        return studyGroupDAO;
+        return studyGroupDao;
     }
 
     public DiscrepancyNoteDAO getDiscrepancyNoteDAO() {
-        discrepancyNoteDAO = this.discrepancyNoteDAO == null ? new DiscrepancyNoteDAO(sm.getDataSource()) : discrepancyNoteDAO;
-        return discrepancyNoteDAO;
+        return discrepancyNoteDao;
     }
 
     public SDVUtil getSDVUtil() {
         return (SDVUtil) SpringServletAccess.getApplicationContext(context).getBean("sdvUtil");
     }
 
-	public IStudyParameterValueDAO getStudyParameterValueDAO() {
-	     studyParameterValueDAO = this.studyParameterValueDAO == null ? new StudyParameterValueDAO(sm.getDataSource()) : studyParameterValueDAO;
-		return studyParameterValueDAO;
-	}
+    public IStudyParameterValueDAO getStudyParameterValueDAO() {
+        return studyParameterValueDao;
+    }
 
-	public void setStudyParameterValueDAO(IStudyParameterValueDAO studyParameterValueDAO) {
-		this.studyParameterValueDAO = studyParameterValueDAO;
-	}
+    public void setStudyParameterValueDAO(StudyParameterValueDAO studyParameterValueDAO) {
+        this.studyParameterValueDao = studyParameterValueDAO;
+    }
 
     
 }

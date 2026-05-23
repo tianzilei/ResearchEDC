@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import jakarta.servlet.ServletContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class PFormCache {
     

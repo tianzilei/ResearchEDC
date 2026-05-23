@@ -3,6 +3,7 @@ package org.researchedc.controller.helper;
 import org.springframework.web.bind.ServletRequestDataBinder;
 
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The Spring BindingResult bean for implementing the SDV search form.

@@ -23,6 +23,8 @@ import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
 import org.researchedc.domain.technicaladmin.LoginStatus;
 import org.researchedc.i18n.util.ResourceBundleProvider;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -71,6 +73,7 @@ public class OpenClinicaUsernamePasswordAuthenticationFilter extends AbstractAut
 
     private AuditUserLoginDao auditUserLoginDao;
     private ConfigurationDao configurationDao;
+    @Autowired
     private UserAccountDAO userAccountDao;
     private DataSource dataSource;
 
@@ -269,7 +272,7 @@ public class OpenClinicaUsernamePasswordAuthenticationFilter extends AbstractAut
     }
 
     public UserAccountDAO getUserAccountDao() {
-        return userAccountDao != null ? userAccountDao : new UserAccountDAO(dataSource);
+        return userAccountDao;
     }
 
 }

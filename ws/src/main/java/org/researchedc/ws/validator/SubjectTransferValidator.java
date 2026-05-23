@@ -19,6 +19,8 @@ import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.submit.SubjectDAO;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.ws.bean.SubjectStudyDefinitionBean;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -26,11 +28,16 @@ import org.springframework.validation.Validator;
 public class SubjectTransferValidator implements Validator {
 
     DataSource dataSource;
-    StudyDAO studyDAO;
-    SubjectDAO subjectDao;
-    StudySubjectDAO studySubjectDAO;
-    IStudyParameterValueDAO studyParameterValueDAO;
-    UserAccountDAO userAccountDAO;
+    @Autowired
+    private StudyDAO studyDAO;
+    @Autowired
+    private SubjectDAO subjectDao;
+    @Autowired
+    private StudySubjectDAO studySubjectDAO;
+    @Autowired
+    private IStudyParameterValueDAO studyParameterValueDAO;
+    @Autowired
+    private UserAccountDAO userAccountDAO;
     BaseVSValidatorImplementation helper;
 
     public SubjectTransferValidator(DataSource dataSource) {
@@ -51,13 +58,13 @@ public class SubjectTransferValidator implements Validator {
             return;
         }
         Status[] included_status= new Status[]{Status.AVAILABLE };
-        StudyBean study = helper.verifyStudy(getStudyDAO(), subjectStudyBean.getStudyUniqueId(), included_status, e);
+        StudyBean study = helper.verifyStudy(studyDAO, subjectStudyBean.getStudyUniqueId(), included_status, e);
         if (study == null) return;
         subjectStudyBean.setStudy(study);
         StudyBean site = null;int site_id = -1;
         
         if (subjectStudyBean.getSiteUniqueId() != null) {
-        	site = helper.verifySite(getStudyDAO(), subjectStudyBean.getStudyUniqueId(), subjectStudyBean.getSiteUniqueId(), included_status, e);
+        	site = helper.verifySite(studyDAO, subjectStudyBean.getStudyUniqueId(), subjectStudyBean.getSiteUniqueId(), included_status, e);
             if (site == null) { return;	        }
             site_id = site.getId();
             subjectStudyBean.setStudy(site);
@@ -109,7 +116,7 @@ public class SubjectTransferValidator implements Validator {
             return;
         } 
         
-        StudySubjectBean studySubject = getStudySubjectDAO().findByLabelAndStudy(subjectStudyBean.getSubjectLabel(), subjectStudyBean.getStudy());
+        StudySubjectBean studySubject = studySubjectDAO.findByLabelAndStudy(subjectStudyBean.getSubjectLabel(), subjectStudyBean.getStudy());
       
         //it is not null but label null
         if (studySubject == null || studySubject.getOid()== null) {
@@ -135,13 +142,13 @@ public class SubjectTransferValidator implements Validator {
         }
         
         Status[] included_status= new Status[]{Status.AVAILABLE };
-        StudyBean study = helper.verifyStudy(getStudyDAO(), subjectTransferBean.getStudyOid(), included_status, e);
+        StudyBean study = helper.verifyStudy(studyDAO, subjectTransferBean.getStudyOid(), included_status, e);
         if (study == null) return;
         StudyBean site = null;int site_id = -1;
         subjectTransferBean.setStudy(study);
     
         if (subjectTransferBean.getSiteIdentifier() != null) {
-        	site = helper.verifySite(getStudyDAO(), subjectTransferBean.getStudyOid(),subjectTransferBean.getSiteIdentifier(), included_status, e);
+        	site = helper.verifySite(studyDAO, subjectTransferBean.getStudyOid(),subjectTransferBean.getSiteIdentifier(), included_status, e);
             if (site == null) { return;	        }
             site_id = site.getId();
             subjectTransferBean.setStudy(site);
@@ -200,7 +207,7 @@ public class SubjectTransferValidator implements Validator {
 //        }
 //      
         int handleStudyId = study.getParentStudyId() > 0 ? study.getParentStudyId() : study.getId();
-        StudyParameterValueBean studyParameter = getStudyParameterValueDAO().findByHandleAndStudy(handleStudyId, "subjectPersonIdRequired");
+        StudyParameterValueBean studyParameter = studyParameterValueDAO.findByHandleAndStudy(handleStudyId, "subjectPersonIdRequired");
         String personId = subjectTransferBean.getPersonId();
 
         //personId 3 cases: 
@@ -229,8 +236,7 @@ public class SubjectTransferValidator implements Validator {
         }
 // verify that personId is unique 
          if (subjectTransferBean.getPersonId() != null && subjectTransferBean.getPersonId().length()>0){
-//	         SubjectBean subjectWithSamePersonId = getSubjectDao().findByUniqueIdentifierAndStudy( subjectTransferBean.getPersonId(), study.getId());
-	         SubjectBean subjectWithSamePersonId = getSubjectDao().findByUniqueIdentifierAndAnyStudy( subjectTransferBean.getPersonId(), study.getId());
+	         SubjectBean subjectWithSamePersonId = subjectDao.findByUniqueIdentifierAndAnyStudy( subjectTransferBean.getPersonId(), study.getId());
         		
 		   if ( subjectWithSamePersonId.getId() !=0 ) {              
 		   	 
@@ -242,7 +248,7 @@ public class SubjectTransferValidator implements Validator {
          }
 
         
-        StudyParameterValueBean subjectIdGenerationParameter = getStudyParameterValueDAO().findByHandleAndStudy(handleStudyId, "subjectIdGeneration");
+        StudyParameterValueBean subjectIdGenerationParameter = studyParameterValueDAO.findByHandleAndStudy(handleStudyId, "subjectIdGeneration");
         String idSetting = subjectIdGenerationParameter.getValue();
         if (!(idSetting.equals("auto editable") || idSetting.equals("auto non-editable"))) {
         	String studySubjectId = subjectTransferBean.getStudySubjectId();
@@ -255,7 +261,7 @@ public class SubjectTransferValidator implements Validator {
                 return;
             } else    
             {  // checks whether there is a subject with same id inside current study
-            	StudySubjectBean subjectWithSame = getStudySubjectDAO().findByLabelAndStudy(studySubjectId, study);
+            	StudySubjectBean subjectWithSame = studySubjectDAO.findByLabelAndStudy(studySubjectId, study);
             	 
             	 if ( subjectWithSame.getLabel().equals(studySubjectId) )
             	 {
@@ -285,7 +291,7 @@ public class SubjectTransferValidator implements Validator {
         }
 
         String gender = String.valueOf(subjectTransferBean.getGender());
-        studyParameter = getStudyParameterValueDAO().findByHandleAndStudy(handleStudyId, "genderRequired");
+        studyParameter = studyParameterValueDAO.findByHandleAndStudy(handleStudyId, "genderRequired");
         if ("true".equals(studyParameter.getValue()) ) {
         	if(gender == null || gender.length() < 1) {
             e.reject("subjectTransferValidator.gender_required", new Object[] { study.getName() }, "Gender is required for the study: " + study.getName());
@@ -306,7 +312,7 @@ public class SubjectTransferValidator implements Validator {
 
         Date dateOfBirth = subjectTransferBean.getDateOfBirth();
         String yearOfBirth = subjectTransferBean.getYearOfBirth();
-        studyParameter = getStudyParameterValueDAO().findByHandleAndStudy(handleStudyId, "collectDob");
+        studyParameter = studyParameterValueDAO.findByHandleAndStudy(handleStudyId, "collectDob");
         if ("1".equals(studyParameter.getValue()) && (dateOfBirth == null)) {
             e.reject("subjectTransferValidator.dateOfBirth_required", new Object[] { study.getName() },
                     "Date of birth is required for the study " + study.getName());
@@ -343,24 +349,4 @@ public class SubjectTransferValidator implements Validator {
         }
     }
 
-    
-    
-    public StudyDAO getStudyDAO() {
-        return this.studyDAO != null ? studyDAO : new StudyDAO(dataSource);
-    }
-
-    public StudySubjectDAO getStudySubjectDAO() {
-        return this.studySubjectDAO != null ? studySubjectDAO : new StudySubjectDAO(dataSource);
-    }
-
-    public IStudyParameterValueDAO getStudyParameterValueDAO() {
-        return this.studyParameterValueDAO != null ? studyParameterValueDAO : new StudyParameterValueDAO(dataSource);
-    }
-    public UserAccountDAO getUserAccountDAO() {
-        return this.userAccountDAO != null ? userAccountDAO : new UserAccountDAO(dataSource);
-    }
-    public SubjectDAO getSubjectDao() {
-       return this.subjectDao != null ? subjectDao : new SubjectDAO(dataSource);
-        
-    }
 }

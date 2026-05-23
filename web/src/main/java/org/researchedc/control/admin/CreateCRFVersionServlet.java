@@ -38,6 +38,8 @@ import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.SQLInitServlet;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -53,6 +55,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Create a new CRF verison by uploading excel file
@@ -60,6 +63,11 @@ import java.util.Set;
  * @author jxu
  */
 public class CreateCRFVersionServlet extends SecureController {
+
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private ItemFormMetadataDAO itemFormMetadataDao;
 
     Locale locale;
     FileUploadHelper uploadHelper = new FileUploadHelper();
@@ -90,9 +98,9 @@ public class CreateCRFVersionServlet extends SecureController {
         resetPanel();
         panel.setStudyInfoShown(true);
 
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        CRFVersionDAO vdao = new CRFVersionDAO(sm.getDataSource());
-        EventDefinitionCRFDao edao = new EventDefinitionCRFDAO(sm.getDataSource());
+        ICrfDAO cdao = this.crfDao;
+        CRFVersionDAO vdao = this.crfVersionDao;
+        EventDefinitionCRFDao edao = this.eventDefinitionCrfDao;
 
         FormProcessor fp = new FormProcessor(request);
         // checks which module the requests are from
@@ -276,7 +284,7 @@ public class CreateCRFVersionServlet extends SecureController {
                     // YW << for add a link to "View CRF Version Data Entry".
                     // For this purpose, CRFVersion id is needed.
                     // So the latest CRFVersion Id of A CRF Id is it.
-                    CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+                    CRFVersionDAO cvdao = this.crfVersionDao;
                     ArrayList crfvbeans = new ArrayList();
 
                     logger.debug("CRF-ID [" + version.getCrfId() + "]");
@@ -565,7 +573,7 @@ public class CreateCRFVersionServlet extends SecureController {
      * @return
      */
     private boolean canDeleteVersion(int previousVersionId) {
-        CRFVersionDAO cdao = new CRFVersionDAO(sm.getDataSource());
+        CRFVersionDAO cdao = this.crfVersionDao;
         ArrayList items = null;
         ArrayList itemsHaveData = new ArrayList();
         // boolean isItemUsedByOtherVersion =
@@ -575,7 +583,7 @@ public class CreateCRFVersionServlet extends SecureController {
         // cdao.findItemUsedByOtherVersion(previousVersionId);
         // session.setAttribute("itemsUsedByOtherVersion",itemsUsedByOtherVersion);
         // return false;
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+        EventCRFDao ecdao = this.eventCrfDao;
         ArrayList events = ecdao.findAllByCRFVersion(previousVersionId);
         if (!events.isEmpty()) {
             session.setAttribute("eventsForVersion", events);
@@ -614,7 +622,7 @@ public class CreateCRFVersionServlet extends SecureController {
      * @return the items found
      */
     private ArrayList isItemSame(HashMap items, CRFVersionBean version) {
-        ItemDAO idao = new ItemDAO(sm.getDataSource());
+        ItemDAO idao = this.itemDao;
         ArrayList diffItems = new ArrayList();
         Set names = items.keySet();
         Iterator it = names.iterator();
@@ -637,8 +645,8 @@ public class CreateCRFVersionServlet extends SecureController {
     }
 
     private ItemBean isResponseValid(HashMap items, CRFVersionBean version) {
-        ItemDAO idao = new ItemDAO(sm.getDataSource());
-        ItemFormMetadataDAO metadao = new ItemFormMetadataDAO(sm.getDataSource());
+        ItemDAO idao = this.itemDao;
+        ItemFormMetadataDAO metadao = this.itemFormMetadataDao;
         Set names = items.keySet();
         Iterator it = names.iterator();
         while (it.hasNext()) {

@@ -39,6 +39,10 @@ import java.util.Locale;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author ssachs
@@ -46,6 +50,9 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping(value="/InitialDataEntry")
 public class InitialDataEntryServlet extends DataEntryServlet {
+
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     Locale locale;
 
@@ -93,7 +100,7 @@ public class InitialDataEntryServlet extends DataEntryServlet {
 //            }
 //        } else if (stage.equals(DataEntryStage.INITIAL_DATA_ENTRY)) {
 //            if (ub.getId() != ecb.getOwnerId() && !r.equals(Role.STUDYDIRECTOR) && !r.equals(Role.COORDINATOR)) {
-//                IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+//                IUserAccountDAO udao = this.userAccountDao;
 //                String ownerName = ((UserAccountBean) udao.findByPK(ecb.getOwnerId())).getName();
 //                this.session.setAttribute("mayProcessUploading", "false");
 //                MessageFormat mf = new MessageFormat("");

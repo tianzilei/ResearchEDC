@@ -19,6 +19,7 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.jmesa.view.html.HtmlBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class EventCrfLayerBuilder {
 

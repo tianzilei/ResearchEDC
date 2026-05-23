@@ -65,6 +65,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.sql.DataSource;
+import org.researchedc.dao.spi.DaoProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 
 /**
  * @author ssachs
@@ -73,6 +76,12 @@ import javax.sql.DataSource;
 // TODO: make it possible to input an event crf bean to this servlet rather than
 // an int
 public class TableOfContentsServlet extends SecureController {
+
+    @Autowired
+    protected SectionDAO sectionDao;
+
+    @Autowired
+    protected CRFVersionDAO crfVersionDao;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     public static final String BEAN_DISPLAY = "toc";
 
@@ -126,7 +135,7 @@ public class TableOfContentsServlet extends SecureController {
     private String action;
 
     private void getEventCRFAndAction() {
-        ecdao = new EventCRFDAO(sm.getDataSource());
+        ecdao = this.eventCrfDao;
 
         ecb = (EventCRFBean) request.getAttribute(INPUT_EVENT_CRF_BEAN);
 
@@ -200,7 +209,7 @@ public class TableOfContentsServlet extends SecureController {
      */
     private EventCRFBean createEventCRF() throws Exception {
         EventCRFBean ecb;
-        ecdao = new EventCRFDAO(sm.getDataSource());
+        ecdao = this.eventCrfDao;
 
         int crfVersionId = fp.getInt(INPUT_CRF_VERSION_ID);
         int studyEventId = fp.getInt(INPUT_STUDY_EVENT_ID);
@@ -211,28 +220,28 @@ public class TableOfContentsServlet extends SecureController {
         logger.info("Creating event CRF within Table of Contents.  Study id: " + currentStudy.getId() + "; CRF Version id: " + crfVersionId
             + "; Study Event id: " + studyEventId + "; Event Definition CRF id: " + eventDefinitionCRFId + "; Subject: " + subjectId);
 
-        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = this.studySubjectDao;
         StudySubjectBean ssb = ssdao.findBySubjectIdAndStudy(subjectId, currentStudy);
 
         if (!ssb.isActive()) {
             throw new InconsistentStateException(Page.LIST_STUDY_SUBJECTS_SERVLET, resexception.getString("trying_to_begin_DE1"));
         }
 
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         StudyEventDefinitionBean sedb = seddao.findByEventDefinitionCRFId(eventDefinitionCRFId);
 
         if (!ssb.isActive() || !sedb.isActive()) {
             throw new InconsistentStateException(Page.LIST_STUDY_SUBJECTS_SERVLET, resexception.getString("trying_to_begin_DE2"));
         }
 
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+        CRFVersionDAO cvdao = this.crfVersionDao;
         EntityBean eb = cvdao.findByPK(crfVersionId);
 
         if (!eb.isActive()) {
             throw new InconsistentStateException(Page.LIST_STUDY_SUBJECTS_SERVLET, resexception.getString("trying_to_begin_DE3"));
         }
 
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
         StudyEventBean sEvent = (StudyEventBean) sedao.findByPK(studyEventId);
 
         StudyBean studyWithSED = currentStudy;
@@ -372,14 +381,14 @@ public class TableOfContentsServlet extends SecureController {
                 ecb.setDateInterviewed(fp.getDate(INPUT_INTERVIEW_DATE));
 
                 if (ecdao == null) {
-                    ecdao = new EventCRFDAO(sm.getDataSource());
+                    ecdao = this.eventCrfDao;
                 }
 
                 ecb = (EventCRFBean) ecdao.update(ecb);
 
                 // save discrepancy notes into DB
                 FormDiscrepancyNotes fdn = (FormDiscrepancyNotes) session.getAttribute(AddNewSubjectServlet.FORM_DISCREPANCY_NOTES_NAME);
-                DiscrepancyNoteDAO dndao = new DiscrepancyNoteDAO(sm.getDataSource());
+                DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
 
                 AddNewSubjectServlet.saveFieldNotes(INPUT_INTERVIEWER, fdn, dndao, ecb.getId(), "EventCRF", currentStudy);
                 AddNewSubjectServlet.saveFieldNotes(INPUT_INTERVIEW_DATE, fdn, dndao, ecb.getId(), "EventCRF", currentStudy);
@@ -410,7 +419,7 @@ public class TableOfContentsServlet extends SecureController {
         DisplayTableOfContentsBean displayBean = getDisplayBean(ecb, sm.getDataSource(), currentStudy);
 
         // this is for generating side info panel
-        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = this.studySubjectDao;
         StudySubjectBean ssb = (StudySubjectBean) ssdao.findByPK(ecb.getStudySubjectId());
         ArrayList beans = ViewStudySubjectServlet.getDisplayStudyEventsForStudySubject(ssb, sm.getDataSource(), ub, currentRole);
         request.setAttribute("studySubject", ssb);
@@ -589,8 +598,8 @@ public class TableOfContentsServlet extends SecureController {
     }
 
     public static ArrayList getSections(EventCRFBean ecb, DataSource ds) {
-        SectionDAO sdao = new SectionDAO(ds);
-        ItemGroupDAO igdao = new ItemGroupDAO(ds);
+        SectionDAO sdao = DaoProvider.getDao(SectionDAO.class);
+        ItemGroupDAO igdao = DaoProvider.getDao(ItemGroupDAO.class);
 
         HashMap numItemsBySectionId = sdao.getNumItemsBySectionId();
         HashMap numItemsPlusRepeatBySectionId = sdao.getNumItemsPlusRepeatBySectionId(ecb);
@@ -643,33 +652,33 @@ public class TableOfContentsServlet extends SecureController {
         answer.setEventCRF(ecb);
 
         // get data
-        IStudySubjectDAO ssdao = new StudySubjectDAO(ds);
+        IStudySubjectDAO ssdao = DaoProvider.getDao(StudySubjectDAO.class);
         StudySubjectBean ssb = (StudySubjectBean) ssdao.findByPK(ecb.getStudySubjectId());
         answer.setStudySubject(ssb);
 
-        IStudyEventDAO sedao = new StudyEventDAO(ds);
+        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
         StudyEventBean seb = (StudyEventBean) sedao.findByPK(ecb.getStudyEventId());
         answer.setStudyEvent(seb);
 
-        SectionDAO sdao = new SectionDAO(ds);
+        SectionDAO sdao = DaoProvider.getDao(SectionDAO.class);
         ArrayList sections = getSections(ecb, ds);
         answer.setSections(sections);
 
         // get metadata
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(ds);
+        IStudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
         StudyEventDefinitionBean sedb = (StudyEventDefinitionBean) seddao.findByPK(seb.getStudyEventDefinitionId());
         answer.setStudyEventDefinition(sedb);
 
-        CRFVersionDAO cvdao = new CRFVersionDAO(ds);
+        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
         CRFVersionBean cvb = (CRFVersionBean) cvdao.findByPK(ecb.getCRFVersionId());
         answer.setCrfVersion(cvb);
 
-        ICrfDAO cdao = new CRFDAO(ds);
+        ICrfDAO cdao = DaoProvider.getDao(CRFDAO.class);
         CRFBean cb = (CRFBean) cdao.findByPK(cvb.getCrfId());
         answer.setCrf(cb);
 
-        StudyBean studyForStudySubject = new StudyDAO(ds).findByStudySubjectId(ssb.getId());
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(ds);
+        StudyBean studyForStudySubject = DaoProvider.getDao(StudyDAO.class).findByStudySubjectId(ssb.getId());
+        EventDefinitionCRFDao edcdao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
         EventDefinitionCRFBean edcb = edcdao.findByStudyEventDefinitionIdAndCRFId(studyForStudySubject, sedb.getId(), cb.getId());
         answer.setEventDefinitionCRF(edcb);
 
@@ -692,7 +701,7 @@ public class TableOfContentsServlet extends SecureController {
             return displayTableOfContentsBean;
         }
         EventCRFBean ecb = displayTableOfContentsBean.getEventCRF();
-        SectionDAO sectionDAO = new SectionDAO(ds);
+        SectionDAO sectionDAO = DaoProvider.getDao(SectionDAO.class);
         ArrayList<SectionBean> sectionBeans = getSections(ecb, ds);
         ArrayList<SectionBean> showSections = new ArrayList<SectionBean>();
         if(sectionBeans != null && sectionBeans.size()>0) {

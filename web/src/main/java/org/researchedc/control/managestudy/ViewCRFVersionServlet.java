@@ -30,6 +30,8 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -38,7 +40,13 @@ import java.util.HashMap;
  * Preferences - Java - Code Style - Code Templates
  */
 public class ViewCRFVersionServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private ItemFormMetadataDAO itemFormMetadataDao;
+
+/**
      * Checks whether the user has the right permission to proceed function
      */
     @Override
@@ -58,9 +66,9 @@ public class ViewCRFVersionServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        ItemDAO idao = new ItemDAO(sm.getDataSource());
-        ItemFormMetadataDAO ifmdao = new ItemFormMetadataDAO(sm.getDataSource());
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ItemDAO idao = this.itemDao;
+        ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
         FormProcessor fp = new FormProcessor(request);
         // checks which module the requests are from
         String module = fp.getString(MODULE);
@@ -74,7 +82,7 @@ public class ViewCRFVersionServlet extends SecureController {
         } else {
             CRFVersionBean version = (CRFVersionBean) cvdao.findByPK(crfVersionId);
             // tbh
-            ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO crfdao = this.crfDao;
             CRFBean crf = (CRFBean) crfdao.findByPK(version.getCrfId());
             CRFVersionMetadataUtil metadataUtil = new CRFVersionMetadataUtil(sm.getDataSource());
             ArrayList<SectionBean> sections = metadataUtil.retrieveFormMetadata(version); 

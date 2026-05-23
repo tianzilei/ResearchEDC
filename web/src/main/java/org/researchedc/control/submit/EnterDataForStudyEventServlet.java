@@ -56,11 +56,20 @@ import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.crfdata.HideCRFManager;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.researchedc.dao.spi.DaoProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 
 /**
  * @author ssachs
  */
 public class EnterDataForStudyEventServlet extends SecureController {
+
+    @Autowired
+    protected RuleSetDAO ruleSetDao;
+
+    @Autowired
+    protected CRFVersionDAO crfVersionDao;
 
     Locale locale;
     // < ResourceBundleresexception,respage;
@@ -88,7 +97,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
     public final static String HAS_END_DATE_NOTE = "hasEndDateNote";
 
     private StudyEventBean getStudyEvent(int eventId) throws Exception {
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
 
         StudyBean studyWithSED = currentStudy;
         if (currentStudy.getParentStudyId() > 0) {
@@ -105,7 +114,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
 
         StudyEventBean seb = (StudyEventBean) aeb;
 
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
         StudyEventDefinitionBean sedb = (StudyEventDefinitionBean) seddao.findByPK(seb.getStudyEventDefinitionId());
         seb.setStudyEventDefinition(sedb);
         //A. Hamid mantis issue 5048
@@ -133,11 +142,11 @@ public class EnterDataForStudyEventServlet extends SecureController {
         StudyEventBean seb = getStudyEvent(eventId);
 
         // so we can display the subject's label
-        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = this.studySubjectDao;
         StudySubjectBean studySubjectBean = (StudySubjectBean) ssdao.findByPK(seb.getStudySubjectId());
         int studyId = studySubjectBean.getStudyId();
 
-        IStudyDAO studydao = new StudyDAO(sm.getDataSource());
+        IStudyDAO studydao = this.studyDao;
         StudyBean study = (StudyBean) studydao.findByPK(studyId);
         // If the study subject derives from a site, and is being viewed from a
         // parent study,
@@ -149,7 +158,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
         boolean isParentStudy = study.getParentStudyId() < 1;
 
         // Get any disc notes for this study event
-        DiscrepancyNoteDAO discrepancyNoteDAO = new DiscrepancyNoteDAO(sm.getDataSource());
+        DiscrepancyNoteDAO discrepancyNoteDAO = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
         ArrayList<DiscrepancyNoteBean> allNotesforSubjectAndEvent = new ArrayList<DiscrepancyNoteBean>();
 
         /*
@@ -178,10 +187,10 @@ public class EnterDataForStudyEventServlet extends SecureController {
         }
 
         // prepare to figure out what the display should look like
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+        EventCRFDao ecdao = this.eventCrfDao;
         ArrayList<EventCRFBean> eventCRFs = ecdao.findAllByStudyEvent(seb);
         ArrayList<Boolean> doRuleSetsExist = new ArrayList<Boolean>();
-        RuleSetDAO ruleSetDao = new RuleSetDAO(sm.getDataSource());
+        RuleSetDAO ruleSetDao = this.ruleSetDao;
 
         for (EventCRFBean eventCrfBean : eventCRFs) {
             // Boolean result = ruleSetDao.findByEventCrf(eventCrfBean) != null
@@ -189,7 +198,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
             // doRuleSetsExist.add(result);
         }
 
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
         ArrayList eventDefinitionCRFs = (ArrayList) edcdao.findAllActiveByEventDefinitionId(study, seb.getStudyEventDefinitionId());
 
         // get the event definition CRFs for which no event CRF exists
@@ -315,8 +324,8 @@ public class EnterDataForStudyEventServlet extends SecureController {
             startedButIncompleted.put(new Integer(edcrf.getCrfId()), new EventCRFBean());
         }
 
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ItemDataDAO iddao = this.itemDataDao;
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecrf = (EventCRFBean) eventCRFs.get(i);
             int crfId = cvdao.getCRFIdFromCRFVersionId(ecrf.getCRFVersionId());
@@ -347,7 +356,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
         if (displayEventDefinitionCRFBeans == null || displayEventDefinitionCRFBeans.isEmpty()) {
             return;
         }
-        IUserAccountDAO userAccountDAO = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO userAccountDAO = this.userAccountDao;
         UserAccountBean userAccountBean;
         EventCRFBean eventCRFBean;
         EventDefinitionCRFBean eventDefinitionCRFBean;
@@ -377,8 +386,8 @@ public class EnterDataForStudyEventServlet extends SecureController {
     }
 
     private void populateUncompletedCRFsWithCRFAndVersions(ArrayList uncompletedEventDefinitionCRFs) {
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+        ICrfDAO cdao = this.crfDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
 
         int size = uncompletedEventDefinitionCRFs.size();
         for (int i = 0; i < size; i++) {
@@ -468,9 +477,9 @@ public class EnterDataForStudyEventServlet extends SecureController {
             definitionsByCRFId.put(new Integer(edc.getCrfId()), edc);
         }
 
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+        ICrfDAO cdao = this.crfDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ItemDataDAO iddao = this.itemDataDao;
 
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecb = (EventCRFBean) eventCRFs.get(i);

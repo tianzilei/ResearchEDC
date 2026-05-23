@@ -22,6 +22,9 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.Locale;
+import org.researchedc.dao.spi.DaoProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author thickerson
@@ -44,10 +47,10 @@ public class AccessFileServlet extends SecureController {
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
         int fileId = fp.getInt("fileId");
-        ArchivedDatasetFileDAO asdfdao = new ArchivedDatasetFileDAO(sm.getDataSource());
-        DatasetDAO dsDao = new DatasetDAO(sm.getDataSource());
+        ArchivedDatasetFileDAO asdfdao = DaoProvider.getDao(ArchivedDatasetFileDAO.class);
+        DatasetDAO dsDao = DaoProvider.getDao(DatasetDAO.class);
         ArchivedDatasetFileBean asdfBean = (ArchivedDatasetFileBean) asdfdao.findByPK(fileId);
-        IStudyDAO studyDao = new StudyDAO(sm.getDataSource());
+        IStudyDAO studyDao = DaoProvider.getDao(StudyDAO.class);
         DatasetBean dsBean = (DatasetBean) dsDao.findByPK(asdfBean.getDatasetId());
         int parentId = currentStudy.getParentStudyId();
         if(parentId==0)//Logged in at study level

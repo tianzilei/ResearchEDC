@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.researchedc.module.dataset.entity.DatasetEntity;
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.dataset.service.DatasetService;
 import org.researchedc.module.legacy.dto.DatasetDTO;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class LegacyDatasetController {
 
     private final DatasetService datasetService;
+    private final CurrentUserUtils currentUserUtils;
 
-    public LegacyDatasetController(DatasetService datasetService) {
+    public LegacyDatasetController(DatasetService datasetService, CurrentUserUtils currentUserUtils) {
         this.datasetService = datasetService;
+        this.currentUserUtils = currentUserUtils;
     }
 
     @GetMapping
@@ -55,7 +58,7 @@ public class LegacyDatasetController {
     @PostMapping
     public ResponseEntity<DatasetDTO> createDataset(@RequestParam String name,
             @RequestParam int studyId) {
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         DatasetEntity entity = datasetService.create(name, null, studyId, ownerId);
         return ResponseEntity.ok(toDto(entity));
     }

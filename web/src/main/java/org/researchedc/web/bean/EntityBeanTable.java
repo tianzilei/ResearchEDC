@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A class for displaying a table of EntityBean objects on the screen.

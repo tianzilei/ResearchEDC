@@ -37,6 +37,8 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.DaoProvider;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
@@ -48,6 +50,8 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.SQLInitServlet;
 import org.researchedc.web.table.sdv.SDVUtil;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -98,7 +102,7 @@ public class MainMenuServlet extends SecureController {
             return;
         }
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         ArrayList studies = null;
 
         long pwdExpireDay = new Long(SQLInitServlet.getField("passwd_expiration_time")).longValue();
@@ -108,7 +112,7 @@ public class MainMenuServlet extends SecureController {
         // time log in or pwd expired
         int pwdChangeRequired = new Integer(SQLInitServlet.getField("change_passwd_required")).intValue();
         // update last visit date to current date
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
         UserAccountBean ub1 = (UserAccountBean) udao.findByPK(ub.getId());
         ub1.setLastVisitDate(new Date(System.currentTimeMillis()));
         // have to actually set the above to a timestamp? tbh
@@ -185,7 +189,7 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
                 request.setAttribute("assignedDiscrepancies", assignedDiscrepancies == null ? 0 : assignedDiscrepancies);
 
                 int parentStudyId = currentStudy.getParentStudyId()>0?currentStudy.getParentStudyId():currentStudy.getId();
-                StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
+                StudyParameterValueDAO spvdao = this.studyParameterValueDao;
                 StudyParameterValueBean parentSPV = spvdao.findByHandleAndStudy(parentStudyId, "subjectIdGeneration");
                 currentStudy.getStudyParameterConfig().setSubjectIdGeneration(parentSPV.getValue());
                 String idSetting = parentSPV.getValue();
@@ -310,7 +314,7 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
 
     
     public StudyParameterValueDAO getStudyParameterValueDAO() {
-     studyParameterValueDAO = this.studyParameterValueDAO == null ? new StudyParameterValueDAO(sm.getDataSource()) : studyParameterValueDAO;
+     studyParameterValueDAO = this.studyParameterValueDAO == null ? this.studyParameterValueDao : studyParameterValueDAO;
 		return studyParameterValueDAO;
 	}
 
@@ -319,57 +323,57 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
 	}
 
 	public IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
-        studyEventDefinitionDAO = studyEventDefinitionDAO == null ? new StudyEventDefinitionDAO(sm.getDataSource()) : studyEventDefinitionDAO;
+        studyEventDefinitionDAO = studyEventDefinitionDAO == null ? this.studyEventDefinitionDao : studyEventDefinitionDAO;
         return studyEventDefinitionDAO;
     }
 
     public ISubjectDAO getSubjectDAO() {
-        subjectDAO = this.subjectDAO == null ? new SubjectDAO(sm.getDataSource()) : subjectDAO;
+        subjectDAO = this.subjectDAO == null ? this.subjectDao : subjectDAO;
         return subjectDAO;
     }
 
     public IStudySubjectDAO getStudySubjectDAO() {
-        studySubjectDAO = this.studySubjectDAO == null ? new StudySubjectDAO(sm.getDataSource()) : studySubjectDAO;
+        studySubjectDAO = this.studySubjectDAO == null ? this.studySubjectDao : studySubjectDAO;
         return studySubjectDAO;
     }
 
     public StudyGroupClassDAO getStudyGroupClassDAO() {
-        studyGroupClassDAO = this.studyGroupClassDAO == null ? new StudyGroupClassDAO(sm.getDataSource()) : studyGroupClassDAO;
+        studyGroupClassDAO = this.studyGroupClassDAO == null ? this.studyGroupClassDao : studyGroupClassDAO;
         return studyGroupClassDAO;
     }
 
     public SubjectGroupMapDAO getSubjectGroupMapDAO() {
-        subjectGroupMapDAO = this.subjectGroupMapDAO == null ? new SubjectGroupMapDAO(sm.getDataSource()) : subjectGroupMapDAO;
+        subjectGroupMapDAO = this.subjectGroupMapDAO == null ? this.subjectGroupMapDao : subjectGroupMapDAO;
         return subjectGroupMapDAO;
     }
 
     public IStudyEventDAO getStudyEventDAO() {
-        studyEventDAO = this.studyEventDAO == null ? new StudyEventDAO(sm.getDataSource()) : studyEventDAO;
+        studyEventDAO = this.studyEventDAO == null ? this.studyEventDao : studyEventDAO;
         return studyEventDAO;
     }
 
     public IStudyDAO getStudyDAO() {
-        studyDAO = this.studyDAO == null ? new StudyDAO(sm.getDataSource()) : studyDAO;
+        studyDAO = this.studyDAO == null ? this.studyDao : studyDAO;
         return studyDAO;
     }
 
     public EventCRFDao getEventCRFDAO() {
-        eventCRFDAO = this.eventCRFDAO == null ? new EventCRFDAO(sm.getDataSource()) : eventCRFDAO;
+        eventCRFDAO = this.eventCRFDAO == null ? this.eventCrfDao : eventCRFDAO;
         return eventCRFDAO;
     }
 
     public EventDefinitionCRFDao getEventDefinitionCRFDAO() {
-        eventDefintionCRFDAO = this.eventDefintionCRFDAO == null ? new EventDefinitionCRFDAO(sm.getDataSource()) : eventDefintionCRFDAO;
+        eventDefintionCRFDAO = this.eventDefintionCRFDAO == null ? this.eventDefinitionCrfDao : eventDefintionCRFDAO;
         return eventDefintionCRFDAO;
     }
 
     public StudyGroupDAO getStudyGroupDAO() {
-        studyGroupDAO = this.studyGroupDAO == null ? new StudyGroupDAO(sm.getDataSource()) : studyGroupDAO;
+        studyGroupDAO = this.studyGroupDAO == null ? this.studyGroupDao : studyGroupDAO;
         return studyGroupDAO;
     }
 
     public DiscrepancyNoteDAO getDiscrepancyNoteDAO() {
-        discrepancyNoteDAO = this.discrepancyNoteDAO == null ? new DiscrepancyNoteDAO(sm.getDataSource()) : discrepancyNoteDAO;
+        discrepancyNoteDAO = discrepancyNoteDAO == null ? DaoProvider.getDao(DiscrepancyNoteDAO.class) : discrepancyNoteDAO;
         return discrepancyNoteDAO;
     }
 

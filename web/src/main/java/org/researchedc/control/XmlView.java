@@ -8,6 +8,7 @@ import org.jmesa.util.ItemUtils;
 import org.jmesa.view.AbstractExportView;
 import org.jmesa.view.component.Column;
 import org.jmesa.view.component.Table;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class XmlView extends AbstractExportView {
 

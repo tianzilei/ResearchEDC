@@ -11,6 +11,7 @@ import org.researchedc.bean.core.EntityBean;
 
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <p>

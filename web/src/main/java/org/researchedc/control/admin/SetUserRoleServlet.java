@@ -16,10 +16,11 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -37,6 +39,8 @@ import java.util.ResourceBundle;
  * Preferences - Java - Code Style - Code Templates
  */
 public class SetUserRoleServlet extends SecureController {
+    @Autowired
+    private UserAccountDAO userAccountDao;
     /**
      *
      */
@@ -53,8 +57,8 @@ public class SetUserRoleServlet extends SecureController {
 
     @Override
     public void processRequest() throws Exception {
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
+        IStudyDAO sdao = this.studyDao;
         FormProcessor fp = new FormProcessor(request);
         int userId = fp.getInt("userId");
         if (userId == 0) {

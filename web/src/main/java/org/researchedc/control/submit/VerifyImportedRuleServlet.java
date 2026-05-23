@@ -20,6 +20,7 @@ import org.researchedc.web.InsufficientPermissionException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * View the uploaded data and verify what is going to be saved into the system

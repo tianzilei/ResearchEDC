@@ -44,6 +44,8 @@ import org.apache.poi.ss.usermodel.CellType;import org.apache.poi.poifs.filesyst
 import org.apache.poi.ss.usermodel.CellType;import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -59,6 +61,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * <P>
@@ -105,7 +108,18 @@ public class SpreadSheetTableRepeating implements SpreadSheetTable {
 
     private Set<String> existingOIDs = new TreeSet<String>();
 
-    private MeasurementUnitDao measurementUnitDao = new MeasurementUnitDao();
+    private MeasurementUnitDao measurementUnitDao = this.measurementUnitDao;
+
+    @Autowired
+    private ICrfDAO crfDao;
+    @Autowired
+    private ItemDAO itemDao;
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private ItemGroupDAO itemGroupDao;
+    @Autowired
+    private ItemFormMetadataDAO itemFormMetadataDao;
 
     // the default; all crf ids should be > 0, tbh 8-29 :-)
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
@@ -173,16 +187,16 @@ public class SpreadSheetTableRepeating implements SpreadSheetTable {
         ArrayList<String> itemGroupOids = new ArrayList<String>();
         ArrayList<String> itemOids = new ArrayList<String>();
 
-        ICrfDAO cdao = new CRFDAO(ds);
+        ICrfDAO cdao = this.crfDao;
         CRFBean crf = (CRFBean) cdao.findByPK(crfId);
-        ItemDAO idao = new ItemDAO(ds);
-        CRFVersionDAO cvdao = new CRFVersionDAO(ds);
-        ItemGroupDAO itemGroupDao = new ItemGroupDAO(ds);
+        ItemDAO idao = this.itemDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ItemGroupDAO itemGroupDao = this.itemGroupDao;
         SheetValidationContainer sheetContainer = new SheetValidationContainer();
         HashMap<String, String> allItems = (HashMap<String, String>)sheetContainer.getAllItems();
         //HashMap<String, String> allItems = new HashMap<String, String>();
         Map<String, String[]> controlValues = new HashMap<String, String[]>();
-        int maxItemFormMetadataId = new ItemFormMetadataDAO(ds).findMaxId();
+        int maxItemFormMetadataId = this.itemFormMetadataDao.findMaxId();
         OnChangeSheetValidator instantValidator = new OnChangeSheetValidator(sheetContainer, resPageMsg);
 
 

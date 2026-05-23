@@ -7,6 +7,7 @@ import org.jmesa.view.html.HtmlSnippets;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DefaultView extends AbstractHtmlView {
 

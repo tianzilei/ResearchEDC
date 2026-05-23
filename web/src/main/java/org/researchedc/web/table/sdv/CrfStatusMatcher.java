@@ -1,6 +1,7 @@
 package org.researchedc.web.table.sdv;
 
 import org.jmesa.core.filter.FilterMatcher;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The filter for matching the values of an event CRF's status (as in "completed" or "data entry started").

@@ -54,6 +54,7 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.jmesa.facade.TableFacade;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -63,7 +64,19 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @author jxu
  */
 public class ViewNotesServlet extends SecureController {
-    public static final String PRINT = "print";
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+    @Autowired
+    private ISubjectDAO subjectDao;
+    @Autowired
+    private IUserAccountDAO userAccountDao;
+
+public static final String PRINT = "print";
     public static final String RESOLUTION_STATUS = "resolutionStatus";
     public static final String TYPE = "discNoteType";
     public static final String WIN_LOCATION = "window_location";
@@ -127,8 +140,8 @@ public class ViewNotesServlet extends SecureController {
         String viewForOne = fp.getString("viewForOne");
         boolean isForOneSubjectsNotes = "y".equalsIgnoreCase(viewForOne);
 
-        DiscrepancyNoteDAO dndao = new DiscrepancyNoteDAO(sm.getDataSource());
-        IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IStudyDAO studyDAO = this.studyDao;
         dndao.setFetchMapping(true);
 
         int resolutionStatus = 0;
@@ -164,22 +177,20 @@ public class ViewNotesServlet extends SecureController {
             session.setAttribute(RESOLUTION_STATUS, resolutionStatusIds);
         }
 
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
-        IStudyDAO studyDao = new StudyDAO(sm.getDataSource());
+        IStudySubjectDAO subdao = this.studySubjectDao;
+        IStudyDAO studyDao = this.studyDao;
 
-        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
+        ISubjectDAO sdao = this.subjectDao;
 
-        IUserAccountDAO uadao = new UserAccountDAO(sm.getDataSource());
-        CRFVersionDAO crfVersionDao = new CRFVersionDAO(sm.getDataSource());
-        ICrfDAO crfDao = new CRFDAO(sm.getDataSource());
-        IStudyEventDAO studyEventDao = new StudyEventDAO(sm.getDataSource());
-        IStudyEventDefinitionDAO studyEventDefinitionDao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventDefinitionCRFDao eventDefinitionCRFDao = new EventDefinitionCRFDAO(sm.getDataSource());
-        ItemDataDAO itemDataDao = new ItemDataDAO(sm.getDataSource());
-        ItemDAO itemDao = new ItemDAO(sm.getDataSource());
-        EventCRFDao eventCRFDao = new EventCRFDAO(sm.getDataSource());
-
-
+        IUserAccountDAO uadao = this.userAccountDao;
+        CRFVersionDAO crfVersionDao = this.crfVersionDao;
+        ICrfDAO crfDao = this.crfDao;
+        IStudyEventDAO studyEventDao = this.studyEventDao;
+        IStudyEventDefinitionDAO studyEventDefinitionDao = this.studyEventDefinitionDao;
+        EventDefinitionCRFDao eventDefinitionCRFDao = this.eventDefinitionCrfDao;
+        ItemDataDAO itemDataDao = this.itemDataDao;
+        ItemDAO itemDao = this.itemDao;
+        EventCRFDao eventCRFDao = this.eventCrfDao;
 
         ListNotesTableFactory factory = new ListNotesTableFactory(showMoreLink);
         factory.setSubjectDao(sdao);
@@ -289,7 +300,7 @@ public class ViewNotesServlet extends SecureController {
         boolean filterByRes = resolutionStatus >= 1 && resolutionStatus <= 5;
 
         ArrayList<DiscrepancyNoteBean> filteredNotes = new ArrayList<DiscrepancyNoteBean>();
-        IStudySubjectDAO subjectDao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO subjectDao = this.studySubjectDao;
         StudySubjectBean studySubjBean = (StudySubjectBean) subjectDao.findByPK(subjectId);
 
         for (DiscrepancyNoteBean discBean : allNotes) {

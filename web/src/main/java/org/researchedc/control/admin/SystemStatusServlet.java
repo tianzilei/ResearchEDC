@@ -16,6 +16,7 @@ import org.springframework.web.util.HtmlUtils;
 
 import java.io.PrintWriter;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 
 // allows both deletion and restoration of a study user role
 

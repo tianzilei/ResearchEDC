@@ -57,11 +57,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 @Controller
 @RequestMapping(value = "/auth/api/v1")
 @ResponseStatus(value = org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
 public class UserAccountController {
+
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
 
 	@Autowired
 	@Qualifier("dataSource")
@@ -74,8 +81,8 @@ public class UserAccountController {
 	AuthoritiesDao authoritiesDao;
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-	UserAccountDAO udao;
-	StudyDAO sdao;
+	IUserAccountDAO udao;
+	IStudyDAO sdao;
 	IStudySubjectDAO ssdao;
 	UserAccountBean uBean;
 
@@ -283,7 +290,7 @@ public class UserAccountController {
 	}
 
 	private void createUserAccount(UserAccountBean userAccountBean) {
-		udao = new UserAccountDAO(dataSource);
+		udao = this.userAccountDao;
 		udao.create(userAccountBean);
 	}
 
@@ -310,19 +317,19 @@ public class UserAccountController {
 	}
 
 	private StudyBean getStudyByName(String name) {
-		sdao = new StudyDAO(dataSource);
+		sdao = this.studyDao;
 		StudyBean studyBean = (StudyBean) sdao.findByName(name);
 		return studyBean;
 	}
 
 	private StudyBean getStudy(String oid) {
-		sdao = new StudyDAO(dataSource);
+		sdao = this.studyDao;
 		StudyBean studyBean = (StudyBean) sdao.findByOid(oid);
 		return studyBean;
 	}
 
 	private StudyBean getStudy(Integer id) {
-		sdao = new StudyDAO(dataSource);
+		sdao = this.studyDao;
 		StudyBean studyBean = (StudyBean) sdao.findByPK(id);
 		return studyBean;
 	}
@@ -339,19 +346,19 @@ public class UserAccountController {
 	}
 
 	private ArrayList<UserAccountBean> getUserAccountByStudy(String userName, ArrayList allStudies) {
-		udao = new UserAccountDAO(dataSource);
+		udao = this.userAccountDao;
 		ArrayList<UserAccountBean> userAccountBeans = udao.findStudyByUser(userName, allStudies);
 		return userAccountBeans;
 	}
 
 	private UserAccountBean getUserAccount(String userName) {
-		udao = new UserAccountDAO(dataSource);
+		udao = this.userAccountDao;
 		UserAccountBean userAccountBean = (UserAccountBean) udao.findByUserName(userName);
 		return userAccountBean;
 	}
 
 	private UserAccountBean getUserAccountByApiKey(String apiKey) {
-		udao = new UserAccountDAO(dataSource);
+		udao = this.userAccountDao;
 		UserAccountBean userAccountBean = (UserAccountBean) udao.findByApiKey(apiKey);
 		return userAccountBean;
 	}
@@ -369,7 +376,7 @@ public class UserAccountController {
 	}
 
 	public Boolean isApiKeyExist(String uuid) {
-		IUserAccountDAO udao = new UserAccountDAO(dataSource);
+		IUserAccountDAO udao = this.userAccountDao;
 		UserAccountBean uBean = (UserAccountBean) udao.findByApiKey(uuid);
 		if (uBean == null || !uBean.isActive()) {
 			return false;
@@ -398,7 +405,7 @@ public class UserAccountController {
 		if (!username.equals("root"))
 			v.addValidation("username", Validator.IS_A_USERNAME);
 
-		v.addValidation("username", Validator.USERNAME_UNIQUE, udao);
+		v.addValidation("username", Validator.USERNAME_UNIQUE, (org.researchedc.dao.core.EntityDAO) udao);
 		v.addValidation("fName", Validator.NO_BLANKS);
 		v.addValidation("fName", Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 50);
 		v.addValidation("lName", Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 50);

@@ -11,6 +11,7 @@ package org.researchedc.web.bean;
 import org.researchedc.bean.admin.DisplayStudyBean;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A class for displaying study object in show table class

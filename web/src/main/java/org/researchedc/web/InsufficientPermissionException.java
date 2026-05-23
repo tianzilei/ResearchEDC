@@ -9,6 +9,7 @@ package org.researchedc.web;
 
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.view.Page;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This exception should be used when the user attempts to perform a use case,

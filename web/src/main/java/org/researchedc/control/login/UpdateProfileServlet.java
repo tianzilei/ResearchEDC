@@ -32,6 +32,8 @@ import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 /**
  * @author jxu
  * @version CVS: $Id: UpdateProfileServlet.java,v 1.9 2005/02/23 18:58:11 jxu
@@ -40,6 +42,9 @@ import org.apache.commons.lang3.StringUtils;
  * Servlet for processing 'update profile' request from user
  */
 public class UpdateProfileServlet extends SecureController {
+
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
 
     /**
 	 * 
@@ -55,11 +60,9 @@ public class UpdateProfileServlet extends SecureController {
     public void processRequest() throws Exception {
 
         String action = request.getParameter("action");// action sent by user
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
-        UserAccountBean userBean1 = (UserAccountBean) udao.findByUserName(ub.getName());
+        UserAccountBean userBean1 = (UserAccountBean) userAccountDao.findByUserName(ub.getName());
 
-        Collection studies = sdao.findAllByUser(ub.getName());
+        Collection studies = studyDao.findAllByUser(ub.getName());
 
         if (StringUtils.isBlank(action)) {
             request.setAttribute("studies", studies);
@@ -69,11 +72,11 @@ public class UpdateProfileServlet extends SecureController {
             if ("confirm".equalsIgnoreCase(action)) {
                 logger.info("confirm");
                 request.setAttribute("studies", studies);
-                confirmProfile(userBean1, udao);
+                confirmProfile(userBean1);
 
             } else if ("submit".equalsIgnoreCase(action)) {
                 logger.info("submit");
-                submitProfile(udao);
+                submitProfile();
 
                 addPageMessage(respage.getString("profile_updated_succesfully"));
                 ub.incNumVisitsToMainMenu();
@@ -83,7 +86,7 @@ public class UpdateProfileServlet extends SecureController {
 
     }
 
-	private void confirmProfile(UserAccountBean userBean1, IUserAccountDAO udao) throws Exception {
+	private void confirmProfile(UserAccountBean userBean1) throws Exception {
         Validator v = new Validator(request);
         FormProcessor fp = new FormProcessor(request);
 
@@ -119,7 +122,7 @@ public class UpdateProfileServlet extends SecureController {
 
             pwdErrors = PasswordValidator.validatePassword(
                             passwordRequirementsDao,
-                            udao,
+                            userAccountDao,
                             userBean1.getId(),
                             password,
                             newDigestPass,
@@ -139,9 +142,8 @@ public class UpdateProfileServlet extends SecureController {
         userBean1.setPasswdChallengeAnswer(fp.getString("passwdChallengeAnswer"));
         userBean1.setPhone(fp.getString("phone"));
         userBean1.setActiveStudyId(fp.getInt("activeStudyId"));
-        IStudyDAO sdao = new StudyDAO(this.sm.getDataSource());
 
-        StudyBean newActiveStudy = (StudyBean) sdao.findByPK(userBean1.getActiveStudyId());
+        StudyBean newActiveStudy = (StudyBean) studyDao.findByPK(userBean1.getActiveStudyId());
         request.setAttribute("newActiveStudy", newActiveStudy);
 
         if (errors.isEmpty()) {
@@ -178,14 +180,14 @@ public class UpdateProfileServlet extends SecureController {
      * Updates user new profile
      *
      */
-    private void submitProfile(IUserAccountDAO udao) {
+    private void submitProfile() {
         logger.info("user bean to be updated:" + ub.getId() + ub.getFirstName());
 
         UserAccountBean userBean1 = (UserAccountBean) session.getAttribute("userBean1");
         if (userBean1 != null) {
         	userBean1.setLastVisitDate(new Date());
             userBean1.setUpdater(ub);
-            udao.update(userBean1);
+            userAccountDao.update(userBean1);
 
         	session.setAttribute("userBean", userBean1);
             ub = userBean1;

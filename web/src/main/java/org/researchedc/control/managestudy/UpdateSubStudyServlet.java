@@ -41,6 +41,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -49,7 +52,13 @@ import java.util.HashMap;
  *          Exp $
  */
 public class UpdateSubStudyServlet extends SecureController {
-    public static final String INPUT_START_DATE = "startDate";
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+
+public static final String INPUT_START_DATE = "startDate";
     public static final String INPUT_VER_DATE = "protocolDateVerification";
     public static final String INPUT_END_DATE = "endDate";
     public static StudyBean parentStudy;
@@ -75,7 +84,7 @@ public class UpdateSubStudyServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         StudyBean study = (StudyBean) session.getAttribute("newStudy");
         parentStudy = (StudyBean) sdao.findByPK(study.getParentStudyId());
 
@@ -153,7 +162,7 @@ public class UpdateSubStudyServlet extends SecureController {
         errors = v.validate();
 
         // >> tbh
-        IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+        IStudyDAO studyDAO = this.studyDao;
         ArrayList<StudyBean> allStudies = (ArrayList<StudyBean>) studyDAO.findAll();
         StudyBean oldStudy = (StudyBean) session.getAttribute("newStudy");
         for (StudyBean thisBean : allStudies) {
@@ -201,7 +210,7 @@ public class UpdateSubStudyServlet extends SecureController {
 
         	StudyBean studyCheck = (StudyBean) session.getAttribute("newStudy");
             parentStudy = (StudyBean) studyDAO.findByPK(studyCheck.getParentStudyId());
-            StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());    
+            IStudyParameterValueDAO spvdao = this.studyParameterValueDao;    
             String participateFormStatus = spvdao.findByHandleAndStudy(parentStudy.getId(), "participantPortal").getValue();
             request.setAttribute("participateFormStatus",participateFormStatus );
      
@@ -313,17 +322,17 @@ public class UpdateSubStudyServlet extends SecureController {
         ArrayList<StudyEventDefinitionBean> seds = new ArrayList<StudyEventDefinitionBean>();
         
         ArrayList<EventDefinitionCRFBean> defCrfs = new ArrayList<EventDefinitionCRFBean>();
-        IStudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO sedDao = this.studyEventDefinitionDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
 
         StudyBean parentStudyBean;
         if (site.getParentStudyId()==0){
         	parentStudyBean = site;
         }else{
-            IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+            IStudyDAO studyDAO = this.studyDao;
              parentStudyBean = (StudyBean) studyDAO.findByPK(site.getParentStudyId());          	
         }
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
         ArrayList <EventDefinitionCRFBean> eventDefCrfList =(ArrayList <EventDefinitionCRFBean>) edcdao.findAllActiveSitesAndStudiesPerParentStudy(parentStudyBean.getId());
 
         ArrayList <EventDefinitionCRFBean> toBeCreatedEventDefBean = new ArrayList<>();
@@ -332,7 +341,7 @@ public class UpdateSubStudyServlet extends SecureController {
         boolean changestate = false;
         seds = (ArrayList<StudyEventDefinitionBean>) session.getAttribute("definitions");
 
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());    
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;    
         String participateFormStatus = spvdao.findByHandleAndStudy(parentStudyBean.getId(), "participantPortal").getValue();
         if (participateFormStatus.equals("enabled")) 	baseUrl();
       request.setAttribute("participateFormStatus",participateFormStatus );
@@ -379,7 +388,6 @@ public class UpdateSubStudyServlet extends SecureController {
                     	changed = changeStatus.get(sed.getId() + "-" + edcBean.getId());
                         edcBean.setSubmissionUrl(submissionUrl);
                     }
-
 
                     boolean isRequired = !StringUtil.isBlank(requiredCRF) && "yes".equalsIgnoreCase(requiredCRF.trim()) ? true : false;
                     boolean isDouble = !StringUtil.isBlank(doubleEntry) && "yes".equalsIgnoreCase(doubleEntry.trim()) ? true : false;
@@ -552,7 +560,7 @@ public class UpdateSubStudyServlet extends SecureController {
      * @throws MalformedURLException *
      */
     private void submitStudy() throws MalformedURLException {
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         StudyBean study = (StudyBean) session.getAttribute("newStudy");
         ArrayList parameters = study.getStudyParameters();
         /*
@@ -576,7 +584,7 @@ public class UpdateSubStudyServlet extends SecureController {
         study.setUpdater(ub);
         sdao.update(study);
 
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         for (int i = 0; i < parameters.size(); i++) {
             StudyParamsConfig config = (StudyParamsConfig) parameters.get(i);
             StudyParameterValueBean spv = config.getValue();
@@ -653,7 +661,5 @@ public class UpdateSubStudyServlet extends SecureController {
         }
     	return eventDefCrfList;
     }
-
-
 
 }

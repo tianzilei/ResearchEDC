@@ -23,6 +23,8 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author Krikor Krumlian
@@ -109,7 +111,7 @@ public class ViewRuleSetAuditServlet extends SecureController {
     }
 
     private IUserAccountDAO getUserAccountDAO() {
-        return userAccountDAO = this.userAccountDAO != null ? userAccountDAO : new UserAccountDAO(sm.getDataSource());
+        return userAccountDAO = this.userAccountDAO != null ? userAccountDAO : this.userAccountDao;
     }
 
 }

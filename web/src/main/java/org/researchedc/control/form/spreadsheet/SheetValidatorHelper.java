@@ -8,6 +8,7 @@
 package org.researchedc.control.form.spreadsheet;
 
 import java.util.ResourceBundle;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Utility class for crf spreadsheet validation. Created at Aug. 2011, ywang

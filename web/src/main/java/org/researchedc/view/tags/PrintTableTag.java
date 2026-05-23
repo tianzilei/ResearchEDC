@@ -16,6 +16,7 @@ import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.JspFragment;
 import jakarta.servlet.jsp.tagext.SimpleTagSupport;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A tag class that is designed to generate a printable group table. The String

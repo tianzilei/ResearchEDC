@@ -7,6 +7,7 @@ import org.researchedc.module.event.dto.EventDefinitionDTO;
 import org.researchedc.module.event.dto.ScheduleEventRequest;
 import org.researchedc.module.event.dto.StudyEventDTO;
 import org.researchedc.module.event.dto.UpdateEventRequest;
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.event.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class EventController {
 
     private final EventService eventService;
+    private final CurrentUserUtils currentUserUtils;
 
-    public EventController(EventService eventService) {
+    public EventController(EventService eventService, CurrentUserUtils currentUserUtils) {
         this.eventService = eventService;
+        this.currentUserUtils = currentUserUtils;
     }
 
     @GetMapping("/definitions")
@@ -54,8 +57,7 @@ public class EventController {
     @PostMapping
     public ResponseEntity<StudyEventDTO> scheduleEvent(
             @Valid @RequestBody ScheduleEventRequest request) {
-        // TODO: extract ownerId from security context / JWT token
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         StudyEventDTO dto = eventService.scheduleEvent(request, ownerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
@@ -64,16 +66,14 @@ public class EventController {
     public ResponseEntity<StudyEventDTO> updateEvent(
             @PathVariable Integer id,
             @Valid @RequestBody UpdateEventRequest request) {
-        // TODO: extract userId from security context / JWT token
-        Integer userId = 1;
+        Integer userId = currentUserUtils.getCurrentUserId();
         StudyEventDTO dto = eventService.updateEvent(id, request, userId);
         return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/{id}/complete")
     public ResponseEntity<Void> completeEvent(@PathVariable Integer id) {
-        // TODO: extract userId from security context / JWT token
-        Integer userId = 1;
+        Integer userId = currentUserUtils.getCurrentUserId();
         eventService.completeEvent(id, userId);
         return ResponseEntity.ok().build();
     }

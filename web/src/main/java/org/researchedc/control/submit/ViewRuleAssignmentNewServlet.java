@@ -43,6 +43,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Verify the Rule import , show records that have Errors as well as records that will be saved.
@@ -50,6 +51,9 @@ import jakarta.servlet.http.HttpServletRequest;
  * @author Krikor krumlian
  */
 public class ViewRuleAssignmentNewServlet extends SecureController {
+
+    @Autowired
+    protected ItemFormMetadataDAO itemFormMetadataDao;
 
     private static final long serialVersionUID = 9116068126651934226L;
     protected final Logger log = LoggerFactory.getLogger(ViewRuleAssignmentNewServlet.class);
@@ -82,17 +86,17 @@ public class ViewRuleAssignmentNewServlet extends SecureController {
 
     private void createStudyEventForInfoPanel() {
 
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
-        ItemDAO itemdao = new ItemDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
+        EventCRFDao ecdao = this.eventCrfDao;
+        ItemDAO itemdao = this.itemDao;
         StudyBean studyWithEventDefinitions = currentStudy;
         if (currentStudy.getParentStudyId() > 0) {
             studyWithEventDefinitions = new StudyBean();
             studyWithEventDefinitions.setId(currentStudy.getParentStudyId());
 
         }
-        ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO crfdao = this.crfDao;
         ArrayList seds = seddao.findAllActiveByStudy(studyWithEventDefinitions);
 
         HashMap events = new LinkedHashMap();
@@ -191,7 +195,7 @@ public class ViewRuleAssignmentNewServlet extends SecureController {
     }
 
     public ItemFormMetadataDAO getItemFormMetadataDAO() {
-        itemFormMetadataDAO = this.itemFormMetadataDAO == null ? new ItemFormMetadataDAO(sm.getDataSource()) : itemFormMetadataDAO;
+        itemFormMetadataDAO = this.itemFormMetadataDAO == null ? this.itemFormMetadataDao : itemFormMetadataDAO;
         return itemFormMetadataDAO;
     }
 

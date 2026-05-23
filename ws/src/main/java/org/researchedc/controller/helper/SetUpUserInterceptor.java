@@ -26,6 +26,9 @@ public class SetUpUserInterceptor implements HandlerInterceptor {
     @Qualifier("dataSource")
     private DataSource dataSource;
 
+    @Autowired
+    private UserAccountDAO userAccountDAO;
+
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
 
@@ -39,7 +42,6 @@ public class SetUpUserInterceptor implements HandlerInterceptor {
         UserAccountBean userBean = (UserAccountBean) currentSession.getAttribute("userBean");
         String userName = "";
         boolean userBeanIsInvalid;
-        UserAccountDAO userAccountDAO = new UserAccountDAO(dataSource);
 
         if (userBean == null) {
 

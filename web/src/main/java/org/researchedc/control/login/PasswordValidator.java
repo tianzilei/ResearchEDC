@@ -7,6 +7,8 @@ import java.util.ResourceBundle;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.hibernate.PasswordRequirementsDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  *

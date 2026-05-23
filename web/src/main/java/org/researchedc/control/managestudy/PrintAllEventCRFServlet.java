@@ -46,13 +46,34 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author Shamim
   * Date: Dec 15, 2009
  */
 public class PrintAllEventCRFServlet extends DataEntryServlet {
-    Locale locale;
+
+    @Autowired
+    protected ICrfDAO crfDao;
+
+    @Autowired
+    protected IStudyEventDefinitionDAO studyEventDefinitionDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+    @Autowired
+    private ItemGroupDAO itemGroupDao;
+    @Autowired
+    private SectionDAO sectionDao;
+
+Locale locale;
 
     /**
      * Checks whether the user has the correct privilege
@@ -82,11 +103,11 @@ public class PrintAllEventCRFServlet extends DataEntryServlet {
         ArrayList<SectionBean> allSectionBeans;
         // The PrintDataEntry servlet handles this parameter
         boolean isSubmitted = false;
-        IStudyEventDefinitionDAO sedao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventDefinitionCRFDao edao = new EventDefinitionCRFDAO(sm.getDataSource());
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO sedao = this.studyEventDefinitionDao;
+        EventDefinitionCRFDao edao = this.eventDefinitionCrfDao;
+        EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
 
-        IStudyDAO studyDao = new StudyDAO(sm.getDataSource());
+        IStudyDAO studyDao = this.studyDao;
         StudyBean currentStudy = (StudyBean) request.getSession().getAttribute("study");
 
         ArrayList<StudyEventDefinitionBean> seds = new ArrayList<StudyEventDefinitionBean>();
@@ -94,8 +115,8 @@ public class PrintAllEventCRFServlet extends DataEntryServlet {
 
         //        ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllByStudy(site);
 
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfDAO cdao = this.crfDao;
 
         ArrayList<EventDefinitionCRFBean> edcs = new ArrayList();
         for (StudyEventDefinitionBean sed : seds) {
@@ -134,9 +155,9 @@ public class PrintAllEventCRFServlet extends DataEntryServlet {
             request.setAttribute("isInternetExplorer", "true");
         }
 
-        SectionDAO sdao = new SectionDAO(sm.getDataSource());
-        CRFVersionDAO crfVersionDAO = new CRFVersionDAO(sm.getDataSource());
-        ICrfDAO crfDao = new CRFDAO(sm.getDataSource());
+        SectionDAO sdao = this.sectionDao;
+        CRFVersionDAO crfVersionDAO = this.crfVersionDao;
+        ICrfDAO crfDao = this.crfDao;
         Map sedCrfBeans = null;
 
         for (Iterator it = eventDefinitionDefaultVersions.keySet().iterator(); it.hasNext();) {
@@ -149,7 +170,7 @@ public class PrintAllEventCRFServlet extends DataEntryServlet {
                 allSectionBeans = new ArrayList<SectionBean>();
                 ArrayList sectionBeans = new ArrayList();
 
-                ItemGroupDAO itemGroupDao = new ItemGroupDAO(sm.getDataSource());
+                ItemGroupDAO itemGroupDao = this.itemGroupDao;
                 // Find truely grouped tables, not groups with a name of 'Ungrouped'
                 List<ItemGroupBean> itemGroupBeans = itemGroupDao.findOnlyGroupsByCRFVersionID(crfVersionBean.getId());
                 CRFBean crfBean = crfDao.findByVersionId(crfVersionBean.getId());

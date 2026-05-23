@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class UpdateStudyServletNew extends SecureController {
     public static final String INPUT_START_DATE = "startDate";
@@ -67,7 +69,7 @@ public class UpdateStudyServletNew extends SecureController {
         int studyId = fp.getInt("id");
         studyId = studyId == 0 ? fp.getInt("studyId") : studyId;
         String action = fp.getString("action");
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         boolean isInterventional = false;
 
         study = (StudyBean) sdao.findByPK(studyId);
@@ -493,8 +495,8 @@ public class UpdateStudyServletNew extends SecureController {
     }
 
     private void submitStudy(StudyBean newStudy) {
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
 
         StudyBean study1 = newStudy;
         logger.info("study bean to be updated:" + study1.getName());

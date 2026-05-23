@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Error message for SpreadSheet uploading cooperating with existing message handling style.

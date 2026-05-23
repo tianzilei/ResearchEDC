@@ -64,10 +64,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 @Controller
 @RequestMapping(value = "/api/v1/editform")
 public class EditFormController {
+
+    @Autowired
+    protected StudyParameterValueDAO studyParameterValueDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
 
     @Autowired
     @Qualifier("dataSource")
@@ -317,13 +324,13 @@ public class EditFormController {
     }
 
     private StudyBean getStudy(Integer id) {
-        sdao = new StudyDAO(dataSource);
+        sdao = this.studyDao;
         StudyBean studyBean = (StudyBean) sdao.findByPK(id);
         return studyBean;
     }
 
     private StudyBean getStudy(String oid) {
-        sdao = new StudyDAO(dataSource);
+        sdao = this.studyDao;
         StudyBean studyBean = (StudyBean) sdao.findByOid(oid);
         return studyBean;
     }
@@ -344,7 +351,7 @@ public class EditFormController {
         boolean accessPermission = false;
         StudyBean siteStudy = getStudy(studyOid);
         StudyBean study = getParentStudy(studyOid);
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(dataSource);
+        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
         participantPortalRegistrar = new ParticipantPortalRegistrar();
         String pManageStatus = participantPortalRegistrar.getRegistrationStatus(study.getOid()).toString(); // ACTIVE ,

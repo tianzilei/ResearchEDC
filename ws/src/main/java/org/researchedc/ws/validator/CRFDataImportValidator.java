@@ -8,6 +8,8 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.ws.bean.BaseStudyDefinitionBean;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -16,8 +18,10 @@ import javax.sql.DataSource;
 public class CRFDataImportValidator implements Validator {
 
     DataSource dataSource;
-    StudyDAO studyDAO;
-    UserAccountDAO userAccountDAO;
+    @Autowired
+    private StudyDAO studyDAO;
+    @Autowired
+    private UserAccountDAO userAccountDAO;
     BaseVSValidatorImplementation helper;
 
     public CRFDataImportValidator(DataSource dataSource) {
@@ -41,7 +45,7 @@ public class CRFDataImportValidator implements Validator {
              return;
         }
         Status[] included_status= new Status[]{Status.AVAILABLE ,  Status.PENDING};
-        StudyBean study = helper.verifyStudyByOID( getStudyDAO(), crfDataImportBean.getStudyUniqueId(), included_status, e);
+        StudyBean study = helper.verifyStudyByOID( studyDAO, crfDataImportBean.getStudyUniqueId(), included_status, e);
         if (study == null) return; 
         boolean isRoleVerified = helper.verifyRole(crfDataImportBean.getUser(), study.getId(), -1, Role.MONITOR, e);
         if ( !isRoleVerified ) return;
@@ -67,16 +71,6 @@ public class CRFDataImportValidator implements Validator {
 //      
         crfDataImportBean.setStudy(study);
 
-    }
-
-    public StudyDAO getStudyDAO() {
-        return this.studyDAO != null ? studyDAO : new StudyDAO(dataSource);
-    }
-
-   
-
-    public UserAccountDAO getUserAccountDAO() {
-        return this.userAccountDAO != null ? userAccountDAO : new UserAccountDAO(dataSource);
     }
 
 }

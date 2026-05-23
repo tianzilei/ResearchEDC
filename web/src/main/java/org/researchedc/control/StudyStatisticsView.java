@@ -11,6 +11,7 @@ import org.jmesa.view.editor.GroupCellEditor;
 import org.jmesa.view.html.AbstractHtmlView;
 import org.jmesa.view.html.HtmlBuilder;
 import org.jmesa.view.html.HtmlSnippets;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class StudyStatisticsView extends AbstractHtmlView {
 	   private final ResourceBundle resword;

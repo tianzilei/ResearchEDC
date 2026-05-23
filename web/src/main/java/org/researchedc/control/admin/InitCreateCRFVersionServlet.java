@@ -14,6 +14,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Prepares to creat a new CRF Version

@@ -27,6 +27,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Run Rules Using this Servlet

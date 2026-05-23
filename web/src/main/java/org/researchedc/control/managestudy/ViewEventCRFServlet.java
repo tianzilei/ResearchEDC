@@ -31,6 +31,9 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -38,7 +41,13 @@ import java.util.ArrayList;
  * Views the detail of an event CRF
  */
 public class ViewEventCRFServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private ItemFormMetadataDAO itemFormMetadataDao;
+    @Autowired
+    private SectionDAO sectionDao;
+
+/**
      *
      */
     @Override
@@ -52,13 +61,13 @@ public class ViewEventCRFServlet extends SecureController {
         int eventCRFId = fp.getInt("id", true);
         int studySubId = fp.getInt("studySubId", true);
 
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
-        ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
-        ItemDAO idao = new ItemDAO(sm.getDataSource());
-        ItemFormMetadataDAO ifmdao = new ItemFormMetadataDAO(sm.getDataSource());
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        SectionDAO secdao = new SectionDAO(sm.getDataSource());
+        IStudySubjectDAO subdao = this.studySubjectDao;
+        EventCRFDao ecdao = this.eventCrfDao;
+        IItemDataDAO iddao = this.itemDataDao;
+        ItemDAO idao = this.itemDao;
+        ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
+        ICrfDAO cdao = this.crfDao;
+        SectionDAO secdao = this.sectionDao;
 
         if (eventCRFId == 0) {
             addPageMessage(respage.getString("please_choose_an_event_CRF_to_view"));

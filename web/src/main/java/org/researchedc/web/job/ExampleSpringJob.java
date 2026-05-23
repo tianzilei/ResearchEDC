@@ -42,8 +42,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class ExampleSpringJob extends QuartzJobBean {
+
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
+
+    @Autowired
+    protected AuditEventDAO auditEventDao;
+
+    @Autowired
+    protected DatasetDAO datasetDao;
 
     // example code here
     private String message;
@@ -100,7 +114,7 @@ public class ExampleSpringJob extends QuartzJobBean {
             ruleSetRuleDao = (RuleSetRuleDao) appContext.getBean("ruleSetRuleDao");
             dataSource = (DataSource) appContext.getBean("dataSource");
             mailSender = (OpenClinicaMailSender) appContext.getBean("openClinicaMailSender");
-            IAuditEventDAO auditEventDAO = new AuditEventDAO(dataSource);
+            IAuditEventDAO auditEventDAO = this.auditEventDao;
             // Scheduler scheduler = context.getScheduler();
             // JobDetail detail = context.getJobDetail();
             // jobDetailBean = (JobDetailBean) detail;
@@ -160,10 +174,10 @@ public class ExampleSpringJob extends QuartzJobBean {
             HashMap fileName = new HashMap<String, Integer>();
             if (dsId > 0) {
                 // trying to not throw an error if there's no dataset id
-                DatasetDAO dsdao = new DatasetDAO(dataSource);
+                DatasetDAO dsdao = this.datasetDao;
                 DatasetBean datasetBean = (DatasetBean) dsdao.findByPK(dsId);
-                IStudyDAO studyDao = new StudyDAO(dataSource);
-                IUserAccountDAO userAccountDAO = new UserAccountDAO(dataSource);
+                IStudyDAO studyDao = this.studyDao;
+                IUserAccountDAO userAccountDAO = this.userAccountDao;
                 // hmm, three lines in the if block DRY?
                 String generalFileDir = "";
                 String generalFileDirCopy = "";
@@ -192,7 +206,7 @@ public class ExampleSpringJob extends QuartzJobBean {
                 StudyBean parentStudy = new StudyBean();
                 logger.debug("active study: " + studyId + " parent study: " + activeStudy.getParentStudyId());
                 if (activeStudy.getParentStudyId() > 0) {
-                    // IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+                    // IStudyDAO sdao = this.studyDao;
                     parentStudy = (StudyBean) studyDao.findByPK(activeStudy.getParentStudyId());
                 } else {
                     parentStudy = activeStudy;

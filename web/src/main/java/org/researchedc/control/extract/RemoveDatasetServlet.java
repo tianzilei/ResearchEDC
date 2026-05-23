@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author thickerson
@@ -33,6 +35,9 @@ import java.util.Locale;
  *
  */
 public class RemoveDatasetServlet extends SecureController {
+
+    @Autowired
+    protected DatasetDAO datasetDao;
 
     Locale locale;
 
@@ -46,10 +51,10 @@ public class RemoveDatasetServlet extends SecureController {
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
         int dsId = fp.getInt("dsId");
-        DatasetDAO dsDAO = new DatasetDAO(sm.getDataSource());
+        DatasetDAO dsDAO = this.datasetDao;
         DatasetBean dataset = (DatasetBean) dsDAO.findByPK(dsId);
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         StudyBean study = (StudyBean)sdao.findByPK(dataset.getStudyId());
         checkRoleByUserAndStudy(ub, study.getParentStudyId(), study.getId());
         if (study.getId() != currentStudy.getId() && study.getParentStudyId() != currentStudy.getId()) {
@@ -108,7 +113,7 @@ public class RemoveDatasetServlet extends SecureController {
         FormProcessor fp = new FormProcessor(request);
 
         EntityBeanTable table = fp.getEntityBeanTable();
-        DatasetDAO dsdao = new DatasetDAO(sm.getDataSource());
+        DatasetDAO dsdao = this.datasetDao;
         ArrayList datasets = new ArrayList();
         // if (ub.isSysAdmin()) {
         // datasets =

@@ -19,6 +19,7 @@ import org.researchedc.control.admin.EditUserAccountServlet;
 import org.researchedc.control.admin.ViewUserAccountServlet;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class UserAccountTable extends Table {
     public UserAccountTable() {

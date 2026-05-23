@@ -44,11 +44,19 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author ssachs
  */
 public class DoubleDataEntryServlet extends DataEntryServlet {
+
+    @Autowired
+    protected ItemDataDAO itemDataDao;
+
+    @Autowired
+    protected SectionDAO sectionDao;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DoubleDataEntryServlet.class);
 
@@ -125,7 +133,7 @@ public class DoubleDataEntryServlet extends DataEntryServlet {
                 tabNumber = fp.getInt("tab");
             }
         }
-        SectionDAO sectionDao = new SectionDAO(getDataSource());
+        SectionDAO sectionDao = this.sectionDao;
         int crfVersionId = ecb.getCRFVersionId();
         int eventCRFId = ecb.getId();
         ArrayList sections = sectionDao.findAllByCRFVersionId(crfVersionId);
@@ -424,7 +432,7 @@ public class DoubleDataEntryServlet extends DataEntryServlet {
     protected DisplayItemBean validateCalcTypeDisplayItemBean(ScoreItemValidator sv, DisplayItemBean dib, String inputName, HttpServletRequest request) {
 
         org.researchedc.bean.core.ResponseType rt = dib.getMetadata().getResponseSet().getResponseType();
-        ItemDataDAO iddao = new ItemDataDAO(getDataSource());
+        ItemDataDAO iddao = this.itemDataDao;
         boolean isSingleItem = false;
         HttpSession session = request.getSession();
         if (StringUtil.isBlank(inputName)) {// for single items

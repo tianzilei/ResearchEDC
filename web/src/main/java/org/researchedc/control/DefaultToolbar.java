@@ -9,6 +9,7 @@ import org.jmesa.view.html.toolbar.AbstractItem;
 import org.jmesa.view.html.HtmlBuilder;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DefaultToolbar extends AbstractToolbar {
 

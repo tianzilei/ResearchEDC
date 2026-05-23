@@ -37,6 +37,7 @@ import java.util.List;
 
 import jakarta.servlet.ServletOutputStream;
 import org.researchedc.dao.spi.IRuleDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DownloadRuleSetXmlServlet extends SecureController {
 

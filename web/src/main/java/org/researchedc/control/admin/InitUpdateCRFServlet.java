@@ -11,10 +11,12 @@ import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.admin.CRFDAO;
+
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -86,7 +88,7 @@ public class InitUpdateCRFServlet extends SecureController {
             addPageMessage(respage.getString("please_choose_a_CRF_version_to_update"));
             forwardPage(Page.CRF_LIST_SERVLET);
         } else {
-            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+            ICrfDAO cdao = this.crfDao;
             CRFBean crf = (CRFBean) cdao.findByPK(crfId);
             if(!ub.isSysAdmin() && (crf.getOwnerId() != ub.getId())){
                 addPageMessage(respage.getString("no_have_correct_privilege_current_study")

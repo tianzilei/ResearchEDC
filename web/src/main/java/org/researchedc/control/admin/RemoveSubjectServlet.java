@@ -16,20 +16,18 @@ import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDataDAO;
-import org.researchedc.dao.submit.SubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -57,7 +55,7 @@ public class RemoveSubjectServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
+        ISubjectDAO sdao = this.subjectDao;
         FormProcessor fp = new FormProcessor(request);
         int subjectId = fp.getInt("id");
 
@@ -70,11 +68,11 @@ public class RemoveSubjectServlet extends SecureController {
             SubjectBean subject = (SubjectBean) sdao.findByPK(subjectId);
 
             // find all study subjects
-            IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+            IStudySubjectDAO ssdao = this.studySubjectDao;
             ArrayList studySubs = ssdao.findAllBySubjectId(subjectId);
 
             // find study events
-            IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+            IStudyEventDAO sedao = this.studyEventDao;
             ArrayList events = sedao.findAllBySubjectId(subjectId);
             if ("confirm".equalsIgnoreCase(action)) {
                 request.setAttribute("subjectToRemove", subject);
@@ -100,7 +98,7 @@ public class RemoveSubjectServlet extends SecureController {
                     }
                 }
 
-                EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+                EventCRFDao ecdao = this.eventCrfDao;
 
                 for (int j = 0; j < events.size(); j++) {
                     StudyEventBean event = (StudyEventBean) events.get(j);
@@ -112,7 +110,7 @@ public class RemoveSubjectServlet extends SecureController {
 
                         ArrayList eventCRFs = ecdao.findAllByStudyEvent(event);
 
-                        ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+                        ItemDataDAO iddao = this.itemDataDao;
                         for (int k = 0; k < eventCRFs.size(); k++) {
                             EventCRFBean eventCRF = (EventCRFBean) eventCRFs.get(k);
                             if (!eventCRF.getStatus().equals(Status.DELETED)) {

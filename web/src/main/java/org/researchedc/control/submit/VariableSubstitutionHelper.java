@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.researchedc.dao.spi.DaoProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Performs the variable substitution in the CRF fields that support it.
@@ -63,7 +65,7 @@ public class VariableSubstitutionHelper {
                                                       StudyBean study, StudyEventDefinitionBean eventDef,
                                                       StudyEventBean event, DataSource dataSource) {
 
-        ItemDAO itemDAO = new ItemDAO(dataSource);
+        ItemDAO itemDAO = DaoProvider.getDao(ItemDAO.class);
 
         List<ItemBean> items = itemDAO.findAllWithItemDataByCRFVersionId(
                 section.getCrfVersion().getId(), section.getEventCRF().getId());

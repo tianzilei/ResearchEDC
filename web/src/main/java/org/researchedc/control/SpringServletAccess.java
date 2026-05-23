@@ -8,6 +8,7 @@ import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import jakarta.servlet.ServletContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class SpringServletAccess {
 

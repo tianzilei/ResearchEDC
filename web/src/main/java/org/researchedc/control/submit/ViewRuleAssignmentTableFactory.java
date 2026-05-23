@@ -58,6 +58,7 @@ import org.jmesa.view.editor.BasicCellEditor;
 import org.jmesa.view.editor.CellEditor;
 import org.jmesa.view.html.HtmlBuilder;
 import org.jmesa.view.html.editor.DroplistFilterEditor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class ViewRuleAssignmentTableFactory extends AbstractTableFactory {

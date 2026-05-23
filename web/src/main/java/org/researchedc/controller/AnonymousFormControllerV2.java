@@ -39,11 +39,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 @Controller
 @RequestMapping(value = "/api/v2/anonymousform")
 @ResponseStatus(value = org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
 public class AnonymousFormControllerV2 {
+
+    @Autowired
+    protected ICrfDAO crfDao;
+
+    @Autowired
+    protected StudyParameterValueDAO studyParameterValueDao;
+
+    @Autowired
+    protected EventDefinitionCRFDao eventDefinitionCrfDao;
+
+    @Autowired
+    protected IStudyEventDefinitionDAO studyEventDefinitionDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
+
+    @Autowired
+    protected CRFVersionDAO crfVersionDao;
 
     @Autowired
     @Qualifier("dataSource")
@@ -98,13 +117,13 @@ public class AnonymousFormControllerV2 {
 
             StudyBean study = getStudy(studyOid);
 
-            EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(dataSource);
+            EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
             ArrayList<EventDefinitionCRFBean> edcBeans = edcdao.findAllSubmissionUriAndStudyId(submissionUri, study.getId());
             if (edcBeans.size() != 0) {
                 EventDefinitionCRFBean edcBean = edcBeans.get(0);
-                ICrfDAO crfdao = new CRFDAO(dataSource);
-                CRFVersionDAO cvdao = new CRFVersionDAO(dataSource);
-                IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(dataSource);
+                ICrfDAO crfdao = this.crfDao;
+                CRFVersionDAO cvdao = this.crfVersionDao;
+                IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
 
                 CRFVersionBean crfVersionBean = (CRFVersionBean) cvdao.findByPK(edcBean.getDefaultVersionId());
                 CRFBean crf = (CRFBean) crfdao.findByPK(crfVersionBean.getCrfId());
@@ -141,7 +160,7 @@ public class AnonymousFormControllerV2 {
     }
 
     private StudyBean getStudy(String oid) {
-        sdao = new StudyDAO(dataSource);
+        sdao = this.studyDao;
         StudyBean studyBean = (StudyBean) sdao.findByOid(oid);
         return studyBean;
     }
@@ -162,7 +181,7 @@ public class AnonymousFormControllerV2 {
         boolean accessPermission = false;
         StudyBean siteStudy = getStudy(studyOid);
         StudyBean study = getParentStudy(studyOid);
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(dataSource);
+        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
         participantPortalRegistrar = new ParticipantPortalRegistrar();
         String pManageStatus = participantPortalRegistrar.getRegistrationStatus(study.getOid()).toString(); // ACTIVE , PENDING , INACTIVE

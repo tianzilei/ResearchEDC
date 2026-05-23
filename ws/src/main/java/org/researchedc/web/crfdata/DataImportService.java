@@ -35,6 +35,8 @@ import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.logic.rulerunner.ExecutionMode;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.logic.rulerunner.ImportDataRuleRunnerContainer;
 import org.researchedc.service.rule.RuleSetServiceInterface;
 import org.researchedc.web.job.CrfBusinessLogicHelper;
@@ -54,6 +56,16 @@ public class DataImportService {
 
     XmlSchemaValidationHelper schemaValidator = new XmlSchemaValidationHelper();
     ResourceBundle respage;
+    @Autowired
+    private ItemDataDAO itemDataDao;
+    @Autowired
+    private EventCRFDAO eventCrfDao;
+    @Autowired
+    private ItemDAO itemDao;
+    @Autowired
+    private StudySubjectDAO studySubjectDao;
+    @Autowired
+    private DiscrepancyNoteDAO discrepancyNoteDao;
 
     public ResourceBundle getRespage() {
         return respage;
@@ -213,9 +225,7 @@ public class DataImportService {
 
         boolean discNotesGenerated = false;
 
-        ItemDataDAO itemDataDao = new ItemDataDAO(dataSource);
         itemDataDao.setFormatDates(false);
-        EventCRFDAO eventCrfDao = new EventCRFDAO(dataSource);
 
         StringBuffer auditMsg = new StringBuffer();
         int eventCrfBeanId = -1;
@@ -282,8 +292,7 @@ public class DataImportService {
                         // logger.debug("found: id " + itemDataBean2.getId() + " name " + itemDataBean2.getName());
                         displayItemBean.getData().setId(itemDataBean.getId());
                     }
-                    ItemDAO idao = new ItemDAO(dataSource);
-                    ItemBean ibean = (ItemBean) idao.findByPK(displayItemBean.getData().getItemId());
+                    ItemBean ibean = (ItemBean) itemDao.findByPK(displayItemBean.getData().getItemId());
                     // logger.debug("*** checking for validation errors: " + ibean.getName());
                     String itemOid = displayItemBean.getItem().getOid() + "_" + wrapper.getStudyEventRepeatKey() + "_" + displayItemBean.getData().getOrdinal()
                             + "_" + wrapper.getStudySubjectOid();
@@ -331,7 +340,6 @@ public class DataImportService {
             Integer parentId, UserAccountBean uab, DataSource ds, StudyBean study) {
 
         DiscrepancyNoteBean note = new DiscrepancyNoteBean();
-        StudySubjectDAO ssdao = new StudySubjectDAO(ds);
         note.setDescription(message);
         note.setDetailedNotes("Failed Validation Check");
         note.setOwner(uab);
@@ -352,17 +360,16 @@ public class DataImportService {
         note.setEventStart(eventCrfBean.getCreatedDate());
         note.setCrfName(displayItemBean.getEventDefinitionCRF().getCrfName());
 
-        StudySubjectBean ss = (StudySubjectBean) ssdao.findByPK(eventCrfBean.getStudySubjectId());
+        StudySubjectBean ss = (StudySubjectBean) studySubjectDao.findByPK(eventCrfBean.getStudySubjectId());
         note.setSubjectName(ss.getName());
 
         note.setEntityId(displayItemBean.getData().getId());
         note.setColumn("value");
 
-        DiscrepancyNoteDAO dndao = new DiscrepancyNoteDAO(ds);
-        note = (DiscrepancyNoteBean) dndao.create(note);
+        note = (DiscrepancyNoteBean) discrepancyNoteDao.create(note);
         // so that the below method works, need to set the entity above
         logger.debug("trying to create mapping with " + note.getId() + " " + note.getEntityId() + " " + note.getColumn() + " " + note.getEntityType());
-        dndao.createMapping(note);
+        discrepancyNoteDao.createMapping(note);
         logger.debug("just created mapping");
         return note;
     }

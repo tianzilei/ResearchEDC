@@ -15,12 +15,16 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 // allows both deletion and restoration of a study user role
 
 public class DeleteStudyUserRoleServlet extends SecureController {
+
+    @Autowired
+    private UserAccountDAO userAccountDao;
     public static final String PATH = "DeleteStudyUserRole";
     public static final String ARG_USERNAME = "userName";
     public static final String ARG_STUDYID = "studyId";
@@ -42,7 +46,7 @@ public class DeleteStudyUserRoleServlet extends SecureController {
 
     @Override
     protected void processRequest() throws Exception {
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
 
         FormProcessor fp = new FormProcessor(request);
         int studyId = fp.getInt(ARG_STUDYID);
@@ -99,7 +103,7 @@ public class DeleteStudyUserRoleServlet extends SecureController {
     // }
     //
     // SQLFactory factory = SQLFactory.getInstance();
-    // IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+    // IUserAccountDAO udao = this.userAccountDao;
     //
     // FormProcessor fp = new FormProcessor(request);
     // int studyId = fp.getInt(ARG_STUDYID);

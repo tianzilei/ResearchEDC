@@ -27,9 +27,18 @@ import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class LockCRFVersionServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+
+/**
     *
     */
    @Override
@@ -64,8 +73,8 @@ public class LockCRFVersionServlet extends SecureController {
            return;
        }
        
-       CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-       CRFDAO cdao = new CRFDAO(sm.getDataSource());
+       CRFVersionDAO cvdao = this.crfVersionDao;
+       CRFDAO cdao = (CRFDAO) this.crfDao;
        
        CRFVersionBean version = (CRFVersionBean)cvdao.findByPK(crfVersionId);
        //System.out.println("crf version found:" + version.getName());
@@ -78,7 +87,7 @@ public class LockCRFVersionServlet extends SecureController {
            return;
        }
       
-       EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+       EventCRFDao ecdao = this.eventCrfDao;
        ArrayList eventCRFs = ecdao.findAllStudySubjectByCRFVersion(crfVersionId);
        
        if (StringUtil.isBlank(action)) {
@@ -94,7 +103,7 @@ public class LockCRFVersionServlet extends SecureController {
 
            ArrayList versionList = (ArrayList)cvdao.findAllByCRF(version.getCrfId());
            if(versionList.size() > 0){
-               EventDefinitionCRFDao edCRFDao = new EventDefinitionCRFDAO(sm.getDataSource());
+               EventDefinitionCRFDao edCRFDao = this.eventDefinitionCrfDao;
                ArrayList edcList = (ArrayList)edCRFDao.findAllByCRF(version.getCrfId());
                for(int i = 0; i < edcList.size(); i++){
                    EventDefinitionCRFBean edcBean = (EventDefinitionCRFBean)edcList.get(i);

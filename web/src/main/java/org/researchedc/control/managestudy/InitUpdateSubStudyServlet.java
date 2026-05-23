@@ -41,6 +41,9 @@ import org.researchedc.web.InsufficientPermissionException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -49,7 +52,13 @@ import java.util.ArrayList;
  *          jxu $
  */
 public class InitUpdateSubStudyServlet extends SecureController {
-    EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+
+EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
 
     /**
      *
@@ -73,7 +82,7 @@ public class InitUpdateSubStudyServlet extends SecureController {
     public void processRequest() throws Exception {
     	//baseUrl();
         String userName = request.getRemoteUser();
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         String idString = request.getParameter("id");
         logger.info("study id:" + idString);
         if (StringUtil.isBlank(idString)) {
@@ -98,7 +107,7 @@ public class InitUpdateSubStudyServlet extends SecureController {
                 ArrayList parentConfigs = currentStudy.getStudyParameters();
                 // logger.info("parentConfigs size:" + parentConfigs.size());
                 ArrayList configs = new ArrayList();
-                StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
+                IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
                 for (int i = 0; i < parentConfigs.size(); i++) {
                     StudyParamsConfig scg = (StudyParamsConfig) parentConfigs.get(i);
                     if (scg != null) {
@@ -151,14 +160,14 @@ public class InitUpdateSubStudyServlet extends SecureController {
 
     private void createEventDefinitions(StudyBean parentStudy) throws MalformedURLException {
         FormProcessor fp = new FormProcessor(request);
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());    
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;    
 
         int siteId = Integer.valueOf(request.getParameter("id").trim());
         ArrayList<StudyEventDefinitionBean> seds = new ArrayList<StudyEventDefinitionBean>();
-        IStudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO sedDao = this.studyEventDefinitionDao;
+        EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfDAO cdao = this.crfDao;
         seds = sedDao.findAllByStudy(parentStudy);
         int start = 0;
         for (StudyEventDefinitionBean sed : seds) {

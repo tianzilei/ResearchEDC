@@ -6,6 +6,8 @@ import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.ws.bean.BaseStudyDefinitionBean;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -15,10 +17,14 @@ import javax.sql.DataSource;
 public class StudyMetadataRequestValidator implements Validator {
 
     DataSource dataSource;
-    StudyDAO studyDAO;
-    StudySubjectDAO studySubjectDAO;
-    StudyEventDefinitionDAO studyEventDefinitionDAO;
-    UserAccountDAO userAccountDAO;
+    @Autowired
+    private StudyDAO studyDAO;
+    @Autowired
+    private StudySubjectDAO studySubjectDAO;
+    @Autowired
+    private StudyEventDefinitionDAO studyEventDefinitionDAO;
+    @Autowired
+    private UserAccountDAO userAccountDAO;
     BaseVSValidatorImplementation helper;
 
     public StudyMetadataRequestValidator(DataSource dataSource) {
@@ -38,15 +44,15 @@ public class StudyMetadataRequestValidator implements Validator {
         	 e.reject("studyEventDefinitionRequestValidator.study_does_not_exist");
              return;
         }
-        StudyBean study = helper.verifyStudy(getStudyDAO(), studyMetadataRequest.getStudyUniqueId(), null, e);
+        StudyBean study = helper.verifyStudy(studyDAO, studyMetadataRequest.getStudyUniqueId(), null, e);
         if (study == null) return;
         int site_id = -1;StudyBean site;
         if (studyMetadataRequest.getSiteUniqueId() != null) {
-        	site = helper.verifySite(getStudyDAO(), studyMetadataRequest.getStudyUniqueId(), studyMetadataRequest.getSiteUniqueId(), null, e);
+        	site = helper.verifySite(studyDAO, studyMetadataRequest.getStudyUniqueId(), studyMetadataRequest.getSiteUniqueId(), null, e);
        
         	if ( site!=null){site_id = site.getId();}
         }
-        helper.verifyUser(studyMetadataRequest.getUser(), getUserAccountDAO(), study.getId(), site_id,   e) ;
+        helper.verifyUser(studyMetadataRequest.getUser(), userAccountDAO, study.getId(), site_id,   e) ;
         	
         
 //        
@@ -86,22 +92,6 @@ public class StudyMetadataRequestValidator implements Validator {
 //                return;
 //            }
 //        }
-    }
-
-    public StudyDAO getStudyDAO() {
-        return this.studyDAO != null ? studyDAO : new StudyDAO(dataSource);
-    }
-
-    public StudySubjectDAO getStudySubjectDAO() {
-        return this.studySubjectDAO != null ? studySubjectDAO : new StudySubjectDAO(dataSource);
-    }
-
-    public StudyEventDefinitionDAO getStudyEventDefinitionDAO() {
-        return this.studyEventDefinitionDAO != null ? studyEventDefinitionDAO : new StudyEventDefinitionDAO(dataSource);
-    }
-
-    public UserAccountDAO getUserAccountDAO() {
-        return this.userAccountDAO != null ? userAccountDAO : new UserAccountDAO(dataSource);
     }
 
 }

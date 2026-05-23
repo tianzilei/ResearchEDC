@@ -51,6 +51,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jsampson
@@ -59,7 +62,17 @@ import java.util.List;
 
 public class ViewStudySubjectAuditLogServlet extends SecureController {
 
-    /**
+    
+    @Autowired
+    private AuditDao auditDao;
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+    @Autowired
+    private ISubjectDAO subjectDao;
+
+/**
      * Checks whether the user has the right permission to proceed function
      */
     @Override
@@ -92,19 +105,19 @@ public class ViewStudySubjectAuditLogServlet extends SecureController {
 
     @Override
     public void processRequest() throws Exception {
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
-        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
-        AuditDao adao = new AuditDAO(sm.getDataSource());
+        IStudySubjectDAO subdao = this.studySubjectDao;
+        ISubjectDAO sdao = this.subjectDao;
+        AuditDao adao = this.auditDao;
 
         FormProcessor fp = new FormProcessor(request);
 
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
-        IStudyDAO studydao = new StudyDAO(sm.getDataSource());
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
+        EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
+        EventCRFDao ecdao = this.eventCrfDao;
+        IStudyDAO studydao = this.studyDao;
+        ICrfDAO cdao = this.crfDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
 
         ArrayList studySubjectAudits = new ArrayList();
         ArrayList eventCRFAudits = new ArrayList();
@@ -141,7 +154,7 @@ public class ViewStudySubjectAuditLogServlet extends SecureController {
             request.setAttribute("studySub", studySubject);
             SubjectBean subject = (SubjectBean) sdao.findByPK(studySubject.getSubjectId());
 
-            StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
+            IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
             study.getStudyParameterConfig().setCollectDob(spvdao.findByHandleAndStudy(study.getId(), "collectDob").getValue());
             String collectdob="used";
                 if (study.getStudyParameterConfig().getCollectDob().equals("2")) {
@@ -210,7 +223,7 @@ public class ViewStudySubjectAuditLogServlet extends SecureController {
                     logger.info("eventCRFAudits size [" + eventCRFAudits.size() + "] eventCRF id [" + eventCRF.getId() + "]");
                 }
             }
-            ItemDataDAO itemDataDao = new ItemDataDAO(sm.getDataSource());
+            ItemDataDAO itemDataDao = this.itemDataDao;
             for (Object o :eventCRFAudits) {
                 AuditBean ab = (AuditBean)o;
                 if (ab.getAuditTable().equalsIgnoreCase("item_data")) {

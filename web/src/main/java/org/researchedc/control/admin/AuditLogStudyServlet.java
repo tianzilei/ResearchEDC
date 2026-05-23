@@ -40,6 +40,9 @@ import org.researchedc.web.InsufficientPermissionException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import org.researchedc.dao.admin.AuditEventDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author thickerson
@@ -48,7 +51,15 @@ import java.util.Locale;
  */
 public class AuditLogStudyServlet extends SecureController {
 
+    @Autowired
+    protected AuditEventDAO auditEventDao;
+
     Locale locale;
+
+    @Autowired
+    private AuditDAO auditDao;
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
 
     // <ResourceBundle resword,resexception,respage;
 
@@ -77,19 +88,19 @@ public class AuditLogStudyServlet extends SecureController {
     protected void processRequest() throws Exception {
         int studyId = currentStudy.getId();
 
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
-        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
-        AuditDao adao = new AuditDAO(sm.getDataSource());
+        IStudySubjectDAO subdao = this.studySubjectDao;
+        ISubjectDAO sdao = this.subjectDao;
+        AuditDao adao = this.auditDao;
 
         FormProcessor fp = new FormProcessor(request);
 
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
-        IStudyDAO studydao = new StudyDAO(sm.getDataSource());
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
+        EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
+        EventCRFDao ecdao = this.eventCrfDao;
+        IStudyDAO studydao = this.studyDao;
+        ICrfDAO cdao = this.crfDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
 
         HashMap eventCRFAuditsHashMap = new HashMap();
         HashMap eventsHashMap = new HashMap();
@@ -169,7 +180,7 @@ public class AuditLogStudyServlet extends SecureController {
 
         // FormProcessor fp = new FormProcessor(request);
         //
-        // IAuditEventDAO aeDAO = new AuditEventDAO(sm.getDataSource());
+        // IAuditEventDAO aeDAO = this.auditEventDao;
         // ArrayList al = aeDAO.findAllByStudyId(currentStudy.getId());
         //
         // EntityBeanTable table = fp.getEntityBeanTable();

@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Lists all the subject group classes in a study
@@ -71,9 +73,9 @@ public class ListSubjectGroupClassServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
-        StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
+        StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
         // YW <<
-        IStudyDAO stdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO stdao = this.studyDao;
         int parentStudyId = currentStudy.getParentStudyId();
         ArrayList groups = new ArrayList();
         if (parentStudyId > 0) {
@@ -85,7 +87,7 @@ public class ListSubjectGroupClassServlet extends SecureController {
         // YW >>
         String isReadOnly = request.getParameter("read");
 
-        StudyGroupDAO sgdao = new StudyGroupDAO(sm.getDataSource());
+        StudyGroupDAO sgdao = this.studyGroupDao;
         for (int i = 0; i < groups.size(); i++) {
             StudyGroupClassBean group = (StudyGroupClassBean) groups.get(i);
             ArrayList studyGroups = sgdao.findAllByGroupClass(group);

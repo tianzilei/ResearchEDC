@@ -8,6 +8,7 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.pform.EnketoAPI;
 import org.researchedc.web.pform.EnketoCredentials;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ParticipantFormServlet extends SecureController {
 

@@ -10,6 +10,7 @@ import org.researchedc.bean.core.Role;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.submit.CRFVersionDAO;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import jakarta.servlet.ServletOutputStream;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -31,6 +33,8 @@ import jakarta.servlet.ServletOutputStream;
  *         Code Templates
  */
 public class DownloadVersionSpreadSheetServlet extends SecureController {
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
     public static String CRF_ID = "crfId";
 
     public static String CRF_VERSION_NAME = "crfVersionName";
@@ -71,7 +75,7 @@ public class DownloadVersionSpreadSheetServlet extends SecureController {
         String crfIdString = fp.getString(CRF_ID);
         int crfVersionId = fp.getInt(CRF_VERSION_ID);
 
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+        CRFVersionDAO cvdao = this.crfVersionDao;
 
         CRFVersionBean version = (CRFVersionBean) cvdao.findByPK(crfVersionId);
 

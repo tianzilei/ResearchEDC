@@ -7,6 +7,7 @@ import org.researchedc.module.study.dto.FeatureFlagsDTO;
 import org.researchedc.module.study.dto.StudyDetailDTO;
 import org.researchedc.module.study.dto.StudySummaryDTO;
 import org.researchedc.module.study.dto.UpdateStudyRequest;
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.study.service.StudyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class StudyController {
 
     private final StudyService studyService;
+    private final CurrentUserUtils currentUserUtils;
 
-    public StudyController(StudyService studyService) {
+    public StudyController(StudyService studyService, CurrentUserUtils currentUserUtils) {
         this.studyService = studyService;
+        this.currentUserUtils = currentUserUtils;
     }
 
     @GetMapping
@@ -55,8 +58,7 @@ public class StudyController {
     @PostMapping
     public ResponseEntity<StudyDetailDTO> createStudy(
             @Valid @RequestBody CreateStudyRequest request) {
-        // TODO: extract ownerId from security context / JWT token
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         StudyDetailDTO dto = studyService.createStudy(request, ownerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
@@ -65,16 +67,14 @@ public class StudyController {
     public ResponseEntity<StudyDetailDTO> updateStudy(
             @PathVariable Integer id,
             @Valid @RequestBody UpdateStudyRequest request) {
-        // TODO: extract userId from security context / JWT token
-        Integer userId = 1;
+        Integer userId = currentUserUtils.getCurrentUserId();
         StudyDetailDTO dto = studyService.updateStudy(id, request, userId);
         return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudy(@PathVariable Integer id) {
-        // TODO: extract userId from security context / JWT token
-        Integer userId = 1;
+        Integer userId = currentUserUtils.getCurrentUserId();
         studyService.deleteStudy(id, userId);
         return ResponseEntity.noContent().build();
     }
@@ -83,8 +83,7 @@ public class StudyController {
     public ResponseEntity<Void> updateStudyStatus(
             @PathVariable Integer id,
             @RequestParam Integer statusId) {
-        // TODO: extract userId from security context / JWT token
-        Integer userId = 1;
+        Integer userId = currentUserUtils.getCurrentUserId();
         studyService.updateStudyStatus(id, statusId, userId);
         return ResponseEntity.ok().build();
     }
@@ -107,7 +106,7 @@ public class StudyController {
     public ResponseEntity<Void> updateFeatureFlags(
             @PathVariable Integer id,
             @RequestBody FeatureFlagsDTO featureFlags) {
-        Integer userId = 1;
+        Integer userId = currentUserUtils.getCurrentUserId();
         String flagsJson = "{}";
         if (featureFlags.getFlags() != null) {
             try {

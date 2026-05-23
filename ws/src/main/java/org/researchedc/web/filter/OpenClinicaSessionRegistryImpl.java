@@ -6,6 +6,8 @@ import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
 import org.researchedc.domain.technicaladmin.LoginStatus;
 import org.researchedc.i18n.util.ResourceBundleProvider;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.User;
@@ -18,7 +20,8 @@ import javax.sql.DataSource;
 public class OpenClinicaSessionRegistryImpl extends SessionRegistryImpl {
 
     AuditUserLoginDao auditUserLoginDao;
-    UserAccountDAO userAccountDao;
+    @Autowired
+    private UserAccountDAO userAccountDao;
     DataSource dataSource;
 
     @Override
@@ -52,7 +55,7 @@ public class OpenClinicaSessionRegistryImpl extends SessionRegistryImpl {
     }
 
     public UserAccountDAO getUserAccountDao() {
-        return userAccountDao != null ? userAccountDao : new UserAccountDAO(dataSource);
+        return userAccountDao;
     }
 
     public AuditUserLoginDao getAuditUserLoginDao() {

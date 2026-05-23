@@ -15,6 +15,7 @@ import org.jmesa.view.html.toolbar.ToolbarItemType;
 
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ListStudySubjectTableToolbar extends DefaultToolbar {
 

@@ -20,6 +20,7 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import org.researchedc.dao.spi.IRuleDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class DownloadStudyMetadataServlet extends SecureController {

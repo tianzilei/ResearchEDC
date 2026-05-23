@@ -27,9 +27,15 @@ import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class DeleteStudyEventServlet extends SecureController{
-    @Override
+    
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+
+@Override
     public void mayProceed() throws InsufficientPermissionException {
         checkStudyLocked(Page.LIST_STUDY_SUBJECTS, respage.getString("current_study_locked"));
         checkStudyFrozen(Page.LIST_STUDY_SUBJECTS, respage.getString("current_study_frozen"));
@@ -53,8 +59,8 @@ public class DeleteStudyEventServlet extends SecureController{
         int studyEventId = fp.getInt("id");// studyEventId
         int studySubId = fp.getInt("studySubId");// studySubjectId
 
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
+        IStudySubjectDAO subdao = this.studySubjectDao;
 
         if (studyEventId == 0) {
             addPageMessage(respage.getString("please_choose_a_SE_to_remove"));
@@ -67,21 +73,21 @@ public class DeleteStudyEventServlet extends SecureController{
             StudySubjectBean studySub = (StudySubjectBean) subdao.findByPK(studySubId);
             request.setAttribute("studySub", studySub);
 
-            IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+            IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(event.getStudyEventDefinitionId());
             event.setStudyEventDefinition(sed);
 
-            IStudyDAO studydao = new StudyDAO(sm.getDataSource());
+            IStudyDAO studydao = this.studyDao;
             StudyBean study = (StudyBean) studydao.findByPK(studySub.getStudyId());
 
             String action = request.getParameter("action");
             if ("confirm".equalsIgnoreCase(action)) {
 
-                EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+                EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
                 // find all crfs in the definition
                 ArrayList eventDefinitionCRFs = (ArrayList) edcdao.findAllByEventDefinitionId(study, sed.getId());
 
-                EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+                EventCRFDao ecdao = this.eventCrfDao;
                 // construct info needed on view study event page
                 DisplayStudyEventBean de = new DisplayStudyEventBean();
                 de.setStudyEvent(event);
@@ -110,7 +116,6 @@ public class DeleteStudyEventServlet extends SecureController{
             }
         }
     }
-
 
     /**
      * Send email to director and administrator

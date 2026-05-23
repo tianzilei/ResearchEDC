@@ -27,6 +27,8 @@ import org.researchedc.web.SQLInitServlet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -48,8 +50,7 @@ public class RequestAccountServlet extends SecureController {
 
         String action = request.getParameter("action");
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
-        ArrayList studies = (ArrayList) sdao.findAll();
+        ArrayList studies = (ArrayList) studyDao.findAll();
         ArrayList roles = Role.toArrayList();
         roles.remove(Role.ADMIN); // admin is not a user role, only used for
         // tomcat
@@ -113,8 +114,7 @@ public class RequestAccountServlet extends SecureController {
             UserAccountBean ubDB = sm.getUserBean();
 
             if (StringUtil.isBlank(ubDB.getName())) {
-                IStudyDAO sdao = new StudyDAO(sm.getDataSource());
-                StudyBean study = (StudyBean) sdao.findByPK(ubForm.getActiveStudyId());
+                StudyBean study = (StudyBean) studyDao.findByPK(ubForm.getActiveStudyId());
                 String studyName = study.getName();
                 request.setAttribute("studyName", studyName);
                 forwardPage(Page.REQUEST_ACCOUNT_CONFIRM);

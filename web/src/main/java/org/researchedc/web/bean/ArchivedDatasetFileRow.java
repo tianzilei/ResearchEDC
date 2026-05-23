@@ -9,6 +9,7 @@ package org.researchedc.web.bean;
 import org.researchedc.bean.extract.ArchivedDatasetFileBean;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author thickerson

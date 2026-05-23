@@ -12,6 +12,7 @@ import org.researchedc.i18n.util.ResourceBundleProvider;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author thickerson

@@ -23,6 +23,7 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.bean.DisplayStudyRow;
 import org.researchedc.web.bean.EntityBeanTable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author jxu
@@ -61,7 +62,7 @@ public class ListStudyServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         ArrayList studies = (ArrayList) sdao.findAll();
         // find all parent studies
         ArrayList parents = (ArrayList) sdao.findAllParents();

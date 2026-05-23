@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by IntelliJ IDEA. User: bruceperry Date: May 15, 2007

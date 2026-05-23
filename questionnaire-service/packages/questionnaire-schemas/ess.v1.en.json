@@ -1,0 +1,106 @@
+{
+  "title": "Epworth Sleepiness Scale (ESS)",
+  "description": "How likely are you to doze off or fall asleep in the following situations?",
+  "pages": [
+    {
+      "elements": [
+        {
+          "type": "radiogroup",
+          "name": "ESS_01",
+          "title": "1. Sitting and reading",
+          "choices": [
+            {"value": 0, "text": "Would never doze"},
+            {"value": 1, "text": "Slight chance of dozing"},
+            {"value": 2, "text": "Moderate chance of dozing"},
+            {"value": 3, "text": "High chance of dozing"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_02",
+          "title": "2. Watching TV",
+          "choices": [
+            {"value": 0, "text": "Would never doze"},
+            {"value": 1, "text": "Slight chance of dozing"},
+            {"value": 2, "text": "Moderate chance of dozing"},
+            {"value": 3, "text": "High chance of dozing"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_03",
+          "title": "3. Sitting inactive in a public place (e.g. a theater or a meeting)",
+          "choices": [
+            {"value": 0, "text": "Would never doze"},
+            {"value": 1, "text": "Slight chance of dozing"},
+            {"value": 2, "text": "Moderate chance of dozing"},
+            {"value": 3, "text": "High chance of dozing"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_04",
+          "title": "4. As a passenger in a car for an hour without a break",
+          "choices": [
+            {"value": 0, "text": "Would never doze"},
+            {"value": 1, "text": "Slight chance of dozing"},
+            {"value": 2, "text": "Moderate chance of dozing"},
+            {"value": 3, "text": "High chance of dozing"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_05",
+          "title": "5. Lying down to rest in the afternoon when circumstances permit",
+          "choices": [
+            {"value": 0, "text": "Would never doze"},
+            {"value": 1, "text": "Slight chance of dozing"},
+            {"value": 2, "text": "Moderate chance of dozing"},
+            {"value": 3, "text": "High chance of dozing"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_06",
+          "title": "6. Sitting and talking to someone",
+          "choices": [
+            {"value": 0, "text": "Would never doze"},
+            {"value": 1, "text": "Slight chance of dozing"},
+            {"value": 2, "text": "Moderate chance of dozing"},
+            {"value": 3, "text": "High chance of dozing"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_07",
+          "title": "7. Sitting quietly after a lunch without alcohol",
+          "choices": [
+            {"value": 0, "text": "Would never doze"},
+            {"value": 1, "text": "Slight chance of dozing"},
+            {"value": 2, "text": "Moderate chance of dozing"},
+            {"value": 3, "text": "High chance of dozing"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ESS_08",
+          "title": "8. In a car, while stopped for a few minutes in traffic",
+          "choices": [
+            {"value": 0, "text": "Would never doze"},
+            {"value": 1, "text": "Slight chance of dozing"},
+            {"value": 2, "text": "Moderate chance of dozing"},
+            {"value": 3, "text": "High chance of dozing"}
+          ],
+          "isRequired": true
+        }
+      ]
+    }
+  ]
+}

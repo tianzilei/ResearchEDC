@@ -40,12 +40,24 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 
 /**
  * @author Bruce W. Perry, 5/1/08
  */
 public class ListDiscNotesSubjectServlet extends SecureController {
-    public static final String RESOLUTION_STATUS = "resolutionStatus";
+    
+    @Autowired
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+    @Autowired
+    private ISubjectDAO subjectDao;
+    @Autowired
+    private SubjectGroupMapDAO subjectGroupMapDao;
+
+public static final String RESOLUTION_STATUS = "resolutionStatus";
     // Include extra path info on the URL, which generates a file name hint in
     // some
     // browser's "save as..." dialog boxes
@@ -134,18 +146,18 @@ public class ListDiscNotesSubjectServlet extends SecureController {
         // < resword =
         // ResourceBundle.getBundle("org.researchedc.i18n.words",locale);
 
-        IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
-        IStudySubjectDAO sdao = new StudySubjectDAO(sm.getDataSource());
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
-        SubjectGroupMapDAO sgmdao = new SubjectGroupMapDAO(sm.getDataSource());
-        StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
-        StudyGroupDAO sgdao = new StudyGroupDAO(sm.getDataSource());
-        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
-        EventCRFDao edao = new EventCRFDAO(sm.getDataSource());
-        EventDefinitionCRFDao eddao = new EventDefinitionCRFDAO(sm.getDataSource());
-        ISubjectDAO subdao = new SubjectDAO(sm.getDataSource());
-        DiscrepancyNoteDAO dnDAO = new DiscrepancyNoteDAO(sm.getDataSource());
+        IStudyDAO studyDAO = this.studyDao;
+        IStudySubjectDAO sdao = this.studySubjectDao;
+        IStudyEventDAO sedao = this.studyEventDao;
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
+        SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+        StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
+        StudyGroupDAO sgdao = this.studyGroupDao;
+        IStudySubjectDAO ssdao = this.studySubjectDao;
+        EventCRFDao edao = this.eventCrfDao;
+        EventDefinitionCRFDao eddao = this.eventDefinitionCrfDao;
+        ISubjectDAO subdao = this.subjectDao;
+        IDiscrepancyNoteDAO dnDAO = this.discrepancyNoteDao;
 
         ListDiscNotesSubjectTableFactory factory = new ListDiscNotesSubjectTableFactory(ResourceBundleProvider.getTermsBundle(locale));
         factory.setStudyEventDefinitionDao(seddao);

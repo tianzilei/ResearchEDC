@@ -16,6 +16,7 @@ import java.util.Locale;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Call Super Class SecurityContextLogoutHandler that Performs a logout by modifying the {@see org.springframework.security.context.SecurityContextHolder}.
@@ -27,6 +28,7 @@ import javax.sql.DataSource;
 public class OpenClinicaSecurityContextLogoutHandler extends SecurityContextLogoutHandler {
 
     AuditUserLoginDao auditUserLoginDao;
+    @Autowired
     IUserAccountDAO userAccountDao;
     DataSource dataSource;
 
@@ -70,7 +72,7 @@ public class OpenClinicaSecurityContextLogoutHandler extends SecurityContextLogo
     }
 
     public IUserAccountDAO getUserAccountDao() {
-        return userAccountDao != null ? userAccountDao : new UserAccountDAO(dataSource);
+        return userAccountDao != null ? userAccountDao : this.userAccountDao;
     }
 
     public AuditUserLoginDao getAuditUserLoginDao() {

@@ -12,6 +12,8 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.view.Page;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Processes request to change ordinals of study event definitions in a study
@@ -20,12 +22,15 @@ import org.researchedc.view.Page;
  */
 public class ChangeDefinitionOrdinalServlet extends ChangeOrdinalServlet {
 
+    @Autowired
+    protected IStudyEventDefinitionDAO studyEventDefinitionDao;
+
     @Override
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
         int current = fp.getInt("current");
         int previous = fp.getInt("previous");
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         increase(current, previous, seddao);
         String url=response.encodeRedirectURL("ListEventDefinition");
         response.sendRedirect(url);

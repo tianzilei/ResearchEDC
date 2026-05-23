@@ -8,6 +8,7 @@ import org.researchedc.module.identity.dto.AssignRoleRequest;
 import org.researchedc.module.identity.dto.CreateUserRequest;
 import org.researchedc.module.identity.dto.RoleDTO;
 import org.researchedc.module.identity.dto.UserDTO;
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.identity.service.IdentityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class IdentityController {
 
     private final IdentityService identityService;
+    private final CurrentUserUtils currentUserUtils;
 
-    public IdentityController(IdentityService identityService) {
+    public IdentityController(IdentityService identityService, CurrentUserUtils currentUserUtils) {
         this.identityService = identityService;
+        this.currentUserUtils = currentUserUtils;
     }
 
     @GetMapping("/users")
@@ -46,16 +49,14 @@ public class IdentityController {
 
     @PostMapping("/users")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserRequest request) {
-        // TODO: extract ownerId from security context / JWT token
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         UserDTO dto = identityService.createUser(request, ownerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PostMapping("/roles/assign")
     public ResponseEntity<Void> assignRole(@Valid @RequestBody AssignRoleRequest request) {
-        // TODO: extract ownerId from security context / JWT token
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         identityService.assignRole(request, ownerId);
         return ResponseEntity.ok().build();
     }

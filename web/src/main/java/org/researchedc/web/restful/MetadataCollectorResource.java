@@ -25,6 +25,8 @@ import org.researchedc.domain.datamap.Study;
 import org.researchedc.logic.odmExport.AdminDataCollector;
 import org.researchedc.logic.odmExport.MetaDataCollector;
 import org.researchedc.dao.spi.IRuleDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * R
@@ -32,6 +34,9 @@ import org.researchedc.dao.spi.IRuleDAO;
  *
  */
 public class MetadataCollectorResource {
+
+    @Autowired
+    protected StudyParameterValueDAO studyParameterValueDao;
 
     private static final int INDENT_LEVEL = 2;
 	private DataSource dataSource;
@@ -81,7 +86,7 @@ public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
 
 
 	public IStudyDAO getStudyDao() {
-		return new StudyDAO(dataSource);
+		return this.studyDao;
 	}
 
 
@@ -245,7 +250,7 @@ public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
 	        return report;
 	}
 	private StudyBean populateStudyBean(StudyBean studyBean) {
-		 StudyParameterValueDAO spvdao = new StudyParameterValueDAO(this.dataSource);
+		 StudyParameterValueDAO spvdao = this.studyParameterValueDao;
 		  @SuppressWarnings("rawtypes")
 		ArrayList studyParameters = spvdao.findParamConfigByStudy(studyBean);
 

@@ -7,6 +7,7 @@ import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.jstl.fmt.LocalizationContext;
 import jakarta.servlet.jsp.tagext.SimpleTagSupport;
 import java.io.IOException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Custom tag used to escape special characters for text rendered as JavaScript values.

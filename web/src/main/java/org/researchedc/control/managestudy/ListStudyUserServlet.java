@@ -22,6 +22,7 @@ import org.researchedc.web.bean.StudyUserRoleRow;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Lists all the users in a study
@@ -34,7 +35,11 @@ import java.util.HashMap;
  */
 public class ListStudyUserServlet extends SecureController {
 
-    /**
+    
+    @Autowired
+    private IUserAccountDAO userAccountDao;
+
+/**
      *
      */
     @Override
@@ -55,7 +60,7 @@ public class ListStudyUserServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
         ArrayList users = udao.findAllAssignedUsersByStudy(currentStudy.getId());
 
         EntityBeanTable table = fp.getEntityBeanTable();

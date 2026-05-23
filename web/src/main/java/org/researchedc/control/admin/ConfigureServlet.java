@@ -17,6 +17,7 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.HashMap;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Krikor Krumlian

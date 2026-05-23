@@ -5,6 +5,7 @@ import org.researchedc.bean.submit.ResponseSetBean;
 import org.jdom.Element;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class is designed to intercept calls to FormBeanUtil methods, and for

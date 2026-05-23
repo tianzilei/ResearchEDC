@@ -1,6 +1,7 @@
 package org.researchedc.control.admin;
 
 import org.researchedc.bean.managestudy.StudyBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A bean that represents a study row in a view table.

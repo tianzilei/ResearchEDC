@@ -63,10 +63,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 @Controller
 @RequestMapping(value = "/odmk")
 public class OdmController {
+
+    @Autowired
+    protected ICrfDAO crfDao;
+
+    @Autowired
+    protected StudyParameterValueDAO studyParameterValueDao;
+
+    @Autowired
+    protected ItemDataDAO itemDataDao;
+
+    @Autowired
+    protected IStudyEventDefinitionDAO studyEventDefinitionDao;
+
+    @Autowired
+    protected IStudySubjectDAO studySubjectDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
+
+    @Autowired
+    protected CRFVersionDAO crfVersionDao;
 
     @Autowired
     @Qualifier("dataSource")
@@ -236,12 +258,12 @@ public class OdmController {
             return null;
         }
 
-        CRFVersionDAO versionDAO = new CRFVersionDAO(dataSource);
-        IStudyDAO studyDAO = new StudyDAO(dataSource);
-        IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(dataSource);
-        EventCRFDao eventCRFDAO = new EventCRFDAO(dataSource);
-        ItemDataDAO itemDataDAO = new ItemDataDAO(dataSource);
-        ICrfDAO crfDAO = new CRFDAO(dataSource);
+        CRFVersionDAO versionDAO = this.crfVersionDao;
+        IStudyDAO studyDAO = this.studyDao;
+        IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
+        EventCRFDAO eventCRFDAO = org.researchedc.dao.spi.DaoProvider.getDao(org.researchedc.dao.submit.EventCRFDAO.class);
+        ItemDataDAO itemDataDAO = org.researchedc.dao.spi.DaoProvider.getDao(org.researchedc.dao.submit.ItemDataDAO.class);
+        ICrfDAO crfDAO = this.crfDao;
         List<ODMcomplexTypeDefinitionFormData> formDatas = new ArrayList<>();
         try {
             // Retrieve crfs for next event
@@ -295,7 +317,7 @@ public class OdmController {
     }
 
     private StudyEventDefinitionBean getStudyEventDefinitionBean(int ID) {
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(dataSource);
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         StudyEventDefinitionBean studyEventDefinitionBean = (StudyEventDefinitionBean) seddao.findByPK(ID);
         return studyEventDefinitionBean;
     }
@@ -441,7 +463,7 @@ public class OdmController {
     }
 
     private StudyBean getStudy(String oid) {
-        sdao = new StudyDAO(dataSource);
+        sdao = this.studyDao;
         StudyBean studyBean = (StudyBean) sdao.findByOid(oid);
         return studyBean;
     }
@@ -470,7 +492,7 @@ public class OdmController {
     private boolean mayProceed(String studyOid) throws Exception {
         boolean accessPermission = false;
         StudyBean study = getParentStudy(studyOid);
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(dataSource);
+        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
         participantPortalRegistrar = new ParticipantPortalRegistrar();
         String pManageStatus = participantPortalRegistrar.getRegistrationStatus(studyOid).toString(); // ACTIVE ,

@@ -34,6 +34,9 @@ import org.researchedc.web.bean.EntityBeanTable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Processes request to add new CRFs info study event definition
@@ -42,7 +45,11 @@ import java.util.*;
  */
 public class AddCRFToDefinitionServlet extends SecureController {
 
-    /**
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+
+/**
      * Checks whether the user has the correct privilege
      */
     @Override
@@ -64,7 +71,7 @@ public class AddCRFToDefinitionServlet extends SecureController {
         String actionName = request.getParameter("actionName");
         String submit = request.getParameter("Submit");
 
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = this.crfDao;
         ArrayList crfs = (ArrayList) cdao.findAllByStatus(Status.AVAILABLE);
         ArrayList edcs = (ArrayList) session.getAttribute("eventDefinitionCRFs");
         if (edcs == null) {
@@ -166,7 +173,7 @@ public class AddCRFToDefinitionServlet extends SecureController {
     private void addCRF() throws Exception {
 
         FormProcessor fp = new FormProcessor(request);
-        CRFVersionDAO vdao = new CRFVersionDAO(sm.getDataSource());
+        CRFVersionDAO vdao = this.crfVersionDao;
         ArrayList crfArray = new ArrayList();
         Map tmpCRFIdMap = (HashMap) session.getAttribute("tmpCRFIdMap");
         if (tmpCRFIdMap == null) {
@@ -216,8 +223,7 @@ public class AddCRFToDefinitionServlet extends SecureController {
             }
         }
         session.removeAttribute("tmpCRFIdMap");
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());    
-
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;    
 
         if (crfArray.size() == 0) {// no crf seleted
             addPageMessage(respage.getString("no_new_CRF_added"));
@@ -270,7 +276,6 @@ public class AddCRFToDefinitionServlet extends SecureController {
         }
     }
 
-
 }    
 //    private void addCRFOld() throws Exception {
 //        boolean hasCrf = false;
@@ -278,7 +283,7 @@ public class AddCRFToDefinitionServlet extends SecureController {
 //        ArrayList crfs = (ArrayList) session.getAttribute("crfsWithVersion");
 //        StudyEventDefinitionBean sed = (StudyEventDefinitionBean) session.getAttribute("definition");
 //        FormProcessor fp = new FormProcessor(request);
-//        CRFVersionDAO vdao = new CRFVersionDAO(sm.getDataSource());
+//        CRFVersionDAO vdao = this.crfVersionDao;
 //        String crfNames = "";
 //        boolean isCRFSelected = false;
 //        int ordinalForNewCRF = edcs.size();

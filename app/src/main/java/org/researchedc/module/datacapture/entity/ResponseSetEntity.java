@@ -3,12 +3,12 @@ package org.researchedc.module.datacapture.entity;
 import jakarta.persistence.*;
 
 @Entity(name = "ModuleResponseSet")
-@Table(name = "response_set")
+@Table(name = "module_response_set")
 public class ResponseSetEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rs_seq")
-    @SequenceGenerator(name = "rs_seq", sequenceName = "response_set_response_set_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "rs_seq", sequenceName = "module_response_set_id_seq", allocationSize = 1)
     @Column(name = "response_set_id")
     private Integer responseSetId;
 

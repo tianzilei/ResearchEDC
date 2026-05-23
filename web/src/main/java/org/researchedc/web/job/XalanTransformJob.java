@@ -21,6 +21,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Xalan Transform Job, an XSLT transform job using the Xalan classes

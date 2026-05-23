@@ -26,6 +26,8 @@ import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,19 @@ public class ImportCRFInfoContainer {
     // (Subject) (Event) (Form)
     private Map<String, Map<String, Map<String, String>>> importCRFMap;
     private List<ImportCRFInfo> importCRFList;
+
+    @Autowired
+    private EventCRFDAO eventCrfDAO;
+    @Autowired
+    private StudySubjectDAO studySubjectDAO;
+    @Autowired
+    private StudyEventDefinitionDAO studyEventDefinitionDAO;
+    @Autowired
+    private StudyDAO studyDAO;
+    @Autowired
+    private StudyEventDAO studyEventDAO;
+    @Autowired
+    private CRFVersionDAO crfVersionDAO;
 
     /*
      * Purpose: Iterates over ODM to populate 2 objects: 1. importCRFList: A List of EventCRFs and information on how to
@@ -46,11 +61,6 @@ public class ImportCRFInfoContainer {
 
         ArrayList<EventCRFBean> eventCRFBeans = new ArrayList<EventCRFBean>();
         ArrayList<Integer> eventCRFBeanIds = new ArrayList<Integer>();
-        EventCRFDAO eventCrfDAO = new EventCRFDAO(ds);
-        StudySubjectDAO studySubjectDAO = new StudySubjectDAO(ds);
-        StudyEventDefinitionDAO studyEventDefinitionDAO = new StudyEventDefinitionDAO(ds);
-        StudyDAO studyDAO = new StudyDAO(ds);
-        StudyEventDAO studyEventDAO = new StudyEventDAO(ds);
         UpsertOnBean upsert = odmContainer.getCrfDataPostImportContainer().getUpsertOn();
         // If Upsert bean is not present, create one with default settings
         if (upsert == null)
@@ -81,7 +91,6 @@ public class ImportCRFInfoContainer {
                 Map<String, String> formMap = new HashMap<String, String>();
                 for (FormDataBean formDataBean : formDataBeans) {
 
-                    CRFVersionDAO crfVersionDAO = new CRFVersionDAO(ds);
                     ArrayList<CRFVersionBean> crfVersionBeans = crfVersionDAO.findAllByOid(formDataBean.getFormOID());
                     for (CRFVersionBean crfVersionBean : crfVersionBeans) {
 

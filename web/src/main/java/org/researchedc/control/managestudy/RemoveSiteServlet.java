@@ -43,6 +43,9 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -51,7 +54,17 @@ import java.util.Date;
  */
 public class RemoveSiteServlet extends SecureController {
 
-    /**
+    
+    @Autowired
+    private DatasetDAO datasetDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+    @Autowired
+    private SubjectGroupMapDAO subjectGroupMapDao;
+    @Autowired
+    private IUserAccountDAO userAccountDao;
+
+/**
      *
      */
     @Override
@@ -72,7 +85,7 @@ public class RemoveSiteServlet extends SecureController {
 
     @Override
     public void processRequest() throws Exception {
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         String idString = request.getParameter("id");
         logger.info("site id:" + idString);
 
@@ -86,15 +99,15 @@ public class RemoveSiteServlet extends SecureController {
         }
 
         // find all user and roles
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
         ArrayList userRoles = udao.findAllByStudyId(siteId);
 
         // find all subjects
-        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = this.studySubjectDao;
         ArrayList subjects = ssdao.findAllByStudy(study);
 
         // find all events
-        IStudyEventDefinitionDAO sefdao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO sefdao = this.studyEventDefinitionDao;
         ArrayList definitions = sefdao.findAllByStudy(study);
 
         String action = request.getParameter("action");
@@ -113,7 +126,7 @@ public class RemoveSiteServlet extends SecureController {
             } else {
                 logger.info("submit to remove the site");
                 // change all statuses to unavailable
-                IStudyDAO studao = new StudyDAO(sm.getDataSource());
+                IStudyDAO studao = this.studyDao;
                 study.setOldStatus(study.getStatus());
                 study.setStatus(Status.DELETED);
                 study.setUpdater(ub);
@@ -149,8 +162,8 @@ public class RemoveSiteServlet extends SecureController {
                 }
 
                 // remove all study_group
-                StudyGroupDAO sgdao = new StudyGroupDAO(sm.getDataSource());
-                SubjectGroupMapDAO sgmdao = new SubjectGroupMapDAO(sm.getDataSource());
+                StudyGroupDAO sgdao = this.studyGroupDao;
+                SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
                 ArrayList groups = sgdao.findAllByStudy(study);
                 for (int i = 0; i < groups.size(); i++) {
                     StudyGroupBean group = (StudyGroupBean) groups.get(i);
@@ -174,8 +187,8 @@ public class RemoveSiteServlet extends SecureController {
                 }
 
                 // remove all events
-                EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
-                IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+                EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
+                IStudyEventDAO sedao = this.studyEventDao;
                 for (int i = 0; i < subjects.size(); i++) {
                     StudySubjectBean subject = (StudySubjectBean) subjects.get(i);
 
@@ -186,7 +199,7 @@ public class RemoveSiteServlet extends SecureController {
                         ssdao.update(subject);
 
                         ArrayList events = sedao.findAllByStudySubject(subject);
-                        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+                        EventCRFDao ecdao = this.eventCrfDao;
 
                         for (int j = 0; j < events.size(); j++) {
                             StudyEventBean event = (StudyEventBean) events.get(j);
@@ -198,7 +211,7 @@ public class RemoveSiteServlet extends SecureController {
 
                                 ArrayList eventCRFs = ecdao.findAllByStudyEvent(event);
 
-                                ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+                                IItemDataDAO iddao = this.itemDataDao;
                                 for (int k = 0; k < eventCRFs.size(); k++) {
                                     EventCRFBean eventCRF = (EventCRFBean) eventCRFs.get(k);
                                     if (!eventCRF.getStatus().equals(Status.DELETED)) {
@@ -226,7 +239,7 @@ public class RemoveSiteServlet extends SecureController {
                     }
                 }// for subjects
 
-                DatasetDAO datadao = new DatasetDAO(sm.getDataSource());
+                DatasetDAO datadao = this.datasetDao;
                 ArrayList dataset = datadao.findAllByStudyId(study.getId());
                 for (int i = 0; i < dataset.size(); i++) {
                     DatasetBean data = (DatasetBean) dataset.get(i);

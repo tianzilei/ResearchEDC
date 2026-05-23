@@ -10,6 +10,7 @@ package org.researchedc.web.bean;
 import org.researchedc.bean.login.StudyUserRoleBean;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author jxu

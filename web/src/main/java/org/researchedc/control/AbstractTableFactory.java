@@ -27,6 +27,7 @@ import org.jmesa.view.html.component.HtmlColumn;
 import org.jmesa.view.html.component.HtmlTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractTableFactory {
 

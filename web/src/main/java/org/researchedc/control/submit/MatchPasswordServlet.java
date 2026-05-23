@@ -11,6 +11,7 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Checks user's password with the one int the session

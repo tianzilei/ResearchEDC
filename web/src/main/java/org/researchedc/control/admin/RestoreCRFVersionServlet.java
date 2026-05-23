@@ -17,7 +17,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.SectionDAO;
@@ -26,6 +26,7 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -34,6 +35,11 @@ import java.util.Date;
  * Preferences - Java - Code Style - Code Templates
  */
 public class RestoreCRFVersionServlet extends SecureController {
+
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private SectionDAO sectionDao;
     /**
      *
      */
@@ -55,7 +61,7 @@ public class RestoreCRFVersionServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+        CRFVersionDAO cvdao = this.crfVersionDao;
         FormProcessor fp = new FormProcessor(request);
         // checks which module the requests are from
         String module = fp.getString(MODULE);
@@ -75,9 +81,9 @@ public class RestoreCRFVersionServlet extends SecureController {
             }
             CRFVersionBean version = (CRFVersionBean) cvdao.findByPK(versionId);
 
-            SectionDAO secdao = new SectionDAO(sm.getDataSource());
+            SectionDAO secdao = this.sectionDao;
 
-            EventCRFDao evdao = new EventCRFDAO(sm.getDataSource());
+            EventCRFDao evdao = this.eventCrfDao;
             // find all event crfs by version id
             ArrayList eventCRFs = evdao.findAllByCRFVersion(versionId);
             if ("confirm".equalsIgnoreCase(action)) {
@@ -104,7 +110,7 @@ public class RestoreCRFVersionServlet extends SecureController {
                 }
 
                 // all item data related to event crfs
-                ItemDataDAO idao = new ItemDataDAO(sm.getDataSource());
+                ItemDataDAO idao = this.itemDataDao;
                 for (int i = 0; i < eventCRFs.size(); i++) {
                     EventCRFBean eventCRF = (EventCRFBean) eventCRFs.get(i);
                     if (eventCRF.getStatus().equals(Status.AUTO_DELETED)) {

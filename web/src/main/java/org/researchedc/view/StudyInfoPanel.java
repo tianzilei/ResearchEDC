@@ -40,6 +40,7 @@ import java.util.TreeMap;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * To create a flexible panel of information that will change while the user

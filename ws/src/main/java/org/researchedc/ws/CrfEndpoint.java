@@ -9,6 +9,8 @@ package org.researchedc.ws;
 
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.login.UserAccountDAO;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.service.subject.SubjectServiceInterface;
 import org.openclinica.ws.crf.v1.CreateCrfResponse;
 import org.openclinica.ws.crf.v1.CrfType;
@@ -49,6 +51,8 @@ public class CrfEndpoint {
 
     private final SubjectServiceInterface subjectService;
     private final DataSource dataSource;
+    @Autowired
+    private UserAccountDAO userAccountDao;
     private final ObjectFactory objectFactory;
 
     /**
@@ -127,7 +131,6 @@ public class CrfEndpoint {
         } else {
             username = principal.toString();
         }
-        UserAccountDAO userAccountDao = new UserAccountDAO(dataSource);
         return (UserAccountBean) userAccountDao.findByUserName(username);
     }
 

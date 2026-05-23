@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /***
  * * Rest service for ODM clinical data usage
@@ -45,6 +46,12 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("prototype")
 public class ODMClinicaDataResource {
+
+    @Autowired
+    protected IStudySubjectDAO studySubjectDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ODMClinicaDataResource.class);
 	private static final int INDENT_LEVEL = 2;
@@ -248,13 +255,13 @@ public class ODMClinicaDataResource {
 	 */
 	private String getStudySubjectOID(String subjectIdentifier, String studyOID)
 	{
-		IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(getDataSource());
+		IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
 		StudySubjectBean studySubject = studySubjectDAO.findByOid(subjectIdentifier);
 		if (subjectIdentifier.equals("*") ||
 				(studySubject != null  && studySubject.getOid() != null)) return subjectIdentifier;
 		else
 		{
-			IStudyDAO studyDAO = new StudyDAO(getDataSource());
+			IStudyDAO studyDAO = this.studyDao;
 			StudyBean study = studyDAO.findByOid(studyOID);
 			studySubject = studySubjectDAO.findByLabelAndStudy(subjectIdentifier,study);
 			if (studySubject != null && studySubject.getOid() != null) return studySubject.getOid();

@@ -29,6 +29,8 @@ import org.researchedc.web.InsufficientPermissionException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -37,6 +39,9 @@ import java.util.Locale;
  * select all items in a study
  */
 public class ViewSelectedServlet extends SecureController {
+
+    @Autowired
+    protected ItemFormMetadataDAO itemFormMetadataDao;
 
     Locale locale;
 
@@ -73,8 +78,8 @@ public class ViewSelectedServlet extends SecureController {
     public void setUpStudyGroups() {
         ArrayList sgclasses = (ArrayList) session.getAttribute("allSelectedGroups");
         if (sgclasses == null || sgclasses.size() == 0) {
-            IStudyDAO studydao = new StudyDAO(sm.getDataSource());
-            StudyGroupClassDAO sgclassdao = new StudyGroupClassDAO(sm.getDataSource());
+            IStudyDAO studydao = this.studyDao;
+            StudyGroupClassDAO sgclassdao = this.studyGroupClassDao;
             StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
             sgclasses = sgclassdao.findAllActiveByStudy(theStudy);
         }
@@ -93,9 +98,9 @@ public class ViewSelectedServlet extends SecureController {
         }
         request.setAttribute("eventlist", events);
 
-        ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
-        ItemDAO idao = new ItemDAO(sm.getDataSource());
-        ItemFormMetadataDAO imfdao = new ItemFormMetadataDAO(sm.getDataSource());
+        ICrfDAO crfdao = this.crfDao;
+        ItemDAO idao = this.itemDao;
+        ItemFormMetadataDAO imfdao = this.itemFormMetadataDao;
         ArrayList ids = CreateDatasetServlet.allSedItemIdsInStudy(events, crfdao, idao);// new
                                                                                         // ArrayList();
         // ArrayList allItemsInStudy = EditSelectedServlet.selectAll(events,

@@ -1,6 +1,7 @@
 package org.researchedc.controller.helper;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TransferObject {
     String studyOID;

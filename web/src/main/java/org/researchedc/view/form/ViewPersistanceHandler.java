@@ -11,12 +11,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A class that handles persistent values that must appear in forms when they
  * are generated.
  */
 public class ViewPersistanceHandler {
+
+    @Autowired
+    protected ItemDataDAO itemDataDao;
     private List<ItemDataBean> itemDataBeans;
     private ViewBuilderUtil viewBuilderUtil;
 
@@ -29,7 +33,7 @@ public class ViewPersistanceHandler {
     public List<ItemDataBean> fetchPersistedData(int sectionId, int eventcrfId) {
 
         //SessionManager sessionManager = new SessionManager();
-        ItemDataDAO itemDataDAO = new ItemDataDAO(SessionManager.getStaticDataSource());
+        ItemDataDAO itemDataDAO = this.itemDataDao;
         List<ItemDataBean> itemDataBeans = itemDataDAO.findAllActiveBySectionIdAndEventCRFId(sectionId, eventcrfId);
         return itemDataBeans == null ? new ArrayList<ItemDataBean>() : itemDataBeans;
     }

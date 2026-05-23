@@ -1,6 +1,7 @@
 package org.researchedc.web.table.sdv;
 
 import org.jmesa.core.filter.FilterMatcher;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *  A FilterMatcher designed to filter values of source data verification in a Jmesa table cell.

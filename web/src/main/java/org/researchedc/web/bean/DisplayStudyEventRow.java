@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.researchedc.bean.managestudy.DisplayStudyEventBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author jxu

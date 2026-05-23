@@ -1,12 +1,5 @@
 package org.researchedc.module.legacy.internal;
 
-import javax.sql.DataSource;
-import org.researchedc.dao.extract.DatasetDAO;
-import org.researchedc.dao.extract.FilterDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**

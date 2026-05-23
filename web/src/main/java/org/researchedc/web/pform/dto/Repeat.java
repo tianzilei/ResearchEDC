@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.researchedc.bean.submit.SectionBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class Repeat {
 

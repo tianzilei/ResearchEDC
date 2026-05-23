@@ -20,6 +20,7 @@ import org.jmesa.view.html.toolbar.ClearItemRenderer;
 import org.jmesa.view.html.toolbar.ToolbarItem;
 import org.jmesa.view.html.toolbar.ToolbarItemRenderer;
 import org.jmesa.view.html.toolbar.ToolbarItemType;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ListNotesTableToolbar extends DefaultToolbar {
     private ResourceBundle reswords = ResourceBundleProvider.getWordsBundle();

@@ -3,6 +3,8 @@ package org.researchedc.ws;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ws.context.MessageContext;
@@ -17,6 +19,8 @@ import javax.sql.DataSource;
 public class UserPermissionInterceptor implements EndpointInterceptor {
 
     private final DataSource dataSource;
+    @Autowired
+    private UserAccountDAO userAccountDao;
 
     public UserPermissionInterceptor(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -31,7 +35,6 @@ public class UserPermissionInterceptor implements EndpointInterceptor {
         } else {
             username = principal.toString();
         }
-        UserAccountDAO userAccountDao = new UserAccountDAO(dataSource);
         UserAccountBean userAccountBean = ((UserAccountBean) userAccountDao.findByUserName(username));
         Boolean result = userAccountBean.getRunWebservices();
         if (!result) {

@@ -10,8 +10,8 @@ import jakarta.servlet.http.HttpSession;
 
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.UserAccountBean;
+import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.legacy.dao.IUserAccountDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -40,7 +40,7 @@ public class OidcSessionBridgeSuccessHandler implements AuthenticationSuccessHan
             if (username != null) {
                 DataSource ds = resolveDataSource(request);
                 if (ds != null) {
-                    IUserAccountDAO dao = new IUserAccountDAOImpl(ds);
+                    IUserAccountDAO dao = new UserAccountDAO(ds);
                     UserAccountBean ub = (UserAccountBean) dao.findByUserName(username);
                     if (ub == null || ub.getId() <= 0) {
                         // JIT provisioning: create local user from OIDC claims

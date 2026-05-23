@@ -104,6 +104,15 @@ public class CrfService {
         crfVersionRepository.deleteById(crfVersionId);
     }
 
+    @Transactional
+    public void updateVersionStatus(Integer crfVersionId, Integer statusId) {
+        CrfVersionEntity entity = crfVersionRepository.findById(crfVersionId)
+                .orElseThrow(() -> new NoSuchElementException("CRF version not found: " + crfVersionId));
+        entity.setStatusId(statusId);
+        entity.setDateUpdated(LocalDateTime.now());
+        crfVersionRepository.save(entity);
+    }
+
     private CrfSummaryDTO toSummary(CrfEntity e) {
         CrfSummaryDTO dto = new CrfSummaryDTO();
         dto.setCrfId(e.getCrfId());

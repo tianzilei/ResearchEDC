@@ -43,27 +43,22 @@ import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.hibernate.CrfVersionDao;
-import org.researchedc.dao.hibernate.EventCrfDao;
-import org.researchedc.dao.hibernate.StudyEventDao;
-import org.researchedc.dao.hibernate.StudySubjectDao;
-
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
-import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.DaoProvider;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.admin.AuditDAO;
+import org.researchedc.dao.hibernate.EventCrfDao;
+import org.researchedc.dao.hibernate.StudyEventDao;
+import org.researchedc.dao.hibernate.StudySubjectDao;
+import org.researchedc.dao.hibernate.CrfVersionDao;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.datamap.CrfVersion;
 import org.researchedc.domain.datamap.EventCrf;
@@ -85,9 +80,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 @Controller
 public class BatchCRFMigrationController implements Runnable {
+
+    @Autowired
+    protected ICrfDAO crfDao;
+
+    @Autowired
+    protected EventDefinitionCRFDao eventDefinitionCrfDao;
+
+    @Autowired
+    protected IStudyEventDefinitionDAO studyEventDefinitionDao;
+
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
+
+    @Autowired
+    protected AuditDAO auditDao;
 
     @Autowired
     private DataSource dataSource;
@@ -100,7 +114,9 @@ public class BatchCRFMigrationController implements Runnable {
 
     @Autowired
     private StudySubjectDao studySubjectDao;
+    @Autowired
     private StudyEventDao studyEventDao;
+    @Autowired
     private CrfVersionDao crfVersionDao;
 
     @Autowired
@@ -518,48 +534,47 @@ public class BatchCRFMigrationController implements Runnable {
 
     @SuppressWarnings("rawtypes")
     private IStudyDAO sdao() {
-        return new StudyDAO(dataSource);
+        return this.studyDao;
     }
 
     @SuppressWarnings("rawtypes")
-    private EventCRFDao ecdao() {
-        return new EventCRFDAO(dataSource);
+    private EventCRFDAO ecdao() {
+        return DaoProvider.getDao(EventCRFDAO.class);
     }
 
     private IStudyEventDAO sedao() {
-        return new StudyEventDAO(dataSource);
+        return DaoProvider.getDao(IStudyEventDAO.class);
     }
 
     @SuppressWarnings("rawtypes")
-    private IStudyEventDefinitionDAO seddao() {
-        return new StudyEventDefinitionDAO(dataSource);
-    }
-
-    @SuppressWarnings("rawtypes")
-    private IStudySubjectDAO ssdao() {
-        return new StudySubjectDAO(dataSource);
+    private StudySubjectDAO ssdao() {
+        return DaoProvider.getDao(StudySubjectDAO.class);
     }
 
     private EventDefinitionCRFDao edcdao() {
-        return new EventDefinitionCRFDAO(dataSource);
+        return this.eventDefinitionCrfDao;
     }
 
     private IUserAccountDAO uadao() {
-        return new UserAccountDAO(dataSource);
+        return this.userAccountDao;
     }
 
     @SuppressWarnings("rawtypes")
     private ICrfDAO cdao() {
-        return new CRFDAO(dataSource);
+        return this.crfDao;
     }
 
     @SuppressWarnings("rawtypes")
     private CRFVersionDAO cvdao() {
-        return new CRFVersionDAO(dataSource);
+        return DaoProvider.getDao(CRFVersionDAO.class);
+    }
+
+    private IStudyEventDefinitionDAO seddao() {
+        return this.studyEventDefinitionDao;
     }
 
     private AuditDao auditDao() {
-        return new AuditDAO(dataSource);
+        return this.auditDao;
     }
 
     private UserAccountBean getCurrentUser(HttpServletRequest request) {

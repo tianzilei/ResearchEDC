@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "ModuleUserAccount")
-@Table(name = "user_account")
+@Table(name = "module_user_account")
 public class UserAccountEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-    @SequenceGenerator(name = "user_seq", sequenceName = "user_account_user_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "user_seq", sequenceName = "module_user_account_id_seq", allocationSize = 1)
     @Column(name = "user_id")
     private Integer userId;
 

@@ -3,12 +3,12 @@ package org.researchedc.module.subjectgroup.entity;
 import jakarta.persistence.*;
 
 @Entity(name = "ModuleStudyGroup")
-@Table(name = "study_group")
+@Table(name = "module_study_group")
 public class StudyGroupEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sg_seq")
-    @SequenceGenerator(name = "sg_seq", sequenceName = "study_group_study_group_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "module_study_group_seq")
+    @SequenceGenerator(name = "module_study_group_seq", sequenceName = "module_study_group_id_seq", allocationSize = 1)
     @Column(name = "study_group_id")
     private Integer studyGroupId;
 

@@ -25,6 +25,8 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -58,8 +60,8 @@ public class UpdateSubjectGroupClassServlet extends SecureController {
             addPageMessage(respage.getString("please_choose_a_subject_group_class_to_edit"));
             forwardPage(Page.SUBJECT_GROUP_CLASS_LIST_SERVLET);
         } else {
-            StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
-            StudyGroupDAO sgdao = new StudyGroupDAO(sm.getDataSource());
+            StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
+            StudyGroupDAO sgdao = this.studyGroupDao;
 
             if (!fp.isSubmitted()) {
                 StudyGroupClassBean sgcb = (StudyGroupClassBean) sgcdao.findByPK(classId);
@@ -158,7 +160,7 @@ public class UpdateSubjectGroupClassServlet extends SecureController {
         StudyGroupClassBean group = (StudyGroupClassBean) session.getAttribute("group");
         ArrayList studyGroups = (ArrayList) session.getAttribute("studyGroups");
         ArrayList newStudyGroups = (ArrayList) session.getAttribute("newStudyGroups");
-        StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(sm.getDataSource());
+        StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
         group.setUpdater(ub);
         group.setUpdatedDate(new Date());
         group = (StudyGroupClassBean) sgcdao.update(group);
@@ -166,7 +168,7 @@ public class UpdateSubjectGroupClassServlet extends SecureController {
         if (!group.isActive()) {
             addPageMessage(respage.getString("the_subject_group_class_no_updated_database"));
         } else {
-            StudyGroupDAO sgdao = new StudyGroupDAO(sm.getDataSource());
+            StudyGroupDAO sgdao = this.studyGroupDao;
             for (int i = 0; i < studyGroups.size(); i++) {
                 StudyGroupBean sg = (StudyGroupBean) studyGroups.get(i);
                 sg.setStudyGroupClassId(group.getId());

@@ -7,11 +7,12 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.web.SQLInitServlet;
 import org.researchedc.web.job.ImportSpringJob;
 import org.researchedc.web.job.TriggerService;
@@ -31,8 +32,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class UpdateJobImportServlet extends SecureController {
+    @Autowired
+    private UserAccountDAO userAccountDao;
 
     private static String SCHEDULER = "schedulerFactoryBean";
     private static String TRIGGER_IMPORT_GROUP = "importTrigger";
@@ -84,8 +88,8 @@ public class UpdateJobImportServlet extends SecureController {
 
         Date jobDate = trigger.getNextFireTime();
 
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
+        IStudyDAO sdao = this.studyDao;
 
         // ArrayList studies = udao.findStudyByUser(ub.getName(), (ArrayList)
         // sdao.findAll());
@@ -142,7 +146,7 @@ public class UpdateJobImportServlet extends SecureController {
                 setUpServlet(trigger);
                 forwardPage(Page.UPDATE_JOB_IMPORT);
             } else {
-                IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+                IStudyDAO studyDAO = this.studyDao;
                 int studyId = fp.getInt(CreateJobImportServlet.STUDY_ID);
                 StudyBean study = (StudyBean) studyDAO.findByPK(studyId);
                 // in the place of a users' current study, tbh

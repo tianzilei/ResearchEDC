@@ -12,6 +12,7 @@ import org.researchedc.domain.datamap.StudyEvent;
 import org.researchedc.domain.datamap.StudySubject;
 import org.researchedc.domain.user.UserAccount;
 import org.springframework.validation.Errors;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class SubmissionContainer {
     private String requestBody = null;

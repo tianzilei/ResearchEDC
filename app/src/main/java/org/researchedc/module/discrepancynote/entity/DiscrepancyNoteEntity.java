@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "ModuleDiscrepancyNote")
-@Table(name = "discrepancy_note")
+@Table(name = "module_discrepancy_note")
 public class DiscrepancyNoteEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "discrepancy_note_id_gen")
-    @SequenceGenerator(name = "discrepancy_note_id_gen", sequenceName = "discrepancy_note_discrepancy_note_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "module_discrepancy_note_seq")
+    @SequenceGenerator(name = "module_discrepancy_note_seq", sequenceName = "module_discrepancy_note_id_seq", allocationSize = 1)
     @Column(name = "discrepancy_note_id")
     private Integer discrepancyNoteId;
 

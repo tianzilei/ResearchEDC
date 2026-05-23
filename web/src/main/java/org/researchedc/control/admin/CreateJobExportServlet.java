@@ -17,6 +17,7 @@ import org.researchedc.bean.extract.ExtractPropertyBean;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
@@ -38,6 +39,7 @@ import org.quartz.TriggerKey;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  *
@@ -45,6 +47,11 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
  *
  */
 public class CreateJobExportServlet extends SecureController {
+    @Autowired
+    IStudyDAO studyDao;
+
+    @Autowired
+    private DatasetDAO datasetDao;
     public static final String PERIOD = "periodToRun";
     public static final String FORMAT_ID = "formatId";
     public static final String DATASET_ID = "dsId";
@@ -100,7 +107,7 @@ public class CreateJobExportServlet extends SecureController {
         // }
         // // possible error with dates? yep
         // }
-        DatasetDAO dsdao = new DatasetDAO(sm.getDataSource());
+        DatasetDAO dsdao = this.datasetDao;
         Collection dsList = dsdao.findAllOrderByStudyIdAndName();
         // TODO will have to dress this up to allow for sites then datasets
         request.setAttribute("datasets", dsList);
@@ -159,8 +166,8 @@ public class CreateJobExportServlet extends SecureController {
             } else {
                 logger.info("found no validation errors, continuing");
 
-                IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
-                DatasetDAO datasetDao = new DatasetDAO(sm.getDataSource());
+                IStudyDAO studyDAO = this.studyDao;
+                DatasetDAO datasetDao = this.datasetDao;
 
                 UserAccountBean userBean = (UserAccountBean) request.getSession().getAttribute("userBean");
                 CoreResources cr =  new CoreResources();

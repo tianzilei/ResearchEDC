@@ -1,6 +1,7 @@
 package org.researchedc.view.form;
 
 import org.jdom.Content;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class has the sole purpose of creating a non-breaking space character

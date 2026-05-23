@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Maintain the breadcrumbs on the page, remain seamless, for example, it gets

@@ -23,3 +23,19 @@ export function useRuleSet(ruleSetId: number | undefined) {
     enabled: !!ruleSetId,
   });
 }
+
+interface RuleDetailDTO {
+  ruleId: number;
+  name: string;
+  description: string;
+  expressionValue: string;
+  enabled: boolean;
+}
+
+export function useRule(ruleId: number) {
+  return useAppQuery<RuleDetailDTO>({
+    queryKey: ["rule", ruleId],
+    queryFn: () => apiClient.get<RuleDetailDTO>(`/api/legacy/rules/${ruleId}`),
+    enabled: !!ruleId,
+  });
+}

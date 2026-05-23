@@ -37,6 +37,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author jxu
@@ -140,7 +141,7 @@ public class ViewStudyEventsServlet extends SecureController {
 
         request.setAttribute(STATUS_MAP, SubjectEventStatus.toArrayList());
 
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         ArrayList definitions = seddao.findAllByStudy(currentStudy);
         request.setAttribute(DEFINITION_MAP, definitions);
 
@@ -176,12 +177,12 @@ public class ViewStudyEventsServlet extends SecureController {
      * @return
      */
     private ArrayList genTables(FormProcessor fp, ArrayList definitions, Date startDate, Date endDate, int sedId, int definitionId, int statusId) {
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
+        EventCRFDao ecdao = this.eventCrfDao;
         ArrayList allEvents = new ArrayList();
         definitions = findDefinitionById(definitions, definitionId);
         // YW <<
-        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = this.studySubjectDao;
         ArrayList studySubjects = ssdao.findAllByStudyId(currentStudy.getId());
         // YW >>
         for (int i = 0; i < definitions.size(); i++) {
@@ -294,8 +295,6 @@ public class ViewStudyEventsServlet extends SecureController {
 
             ved.setStudyEventTable(table);
 
-
-
             if (!events.isEmpty()) {
                 allEvents.add(ved);
             }
@@ -318,12 +317,12 @@ public class ViewStudyEventsServlet extends SecureController {
      * @return
      */
     private ArrayList genEventsForPrint(FormProcessor fp, ArrayList definitions, Date startDate, Date endDate, int sedId, int definitionId, int statusId) {
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
+        EventCRFDao ecdao = this.eventCrfDao;
         ArrayList allEvents = new ArrayList();
         definitions = findDefinitionById(definitions, definitionId);
         // YW <<
-        IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO ssdao = this.studySubjectDao;
         ArrayList studySubjects = ssdao.findAllByStudyId(currentStudy.getId());
         // YW >>
         for (int i = 0; i < definitions.size(); i++) {

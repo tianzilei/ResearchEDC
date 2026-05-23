@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import jakarta.servlet.ServletOutputStream;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author ywang (Dec., 2008)
@@ -40,7 +42,7 @@ public class DownloadAttachedFileServlet extends SecureController {
         Locale locale = LocaleResolver.getLocale(request);
         FormProcessor fp = new FormProcessor(request);
 /*        int eventCRFId = fp.getInt("eventCRFId");
-        EventCRFDao edao = new EventCRFDAO(sm.getDataSource());
+        EventCRFDao edao = this.eventCrfDao;
 
         if (eventCRFId > 0) {
             if (!entityIncluded(eventCRFId, ub.getName(), edao, sm.getDataSource())) {
@@ -94,14 +96,14 @@ public class DownloadAttachedFileServlet extends SecureController {
                 logger.info(currentStudy.getName() + " existing filePathName=" + filePathName);
             } else {
                 if (currentStudy.isSite(parentStudyId)) {
-                    testName = testPath + ((StudyBean) new StudyDAO(sm.getDataSource()).findByPK(parentStudyId)).getOid() + tail;
+                    testName = testPath + ((StudyBean) this.studyDao.findByPK(parentStudyId)).getOid() + tail;
                     temp = new File(testName);
                     if (temp.exists()) {
                         filePathName = testName;
                         logger.info("parent existing filePathName=" + filePathName);
                     }
                 } else {
-                    ArrayList<StudyBean> sites = (ArrayList<StudyBean>) new StudyDAO(sm.getDataSource()).findAllByParent(currentStudy.getId());
+                    ArrayList<StudyBean> sites = (ArrayList<StudyBean>) this.studyDao.findAllByParent(currentStudy.getId());
                     for (StudyBean s : sites) {
                         testPath = Utils.getAttachedFilePath(s);
                         testName = testPath + tail;//+ s.getIdentifier() + tail;

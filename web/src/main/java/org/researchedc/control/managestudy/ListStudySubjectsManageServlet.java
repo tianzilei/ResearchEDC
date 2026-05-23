@@ -13,6 +13,7 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author ssachs

@@ -13,6 +13,7 @@ import org.researchedc.control.form.FormProcessor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class Table {
     public static final int NUM_ROWS_PER_PAGE = 10;

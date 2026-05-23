@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import org.researchedc.bean.odmbeans.OdmClinicalDataBean;
 import org.researchedc.service.extract.GenerateClinicalDataService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 

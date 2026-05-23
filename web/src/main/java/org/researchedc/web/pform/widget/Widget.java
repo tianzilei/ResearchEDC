@@ -4,6 +4,7 @@ import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.web.pform.dto.Bind;
 import org.researchedc.web.pform.dto.UserControl;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public interface Widget {
 	

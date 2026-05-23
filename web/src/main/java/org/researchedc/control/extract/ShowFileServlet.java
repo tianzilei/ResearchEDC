@@ -21,6 +21,8 @@ import org.researchedc.web.bean.EntityBeanTable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * <P>
@@ -31,6 +33,9 @@ import java.util.Locale;
  *
  */
 public class ShowFileServlet extends SecureController {
+
+    @Autowired
+    protected DatasetDAO datasetDao;
 
     Locale locale;
 
@@ -45,10 +50,10 @@ public class ShowFileServlet extends SecureController {
         FormProcessor fp = new FormProcessor(request);
         int fileId = fp.getInt("fileId");
         int dsId = fp.getInt("datasetId");
-        DatasetDAO dsdao = new DatasetDAO(sm.getDataSource());
+        DatasetDAO dsdao = this.datasetDao;
         DatasetBean db = (DatasetBean) dsdao.findByPK(dsId);
 
-        ArchivedDatasetFileDAO asdfdao = new ArchivedDatasetFileDAO(sm.getDataSource());
+        ArchivedDatasetFileDAO asdfdao = this.archivedDatasetFileDao;
         ArchivedDatasetFileBean asdfBean = (ArchivedDatasetFileBean) asdfdao.findByPK(fileId);
 
         ArrayList newFileList = new ArrayList();

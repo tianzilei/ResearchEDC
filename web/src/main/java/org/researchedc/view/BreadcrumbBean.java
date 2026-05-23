@@ -9,6 +9,7 @@ package org.researchedc.view;
 
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <P>

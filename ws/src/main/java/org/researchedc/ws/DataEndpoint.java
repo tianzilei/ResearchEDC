@@ -30,6 +30,8 @@ import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.logic.rulerunner.ExecutionMode;
 import org.researchedc.logic.rulerunner.ImportDataRuleRunnerContainer;
@@ -71,6 +73,8 @@ public class DataEndpoint {
     private final MessageSource messages;
     private final CoreResources coreResources;
     private final Locale locale;
+    @Autowired
+    private UserAccountDAO userAccountDao;
     private final DataImportService dataImportService = new DataImportService();
 
     private RuleSetServiceInterface ruleSetService;
@@ -286,7 +290,6 @@ public class DataEndpoint {
         } else {
             username = principal.toString();
         }
-        UserAccountDAO userAccountDao = new UserAccountDAO(dataSource);
         return (UserAccountBean) userAccountDao.findByUserName(username);
     }
 

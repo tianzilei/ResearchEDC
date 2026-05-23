@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.log.LoggingConstants;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author pgawade

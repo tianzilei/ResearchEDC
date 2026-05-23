@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.sql.DataSource;
+import org.researchedc.dao.spi.DaoProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * To view the table of content of an event CRF
@@ -69,15 +72,15 @@ public class ViewTableOfContentServlet extends SecureController {
     public static DisplayTableOfContentsBean getDisplayBean(DataSource ds, int crfVersionId) {
         DisplayTableOfContentsBean answer = new DisplayTableOfContentsBean();
 
-        SectionDAO sdao = new SectionDAO(ds);
+        SectionDAO sdao = DaoProvider.getDao(SectionDAO.class);
         ArrayList sections = getSections(crfVersionId, ds);
         answer.setSections(sections);
 
-        CRFVersionDAO cvdao = new CRFVersionDAO(ds);
+        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
         CRFVersionBean cvb = (CRFVersionBean) cvdao.findByPK(crfVersionId);
         answer.setCrfVersion(cvb);
 
-        ICrfDAO cdao = new CRFDAO(ds);
+        ICrfDAO cdao = DaoProvider.getDao(CRFDAO.class);
         CRFBean cb = (CRFBean) cdao.findByPK(cvb.getCrfId());
         answer.setCrf(cb);
 
@@ -89,7 +92,7 @@ public class ViewTableOfContentServlet extends SecureController {
     }
 
     public static ArrayList getSections(int crfVersionId, DataSource ds) {
-        SectionDAO sdao = new SectionDAO(ds);
+        SectionDAO sdao = DaoProvider.getDao(SectionDAO.class);
 
         HashMap numItemsBySectionId = sdao.getNumItemsBySectionId();
         ArrayList sections = sdao.findAllByCRFVersionId(crfVersionId);

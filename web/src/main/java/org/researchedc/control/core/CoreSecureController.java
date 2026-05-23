@@ -47,6 +47,17 @@ import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -66,12 +77,14 @@ import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 /**
  * Abstract class for creating a controller servlet and extending capabilities of SecureController. However, not using the SingleThreadModel.
  * @author jnyayapathi
@@ -83,6 +96,41 @@ public abstract class CoreSecureController extends HttpServlet {
     private static final Logger LOGGER = LoggerFactory.getLogger(CoreSecureController.class);
 
     protected HashMap errors = new HashMap();
+
+    @Autowired
+    protected ArchivedDatasetFileDAO archivedDatasetFileDao;
+    @Autowired
+    protected IStudyDAO studyDao;
+    @Autowired
+    protected StudyParameterValueDAO studyParameterValueDao;
+    @Autowired
+    protected IStudyEventDefinitionDAO studyEventDefinitionDao;
+    @Autowired
+    protected StudyGroupClassDAO studyGroupClassDao;
+    @Autowired
+    protected StudyGroupDAO studyGroupDao;
+    @Autowired
+    protected ICrfDAO crfDao;
+    @Autowired
+    protected IStudySubjectDAO studySubjectDao;
+    @Autowired
+    protected IStudyEventDAO studyEventDao;
+    @Autowired
+    protected EventCRFDao eventCrfDao;
+    @Autowired
+    protected ItemDataDAO itemDataDao;
+    @Autowired
+    protected ItemDAO itemDao;
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
+    @Autowired
+    protected EventDefinitionCRFDao eventDefinitionCrfDao;
+    @Autowired
+    protected IDiscrepancyNoteDAO discrepancyNoteDao;
+    @Autowired
+    protected ISubjectDAO subjectDao;
+    @Autowired
+    protected SubjectGroupMapDAO subjectGroupMapDao;
 
     private static String SCHEDULER = "schedulerFactoryBean";
 
@@ -148,6 +196,7 @@ public abstract class CoreSecureController extends HttpServlet {
 
         ServletContext context = getServletContext();
         ApplicationContext appCtx = SpringServletAccess.getApplicationContext(context);
+        appCtx.getAutowireCapableBeanFactory().autowireBean(this);
         SessionManager sm = new SessionManager(appCtx);
         dataSource = sm.getDataSource();
         this.crfLocker = appCtx.getBean(CRFLocker.class);

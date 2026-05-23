@@ -17,12 +17,12 @@ import org.researchedc.core.EmailEngine;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.core.SessionManager;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.SQLInitServlet;
 import org.researchedc.web.filter.OpenClinicaJdbcService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -35,6 +35,9 @@ import java.util.Date;
  *          Servlet of requesting password
  */
 public class RequestPasswordServlet extends SecureController {
+
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
 
     @Override
     public void mayProceed() throws InsufficientPermissionException {
@@ -86,9 +89,8 @@ public class RequestPasswordServlet extends SecureController {
 
         sm = new SessionManager(null, ubForm.getName(), SpringServletAccess.getApplicationContext(context));
 
-        IUserAccountDAO uDAO = new UserAccountDAO(sm.getDataSource());
         // see whether this user in the DB
-        UserAccountBean ubDB = (UserAccountBean) uDAO.findByUserName(ubForm.getName());
+        UserAccountBean ubDB = (UserAccountBean) userAccountDao.findByUserName(ubForm.getName());
 
         UserAccountBean updater = ubDB;
 
@@ -130,7 +132,7 @@ public class RequestPasswordServlet extends SecureController {
 
                     logger.info("user bean to be updated:" + ubDB.getId() + ubDB.getName() + ubDB.getActiveStudyId());
 
-                    uDAO.update(ubDB);
+                    userAccountDao.update(ubDB);
                     sendPassword(newPass, ubDB);
                 } else {
                     addPageMessage(respage.getString("your_password_not_verified_try_again"));

@@ -10,6 +10,7 @@
 package org.researchedc.control.form;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A Validator for 'calculation' and 'group-calculation' type Items whose

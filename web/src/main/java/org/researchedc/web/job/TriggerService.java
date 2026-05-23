@@ -23,6 +23,8 @@ import org.researchedc.control.submit.ImportCRFInfoContainer;
 import org.quartz.JobDataMap;
 import org.quartz.SimpleTrigger;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
+import org.researchedc.dao.spi.DaoProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TriggerService {
 
@@ -112,7 +114,7 @@ public class TriggerService {
         // jobDataMap.get(ExampleSpringJob.CDISC13OC));
         jobDataMap.put(SPSS, spss);
         jobDataMap.put(USER_ID, userAccount.getId());
-        // IStudyDAO studyDAO = new StudyDAO();
+        // IStudyDAO studyDAO = DaoProvider.getDao(StudyDAO.class);
         jobDataMap.put(STUDY_ID, study.getId());
         jobDataMap.put(STUDY_NAME, study.getName());
         jobDataMap.put(STUDY_OID, study.getOid());

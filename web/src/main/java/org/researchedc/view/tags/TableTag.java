@@ -10,6 +10,7 @@ import jakarta.servlet.jsp.JspContext;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.SimpleTagSupport;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by IntelliJ IDEA. User: bruceperry Date: May 4, 2007

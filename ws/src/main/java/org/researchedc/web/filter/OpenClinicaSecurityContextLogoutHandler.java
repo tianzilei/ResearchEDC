@@ -6,6 +6,8 @@ import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
 import org.researchedc.domain.technicaladmin.LoginStatus;
 import org.researchedc.i18n.util.ResourceBundleProvider;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
@@ -26,7 +28,8 @@ import javax.sql.DataSource;
 public class OpenClinicaSecurityContextLogoutHandler extends SecurityContextLogoutHandler {
 
     AuditUserLoginDao auditUserLoginDao;
-    UserAccountDAO userAccountDao;
+    @Autowired
+    private UserAccountDAO userAccountDao;
     DataSource dataSource;
 
     // ~ Methods ========================================================================================================
@@ -69,7 +72,7 @@ public class OpenClinicaSecurityContextLogoutHandler extends SecurityContextLogo
     }
 
     public UserAccountDAO getUserAccountDao() {
-        return userAccountDao != null ? userAccountDao : new UserAccountDAO(dataSource);
+        return userAccountDao;
     }
 
     public AuditUserLoginDao getAuditUserLoginDao() {

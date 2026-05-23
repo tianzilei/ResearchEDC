@@ -34,6 +34,7 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author thickerson
@@ -42,7 +43,19 @@ import java.util.Locale;
  */
 public class StudyAuditLogServlet extends SecureController {
 
-    Locale locale;
+    
+    @Autowired
+    private AuditDao auditDao;
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+    @Autowired
+    private ISubjectDAO subjectDao;
+    @Autowired
+    private IUserAccountDAO userAccountDao;
+
+Locale locale;
 
     // <ResourceBundle resword,resexception,respage;
 
@@ -68,20 +81,20 @@ public class StudyAuditLogServlet extends SecureController {
     protected void processRequest() throws Exception {
         int studyId = currentStudy.getId();
 
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
-        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
-        AuditDao adao = new AuditDAO(sm.getDataSource());
-        IUserAccountDAO uadao = new UserAccountDAO(sm.getDataSource());
+        IStudySubjectDAO subdao = this.studySubjectDao;
+        ISubjectDAO sdao = this.subjectDao;
+        AuditDao adao = this.auditDao;
+        IUserAccountDAO uadao = this.userAccountDao;
 
         FormProcessor fp = new FormProcessor(request);
 
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
-        IStudyDAO studydao = new StudyDAO(sm.getDataSource());
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
+        EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
+        EventCRFDao ecdao = this.eventCrfDao;
+        IStudyDAO studydao = this.studyDao;
+        ICrfDAO cdao = this.crfDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
 
         StudyAuditLogTableFactory factory = new StudyAuditLogTableFactory();
         factory.setSubjectDao(sdao);

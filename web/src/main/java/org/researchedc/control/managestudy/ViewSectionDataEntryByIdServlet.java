@@ -17,6 +17,8 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Builds on top of ViewSectionDataEntryServlet, Doesn't add much other than using OIDs to get to the View Screen.
@@ -25,7 +27,14 @@ import org.researchedc.web.InsufficientPermissionException;
  */
 public class ViewSectionDataEntryByIdServlet extends ViewSectionDataEntryServlet {
 
-    private static final long serialVersionUID = 1L;
+    @Autowired
+    protected IStudyDAO studyDao;
+
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+
+private static final long serialVersionUID = 1L;
 
     /*
      * (non-Javadoc)
@@ -42,10 +51,10 @@ public class ViewSectionDataEntryByIdServlet extends ViewSectionDataEntryServlet
      */
     @Override
     public void processRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        IStudyDAO studyDao = new StudyDAO(getDataSource());
+        IStudyDAO studyDao = this.studyDao;
        
         StudyBean  currentStudy = (StudyBean) studyDao.findByPK(1);
-        CRFVersionDAO crfVersionDao = new CRFVersionDAO(getDataSource());
+        CRFVersionDAO crfVersionDao = this.crfVersionDao;
         if (request.getParameter("id") == null) {
             forwardPage(Page.LOGIN, request, response);
         }

@@ -3,12 +3,12 @@ package org.researchedc.module.crf.entity;
 import jakarta.persistence.*;
 
 @Entity(name = "ModuleItemFormMetadata")
-@Table(name = "item_form_metadata")
+@Table(name = "module_item_form_metadata")
 public class ItemFormMetadataEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ifm_seq")
-    @SequenceGenerator(name = "ifm_seq", sequenceName = "item_form_metadata_item_form_metadata_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "module_ifm_seq")
+    @SequenceGenerator(name = "module_ifm_seq", sequenceName = "module_ifm_id_seq", allocationSize = 1)
     @Column(name = "item_form_metadata_id")
     private Integer itemFormMetadataId;
 

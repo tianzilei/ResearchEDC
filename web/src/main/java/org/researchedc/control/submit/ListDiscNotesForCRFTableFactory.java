@@ -65,6 +65,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ListDiscNotesForCRFTableFactory extends AbstractTableFactory {
 

@@ -8,10 +8,15 @@ import org.researchedc.view.Page;
 import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ViewItemAuditLogServlet extends SecureController {
 
-    public void mayProceed() throws InsufficientPermissionException {
+    
+    @Autowired
+    private AuditDao auditDao;
+
+public void mayProceed() throws InsufficientPermissionException {
         if (ub.isSysAdmin()) {
             return;
         }
@@ -25,7 +30,7 @@ public class ViewItemAuditLogServlet extends SecureController {
     }
 
     public void processRequest () throws Exception{
-        AuditDao adao = new AuditDAO(sm.getDataSource());
+        AuditDao adao = this.auditDao;
         FormProcessor fp = new FormProcessor(request);
         String auditTable = fp.getString("auditTable");
         if(auditTable.equalsIgnoreCase("studysub")){

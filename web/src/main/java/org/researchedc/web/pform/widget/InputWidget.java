@@ -16,6 +16,7 @@ import org.researchedc.web.pform.dto.Label;
 import org.researchedc.web.pform.dto.Repeat;
 import org.researchedc.web.pform.dto.UserControl;
 import org.w3c.dom.svg.GetSVGDocument;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class InputWidget extends BaseWidget {
 	private ItemBean item = null;

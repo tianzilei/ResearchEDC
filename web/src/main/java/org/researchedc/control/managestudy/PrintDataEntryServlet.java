@@ -58,6 +58,8 @@ import java.util.Locale;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author Krikor Krumlian 10/26/2006
@@ -67,7 +69,35 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class PrintDataEntryServlet extends DataEntryServlet {
 
-    Locale locale;
+    @Autowired
+    protected ICrfDAO crfDao;
+
+    @Autowired
+    protected IStudyEventDefinitionDAO studyEventDefinitionDao;
+
+    @Autowired
+    protected IStudySubjectDAO studySubjectDao;
+
+    @Autowired
+    protected EventCRFDao eventCrfDao;
+
+    @Autowired
+    protected IStudyEventDAO studyEventDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
+
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private ItemGroupDAO itemGroupDao;
+    @Autowired
+    private SectionDAO sectionDao;
+    @Autowired
+    private ISubjectDAO subjectDao;
+
+Locale locale;
 
     // < ResourceBundleresword, resworkflow, respage,resexception;
 
@@ -103,7 +133,7 @@ public class PrintDataEntryServlet extends DataEntryServlet {
         int eventCRFId = fp.getInt("ecId");
         //JN:The following were the the global variables, moved as local.
         EventCRFBean ecb ;
-        SectionDAO sdao = new SectionDAO(getDataSource());
+        SectionDAO sdao = this.sectionDao;
        ArrayList<SectionBean> allSectionBeans = new ArrayList<SectionBean>();
         ArrayList sectionBeans = new ArrayList();
         String age = "";
@@ -119,7 +149,7 @@ public class PrintDataEntryServlet extends DataEntryServlet {
             ecb = new EventCRFBean();
             // super.ecb.setCRFVersionId(sb.getCRFVersionId());
         } else {
-            EventCRFDao ecdao = new EventCRFDAO(getDataSource());
+            EventCRFDao ecdao = this.eventCrfDao;
             ecb = (EventCRFBean) ecdao.findByPK(eventCRFId);
 
             // Get all the SectionBeans attached to this ECB
@@ -133,16 +163,16 @@ public class PrintDataEntryServlet extends DataEntryServlet {
                 }
             }
             // This is the StudySubjectBean
-            IStudySubjectDAO ssdao = new StudySubjectDAO(getDataSource());
+            IStudySubjectDAO ssdao = this.studySubjectDao;
             StudySubjectBean sub = (StudySubjectBean) ssdao.findByPK(ecb.getStudySubjectId());
             // This is the SubjectBean
-            ISubjectDAO subjectDao = new SubjectDAO(getDataSource());
+            ISubjectDAO subjectDao = this.subjectDao;
             int subjectId = sub.getSubjectId();
             int studyId = sub.getStudyId();
             SubjectBean subject = (SubjectBean) subjectDao.findByPK(subjectId);
-            IStudyEventDAO sedao = new StudyEventDAO(getDataSource());
+            IStudyEventDAO sedao = this.studyEventDao;
             StudyEventBean se = (StudyEventBean) sedao.findByPK(ecb.getStudyEventId());
-            IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(getDataSource());
+            IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(se.getStudyEventDefinitionId());
             se.setStudyEventDefinition(sed);
             // Let us process the age
@@ -151,7 +181,7 @@ public class PrintDataEntryServlet extends DataEntryServlet {
                 age = Utils.getInstacne().processAge(sub.getEnrollmentDate(), subject.getDateOfBirth());
             }
             // Get the study then the parent study
-            IStudyDAO studydao = new StudyDAO(getDataSource());
+            IStudyDAO studydao = this.studyDao;
             StudyBean study = (StudyBean) studydao.findByPK(studyId);
 
             if (study.getParentStudyId() > 0) {
@@ -175,7 +205,7 @@ public class PrintDataEntryServlet extends DataEntryServlet {
         }
 
         // Find out whether the sections involve groups
-        ItemGroupDAO itemGroupDao = new ItemGroupDAO(getDataSource());
+        ItemGroupDAO itemGroupDao = this.itemGroupDao;
         // Find truely grouped tables, not groups with a name of 'Ungrouped'
         // CRF VERSION ID WILL BE 0 IF "ecId" IS NOT IN THE QUERYSTRING
         int crfVersionId = ecb.getCRFVersionId();
@@ -196,8 +226,8 @@ public class PrintDataEntryServlet extends DataEntryServlet {
             handler.setEventCRFId(eventCRFId);
             List<DisplaySectionBean> displaySectionBeans = handler.getDisplaySectionBeans();
 
-            CRFVersionDAO crfVersionDAO = new CRFVersionDAO(getDataSource());
-            ICrfDAO crfDao = new CRFDAO(getDataSource());
+            CRFVersionDAO crfVersionDAO = this.crfVersionDao;
+            ICrfDAO crfDao = this.crfDao;
 
             request.setAttribute("listOfDisplaySectionBeans", displaySectionBeans);
             // Make available the CRF names and versions for

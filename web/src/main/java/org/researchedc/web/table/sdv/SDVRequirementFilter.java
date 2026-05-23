@@ -5,6 +5,7 @@ import org.jmesa.view.html.editor.DroplistFilterEditor;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by IntelliJ IDEA.

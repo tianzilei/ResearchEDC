@@ -22,6 +22,8 @@ import org.researchedc.service.rule.RuleSetServiceInterface;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.dao.spi.IRuleDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.rule.RuleSetDAO;
 
 /**
  * @author Krikor Krumlian
@@ -29,7 +31,7 @@ import org.researchedc.dao.spi.IRuleDAO;
  */
 public class RemoveRuleSetServlet extends SecureController {
 
-    private static final long serialVersionUID = 1L;
+    @Autowired
     IRuleSetDAO ruleSetDao;
     RuleSetServiceInterface ruleSetService;
     RuleSetRuleAuditDao ruleSetRuleAuditDao;

@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Verify the Rule import , show records that have Errors as well as records that will be saved.

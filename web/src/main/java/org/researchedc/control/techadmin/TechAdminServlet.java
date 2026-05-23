@@ -19,6 +19,7 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author thickerson
@@ -35,27 +36,27 @@ public class TechAdminServlet extends SecureController {
     @Override
     protected void processRequest() throws Exception {
         // find last 5 modifed studies
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         // ArrayList studies = (ArrayList) sdao.findAllByLimit(true);
         // request.setAttribute("studies", studies);
         ArrayList allStudies = (ArrayList) sdao.findAll();
         // request.setAttribute("allStudyNumber", new
         // Integer(allStudies.size()));
 
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
         // ArrayList users = (ArrayList) udao.findAllByLimit(true);
         // request.setAttribute("users", users);
         ArrayList allUsers = (ArrayList) udao.findAll();
         // request.setAttribute("allUserNumber", new Integer(allUsers.size()));
 
-        ISubjectDAO subdao = new SubjectDAO(sm.getDataSource());
+        ISubjectDAO subdao = this.subjectDao;
         // ArrayList subjects = (ArrayList) subdao.findAllByLimit(true);
         // request.setAttribute("subjects", subjects);
         ArrayList allSubjects = (ArrayList) subdao.findAll();
         // request.setAttribute("allSubjectNumber", new
         // Integer(allSubjects.size()));
 
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+        ICrfDAO cdao = this.crfDao;
         // ArrayList crfs = (ArrayList) cdao.findAllByLimit(true);
         // request.setAttribute("crfs", subjects);
         ArrayList allCrfs = (ArrayList) cdao.findAll();

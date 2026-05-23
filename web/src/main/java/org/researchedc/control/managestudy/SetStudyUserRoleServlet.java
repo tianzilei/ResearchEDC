@@ -25,6 +25,8 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -33,7 +35,11 @@ import java.util.Date;
  * Preferences - Java - Code Style - Code Templates
  */
 public class SetStudyUserRoleServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private IUserAccountDAO userAccountDao;
+
+/**
      *
      */
     @Override
@@ -53,8 +59,8 @@ public class SetStudyUserRoleServlet extends SecureController {
 
     @Override
     public void processRequest() throws Exception {
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
+        IStudyDAO sdao = this.studyDao;
         String name = request.getParameter("name");
         String studyIdString = request.getParameter("studyId");
         if (StringUtil.isBlank(name) || StringUtil.isBlank(studyIdString)) {
@@ -138,7 +144,7 @@ public class SetStudyUserRoleServlet extends SecureController {
      */
     private String sendEmail(UserAccountBean u, StudyUserRoleBean sub) throws Exception {
 
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         StudyBean study = (StudyBean) sdao.findByPK(sub.getStudyId());
         logger.info("Sending email...");
         String body =

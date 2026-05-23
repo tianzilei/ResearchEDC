@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import jakarta.xml.bind.DatatypeConverter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class UploadFileServlet extends SecureController {
     Locale locale;

@@ -11,6 +11,7 @@ import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.view.Table;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author thickerson

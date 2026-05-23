@@ -21,13 +21,14 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InconsistentStateException;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.SQLInitServlet;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author ssachs
@@ -35,6 +36,9 @@ import org.researchedc.web.SQLInitServlet;
  *         Servlet for creating a user account.
  */
 public class EditUserAccountServlet extends SecureController {
+
+    @Autowired
+    private UserAccountDAO userAccountDao;
     public static final String INPUT_FIRST_NAME = "firstName";
 
     public static final String INPUT_LAST_NAME = "lastName";
@@ -74,7 +78,7 @@ public class EditUserAccountServlet extends SecureController {
     public static final String USER_ACCOUNT_NOTIFICATION = "notifyPassword";
 
     private ArrayList getAllStudies() {
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+        IStudyDAO sdao = this.studyDao;
         return (ArrayList) sdao.findAll();
     }
 
@@ -103,7 +107,7 @@ public class EditUserAccountServlet extends SecureController {
         int userId = fp.getInt(ARG_USERID);
         
         
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
         UserAccountBean user = (UserAccountBean) udao.findByPK(userId);
 
         techAdminProtect(user);
@@ -247,7 +251,7 @@ public class EditUserAccountServlet extends SecureController {
     // }
     //
     // SQLFactory factory = SQLFactory.getInstance();
-    // IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+    // IUserAccountDAO udao = this.userAccountDao;
     //
     // HashMap presetValues;
     // } catch (Exception e) {
@@ -326,7 +330,7 @@ public class EditUserAccountServlet extends SecureController {
     }
 
 	public Boolean isApiKeyExist(String uuid) {
-		IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+		IUserAccountDAO udao = this.userAccountDao;
 		UserAccountBean uBean = (UserAccountBean) udao.findByApiKey(uuid);
 		if (uBean == null || !uBean.isActive()) {
 			return false;

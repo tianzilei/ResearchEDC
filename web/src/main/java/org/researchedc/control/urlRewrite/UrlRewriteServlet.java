@@ -40,6 +40,7 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author pgawade Servlet to call appropriate application pages corresponding to
@@ -47,6 +48,15 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class UrlRewriteServlet extends CoreSecureController {
+
+    @Autowired
+    protected SectionDAO sectionDao;
+
+    @Autowired
+    protected ItemGroupDAO itemGroupDao;
+
+    @Autowired
+    protected CRFVersionDAO crfVersionDao;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
 
@@ -137,7 +147,7 @@ public class UrlRewriteServlet extends CoreSecureController {
 		                    }
 		                    //@pgawade 16-Aug-2012: fix for issue https://issuetracker.openclinica.com/view.php?id=12343#c55853
 		                    //retrieve sectionId from tabId
-		                    SectionDAO sdao = new SectionDAO(getDataSource());
+		                    SectionDAO sdao = this.sectionDao;
 		                    if(mapQueryParams.containsKey("tabId")){
 			                    HashMap sectionIdMap = sdao.getSectionIdForTabId(ocResource.getFormVersionID(), Integer.parseInt(mapQueryParams.get("tabId")));
 			                    Integer sectionId = null;
@@ -226,14 +236,14 @@ public class UrlRewriteServlet extends CoreSecureController {
                 String[] tokens = URLPath.split("/");
                 if (tokens.length != 0) {
                     String URLParamValue = "";
-                    IStudyDAO stdao = new StudyDAO(getDataSource());
-                    IStudySubjectDAO ssubdao = new StudySubjectDAO(getDataSource());
-                    IStudyEventDefinitionDAO sedefdao = new StudyEventDefinitionDAO(getDataSource());
-                    ICrfDAO crfdao = new CRFDAO(getDataSource());
-                    CRFVersionDAO crfvdao = new CRFVersionDAO(getDataSource());
-                    ItemDAO idao = new ItemDAO(getDataSource());
-                    ItemGroupDAO igdao = new ItemGroupDAO(getDataSource());
-                    IStudyEventDAO sedao = new StudyEventDAO(getDataSource());
+                    IStudyDAO stdao = this.studyDao;
+                    IStudySubjectDAO ssubdao = this.studySubjectDao;
+                    IStudyEventDefinitionDAO sedefdao = this.studyEventDefinitionDao;
+                    ICrfDAO crfdao = this.crfDao;
+                    CRFVersionDAO crfvdao = this.crfVersionDao;
+                    ItemDAO idao = this.itemDao;
+                    ItemGroupDAO igdao = this.itemGroupDao;
+                    IStudyEventDAO sedao = this.studyEventDao;
 
                     StudyBean study = null;
                     StudySubjectBean subject = null;

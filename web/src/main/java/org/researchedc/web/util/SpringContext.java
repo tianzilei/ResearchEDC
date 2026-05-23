@@ -1,6 +1,7 @@
 package org.researchedc.web.util;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Static holder for Spring ApplicationContext, set during Spring Boot initialization.

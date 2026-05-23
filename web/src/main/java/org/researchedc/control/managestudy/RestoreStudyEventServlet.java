@@ -45,6 +45,9 @@ import org.researchedc.web.InsufficientPermissionException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -52,7 +55,13 @@ import java.util.HashMap;
  * Restores a removed study event and all its data
  */
 public class RestoreStudyEventServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+
+/**
      *
      */
     @Override
@@ -79,8 +88,8 @@ public class RestoreStudyEventServlet extends SecureController {
         int studyEventId = fp.getInt("id");// studyEventId
         int studySubId = fp.getInt("studySubId");// studySubjectId
 
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
+        IStudySubjectDAO subdao = this.studySubjectDao;
 
         if (studyEventId == 0) {
             addPageMessage(respage.getString("please_choose_a_SE_to_restore"));
@@ -105,11 +114,11 @@ public class RestoreStudyEventServlet extends SecureController {
 
             request.setAttribute("studySub", studySub);
 
-            IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+            IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
             StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(event.getStudyEventDefinitionId());
             event.setStudyEventDefinition(sed);
 
-            IStudyDAO studydao = new StudyDAO(sm.getDataSource());
+            IStudyDAO studydao = this.studyDao;
             StudyBean study = (StudyBean) studydao.findByPK(studySub.getStudyId());
             request.setAttribute("subStudy", study);
 
@@ -123,11 +132,11 @@ public class RestoreStudyEventServlet extends SecureController {
                     return;
                 }
 
-                EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+                EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
                 // find all crfs in the definition
                 ArrayList eventDefinitionCRFs = (ArrayList) edcdao.findAllByEventDefinitionId(study, sed.getId());
 
-                EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+                EventCRFDao ecdao = this.eventCrfDao;
                 ArrayList eventCRFs = ecdao.findAllByStudyEvent(event);
 
                 // construct info needed on view study event page
@@ -147,11 +156,11 @@ public class RestoreStudyEventServlet extends SecureController {
                 sedao.update(event);
 
                 // restore event crfs
-                EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+                EventCRFDao ecdao = this.eventCrfDao;
 
                 ArrayList eventCRFs = ecdao.findAllByStudyEvent(event);
 
-                ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+                IItemDataDAO iddao = this.itemDataDao;
                 for (int k = 0; k < eventCRFs.size(); k++) {
                     EventCRFBean eventCRF = (EventCRFBean) eventCRFs.get(k);
                     if (eventCRF.getStatus().equals(Status.AUTO_DELETED)) {
@@ -205,9 +214,9 @@ public class RestoreStudyEventServlet extends SecureController {
             definitionsById.put(new Integer(edc.getStudyEventDefinitionId()), edc);
         }
 
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
+        ICrfDAO cdao = this.crfDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
 
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecb = (EventCRFBean) eventCRFs.get(i);

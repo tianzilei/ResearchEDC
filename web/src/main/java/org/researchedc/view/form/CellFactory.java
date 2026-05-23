@@ -8,6 +8,7 @@ import org.jdom.Element;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The class responsible for adding different types of input elements or tags to

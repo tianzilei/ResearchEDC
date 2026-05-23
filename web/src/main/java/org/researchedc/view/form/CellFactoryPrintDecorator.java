@@ -3,6 +3,7 @@ package org.researchedc.view.form;
 import org.researchedc.bean.submit.DisplayItemBean;
 import org.researchedc.bean.submit.ItemBean;
 import org.jdom.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class decorates CellFactory, for the purposes of CRF print views.

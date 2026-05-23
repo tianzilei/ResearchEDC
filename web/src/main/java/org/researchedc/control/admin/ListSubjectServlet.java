@@ -10,15 +10,15 @@ package org.researchedc.control.admin;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.SubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Locale;
 
@@ -28,6 +28,10 @@ import java.util.Locale;
  * @author jxu
  */
 public class ListSubjectServlet extends SecureController {
+    @Autowired
+    private SubjectDAO subjectDao;
+    @Autowired
+    private UserAccountDAO userAccountDao;
     Locale locale;
 
     /**
@@ -49,11 +53,11 @@ public class ListSubjectServlet extends SecureController {
 
     @Override
     public void processRequest() throws Exception {
-        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
+        ISubjectDAO sdao = this.subjectDao;
 
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
-        IStudyDAO studyDao = new StudyDAO(sm.getDataSource());
-        IUserAccountDAO uadao = new UserAccountDAO(sm.getDataSource());
+        IStudySubjectDAO subdao = this.studySubjectDao;
+        IStudyDAO studyDao = this.studyDao;
+        IUserAccountDAO uadao = this.userAccountDao;
 
         ListSubjectTableFactory factory = new ListSubjectTableFactory();
         factory.setSubjectDao(sdao);

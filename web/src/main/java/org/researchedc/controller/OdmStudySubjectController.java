@@ -57,10 +57,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 @Controller
 @RequestMapping(value = "/odmss")
 public class OdmStudySubjectController {
+
+    @Autowired
+    protected StudyParameterValueDAO studyParameterValueDao;
+
+    @Autowired
+    protected IStudySubjectDAO studySubjectDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
 
 	@Autowired
 	@Qualifier("dataSource")
@@ -75,7 +85,7 @@ public class OdmStudySubjectController {
 	@Autowired
 	AccountController accountController;
 
-	StudyDAO sdao;
+	IStudyDAO sdao;
 	ParticipantPortalRegistrar participantPortalRegistrar;
 	public static final String FORM_CONTEXT = "ecid";
 
@@ -99,8 +109,8 @@ public class OdmStudySubjectController {
 
 	private ODM getODM(String studyOID, String studySubjectLabel, String crcUserName) {
 
-		StudyDAO studyDAO = new StudyDAO(dataSource);
-		IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(dataSource);
+		IStudyDAO studyDAO = this.studyDao;
+		IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
 		StudyBean studyBean = null;
 		StudySubjectBean studySubjectBean = null;
 		try {
@@ -180,7 +190,7 @@ public class OdmStudySubjectController {
 	}
 
 	private StudyBean getStudy(String oid) {
-		sdao = new StudyDAO(dataSource);
+		sdao = this.studyDao;
 		StudyBean studyBean = (StudyBean) sdao.findByOid(oid);
 		return studyBean;
 	}
@@ -199,7 +209,7 @@ public class OdmStudySubjectController {
 	private boolean mayProceed(String studyOid, StudySubjectBean ssBean) throws Exception {
 		boolean accessPermission = false;
 		StudyBean study = getParentStudy(studyOid);
-		StudyParameterValueDAO spvdao = new StudyParameterValueDAO(dataSource);
+		StudyParameterValueDAO spvdao = this.studyParameterValueDao;
 		StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
 		participantPortalRegistrar = new ParticipantPortalRegistrar();
 		String pManageStatus = participantPortalRegistrar.getRegistrationStatus(studyOid).toString(); // ACTIVE , PENDING , INACTIVE

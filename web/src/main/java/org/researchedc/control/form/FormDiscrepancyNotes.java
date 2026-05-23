@@ -11,6 +11,7 @@ import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author jxu

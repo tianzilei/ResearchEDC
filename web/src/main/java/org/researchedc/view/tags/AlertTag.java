@@ -10,6 +10,7 @@ import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by IntelliJ IDEA.
  * User: bruceperry

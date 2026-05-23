@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "ModuleCrfVersion")
-@Table(name = "crf_version")
+@Table(name = "module_crf_version")
 public class CrfVersionEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "crfv_seq")
-    @SequenceGenerator(name = "crfv_seq", sequenceName = "crf_version_crf_version_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "module_crf_version_seq")
+    @SequenceGenerator(name = "module_crf_version_seq", sequenceName = "module_crf_version_id_seq", allocationSize = 1)
     @Column(name = "crf_version_id")
     private Integer crfVersionId;
 

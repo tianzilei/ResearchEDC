@@ -32,6 +32,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Processes request to assign a user to a study
@@ -41,7 +43,11 @@ import java.util.Set;
  */
 public class AssignUserToStudyServlet extends SecureController {
 
-    /**
+    
+    @Autowired
+    private IUserAccountDAO userAccountDao;
+
+/**
      *
      */
     @Override
@@ -136,7 +142,7 @@ public class AssignUserToStudyServlet extends SecureController {
 
     private void addUser(ArrayList users) throws Exception {
         String pageMass = "";
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
         FormProcessor fp = new FormProcessor(request);
         Map tmpSelectedUsersMap = (HashMap) session.getAttribute("tmpSelectedUsersMap");
         Set addedUsers = new HashSet();
@@ -244,7 +250,7 @@ public class AssignUserToStudyServlet extends SecureController {
      * @return
      */
     private ArrayList findUsers() {
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+        IUserAccountDAO udao = this.userAccountDao;
         ArrayList userList = (ArrayList) udao.findAll();
         ArrayList userAvailable = new ArrayList();
         for (int i = 0; i < userList.size(); i++) {
@@ -269,7 +275,7 @@ public class AssignUserToStudyServlet extends SecureController {
 
                 } else {
                     // find all the sites for this top study
-                    IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+                    IStudyDAO sdao = this.studyDao;
                     ArrayList sites = (ArrayList) sdao.findAllByParent(currentStudy.getId());
                     String notes = "";
                     for (int j = 0; j < sites.size(); j++) {
@@ -320,7 +326,5 @@ public class AssignUserToStudyServlet extends SecureController {
 
     }
     
-
-
 
 }

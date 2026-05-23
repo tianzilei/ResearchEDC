@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author jxu
@@ -73,7 +74,7 @@ public class ListSiteServlet extends SecureController {
             forwardPage(Page.MENU_SERVLET);
         } else {
 
-            IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+            IStudyDAO sdao = this.studyDao;
             ArrayList studies = (ArrayList) sdao.findAllByParent(currentStudy.getId());
 
             EntityBeanTable table = fp.getEntityBeanTable();

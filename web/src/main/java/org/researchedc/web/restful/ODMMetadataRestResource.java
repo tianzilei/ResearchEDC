@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
 import freemarker.template.TemplateExceptionHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 /**
  *  Rest service for ODM metadata
  *  usage ROOT_CONTEXT/rest/metadata/{format}/{mode}/{STUDYOID}

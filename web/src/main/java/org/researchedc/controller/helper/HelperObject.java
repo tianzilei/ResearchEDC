@@ -18,8 +18,14 @@ import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudySubjectDao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.submit.CRFVersionDAO;
 
 public class HelperObject {
+
     List<EventCRFBean> eventCrfListToMigrate;
     CRFVersionBean sourceCrfVersionBean;
     CRFVersionBean targetCrfVersionBean;

@@ -35,6 +35,9 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -42,7 +45,11 @@ import java.util.Date;
  * Removes a study subject and all the related data
  */
 public class RemoveStudySubjectServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private ISubjectDAO subjectDao;
+
+/**
      *
      */
     @Override
@@ -69,8 +76,8 @@ public class RemoveStudySubjectServlet extends SecureController {
         String subIdString = request.getParameter("subjectId");
         String studyIdString = request.getParameter("studyId");
 
-        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+        ISubjectDAO sdao = this.subjectDao;
+        IStudySubjectDAO subdao = this.studySubjectDao;
 
         if (StringUtil.isBlank(studySubIdString) || StringUtil.isBlank(subIdString) || StringUtil.isBlank(studyIdString)) {
             addPageMessage(respage.getString("please_choose_a_study_subject_to_remove"));
@@ -84,13 +91,13 @@ public class RemoveStudySubjectServlet extends SecureController {
 
             StudySubjectBean studySub = (StudySubjectBean) subdao.findByPK(studySubId);
 
-            IStudyDAO studydao = new StudyDAO(sm.getDataSource());
+            IStudyDAO studydao = this.studyDao;
             StudyBean study = (StudyBean) studydao.findByPK(studyId);
 
             checkRoleByUserAndStudy(ub, study.getParentStudyId(), study.getId());
 
             // find study events
-            IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+            IStudyEventDAO sedao = this.studyEventDao;
 //            ArrayList events = sedao.findAllByStudyAndStudySubjectId(study, studySubId);
             ArrayList<DisplayStudyEventBean> displayEvents = ViewStudySubjectServlet.getDisplayStudyEventsForStudySubject(studySub, sm.getDataSource(), ub, currentRole);
             String action = request.getParameter("action");
@@ -118,7 +125,7 @@ public class RemoveStudySubjectServlet extends SecureController {
 
                 // remove all study events
                 // remove all event crfs
-                EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+                EventCRFDao ecdao = this.eventCrfDao;
 
                 for (int j = 0; j < displayEvents.size(); j++) {
                     DisplayStudyEventBean dispEvent = displayEvents.get(j);
@@ -131,7 +138,7 @@ public class RemoveStudySubjectServlet extends SecureController {
 
                         ArrayList eventCRFs = ecdao.findAllByStudyEvent(event);
 
-                        ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+                        IItemDataDAO iddao = this.itemDataDao;
                         for (int k = 0; k < eventCRFs.size(); k++) {
                             EventCRFBean eventCRF = (EventCRFBean) eventCRFs.get(k);
                             if (!eventCRF.getStatus().equals(Status.DELETED)) {

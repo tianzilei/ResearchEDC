@@ -15,15 +15,14 @@ import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -33,6 +32,9 @@ import org.researchedc.web.InsufficientPermissionException;
  */
 @SuppressWarnings("serial")
 public class BatchCRFMigrationServlet extends SecureController {
+
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
 
     private static String CRF_ID = "crfId";
     private static String CRF = "crf";
@@ -74,8 +76,8 @@ public class BatchCRFMigrationServlet extends SecureController {
             addPageMessage(respage.getString("please_choose_a_CRF_to_view"));
             forwardPage(Page.CRF_LIST);
         } else {
-            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-            CRFVersionDAO vdao = new CRFVersionDAO(sm.getDataSource());
+            ICrfDAO cdao = this.crfDao;
+            CRFVersionDAO vdao = this.crfVersionDao;
             CRFBean crf = (CRFBean) cdao.findByPK(crfId);
             request.setAttribute("crfName", crf.getName());
             ArrayList<CRFVersionBean> versions = (ArrayList<CRFVersionBean>) vdao.findAllByCRF(crfId);
@@ -124,12 +126,12 @@ public class BatchCRFMigrationServlet extends SecureController {
 
     @SuppressWarnings("rawtypes")
     private IStudyDAO sdao() {
-        return new StudyDAO(sm.getDataSource());
+        return this.studyDao;
     }
 
     @SuppressWarnings("rawtypes")
     private IStudyEventDefinitionDAO seddao() {
-        return new StudyEventDefinitionDAO(sm.getDataSource());
+        return this.studyEventDefinitionDao;
     }
 
 

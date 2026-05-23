@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class PformValidator implements Validator {
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());

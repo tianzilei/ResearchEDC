@@ -74,6 +74,12 @@ import org.springframework.web.servlet.ModelAndView;
 public class RuleController {
 
     @Autowired
+    protected IUserAccountDAO userAccountDao;
+
+    @Autowired
+    protected IStudyDAO studyDao;
+
+    @Autowired
     @Qualifier("dataSource")
     private BasicDataSource dataSource;
     private RuleSetRuleDao ruleSetRuleDao;
@@ -233,10 +239,10 @@ public class RuleController {
         StudyBean currentStudy = (StudyBean) session.getAttribute("study");
         UserAccountBean userAccount = (UserAccountBean) session.getAttribute("userBean");
 
-        IUserAccountDAO userAccountDao = new UserAccountDAO(dataSource);
+        IUserAccountDAO userAccountDao = this.userAccountDao;
         userAccount = (UserAccountBean) userAccountDao.findByUserName("root");
 
-        IStudyDAO studyDao = new StudyDAO(dataSource);
+        IStudyDAO studyDao = this.studyDao;
         currentStudy = studyDao.findByOid(studyOid);
 
         MetaDataCollector mdc = new MetaDataCollector(dataSource, currentStudy, getRuleSetRuleDao());
@@ -322,7 +328,7 @@ public class RuleController {
     org.openclinica.ns.response.v31.Response create(@RequestBody org.openclinica.ns.response.v31.Response responeType, Model model, HttpSession session,
             @PathVariable("study") String studyOid) throws Exception {
         ResourceBundleProvider.updateLocale(new Locale("en_US"));
-        IStudyDAO studyDao = new StudyDAO(dataSource);
+        IStudyDAO studyDao = this.studyDao;
         StudyBean currentStudy = studyDao.findByOid(studyOid);
 
         UserAccountBean userAccount = getUserAccount();
@@ -344,7 +350,7 @@ public class RuleController {
             throws Exception {
         ResourceBundleProvider.updateLocale(new Locale("en_US"));
         RulesPostImportContainer rpic = mapRulesToRulesPostImportContainer(rules);
-        IStudyDAO studyDao = new StudyDAO(dataSource);
+        IStudyDAO studyDao = this.studyDao;
         StudyBean currentStudy = studyDao.findByOid(studyOid);
 
         UserAccountBean userAccount = getUserAccount();
@@ -382,7 +388,7 @@ public class RuleController {
             @RequestParam("ignoreDuplicates") Boolean ignoreDuplicates) throws Exception {
         ResourceBundleProvider.updateLocale(new Locale("en_US"));
         RulesPostImportContainer rpic = mapRulesToRulesPostImportContainer(rules);
-        IStudyDAO studyDao = new StudyDAO(dataSource);
+        IStudyDAO studyDao = this.studyDao;
         StudyBean currentStudy = studyDao.findByOid(studyOid);
 
         UserAccountBean userAccount = getUserAccount();
@@ -429,7 +435,7 @@ public class RuleController {
             @PathVariable("study") String studyOid) throws Exception {
         ResourceBundleProvider.updateLocale(new Locale("en_US"));
         RulesPostImportContainer rpic = mapRulesToRulesPostImportContainer(ruleTest.getRules());
-        IStudyDAO studyDao = new StudyDAO(dataSource);
+        IStudyDAO studyDao = this.studyDao;
         StudyBean currentStudy = studyDao.findByOid(studyOid);
 
         UserAccountBean userAccount = getUserAccount();
@@ -510,7 +516,7 @@ public class RuleController {
         } else {
             username = principal.toString();
         }
-        IUserAccountDAO userAccountDao = new UserAccountDAO(dataSource);
+        IUserAccountDAO userAccountDao = this.userAccountDao;
         return (UserAccountBean) userAccountDao.findByUserName(username);
     }
 

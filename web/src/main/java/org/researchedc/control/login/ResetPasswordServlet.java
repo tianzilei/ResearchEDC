@@ -28,12 +28,16 @@ import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Reset expired password
  *
  * @author ywang
  */
 public class ResetPasswordServlet extends SecureController {
+
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
 
     /**
 	 * 
@@ -66,7 +70,6 @@ public class ResetPasswordServlet extends SecureController {
     public void processRequest() throws Exception {
         logger.info("Change expired password");
 
-        IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
         Validator v = new Validator(request);
         errors.clear();
         FormProcessor fp = new FormProcessor(request);
@@ -126,7 +129,7 @@ public class ResetPasswordServlet extends SecureController {
 
                 pwdErrors = PasswordValidator.validatePassword(
                                 passwordRequirementsDao,
-                                udao,
+                                userAccountDao,
                                 ub.getId(),
                                 newPwd,
                                 newDigestPass,
@@ -155,7 +158,7 @@ public class ResetPasswordServlet extends SecureController {
                 ub.setUpdater(ub);// when update ub, updator id is required
                 ub.setPasswdChallengeQuestion(passwdChallengeQ);
                 ub.setPasswdChallengeAnswer(passwdChallengeA);
-                udao.update(ub);
+                userAccountDao.update(ub);
 
                 ArrayList<String> pageMessages = new ArrayList<String>();
                 request.setAttribute(PAGE_MESSAGE, pageMessages);

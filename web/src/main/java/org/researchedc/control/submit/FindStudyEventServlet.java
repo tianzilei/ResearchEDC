@@ -23,6 +23,8 @@ import org.researchedc.web.InsufficientPermissionException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author ssachs
@@ -81,10 +83,10 @@ public class FindStudyEventServlet extends SecureController {
             ArrayList allDisplayEntities = new ArrayList();
 
             if (browseBy.equals(ARG_BROWSEBY_SUBJECT)) {
-                IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+                IStudySubjectDAO ssdao = this.studySubjectDao;
                 allDisplayEntities = ssdao.findAllWithStudyEvent(currentStudy);
             } else {
-                IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+                IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
                 allDisplayEntities = seddao.findAllWithStudyEvent(currentStudy);
             }
 
@@ -113,19 +115,19 @@ public class FindStudyEventServlet extends SecureController {
 
         // User is coming from Step 2, is going to Step 3
         else {
-            IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+            IStudyEventDAO sedao = this.studyEventDao;
             ArrayList events = new ArrayList();
 
             EntityBean entityWithStudyEvents;
             if (browseBy.equals(ARG_BROWSEBY_SUBJECT)) {
                 events = sedao.findAllByStudyAndStudySubjectId(currentStudy, id);
 
-                IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+                IStudySubjectDAO ssdao = this.studySubjectDao;
                 entityWithStudyEvents = ssdao.findByPK(id);
             } else {
                 events = sedao.findAllByStudyAndEventDefinitionId(currentStudy, id);
 
-                IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+                IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
                 entityWithStudyEvents = seddao.findByPK(id);
             }
 

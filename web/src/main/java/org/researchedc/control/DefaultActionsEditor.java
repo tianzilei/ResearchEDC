@@ -12,6 +12,7 @@ import org.jmesa.view.html.toolbar.ToolbarItemType;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DefaultActionsEditor extends AbstractFilterEditor {
 

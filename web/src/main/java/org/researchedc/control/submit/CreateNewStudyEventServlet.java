@@ -47,6 +47,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.sql.DataSource;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.DaoProvider;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 
 // TODO: support YYYY-MM-DD HH:MM time formats
 
@@ -106,7 +110,7 @@ public class CreateNewStudyEventServlet extends SecureController {
         int studyEventDefinitionId = fp.getInt(INPUT_STUDY_EVENT_DEFINITION);
 
         // TODO: make this sensitive to permissions
-        IStudySubjectDAO sdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO sdao = DaoProvider.getDao(StudySubjectDAO.class);
         StudySubjectBean ssb;
         if (studySubjectId <= 0) {
             ssb = (StudySubjectBean) request.getAttribute(INPUT_STUDY_SUBJECT);
@@ -130,7 +134,7 @@ public class CreateNewStudyEventServlet extends SecureController {
         // ArrayList subjects = sdao.findAllActiveByStudyOrderByLabel(currentStudy);
 
         // TODO: make this sensitive to permissions
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+        StudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
 
         StudyBean studyWithEventDefinitions = currentStudy;
         if (currentStudy.getParentStudyId() > 0) {
@@ -166,7 +170,7 @@ public class CreateNewStudyEventServlet extends SecureController {
         ArrayList eventDefinitionsScheduled = eventDefinitions;
 
         if (!fp.isSubmitted()) {
-            // IStudyEventDAO sed = new StudyEventDAO(sm.getDataSource());
+            // IStudyEventDAO sed = DaoProvider.getDao(StudyEventDAO.class);
             // sed.updateSampleOrdinals_v092();
 
             HashMap presetValues = new HashMap();
@@ -477,7 +481,7 @@ public class CreateNewStudyEventServlet extends SecureController {
                 forwardPage(Page.CREATE_NEW_STUDY_EVENT);
             } else {
             	logger.debug("error is empty");
-                IStudyEventDAO sed = new StudyEventDAO(sm.getDataSource());
+                IStudyEventDAO sed = this.studyEventDao;
 
                 StudyEventBean studyEvent = new StudyEventBean();
                 studyEvent.setStudyEventDefinitionId(definition.getId());
@@ -530,7 +534,7 @@ public class CreateNewStudyEventServlet extends SecureController {
 
                 // save discrepancy notes into DB
                 FormDiscrepancyNotes fdn = (FormDiscrepancyNotes) session.getAttribute(AddNewSubjectServlet.FORM_DISCREPANCY_NOTES_NAME);
-                DiscrepancyNoteDAO dndao = new DiscrepancyNoteDAO(sm.getDataSource());
+                DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
                 String[] eventFields = { INPUT_LOCATION, INPUT_STARTDATE_PREFIX, INPUT_ENDDATE_PREFIX };
                 for (String element : eventFields) {
                     AddNewSubjectServlet.saveFieldNotes(element, fdn, dndao, studyEvent.getId(), "studyEvent", currentStudy);
@@ -673,7 +677,7 @@ public class CreateNewStudyEventServlet extends SecureController {
             return true;
         }
 
-        IStudyEventDAO sedao = new StudyEventDAO(ds);
+        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
         ArrayList allEvents = sedao.findAllByDefinitionAndSubject(studyEventDefinition, studySubject);
 
         if (allEvents.size() > 0) {

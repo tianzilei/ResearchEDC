@@ -11,6 +11,7 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * PauseJobServlet, a small servlet to pause/unpause a trigger in the scehduler.

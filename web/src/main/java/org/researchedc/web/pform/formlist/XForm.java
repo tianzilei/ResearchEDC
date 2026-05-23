@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.submit.CRFVersionBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class XForm {
     private String formID = null;

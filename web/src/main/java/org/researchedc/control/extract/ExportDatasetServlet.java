@@ -52,6 +52,8 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Take a dataset and show it in different formats,<BR/> Detect whether or not
@@ -67,6 +69,9 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
  *
  */
 public class ExportDatasetServlet extends SecureController {
+
+    @Autowired
+    protected DatasetDAO datasetDao;
 
     public static String getLink(int dsId) {
         return "ExportDataset?datasetId=" + dsId;
@@ -91,8 +96,8 @@ public class ExportDatasetServlet extends SecureController {
 
     @Override
     public void processRequest() throws Exception {
-        DatasetDAO dsdao = new DatasetDAO(sm.getDataSource());
-        ArchivedDatasetFileDAO asdfdao = new ArchivedDatasetFileDAO(sm.getDataSource());
+        DatasetDAO dsdao = this.datasetDao;
+        ArchivedDatasetFileDAO asdfdao = this.archivedDatasetFileDao;
         FormProcessor fp = new FormProcessor(request);
 
         GenerateExtractFileService generateFileService = new GenerateExtractFileService(sm.getDataSource(),
@@ -113,7 +118,7 @@ public class ExportDatasetServlet extends SecureController {
             }
         }
         DatasetBean db = (DatasetBean) dsdao.findByPK(datasetId);
-       IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+       IStudyDAO sdao = this.studyDao;
         StudyBean study = (StudyBean)sdao.findByPK(db.getStudyId());
         checkRoleByUserAndStudy(ub, study.getParentStudyId(), study.getId());
 
@@ -137,7 +142,7 @@ public class ExportDatasetServlet extends SecureController {
 
         StudyBean parentStudy = new StudyBean();
         if (currentStudy.getParentStudyId() > 0) {
-            //IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+            //IStudyDAO sdao = this.studyDao;
             parentStudy = (StudyBean) sdao.findByPK(currentStudy.getParentStudyId());
         }
 
@@ -401,7 +406,7 @@ public class ExportDatasetServlet extends SecureController {
                 // "/WEB-INF/jsp/extract/generatedFileDataset.jsp");
                 finalTarget.setFileName("" + "/WEB-INF/jsp/extract/generateMetadataCore.jsp");
                 // also set up table here???
-                asdfdao = new ArchivedDatasetFileDAO(sm.getDataSource());
+                asdfdao = this.archivedDatasetFileDao;
 
                 ArchivedDatasetFileBean asdfBean = (ArchivedDatasetFileBean) asdfdao.findByPK(fId);
                 // *** do we need this below? tbh

@@ -29,8 +29,11 @@ import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.Date;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -39,6 +42,11 @@ import java.util.Date;
  * Preferences - Java - Code Style - Code Templates
  */
 public class RestoreCRFServlet extends SecureController {
+
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private SectionDAO sectionDao;
     /**
      *
      */
@@ -59,8 +67,8 @@ public class RestoreCRFServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+        ICrfDAO cdao = this.crfDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
         FormProcessor fp = new FormProcessor(request);
         // checks which module the requests are from
         String module = fp.getString(MODULE);
@@ -76,12 +84,12 @@ public class RestoreCRFServlet extends SecureController {
             CRFBean crf = (CRFBean) cdao.findByPK(crfId);
             ArrayList versions = cvdao.findAllByCRFId(crfId);
             crf.setVersions(versions);
-            EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+            EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
             ArrayList edcs = (ArrayList) edcdao.findAllByCRF(crfId);
 
-            SectionDAO secdao = new SectionDAO(sm.getDataSource());
+            SectionDAO secdao = this.sectionDao;
 
-            EventCRFDao evdao = new EventCRFDAO(sm.getDataSource());
+            EventCRFDao evdao = this.eventCrfDao;
             ArrayList eventCRFs = evdao.findAllByCRF(crfId);
             if ("confirm".equalsIgnoreCase(action)) {
                 request.setAttribute("crfToRestore", crf);
@@ -125,7 +133,7 @@ public class RestoreCRFServlet extends SecureController {
                     }
                 }
 
-                ItemDataDAO idao = new ItemDataDAO(sm.getDataSource());
+                ItemDataDAO idao = this.itemDataDao;
                 for (int i = 0; i < eventCRFs.size(); i++) {
                     EventCRFBean eventCRF = (EventCRFBean) eventCRFs.get(i);
                     if (eventCRF.getStatus().equals(Status.AUTO_DELETED)) {

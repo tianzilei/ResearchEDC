@@ -45,6 +45,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -52,7 +56,13 @@ import java.util.Date;
  * Restores a removed study event definition and all its related data
  */
 public class RestoreEventDefinitionServlet extends SecureController {
-    EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+
+EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
     /**
      *
      */
@@ -77,14 +87,14 @@ public class RestoreEventDefinitionServlet extends SecureController {
         String idString = request.getParameter("id");
 
         int defId = Integer.valueOf(idString.trim()).intValue();
-        IStudyEventDefinitionDAO sdao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO sdao = this.studyEventDefinitionDao;
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) sdao.findByPK(defId);
         // find all CRFs
-        EventDefinitionCRFDao edao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edao = this.eventDefinitionCrfDao;
         ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllByDefinition(defId);
 
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfDAO cdao = this.crfDao;
         for (int i = 0; i < eventDefinitionCRFs.size(); i++) {
             EventDefinitionCRFBean edc = (EventDefinitionCRFBean) eventDefinitionCRFs.get(i);
             ArrayList versions = (ArrayList) cvdao.findAllByCRF(edc.getCrfId());
@@ -100,8 +110,8 @@ public class RestoreEventDefinitionServlet extends SecureController {
         }
 
         // finds all events
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());    
+        IStudyEventDAO sedao = this.studyEventDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;    
         ArrayList events = (ArrayList) sedao.findAllByDefinition(sed.getId());
 
         String action = request.getParameter("action");
@@ -143,7 +153,7 @@ public class RestoreEventDefinitionServlet extends SecureController {
                 }
                 // restore all events
 
-                EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+                EventCRFDao ecdao = this.eventCrfDao;
 
                 for (int j = 0; j < events.size(); j++) {
                     StudyEventBean event = (StudyEventBean) events.get(j);
@@ -155,7 +165,7 @@ public class RestoreEventDefinitionServlet extends SecureController {
 
                         ArrayList eventCRFs = ecdao.findAllByStudyEvent(event);
                         // remove all the item data
-                        ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+                        IItemDataDAO iddao = this.itemDataDao;
                         for (int k = 0; k < eventCRFs.size(); k++) {
                             EventCRFBean eventCRF = (EventCRFBean) eventCRFs.get(k);
                             if (eventCRF.getStatus().equals(Status.AUTO_DELETED)) {

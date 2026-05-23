@@ -1,6 +1,7 @@
 package org.researchedc.view.form;
 
 import org.jdom.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This interface defines the public interface for dynamically creating the

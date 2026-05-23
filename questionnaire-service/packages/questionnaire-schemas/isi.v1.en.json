@@ -1,0 +1,101 @@
+{
+  "title": "Insomnia Severity Index (ISI)",
+  "description": "Please rate the severity of your insomnia symptoms over the last 2 weeks.",
+  "pages": [
+    {
+      "elements": [
+        {
+          "type": "radiogroup",
+          "name": "ISI_01",
+          "title": "1. Difficulty falling asleep",
+          "choices": [
+            {"value": 0, "text": "None"},
+            {"value": 1, "text": "Mild"},
+            {"value": 2, "text": "Moderate"},
+            {"value": 3, "text": "Severe"},
+            {"value": 4, "text": "Very severe"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ISI_02",
+          "title": "2. Difficulty staying asleep",
+          "choices": [
+            {"value": 0, "text": "None"},
+            {"value": 1, "text": "Mild"},
+            {"value": 2, "text": "Moderate"},
+            {"value": 3, "text": "Severe"},
+            {"value": 4, "text": "Very severe"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ISI_03",
+          "title": "3. Problems waking up too early",
+          "choices": [
+            {"value": 0, "text": "None"},
+            {"value": 1, "text": "Mild"},
+            {"value": 2, "text": "Moderate"},
+            {"value": 3, "text": "Severe"},
+            {"value": 4, "text": "Very severe"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ISI_04",
+          "title": "4. How satisfied/dissatisfied with your sleep pattern?",
+          "choices": [
+            {"value": 0, "text": "Very satisfied"},
+            {"value": 1, "text": "Satisfied"},
+            {"value": 2, "text": "Neutral"},
+            {"value": 3, "text": "Dissatisfied"},
+            {"value": 4, "text": "Very dissatisfied"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ISI_05",
+          "title": "5. How noticeable is your sleep problem to others?",
+          "choices": [
+            {"value": 0, "text": "Not at all noticeable"},
+            {"value": 1, "text": "A little"},
+            {"value": 2, "text": "Somewhat"},
+            {"value": 3, "text": "Much"},
+            {"value": 4, "text": "Very much noticeable"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ISI_06",
+          "title": "6. How worried/distressed are you about your sleep?",
+          "choices": [
+            {"value": 0, "text": "Not at all"},
+            {"value": 1, "text": "A little"},
+            {"value": 2, "text": "Somewhat"},
+            {"value": 3, "text": "Much"},
+            {"value": 4, "text": "Very much"}
+          ],
+          "isRequired": true
+        },
+        {
+          "type": "radiogroup",
+          "name": "ISI_07",
+          "title": "7. To what extent does your sleep problem interfere with daily life?",
+          "choices": [
+            {"value": 0, "text": "Not at all interfering"},
+            {"value": 1, "text": "A little"},
+            {"value": 2, "text": "Somewhat"},
+            {"value": 3, "text": "Much"},
+            {"value": 4, "text": "Very much interfering"}
+          ],
+          "isRequired": true
+        }
+      ]
+    }
+  ]
+}

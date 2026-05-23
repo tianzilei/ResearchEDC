@@ -17,6 +17,7 @@ import org.researchedc.web.InsufficientPermissionException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Bruce Perry 3/8/2007

@@ -1,6 +1,6 @@
-import { useAppQuery } from "@/hooks/useQuery";
+import { useAppQuery, useAppMutation, useQueryClient } from "@/hooks/useQuery";
 import { apiClient } from "@/api/client";
-import type { CrfSummary, CrfVersion, ItemDTO } from "@/types/crf";
+import type { CrfSummary, CrfVersion, CrfVersionEntity, ItemDTO } from "@/types/crf";
 import type { ItemDataDTO, ResponseSetDTO, ItemGroupDTO } from "@/types/datacapture";
 
 export function useCrfList() {
@@ -66,5 +66,49 @@ export function useItemGroups(crfId: number | undefined) {
         ? apiClient.get<ItemGroupDTO[]>("/api/v1/data-capture/item-groups", { crfId })
         : Promise.resolve([]),
     enabled: !!crfId,
+  });
+}
+
+export function useCrfVersions(crfId: number | undefined) {
+  return useAppQuery<CrfVersionEntity[]>({
+    queryKey: ["crf-versions", crfId],
+    queryFn: () =>
+      crfId
+        ? apiClient.get<CrfVersionEntity[]>(`/api/v1/crfs/${crfId}/versions`)
+        : Promise.resolve([]),
+    enabled: !!crfId,
+  });
+}
+
+export function useUpdateCrfVersionStatus() {
+  const qc = useQueryClient();
+  return useAppMutation<void, { crfVersionId: number; statusId: number }>({
+    mutationFn: ({ crfVersionId, statusId }) =>
+      apiClient.patch(`/api/v1/crfs/versions/${crfVersionId}/status`, { statusId }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["crf-versions"] });
+    },
+  });
+}
+
+export function useDeleteCrfVersion() {
+  const qc = useQueryClient();
+  return useAppMutation<void, number>({
+    mutationFn: (crfVersionId) =>
+      apiClient.delete(`/api/v1/crfs/versions/${crfVersionId}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["crf-versions"] });
+    },
+  });
+}
+
+export function useCreateCrfVersion() {
+  const qc = useQueryClient();
+  return useAppMutation<CrfVersionEntity, { crfId: number; name: string; description: string }>({
+    mutationFn: ({ crfId, ...body }) =>
+      apiClient.post<CrfVersionEntity>(`/api/v1/crfs/${crfId}/versions`, body),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["crf-versions"] });
+    },
   });
 }

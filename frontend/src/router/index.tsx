@@ -15,6 +15,7 @@ const AuditViewer = lazy(() => import("@/pages/randomization/AuditViewer"));
 const ExportCenter = lazy(() => import("@/pages/export/ExportCenter"));
 const CrfList = lazy(() => import("@/pages/crf/CrfList"));
 const CrfPreview = lazy(() => import("@/pages/crf/CrfPreview"));
+const CrfVersionManager = lazy(() => import("@/pages/crf/CrfVersionManager"));
 const SubjectList = lazy(() => import("@/pages/subject/SubjectList"));
 const UserManagement = lazy(() => import("@/pages/admin/UserManagement"));
 const AuditLogViewer = lazy(() => import("@/pages/admin/AuditLogViewer"));
@@ -103,6 +104,10 @@ const router = createBrowserRouter([
       {
         path: "crfs/:versionId",
         element: <CrfPreview />,
+      },
+      {
+        path: "crfs/:crfId/versions",
+        element: <CrfVersionManager />,
       },
       {
         path: "questionnaires/templates",

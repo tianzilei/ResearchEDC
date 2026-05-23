@@ -8,6 +8,7 @@
 package org.researchedc.control.form;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class Validation {
     private int type;

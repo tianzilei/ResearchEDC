@@ -16,6 +16,7 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /*
  * A simple xml parser based on SAX. This currently supports

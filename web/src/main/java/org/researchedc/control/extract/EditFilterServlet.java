@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * <P>
@@ -36,6 +38,9 @@ import java.util.List;
  * @author thickerson
  */
 public class EditFilterServlet extends SecureController {
+
+    @Autowired
+    protected FilterDAO filterDao;
 
     public static String getLink(int filterId) {
         return "EditFilter?filterId=" + filterId;
@@ -65,7 +70,7 @@ public class EditFilterServlet extends SecureController {
 
                 // TODO determine if this is necessary
                 int filterId = fp.getInt("filterId");
-                FilterDAO fDAO = new FilterDAO(sm.getDataSource());
+                FilterDAO fDAO = this.filterDao;
                 FilterBean showFilter = (FilterBean) fDAO.findByPK(filterId);
                 request.setAttribute("filter", showFilter);
                 // maybe just set the above to the session?
@@ -74,7 +79,7 @@ public class EditFilterServlet extends SecureController {
                 forwardPage(Page.EDIT_FILTER);
             } else {
                 int filterId = fp.getInt("filterId");
-                FilterDAO fDAO = new FilterDAO(sm.getDataSource());
+                FilterDAO fDAO = this.filterDao;
                 FilterBean filter = (FilterBean) fDAO.findByPK(filterId);
                 filter.setName(fp.getString("fName"));
                 filter.setDescription(fp.getString("fDesc"));
@@ -85,7 +90,7 @@ public class EditFilterServlet extends SecureController {
                 // Collection filters = fDAO.findAll();
                 // TODO make findAllByProject?
                 // FormProcessor fp = new FormProcessor(request);
-                FilterDAO fdao = new FilterDAO(sm.getDataSource());
+                FilterDAO fdao = this.filterDao;
                 EntityBeanTable table = fp.getEntityBeanTable();
 
                 ArrayList filters = (ArrayList) fdao.findAll();// TODO make
@@ -109,7 +114,7 @@ public class EditFilterServlet extends SecureController {
             }
         } else {
             int filterId = fp.getInt("filterId");
-            FilterDAO fDAO = new FilterDAO(sm.getDataSource());
+            FilterDAO fDAO = this.filterDao;
             FilterBean showFilter = (FilterBean) fDAO.findByPK(filterId);
             request.setAttribute("filter", showFilter);
             request.setAttribute("statuses", getStatuses());

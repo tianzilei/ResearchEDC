@@ -26,6 +26,7 @@ import org.jmesa.view.html.component.HtmlTable;
 
 import java.util.List;
 import java.util.Locale;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Servlet for creating a user account.

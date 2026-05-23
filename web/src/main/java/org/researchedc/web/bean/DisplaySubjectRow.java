@@ -10,6 +10,7 @@ package org.researchedc.web.bean;
 import org.researchedc.bean.submit.DisplaySubjectBean;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author jxu

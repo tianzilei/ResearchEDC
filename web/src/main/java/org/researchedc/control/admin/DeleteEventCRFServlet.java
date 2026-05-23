@@ -28,6 +28,7 @@ import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
@@ -49,6 +50,7 @@ import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.domain.datamap.DnItemDataMap;
@@ -65,10 +67,30 @@ import java.util.ArrayList;
  *         TODO To change the template for this generated type comment go to Window - Preferences - Java - Code Style - Code Templates
  */
 public class DeleteEventCRFServlet extends SecureController {
+    @Autowired
+    IStudyEventDAO studyEventDao;
+    @Autowired
+    IStudySubjectDAO studySubjectDao;
+    @Autowired
+    EventCRFDao eventCrfDao;
+    @Autowired
+    IStudyDAO studyDao;
+    @Autowired
+    ICrfDAO crfDao;
+    @Autowired
+    IStudyEventDefinitionDAO studyEventDefinitionDao;
+    @Autowired
+    ItemDataDAO itemDataDao;
+
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
 	public static String STUDY_SUB_ID = "ssId";
 
 	public static String EVENT_CRF_ID = "ecId";
-	IDiscrepancyNoteDAO dnDao;
+	@Autowired
+	private DiscrepancyNoteDAO dnDao;
 	RuleActionRunLogDao ruleActionRunLogDao;
 	DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
 	DynamicsItemGroupMetadataDao dynamicsItemGroupMetadataDao;
@@ -97,10 +119,10 @@ public class DeleteEventCRFServlet extends SecureController {
 
 		String action = request.getParameter("action");
 
-		IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-		IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
-		EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
-		IStudyDAO sdao = new StudyDAO(sm.getDataSource());
+		IStudyEventDAO sedao = this.studyEventDao;
+		IStudySubjectDAO subdao = this.studySubjectDao;
+		EventCRFDao ecdao = this.eventCrfDao;
+		IStudyDAO sdao = this.studyDao;
 
 		if (eventCRFId == 0) {
 			addPageMessage(respage.getString("please_choose_an_event_CRF_to_delete"));
@@ -113,8 +135,8 @@ public class DeleteEventCRFServlet extends SecureController {
 			request.setAttribute("studySub", studySub);
 
 			// construct info needed on view event crf page
-			ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-			CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+			ICrfDAO cdao = this.crfDao;
+			CRFVersionDAO cvdao = this.crfVersionDao;
 
 			int crfVersionId = eventCRF.getCRFVersionId();
 			CRFBean cb = cdao.findByVersionId(crfVersionId);
@@ -130,12 +152,12 @@ public class DeleteEventCRFServlet extends SecureController {
 			StudyEventBean event = (StudyEventBean) sedao.findByPK(studyEventId);
 
 			int studyEventDefinitionId = sedao.getDefinitionIdFromStudyEventId(studyEventId);
-			IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+			IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
 			StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(studyEventDefinitionId);
 			event.setStudyEventDefinition(sed);
 			request.setAttribute("event", event);
 
-			EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+			EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
 
 			StudyBean study = (StudyBean) sdao.findByPK(studySub.getStudyId());
 			EventDefinitionCRFBean edc = edcdao.findByStudyEventDefinitionIdAndCRFId(study, studyEventDefinitionId, cb.getId());
@@ -145,8 +167,8 @@ public class DeleteEventCRFServlet extends SecureController {
 			dec.setFlags(eventCRF, ub, currentRole, edc.isDoubleEntry());
 
 			// find all item data
-			ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
-			dnDao = new DiscrepancyNoteDAO(sm.getDataSource());
+			IItemDataDAO iddao = this.itemDataDao;
+			// dnDao is now @Autowired
 			ArrayList<ItemDataBean> itemData = iddao.findAllByEventCRFId(eventCRF.getId());
 			request.setAttribute("items", itemData);
 
@@ -186,8 +208,8 @@ public class DeleteEventCRFServlet extends SecureController {
 							createDiscrepancyNoteBean(description, detailedNotes, itemdata.getId(), study, ub, parentDiscrepancyNote);
 						}
 					}
-					iddao = new ItemDataDAO(sm.getDataSource());
-					ifmdao = new ItemFormMetadataDAO(sm.getDataSource());
+					iddao = this.itemDataDao;
+					// ifmdao is now @Autowired
 					ItemDataBean idBean = (ItemDataBean) iddao.findByPK(itemdata.getId());
 
 					ItemFormMetadataBean ifmBean = ifmdao.findByItemIdAndCRFVersionId(idBean.getItemId(), crfVersionId);
@@ -223,7 +245,7 @@ public class DeleteEventCRFServlet extends SecureController {
 				if(event.getSubjectEventStatus().isCompleted() || event.getSubjectEventStatus().isSigned()){
 					event.setSubjectEventStatus(SubjectEventStatus.DATA_ENTRY_STARTED);
 					event.setUpdater(ub);
-                   sedao = new StudyEventDAO(sm.getDataSource());
+                   sedao = this.studyEventDao;
                    sedao.update(event);
 				}
 				
@@ -268,7 +290,7 @@ public class DeleteEventCRFServlet extends SecureController {
 	}
 
 	public void setDnDao(IDiscrepancyNoteDAO dnDao) {
-		this.dnDao = dnDao;
+		this.dnDao = (DiscrepancyNoteDAO) dnDao;
 	}
 	
 	

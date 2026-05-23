@@ -16,6 +16,7 @@ import org.researchedc.dao.hibernate.ConfigurationDao;
 import org.researchedc.dao.hibernate.PasswordRequirementsDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Leonel Gayard

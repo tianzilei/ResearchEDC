@@ -17,13 +17,13 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.EmailEngine;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -41,8 +41,7 @@ public class RequestStudyServlet extends SecureController {
     public void processRequest() throws Exception {
 
         String action = request.getParameter("action");
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
-        ArrayList studies = sdao.findAllByStatus(Status.AVAILABLE);
+        ArrayList studies = studyDao.findAllByStatus(Status.AVAILABLE);
         ArrayList roles = Role.toArrayList();
         roles.remove(Role.ADMIN); // admin is not a user role, only used for
         // tomcat
@@ -83,8 +82,7 @@ public class RequestStudyServlet extends SecureController {
             newRole.setRole(Role.get(fp.getInt("studyRoleId")));
         }
         newRole.setStudyId(fp.getInt("studyId"));
-        IStudyDAO sdao = new StudyDAO(sm.getDataSource());
-        StudyBean studyRequested = (StudyBean) sdao.findByPK(newRole.getStudyId());
+        StudyBean studyRequested = (StudyBean) studyDao.findByPK(newRole.getStudyId());
         newRole.setStudyName(studyRequested.getName());
         session.setAttribute("newRole", newRole);
         if (!errors.isEmpty()) {

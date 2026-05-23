@@ -2,6 +2,7 @@ package org.researchedc.web.pform.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class Group {
 	private Label label;

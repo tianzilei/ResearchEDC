@@ -34,6 +34,9 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Unlocks a locked study event definition
@@ -42,7 +45,13 @@ import java.util.Date;
  *
  */
 public class UnlockEventDefinitionServlet extends SecureController {
-    /**
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+
+/**
      *
      */
     @Override
@@ -61,14 +70,14 @@ public class UnlockEventDefinitionServlet extends SecureController {
         String idString = request.getParameter("id");
 
         int defId = Integer.valueOf(idString.trim()).intValue();
-        IStudyEventDefinitionDAO sdao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO sdao = this.studyEventDefinitionDao;
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) sdao.findByPK(defId);
         // find all CRFs
-        EventDefinitionCRFDao edao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edao = this.eventDefinitionCrfDao;
         ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllByDefinition(defId);
 
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfDAO cdao = this.crfDao;
         for (int i = 0; i < eventDefinitionCRFs.size(); i++) {
             EventDefinitionCRFBean edc = (EventDefinitionCRFBean) eventDefinitionCRFs.get(i);
             ArrayList versions = (ArrayList) cvdao.findAllByCRF(edc.getCrfId());
@@ -78,7 +87,7 @@ public class UnlockEventDefinitionServlet extends SecureController {
         }
 
         // finds all events
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        IStudyEventDAO sedao = this.studyEventDao;
         ArrayList events = (ArrayList) sedao.findAllByDefinition(sed.getId());
 
         String action = request.getParameter("action");
@@ -115,7 +124,7 @@ public class UnlockEventDefinitionServlet extends SecureController {
                 }
                 // unlock all events
 
-                EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
+                EventCRFDao ecdao = this.eventCrfDao;
 
                 for (int j = 0; j < events.size(); j++) {
                     StudyEventBean event = (StudyEventBean) events.get(j);
@@ -126,7 +135,7 @@ public class UnlockEventDefinitionServlet extends SecureController {
 
                     ArrayList eventCRFs = ecdao.findAllByStudyEvent(event);
                     // unlock all the item data
-                    ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+                    IItemDataDAO iddao = this.itemDataDao;
                     for (int k = 0; k < eventCRFs.size(); k++) {
                         EventCRFBean eventCRF = (EventCRFBean) eventCRFs.get(k);
                         eventCRF.setStatus(Status.AVAILABLE);

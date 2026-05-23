@@ -5,6 +5,7 @@ package org.researchedc.control.urlRewrite;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author pgawade This represents a resource which could be any OpenClinica

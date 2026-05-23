@@ -17,6 +17,7 @@ import jakarta.servlet.jsp.jstl.core.Config;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Filter for applying the OpenClinica's Locale

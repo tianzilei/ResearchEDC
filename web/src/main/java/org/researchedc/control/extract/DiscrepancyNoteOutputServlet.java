@@ -59,6 +59,9 @@ import org.researchedc.service.managestudy.ViewNotesService;
 import org.researchedc.service.managestudy.ViewNotesSortCriteria;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.researchedc.dao.submit.EventCRFDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 
 /**
  * A servlet that sends via HTTP a file containing Discrepancy-Note related data.
@@ -67,6 +70,15 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @see org.researchedc.bean.extract.DownloadDiscrepancyNote
  */
 public class DiscrepancyNoteOutputServlet extends SecureController {
+
+    @Autowired
+    protected ItemGroupMetadataDAO itemGroupMetadataDao;
+
+    @Autowired
+    protected ItemGroupDAO itemGroupDao;
+
+    @Autowired
+    protected CRFVersionDAO crfVersionDao;
     // These are the headers that must appear in the HTTP response, when sending a
     // file back to the user
     public static String CONTENT_DISPOSITION_HEADER = "Content-Disposition";
@@ -275,18 +287,18 @@ public class DiscrepancyNoteOutputServlet extends SecureController {
         resword = ResourceBundleProvider.getWordsBundle(l);
         resformat = ResourceBundleProvider.getFormatBundle(l);
         SimpleDateFormat sdf = new SimpleDateFormat(resformat.getString("date_format_string"), ResourceBundleProvider.getLocale());
-        DiscrepancyNoteDAO dndao = new DiscrepancyNoteDAO(sm.getDataSource());
-        IStudySubjectDAO studySubjectDAO = new StudySubjectDAO(sm.getDataSource());
-        IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-        CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-        ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
-        EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
-        ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
-        ItemDAO idao = new ItemDAO(sm.getDataSource());
-        IStudyDAO studyDao = new StudyDAO(sm.getDataSource());
-        ItemGroupMetadataDAO<String, ArrayList> igmdao = new ItemGroupMetadataDAO<String, ArrayList>(sm.getDataSource());
-        ItemGroupDAO<String, ArrayList> igdao = new ItemGroupDAO<String, ArrayList>(sm.getDataSource());
+        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
+        IStudyEventDAO sedao = this.studyEventDao;
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfDAO cdao = this.crfDao;
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
+        EventCRFDao ecdao = this.eventCrfDao;
+        ItemDataDAO iddao = this.itemDataDao;
+        ItemDAO idao = this.itemDao;
+        IStudyDAO studyDao = this.studyDao;
+        ItemGroupMetadataDAO<String, ArrayList> igmdao = this.itemGroupMetadataDao;
+        ItemGroupDAO<String, ArrayList> igdao = this.itemGroupDao;
 
         ArrayList<DiscrepancyNoteBean> allNotes = new ArrayList<DiscrepancyNoteBean>();
 

@@ -53,6 +53,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * @author jxu
@@ -61,8 +65,15 @@ import java.util.ListIterator;
  * Preferences - Java - Code Style - Code Templates
  */
 public class UpdateEventDefinitionServlet extends SecureController {
-    EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
+    
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
 
+EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
 
     /**
      * 
@@ -110,7 +121,7 @@ public class UpdateEventDefinitionServlet extends SecureController {
         FormProcessor fp = new FormProcessor(request);
 
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) session.getAttribute("definition");
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());    
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;    
         String participateFormStatus = spvdao.findByHandleAndStudy(sed.getStudyId(), "participantPortal").getValue();
         if (participateFormStatus.equals("enabled")) baseUrl();
 
@@ -123,7 +134,7 @@ public class UpdateEventDefinitionServlet extends SecureController {
 
         ArrayList <EventDefinitionCRFBean>  edcsInSession = (ArrayList<EventDefinitionCRFBean>) session.getAttribute("eventDefinitionCRFs");
         int parentStudyId=sed.getStudyId();
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
         ArrayList <EventDefinitionCRFBean> eventDefCrfList =(ArrayList <EventDefinitionCRFBean>) edcdao.findAllActiveSitesAndStudiesPerParentStudy(parentStudyId);
          
 
@@ -137,7 +148,7 @@ public class UpdateEventDefinitionServlet extends SecureController {
             
             if(sed.isRepeating() && !repeating) {            	
             	 
-            	 IStudyEventDAO seDao = new StudyEventDAO(sm.getDataSource());
+            	 IStudyEventDAO seDao = this.studyEventDao;
             	 if(seDao.isThisRepeatingEventScheduledMoreThanOneTime(parentStudyId, sed.getId())) {
             		 v.addValidation("repeating", Validator.CAN_NOT_CHANGE_NONE_REPEATING_NOW);
             		 canBeChanged = false;
@@ -156,7 +167,7 @@ public class UpdateEventDefinitionServlet extends SecureController {
             
 
             session.setAttribute("definition", sed);
-            CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
+            CRFVersionDAO cvdao = this.crfVersionDao;
             ArrayList<EventDefinitionCRFBean> edcs = (ArrayList) session.getAttribute("eventDefinitionCRFs");
             for (int i = 0; i < edcs.size(); i++) {
                 EventDefinitionCRFBean edcBean = (EventDefinitionCRFBean) edcs.get(i);
@@ -276,7 +287,7 @@ public class UpdateEventDefinitionServlet extends SecureController {
     private void submitDefinition() {
         ArrayList edcs = (ArrayList) session.getAttribute("eventDefinitionCRFs");
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) session.getAttribute("definition");
-        IStudyEventDefinitionDAO edao = new StudyEventDefinitionDAO(sm.getDataSource());
+        IStudyEventDefinitionDAO edao = this.studyEventDefinitionDao;
         if (sed !=null)
         logger.info("Definition bean to be updated:" + sed.getName() + sed.getCategory());
 
@@ -285,8 +296,8 @@ public class UpdateEventDefinitionServlet extends SecureController {
         sed.setStatus(Status.AVAILABLE);
         edao.update(sed);
 
-        EventDefinitionCRFDao cdao = new EventDefinitionCRFDAO(sm.getDataSource());
-        ICrfDAO crfdao = new CRFDAO(sm.getDataSource());
+        EventDefinitionCRFDao cdao = this.eventDefinitionCrfDao;
+        ICrfDAO crfdao = this.crfDao;
 
         for (int i = 0; i < edcs.size(); i++) {
             EventDefinitionCRFBean edc = (EventDefinitionCRFBean) edcs.get(i);
@@ -352,9 +363,9 @@ public class UpdateEventDefinitionServlet extends SecureController {
     }
 
     public void removeAllEventsItems(EventDefinitionCRFBean edc, StudyEventDefinitionBean sed){
-        IStudyEventDAO seDao = new StudyEventDAO(sm.getDataSource());
-        EventCRFDao ecrfDao = new EventCRFDAO(sm.getDataSource());
-        ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+        IStudyEventDAO seDao = this.studyEventDao;
+        EventCRFDao ecrfDao = this.eventCrfDao;
+        IItemDataDAO iddao = this.itemDataDao;
         
         // Getting Study Events
         ArrayList seList = seDao.findAllByStudyEventDefinitionAndCrfOids(sed.getOid(), edc.getCrf().getOid());
@@ -380,7 +391,7 @@ public class UpdateEventDefinitionServlet extends SecureController {
                         item.setUpdater(ub);
                         item.setUpdatedDate(new Date());
                         iddao.update(item);
-                        DiscrepancyNoteDAO dnDao = new DiscrepancyNoteDAO(sm.getDataSource());
+                        DiscrepancyNoteDAO dnDao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
                         List dnNotesOfRemovedItem = dnDao.findExistingNotesForItemData(item.getId());
                         if (!dnNotesOfRemovedItem.isEmpty()) {
                             DiscrepancyNoteBean itemParentNote = null;
@@ -415,9 +426,9 @@ public class UpdateEventDefinitionServlet extends SecureController {
     }
 
     public void restoreAllEventsItems(EventDefinitionCRFBean edc, StudyEventDefinitionBean sed){
-        IStudyEventDAO seDao = new StudyEventDAO(sm.getDataSource());
-        EventCRFDao ecrfDao = new EventCRFDAO(sm.getDataSource());
-        ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
+        IStudyEventDAO seDao = this.studyEventDao;
+        EventCRFDao ecrfDao = this.eventCrfDao;
+        IItemDataDAO iddao = this.itemDataDao;
 
         // All Study Events
         ArrayList seList = seDao.findAllByStudyEventDefinitionAndCrfOids(sed.getOid(), edc.getCrf().getOid());

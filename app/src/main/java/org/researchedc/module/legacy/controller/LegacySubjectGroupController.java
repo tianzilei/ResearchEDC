@@ -9,6 +9,7 @@ import org.researchedc.module.legacy.dto.SubjectGroupClassDTO;
 import org.researchedc.module.legacy.dto.SubjectGroupDTO;
 import org.researchedc.module.subjectgroup.entity.StudyGroupClassEntity;
 import org.researchedc.module.subjectgroup.entity.StudyGroupEntity;
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.subjectgroup.service.SubjectGroupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,9 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class LegacySubjectGroupController {
 
     private final SubjectGroupService subjectGroupService;
+    private final CurrentUserUtils currentUserUtils;
 
-    public LegacySubjectGroupController(SubjectGroupService subjectGroupService) {
+    public LegacySubjectGroupController(SubjectGroupService subjectGroupService, CurrentUserUtils currentUserUtils) {
         this.subjectGroupService = subjectGroupService;
+        this.currentUserUtils = currentUserUtils;
     }
 
     @GetMapping("/classes")
@@ -59,7 +62,7 @@ public class LegacySubjectGroupController {
     @PostMapping("/classes")
     public ResponseEntity<SubjectGroupClassDTO> createClass(
             @RequestBody SubjectGroupClassDTO dto) {
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         StudyGroupClassEntity entity = subjectGroupService.createClass(
                 dto.getName(), dto.getStudyId(), dto.getSubjectAssignment(), ownerId);
         return ResponseEntity.ok(toClassDto(entity));
@@ -89,7 +92,7 @@ public class LegacySubjectGroupController {
     @PostMapping("/classes/{classId}/groups")
     public ResponseEntity<SubjectGroupDTO> createGroup(
             @PathVariable int classId, @RequestBody SubjectGroupDTO dto) {
-        Integer ownerId = 1;
+        Integer ownerId = currentUserUtils.getCurrentUserId();
         StudyGroupEntity entity = subjectGroupService.createGroup(
                 dto.getName(), dto.getDescription(), classId, ownerId);
         return ResponseEntity.ok(toGroupDto(entity));

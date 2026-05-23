@@ -17,6 +17,7 @@ import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.control.core.SecureController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
@@ -33,11 +34,13 @@ import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.domain.datamap.VersioningMap;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -46,6 +49,23 @@ import java.util.ArrayList;
  * Preferences - Java - Code Style - Code Templates
  */
 public class DeleteCRFVersionServlet extends SecureController {
+    @Autowired
+    ICrfDAO crfDao;
+    @Autowired
+    IStudyEventDefinitionDAO studyEventDefinitionDao;
+    @Autowired
+    IStudyEventDAO studyEventDao;
+    @Autowired
+    ItemDataDAO itemDataDao;
+    @Autowired
+    EventCRFDao eventCrfDao;
+    @Autowired
+    IStudySubjectDAO studySubjectDao;
+
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
     public static final String VERSION_ID = "verId";
 
     public static final String VERSION_TO_DELETE = "version";
@@ -72,14 +92,14 @@ public class DeleteCRFVersionServlet extends SecureController {
             addPageMessage(respage.getString("please_choose_a_CRF_version_to_delete"));
             forwardPage(Page.CRF_LIST_SERVLET);
         } else {
-            CRFVersionDAO cvdao = new CRFVersionDAO(sm.getDataSource());
-            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-            EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(sm.getDataSource());
-            IStudyEventDefinitionDAO sedDao = new StudyEventDefinitionDAO(sm.getDataSource());
-            IStudyEventDAO seDao = new StudyEventDAO(sm.getDataSource());
-            ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
-            EventCRFDao ecdao = new EventCRFDAO(sm.getDataSource());
-            IStudySubjectDAO ssdao = new StudySubjectDAO(sm.getDataSource());
+            CRFVersionDAO cvdao = this.crfVersionDao;
+            ICrfDAO cdao = this.crfDao;
+            EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
+            IStudyEventDefinitionDAO sedDao = this.studyEventDefinitionDao;
+            IStudyEventDAO seDao = this.studyEventDao;
+            IItemDataDAO iddao = this.itemDataDao;
+            EventCRFDao ecdao = this.eventCrfDao;
+            IStudySubjectDAO ssdao = this.studySubjectDao;
             CRFVersionBean version = (CRFVersionBean) cvdao.findByPK(versionId);
 
             // find definitions using this version

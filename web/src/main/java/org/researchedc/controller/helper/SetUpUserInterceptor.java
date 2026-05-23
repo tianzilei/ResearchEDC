@@ -15,12 +15,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * An "interceptor" class that sets up a UserAccount and stores it in the Session, before
  * another class is initialized and potentially uses that UserAccount.
  */
 public class SetUpUserInterceptor implements HandlerInterceptor {
+
+    @Autowired
+    protected IUserAccountDAO userAccountDao;
 
     public static final String USER_BEAN_NAME = "userBean";
 
@@ -41,7 +45,7 @@ public class SetUpUserInterceptor implements HandlerInterceptor {
         UserAccountBean userBean = (UserAccountBean) currentSession.getAttribute("userBean");
         String userName = "";
         boolean userBeanIsInvalid;
-        IUserAccountDAO userAccountDAO = new UserAccountDAO(dataSource);
+        IUserAccountDAO userAccountDAO = this.userAccountDao;
 
         if (userBean == null) {
 

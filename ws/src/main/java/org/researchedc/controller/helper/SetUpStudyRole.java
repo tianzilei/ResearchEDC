@@ -27,6 +27,10 @@ public class SetUpStudyRole {
     @Autowired
     @Qualifier("dataSource")*/
     private DataSource dataSource;
+    @Autowired
+    private StudyDAO studyDao;
+    @Autowired
+    private StudyParameterValueDAO studyParameterValueDao;
 
     public static final String STUDY_INFO_PANEL = "panel";
 
@@ -48,11 +52,9 @@ public class SetUpStudyRole {
         StudyBean currentStudy = new StudyBean();
         StudyInfoPanel panel = new StudyInfoPanel();
 
-        StudyDAO sdao = new StudyDAO(dataSource);
-
         if (userAccountBean.getId() > 0 && userAccountBean.getActiveStudyId() > 0) {
-            StudyParameterValueDAO spvdao = new StudyParameterValueDAO(dataSource);
-            currentStudy = (StudyBean) sdao.findByPK(userAccountBean.getActiveStudyId());
+            StudyParameterValueDAO spvdao = studyParameterValueDao;
+            currentStudy = (StudyBean) studyDao.findByPK(userAccountBean.getActiveStudyId());
 
             ArrayList studyParameters = spvdao.findParamConfigByStudy(currentStudy);
 
@@ -64,7 +66,7 @@ public class SetUpStudyRole {
 
             } else {
                 // YW <<
-                currentStudy.setParentStudyName(((StudyBean) sdao.findByPK(currentStudy.getParentStudyId())).getName());
+                currentStudy.setParentStudyName(((StudyBean) studyDao.findByPK(currentStudy.getParentStudyId())).getName());
                 // YW >>
                 scs.setParametersForSite(currentStudy);
             }
@@ -89,7 +91,7 @@ public class SetUpStudyRole {
         // YW 06-20-2007<< set site's parentstudy name when site is
         // restored
         if (currentStudy.getParentStudyId() > 0) {
-            currentStudy.setParentStudyName(((StudyBean) sdao.findByPK(currentStudy.getParentStudyId())).getName());
+            currentStudy.setParentStudyName(((StudyBean) studyDao.findByPK(currentStudy.getParentStudyId())).getName());
         }
         // YW >>
 

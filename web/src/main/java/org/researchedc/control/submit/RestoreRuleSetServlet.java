@@ -18,6 +18,7 @@ import org.researchedc.service.rule.RuleSetServiceInterface;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.dao.spi.IRuleSetDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Krikor Krumlian
@@ -25,7 +26,7 @@ import org.researchedc.dao.spi.IRuleSetDAO;
  */
 public class RestoreRuleSetServlet extends SecureController {
 
-    private static final long serialVersionUID = 1L;
+    @Autowired
     RuleSetDAO ruleSetDao;
     RuleSetServiceInterface ruleSetService;
 
@@ -72,7 +73,7 @@ public class RestoreRuleSetServlet extends SecureController {
     }
 
     private RuleSetDAO getRuleSetDao() {
-        ruleSetDao = this.ruleSetDao != null ? ruleSetDao : new RuleSetDAO(sm.getDataSource());
+        ruleSetDao = this.ruleSetDao != null ? ruleSetDao : this.ruleSetDao;
         return ruleSetDao;
     }
 

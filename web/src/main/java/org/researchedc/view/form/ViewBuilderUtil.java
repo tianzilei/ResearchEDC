@@ -10,6 +10,7 @@ import org.jdom.Element;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A utility class containing various methods that are used for generating Web

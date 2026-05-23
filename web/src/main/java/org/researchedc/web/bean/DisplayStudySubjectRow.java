@@ -13,6 +13,7 @@ import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.submit.SubjectGroupMapBean;
 
 import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author jxu

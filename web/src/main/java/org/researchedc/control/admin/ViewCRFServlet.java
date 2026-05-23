@@ -15,11 +15,10 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.util.ItemGroupCrvVersionUtil;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
@@ -45,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -57,6 +57,9 @@ public class ViewCRFServlet extends SecureController {
     private static String CRF_ID = "crfId";
     private static String CRF = "crf";
     private RuleSetServiceInterface ruleSetService;
+
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
 
     /**
      *
@@ -102,8 +105,8 @@ public class ViewCRFServlet extends SecureController {
             addPageMessage(respage.getString("please_choose_a_CRF_to_view"));
             forwardPage(Page.CRF_LIST);
         } else {
-            ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-            CRFVersionDAO vdao = new CRFVersionDAO(sm.getDataSource());
+            ICrfDAO cdao = this.crfDao;
+            CRFVersionDAO vdao = this.crfVersionDao;
             CRFBean crf = (CRFBean) cdao.findByPK(crfId);
             request.setAttribute("crfName", crf.getName());
             ArrayList<CRFVersionBean> versions = (ArrayList<CRFVersionBean>) vdao.findAllByCRF(crfId);
@@ -113,7 +116,7 @@ public class ViewCRFServlet extends SecureController {
             
             if ("admin".equalsIgnoreCase(module)) {
                 //BWP 3279: generate a table showing a list of studies associated with the CRF>>
-                IStudyDAO studyDAO = new StudyDAO(sm.getDataSource());
+                IStudyDAO studyDAO = this.studyDao;
 
                 studyBeans = findStudiesForCRFId(crfId, studyDAO);
                 //Create the Jmesa table for the studies associated with the CRF
@@ -132,7 +135,7 @@ public class ViewCRFServlet extends SecureController {
     private  ArrayList< ItemGroupCrvVersionUtil> verifyUniqueItemPlacementInGroups(	String crfName){
 		
 		//get all items with group / version info from db 
-		 ItemDAO idao = new ItemDAO(sm.getDataSource());
+		 ItemDAO idao = this.itemDao;
 		 int check_group_count = 0;
 		 StringBuffer item_messages = null; String temp_buffer=null; //use for first record in the group
 		 ArrayList< ItemGroupCrvVersionUtil> results = new ArrayList< ItemGroupCrvVersionUtil>();

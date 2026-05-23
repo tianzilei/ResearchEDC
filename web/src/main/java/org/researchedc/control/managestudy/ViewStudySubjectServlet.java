@@ -77,6 +77,9 @@ import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.bean.DisplayStudyEventRow;
 import org.researchedc.web.bean.EntityBeanTable;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.DaoProvider;
 
 /**
  * @author jxu
@@ -84,7 +87,21 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * Processes 'view subject' request
  */
 public class ViewStudySubjectServlet extends SecureController {
-    // The study subject has an existing discrepancy note related to their
+    
+    @Autowired
+    private IAuditEventDAO auditEventDao;
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
+    @Autowired
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
+    @Autowired
+    private ISubjectDAO subjectDao;
+    @Autowired
+    private SubjectGroupMapDAO subjectGroupMapDao;
+    @Autowired
+    private IUserAccountDAO userAccountDao;
+
+// The study subject has an existing discrepancy note related to their
     // unique identifier; this
     // value will be saved as a request attribute
     public final static String HAS_UNIQUE_ID_NOTE = "hasUniqueIDNote";
@@ -132,12 +149,12 @@ public class ViewStudySubjectServlet extends SecureController {
 
     public static ArrayList<DisplayStudyEventBean> getDisplayStudyEventsForStudySubject(StudySubjectBean studySub, DataSource ds, UserAccountBean ub,
             StudyUserRoleBean currentRole) {
-        IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(ds);
-        IStudyEventDAO sedao = new StudyEventDAO(ds);
-        EventCRFDao ecdao = new EventCRFDAO(ds);
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(ds);
-        IStudySubjectDAO ssdao = new StudySubjectDAO(ds);
-        IStudyDAO sdao = new StudyDAO(ds);
+        IStudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
+        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
+        EventCRFDao ecdao = DaoProvider.getDao(EventCRFDAO.class);
+        EventDefinitionCRFDao edcdao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
+        IStudySubjectDAO ssdao = DaoProvider.getDao(StudySubjectDAO.class);
+        IStudyDAO sdao = DaoProvider.getDao(StudyDAO.class);
 
         ArrayList events = sedao.findAllByStudySubject(studySub);
 
@@ -175,8 +192,8 @@ public class ViewStudySubjectServlet extends SecureController {
 
     @Override
     public void processRequest() throws Exception {
-        ISubjectDAO sdao = new SubjectDAO(sm.getDataSource());
-        IStudySubjectDAO subdao = new StudySubjectDAO(sm.getDataSource());
+        ISubjectDAO sdao = this.subjectDao;
+        IStudySubjectDAO subdao = this.studySubjectDao;
         FormProcessor fp = new FormProcessor(request);
         int studySubId = fp.getInt("id", true);// studySubjectId
         String from = fp.getString("from");
@@ -207,7 +224,7 @@ public class ViewStudySubjectServlet extends SecureController {
             int studyId = studySub.getStudyId();
             int subjectId = studySub.getSubjectId();
 
-            IStudyDAO studydao = new StudyDAO(sm.getDataSource());
+            IStudyDAO studydao = this.studyDao;
             StudyBean study = (StudyBean) studydao.findByPK(studyId);
             //Check if this StudySubject would be accessed from the Current Study
             if(studySub.getStudyId() != currentStudy.getId()){
@@ -226,8 +243,6 @@ public class ViewStudySubjectServlet extends SecureController {
                 }
             }
 
-
-
             // If the study subject derives from a site, and is being viewed
             // from a parent study,
             // then the study IDs will be different. However, since each note is
@@ -238,7 +253,7 @@ public class ViewStudySubjectServlet extends SecureController {
             boolean isParentStudy = study.getParentStudyId() < 1;
 
             // Get any disc notes for this subject : studySubId
-            DiscrepancyNoteDAO discrepancyNoteDAO = new DiscrepancyNoteDAO(sm.getDataSource());
+            DiscrepancyNoteDAO discrepancyNoteDAO = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
             List<DiscrepancyNoteBean> allNotesforSubject = new ArrayList<DiscrepancyNoteBean>();
 
             // These methods return only parent disc notes
@@ -279,13 +294,12 @@ public class ViewStudySubjectServlet extends SecureController {
 
             request.setAttribute("subject", subject);
 
-
             /*
-             * IStudyDAO studydao = new StudyDAO(sm.getDataSource()); StudyBean
+             * IStudyDAO studydao = this.studyDao; StudyBean
              * study = (StudyBean) studydao.findByPK(studyId);
              */
             // YW 11-26-2007 <<
-            StudyParameterValueDAO spvdao = new StudyParameterValueDAO(sm.getDataSource());
+            IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
             study.getStudyParameterConfig().setCollectDob(spvdao.findByHandleAndStudy(studyId, "collectDob").getValue());
             // YW >>
             request.setAttribute("subjectStudy", study);
@@ -302,8 +316,8 @@ public class ViewStudySubjectServlet extends SecureController {
             request.setAttribute("children", children);
 
             // find study events
-            IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
-            IStudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(sm.getDataSource());
+            IStudyEventDAO sedao = this.studyEventDao;
+        IStudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
 
             StudySubjectService studySubjectService = (StudySubjectService)
                     WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("studySubjectService");
@@ -318,7 +332,6 @@ public class ViewStudySubjectServlet extends SecureController {
                          decb.getStudyEvent().setEditable(false);
                     }
             }
-
 
             // BWP 3212; remove event CRFs that are supposed to be "hidden" >>
             if (currentStudy.getParentStudyId() > 0) {
@@ -361,15 +374,15 @@ public class ViewStudySubjectServlet extends SecureController {
             // request.setAttribute("displayEvents", displayEvents);
 
             // find group info
-            SubjectGroupMapDAO sgmdao = new SubjectGroupMapDAO(sm.getDataSource());
+            SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
             ArrayList groupMaps = (ArrayList) sgmdao.findAllByStudySubject(studySubId);
             request.setAttribute("groups", groupMaps);
 
             // find audit log for events
-            IAuditEventDAO aedao = new AuditEventDAO(sm.getDataSource());
+            IAuditEventDAO aedao = this.auditEventDao;
             ArrayList logs = aedao.findEventStatusLogByStudySubject(studySubId);
             // logger.warning("^^^ retrieved logs");
-            IUserAccountDAO udao = new UserAccountDAO(sm.getDataSource());
+            IUserAccountDAO udao = this.userAccountDao;
             ArrayList eventLogs = new ArrayList();
             // logger.warning("^^^ starting to iterate");
             for (int i = 0; i < logs.size(); i++) {
@@ -432,11 +445,11 @@ public class ViewStudySubjectServlet extends SecureController {
          * Integer(edc.getStudyEventDefinitionId()), edc); }
          */
 
-        IStudyEventDAO sedao = new StudyEventDAO(ds);
-        ICrfDAO cdao = new CRFDAO(ds);
-        CRFVersionDAO cvdao = new CRFVersionDAO(ds);
-        ItemDataDAO iddao = new ItemDataDAO(ds);
-        EventDefinitionCRFDao edcdao = new EventDefinitionCRFDAO(ds);
+        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
+        ICrfDAO cdao = DaoProvider.getDao(CRFDAO.class);
+        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
+        ItemDataDAO iddao = DaoProvider.getDao(ItemDataDAO.class);
+        EventDefinitionCRFDao edcdao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
 
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecb = (EventCRFBean) eventCRFs.get(i);
@@ -538,8 +551,8 @@ public class ViewStudySubjectServlet extends SecureController {
             startedButIncompleted.put(new Integer(edcrf.getCrfId()), new EventCRFBean());
         }
 
-        CRFVersionDAO cvdao = new CRFVersionDAO(ds);
-        ItemDataDAO iddao = new ItemDataDAO(ds);
+        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
+        ItemDataDAO iddao = DaoProvider.getDao(ItemDataDAO.class);
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecrf = (EventCRFBean) eventCRFs.get(i);
             // System.out.println("########event crf id:" + ecrf.getId());
@@ -596,8 +609,8 @@ public class ViewStudySubjectServlet extends SecureController {
     }
 
     public static void populateUncompletedCRFsWithCRFAndVersions(DataSource ds, ArrayList uncompletedEventDefinitionCRFs) {
-        ICrfDAO cdao = new CRFDAO(ds);
-        CRFVersionDAO cvdao = new CRFVersionDAO(ds);
+        ICrfDAO cdao = DaoProvider.getDao(CRFDAO.class);
+        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
 
         int size = uncompletedEventDefinitionCRFs.size();
         for (int i = 0; i < size; i++) {
@@ -634,8 +647,8 @@ public class ViewStudySubjectServlet extends SecureController {
      * uncompleted
      *
      * private ArrayList createAllEventCRFs(ArrayList eventCRFs, ArrayList
-     * eventDefinitionCRFs) { ICrfDAO cdao = new CRFDAO(sm.getDataSource());
-     * CRFVersionDAO vdao = new CRFVersionDAO(sm.getDataSource()); HashMap
+     * eventDefinitionCRFs) { ICrfDAO cdao = this.crfDao;
+     * CRFVersionDAO vdao = this.crfVersionDao; HashMap
      * crfIdMap = new HashMap(); ArrayList evs = new ArrayList(); for (int i =
      * 0; i < eventDefinitionCRFs.size(); i++) { EventDefinitionCRFBean edc =
      * (EventDefinitionCRFBean) eventDefinitionCRFs.get(i); crfIdMap.put(new
@@ -684,11 +697,11 @@ public class ViewStudySubjectServlet extends SecureController {
      */
     public void mayAccess() throws InsufficientPermissionException {
         FormProcessor fp = new FormProcessor(request);
-        AuditableEntityDAO subdao = new StudySubjectDAO(sm.getDataSource());
+        IStudySubjectDAO subdao = this.studySubjectDao;
         int studySubId = fp.getInt("id", true);
 
         if (studySubId > 0) {
-            if (!entityIncluded(studySubId, ub.getName(), subdao, sm.getDataSource())) {
+            if (!entityIncluded(studySubId, ub.getName(), (AuditableEntityDAO) subdao, sm.getDataSource())) {
                 addPageMessage(respage.getString("required_study_subject_not_belong"));
                 throw new InsufficientPermissionException(Page.MENU, resexception.getString("entity_not_belong_studies"), "1");
             }

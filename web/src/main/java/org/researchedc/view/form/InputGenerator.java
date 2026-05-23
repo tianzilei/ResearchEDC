@@ -4,6 +4,7 @@ import org.researchedc.bean.submit.ResponseSetBean;
 import org.jdom.Element;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This interface defines the methods for creating HTML input types. The inputs

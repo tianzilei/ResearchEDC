@@ -38,6 +38,10 @@ import org.researchedc.web.InsufficientPermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu
@@ -46,6 +50,9 @@ import org.researchedc.dao.spi.IStudyParameterValueDAO;
  *         coordinator
  */
 public class AdministrativeEditingServlet extends DataEntryServlet {
+
+    @Autowired
+    protected IStudyEventDAO studyEventDao;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdministrativeEditingServlet.class);
 
@@ -187,7 +194,7 @@ public class AdministrativeEditingServlet extends DataEntryServlet {
         this.checkUpdateDataPermission(request);
         request.setAttribute("fromResolvingNotes", fromResolvingNotes);
         LOGGER.debug(" +++++++++++++++++++ " + ecb.getStudyEventId());
-        // IStudyEventDAO sedao = new StudyEventDAO(sm.getDataSource());
+        // IStudyEventDAO sedao = this.studyEventDao;
         // StudyEventBean sEvent = (StudyEventBean)
         // sedao.findByPK(ecb.getStudyEventId());
         // if (sEvent.getSubjectEventStatus().equals(SubjectEventStatus.SIGNED))

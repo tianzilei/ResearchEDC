@@ -13,6 +13,7 @@ import org.researchedc.bean.extract.FilterBean;
 import org.researchedc.control.extract.ApplyFilterServlet;
 import org.researchedc.control.extract.EditFilterServlet;
 import org.researchedc.control.extract.RemoveFilterServlet;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * The extension of Shai Sachs' Table class, Essentially builds the rows for
