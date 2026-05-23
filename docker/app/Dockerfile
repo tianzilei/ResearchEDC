@@ -24,7 +24,7 @@ WORKDIR /build
 
 # Copy parent POM first for dependency caching
 COPY pom.xml ./
-COPY core/pom.xml ./core/
+COPY shared/pom.xml ./shared/
 COPY web/pom.xml ./web/
 COPY ws/pom.xml ./ws/
 COPY app/pom.xml ./app/
@@ -36,8 +36,8 @@ RUN --mount=type=cache,target=/root/.m2 mvn dependency:go-offline -DskipTests -p
 COPY lib/openclinica-odm-2.2.jar lib/openclinica-odm-2.2.pom ./lib/
 RUN --mount=type=cache,target=/root/.m2 mvn install:install-file -Dfile=lib/openclinica-odm-2.2.jar -DpomFile=lib/openclinica-odm-2.2.pom -q
 
-# Copy source (core + app modules needed)
-COPY core/ ./core/
+# Copy source (shared + app modules needed)
+COPY shared/ ./shared/
 COPY app/ ./app/
 
 # Copy frontend build output into app's static resources

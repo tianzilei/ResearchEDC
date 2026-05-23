@@ -12,24 +12,24 @@ WORKDIR /build
 
 # Copy parent POM first for dependency caching
 COPY pom.xml ./
-COPY core/pom.xml ./core/
+COPY shared/pom.xml ./shared/
 COPY web/pom.xml ./web/
 COPY ws/pom.xml ./ws/
 COPY app/pom.xml ./app/
 
 # Download dependencies (cached layer unless POM changes)
-RUN mvn dependency:go-offline -DskipTests -pl core,web -am --quiet || true
+RUN mvn dependency:go-offline -DskipTests -pl shared,web -am --quiet || true
 
 # Install proprietary ODM dependency (not in public repos)
 COPY lib/openclinica-odm-2.2.jar lib/openclinica-odm-2.2.pom ./lib/
 RUN mvn install:install-file -Dfile=lib/openclinica-odm-2.2.jar -DpomFile=lib/openclinica-odm-2.2.pom -q
 
 # Copy source (app/ NOT needed — only core + web are built)
-COPY core/ ./core/
+COPY shared/ ./shared/
 COPY web/ ./web/
 
 # Build the WAR (skip tests)
-RUN mvn clean package -DskipTests -pl core,web -am
+RUN mvn clean package -DskipTests -pl shared,web -am
 
 # Stage 2: Runtime — Tomcat 10.1 + JDK 21
 # =============================================================================

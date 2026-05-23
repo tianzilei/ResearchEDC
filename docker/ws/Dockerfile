@@ -12,7 +12,7 @@ WORKDIR /build
 
 # Copy parent POM first for dependency caching
 COPY pom.xml ./
-COPY core/pom.xml ./core/
+COPY shared/pom.xml ./shared/
 COPY web/pom.xml ./web/
 COPY ws/pom.xml ./ws/
 COPY app/pom.xml ./app/
@@ -25,7 +25,7 @@ COPY lib/openclinica-odm-2.2.jar lib/openclinica-odm-2.2.pom ./lib/
 RUN mvn install:install-file -Dfile=lib/openclinica-odm-2.2.jar -DpomFile=lib/openclinica-odm-2.2.pom -q
 
 # Copy source (only needed modules)
-COPY core/ ./core/
+COPY shared/ ./shared/
 COPY ws/ ./ws/
 
 # Build the WAR (skip tests)
