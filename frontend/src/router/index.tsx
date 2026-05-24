@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import AppLayout from "@/layouts/AppLayout";
-import Login from "@/pages/Login";
+import MainMenu from "@/pages/MainMenu";
 import NotFound from "@/pages/NotFound";
 import ErrorPage from "@/pages/ErrorPage";
 import LegacyFrame from "@/components/LegacyFrame";
@@ -253,7 +253,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login />,
+    element: <MainMenu />,
   },
   {
     path: "/q/fill/:token",
@@ -265,7 +265,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <Navigate to="/app/dashboard" replace />,
+    element: <MainMenu />,
   },
   {
     path: "*",
