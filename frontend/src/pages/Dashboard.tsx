@@ -196,7 +196,7 @@ function getGreeting(t: (key: string) => string): string {
 
 export default function Dashboard() {
   const { t } = useTranslation();
-  const { isAuthenticated, isInitialized, login, user } = useAuth();
+  const { isAuthenticated, isInitialized, user } = useAuth();
   const { data: studies, isLoading, isError } = useStudies();
   const navigate = useNavigate();
 
@@ -224,9 +224,9 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (isInitialized && !isAuthenticated) {
-      login();
+      navigate("/");
     }
-  }, [isInitialized, isAuthenticated, login]);
+  }, [isInitialized, isAuthenticated, navigate]);
 
   if (!isInitialized || isLoading) {
     return (

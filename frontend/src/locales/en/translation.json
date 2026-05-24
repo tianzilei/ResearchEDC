@@ -50,7 +50,7 @@
   "dashboard.error.description": "The server could not be reached. Please check your connection and try again.",
   "dashboard.error.retry": "Retry",
 
-  "login.signIn": "Sign in with Keycloak",
+  "login.signIn": "Sign in",
 
   "notFound.message": "Page not found.",
 

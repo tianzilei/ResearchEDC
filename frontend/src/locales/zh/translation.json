@@ -50,7 +50,7 @@
   "dashboard.error.description": "无法连接服务器，请检查网络连接后重试。",
   "dashboard.error.retry": "重试",
 
-  "login.signIn": "使用 Keycloak 登录",
+  "login.signIn": "登录",
 
   "notFound.message": "页面未找到。",
 

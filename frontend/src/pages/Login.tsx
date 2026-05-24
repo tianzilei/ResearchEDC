@@ -8,7 +8,7 @@ const { Title, Text } = Typography;
 
 export default function Login() {
   const { t } = useTranslation();
-  const { isAuthenticated, isInitialized, login } = useAuth();
+  const { isAuthenticated, isInitialized } = useAuth();
 
   if (!isInitialized) {
     return null;
@@ -144,7 +144,7 @@ export default function Login() {
             type="primary"
             size="large"
             block
-            onClick={login}
+            onClick={() => { window.location.href = "/"; }}
             style={{
               height: 48,
               fontSize: 15,
