@@ -6,7 +6,6 @@ import {
   Button,
   Space,
   Typography,
-  Tag,
   Modal,
   Form,
   Select,
@@ -14,11 +13,7 @@ import {
   message,
   Empty,
 } from "antd";
-import {
-  LinkOutlined,
-  PlusOutlined,
-  CalendarOutlined,
-} from "@ant-design/icons";
+
 import { useCurrentStudy } from "@/hooks/useStudies";
 import { useAppQuery, useAppMutation, useQueryClient } from "@/hooks/useQuery";
 import { apiClient } from "@/api/client";
@@ -55,14 +50,14 @@ interface Version {
   status: string;
 }
 
-const statusColors: Record<string, string> = {
+const statusClassMap: Record<string, string> = {
   pending: "default",
-  in_progress: "processing",
+  in_progress: "warning",
   submitted: "success",
-  reviewed: "cyan",
-  locked: "purple",
+  reviewed: "info",
+  locked: "info",
   expired: "warning",
-  withdrawn: "error",
+  withdrawn: "danger",
 };
 
 function useAssignments(studyId: number) {
@@ -145,7 +140,7 @@ export default function QuestionnaireAssignments() {
       title: t("assignment.column.status"),
       dataIndex: "status",
       key: "status",
-      render: (s: string) => <Tag color={statusColors[s]}>{s}</Tag>,
+      render: (s: string) => <span className={`status status-${statusClassMap[s] ?? "default"}`}>{s}</span>,
     },
     {
       title: t("assignment.column.due"),
@@ -153,10 +148,7 @@ export default function QuestionnaireAssignments() {
       key: "due_at",
       render: (d: string | null) =>
         d ? (
-          <Space>
-            <CalendarOutlined />
-            {new Date(d).toLocaleDateString()}
-          </Space>
+          <span>{new Date(d).toLocaleDateString()}</span>
         ) : (
           "-"
         ),
@@ -166,7 +158,7 @@ export default function QuestionnaireAssignments() {
       dataIndex: "has_token",
       key: "has_token",
       render: (hasTok: boolean) =>
-        hasTok ? <Tag color="blue">{t("assignment.token.issued")}</Tag> : <Tag>{t("assignment.token.none")}</Tag>,
+        hasTok ? <span className="status status-info">{t("assignment.token.issued")}</span> : <span className="status status-default">{t("assignment.token.none")}</span>,
     },
     {
       title: t("assignment.column.created"),
@@ -180,9 +172,9 @@ export default function QuestionnaireAssignments() {
     <div>
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
         <Title level={4} style={{ marginTop: 0 }}>
-          <LinkOutlined /> {t("questionnaire.assignments")}
+          {t("questionnaire.assignments")}
         </Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
+        <Button type="primary" onClick={() => setCreateOpen(true)}>
           {t("assignment.new")}
         </Button>
       </Space>

@@ -13,11 +13,7 @@ import {
   Modal,
   Checkbox,
 } from "antd";
-import {
-  ExportOutlined,
-  DownloadOutlined,
-  ReloadOutlined,
-} from "@ant-design/icons";
+
 import { useCurrentStudy } from "@/hooks/useStudies";
 import { useAppQuery, useAppMutation, useQueryClient } from "@/hooks/useQuery";
 import { apiClient } from "@/api/client";
@@ -128,15 +124,14 @@ export default function QuestionnaireExport() {
       key: "actions",
       render: (_: unknown, r: ExportJob) => (
         <Space>
-          {r.status === "completed" && r.file_path && (
-            <Button size="small" icon={<DownloadOutlined />} type="link">
+            {r.status === "completed" && r.file_path && (
+            <Button size="small" type="link">
               {t("qexport.action.download")}
             </Button>
           )}
           {r.status === "failed" && (
             <Button
               size="small"
-              icon={<ReloadOutlined />}
               onClick={() => {
                 createExport.mutate(r.query_params);
               }}
@@ -153,11 +148,10 @@ export default function QuestionnaireExport() {
     <div>
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
         <Title level={4} style={{ marginTop: 0 }}>
-          <ExportOutlined /> {t("qexport.title")}
+          {t("qexport.title")}
         </Title>
         <Button
           type="primary"
-          icon={<ExportOutlined />}
           onClick={() => setExportOpen(true)}
         >
           {t("qexport.new")}

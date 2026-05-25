@@ -14,15 +14,7 @@ import {
   Empty,
   Tabs,
 } from "antd";
-import {
-  FileAddOutlined,
-  CheckCircleOutlined,
-  StopOutlined,
-  EyeOutlined,
-  CodeOutlined,
-  BuildOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
+
 import { useParams, useNavigate } from "react-router-dom";
 import { Model } from "survey-core";
 import { Survey } from "survey-react-ui";
@@ -193,14 +185,13 @@ export default function QuestionnaireVersionEditor() {
       key: "actions",
       render: (_: unknown, r: Version) => (
         <Space>
-          <Button size="small" icon={<EyeOutlined />} onClick={() => handlePreview(r)}>
+          <Button size="small" onClick={() => handlePreview(r)}>
             {t("version.action.preview")}
           </Button>
           {r.status === "draft" && (
             <>
               <Button
                 size="small"
-                icon={<EditOutlined />}
                 onClick={() => handleOpenBuilder(r)}
               >
                 {t("version.action.edit")}
@@ -208,7 +199,6 @@ export default function QuestionnaireVersionEditor() {
               <Button
                 size="small"
                 type="primary"
-                icon={<CheckCircleOutlined />}
                 onClick={() => publishVersion.mutate(r.id)}
               >
                 {t("version.action.publish")}
@@ -218,7 +208,6 @@ export default function QuestionnaireVersionEditor() {
           {r.status === "published" && (
             <Button
               size="small"
-              icon={<StopOutlined />}
               onClick={() => retireVersion.mutate(r.id)}
             >
               {t("version.action.retire")}
@@ -237,12 +226,11 @@ export default function QuestionnaireVersionEditor() {
             {t("version.back")}
           </Button>
           <Title level={4} style={{ marginTop: 0, marginBottom: 0 }}>
-            <CodeOutlined /> {t("version.management")}
+            {t("version.management")}
           </Title>
         </Space>
         <Button
           type="primary"
-          icon={<FileAddOutlined />}
           onClick={() => setCreateOpen(true)}
         >
           {t("version.new")}
@@ -303,7 +291,7 @@ export default function QuestionnaireVersionEditor() {
               items={[
                 {
                   key: "builder",
-                  label: <span><BuildOutlined /> {t("version.form.builder")}</span>,
+                  label: t("version.form.builder"),
                   children: (
                     <div style={{ border: "1px solid #d9d9d9", borderRadius: 6, overflow: "hidden" }}>
                       <QuestionnaireBuilder value={builderJson} onChange={setBuilderJson} />
@@ -312,7 +300,7 @@ export default function QuestionnaireVersionEditor() {
                 },
                 {
                   key: "json",
-                  label: <span><CodeOutlined /> {t("version.form.jsonEditor")}</span>,
+                  label: t("version.form.jsonEditor"),
                   children: (
                     <TextArea
                       rows={16}
@@ -350,7 +338,7 @@ export default function QuestionnaireVersionEditor() {
             items={[
               {
                 key: "builder",
-                label: <span><BuildOutlined /> Visual Builder</span>,
+                label: "Visual Builder",
                 children: (
                   <div style={{ border: "1px solid #d9d9d9", borderRadius: 6, overflow: "hidden" }}>
                     <QuestionnaireBuilder value={editJson} onChange={handleBuilderChange} />
@@ -359,7 +347,7 @@ export default function QuestionnaireVersionEditor() {
               },
               {
                 key: "preview",
-                label: <span><EyeOutlined /> {t("version.preview")}</span>,
+                label: t("version.preview"),
                 children: (
                   <div style={{ maxWidth: 600, margin: "0 auto", padding: 16 }}>
                     <Survey model={new Model(editJson)} />

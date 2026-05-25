@@ -1,13 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Card, List, Tag, Typography, Space, Button, Empty, Alert, Progress, message } from "antd";
-import {
-  FileTextOutlined,
-  RightOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
-  CalendarOutlined,
-} from "@ant-design/icons";
+
 import { useNavigate } from "react-router-dom";
 import { useAppQuery } from "@/hooks/useQuery";
 import { apiClient } from "@/api/client";
@@ -33,14 +26,14 @@ export default function QuestionnaireMyTasks() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const statusConfig: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
-    pending: { color: "default", icon: <ClockCircleOutlined />, label: t("tasks.pending") },
-    in_progress: { color: "processing", icon: <FileTextOutlined />, label: "In Progress" },
-    submitted: { color: "success", icon: <CheckCircleOutlined />, label: t("tasks.completed") },
-    reviewed: { color: "cyan", icon: <CheckCircleOutlined />, label: "Reviewed" },
-    locked: { color: "purple", icon: <CheckCircleOutlined />, label: "Finalized" },
-    expired: { color: "warning", icon: <CloseCircleOutlined />, label: "Expired" },
-    withdrawn: { color: "error", icon: <CloseCircleOutlined />, label: "Withdrawn" },
+  const statusConfig: Record<string, { color: string; label: string }> = {
+    pending: { color: "default", label: t("tasks.pending") },
+    in_progress: { color: "processing", label: "In Progress" },
+    submitted: { color: "success", label: t("tasks.completed") },
+    reviewed: { color: "cyan", label: "Reviewed" },
+    locked: { color: "purple", label: "Finalized" },
+    expired: { color: "warning", label: "Expired" },
+    withdrawn: { color: "error", label: "Withdrawn" },
   };
   const subjectId = user?.username;
 
@@ -75,7 +68,7 @@ export default function QuestionnaireMyTasks() {
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 16px" }}>
       <Title level={3}>
-        <FileTextOutlined /> {t("questionnaire.myTasks")}
+        {t("questionnaire.myTasks")}
       </Title>
 
       <Card size="small" style={{ marginBottom: 24 }}>
@@ -105,7 +98,7 @@ export default function QuestionnaireMyTasks() {
       {pendingTasks.length > 0 && (
         <>
           <Title level={5} style={{ marginTop: 0 }}>
-            <ClockCircleOutlined /> {t("tasks.toComplete")}
+            {t("tasks.toComplete")}
           </Title>
           <List
             dataSource={pendingTasks}
@@ -115,7 +108,6 @@ export default function QuestionnaireMyTasks() {
                   <Button
                     type="primary"
                     size="small"
-                    icon={<RightOutlined />}
                     onClick={() => {
                       if (item.has_token) {
                         message.info(t("tasks.useLink"));
@@ -141,7 +133,7 @@ export default function QuestionnaireMyTasks() {
                     <Space>
                       {item.due_at && (
                         <Text type="warning" style={{ fontSize: 12 }}>
-                          <CalendarOutlined /> {t("tasks.dueLabel")}: {new Date(item.due_at).toLocaleDateString()}
+                          {t("tasks.dueLabel")}: {new Date(item.due_at).toLocaleDateString()}
                         </Text>
                       )}
                       {item.token_expires_at && (
@@ -161,7 +153,7 @@ export default function QuestionnaireMyTasks() {
       {completedTasks.length > 0 && (
         <>
           <Title level={5} style={{ marginTop: 24 }}>
-            <CheckCircleOutlined /> {t("tasks.completed")}
+            {t("tasks.completed")}
           </Title>
           <List
             dataSource={completedTasks}
@@ -191,7 +183,7 @@ export default function QuestionnaireMyTasks() {
       {expiredTasks.length > 0 && (
         <>
           <Title level={5} style={{ marginTop: 24, color: "#faad14" }}>
-            <CloseCircleOutlined /> {t("tasks.expiredWithdrawn")}
+            {t("tasks.expiredWithdrawn")}
           </Title>
           <List
             dataSource={expiredTasks}

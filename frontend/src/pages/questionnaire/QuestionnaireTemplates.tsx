@@ -10,15 +10,10 @@ import {
   Form,
   Input,
   Select,
-  Tag,
   message,
   Empty,
 } from "antd";
-import {
-  FileTextOutlined,
-  PlusOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
+
 import { useNavigate } from "react-router-dom";
 import { useCurrentStudy } from "@/hooks/useStudies";
 import { useAppQuery, useAppMutation, useQueryClient } from "@/hooks/useQuery";
@@ -40,13 +35,13 @@ interface Template {
   updated_at: string;
 }
 
-const categoryColors: Record<string, string> = {
-  SLEEP: "geekblue",
-  ANXIETY: "volcano",
-  DEPRESSION: "purple",
-  COGNITION: "cyan",
-  SAFETY: "red",
-  QUALITY_OF_LIFE: "green",
+const categoryStatus: Record<string, string> = {
+  SLEEP: "info",
+  ANXIETY: "warning",
+  DEPRESSION: "info",
+  COGNITION: "info",
+  SAFETY: "danger",
+  QUALITY_OF_LIFE: "success",
 };
 
 function useTemplates(studyId: number) {
@@ -88,7 +83,7 @@ export default function QuestionnaireTemplates() {
       title: t("questionnaire.template.column.code"),
       dataIndex: "code",
       key: "code",
-      render: (code: string) => <Tag color="blue">{code}</Tag>,
+      render: (code: string) => <span className="status status-info">{code}</span>,
     },
     { title: t("questionnaire.template.column.name"), dataIndex: "name", key: "name" },
     {
@@ -96,14 +91,14 @@ export default function QuestionnaireTemplates() {
       dataIndex: "category",
       key: "category",
       render: (cat: string | null) =>
-        cat ? <Tag color={categoryColors[cat] ?? "default"}>{cat}</Tag> : "-",
+        cat ? <span className={`status status-${categoryStatus[cat] ?? "default"}`}>{cat}</span> : "-",
     },
     {
       title: t("questionnaire.template.column.status"),
       dataIndex: "status",
       key: "status",
       render: (s: string) => (
-        <Tag color={s === "active" ? "success" : "default"}>{s}</Tag>
+        <span className={s === "active" ? "status status-success" : "status status-default"}>{s}</span>
       ),
     },
     {
@@ -118,7 +113,6 @@ export default function QuestionnaireTemplates() {
       render: (_: unknown, r: Template) => (
         <Button
           size="small"
-          icon={<EyeOutlined />}
           onClick={() => navigate(`/app/questionnaires/templates/${r.id}/versions`)}
         >
           {t("questionnaire.template.action.versions")}
@@ -131,9 +125,9 @@ export default function QuestionnaireTemplates() {
     <div>
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
         <Title level={4} style={{ marginTop: 0 }}>
-          <FileTextOutlined /> {t("questionnaire.templates")}
+          {t("questionnaire.templates")}
         </Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>
+        <Button type="primary" onClick={() => setModalOpen(true)}>
           {t("questionnaire.template.new")}
         </Button>
       </Space>

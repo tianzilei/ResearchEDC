@@ -6,7 +6,6 @@ import {
   Button,
   Space,
   Typography,
-  Tag,
   Modal,
   Descriptions,
   message,
@@ -14,12 +13,7 @@ import {
   Input,
   Alert,
 } from "antd";
-import {
-  FileTextOutlined,
-  CheckCircleOutlined,
-  LockOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
+
 import { useCurrentStudy } from "@/hooks/useStudies";
 import { useAppQuery, useAppMutation, useQueryClient } from "@/hooks/useQuery";
 import { apiClient } from "@/api/client";
@@ -44,11 +38,11 @@ interface Response {
   created_at: string;
 }
 
-const statusColors: Record<string, string> = {
+const statusClassMap: Record<string, string> = {
   draft: "default",
   submitted: "success",
-  reviewed: "cyan",
-  locked: "purple",
+  reviewed: "info",
+  locked: "info",
 };
 
 function useResponses(studyId: number) {
@@ -127,7 +121,7 @@ export default function QuestionnaireResponses() {
       title: t("response.column.status"),
       dataIndex: "status",
       key: "status",
-      render: (s: string) => <Tag color={statusColors[s]}>{s}</Tag>,
+      render: (s: string) => <span className={`status status-${statusClassMap[s] ?? "default"}`}>{s}</span>,
     },
     {
       title: t("response.column.score"),
@@ -150,7 +144,6 @@ export default function QuestionnaireResponses() {
         <Space>
           <Button
             size="small"
-            icon={<EyeOutlined />}
             onClick={() => handleViewDetail(r)}
           >
             {t("response.action.view")}
@@ -158,7 +151,6 @@ export default function QuestionnaireResponses() {
           {r.status === "submitted" && (
             <Button
               size="small"
-              icon={<CheckCircleOutlined />}
               onClick={() =>
                 reviewResponse.mutate({
                   id: r.id,
@@ -172,7 +164,6 @@ export default function QuestionnaireResponses() {
           {r.status === "reviewed" && (
             <Button
               size="small"
-              icon={<LockOutlined />}
               onClick={() => lockResponse.mutate(r.id)}
             >
               {t("response.action.lock")}
@@ -187,7 +178,7 @@ export default function QuestionnaireResponses() {
     <div>
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
         <Title level={4} style={{ marginTop: 0 }}>
-          <FileTextOutlined /> {t("response.title")}
+          {t("response.title")}
         </Title>
       </Space>
 
@@ -233,9 +224,9 @@ export default function QuestionnaireResponses() {
           <>
             <Descriptions column={2} size="small" bordered>
               <Descriptions.Item label={t("response.detail.status")}>
-                <Tag color={statusColors[detailResponse.status]}>
+                <span className={`status status-${statusClassMap[detailResponse.status] ?? "default"}`}>
                   {detailResponse.status}
-                </Tag>
+                </span>
               </Descriptions.Item>
               <Descriptions.Item label={t("response.detail.totalScore")}>
                 {detailResponse.total_score ?? "-"}
@@ -290,7 +281,7 @@ export default function QuestionnaireResponses() {
                   rows={6}
                   style={{
                     marginTop: 8,
-                    fontFamily: "monospace",
+                    fontFamily: "var(--font-mono)",
                     fontSize: 12,
                   }}
                 />

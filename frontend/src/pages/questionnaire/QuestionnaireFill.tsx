@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Model } from "survey-core";
 import { Survey } from "survey-react-ui";
 import { Spin, Alert, Typography, Button, Space, message } from "antd";
-import { CheckCircleOutlined, ClockCircleOutlined } from "@ant-design/icons";
+
 import { apiClient } from "@/api/client";
 import "survey-core/survey-core.min.css";
 
@@ -120,7 +120,6 @@ export default function QuestionnaireFill() {
   if (submitted) {
     return (
       <div style={{ maxWidth: 600, margin: "80px auto", padding: 24, textAlign: "center" }}>
-        <CheckCircleOutlined style={{ fontSize: 64, color: "#52c41a" }} />
         <Title level={3} style={{ marginTop: 16 }}>
           {t("fill.submitted")}
         </Title>
@@ -141,7 +140,7 @@ export default function QuestionnaireFill() {
           <Text type="secondary">{t("fill.version")}: {info?.version_no}</Text>
           {info?.due_at && (
             <Text type="warning">
-              <ClockCircleOutlined /> {t("fill.due")}: {new Date(info.due_at).toLocaleDateString()}
+              {t("fill.due")}: {new Date(info.due_at).toLocaleDateString()}
             </Text>
           )}
         </Space>
