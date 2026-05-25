@@ -9,10 +9,7 @@ import {
   Empty,
   Descriptions,
 } from "antd";
-import {
-  ExperimentOutlined,
-  RightCircleOutlined,
-} from "@ant-design/icons";
+
 import { useRuleSets } from "@/hooks/useRules";
 import type { RuleSetDTO } from "@/types/rules";
 import type { ColumnsType } from "antd/es/table";
@@ -112,7 +109,6 @@ export default function RulesListPage() {
         styles={{ body: { padding: "16px 24px" } }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <ExperimentOutlined style={{ fontSize: 22, color: "var(--color-primary, #099A87)" }} />
           <div>
             <Title level={4} style={{ margin: 0 }}>
               Rule Sets
@@ -173,11 +169,12 @@ export default function RulesListPage() {
                 </div>
               ),
               expandIcon: ({ expanded, onExpand, record }) => (
-                <RightCircleOutlined
-                  rotate={expanded ? 90 : 0}
+                <span
                   onClick={(e) => onExpand(record, e)}
-                  style={{ cursor: "pointer", color: "var(--color-primary, #099A87)" }}
-                />
+                  style={{ cursor: "pointer", color: "var(--color-primary, #099A87)", display: "inline-block", transform: expanded ? "rotate(90deg)" : "none", transition: "transform 0.2s" }}
+                >
+                  ▶
+                </span>
               ),
             }}
           />

@@ -18,13 +18,7 @@ import {
   message,
   Popconfirm,
 } from "antd";
-import {
-  ExperimentOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+
 import { useRuleSet, useRule } from "@/hooks/useRules";
 import { useQueryClient } from "@/hooks/useQuery";
 import PageHeader from "@/components/PageHeader";
@@ -108,7 +102,6 @@ export default function RuleSetDetail() {
       key: "name",
       render: (name: string) => (
         <Space>
-          <ExperimentOutlined style={{ color: "var(--color-primary, #099A87)" }} />
           <Text strong>{name}</Text>
         </Space>
       ),
@@ -120,11 +113,11 @@ export default function RuleSetDetail() {
       width: 100,
       render: (enabled: boolean | null) =>
         enabled ? (
-          <Tag icon={<CheckCircleOutlined />} color="success">
+          <Tag color="success">
             Active
           </Tag>
         ) : (
-          <Tag icon={<CloseCircleOutlined />} color="default">
+          <Tag color="default">
             Inactive
           </Tag>
         ),
@@ -138,7 +131,7 @@ export default function RuleSetDetail() {
           okText="Remove"
           cancelText="Cancel"
         >
-          <Button type="text" size="small" danger icon={<DeleteOutlined />} />
+          <Button type="text" size="small" danger />
         </Popconfirm>
       ),
     },
@@ -286,7 +279,7 @@ export default function RuleSetDetail() {
       <Card
         title="Rules in this Rule Set"
         extra={
-          <Button type="primary" size="small" icon={<PlusOutlined />} onClick={() => setAddOpen(true)}>
+          <Button type="primary" size="small" onClick={() => setAddOpen(true)}>
             Add Rule
           </Button>
         }
