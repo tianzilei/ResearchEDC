@@ -3,25 +3,22 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   Card, Typography, Button, Space, Spin, Result, Breadcrumb, Tag, message,
 } from "antd";
-import {
-  WarningOutlined, CheckCircleOutlined, UndoOutlined,
-  DeleteOutlined, ArrowLeftOutlined,
-} from "@ant-design/icons";
+
 
 const { Title, Text, Paragraph } = Typography;
 
 const ENTITY_LABELS: Record<string, string> = {
-  "study": "Study",
-  "site": "Site",
-  "subject": "Subject",
-  "study-subject": "Study Subject",
-  "study-event": "Study Event",
-  "event-crf": "Event CRF",
-  "event-definition": "Event Definition",
-  "subject-group-class": "Subject Group Class",
-  "study-user-role": "Study User Role",
+  "study": "研究",
+  "site": "站点",
+  "subject": "受试者",
+  "study-subject": "研究受试者",
+  "study-event": "研究事件",
+  "event-crf": "事件 CRF",
+  "event-definition": "事件定义",
+  "subject-group-class": "受试者分组类别",
+  "study-user-role": "研究用户角色",
   "crf": "CRF",
-  "crf-version": "CRF Version",
+  "crf-version": "CRF 版本",
 };
 
 interface EntityInfo {
@@ -100,7 +97,7 @@ export default function EntityAction() {
         const res = await fetch(apiUrl, { method });
         if (res.ok || res.status === 204) {
           setResult("success");
-          message.success(`${entityLabel} ${isRemove ? "removed" : "restored"} successfully`);
+          message.success(`${entityLabel} ${isRemove ? "已删除" : "已恢复"}`);
         } else {
           throw new Error("API returned error");
         }
@@ -120,10 +117,9 @@ export default function EntityAction() {
     return (
       <Result
         status="success"
-        icon={<CheckCircleOutlined />}
-        title={`${entityLabel} ${isRemove ? "Removed" : "Restored"}`}
-        subTitle={info ? `${info.name} has been ${isRemove ? "removed" : "restored"}.` : ""}
-        extra={<Button type="primary" onClick={() => navigate(-1)}>Go Back</Button>}
+        title={`${entityLabel} — ${isRemove ? "已删除" : "已恢复"}`}
+        subTitle={info ? `${info.name} 已${isRemove ? "删除" : "恢复"}。` : ""}
+        extra={<Button type="primary" onClick={() => navigate(-1)}>返回</Button>}
       />
     );
   }
@@ -135,20 +131,18 @@ export default function EntityAction() {
   return (
     <div>
       <Breadcrumb items={[
-        { title: <Link to={backLink}>Back</Link> },
-        { title: `${isRemove ? "Remove" : "Restore"} ${entityLabel}` },
+        { title: <Link to={backLink}>返回</Link> },
+        { title: `${isRemove ? "删除" : "恢复"} ${entityLabel}` },
       ]} style={{ marginBottom: 16 }} />
 
-      <Card style={{ borderRadius: 14, maxWidth: 560, margin: "40px auto" }}>
+      <Card style={{ maxWidth: 560, margin: "40px auto" }}>
         <Space direction="vertical" style={{ width: "100%", textAlign: "center" }} size={16}>
-          <div style={{ fontSize: 48, color: isRemove ? "#ff4d4f" : "#52c41a" }}>
-            {isRemove ? <WarningOutlined /> : <UndoOutlined />}
-          </div>
+
           <Title level={4}>
-            {isRemove ? "Confirm Removal" : "Confirm Restoration"}
+            {isRemove ? "确认删除" : "确认恢复"}
           </Title>
           <Paragraph type="secondary">
-            Are you sure you want to <Text strong>{isRemove ? "remove" : "restore"}</Text> this {entityLabel}?
+            确定要<Text strong>{isRemove ? "删除" : "恢复"}</Text>此{entityLabel}吗？
             {info && (
               <div style={{ marginTop: 8 }}>
                 <Tag>{info.name}</Tag>
@@ -158,12 +152,11 @@ export default function EntityAction() {
           </Paragraph>
           <Space>
             <Button type="primary" danger={isRemove}
-              icon={isRemove ? <DeleteOutlined /> : <UndoOutlined />}
               onClick={handleConfirm} loading={performing}>
-              {isRemove ? "Remove" : "Restore"}
+              {isRemove ? "删除" : "恢复"}
             </Button>
-            <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>
-              Cancel
+            <Button onClick={() => navigate(-1)}>
+              取消
             </Button>
           </Space>
         </Space>

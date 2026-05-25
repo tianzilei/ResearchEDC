@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { Card, Table, Tag, Button, Space, Typography, Modal, Form, Input, Select, DatePicker, message, Tooltip } from "antd";
-import { PlusOutlined, UserOutlined, ReloadOutlined, UnorderedListOutlined, AppstoreOutlined } from "@ant-design/icons";
-
+import { Card, Table, Button, Space, Typography, Modal, Form, Input, Select, DatePicker, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useCurrentStudy } from "@/hooks/useStudies";
 import { SkeletonPage } from "@/components/SkeletonCard";
@@ -27,7 +25,6 @@ export default function SubjectList() {
   const [subjects, setSubjects] = useState<StudySubject[]>([]);
   const [createOpen, setCreateOpen] = useState(false);
   const [form] = Form.useForm();
-  const [viewMode, setViewMode] = useState<"table" | "card">("table");
 
   useState(() => {
     if (!currentStudy?.id) return;
@@ -49,7 +46,7 @@ export default function SubjectList() {
           dateOfBirth: vals.dateOfBirth?.toISOString?.() ?? null,
         }),
       });
-      if (!subRes.ok) { message.error("Failed to create subject"); return; }
+      if (!subRes.ok) { message.error("创建受试者失败"); return; }
       const newSubject = await subRes.json();
 
       const enrollRes = await fetch("/api/v1/subjects/enroll", {
@@ -63,20 +60,20 @@ export default function SubjectList() {
           eventDefinitionId: null,
         }),
       });
-      if (!enrollRes.ok) { message.error("Failed to enroll subject"); return; }
+      if (!enrollRes.ok) { message.error("入组失败"); return; }
 
-      message.success("Subject created and enrolled");
+      message.success("受试者已创建并入组");
       setCreateOpen(false);
       form.resetFields();
       const r = await fetch(`/api/v1/subjects/by-study?studyId=${currentStudy!.id}`);
       if (r.ok) setSubjects(await r.json());
-    } catch { void 0; }
+    } catch { /* form validation error */ }
   };
 
   if (!currentStudy) {
     return (
       <div style={{ padding: 48, textAlign: "center" }}>
-        <Text type="secondary">Select a study to manage subjects</Text>
+        <Text style={{ color: "var(--text-secondary)" }}>请先选择一个项目来管理受试者</Text>
       </div>
     );
   }
@@ -85,94 +82,85 @@ export default function SubjectList() {
 
   const columns = [
     {
-      title: "Label",
+      title: "编号",
       dataIndex: "label",
       key: "label",
       render: (text: string, record: StudySubject) => (
         <a onClick={() => navigate(`/app/subjects/${record.studySubjectId}`)}>
-          <UserOutlined style={{ marginRight: 8 }} />{text}
+          {text}
         </a>
       ),
     },
-    { title: "Subject ID", dataIndex: "subjectId", key: "subjectId" },
-    { title: "OC OID", dataIndex: "ocOid", key: "ocOid", render: (v: string) => v ?? "-" },
+    { title: "受试者 ID", dataIndex: "subjectId", key: "subjectId" },
+    { title: "OC OID", dataIndex: "ocOid", key: "ocOid", render: (v: string | null) => v ?? "-" },
     {
-      title: "Enrolled",
+      title: "入组日期",
       dataIndex: "enrollmentDate",
       key: "enrollmentDate",
-      render: (d: string) => d ? new Date(d).toLocaleDateString() : "-",
+      render: (d: string | null) => d ? new Date(d).toLocaleDateString() : "-",
     },
     {
-      title: "Status",
+      title: "状态",
       key: "status",
-      render: () => <Tag color="green">Active</Tag>,
+      render: () => <span className="status status-success">正常</span>,
     },
   ];
 
   return (
-    <div style={{ padding: "24px 32px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <div>
-          <Title level={3} style={{ margin: 0 }}>Subjects</Title>
-          <Text type="secondary" style={{ marginTop: 4, display: "block" }}>
-            {currentStudy.name} &middot; {subjects.length} enrolled
+          <Title level={4} style={{ margin: 0 }}>受试者</Title>
+          <Text style={{ color: "var(--text-secondary)", marginTop: 2, display: "block", fontSize: 13 }}>
+            {currentStudy.name} · {subjects.length} 名已入组
           </Text>
         </div>
         <Space>
-          <Tooltip title="Toggle view">
-            <Button
-              icon={viewMode === "table" ? <AppstoreOutlined /> : <UnorderedListOutlined />}
-              onClick={() => setViewMode(v => v === "table" ? "card" : "table")}
-            />
-          </Tooltip>
-          <Button icon={<ReloadOutlined />} onClick={() => window.location.reload()}>
-            Refresh
+          <Button onClick={() => window.location.reload()}>
+            刷新
           </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-            Add Subject
+          <Button type="primary" onClick={() => setCreateOpen(true)}>
+            添加受试者
           </Button>
         </Space>
       </div>
 
-      <Card
-        style={{ borderRadius: 14, border: "1px solid var(--color-border-light, #E5E0D8)" }}
-        styles={{ body: { padding: 0 } }}
-      >
+      <Card styles={{ body: { padding: 0 } }}>
         <Table
           dataSource={subjects}
           columns={columns}
           rowKey="studySubjectId"
-          pagination={{ pageSize: 20, showTotal: (t) => `${t} subjects` }}
-          locale={{ emptyText: "No subjects enrolled in this study" }}
+          pagination={{ pageSize: 20, showTotal: (t) => `共 ${t} 名` }}
+          locale={{ emptyText: "该项目暂无受试者" }}
         />
       </Card>
 
       <Modal
-        title="Add Subject to Study"
+        title="添加受试者到项目"
         open={createOpen}
         onOk={handleCreate}
         onCancel={() => { setCreateOpen(false); form.resetFields(); }}
-        okText="Create & Enroll"
-        width={520}
+        okText="创建并入组"
+        width={480}
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="uniqueIdentifier" label="Subject ID" rules={[{ required: true, message: "Required" }]}>
-            <Input placeholder="e.g. SUBJ-001" />
+          <Form.Item name="uniqueIdentifier" label="受试者 ID" rules={[{ required: true, message: "必填" }]}>
+            <Input placeholder="例如 SUBJ-001" />
           </Form.Item>
-          <Form.Item name="label" label="Study Label" rules={[{ required: true, message: "Required" }]}>
-            <Input placeholder="e.g. SITE-A-001" />
+          <Form.Item name="label" label="研究编号" rules={[{ required: true, message: "必填" }]}>
+            <Input placeholder="例如 SITE-A-001" />
           </Form.Item>
-          <Form.Item name="gender" label="Gender">
+          <Form.Item name="gender" label="性别">
             <Select allowClear>
-              <Select.Option value="m">Male</Select.Option>
-              <Select.Option value="f">Female</Select.Option>
-              <Select.Option value="u">Unknown</Select.Option>
+              <Select.Option value="m">男</Select.Option>
+              <Select.Option value="f">女</Select.Option>
+              <Select.Option value="u">未知</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item name="dateOfBirth" label="Date of Birth">
+          <Form.Item name="dateOfBirth" label="出生日期">
             <DatePicker style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="enrollmentDate" label="Enrollment Date">
+          <Form.Item name="enrollmentDate" label="入组日期">
             <DatePicker style={{ width: "100%" }} />
           </Form.Item>
         </Form>
