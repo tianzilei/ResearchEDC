@@ -54,4 +54,8 @@ public class DiscrepancyNoteService {
         entity.setResolutionStatusId(5);
         return discrepancyNoteRepository.save(entity);
     }
+
+    public long countOpenNotes() {
+        return discrepancyNoteRepository.countByResolutionStatusIdNot(3);
+    }
 }

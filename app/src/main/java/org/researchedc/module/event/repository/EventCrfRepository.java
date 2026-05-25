@@ -11,4 +11,6 @@ public interface EventCrfRepository extends JpaRepository<EventCrfEntity, Intege
     List<EventCrfEntity> findByStudyEventId(Integer studyEventId);
 
     List<EventCrfEntity> findByStudySubjectId(Integer studySubjectId);
+
+    long countByDateCompletedIsNull();
 }

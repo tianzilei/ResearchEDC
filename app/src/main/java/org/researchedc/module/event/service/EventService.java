@@ -65,6 +65,10 @@ public class EventService {
             .toList();
     }
 
+    public long countPendingCrfs() {
+        return eventCrfRepository.countByDateCompletedIsNull();
+    }
+
     @Transactional
     public StudyEventDTO scheduleEvent(ScheduleEventRequest request, Integer ownerId) {
         if (request.getStudySubjectId() == null) {
