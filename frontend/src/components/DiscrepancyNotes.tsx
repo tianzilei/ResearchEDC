@@ -11,11 +11,7 @@ import {
   Spin,
   Card,
 } from "antd";
-import {
-  PlusOutlined,
-  CheckCircleOutlined,
-  MessageOutlined,
-} from "@ant-design/icons";
+
 import { useEventCrfNotes, useCreateNote, useResolveNote } from "@/hooks/useDiscrepancyNotes";
 
 const { Text, Paragraph } = Typography;
@@ -68,13 +64,11 @@ export default function DiscrepancyNotes({ eventCrfId, studyId, entityId }: Disc
     <div>
       <Space style={{ width: "100%", justifyContent: "space-between", marginBottom: 16 }}>
         <Text strong>
-          <MessageOutlined style={{ marginRight: 6 }} />
           Discrepancy Notes ({notes?.length ?? 0})
         </Text>
         <Button
           type="primary"
           size="small"
-          icon={<PlusOutlined />}
           onClick={() => setModalOpen(true)}
         >
           Add Note
@@ -100,7 +94,6 @@ export default function DiscrepancyNotes({ eventCrfId, studyId, entityId }: Disc
                         key="resolve"
                         type="link"
                         size="small"
-                        icon={<CheckCircleOutlined />}
                         onClick={() => handleResolve(note.discrepancyNoteId)}
                         loading={resolveNote.isPending}
                       >

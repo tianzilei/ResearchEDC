@@ -1,7 +1,6 @@
 import { useRef, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { Alert, Button, Card, Typography } from "antd";
-import { ReloadOutlined, WarningOutlined } from "@ant-design/icons";
 import { SkeletonPage } from "@/components/SkeletonCard";
 
 const { Text } = Typography;
@@ -61,7 +60,6 @@ export default function LegacyFrame() {
         >
           <Alert
             type="warning"
-            icon={<WarningOutlined />}
             message="Failed to load legacy page"
             description={
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -91,7 +89,6 @@ export default function LegacyFrame() {
         </Card>
         <Button
           type="primary"
-          icon={<ReloadOutlined />}
           onClick={handleRetry}
           style={{
             background: "var(--color-primary, #099A87)",

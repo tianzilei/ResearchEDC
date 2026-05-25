@@ -1,23 +1,7 @@
-import { Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { Outlet } from "react-router-dom";
-import { Layout, Menu, Button, theme as antTheme, Dropdown, Space, Select } from "antd";
+import { Layout, Menu, Button, Dropdown, Space, Select } from "antd";
 import type { MenuProps } from "antd";
-import {
-  DashboardOutlined,
-  UserOutlined,
-  LogoutOutlined,
-  MedicineBoxOutlined,
-  FileTextOutlined,
-  ExportOutlined,
-  SafetyOutlined,
-  AuditOutlined,
-  SettingOutlined,
-  DownOutlined,
-  FormOutlined,
-  LinkOutlined,
-  CheckCircleOutlined,
-  GlobalOutlined,
-} from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/providers/AuthProvider";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -32,45 +16,43 @@ const { Header, Sider, Content } = Layout;
 function useMenuItems(): MenuProps["items"] {
   const permissions = usePermissions();
   const has = (p: Permission) => permissions.includes(p);
-  const { t } = useTranslation();
 
   const items: NonNullable<MenuProps["items"]> = [
-    { key: "/app/dashboard", icon: <DashboardOutlined />, label: t("layout.dashboard") },
+    { key: "/app/dashboard", label: "总览" },
   ];
 
   if (has("study:view")) {
-    items.push({ key: "/app/studies", icon: <MedicineBoxOutlined />, label: t("layout.studies") });
+    items.push({ key: "/app/studies", label: "项目" });
   }
   if (has("subject:view")) {
-    items.push({ key: "/app/subjects", icon: <UserOutlined />, label: t("layout.subjects") });
+    items.push({ key: "/app/subjects", label: "受试者" });
   }
   if (has("crf:design")) {
-    items.push({ key: "/app/crfs", icon: <FileTextOutlined />, label: t("layout.crfs") });
+    items.push({ key: "/app/crfs", label: "CRF" });
   }
   if (has("crf:design")) {
     items.push({
       key: "questionnaires",
-      icon: <FormOutlined />,
-      label: t("layout.questionnaires"),
+      label: "问卷",
       children: [
-        { key: "/app/questionnaires/templates", icon: <FileTextOutlined />, label: t("layout.templates") },
-        { key: "/app/questionnaires/assignments", icon: <LinkOutlined />, label: t("layout.assignments") },
-        { key: "/app/questionnaires/responses", icon: <CheckCircleOutlined />, label: t("layout.responses") },
-        { key: "/app/questionnaires/export", icon: <ExportOutlined />, label: t("layout.export") },
+        { key: "/app/questionnaires/templates", label: "模板" },
+        { key: "/app/questionnaires/assignments", label: "分配" },
+        { key: "/app/questionnaires/responses", label: "回复" },
+        { key: "/app/questionnaires/export", label: "导出" },
       ],
-    } satisfies NonNullable<MenuProps["items"]>[number]);
+    });
   }
   if (has("data:export")) {
-    items.push({ key: "/app/data-export", icon: <ExportOutlined />, label: t("layout.dataExport") });
+    items.push({ key: "/app/data-export", label: "数据导出" });
   }
   if (has("randomization:view")) {
-    items.push({ key: "/app/randomization", icon: <SafetyOutlined />, label: t("layout.randomization") });
+    items.push({ key: "/app/randomization", label: "随机" });
   }
   if (has("audit:view")) {
-    items.push({ key: "/app/audit-log", icon: <AuditOutlined />, label: t("layout.auditLog") });
+    items.push({ key: "/app/audit-log", label: "审计日志" });
   }
   if (has("admin:access")) {
-    items.push({ key: "/app/admin", icon: <SettingOutlined />, label: t("layout.admin") });
+    items.push({ key: "/app/admin", label: "管理" });
   }
 
   return items;
@@ -80,9 +62,21 @@ export default function AppLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { token } = antTheme.useToken();
   const menuItems = useMenuItems();
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
+
+  const [theme, setTheme] = useState<"daylight" | "night">(() => {
+    return (localStorage.getItem("theme") as "daylight" | "night") ?? "daylight";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => (prev === "daylight" ? "night" : "daylight"));
+  }, []);
 
   const defaultOpenKeys = location.pathname.startsWith("/app/questionnaires")
     ? ["questionnaires"]
@@ -92,7 +86,7 @@ export default function AppLayout() {
     const path = location.pathname;
     if (path.startsWith("/app/randomization")) return "/app/randomization";
     if (path.startsWith("/app/questionnaires")) return "/app/questionnaires/templates";
-    return ((menuItems ?? []) as { key: string }[]).find(
+    return (menuItems?.filter((item) => item && typeof item === "object" && "key" in item) as { key: string }[])?.find(
       (item) => item.key !== "/app/dashboard" && path.startsWith(item.key),
     )?.key ?? "/app/dashboard";
   })();
@@ -104,13 +98,14 @@ export default function AppLayout() {
       disabled: true,
     },
     { type: "divider" },
+    { key: "profile-page", label: "账户设置", onClick: () => navigate("/app/profile") },
+    { type: "divider" },
     {
       key: "logout",
-      icon: <LogoutOutlined />,
-      label: t("layout.logout"),
+      label: "退出登录",
       onClick: () => {
         logout();
-        void navigate("/login");
+        navigate("/login");
       },
     },
   ];
@@ -122,62 +117,46 @@ export default function AppLayout() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "0 28px",
-          height: 60,
-          lineHeight: "60px",
-          borderBottom: "1.5px solid rgba(212,168,84,0.30)",
-          background: "#0F1A2E",
-          backgroundImage:
-            "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%)",
+          padding: "0 20px",
+          height: 52,
+          lineHeight: "52px",
+          background: "var(--header-bg)",
           position: "relative",
           zIndex: 10,
+          borderBottom: "1px solid var(--border)",
         }}
       >
         <Space size="middle">
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: "50%",
-              border: "1.5px solid rgba(212,168,84,0.4)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "rgba(212,168,84,0.08)",
-              flexShrink: 0,
-            }}
-          >
-            <MedicineBoxOutlined style={{ fontSize: 18, color: "#099A87" }} />
-          </div>
-          <span
-            style={{
-              color: "#F8F5F0",
-              fontSize: 17,
-              fontWeight: 500,
-              fontFamily: "'DM Sans', sans-serif",
-              letterSpacing: "0.04em",
-              textShadow: "0 1px 2px rgba(0,0,0,0.2)",
-            }}
-          >
+          <div style={{ fontWeight: 600, fontSize: 15, color: "var(--header-text)", letterSpacing: "0.02em" }}>
             ResearchEDC
-          </span>
-          <div style={{ borderLeft: "1px solid rgba(212,168,84,0.2)", height: 28, width: 1 }} />
+          </div>
+          <div style={{ borderLeft: "1px solid var(--border)", height: 20, width: 1 }} />
           <StudySwitcher />
         </Space>
-        <Space size="middle">
+        <Space size="small">
+          <Button
+            type="text"
+            onClick={toggleTheme}
+            style={{
+              color: "var(--header-text)",
+              fontSize: 12,
+              height: 32,
+              padding: "0 10px",
+            }}
+          >
+            {theme === "daylight" ? "夜间模式" : "日间模式"}
+          </Button>
           <Select
             value={i18n.language?.startsWith("zh") ? "zh" : "en"}
-            onChange={(lng) => { void i18n.changeLanguage(lng); }}
+            onChange={(lng) => { i18n.changeLanguage(lng); }}
             size="small"
             variant="borderless"
             style={{
-              minWidth: 80,
-              color: "rgba(248,245,240,0.75)",
-              fontFamily: "'DM Sans', sans-serif",
+              minWidth: 64,
+              color: "var(--header-text)",
               fontSize: 12,
             }}
             popupMatchSelectWidth={false}
-            suffixIcon={<GlobalOutlined style={{ color: "rgba(248,245,240,0.5)", fontSize: 13 }} />}
             options={SUPPORTED_LANGUAGES.map((l) => ({
               value: l.key,
               label: l.label,
@@ -187,29 +166,22 @@ export default function AppLayout() {
             <Button
               type="text"
               style={{
-                color: "rgba(248,245,240,0.85)",
-                height: 60,
-                fontFamily: "'DM Sans', sans-serif",
+                color: "var(--header-text)",
+                height: 52,
                 fontSize: 13,
-                letterSpacing: "0.02em",
               }}
             >
-              <Space>
-                <UserOutlined style={{ color: "#D4A854", fontSize: 14 }} />
-                {user?.firstName ?? user?.username ?? "User"}
-                <DownOutlined style={{ fontSize: 9, opacity: 0.6 }} />
-              </Space>
+              {user?.firstName ?? user?.username ?? "用户"}
             </Button>
           </Dropdown>
         </Space>
       </Header>
       <Layout>
         <Sider
-          width={220}
+          width={200}
           style={{
-            background: token.colorBgContainer,
-            borderRight: "1px solid #EDE8E0",
-            boxShadow: "inset 0 2px 4px rgba(15,26,46,0.04)",
+            background: "var(--sider-bg)",
+            borderRight: "1px solid var(--sider-border)",
           }}
           breakpoint="lg"
           collapsedWidth={0}
@@ -225,19 +197,16 @@ export default function AppLayout() {
             style={{
               height: "100%",
               borderRight: 0,
-              paddingTop: 16,
-              paddingBottom: 16,
+              paddingTop: 12,
+              paddingBottom: 12,
             }}
           />
         </Sider>
         <Content
           style={{
-            padding: 28,
-            background: token.colorBgLayout,
-            backgroundImage:
-              "radial-gradient(circle, #D9D4CA 0.6px, transparent 0.6px)",
-            backgroundSize: "28px 28px",
-            minHeight: "calc(100vh - 60px)",
+            padding: 24,
+            background: "var(--bg-layout)",
+            minHeight: "calc(100vh - 52px)",
           }}
         >
           <div
@@ -248,9 +217,7 @@ export default function AppLayout() {
             }}
           >
             <Suspense fallback={<SkeletonPage />}>
-              <div className="animate-in" style={{ animationDuration: "0.5s" }}>
-                <Outlet />
-              </div>
+              <Outlet />
             </Suspense>
           </div>
         </Content>

@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
 import { Form, Button, Space, Typography, Alert } from "antd";
-import { SaveOutlined, LoadingOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { FormField, type FormItemConfig } from "@/components/form-engine/FormField";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { isFieldDisabled, type FormStatusConfig, type FormRecordStatus } from "@/components/form-engine/FormStatus";
@@ -64,9 +63,9 @@ export function DataEntryForm({
   const fieldsDisabled = useMemo(() => isFieldDisabled(statusConfig), [statusConfig]);
 
   const statusTag = useMemo(() => {
-    if (saving) return { icon: <LoadingOutlined />, text: t("form.saving"), color: "rgba(0,0,0,0.45)" };
-    if (manualSaveStatus === "saved") return { icon: <CheckCircleOutlined />, text: t("form.saved"), color: "#52c41a" };
-    if (manualSaveStatus === "error") return { icon: <ExclamationCircleOutlined />, text: t("form.saveFailed"), color: "#ff4d4f" };
+    if (saving) return { text: t("form.saving"), color: "rgba(0,0,0,0.45)" };
+    if (manualSaveStatus === "saved") return { text: t("form.saved"), color: "#52c41a" };
+    if (manualSaveStatus === "error") return { text: t("form.saveFailed"), color: "#ff4d4f" };
     return null;
   }, [saving, manualSaveStatus]);
 
@@ -106,7 +105,6 @@ export function DataEntryForm({
         <Space style={{ marginTop: 16 }}>
           <Button
             type="primary"
-            icon={<SaveOutlined />}
             onClick={handleManualSave}
             loading={saving}
             disabled={fieldsDisabled}
@@ -115,7 +113,7 @@ export function DataEntryForm({
           </Button>
           {statusTag && (
             <Text style={{ color: statusTag.color }}>
-              {statusTag.icon} {statusTag.text}
+              {statusTag.text}
             </Text>
           )}
         </Space>

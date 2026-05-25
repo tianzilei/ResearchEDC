@@ -1,7 +1,4 @@
 import type { ReactNode } from "react";
-import { Typography } from "antd";
-
-const { Text } = Typography;
 
 interface PageHeaderProps {
   title: string;
@@ -14,7 +11,7 @@ export default function PageHeader({ title, subtitle, actions, className }: Page
   return (
     <div className={`page-header${className ? ` ${className}` : ""}`}>
       <div className="page-header-left">
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div className="accent-bar" />
           <h1 className="page-header-title">{title}</h1>
         </div>
@@ -28,8 +25,8 @@ export default function PageHeader({ title, subtitle, actions, className }: Page
 export function PageHeaderStat({ label, value }: { label: string; value: string | number }) {
   return (
     <div style={{ textAlign: "center" }}>
-      <div className="number-display" style={{ fontSize: 22, color: "#1A1D23" }}>{value}</div>
-      <Text style={{ fontSize: 12, color: "#9CA3AF", letterSpacing: "0.02em" }}>{label}</Text>
+      <div className="number-display" style={{ fontSize: 20, fontWeight: 600, color: "var(--text)" }}>{value}</div>
+      <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{label}</div>
     </div>
   );
 }

@@ -1,14 +1,9 @@
 import { useState } from "react";
-import { Select, Typography, Space } from "antd";
-import { MedicineBoxOutlined, HomeOutlined } from "@ant-design/icons";
+import { Select, Space } from "antd";
 import { useStudies, useCurrentStudy } from "@/hooks/useStudies";
 import type { Study } from "@/types/study";
-import { useTranslation } from "react-i18next";
-
-const { Text } = Typography;
 
 export default function StudySwitcher() {
-  const { t } = useTranslation();
   const { data: studies } = useStudies();
   const { currentStudy, setCurrentStudy } = useCurrentStudy();
   const [open, setOpen] = useState(false);
@@ -26,12 +21,16 @@ export default function StudySwitcher() {
     <Select
       showSearch
       value={currentStudy ? currentStudy.name : undefined}
-      placeholder={t("layout.selectStudy")}
+      placeholder="选择项目"
       open={open}
       onDropdownVisibleChange={setOpen}
       onChange={handleChange}
-      style={{ minWidth: 240 }}
-     dropdownStyle={{ width: 360 }}
+      variant="borderless"
+      style={{
+        minWidth: 200,
+        color: "var(--header-text)",
+      }}
+      popupMatchSelectWidth={320}
       optionFilterProp="label"
       notFoundContent={null}
       options={topStudies.flatMap((group) => {
@@ -57,11 +56,10 @@ export default function StudySwitcher() {
         const item = option.data.item;
         return (
           <Space>
-            {item.type === "site" ? <HomeOutlined /> : <MedicineBoxOutlined />}
             <span>{item.name}</span>
-            <Text type="secondary" style={{ fontSize: 12 }}>
+            <span style={{ color: "var(--text-muted)", fontSize: 12 }}>
               {item.identifier ?? ""}
-            </Text>
+            </span>
           </Space>
         );
       }}
