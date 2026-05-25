@@ -1,0 +1,134 @@
+# ResearchEDC — Caddy Reverse Proxy
+#
+# Development:
+#   docker compose -f deploy/compose/docker-compose.dev.yml \
+#       -f deploy/compose/docker-compose.caddy.yml up --build -d
+#
+# Production:
+#   1. Replace `:80` with your domain
+#   2. docker compose -f deploy/compose/docker-compose.prod.yml \
+#        -f deploy/compose/docker-compose.caddy.yml up -d
+#
+# Session-based auth (Spring Security):
+#   - JSESSIONID cookie: HttpOnly, SameSite=Strict
+#   - XSRF-TOKEN cookie: readable by JS (for CSRF protection)
+#   - All /app/* and /login routes served by React SPA via backend
+
+{
+    admin off
+}
+
+:80 {
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    encode gzip
+    request_body /api/* 100MB
+    request_body /legacy/* 100MB
+
+    root * /opt/researchedc/www
+
+    # Static assets (cache aggressively — content-addressed by Vite build)
+    handle /assets/* {
+        file_server
+        header Cache-Control "public, immutable, max-age=86400"
+    }
+
+    handle /favicon.ico {
+        file_server
+    }
+
+    # React SPA — proxy to Spring Boot backend for client-side routing
+    # The SPA (index.html) is served by Spring Boot as a static resource,
+    # and handles all routes: /login, /app/*, and / (with redirects).
+    handle /app/* {
+        reverse_proxy researchedc-app:8080 {
+            transport http {
+                dial_timeout 30s
+                read_timeout 180s
+            }
+        }
+    }
+
+    # Login page — served by React SPA via backend
+    handle /login {
+        reverse_proxy researchedc-app:8080 {
+            transport http {
+                dial_timeout 30s
+                read_timeout 180s
+            }
+        }
+    }
+
+    # REST API — proxied to Spring Boot backend
+    handle /api/* {
+        reverse_proxy researchedc-app:8080 {
+            transport http {
+                dial_timeout 30s
+                read_timeout 180s
+            }
+        }
+    }
+
+    # Questionnaire service
+    handle /q/* {
+        reverse_proxy researchedc-app:8080
+    }
+
+    # Legacy Web (JSP pages)
+    handle /legacy/* {
+        reverse_proxy researchedc-web:8080
+    }
+
+    handle /images/* {
+        reverse_proxy researchedc-web:8080
+    }
+
+    handle /includes/* {
+        reverse_proxy researchedc-web:8080
+    }
+
+    # SOAP Web Services
+    handle /ws/* {
+        reverse_proxy researchedc-ws:8080 {
+            transport http {
+                read_timeout 300s
+            }
+        }
+    }
+
+    # Actuator (restricted to internal networks)
+    handle /actuator/* {
+        @denied not remote_ip 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 127.0.0.0/8
+        respond @denied 403
+        reverse_proxy researchedc-app:8080
+    }
+
+    handle /SystemStatus {
+        @denied not remote_ip 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 127.0.0.0/8
+        respond @denied 403
+        reverse_proxy researchedc-app:8080
+    }
+
+    handle /.git/* {
+        respond 403
+    }
+    handle /WEB-INF/* {
+        respond 403
+    }
+    handle /META-INF/* {
+        respond 403
+    }
+
+    # Root: serve landing page, or proxy to backend for SPA
+    handle {
+        try_files {path} /index.html
+        file_server
+    }
+}
