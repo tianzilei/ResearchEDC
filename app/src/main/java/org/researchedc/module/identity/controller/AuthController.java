@@ -1,23 +1,27 @@
 package org.researchedc.module.identity.controller;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
-import java.util.Base64;
-import java.util.HexFormat;
 import java.util.List;
 
 import jakarta.validation.Valid;
 
-import org.researchedc.dao.hibernate.UserAccountDao;
-import org.researchedc.domain.user.UserAccount;
+import org.researchedc.module.identity.dto.CurrentUserResponse;
+import org.researchedc.module.identity.dto.CurrentUserResponse.StudyRoleInfo;
 import org.researchedc.module.identity.dto.LoginRequest;
 import org.researchedc.module.identity.dto.LoginResponse;
+import org.researchedc.module.identity.entity.RoleEntity;
+import org.researchedc.module.identity.entity.UserAccountEntity;
+import org.researchedc.module.identity.repository.RoleRepository;
+import org.researchedc.module.identity.repository.UserAccountRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +31,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    private final UserAccountDao userAccountDao;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final UserAccountRepository userAccountRepository;
+    private final RoleRepository roleRepository;
 
-    public AuthController(UserAccountDao userAccountDao) {
-        this.userAccountDao = userAccountDao;
-        this.passwordEncoder = new BCryptPasswordEncoder();
+    public AuthController(AuthenticationManager authenticationManager,
+                          UserAccountRepository userAccountRepository,
+                          RoleRepository roleRepository) {
+        this.authenticationManager = authenticationManager;
+        this.userAccountRepository = userAccountRepository;
+        this.roleRepository = roleRepository;
     }
 
     @PostMapping("/login")
@@ -40,66 +48,73 @@ public class AuthController {
         String username = request.username().trim();
         String password = request.password();
 
-        UserAccount user = userAccountDao.findByUserName(username);
+        try {
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password));
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        } catch (BadCredentialsException | DisabledException | LockedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        UserAccountEntity user = userAccountRepository.findByUserName(username).orElse(null);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        if (!matchesPassword(password, user.getPasswd())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        List<String> roles = roleRepository.findByUserName(username)
+                .stream()
+                .map(RoleEntity::getRoleName)
+                .distinct()
+                .toList();
 
-        if (!user.isEnabled()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        String token = generateToken(username);
-        List<String> roles = extractRoles(user);
         String email = user.getEmail() != null ? user.getEmail() : "";
 
         LoginResponse response = new LoginResponse(
-            token,
-            user.getUserName(),
-            user.getFirstName(),
-            user.getLastName(),
-            email,
-            roles
+                "",
+                user.getUserName(),
+                user.getFirstName(),
+                user.getLastName(),
+                email,
+                roles
         );
 
         return ResponseEntity.ok(response);
     }
 
-    private boolean matchesPassword(String rawPassword, String encodedPassword) {
-        if (encodedPassword == null || encodedPassword.isBlank()) {
-            return false;
+    @GetMapping("/me")
+    public ResponseEntity<CurrentUserResponse> me(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        try {
-            if (passwordEncoder.matches(rawPassword, encodedPassword)) {
-                return true;
-            }
-        } catch (Exception ignored) {
+
+        String username = authentication.getName();
+        UserAccountEntity user = userAccountRepository.findByUserName(username).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        String sha1Hex = sha1Hex(rawPassword);
-        return sha1Hex.equalsIgnoreCase(encodedPassword);
-    }
 
-    private String sha1Hex(String input) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-1");
-            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
-            return HexFormat.of().formatHex(hash);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-1 not available", e);
-        }
-    }
+        List<String> roles = roleRepository.findByUserName(username)
+                .stream()
+                .map(RoleEntity::getRoleName)
+                .distinct()
+                .toList();
 
-    private String generateToken(String username) {
-        long exp = Instant.now().plusSeconds(86400).toEpochMilli();
-        String payload = "{\"sub\":\"" + username + "\",\"exp\":" + exp + "}";
-        return "dev-" + Base64.getUrlEncoder().withoutPadding().encodeToString(payload.getBytes(StandardCharsets.UTF_8));
-    }
+        List<StudyRoleInfo> studyRoles = roleRepository.findByUserName(username)
+                .stream()
+                .map(r -> new StudyRoleInfo(r.getStudyId(), r.getRoleName()))
+                .toList();
 
-    private List<String> extractRoles(UserAccount user) {
-        return List.of();
+        CurrentUserResponse response = new CurrentUserResponse(
+                user.getUserId(),
+                user.getUserName(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail() != null ? user.getEmail() : "",
+                user.getEnabled(),
+                roles,
+                studyRoles
+        );
+
+        return ResponseEntity.ok(response);
     }
 }

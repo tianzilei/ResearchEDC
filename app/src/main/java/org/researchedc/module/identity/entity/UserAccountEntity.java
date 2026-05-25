@@ -46,6 +46,9 @@ public class UserAccountEntity {
     @Column(name = "account_non_locked")
     private Boolean accountNonLocked;
 
+    @Column(name = "passwd", length = 255)
+    private String passwordHash;
+
     @Column(name = "date_created")
     private LocalDateTime dateCreated;
 
@@ -82,6 +85,8 @@ public class UserAccountEntity {
     public void setEnabled(Boolean v) { this.enabled = v; }
     public Boolean getAccountNonLocked() { return accountNonLocked; }
     public void setAccountNonLocked(Boolean v) { this.accountNonLocked = v; }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String v) { this.passwordHash = v; }
     public LocalDateTime getDateCreated() { return dateCreated; }
     public void setDateCreated(LocalDateTime v) { this.dateCreated = v; }
     public LocalDateTime getDateUpdated() { return dateUpdated; }

@@ -9,15 +9,43 @@
 server:
   port: 8080
   servlet:
-    context-path: /research-edc
+    context-path: /
+    session:
+      timeout: 30m
+      cookie:
+        http-only: true
+        secure: false
+        same-site: lax
+
+logging:
+  config: classpath:logback-spring.xml
   tomcat:
     uri-encoding: UTF-8
 
 spring:
-  # Application info for Actuator /info endpoint
+  mail:
+    host: ${RESEARCHEDC_MAIL_HOST:localhost}
+    port: ${RESEARCHEDC_MAIL_PORT:1025}
+    protocol: smtp
+    username:
+    password:
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+    web-application-type: servlet
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.id.db_structure_naming_strategy: legacy
+      hibernate.id.optimizer.pooled.preferred: none
   application:
     name: ResearchEDC
-    version: @project.version@
+    version: ${project.version}
 
   # JSP view resolution (legacy UI)
   mvc:
@@ -25,71 +53,37 @@ spring:
       prefix: /WEB-INF/jsp/
       suffix: .jsp
     static-path-pattern: /static/**
-    static-path-pattern: /static/**
 
-  # Servlet multipart configuration
+# Database configuration (overridable via env vars: RESEARCHEDC_DB_*)
+researchedc:
+  db:
+    host: ${RESEARCHEDC_DB_HOST:localhost}
+    port: ${RESEARCHEDC_DB_PORT:5432}
+    name: ${RESEARCHEDC_DB_NAME:researchedc}
+    user: ${RESEARCHEDC_DB_USER:researchedc}
+    pass: ${RESEARCHEDC_DB_PASS:researchedc}
+
   servlet:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
 
-  # Jackson serialization
   jackson:
     serialization:
       write-dates-as-timestamps: false
       fail-on-empty-beans: false
 
-  # Mail (replaces applicationContext-core-email.xml)
-  mail:
-    host: ${MAIL_HOST:localhost}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
-    protocol: smtp
-    default-encoding: UTF-8
-    properties:
-      mail.smtp.auth: ${MAIL_SMTP_AUTH:false}
-      mail.smtp.starttls.enable: ${MAIL_STARTTLS:false}
-      mail.smtps.auth: ${MAIL_SMTPS_AUTH:false}
-      mail.smtps.starttls.enable: ${MAIL_SMTPS_STARTTLS:false}
-      mail.smtp.connectiontimeout: ${MAIL_SMTP_TIMEOUT:5000}
-      mail.smtp.starttls.required: ${MAIL_STARTTLS_REQUIRED:false}
-      mail.smtp.ssl.protocols: ${MAIL_SSL_PROTOCOLS:TLSv1.2}
-
-  # Scheduling (replaces applicationContext-core-annotation-scheduler.xml)
   task:
     scheduling:
       pool:
         size: 42
 
-  # Keycloak / OIDC authentication (optional - only activates when KEYCLOAK_ISSUER_URI is set)
-  security:
-    oauth2:
-      client:
-        registration:
-          keycloak:
-            provider: keycloak
-            client-id: ${KEYCLOAK_CLIENT_ID:researchedc-backend}
-            client-secret: ${KEYCLOAK_CLIENT_SECRET:}
-            authorization-grant-type: authorization_code
-            scope: openid,profile,email
-            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
-        provider:
-          keycloak:
-            issuer-uri: ${KEYCLOAK_ISSUER_URI:}
-            user-name-attribute: preferred_username
-      resourceserver:
-        jwt:
-          issuer-uri: ${KEYCLOAK_ISSUER_URI:}
-
-  # JPA / Hibernate
   jpa:
     open-in-view: false
     hibernate:
       ddl-auto: none
     show-sql: false
 
-# Actuator endpoints
 management:
   endpoints:
     web:
@@ -109,7 +103,6 @@ management:
     tags:
       application: ${spring.application.name}
 
-# Springdoc OpenAPI
 springdoc:
   api-docs:
     path: /api-docs
@@ -173,8 +166,6 @@ logging:
     org.springframework: WARN
     org.hibernate: WARN
 
-# Production: restrict Actuator to safe endpoints only (P0.1)
-# Env, beans, conditions are disabled to prevent sensitive information disclosure
 management:
   endpoints:
     web:
@@ -188,8 +179,6 @@ management:
     conditions:
       enabled: false
 
-# Production: disable Swagger UI entirely (P0.2)
-# Try-it-out could allow unauthorized API probing in production
 springdoc:
   swagger-ui:
     enabled: false

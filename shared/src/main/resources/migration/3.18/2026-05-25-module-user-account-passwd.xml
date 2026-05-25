@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Spring Security login: add passwd column to module_user_account for password hash storage -->
+    <!-- Copy existing passwd values from legacy user_account for backward compatibility -->
+
+    <changeSet author="research-edc" id="2026-05-25-module-user-account-passwd-add-1">
+        <comment>Add passwd column to module_user_account for password hash</comment>
+        <addColumn tableName="module_user_account">
+            <column name="passwd" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-25-module-user-account-passwd-copy-2">
+        <comment>Copy existing password hashes from legacy user_account table</comment>
+        <sql>
+            UPDATE module_user_account m
+            SET passwd = u.passwd
+            FROM user_account u
+            WHERE m.user_id = u.user_id
+              AND u.passwd IS NOT NULL
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-05-25-module-user-account-passwd-sync-trigger-3" dbms="postgresql">
+        <comment>Update sync trigger to include passwd column in module_user_account → user_account sync</comment>
+        <sql>
+            CREATE OR REPLACE FUNCTION sync_module_user_account_to_user_account()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO user_account (
+                        user_id, user_name, first_name, last_name, email, phone,
+                        institutional_affiliation, user_type_id, status_id, active_study,
+                        enabled, account_non_locked, passwd,
+                        date_created, date_updated, owner_id, update_id
+                    )
+                    VALUES (
+                        NEW.user_id, NEW.user_name, NEW.first_name, NEW.last_name, NEW.email, NEW.phone,
+                        NEW.institutional_affiliation, NEW.user_type_id, NEW.status_id, NEW.active_study_id,
+                        NEW.enabled, NEW.account_non_locked, NEW.passwd,
+                        NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id
+                    );
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE user_account SET
+                        user_name = NEW.user_name,
+                        first_name = NEW.first_name,
+                        last_name = NEW.last_name,
+                        email = NEW.email,
+                        phone = NEW.phone,
+                        institutional_affiliation = NEW.institutional_affiliation,
+                        user_type_id = NEW.user_type_id,
+                        status_id = NEW.status_id,
+                        active_study = NEW.active_study_id,
+                        enabled = NEW.enabled,
+                        account_non_locked = NEW.account_non_locked,
+                        passwd = NEW.passwd,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id
+                    WHERE user_id = OLD.user_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM user_account WHERE user_id = OLD.user_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+        </sql>
+        <rollback>
+            -- Restore original sync trigger without passwd column
+            CREATE OR REPLACE FUNCTION sync_module_user_account_to_user_account()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO user_account (
+                        user_id, user_name, first_name, last_name, email, phone,
+                        institutional_affiliation, user_type_id, status_id, active_study,
+                        enabled, account_non_locked, date_created, date_updated, owner_id, update_id
+                    )
+                    VALUES (
+                        NEW.user_id, NEW.user_name, NEW.first_name, NEW.last_name, NEW.email, NEW.phone,
+                        NEW.institutional_affiliation, NEW.user_type_id, NEW.status_id, NEW.active_study_id,
+                        NEW.enabled, NEW.account_non_locked, NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id
+                    );
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE user_account SET
+                        user_name = NEW.user_name,
+                        first_name = NEW.first_name,
+                        last_name = NEW.last_name,
+                        email = NEW.email,
+                        phone = NEW.phone,
+                        institutional_affiliation = NEW.institutional_affiliation,
+                        user_type_id = NEW.user_type_id,
+                        status_id = NEW.status_id,
+                        active_study = NEW.active_study_id,
+                        enabled = NEW.enabled,
+                        account_non_locked = NEW.account_non_locked,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id
+                    WHERE user_id = OLD.user_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM user_account WHERE user_id = OLD.user_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

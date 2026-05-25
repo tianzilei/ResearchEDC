@@ -68,4 +68,6 @@
     <include file="migration/3.18/2026-05-23-module-rule-set-rule-sync-trigger.xml"/>
     <include file="migration/3.18/2026-05-23-module-rule-expression-table.xml"/>
     <include file="migration/3.18/2026-05-23-module-rule-expression-sync-trigger.xml"/>
+    <!-- Spring Security login: passwd column for module_user_account -->
+    <include file="migration/3.18/2026-05-25-module-user-account-passwd.xml"/>
 </databaseChangeLog>
