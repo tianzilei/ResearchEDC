@@ -13,22 +13,9 @@ import {
   Descriptions,
   Result,
   message,
-  theme as antTheme,
 } from "antd";
 import type { Dayjs } from "dayjs";
-import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  SendOutlined,
-  CheckCircleOutlined,
-  FileTextOutlined,
-  BankOutlined,
-  ExperimentOutlined,
-  TeamOutlined,
-  CalendarOutlined,
-  HomeOutlined,
-  PhoneOutlined,
-} from "@ant-design/icons";
+
 import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
@@ -74,58 +61,49 @@ interface StudyFormValues {
 
 interface StepDef {
   title: string;
-  icon: React.ReactNode;
   fields: (keyof StudyFormValues)[];
 }
 
 const STEPS: StepDef[] = [
   {
-    title: "Protocol Info",
-    icon: <FileTextOutlined />,
+    title: "协议信息",
     fields: ["name", "uniqueIdentifier", "officialTitle", "phase", "summary"],
   },
   {
-    title: "Sponsorship",
-    icon: <BankOutlined />,
+    title: "赞助信息",
     fields: ["sponsor", "collaborators", "protocolType", "protocolDescription"],
   },
   {
-    title: "Study Design",
-    icon: <ExperimentOutlined />,
+    title: "研究设计",
     fields: [
       "purpose", "allocation", "masking", "control", "assignment",
       "endpoint", "interventions", "duration", "selection", "timing", "gender",
     ],
   },
   {
-    title: "Eligibility",
-    icon: <TeamOutlined />,
+    title: "入组标准",
     fields: ["eligibility", "conditions", "keywords"],
   },
   {
-    title: "Enrollment",
-    icon: <CalendarOutlined />,
+    title: "招募计划",
     fields: ["expectedTotalEnrollment", "datePlannedStart", "datePlannedEnd"],
   },
   {
-    title: "Facility",
-    icon: <HomeOutlined />,
+    title: "研究机构",
     fields: [
       "facilityName", "facilityCity", "facilityState",
       "facilityCountry", "facilityRecruitmentStatus",
     ],
   },
   {
-    title: "Contact",
-    icon: <PhoneOutlined />,
+    title: "联系方式",
     fields: [
       "facilityContactName", "facilityContactDegree",
       "facilityContactPhone", "facilityContactEmail",
     ],
   },
   {
-    title: "Review & Confirm",
-    icon: <CheckCircleOutlined />,
+    title: "确认提交",
     fields: [],
   },
 ];
@@ -229,73 +207,73 @@ function reviewRow(label: string, value: unknown): React.ReactNode {
 function buildReviewSections(values: StudyFormValues) {
   return [
     {
-      title: "Protocol Info",
+      title: "协议信息",
       items: [
-        reviewRow("Study Name", values.name),
-        reviewRow("Unique Identifier", values.uniqueIdentifier),
-        reviewRow("Official Title", values.officialTitle),
-        reviewRow("Phase", values.phase),
-        reviewRow("Summary", values.summary),
+        reviewRow("研究名称", values.name),
+        reviewRow("唯一标识", values.uniqueIdentifier),
+        reviewRow("正式标题", values.officialTitle),
+        reviewRow("阶段", values.phase),
+        reviewRow("摘要", values.summary),
       ],
     },
     {
-      title: "Sponsorship",
+      title: "赞助信息",
       items: [
-        reviewRow("Sponsor", values.sponsor),
-        reviewRow("Collaborators", values.collaborators),
-        reviewRow("Protocol Type", values.protocolType),
-        reviewRow("Protocol Description", values.protocolDescription),
+        reviewRow("赞助方", values.sponsor),
+        reviewRow("合作方", values.collaborators),
+        reviewRow("方案类型", values.protocolType),
+        reviewRow("方案描述", values.protocolDescription),
       ],
     },
     {
-      title: "Study Design",
+      title: "研究设计",
       items: [
-        reviewRow("Purpose", values.purpose),
-        reviewRow("Allocation", values.allocation),
-        reviewRow("Masking", values.masking),
-        reviewRow("Control", values.control),
-        reviewRow("Assignment", values.assignment),
-        reviewRow("Primary Endpoint", values.endpoint),
-        reviewRow("Interventions", values.interventions),
-        reviewRow("Duration", values.duration),
-        reviewRow("Selection", values.selection),
-        reviewRow("Timing", values.timing),
-        reviewRow("Gender", values.gender),
+        reviewRow("主要目的", values.purpose),
+        reviewRow("分配方式", values.allocation),
+        reviewRow("盲法", values.masking),
+        reviewRow("对照", values.control),
+        reviewRow("分组方式", values.assignment),
+        reviewRow("主要终点", values.endpoint),
+        reviewRow("干预措施", values.interventions),
+        reviewRow("研究周期", values.duration),
+        reviewRow("抽样方法", values.selection),
+        reviewRow("时序", values.timing),
+        reviewRow("性别", values.gender),
       ],
     },
     {
-      title: "Eligibility",
+      title: "入组标准",
       items: [
-        reviewRow("Eligibility Criteria", values.eligibility),
-        reviewRow("Conditions", values.conditions),
-        reviewRow("Keywords", values.keywords),
+        reviewRow("入排标准", values.eligibility),
+        reviewRow("疾病条件", values.conditions),
+        reviewRow("关键词", values.keywords),
       ],
     },
     {
-      title: "Enrollment",
+      title: "招募计划",
       items: [
-        reviewRow("Expected Total Enrollment", values.expectedTotalEnrollment),
-        reviewRow("Planned Start Date", values.datePlannedStart),
-        reviewRow("Planned End Date", values.datePlannedEnd),
+        reviewRow("预计招募人数", values.expectedTotalEnrollment),
+        reviewRow("计划开始日期", values.datePlannedStart),
+        reviewRow("计划结束日期", values.datePlannedEnd),
       ],
     },
     {
-      title: "Facility",
+      title: "研究机构",
       items: [
-        reviewRow("Facility Name", values.facilityName),
-        reviewRow("City", values.facilityCity),
-        reviewRow("State", values.facilityState),
-        reviewRow("Country", values.facilityCountry),
-        reviewRow("Recruitment Status", values.facilityRecruitmentStatus),
+        reviewRow("机构名称", values.facilityName),
+        reviewRow("城市", values.facilityCity),
+        reviewRow("州/省", values.facilityState),
+        reviewRow("国家", values.facilityCountry),
+        reviewRow("招募状态", values.facilityRecruitmentStatus),
       ],
     },
     {
-      title: "Contact",
+      title: "联系方式",
       items: [
-        reviewRow("Contact Name", values.facilityContactName),
-        reviewRow("Degree / Title", values.facilityContactDegree),
-        reviewRow("Phone", values.facilityContactPhone),
-        reviewRow("Email", values.facilityContactEmail),
+        reviewRow("联系人姓名", values.facilityContactName),
+        reviewRow("学位/职称", values.facilityContactDegree),
+        reviewRow("电话", values.facilityContactPhone),
+        reviewRow("邮箱", values.facilityContactEmail),
       ],
     },
   ];
@@ -306,22 +284,22 @@ function StepProtocolInfo() {
     <>
       <Form.Item
         name="name"
-        label="Study Name"
-        rules={[{ required: true, message: "Please enter the study name" }]}
+        label="研究名称"
+        rules={[{ required: true, message: "请输入研究名称" }]}
       >
-        <Input placeholder="e.g. ASPIRE-2024" />
+        <Input placeholder="例如：ASPIRE-2024" />
       </Form.Item>
-      <Form.Item name="uniqueIdentifier" label="Unique Identifier">
-        <Input placeholder="e.g. NCT12345678" />
+      <Form.Item name="uniqueIdentifier" label="唯一标识">
+        <Input placeholder="例如：NCT12345678" />
       </Form.Item>
-      <Form.Item name="officialTitle" label="Official Title">
-        <Input placeholder="Full official title of the study" />
+      <Form.Item name="officialTitle" label="正式标题">
+        <Input placeholder="研究完整正式标题" />
       </Form.Item>
-      <Form.Item name="phase" label="Phase">
-        <Select allowClear placeholder="Select phase" options={PHASE_OPTIONS} />
+      <Form.Item name="phase" label="阶段">
+        <Select allowClear placeholder="选择阶段" options={PHASE_OPTIONS} />
       </Form.Item>
-      <Form.Item name="summary" label="Summary">
-        <TextArea rows={4} placeholder="Brief description of the study" />
+      <Form.Item name="summary" label="摘要">
+        <TextArea rows={4} placeholder="研究简要描述" />
       </Form.Item>
     </>
   );
@@ -330,17 +308,17 @@ function StepProtocolInfo() {
 function StepSponsorship() {
   return (
     <>
-      <Form.Item name="sponsor" label="Sponsor">
-        <Input placeholder="e.g. National Institutes of Health" />
+      <Form.Item name="sponsor" label="赞助方">
+        <Input placeholder="例如：国家卫生研究院" />
       </Form.Item>
-      <Form.Item name="collaborators" label="Collaborators">
-        <TextArea rows={3} placeholder="List collaborating organizations" />
+      <Form.Item name="collaborators" label="合作方">
+        <TextArea rows={3} placeholder="列出合作机构" />
       </Form.Item>
-      <Form.Item name="protocolType" label="Protocol Type">
-        <Select allowClear placeholder="Select type" options={PROTOCOL_TYPE_OPTIONS} />
+      <Form.Item name="protocolType" label="方案类型">
+        <Select allowClear placeholder="选择类型" options={PROTOCOL_TYPE_OPTIONS} />
       </Form.Item>
-      <Form.Item name="protocolDescription" label="Protocol Description">
-        <TextArea rows={4} placeholder="Detailed protocol description" />
+      <Form.Item name="protocolDescription" label="方案描述">
+        <TextArea rows={4} placeholder="详细方案描述" />
       </Form.Item>
     </>
   );
@@ -349,38 +327,38 @@ function StepSponsorship() {
 function StepStudyDesign() {
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
-      <Form.Item name="purpose" label="Primary Purpose">
-        <Select allowClear placeholder="Select purpose" options={PURPOSE_OPTIONS} />
+      <Form.Item name="purpose" label="主要目的">
+        <Select allowClear placeholder="选择目的" options={PURPOSE_OPTIONS} />
       </Form.Item>
-      <Form.Item name="allocation" label="Allocation">
-        <Select allowClear placeholder="Select allocation" options={ALLOCATION_OPTIONS} />
+      <Form.Item name="allocation" label="分配方式">
+        <Select allowClear placeholder="选择分配方式" options={ALLOCATION_OPTIONS} />
       </Form.Item>
-      <Form.Item name="masking" label="Masking">
-        <Select allowClear placeholder="Select masking" options={MASKING_OPTIONS} />
+      <Form.Item name="masking" label="盲法">
+        <Select allowClear placeholder="选择盲法" options={MASKING_OPTIONS} />
       </Form.Item>
-      <Form.Item name="control" label="Control">
-        <Select allowClear placeholder="Select control type" options={CONTROL_OPTIONS} />
+      <Form.Item name="control" label="对照">
+        <Select allowClear placeholder="选择对照类型" options={CONTROL_OPTIONS} />
       </Form.Item>
-      <Form.Item name="assignment" label="Assignment">
-        <Select allowClear placeholder="Select assignment" options={ASSIGNMENT_OPTIONS} />
+      <Form.Item name="assignment" label="分组方式">
+        <Select allowClear placeholder="选择分组方式" options={ASSIGNMENT_OPTIONS} />
       </Form.Item>
-      <Form.Item name="gender" label="Gender">
-        <Select allowClear placeholder="Select gender eligibility" options={GENDER_OPTIONS} />
+      <Form.Item name="gender" label="性别">
+        <Select allowClear placeholder="选择性别" options={GENDER_OPTIONS} />
       </Form.Item>
-      <Form.Item name="selection" label="Selection" style={{ gridColumn: "span 1" }}>
-        <Select allowClear placeholder="Select sampling method" options={SELECTION_OPTIONS} />
+      <Form.Item name="selection" label="抽样方法" style={{ gridColumn: "span 1" }}>
+        <Select allowClear placeholder="选择抽样方法" options={SELECTION_OPTIONS} />
       </Form.Item>
-      <Form.Item name="timing" label="Timing">
-        <Select allowClear placeholder="Select timing" options={TIMING_OPTIONS} />
+      <Form.Item name="timing" label="时序">
+        <Select allowClear placeholder="选择时序" options={TIMING_OPTIONS} />
       </Form.Item>
-      <Form.Item name="duration" label="Study Duration">
-        <Input placeholder="e.g. 12 months" />
+      <Form.Item name="duration" label="研究周期">
+        <Input placeholder="例如：12 个月" />
       </Form.Item>
-      <Form.Item name="endpoint" label="Primary Endpoint" style={{ gridColumn: "span 1" }}>
-        <Input placeholder="Primary endpoint description" />
+      <Form.Item name="endpoint" label="主要终点" style={{ gridColumn: "span 1" }}>
+        <Input placeholder="主要终点描述" />
       </Form.Item>
-      <Form.Item name="interventions" label="Interventions" style={{ gridColumn: "span 2" }}>
-        <TextArea rows={3} placeholder="Describe study interventions" />
+      <Form.Item name="interventions" label="干预措施" style={{ gridColumn: "span 2" }}>
+        <TextArea rows={3} placeholder="描述研究干预措施" />
       </Form.Item>
     </div>
   );
@@ -389,14 +367,14 @@ function StepStudyDesign() {
 function StepEligibility() {
   return (
     <>
-      <Form.Item name="eligibility" label="Eligibility Criteria">
-        <TextArea rows={6} placeholder="Describe inclusion/exclusion criteria" />
+      <Form.Item name="eligibility" label="入排标准">
+        <TextArea rows={6} placeholder="描述纳入/排除标准" />
       </Form.Item>
-      <Form.Item name="conditions" label="Conditions">
-        <TextArea rows={3} placeholder="List study conditions" />
+      <Form.Item name="conditions" label="疾病条件">
+        <TextArea rows={3} placeholder="列出研究疾病条件" />
       </Form.Item>
-      <Form.Item name="keywords" label="Keywords">
-        <Input placeholder="Comma-separated keywords" />
+      <Form.Item name="keywords" label="关键词">
+        <Input placeholder="逗号分隔的关键词" />
       </Form.Item>
     </>
   );
@@ -405,17 +383,17 @@ function StepEligibility() {
 function StepEnrollment() {
   return (
     <>
-      <Form.Item name="expectedTotalEnrollment" label="Expected Total Enrollment">
+      <Form.Item name="expectedTotalEnrollment" label="预计招募人数">
         <InputNumber
           min={1}
           style={{ width: "100%" }}
-          placeholder="Number of participants"
+          placeholder="参与人数"
         />
       </Form.Item>
-      <Form.Item name="datePlannedStart" label="Planned Start Date">
+      <Form.Item name="datePlannedStart" label="计划开始日期">
         <DatePicker style={{ width: "100%" }} />
       </Form.Item>
-      <Form.Item name="datePlannedEnd" label="Planned End Date">
+      <Form.Item name="datePlannedEnd" label="计划结束日期">
         <DatePicker style={{ width: "100%" }} />
       </Form.Item>
     </>
@@ -425,24 +403,24 @@ function StepEnrollment() {
 function StepFacility() {
   return (
     <>
-      <Form.Item name="facilityName" label="Facility Name">
-        <Input placeholder="e.g. Boston Medical Center" />
+      <Form.Item name="facilityName" label="机构名称">
+        <Input placeholder="例如：北京协和医院" />
       </Form.Item>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
-        <Form.Item name="facilityCity" label="City">
-          <Input placeholder="City" />
+        <Form.Item name="facilityCity" label="城市">
+          <Input placeholder="城市" />
         </Form.Item>
-        <Form.Item name="facilityState" label="State / Province">
-          <Input placeholder="State" />
+        <Form.Item name="facilityState" label="州/省">
+          <Input placeholder="州/省" />
         </Form.Item>
       </div>
-      <Form.Item name="facilityCountry" label="Country">
-        <Input placeholder="Country" />
+      <Form.Item name="facilityCountry" label="国家">
+        <Input placeholder="国家" />
       </Form.Item>
-      <Form.Item name="facilityRecruitmentStatus" label="Recruitment Status">
+      <Form.Item name="facilityRecruitmentStatus" label="招募状态">
         <Select
           allowClear
-          placeholder="Select status"
+          placeholder="选择状态"
           options={RECRUITMENT_STATUS_OPTIONS}
         />
       </Form.Item>
@@ -453,18 +431,18 @@ function StepFacility() {
 function StepContact() {
   return (
     <>
-      <Form.Item name="facilityContactName" label="Contact Name">
-        <Input placeholder="Full name of facility contact" />
+      <Form.Item name="facilityContactName" label="联系人姓名">
+        <Input placeholder="机构联系人全名" />
       </Form.Item>
-      <Form.Item name="facilityContactDegree" label="Degree / Title">
-        <Input placeholder="e.g. MD, PhD" />
+      <Form.Item name="facilityContactDegree" label="学位/职称">
+        <Input placeholder="例如：医学博士" />
       </Form.Item>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
-        <Form.Item name="facilityContactPhone" label="Phone">
-          <Input placeholder="+1 (555) 123-4567" />
+        <Form.Item name="facilityContactPhone" label="电话">
+          <Input placeholder="+86 10-1234-5678" />
         </Form.Item>
-        <Form.Item name="facilityContactEmail" label="Email">
-          <Input placeholder="contact@institution.edu" />
+        <Form.Item name="facilityContactEmail" label="邮箱">
+          <Input placeholder="contact@hospital.cn" />
         </Form.Item>
       </div>
     </>
@@ -473,12 +451,11 @@ function StepContact() {
 
 function StepReview({ values }: { values: StudyFormValues }) {
   const sections = buildReviewSections(values);
-  const { token } = antTheme.useToken();
 
   return (
     <div>
       <Text type="secondary" style={{ display: "block", marginBottom: 20 }}>
-        Please review all entered information before submitting. Click &ldquo;Back&rdquo; to make changes.
+        请确认所有信息无误后提交。点击"上一步"返回修改。
       </Text>
       {sections.map((section) => {
         const visibleItems = section.items.filter(Boolean);
@@ -488,13 +465,12 @@ function StepReview({ values }: { values: StudyFormValues }) {
             <Text
               strong
               style={{
-                fontFamily: "var(--font-heading)",
                 fontSize: 14,
-                color: token.colorText,
+                color: "var(--text)",
                 display: "block",
                 marginBottom: 8,
                 paddingBottom: 6,
-                borderBottom: `1px solid ${token.colorBorderSecondary}`,
+                borderBottom: "1px solid var(--border)",
               }}
             >
               {section.title}
@@ -529,7 +505,6 @@ export default function StudyWizard() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [createdId, setCreatedId] = useState<number | null>(null);
-  const { token } = antTheme.useToken();
 
   const watchedValues = Form.useWatch([], form) as StudyFormValues | undefined;
   const formValues = watchedValues ?? {};
@@ -614,8 +589,8 @@ export default function StudyWizard() {
       });
 
       if (!res.ok) {
-        const errText = await res.text().catch(() => "Failed to create study");
-        message.error(errText || "Failed to create study");
+        const errText = await res.text().catch(() => "创建研究失败");
+        message.error(errText || "创建研究失败");
         return;
       }
 
@@ -623,9 +598,9 @@ export default function StudyWizard() {
       const id = data.id ?? data.studyId;
       setCreatedId(id ?? null);
       setSubmitted(true);
-      message.success("Study created successfully");
+      message.success("研究创建成功");
     } catch {
-      message.error("An unexpected error occurred");
+      message.error("发生意外错误");
     } finally {
       setSubmitting(false);
     }
@@ -635,31 +610,30 @@ export default function StudyWizard() {
     return (
       <div style={{ maxWidth: 680, margin: "0 auto" }}>
         <Card
-          className="glass-panel"
           style={{ borderRadius: "var(--radius-lg)", textAlign: "center" }}
         >
           <Result
             status="success"
-            title="Study Created"
+            title="研究已创建"
             subTitle={
               <Text type="secondary">
-                Your study has been created successfully.
+                研究已成功创建。
                 {createdId && (
-                  <> You will be redirected to the study details page.</>
+                  <>即将跳转至研究详情页面。</>
                 )}
               </Text>
             }
             extra={
               <Space>
                 <Button onClick={() => navigate("/app/studies")}>
-                  Back to Studies
+                  返回研究列表
                 </Button>
                 {createdId && (
                   <Button
                     type="primary"
                     onClick={() => navigate(`/app/studies/${createdId}`)}
                   >
-                    View Study
+                    查看研究
                   </Button>
                 )}
               </Space>
@@ -673,9 +647,9 @@ export default function StudyWizard() {
   return (
     <div style={{ maxWidth: 860, margin: "0 auto" }}>
       <div style={{ marginBottom: 24 }}>
-        <Title level={3} style={{ margin: 0 }}>Create New Study</Title>
+        <Title level={3} style={{ margin: 0 }}>新建研究</Title>
         <Text type="secondary" style={{ marginTop: 4, display: "block" }}>
-          Complete each step to set up your study protocol.
+          按步骤完成研究方案设置。
         </Text>
       </div>
 
@@ -688,7 +662,6 @@ export default function StudyWizard() {
         }}
       >
         <Card
-          className="glass-panel"
           style={{ borderRadius: "var(--radius-lg)" }}
           styles={{ body: { padding: "16px 12px" } }}
         >
@@ -698,13 +671,11 @@ export default function StudyWizard() {
             size="small"
             items={STEPS.map((s) => ({
               title: s.title,
-              icon: s.icon,
             }))}
           />
         </Card>
 
         <Card
-          className="glass-panel"
           style={{ borderRadius: "var(--radius-lg)" }}
           styles={{ body: { padding: "28px 32px 20px" } }}
         >
@@ -718,11 +689,10 @@ export default function StudyWizard() {
                   width: 32,
                   height: 32,
                   borderRadius: "50%",
-                  background: token.colorPrimary,
-                  color: "#fff",
+                  background: "var(--accent)",
+                  color: "var(--accent-text)",
                   fontSize: 14,
                   fontWeight: 600,
-                  fontFamily: "var(--font-heading)",
                 }}
               >
                 {current + 1}
@@ -730,9 +700,8 @@ export default function StudyWizard() {
               <Text
                 strong
                 style={{
-                  fontFamily: "var(--font-heading)",
                   fontSize: 17,
-                  color: token.colorText,
+                  color: "var(--text)",
                 }}
               >
                 {STEPS[current]?.title}
@@ -741,7 +710,7 @@ export default function StudyWizard() {
             <div
               style={{
                 height: 2,
-                background: token.colorBorderSecondary,
+                background: "var(--border)",
                 borderRadius: 1,
                 marginTop: 16,
                 position: "relative",
@@ -751,9 +720,9 @@ export default function StudyWizard() {
                 style={{
                   height: "100%",
                   width: `${((current + 1) / STEPS.length) * 100}%`,
-                  background: token.colorPrimary,
+                  background: "var(--accent)",
                   borderRadius: 1,
-                  transition: "width 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
+                  transition: "width 0.12s ease",
                 }}
               />
             </div>
@@ -778,33 +747,30 @@ export default function StudyWizard() {
               justifyContent: "space-between",
               marginTop: 28,
               paddingTop: 20,
-              borderTop: `1px solid ${token.colorBorderSecondary}`,
+              borderTop: "1px solid var(--border)",
             }}
           >
             <Button
-              icon={<ArrowLeftOutlined />}
               onClick={goPrev}
               disabled={isFirst}
             >
-              Previous
+              上一步
             </Button>
 
             {isReview ? (
               <Button
                 type="primary"
-                icon={<SendOutlined />}
                 loading={submitting}
                 onClick={handleSubmit}
               >
-                Create Study
+                创建研究
               </Button>
             ) : (
               <Button
                 type="primary"
-                icon={<ArrowRightOutlined />}
                 onClick={goNext}
               >
-                Next
+                下一步
               </Button>
             )}
           </div>

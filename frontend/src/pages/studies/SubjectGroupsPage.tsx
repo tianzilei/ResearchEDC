@@ -16,7 +16,7 @@ import {
   Empty,
   Collapse,
 } from "antd";
-import { PlusOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+
 import { useGroupClasses, useCreateGroupClass, useCreateGroup } from "@/hooks/useSubjectGroups";
 import type { SubjectGroupDTO } from "@/types/subjectGroup";
 
@@ -31,7 +31,7 @@ function GroupList({ classId, groups: initialGroups }: { classId: number; groups
     try {
       const vals = await form.validateFields();
       await createGroup.mutateAsync({ classId, data: vals });
-      message.success("Group created");
+      message.success("分组已创建");
       setCreateOpen(false);
       form.resetFields();
     } catch { void 0; }
@@ -40,39 +40,36 @@ function GroupList({ classId, groups: initialGroups }: { classId: number; groups
   return (
     <div>
       <Space style={{ width: "100%", justifyContent: "space-between", marginBottom: 8 }}>
-        <Text strong>Groups ({initialGroups.length})</Text>
-        <Button type="primary" size="small" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-          Add Group
+        <Text strong>分组 ({initialGroups.length})</Text>
+        <Button type="primary" size="small" onClick={() => setCreateOpen(true)}>
+          添加分组
         </Button>
       </Space>
       {initialGroups.length === 0 ? (
-        <Text type="secondary">No groups defined</Text>
+        <Text type="secondary">未定义分组</Text>
       ) : (
         initialGroups.map((g) => (
-          <Card key={g.groupId} size="small" style={{ marginBottom: 8, borderRadius: 8 }}>
-            <Space>
-              <UserOutlined />
-              <div>
-                <Text strong>{g.name}</Text>
-                {g.description && <Text type="secondary" style={{ marginLeft: 8 }}>{g.description}</Text>}
-              </div>
-            </Space>
+          <Card key={g.groupId} size="small" style={{ marginBottom: 8 }}>
+            <div>
+              <Text strong>{g.name}</Text>
+              {g.description && <Text type="secondary" style={{ marginLeft: 8 }}>{g.description}</Text>}
+            </div>
           </Card>
         ))
       )}
       <Modal
-        title="Create Group"
+        title="创建分组"
         open={createOpen}
         onOk={handleCreate}
         onCancel={() => { setCreateOpen(false); form.resetFields(); }}
         confirmLoading={createGroup.isPending}
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="name" label="Group Name" rules={[{ required: true }]}>
-            <Input placeholder="e.g. Drug A" />
+          <Form.Item name="name" label="分组名称" rules={[{ required: true }]}>
+            <Input placeholder="例如：药物 A 组" />
           </Form.Item>
-          <Form.Item name="description" label="Description">
-            <Input.TextArea rows={2} placeholder="Optional description" />
+          <Form.Item name="description" label="描述">
+            <Input.TextArea rows={2} placeholder="可选描述" />
           </Form.Item>
         </Form>
       </Modal>
@@ -93,7 +90,7 @@ export default function SubjectGroupsPage() {
     try {
       const vals = await form.validateFields();
       await createClass.mutateAsync({ ...vals, studyId });
-      message.success("Group class created");
+      message.success("分组类别已创建");
       setCreateOpen(false);
       form.resetFields();
     } catch { void 0; }
@@ -107,44 +104,40 @@ export default function SubjectGroupsPage() {
     <div>
       <Breadcrumb
         items={[
-          { title: <Link to="/app/studies">Studies</Link> },
-          { title: <Link to={`/app/studies/${id}`}>Study #{id}</Link> },
-          { title: "Subject Groups" },
+          { title: <Link to="/app/studies">研究</Link> },
+          { title: <Link to={`/app/studies/${id}`}>研究 #{id}</Link> },
+          { title: "受试者分组" },
         ]}
         style={{ marginBottom: 16 }}
       />
 
-      <Card style={{ marginBottom: 16, borderRadius: 14 }} styles={{ body: { padding: "16px 24px" } }}>
+      <Card style={{ marginBottom: 16 }} styles={{ body: { padding: "16px 24px" } }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Space>
-            <TeamOutlined style={{ fontSize: 22, color: "var(--color-primary, #099A87)" }} />
-            <div>
-              <Title level={4} style={{ margin: 0 }}>Subject Group Classes</Title>
-              <Text type="secondary">{classes?.length ?? 0} group class{(classes?.length ?? 0) !== 1 ? "es" : ""}</Text>
-            </div>
-          </Space>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-            New Group Class
+          <div>
+            <Title level={4} style={{ margin: 0 }}>分组类别</Title>
+            <Text type="secondary">{classes?.length ?? 0} 个类别</Text>
+          </div>
+          <Button type="primary" onClick={() => setCreateOpen(true)}>
+            新建类别
           </Button>
         </div>
       </Card>
 
       {!classes || classes.length === 0 ? (
-        <Card style={{ borderRadius: 14 }}>
-          <Empty description="No subject group classes defined" />
+        <Card>
+          <Empty description="未定义受试者分组类别" />
         </Card>
       ) : (
-        <Card style={{ borderRadius: 14 }} styles={{ body: { padding: 0 } }}>
+        <Card styles={{ body: { padding: 0 } }}>
           <Collapse
             items={classes.map((gc) => ({
               key: String(gc.groupClassId),
               label: (
                 <Space>
-                  <TeamOutlined />
                   <Text strong>{gc.name}</Text>
-                  <Tag>{gc.groupClassType || "Generic"}</Tag>
+                  <Tag>{gc.groupClassType || "通用"}</Tag>
                   <Tag>{gc.subjectAssignment}</Tag>
-                  <Text type="secondary">{gc.groups?.length ?? 0} groups</Text>
+                  <Text type="secondary">{gc.groups?.length ?? 0} 个分组</Text>
                 </Space>
               ),
               children: (
@@ -156,21 +149,21 @@ export default function SubjectGroupsPage() {
       )}
 
       <Modal
-        title="Create Group Class"
+        title="创建分组类别"
         open={createOpen}
         onOk={handleCreateClass}
         onCancel={() => { setCreateOpen(false); form.resetFields(); }}
         confirmLoading={createClass.isPending}
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="name" label="Class Name" rules={[{ required: true }]}>
-            <Input placeholder="e.g. Treatment Group" />
+          <Form.Item name="name" label="类别名称" rules={[{ required: true }]}>
+            <Input placeholder="例如：治疗组" />
           </Form.Item>
-          <Form.Item name="subjectAssignment" label="Subject Assignment">
+          <Form.Item name="subjectAssignment" label="受试者分配方式">
             <Select defaultValue="optimal">
-              <Select.Option value="optimal">Optimal</Select.Option>
-              <Select.Option value="random">Random</Select.Option>
-              <Select.Option value="manual">Manual</Select.Option>
+              <Select.Option value="optimal">最优分配</Select.Option>
+              <Select.Option value="random">随机</Select.Option>
+              <Select.Option value="manual">手动</Select.Option>
             </Select>
           </Form.Item>
         </Form>

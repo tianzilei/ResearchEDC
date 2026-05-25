@@ -13,14 +13,7 @@ import {
   Divider,
   Result,
 } from "antd";
-import {
-  EditOutlined,
-  ExperimentOutlined,
-  BranchesOutlined,
-  TeamOutlined,
-  FileTextOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
+
 import { SkeletonPage } from "@/components/SkeletonCard";
 import type { StudyDetail as StudyDetailType } from "@/types/study";
 
@@ -44,15 +37,15 @@ export default function StudyDetail() {
       .catch(() => setLoading(false));
   }, [id]);
 
-  const statusColor = (status: string) => {
-    switch (status?.toLowerCase()) {
-      case "available": return "green";
-      case "pending": return "orange";
-      case "frozen": return "blue";
-      case "locked": return "red";
-      case "removed": return "default";
-      default: return "default";
-    }
+  const statusLabel = (status: string) => {
+    const map: Record<string, { label: string; cls: string }> = {
+      available: { label: "进行中", cls: "status-success" },
+      pending: { label: "待处理", cls: "status-warning" },
+      frozen: { label: "已冻结", cls: "status-info" },
+      locked: { label: "已锁定", cls: "status-danger" },
+      removed: { label: "已删除", cls: "status-default" },
+    };
+    return map[status?.toLowerCase()] ?? { label: status, cls: "status-default" };
   };
 
   if (loading) return <SkeletonPage />;
@@ -60,84 +53,90 @@ export default function StudyDetail() {
     return (
       <Result
         status="404"
-        title="Study Not Found"
-        subTitle={`Study #${id} could not be found.`}
-        extra={<Button onClick={() => navigate("/app/studies")}>Back to Studies</Button>}
+        title="项目未找到"
+        subTitle={`项目 #${id} 不存在`}
+        extra={<Button onClick={() => navigate("/app/studies")}>返回项目列表</Button>}
       />
     );
   }
 
+  const s = statusLabel(study.status);
+
   const overviewItems = [
-    { label: "Name", children: study.name },
-    { label: "Unique Identifier", children: study.uniqueIdentifier ?? "-" },
-    { label: "Official Title", children: study.officialTitle ?? "-" },
-    { label: "Phase", children: study.phase ? <Tag>{study.phase}</Tag> : "-" },
-    { label: "Status", children: <Tag color={statusColor(study.status)}>{study.status}</Tag> },
-    { label: "Principal Investigator", children: study.principalInvestigator ?? "-" },
-    { label: "Sponsor", children: study.sponsor ?? "-" },
-    { label: "Collaborators", children: study.collaborators ?? "-" },
-    { label: "Summary", children: study.summary ?? "-", span: 2 },
+    { label: "名称", children: study.name },
+    { label: "标识符", children: study.uniqueIdentifier ?? "-" },
+    { label: "正式标题", children: study.officialTitle ?? "-" },
+    { label: "阶段", children: study.phase ? <Tag>{study.phase}</Tag> : "-" },
+    { label: "状态", children: <span className={s.cls}>{s.label}</span> },
+    { label: "主要研究者", children: study.principalInvestigator ?? "-" },
+    { label: "赞助方", children: study.sponsor ?? "-" },
+    { label: "合作方", children: study.collaborators ?? "-" },
+    { label: "摘要", children: study.summary ?? "-", span: 2 },
   ];
 
   const designItems = [
-    { label: "Purpose", children: study.purpose ?? "-" },
-    { label: "Allocation", children: study.allocation ?? "-" },
-    { label: "Masking", children: study.masking ?? "-" },
-    { label: "Gender", children: study.gender ?? "-" },
-    { label: "Conditions", children: study.conditions ?? "-" },
-    { label: "Keywords", children: study.keywords ?? "-" },
-    { label: "Eligibility", children: study.eligibility ?? "-", span: 2 },
+    { label: "目的", children: study.purpose ?? "-" },
+    { label: "分组方式", children: study.allocation ?? "-" },
+    { label: "盲法", children: study.masking ?? "-" },
+    { label: "性别", children: study.gender ?? "-" },
+    { label: "疾病/条件", children: study.conditions ?? "-" },
+    { label: "关键词", children: study.keywords ?? "-" },
+    { label: "纳入标准", children: study.eligibility ?? "-", span: 2 },
   ];
 
   const facilityItems = [
-    { label: "Facility Name", children: study.facilityName ?? "-" },
-    { label: "City", children: study.facilityCity ?? "-" },
-    { label: "State", children: study.facilityState ?? "-" },
-    { label: "Country", children: study.facilityCountry ?? "-" },
-    { label: "Planned Start", children: study.datePlannedStart ? new Date(study.datePlannedStart).toLocaleDateString() : "-" },
-    { label: "Planned End", children: study.datePlannedEnd ? new Date(study.datePlannedEnd).toLocaleDateString() : "-" },
-    { label: "Expected Enrollment", children: study.expectedTotalEnrollment ?? "-" },
-    { label: "Protocol Type", children: study.protocolType ?? "-" },
+    { label: "机构名称", children: study.facilityName ?? "-" },
+    { label: "城市", children: study.facilityCity ?? "-" },
+    { label: "州/省", children: study.facilityState ?? "-" },
+    { label: "国家", children: study.facilityCountry ?? "-" },
+    { label: "计划开始", children: study.datePlannedStart ? new Date(study.datePlannedStart).toLocaleDateString() : "-" },
+    { label: "计划结束", children: study.datePlannedEnd ? new Date(study.datePlannedEnd).toLocaleDateString() : "-" },
+    { label: "计划入组人数", children: study.expectedTotalEnrollment ?? "-" },
+    { label: "方案类型", children: study.protocolType ?? "-" },
   ];
 
   const siteColumns = [
-    { title: "Name", dataIndex: "name", key: "name",
+    {
+      title: "名称", dataIndex: "name", key: "name",
       render: (name: string, record: any) => (
         <Link to={`/app/studies/${record.studyId}`}>{name}</Link>
       ),
     },
-    { title: "Identifier", dataIndex: "uniqueIdentifier", key: "uid", render: (v: string) => v ?? "-" },
-    { title: "PI", dataIndex: "principalInvestigator", key: "pi", render: (v: string) => v ?? "-" },
+    { title: "标识符", dataIndex: "uniqueIdentifier", key: "uid", render: (v: string | null) => v ?? "-" },
+    { title: "主要研究者", dataIndex: "principalInvestigator", key: "pi", render: (v: string | null) => v ?? "-" },
     {
-      title: "Status", dataIndex: "status", key: "status",
-      render: (s: string) => <Tag color={statusColor(s)}>{s}</Tag>,
+      title: "状态", dataIndex: "status", key: "status",
+      render: (s: string) => {
+        const st = statusLabel(s);
+        return <span className={st.cls}>{st.label}</span>;
+      },
     },
   ];
 
   const tabItems = [
     {
       key: "overview",
-      label: "Overview",
+      label: "概览",
       children: (
         <div style={{ padding: 16 }}>
-          <Descriptions title="Protocol Information" column={2} items={overviewItems} bordered size="small" />
+          <Descriptions title="方案信息" column={2} items={overviewItems} bordered size="small" />
           <Divider />
-          <Descriptions title="Study Design" column={2} items={designItems} bordered size="small" />
+          <Descriptions title="研究设计" column={2} items={designItems} bordered size="small" />
           <Divider />
-          <Descriptions title="Facility & Enrollment" column={2} items={facilityItems} bordered size="small" />
+          <Descriptions title="机构与入组" column={2} items={facilityItems} bordered size="small" />
         </div>
       ),
     },
     {
       key: "sites",
-      label: <span><BranchesOutlined /> Sites ({study.sites?.length ?? 0})</span>,
+      label: <span>站点 ({study.sites?.length ?? 0})</span>,
       children: (
         <div style={{ padding: 16 }}>
           <Space style={{ marginBottom: 16, justifyContent: "space-between", width: "100%" }}>
-            <Text strong>Sites for {study.name}</Text>
-            <Button type="primary" size="small" icon={<BranchesOutlined />}
+            <Text strong>站点 — {study.name}</Text>
+            <Button type="primary" size="small"
               onClick={() => navigate(`/app/studies/${id}/sites/create`)}>
-              Add Site
+              添加站点
             </Button>
           </Space>
           <Table
@@ -145,32 +144,32 @@ export default function StudyDetail() {
             columns={siteColumns}
             rowKey="studyId"
             pagination={false}
-            locale={{ emptyText: "No sites defined" }}
+            locale={{ emptyText: "未定义站点" }}
           />
         </div>
       ),
     },
     {
       key: "actions",
-      label: "Quick Actions",
+      label: "快捷操作",
       children: (
         <div style={{ padding: 16 }}>
           <Space direction="vertical" style={{ width: "100%" }}>
             <Card hoverable onClick={() => navigate(`/app/studies/${id}/edit`)}
-              styles={{ body: { padding: "16px 20px" } }}>
-              <Space><EditOutlined style={{ fontSize: 18 }} /><div><Text strong>Edit Study</Text><br /><Text type="secondary">Update study details and configuration</Text></div></Space>
+              styles={{ body: { padding: "14px 20px" } }}>
+              <div><Text strong>编辑项目</Text><br /><Text style={{ color: "var(--text-secondary)", fontSize: 13 }}>更新项目详情和配置</Text></div>
             </Card>
             <Card hoverable onClick={() => navigate(`/app/subjects`)}
-              styles={{ body: { padding: "16px 20px" } }}>
-              <Space><TeamOutlined style={{ fontSize: 18 }} /><div><Text strong>Manage Subjects</Text><br /><Text type="secondary">View and enroll subjects in this study</Text></div></Space>
+              styles={{ body: { padding: "14px 20px" } }}>
+              <div><Text strong>管理受试者</Text><br /><Text style={{ color: "var(--text-secondary)", fontSize: 13 }}>查看和入组受试者</Text></div>
             </Card>
             <Card hoverable onClick={() => navigate(`/app/studies/${id}/event-definitions`)}
-              styles={{ body: { padding: "16px 20px" } }}>
-              <Space><FileTextOutlined style={{ fontSize: 18 }} /><div><Text strong>Event Definitions</Text><br /><Text type="secondary">Define study events and CRF assignments</Text></div></Space>
+              styles={{ body: { padding: "14px 20px" } }}>
+              <div><Text strong>事件定义</Text><br /><Text style={{ color: "var(--text-secondary)", fontSize: 13 }}>定义访视事件和 CRF 分配</Text></div>
             </Card>
             <Card hoverable onClick={() => navigate(`/app/studies/${id}/rules`)}
-              styles={{ body: { padding: "16px 20px" } }}>
-              <Space><SettingOutlined style={{ fontSize: 18 }} /><div><Text strong>Rules</Text><br /><Text type="secondary">View and manage rule sets</Text></div></Space>
+              styles={{ body: { padding: "14px 20px" } }}>
+              <div><Text strong>规则</Text><br /><Text style={{ color: "var(--text-secondary)", fontSize: 13 }}>查看和管理规则集</Text></div>
             </Card>
           </Space>
         </div>
@@ -182,39 +181,36 @@ export default function StudyDetail() {
     <div>
       <Breadcrumb
         items={[
-          { title: <Link to="/app/studies">Studies</Link> },
+          { title: <Link to="/app/studies">项目</Link> },
           { title: study.name },
         ]}
         style={{ marginBottom: 16 }}
       />
 
       <Card
-        style={{ marginBottom: 16, borderRadius: 14 }}
-        styles={{ body: { padding: "16px 24px" } }}
+        style={{ marginBottom: 16 }}
+        styles={{ body: { padding: "14px 20px" } }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <Title level={4} style={{ margin: 0 }}>{study.name}</Title>
+            <Space split={<Text style={{ color: "var(--text-muted)" }}>|</Text>} style={{ marginTop: 2 }}>
+              <Text style={{ color: "var(--text-secondary)", fontSize: 13 }}>{study.uniqueIdentifier ?? "无标识符"}</Text>
+              <span className={s.cls} style={{ fontSize: 12 }}>{s.label}</span>
+              {study.site && <Tag>站点</Tag>}
+            </Space>
+          </div>
           <Space>
-            <ExperimentOutlined style={{ fontSize: 24, color: "var(--color-primary, #099A87)" }} />
-            <div>
-              <Title level={4} style={{ margin: 0 }}>{study.name}</Title>
-              <Space split={<Text type="secondary">|</Text>} style={{ marginTop: 2 }}>
-                <Text type="secondary">{study.uniqueIdentifier ?? "No identifier"}</Text>
-                <Tag color={statusColor(study.status)}>{study.status}</Tag>
-                {study.site && <Tag>Site</Tag>}
-              </Space>
-            </div>
-          </Space>
-          <Space>
-            <Button icon={<EditOutlined />} onClick={() => navigate(`/app/studies/${id}/edit`)}>
-              Edit
+            <Button onClick={() => navigate(`/app/studies/${id}/edit`)}>
+              编辑
             </Button>
-            <Button onClick={() => navigate("/app/studies")}>Back</Button>
+            <Button onClick={() => navigate("/app/studies")}>返回</Button>
           </Space>
         </div>
       </Card>
 
-      <Card style={{ borderRadius: 14 }} styles={{ body: { padding: 0 } }}>
-        <Tabs items={tabItems} style={{ minHeight: 300 }} />
+      <Card styles={{ body: { padding: 0 } }}>
+        <Tabs items={tabItems} style={{ minHeight: 280 }} />
       </Card>
     </div>
   );

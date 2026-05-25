@@ -16,7 +16,7 @@ import {
   message,
   Empty,
 } from "antd";
-import { PlusOutlined, FileTextOutlined } from "@ant-design/icons";
+
 import type { EventDefinitionDTO } from "@/types/event";
 
 const { Title, Text } = Typography;
@@ -66,12 +66,12 @@ export default function EventDefinitionsPage() {
   }
 
   const columns = [
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Description", dataIndex: "description", key: "description", render: (v: string) => v || "-" },
-    { title: "Category", dataIndex: "category", key: "category", render: (v: string) => v ? <Tag>{v}</Tag> : "-" },
-    { title: "Ordinal", dataIndex: "ordinal", key: "ordinal", width: 80 },
+    { title: "名称", dataIndex: "name", key: "name" },
+    { title: "描述", dataIndex: "description", key: "description", render: (v: string) => v || "-" },
+    { title: "类别", dataIndex: "category", key: "category", render: (v: string) => v ? <Tag>{v}</Tag> : "-" },
+    { title: "顺序", dataIndex: "ordinal", key: "ordinal", width: 80 },
     {
-      title: "Status", dataIndex: "status", key: "status",
+      title: "状态", dataIndex: "status", key: "status",
       render: (s: string) => (
         <Tag color={s === "available" ? "green" : "default"}>{s}</Tag>
       ),
@@ -82,63 +82,60 @@ export default function EventDefinitionsPage() {
     <div>
       <Breadcrumb
         items={[
-          { title: <Link to="/app/studies">Studies</Link> },
+          { title: <Link to="/app/studies">研究</Link> },
           { title: <Link to={`/app/studies/${id}`}>{studyName || `#${id}`}</Link> },
-          { title: "Event Definitions" },
+          { title: "事件定义" },
         ]}
         style={{ marginBottom: 16 }}
       />
 
-      <Card style={{ marginBottom: 16, borderRadius: 14 }} styles={{ body: { padding: "16px 24px" } }}>
+      <Card style={{ marginBottom: 16 }} styles={{ body: { padding: "16px 24px" } }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Space>
-            <FileTextOutlined style={{ fontSize: 22, color: "var(--color-primary, #099A87)" }} />
-            <div>
-              <Title level={4} style={{ margin: 0 }}>Event Definitions</Title>
-              <Text type="secondary">{definitions.length} event type{definitions.length !== 1 ? "s" : ""} defined</Text>
-            </div>
-          </Space>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-            New Event Definition
+          <div>
+            <Title level={4} style={{ margin: 0 }}>事件定义</Title>
+            <Text type="secondary">已定义 {definitions.length} 个事件类型</Text>
+          </div>
+          <Button type="primary" onClick={() => setCreateOpen(true)}>
+            新建事件定义
           </Button>
         </div>
       </Card>
 
       {definitions.length === 0 ? (
-        <Card style={{ borderRadius: 14 }}>
-          <Empty description="No event definitions" />
+        <Card>
+          <Empty description="暂无事件定义" />
         </Card>
       ) : (
-        <Card style={{ borderRadius: 14 }} styles={{ body: { padding: 0 } }}>
+        <Card styles={{ body: { padding: 0 } }}>
           <Table dataSource={definitions} columns={columns} rowKey="studyEventDefinitionId" pagination={false} />
         </Card>
       )}
 
       <Modal
-        title="Create Event Definition"
+        title="创建事件定义"
         open={createOpen}
         onOk={handleCreate}
         onCancel={() => { setCreateOpen(false); form.resetFields(); }}
-        okText="Create"
+        okText="创建"
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-            <Input placeholder="e.g. Screening Visit" />
+          <Form.Item name="name" label="名称" rules={[{ required: true }]}>
+            <Input placeholder="例如：筛选访视" />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label="描述">
             <Input.TextArea rows={2} />
           </Form.Item>
           <Space style={{ width: "100%" }} size={16}>
-            <Form.Item name="category" label="Category" style={{ flex: 1 }}>
+            <Form.Item name="category" label="类别" style={{ flex: 1 }}>
               <Select allowClear>
-                <Select.Option value="Screening">Screening</Select.Option>
-                <Select.Option value="Baseline">Baseline</Select.Option>
-                <Select.Option value="Treatment">Treatment</Select.Option>
-                <Select.Option value="Follow-up">Follow-up</Select.Option>
-                <Select.Option value="Final">Final</Select.Option>
+                <Select.Option value="Screening">筛选</Select.Option>
+                <Select.Option value="Baseline">基线</Select.Option>
+                <Select.Option value="Treatment">治疗</Select.Option>
+                <Select.Option value="Follow-up">随访</Select.Option>
+                <Select.Option value="Final">结束</Select.Option>
               </Select>
             </Form.Item>
-            <Form.Item name="ordinal" label="Ordinal" style={{ flex: 1 }}>
+            <Form.Item name="ordinal" label="顺序" style={{ flex: 1 }}>
               <Input type="number" placeholder="1" />
             </Form.Item>
           </Space>

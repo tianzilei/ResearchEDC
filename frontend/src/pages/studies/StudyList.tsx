@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Card, Table, Tag, Button, Space, Typography } from "antd";
-import { PlusOutlined, ExperimentOutlined, BranchesOutlined } from "@ant-design/icons";
+import { Card, Table, Button, Space, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useCurrentStudy } from "@/hooks/useStudies";
 import { SkeletonPage } from "@/components/SkeletonCard";
@@ -52,26 +51,23 @@ export default function StudyList() {
 
   const columns = [
     {
-      title: "Name", dataIndex: "name", key: "name",
+      title: "名称", dataIndex: "name", key: "name",
       render: (text: string, record: StudySummary) => (
         <a onClick={() => handleSelectStudy(record)}>
-          <ExperimentOutlined style={{ marginRight: 8 }} />{text}
+          {text}
         </a>
       ),
     },
-    { title: "Identifier", dataIndex: "uniqueIdentifier", key: "uid", render: (v: string) => v ?? "-" },
-    { title: "PI", dataIndex: "principalInvestigator", key: "pi", render: (v: string) => v ?? "-" },
-    { title: "Phase", dataIndex: "phase", key: "phase", render: (v: string) => v ? <Tag>{v}</Tag> : "-" },
-    { title: "Sponsor", dataIndex: "sponsor", key: "sponsor", render: (v: string) => v ?? "-" },
-    {
-      title: "Enrollment", dataIndex: "expectedTotalEnrollment", key: "enrollment",
-      render: (v: number) => v ?? "-",
-    },
+    { title: "标识符", dataIndex: "uniqueIdentifier", key: "uid", render: (v: string | null) => v ?? "-" },
+    { title: "主要研究者", dataIndex: "principalInvestigator", key: "pi", render: (v: string | null) => v ?? "-" },
+    { title: "阶段", dataIndex: "phase", key: "phase", render: (v: string | null) => v ?? "-" },
+    { title: "赞助方", dataIndex: "sponsor", key: "sponsor", render: (v: string | null) => v ?? "-" },
+    { title: "计划入组", dataIndex: "expectedTotalEnrollment", key: "enrollment", render: (v: number | null) => v ?? "-" },
     {
       title: "", key: "actions",
       render: (_: any, record: StudySummary) => (
-        <Button type="link" size="small" onClick={() => handleSelectStudy(record)}>
-          Manage Subjects
+        <Button size="small" onClick={() => handleSelectStudy(record)}>
+          管理受试者
         </Button>
       ),
     },
@@ -80,45 +76,40 @@ export default function StudyList() {
   const dataSource = activeTab === "studies" ? parentStudies : allSites;
 
   return (
-    <div style={{ padding: "24px 32px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <div>
-          <Title level={3} style={{ margin: 0 }}>Studies</Title>
-          <Text type="secondary" style={{ marginTop: 4, display: "block" }}>
-            {parentStudies.length} studies &middot; {allSites.length} sites
+          <Title level={4} style={{ margin: 0 }}>项目</Title>
+          <Text style={{ color: "var(--text-secondary)", marginTop: 2, display: "block", fontSize: 13 }}>
+            {parentStudies.length} 个项目 · {allSites.length} 个站点
           </Text>
         </div>
         <Space>
           <Button
             type={activeTab === "studies" ? "primary" : "default"}
-            icon={<ExperimentOutlined />}
             onClick={() => setActiveTab("studies")}
           >
-            Studies
+            项目
           </Button>
           <Button
             type={activeTab === "sites" ? "primary" : "default"}
-            icon={<BranchesOutlined />}
             onClick={() => setActiveTab("sites")}
           >
-            Sites
+            站点
           </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/app/studies/create")}>
-            New Study
+          <Button type="primary" onClick={() => navigate("/app/studies/create")}>
+            新建项目
           </Button>
         </Space>
       </div>
 
-      <Card
-        style={{ borderRadius: 14, border: "1px solid var(--color-border-light, #E5E0D8)" }}
-        styles={{ body: { padding: 0 } }}
-      >
+      <Card styles={{ body: { padding: 0 } }}>
         <Table
           dataSource={dataSource}
           columns={columns}
           rowKey="studyId"
-          pagination={{ pageSize: 20, showTotal: (t) => `${t} studies` }}
-          locale={{ emptyText: activeTab === "studies" ? "No studies found" : "No sites found" }}
+          pagination={{ pageSize: 20, showTotal: (t) => `共 ${t} 项` }}
+          locale={{ emptyText: activeTab === "studies" ? "暂无项目" : "暂无站点" }}
         />
       </Card>
     </div>

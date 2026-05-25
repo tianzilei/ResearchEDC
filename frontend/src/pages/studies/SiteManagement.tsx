@@ -15,7 +15,7 @@ import {
   message,
   Empty,
 } from "antd";
-import { PlusOutlined, BranchesOutlined } from "@ant-design/icons";
+
 import type { StudyDetail } from "@/types/study";
 
 const { Title, Text } = Typography;
@@ -80,18 +80,18 @@ export default function SiteManagement() {
   };
 
   const columns = [
-    { title: "Name", dataIndex: "name", key: "name",
+    { title: "名称", dataIndex: "name", key: "name",
       render: (name: string, record: any) => (
         <Link to={`/app/studies/${record.studyId}`}>{name}</Link>
       ),
     },
-    { title: "Identifier", dataIndex: "uniqueIdentifier", key: "uid", render: (v: string) => v || "-" },
-    { title: "PI", dataIndex: "principalInvestigator", key: "pi", render: (v: string) => v || "-" },
-    { title: "Facility", dataIndex: "facilityName", key: "facility", render: (v: string) => v || "-" },
-    { title: "Location", key: "location",
+    { title: "标识符", dataIndex: "uniqueIdentifier", key: "uid", render: (v: string) => v || "-" },
+    { title: "主要研究者", dataIndex: "principalInvestigator", key: "pi", render: (v: string) => v || "-" },
+    { title: "机构", dataIndex: "facilityName", key: "facility", render: (v: string) => v || "-" },
+    { title: "位置", key: "location",
       render: (_: any, record: any) => [record.facilityCity, record.facilityState, record.facilityCountry].filter(Boolean).join(", ") || "-",
     },
-    { title: "Status", dataIndex: "status", key: "status",
+    { title: "状态", dataIndex: "status", key: "status",
       render: (s: string) => <Tag color={statusColor(s)}>{s}</Tag>,
     },
   ];
@@ -102,69 +102,66 @@ export default function SiteManagement() {
     <div>
       <Breadcrumb
         items={[
-          { title: <Link to="/app/studies">Studies</Link> },
+          { title: <Link to="/app/studies">研究</Link> },
           { title: <Link to={`/app/studies/${id}`}>{study?.name ?? `#${id}`}</Link> },
-          { title: "Sites" },
+          { title: "站点" },
         ]}
         style={{ marginBottom: 16 }}
       />
 
-      <Card style={{ marginBottom: 16, borderRadius: 14 }} styles={{ body: { padding: "16px 24px" } }}>
+      <Card style={{ marginBottom: 16 }} styles={{ body: { padding: "16px 24px" } }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Space>
-            <BranchesOutlined style={{ fontSize: 22, color: "var(--color-primary, #099A87)" }} />
-            <div>
-              <Title level={4} style={{ margin: 0 }}>Sites</Title>
-              <Text type="secondary">{sites.length} site{sites.length !== 1 ? "s" : ""} for {study?.name}</Text>
-            </div>
-          </Space>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-            Add Site
+          <div>
+            <Title level={4} style={{ margin: 0 }}>站点</Title>
+            <Text type="secondary">{sites.length} 个站点 — {study?.name}</Text>
+          </div>
+          <Button type="primary" onClick={() => setCreateOpen(true)}>
+            添加站点
           </Button>
         </div>
       </Card>
 
       {sites.length === 0 ? (
-        <Card style={{ borderRadius: 14 }}>
-          <Empty description="No sites have been created for this study" />
+        <Card>
+          <Empty description="尚未为此研究创建站点" />
         </Card>
       ) : (
-        <Card style={{ borderRadius: 14 }} styles={{ body: { padding: 0 } }}>
+        <Card styles={{ body: { padding: 0 } }}>
           <Table dataSource={sites} columns={columns} rowKey="studyId" pagination={false} />
         </Card>
       )}
 
       <Modal
-        title="Create Site"
+        title="创建站点"
         open={createOpen}
         onOk={handleCreateSite}
         onCancel={() => { setCreateOpen(false); form.resetFields(); }}
-        okText="Create Site"
+        okText="创建站点"
         width={520}
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="name" label="Site Name" rules={[{ required: true }]}>
-            <Input placeholder="e.g. Boston Medical Center" />
+          <Form.Item name="name" label="站点名称" rules={[{ required: true }]}>
+            <Input placeholder="例如：北京医学中心" />
           </Form.Item>
-          <Form.Item name="uniqueIdentifier" label="Site Identifier">
-            <Input placeholder="e.g. SITE-001" />
+          <Form.Item name="uniqueIdentifier" label="站点标识符">
+            <Input placeholder="例如：SITE-001" />
           </Form.Item>
-          <Form.Item name="principalInvestigator" label="Principal Investigator">
-            <Input placeholder="e.g. Dr. Jones" />
+          <Form.Item name="principalInvestigator" label="主要研究者">
+            <Input placeholder="例如：张教授" />
           </Form.Item>
-          <Form.Item name="facilityName" label="Facility Name">
-            <Input placeholder="e.g. Boston General Hospital" />
+          <Form.Item name="facilityName" label="机构名称">
+            <Input placeholder="例如：北京总医院" />
           </Form.Item>
           <Space style={{ width: "100%" }} size={16}>
-            <Form.Item name="facilityCity" label="City" style={{ flex: 1 }}>
-              <Input placeholder="e.g. Boston" />
+            <Form.Item name="facilityCity" label="城市" style={{ flex: 1 }}>
+              <Input placeholder="例如：北京" />
             </Form.Item>
-            <Form.Item name="facilityState" label="State" style={{ flex: 1 }}>
-              <Input placeholder="e.g. MA" />
+            <Form.Item name="facilityState" label="州/省" style={{ flex: 1 }}>
+              <Input placeholder="例如：北京市" />
             </Form.Item>
           </Space>
-          <Form.Item name="facilityCountry" label="Country">
-            <Input placeholder="e.g. USA" />
+          <Form.Item name="facilityCountry" label="国家">
+            <Input placeholder="例如：中国" />
           </Form.Item>
         </Form>
       </Modal>
