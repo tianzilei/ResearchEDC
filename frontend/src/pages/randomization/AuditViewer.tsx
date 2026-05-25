@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Table, Tag, Typography, Space, Button, Empty } from "antd";
-import { ArrowLeftOutlined, AuditOutlined } from "@ant-design/icons";
+
 import { useTranslation } from "react-i18next";
 import { useAuditLogs } from "@/hooks/useRandomization";
 import { SkeletonPage } from "@/components/SkeletonCard";
@@ -59,10 +59,10 @@ export default function AuditViewer() {
   return (
     <div>
       <Space style={{ marginBottom: 16 }}>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => { navigate(`/app/randomization/schemes/${schemeId}`); }}>{t("audit.back")}</Button>
+        <Button onClick={() => { navigate(`/app/randomization/schemes/${schemeId}`); }}>{t("audit.back")}</Button>
       </Space>
 
-      <Title level={4}><AuditOutlined /> {t("audit.title")}</Title>
+      <Title level={4}>{t("audit.title")}</Title>
 
       <Card style={{ marginTop: 16 }}>
         <Table

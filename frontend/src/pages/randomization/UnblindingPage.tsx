@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Table, Tag, Button, Modal, Input, message, Space, Select, Empty, InputNumber } from "antd";
-import { ArrowLeftOutlined, EyeOutlined } from "@ant-design/icons";
+
 import { useTranslation } from "react-i18next";
 import { useUnblindingRequests, useRequestUnblinding } from "@/hooks/useRandomization";
 import { SkeletonPage } from "@/components/SkeletonCard";
@@ -97,11 +97,11 @@ export default function UnblindingPage() {
   return (
     <div>
       <Space style={{ marginBottom: 16 }}>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(`/app/randomization/schemes/${schemeId}`)}>Back</Button>
+        <Button onClick={() => navigate(`/app/randomization/schemes/${schemeId}`)}>Back</Button>
       </Space>
 
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
-        <span style={{ fontSize: 18, fontWeight: 600 }}><EyeOutlined /> {t("unblinding.title")}</span>
+        <span style={{ fontSize: 18, fontWeight: 600 }}>{t("unblinding.title")}</span>
         <Button onClick={() => setRequestModalVisible(true)}>{t("unblinding.request")}</Button>
       </Space>
 

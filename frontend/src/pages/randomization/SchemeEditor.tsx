@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Descriptions, Tag, Button, Space, Typography, Table, Divider, message, Alert, Modal } from "antd";
-import { SafetyOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useScheme, useActivateScheme, useCloseScheme } from "@/hooks/useRandomization";
 import { SkeletonPage } from "@/components/SkeletonCard";
@@ -72,7 +71,7 @@ export default function SchemeEditor() {
   return (
     <div>
       <Space style={{ marginBottom: 16 }}>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate("/app/randomization")}>
+        <Button onClick={() => navigate("/app/randomization")}>
           {t("scheme.back")}
         </Button>
       </Space>
@@ -80,7 +79,6 @@ export default function SchemeEditor() {
       <Card>
         <Space style={{ justifyContent: "space-between", width: "100%" }}>
           <Space>
-            <SafetyOutlined style={{ fontSize: 24 }} />
             <Title level={4} style={{ margin: 0 }}>{scheme.name}</Title>
           </Space>
           <Space>

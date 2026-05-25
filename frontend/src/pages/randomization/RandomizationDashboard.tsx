@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Card, Table, Tag, Button, Space, Typography, Modal, Form, Input, Select, InputNumber, message, Alert } from "antd";
-import { PlusOutlined, SafetyOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useSchemes, useCreateScheme, useActivateScheme, useCloseScheme } from "@/hooks/useRandomization";
 import { useCurrentStudy } from "@/hooks/useStudies";
@@ -28,11 +27,11 @@ export default function RandomizationDashboard() {
     STRATIFIED_BLOCK: "purple",
   };
 
-  const statusColors: Record<string, string> = {
-    DRAFT: "default",
-    ACTIVE: "success",
-    PAUSED: "warning",
-    CLOSED: "error",
+  const statusClasses: Record<string, string> = {
+    DRAFT: "status-default",
+    ACTIVE: "status-success",
+    PAUSED: "status-warning",
+    CLOSED: "status-danger",
   };
 
   const handleCreate = async () => {
@@ -87,7 +86,7 @@ export default function RandomizationDashboard() {
       render: (alg: string) => <Tag color={algorithmColors[alg]}>{alg}</Tag>,
     },
     { title: t("randomization.column.status"), dataIndex: "status", key: "status",
-      render: (s: string) => <Tag color={statusColors[s]}>{s}</Tag>,
+      render: (s: string) => <span className={`status ${statusClasses[s] ?? "status-default"}`}>{s}</span>,
     },
     { title: t("randomization.column.arms"), dataIndex: "totalArms", key: "totalArms" },
     { title: t("randomization.column.assigned"), dataIndex: "totalAssigned", key: "totalAssigned" },
@@ -117,9 +116,9 @@ export default function RandomizationDashboard() {
     <div>
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
         <Title level={4} style={{ marginTop: 0 }}>
-          <SafetyOutlined /> {t("randomization.title")}
+          {t("randomization.title")}
         </Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>
+        <Button type="primary" onClick={() => setModalOpen(true)}>
           {t("randomization.newScheme")}
         </Button>
       </Space>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Form, InputNumber, Button, Typography, Table, Tag, message, Alert, Space, Modal, Select, Empty } from "antd";
-import { ArrowLeftOutlined, SwapOutlined } from "@ant-design/icons";
+
 import { useTranslation } from "react-i18next";
 import { useScheme, useRandomize, useAssignments } from "@/hooks/useRandomization";
 import { SkeletonPage } from "@/components/SkeletonCard";
@@ -26,7 +26,7 @@ export default function AllocationPage() {
     return (
       <div>
         <Space style={{ marginBottom: 16 }}>
-          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(`/app/randomization/schemes/${schemeId}`)}>{t("allocation.back")}</Button>
+          <Button onClick={() => navigate(`/app/randomization/schemes/${schemeId}`)}>{t("allocation.back")}</Button>
         </Space>
         <Alert
           message={t("allocation.notActive")}
@@ -88,10 +88,10 @@ export default function AllocationPage() {
   return (
     <div>
       <Space style={{ marginBottom: 16 }}>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(`/app/randomization/schemes/${schemeId}`)}>{t("allocation.back")}</Button>
+        <Button onClick={() => navigate(`/app/randomization/schemes/${schemeId}`)}>{t("allocation.back")}</Button>
       </Space>
 
-      <Title level={4}><SwapOutlined /> {t("allocation.title")} - {scheme.name}</Title>
+      <Title level={4}>{t("allocation.title")} - {scheme.name}</Title>
 
       <Card title={t("allocation.newRandomization")} style={{ marginBottom: 16 }}>
         <Form layout="inline">
@@ -122,7 +122,6 @@ export default function AllocationPage() {
               type="primary"
               onClick={handleRandomize}
               loading={randomize.isPending}
-              icon={<SwapOutlined />}
             >
               {t("allocation.randomize")}
             </Button>
