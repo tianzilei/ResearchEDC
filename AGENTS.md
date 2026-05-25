@@ -1,7 +1,7 @@
 # ResearchEDC - PROJECT KNOWLEDGE BASE
 
 **Derived from:** OpenClinica v3.x  
-**Generated:** 2026-05-23  
+**Generated:** 2026-05-25  
 **Branch:** master
 
 ## OVERVIEW
@@ -12,7 +12,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 
 **当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 31/31 ✅ | Docker Compose ✅ | E2E API ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: LegacyDaoConfig 归零** ✅ | **legacy-core → shared 合并** ✅ | **Java module tests 150+** ✅
 
-⚠️ **Frontend TypeScript 状态:** `pnpm typecheck` — 41 errors, 79 warnings (需要修复)
+⚠️ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors (需要修复)
 
 ## STRUCTURE
 
@@ -115,8 +115,8 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 - **UI library:** Ant Design 5 with ConfigProvider theme
 - **Routing:** React Router 7, browser router with `/app/*` prefix
 - **Data fetching:** TanStack Query 5 via typed `useAppQuery`/`useAppMutation` wrappers
-- **API client:** Fetch-based `ApiClient` class (JSON + FormData support)
-- **Auth:** Keycloak OIDC via `AuthProvider` context (session token based)
+- **API client:** Fetch-based `ApiClient` class (JSON + FormData support, `credentials: same-origin`, CSRF token injection)
+- **Auth:** Spring Security form login with server-side Session (HttpOnly cookie + CookieCsrfTokenRepository)
 - **Quality:** `pnpm typecheck` (⚠️ 41 errors, 79 warnings — needs fix) | `pnpm lint` (0 errors) | `pnpm test` (25/25 ✅)
 
 ## MODULITH MODULES INVENTORY
@@ -193,12 +193,12 @@ python -m pytest app/tests/ -v
 ## NOTES
 
 - **Database:** Supports Oracle and PostgreSQL
-- **Security:** Legacy Spring Security for JSP; Keycloak OIDC for SPA
+- **Security:** Spring Security form login (Session Cookie + CSRF); Legacy Spring Security for JSP
 - **Routing:** `/app/*` -> React SPA, `/legacy/*` -> JSP, `/q/*` -> questionnaire, `/api/*` -> REST
 - **Modulith:** Only `org.researchedc.module.*` is verified; `shared/` packages are excluded
 - **Version:** 3.18-SNAPSHOT
 - **legacy-core → shared:** `legacy-core/` was removed on 2026-05-23. All code consolidated into `shared/` module with `@Repository`/`@Service` annotations and package rename to `org.researchedc`.
-- **Frontend TypeScript:** Currently 41 errors, 79 warnings (regression from previous 0). Needs investigation.
+- **Frontend TypeScript:** Currently 0 errors (after session auth migration).
 - **DAO deletion blocked:** ~1,100 `DaoProvider.getDao()` call sites in `web/`/`ws/` still reference concrete DAO classes by name. Migration to `@Autowired` SPI interfaces is the next major refactoring step.
 
 ## SUBMODULE REFERENCES

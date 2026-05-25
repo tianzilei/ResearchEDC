@@ -12,7 +12,7 @@
 frontend/src/
 ├── main.tsx             # React entry point
 ├── api/                 # API client layer
-│   ├── client.ts        # Fetch-based ApiClient (JSON + FormData)
+│   ├── client.ts        # Fetch-based ApiClient (JSON + FormData, CSRF injection)
 │   └── generated.ts     # Auto-generated API types
 ├── components/          # Shared UI components
 │   ├── form-engine/     # Dynamic form rendering
@@ -55,15 +55,15 @@ frontend/src/
 - **UI:** Ant Design 5 with `ConfigProvider` theme
 - **Routing:** React Router 7, browser router with `/app/*` prefix
 - **Data fetching:** TanStack Query 5 via typed `useAppQuery`/`useAppMutation` (see `useQuery.ts`)
-- **API client:** Fetch-based `ApiClient` class supporting JSON and FormData
-- **Auth:** Keycloak OIDC via `AuthProvider` context (session token flow)
+- **API client:** Fetch-based `ApiClient` class (JSON + FormData, `credentials: same-origin`, CSRF token injection)
+- **Auth:** Spring Security form login via `AuthProvider` (server-side Session, HttpOnly cookie)
 - **Quality:** `pnpm typecheck` (⚠️ 41 errors, 79 warnings) | `pnpm lint` (0 errors) | `pnpm build` (no warnings)
 - **Testing:** Vitest + `test-setup.ts`, 4 test files (`.test.tsx`), 25 tests pass
 
 ## API LAYER
 
 The frontend communicates with the backend through:
-- **`client.ts`** — Base `ApiClient` with token management, JSON/FormData serialization, error handling
+- **`client.ts`** — Base `ApiClient` with session-based auth (`credentials: same-origin`), JSON/FormData serialization, CSRF token injection, error handling
 - **`generated.ts`** — TypeScript interfaces matching backend DTOs (manually updated)
 - **REST API** — Backend controllers at `/api/v1/*` return JSON
 - **Legacy bridge** — `LegacyFrame.tsx` wraps JSP pages in iframes for `/legacy/*` path

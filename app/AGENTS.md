@@ -4,7 +4,7 @@
 **Files:** ~244 Java files (module/) + config classes, 16 Modulith modules  
 
 > Entry point: `OpenClinicaApplication.java` — Spring Boot WAR packaging.  
-> Config classes in `org.researchedc.config.*` handle Hibernate, security (Keycloak OIDC + legacy Spring Security), mail, scheduling, and OpenAPI.
+> Config classes in `org.researchedc.config.*` handle Hibernate, security (Spring Security form login + CSRF), scheduling, and OpenAPI.
 
 ## STRUCTURE
 
@@ -12,10 +12,10 @@
 app/src/main/java/org/researchedc/
 ├── OpenClinicaApplication.java   # @SpringBootApplication entry point
 ├── config/                       # 14 configuration classes
-│   ├── SecurityConfig.java       # Keycloak JWT + legacy session filter
+│   ├── SecurityConfig.java       # Spring Security form login, CSRF, session management
 │   ├── HibernateConfig.java      # Dual DataSource (legacy + module)
 │   ├── WebMvcConfig.java         # SPA fallback to /app/index.html
-│   └── ... (DbConfig, MailConfig, SchedulerConfig, OpenApiConfig, etc.)
+│   └── ... (DbConfig, SchedulerConfig, OpenApiConfig, etc.)
 └── module/                       # 16 Spring Modulith modules
     ├── audit/                    # Audit logging (event-driven, independent table)
     ├── crf/                      # CRF metadata (includes LegacyCrfAdapter)
@@ -49,8 +49,7 @@ app/src/main/java/org/researchedc/
 
 | Config | File | Purpose |
 |--------|------|---------|
-| Security | `config/SecurityConfig.java` | Keycloak JWT auth + legacy session bridge |
-| OIDC Bridge | `config/OidcSessionBridgeSuccessHandler.java` | Session token exchange for JSP |
+| Security | `config/SecurityConfig.java` | Spring Security form login, CSRF, session management |
 | Hibernate | `config/HibernateConfig.java` | Dual DataSource: legacy + module entities |
 | SPA Routes | `config/WebMvcConfig.java` | `/app/**` → React `index.html` fallback |
 | OpenAPI | `config/OpenApiConfig.java` | Swagger UI at `/swagger-ui.html` |

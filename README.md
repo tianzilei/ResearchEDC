@@ -1,7 +1,7 @@
 # ResearchEDC
 
 **版本:** 3.18-SNAPSHOT  
-**最后更新:** 2026-05-23  
+**最后更新:** 2026-05-25  
 **JSP 迁移进度:** 225/419 (54%) — 194 页通过 LegacyFrame 向后兼容  
 **许可证:** GNU LGPL
 
@@ -38,7 +38,7 @@ ResearchEDC is an independently maintained research electronic data capture and 
 | **路由** | React Router 7 |
 | **服务端状态** | TanStack Query 5 |
 | **测试** | Vitest + React Testing Library |
-| **认证** | Keycloak / OIDC |
+| **认证** | Spring Security form login (Session Cookie + CSRF) |
 
 **应用服务器:** Tomcat 10.1.x 推荐  
 **数据库:** PostgreSQL 14+ / Oracle 19c+
@@ -133,7 +133,8 @@ ResearchEDC/
 /q/*            → 问卷受试者填写页 (独立于 AppLayout)
 /api/v1/*       → Spring Boot Modulith REST API (study/subject/event/datacapture/...)
 /api/legacy/*   → Legacy 网关桥接 API (notes/rules/crfs/datasets/groups)
-/auth/*         → Keycloak / OIDC
+/login          → React SPA 登录页 (Spring Security form login)
+/api/v1/auth/*  → 认证 API (login, logout, me)
 /actuator/*     → Spring Boot Actuator
 ```
 
