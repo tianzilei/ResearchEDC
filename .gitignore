@@ -103,6 +103,18 @@ app/src/main/resources/static/
 temp/
 .tmp/
 **/catalina.home_IS_UNDEFINED/
+app/$catalina.home/
+
+# Runtime data
+.pids/
+.tomcat/
+config/
+data/
+
+# Generated properties (produced by entrypoint.sh at container start)
+app/src/main/resources/datainfo.properties
+app/src/main/resources/enterprise.properties
+app/src/main/resources/extract.properties
 
 # Python / Questionnaire Service
 __pycache__/
