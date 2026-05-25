@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   Card, Typography, Table, Tag, Space, Button, Breadcrumb, Empty, Result,
 } from "antd";
-import { ReloadOutlined, FileTextOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
@@ -34,44 +33,43 @@ export default function LogViewer() {
   return (
     <div>
       <Breadcrumb items={[
-        { title: <Link to="/app/admin">Admin</Link> },
-        { title: "Log Viewer" },
+        { title: <Link to="/app/admin">管理</Link> },
+        { title: "日志查看器" },
       ]} style={{ marginBottom: 16 }} />
 
-      <Card style={{ marginBottom: 16, borderRadius: 14 }} styles={{ body: { padding: "16px 24px" } }}>
+      <Card style={{ marginBottom: 16 }} styles={{ body: { padding: "16px 24px" } }}>
         <Space style={{ width: "100%", justifyContent: "space-between" }} align="center">
           <Space>
-            <FileTextOutlined style={{ fontSize: 22, color: "var(--color-primary, #099A87)" }} />
             <div>
-              <Title level={4} style={{ margin: 0 }}>Logger Configuration</Title>
-              <Text type="secondary">View and configure log levels</Text>
+              <Title level={4} style={{ margin: 0 }}>日志配置</Title>
+              <Text type="secondary">查看和配置日志级别</Text>
             </div>
           </Space>
-          <Button icon={<ReloadOutlined />} onClick={fetchLogs} loading={loading}>
-            Load Loggers
+          <Button onClick={fetchLogs} loading={loading}>
+            加载日志器
           </Button>
         </Space>
       </Card>
 
       {error ? (
-        <Result status="warning" title="Log Viewer Unavailable"
+        <Result status="warning" title="日志查看器不可用"
           subTitle={error}
-          extra={<Button onClick={() => window.open("/legacy/ViewLogMessage", "_blank")}>Open Legacy Log Viewer</Button>}
+          extra={<Button onClick={() => window.open("/legacy/ViewLogMessage", "_blank")}>打开旧版日志查看器</Button>}
         />
       ) : logs.length === 0 && !loading ? (
-        <Card style={{ borderRadius: 14 }}>
-          <Empty description="Click 'Load Loggers' to view logger configuration">
-            <Button type="primary" onClick={fetchLogs}>Load Loggers</Button>
+        <Card>
+          <Empty description="点击「加载日志器」查看日志配置">
+            <Button type="primary" onClick={fetchLogs}>加载日志器</Button>
           </Empty>
         </Card>
       ) : (
-        <Card style={{ borderRadius: 14 }} styles={{ body: { padding: 0 } }}>
+        <Card styles={{ body: { padding: 0 } }}>
           <Table
             dataSource={logs}
             columns={[
-              { title: "Logger", dataIndex: "name", key: "name", ellipsis: true },
+              { title: "日志器", dataIndex: "name", key: "name", ellipsis: true },
               {
-                title: "Level", dataIndex: "level", key: "level",
+                title: "级别", dataIndex: "level", key: "level",
                 render: (level: string) => {
                   const color = level === "ERROR" ? "red" : level === "WARN" ? "orange" : level === "DEBUG" ? "blue" : "default";
                   return <Tag color={color}>{level}</Tag>;

@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Card, Table, Tag, Button, Typography, Modal, Form, Input, Select, message, Tabs } from "antd";
-import { PlusOutlined, UserOutlined, SafetyOutlined } from "@ant-design/icons";
+import { Card, Table, Button, Typography, Modal, Form, Input, Select, message, Tabs } from "antd";
 import { SkeletonPage } from "@/components/SkeletonCard";
 
 const { Title, Text } = Typography;
@@ -40,7 +39,7 @@ export default function UserManagement() {
       try {
         const r = await fetch("/api/v1/identity/users?query=");
         if (r.ok) setUsers(await r.json());
-      } catch { void 0; }
+      } catch { /* ignore */ }
       setLoading(false);
     };
     fetchAll();
@@ -62,13 +61,13 @@ export default function UserManagement() {
           statusId: 1,
         }),
       });
-      if (!res.ok) { const err = await res.text(); message.error(`Failed: ${err}`); return; }
-      message.success("User created");
+      if (!res.ok) { const err = await res.text(); message.error(`创建失败: ${err}`); return; }
+      message.success("用户已创建");
       setCreateOpen(false);
       form.resetFields();
       const r = await fetch("/api/v1/identity/users?query=");
       if (r.ok) setUsers(await r.json());
-    } catch { void 0; }
+    } catch { /* validation error */ }
   };
 
   const handleAssignRole = async () => {
@@ -84,13 +83,13 @@ export default function UserManagement() {
           statusId: 1,
         }),
       });
-      if (!res.ok) { message.error("Failed to assign role"); return; }
-      message.success("Role assigned");
+      if (!res.ok) { message.error("分配角色失败"); return; }
+      message.success("角色已分配");
       setRoleOpen(false);
       roleForm.resetFields();
       const r = await fetch(`/api/v1/identity/roles/by-user?userName=${selectedUser}`);
       if (r.ok) setRoles(await r.json());
-    } catch { void 0; }
+    } catch { /* validation error */ }
   };
 
   const viewRoles = async (userName: string) => {
@@ -104,100 +103,102 @@ export default function UserManagement() {
 
   const columns = [
     {
-      title: "Username", dataIndex: "userName", key: "userName",
-      render: (text: string) => <strong><UserOutlined style={{ marginRight: 8 }} />{text}</strong>,
+      title: "用户名", dataIndex: "userName", key: "userName",
+      render: (text: string) => <strong>{text}</strong>,
     },
-    { title: "Name", key: "name", render: (_: any, r: UserDTO) => `${r.firstName} ${r.lastName}` },
-    { title: "Email", dataIndex: "email", key: "email" },
-    { title: "Phone", dataIndex: "phone", key: "phone", render: (v: string) => v || "-" },
+    { title: "姓名", key: "name", render: (_: any, r: UserDTO) => `${r.firstName} ${r.lastName}` },
+    { title: "邮箱", dataIndex: "email", key: "email" },
+    { title: "电话", dataIndex: "phone", key: "phone", render: (v: string | null) => v || "-" },
     {
-      title: "Status", dataIndex: "enabled", key: "enabled",
-      render: (v: boolean) => v ? <Tag color="green">Active</Tag> : <Tag color="red">Disabled</Tag>,
+      title: "状态", dataIndex: "enabled", key: "enabled",
+      render: (v: boolean) => v
+        ? <span className="status status-success">正常</span>
+        : <span className="status status-danger">已停用</span>,
     },
     {
       title: "", key: "actions",
       render: (_: any, record: UserDTO) => (
-        <Button size="small" icon={<SafetyOutlined />} onClick={() => viewRoles(record.userName)}>
-          Roles
+        <Button size="small" onClick={() => viewRoles(record.userName)}>
+          角色
         </Button>
       ),
     },
   ];
 
   return (
-    <div style={{ padding: "24px 32px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <div>
-          <Title level={3} style={{ margin: 0 }}>User Management</Title>
-          <Text type="secondary">{users.length} users</Text>
+          <Title level={4} style={{ margin: 0 }}>用户管理</Title>
+          <Text style={{ color: "var(--text-secondary)", fontSize: 13 }}>{users.length} 名用户</Text>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-          Create User
+        <Button type="primary" onClick={() => setCreateOpen(true)}>
+          创建用户
         </Button>
       </div>
 
-      <Card style={{ borderRadius: 14, border: "1px solid var(--color-border-light, #E5E0D8)" }} styles={{ body: { padding: 0 } }}>
+      <Card styles={{ body: { padding: 0 } }}>
         <Table dataSource={users} columns={columns} rowKey="userId" pagination={{ pageSize: 20 }}
-          locale={{ emptyText: "No users found" }} />
+          locale={{ emptyText: "暂无用户" }} />
       </Card>
 
-      <Modal title="Create User" open={createOpen} onOk={handleCreate}
-        onCancel={() => { setCreateOpen(false); form.resetFields(); }} okText="Create" width={480}>
+      <Modal title="创建用户" open={createOpen} onOk={handleCreate}
+        onCancel={() => { setCreateOpen(false); form.resetFields(); }} okText="创建" width={460}>
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="userName" label="Username" rules={[{ required: true }]}>
-            <Input placeholder="e.g. jsmith" />
+          <Form.Item name="userName" label="用户名" rules={[{ required: true }]}>
+            <Input placeholder="例如 jsmith" />
           </Form.Item>
-          <Form.Item name="firstName" label="First Name" rules={[{ required: true }]}>
-            <Input placeholder="e.g. John" />
+          <Form.Item name="firstName" label="名" rules={[{ required: true }]}>
+            <Input placeholder="例如 John" />
           </Form.Item>
-          <Form.Item name="lastName" label="Last Name" rules={[{ required: true }]}>
-            <Input placeholder="e.g. Smith" />
+          <Form.Item name="lastName" label="姓" rules={[{ required: true }]}>
+            <Input placeholder="例如 Smith" />
           </Form.Item>
-          <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}>
-            <Input placeholder="e.g. john@example.com" />
+          <Form.Item name="email" label="邮箱" rules={[{ required: true, type: "email" }]}>
+            <Input placeholder="例如 john@example.com" />
           </Form.Item>
-          <Form.Item name="phone" label="Phone">
-            <Input placeholder="e.g. +1-555-0100" />
+          <Form.Item name="phone" label="电话">
+            <Input placeholder="例如 +86-138-0000-0000" />
           </Form.Item>
-          <Form.Item name="affiliation" label="Institution">
-            <Input placeholder="e.g. University Hospital" />
+          <Form.Item name="affiliation" label="机构">
+            <Input placeholder="例如 大学附属医院" />
           </Form.Item>
         </Form>
       </Modal>
 
-      <Modal title={`Roles: ${selectedUser}`} open={roleOpen} onCancel={() => { setRoleOpen(false); roleForm.resetFields(); }}
-        footer={null} width={520}>
+      <Modal title={`角色: ${selectedUser}`} open={roleOpen} onCancel={() => { setRoleOpen(false); roleForm.resetFields(); }}
+        footer={null} width={500}>
         {selectedUser && (
           <div style={{ marginTop: 8 }}>
             <Tabs items={[
               {
-                key: "current", label: "Current Roles",
+                key: "current", label: "当前角色",
                 children: roles.length === 0
-                  ? <Text type="secondary">No roles assigned</Text>
+                  ? <Text style={{ color: "var(--text-secondary)" }}>未分配角色</Text>
                   : <Table dataSource={roles} columns={[
-                    { title: "Role", dataIndex: "roleName", key: "role" },
-                    { title: "Study ID", dataIndex: "studyId", key: "study", render: (v: number) => v ?? "All" },
-                    { title: "Status", dataIndex: "statusId", key: "status", render: (v: number) => v === 1 ? <Tag color="green">Active</Tag> : <Tag>Inactive</Tag> },
+                    { title: "角色", dataIndex: "roleName", key: "role" },
+                    { title: "项目 ID", dataIndex: "studyId", key: "study", render: (v: number | null) => v ?? "全部" },
+                    { title: "状态", dataIndex: "statusId", key: "status", render: (v: number) => v === 1 ? <span className="status status-success">正常</span> : <span className="status status-default">未激活</span> },
                   ]} rowKey="studyUserRoleId" pagination={false} size="small" />,
               },
               {
-                key: "assign", label: "Assign Role",
+                key: "assign", label: "分配角色",
                 children: (
                   <Form form={roleForm} layout="vertical" style={{ marginTop: 16 }}>
-                    <Form.Item name="roleName" label="Role" rules={[{ required: true }]}>
-                      <Select placeholder="Select role">
-                        <Select.Option value="admin">Admin</Select.Option>
-                        <Select.Option value="coordinator">Study Coordinator</Select.Option>
-                        <Select.Option value="investigator">Investigator</Select.Option>
-                        <Select.Option value="data_manager">Data Manager</Select.Option>
-                        <Select.Option value="monitor">Monitor</Select.Option>
-                        <Select.Option value="pi">Principal Investigator</Select.Option>
+                    <Form.Item name="roleName" label="角色" rules={[{ required: true }]}>
+                      <Select placeholder="选择角色">
+                        <Select.Option value="admin">管理员</Select.Option>
+                        <Select.Option value="coordinator">研究协调员</Select.Option>
+                        <Select.Option value="investigator">研究者</Select.Option>
+                        <Select.Option value="data_manager">数据管理员</Select.Option>
+                        <Select.Option value="monitor">监查员</Select.Option>
+                        <Select.Option value="pi">主要研究者</Select.Option>
                       </Select>
                     </Form.Item>
-                    <Form.Item name="studyId" label="Study ID (leave empty for global)">
-                      <Input type="number" placeholder="e.g. 1" />
+                    <Form.Item name="studyId" label="项目 ID（留空为全局）">
+                      <Input type="number" placeholder="例如 1" />
                     </Form.Item>
-                    <Button type="primary" onClick={handleAssignRole}>Assign</Button>
+                    <Button type="primary" onClick={handleAssignRole}>分配</Button>
                   </Form>
                 ),
               },

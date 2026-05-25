@@ -1,45 +1,33 @@
 import { Card, Row, Col, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
-import { UserOutlined, SafetyOutlined, InfoCircleOutlined, FileTextOutlined, SettingOutlined, AuditOutlined } from "@ant-design/icons";
-
 const { Title } = Typography;
 
 const ADMIN_SECTIONS = [
-  { title: "User Management", desc: "Create, edit, and manage user accounts and roles", icon: <UserOutlined />, path: "/app/admin/users", color: "#099A87" },
-  { title: "Audit Log", desc: "View system-wide audit trail and user activity", icon: <AuditOutlined />, path: "/app/admin/audit-log", color: "#D4A854" },
-  { title: "System Config", desc: "System health, version info, and component status", icon: <InfoCircleOutlined />, path: "/app/admin/system", color: "#4F46E5" },
-  { title: "CRF Library", desc: "Manage case report form definitions and versions", icon: <FileTextOutlined />, path: "/app/crfs", color: "#0891B2" },
-  { title: "Data Export", desc: "Create and manage data export jobs", icon: <SettingOutlined />, path: "/app/data-export", color: "#7C3AED" },
-  { title: "Security", desc: "Role-based access and permission configuration", icon: <SafetyOutlined />, path: "/app/admin/users", color: "#DC2626" },
+  { title: "用户管理", desc: "创建、编辑和管理用户账户和角色", path: "/app/admin/users" },
+  { title: "审计日志", desc: "查看系统范围的审计追踪和用户活动", path: "/app/admin/audit-log" },
+  { title: "系统配置", desc: "系统健康状态、版本信息和组件状态", path: "/app/admin/system" },
+  { title: "CRF 库", desc: "管理病例报告表定义和版本", path: "/app/crfs" },
+  { title: "数据导出", desc: "创建和管理数据导出任务", path: "/app/data-export" },
+  { title: "安全设置", desc: "基于角色的权限配置", path: "/app/admin/users" },
 ];
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ padding: "24px 32px" }}>
-      <Title level={3} style={{ marginBottom: 24 }}>Administration</Title>
-      <Row gutter={[16, 16]}>
+    <div>
+      <Title level={4} style={{ marginBottom: 20 }}>管理</Title>
+      <Row gutter={[12, 12]}>
         {ADMIN_SECTIONS.map(section => (
           <Col xs={24} sm={12} lg={8} key={section.title}>
             <Card
               hoverable
               onClick={() => navigate(section.path)}
-              style={{ borderRadius: 14, border: "1px solid var(--color-border-light, #E5E0D8)", height: "100%" }}
+              style={{ height: "100%" }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <div style={{
-                  width: 48, height: 48, borderRadius: 12,
-                  background: `${section.color}15`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 22, color: section.color,
-                }}>
-                  {section.icon}
-                </div>
-                <div>
-                  <div style={{ fontWeight: 600, marginBottom: 4 }}>{section.title}</div>
-                  <div style={{ fontSize: 13, color: "#6B7280" }}>{section.desc}</div>
-                </div>
+              <div>
+                <div style={{ fontWeight: 600, marginBottom: 4, color: "var(--text)" }}>{section.title}</div>
+                <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>{section.desc}</div>
               </div>
             </Card>
           </Col>

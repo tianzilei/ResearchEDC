@@ -49,32 +49,32 @@ export default function AuditLogViewer() {
   const columns = [
     { title: "ID", dataIndex: "id", key: "id", width: 60 },
     {
-      title: "Type", dataIndex: "eventType", key: "type", width: 90,
+      title: "类型", dataIndex: "eventType", key: "type", width: 90,
       render: (v: string) => <Tag color={EVENT_COLORS[v] ?? "default"}>{v}</Tag>,
     },
-    { title: "Entity", key: "entity", render: (_: any, r: AuditLogEntry) =>
+    { title: "实体", key: "entity", render: (_: any, r: AuditLogEntry) =>
       `${r.entityType ?? "-"}#${r.entityId ?? ""}` },
-    { title: "Label", dataIndex: "entityLabel", key: "label", ellipsis: true },
-    { title: "Module", dataIndex: "sourceModule", key: "module", width: 100,
+    { title: "标签", dataIndex: "entityLabel", key: "label", ellipsis: true },
+    { title: "模块", dataIndex: "sourceModule", key: "module", width: 100,
       render: (v: string) => <Tag>{v ?? "-"}</Tag> },
-    { title: "User", dataIndex: "performedBy", key: "user", width: 70 },
+    { title: "用户", dataIndex: "performedBy", key: "user", width: 70 },
     {
-      title: "Date", dataIndex: "performedDate", key: "date", width: 170,
+      title: "日期", dataIndex: "performedDate", key: "date", width: 170,
       render: (d: string) => d ? new Date(d).toLocaleString() : "-",
     },
-    { title: "Details", dataIndex: "details", key: "details", ellipsis: true },
+    { title: "详情", dataIndex: "details", key: "details", ellipsis: true },
   ];
 
   return (
     <div style={{ padding: "24px 32px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
         <div>
-          <Title level={3} style={{ margin: 0 }}>Audit Log</Title>
-          <Text type="secondary">{filtered.length} records</Text>
+          <Title level={3} style={{ margin: 0 }}>审计日志</Title>
+          <Text type="secondary">{filtered.length} 条记录</Text>
         </div>
         <Space>
           <Select
-            allowClear placeholder="Filter by module"
+            allowClear placeholder="按模块筛选"
             value={filterModule || undefined}
             onChange={(v) => setFilterModule(v ?? "")}
             style={{ width: 180 }}
@@ -84,11 +84,11 @@ export default function AuditLogViewer() {
         </Space>
       </div>
 
-      <Card style={{ borderRadius: 14, border: "1px solid var(--color-border-light, #E5E0D8)" }} styles={{ body: { padding: 0 } }}>
+      <Card style={{ borderRadius: "var(--radius-lg)", border: "1px solid var(--border)" }} styles={{ body: { padding: 0 } }}>
         <Table
           dataSource={filtered} columns={columns} rowKey="id"
-          pagination={{ pageSize: 25, showTotal: (t) => `${t} records` }}
-          locale={{ emptyText: "No audit records" }}
+          pagination={{ pageSize: 25, showTotal: (t) => `${t} 条记录` }}
+          locale={{ emptyText: "暂无审计记录" }}
           size="small"
         />
       </Card>

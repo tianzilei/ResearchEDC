@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import {
-  Card, Table, Tag, Button, Typography, Space, Modal, List,
+  Card, Table, Button, Typography, Space, Modal, List,
   Form, Input, message, Spin, Empty, Popconfirm,
 } from "antd";
-import {
-  FileTextOutlined, EyeOutlined, HistoryOutlined,
-  PlusOutlined, DeleteOutlined,
-} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
@@ -72,8 +68,8 @@ export default function CrfAdmin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(vals),
       });
-      if (!res.ok) { message.error("Failed to create CRF"); return; }
-      message.success("CRF created");
+      if (!res.ok) { message.error("创建 CRF 失败"); return; }
+      message.success("CRF 已创建");
       setCreateCrfOpen(false);
       crfForm.resetFields();
       fetchCrfs();
@@ -89,8 +85,8 @@ export default function CrfAdmin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(vals),
       });
-      if (!res.ok) { message.error("Failed to create version"); return; }
-      message.success("Version created");
+      if (!res.ok) { message.error("创建版本失败"); return; }
+      message.success("版本已创建");
       setCreateVersionOpen(false);
       versionForm.resetFields();
       viewVersions(selectedCrf);
@@ -101,8 +97,8 @@ export default function CrfAdmin() {
     const res = await fetch(`/api/legacy/crfs/versions/${versionId}`, {
       method: "DELETE",
     });
-    if (!res.ok) { message.error("Failed to delete version"); return; }
-    message.success("Version deleted");
+    if (!res.ok) { message.error("删除版本失败"); return; }
+    message.success("版本已删除");
     if (selectedCrf) viewVersions(selectedCrf);
   };
 
@@ -112,32 +108,32 @@ export default function CrfAdmin() {
 
   const columns = [
     {
-      title: "Name", dataIndex: "name", key: "name",
-      render: (text: string) => <><FileTextOutlined style={{ marginRight: 8 }} />{text}</>,
+      title: "名称", dataIndex: "name", key: "name",
+      render: (text: string) => <>{text}</>,
     },
-    { title: "OC OID", dataIndex: "ocOid", key: "ocOid", render: (v: string) => v || "-" },
+    { title: "OID", dataIndex: "ocOid", key: "ocOid", render: (v: string) => v || "-" },
     {
-      title: "Status", dataIndex: "status", key: "status",
-      render: (v: string) => <Tag color={v === "available" ? "green" : "default"}>{v ?? "unknown"}</Tag>,
+      title: "状态", dataIndex: "status", key: "status",
+      render: (v: string) => <span className={v === "available" ? "status status-success" : "status status-default"}>{v ?? "unknown"}</span>,
     },
     {
-      title: "Created", dataIndex: "dateCreated", key: "created",
+      title: "创建时间", dataIndex: "dateCreated", key: "created",
       render: (d: string) => d ? new Date(d).toLocaleDateString() : "-",
     },
     {
       title: "", key: "actions",
       render: (_: any, record: CrfItem) => (
         <Space>
-          <Button size="small" icon={<HistoryOutlined />} onClick={() => viewVersions(record)}>
-            Versions
+          <Button size="small" onClick={() => viewVersions(record)}>
+            版本
           </Button>
-          <Button size="small" icon={<EyeOutlined />}
+          <Button size="small"
             onClick={() => {
               const firstVersion = versions.find(v => v.crfId === record.crfId);
               if (firstVersion) navigate(`/app/crfs/${firstVersion.crfVersionId}`);
               else navigate(`/app/crfs/${record.crfId}`);
             }}>
-            Preview
+            预览
           </Button>
         </Space>
       ),
@@ -146,63 +142,62 @@ export default function CrfAdmin() {
 
   return (
     <div>
-      <Card style={{ marginBottom: 16, borderRadius: 14 }} styles={{ body: { padding: "16px 24px" } }}>
+      <Card style={{ marginBottom: 16 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Space>
-            <FileTextOutlined style={{ fontSize: 22, color: "var(--color-primary, #099A87)" }} />
             <div>
-              <Title level={4} style={{ margin: 0 }}>CRF Library</Title>
-              <Text type="secondary">{crfs.length} case report forms</Text>
+              <Title level={4} style={{ margin: 0 }}>CRF 库</Title>
+              <Text type="secondary">{crfs.length} 个病例报告表</Text>
             </div>
           </Space>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateCrfOpen(true)}>
-            New CRF
+          <Button type="primary" onClick={() => setCreateCrfOpen(true)}>
+            新建 CRF
           </Button>
         </div>
       </Card>
 
-      <Card style={{ borderRadius: 14 }} styles={{ body: { padding: 0 } }}>
+      <Card>
         <Table dataSource={crfs} columns={columns} rowKey="crfId" pagination={{ pageSize: 20 }}
-          locale={{ emptyText: <Empty description="No CRFs found" /> }} />
+          locale={{ emptyText: <Empty description="暂无 CRF" /> }} />
       </Card>
 
-      <Modal title="Create CRF" open={createCrfOpen}
+      <Modal title="创建 CRF" open={createCrfOpen}
         onOk={handleCreateCrf} onCancel={() => { setCreateCrfOpen(false); crfForm.resetFields(); }}>
         <Form form={crfForm} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="name" label="CRF Name" rules={[{ required: true }]}>
-            <Input placeholder="e.g. Adverse Event Form" />
+          <Form.Item name="name" label="CRF 名称" rules={[{ required: true }]}>
+            <Input placeholder="例如：不良事件表" />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label="描述">
             <Input.TextArea rows={3} />
           </Form.Item>
         </Form>
       </Modal>
 
-      <Modal title={`Versions: ${selectedCrf?.name ?? ""}`} open={versionsOpen}
+      <Modal title={`版本：${selectedCrf?.name ?? ""}`} open={versionsOpen}
         onCancel={() => setVersionsOpen(false)} footer={null} width={640}>
         <Space style={{ marginBottom: 16 }}>
-          <Button type="primary" size="small" icon={<PlusOutlined />}
+          <Button type="primary" size="small"
             onClick={() => setCreateVersionOpen(true)}>
-            New Version
+            新建版本
           </Button>
         </Space>
         {versionLoading ? <div style={{ textAlign: "center", padding: 24 }}><Spin /></div> : (
-          versions.length === 0 ? <Empty description="No versions" /> : (
+            versions.length === 0 ? <Empty description="暂无版本" /> : (
             <List dataSource={versions} renderItem={(v: CrfVersionItem) => (
               <List.Item
                 actions={[
-                  <Button size="small" icon={<EyeOutlined />}
+                  <Button size="small"
                     onClick={() => navigate(`/app/crfs/${v.crfVersionId}`)}>
-                    Preview
+                    预览
                   </Button>,
-                  <Popconfirm title="Delete this version?" onConfirm={() => handleDeleteVersion(v.crfVersionId)}>
-                    <Button size="small" danger icon={<DeleteOutlined />} />
+                  <Popconfirm title="确定删除此版本？" onConfirm={() => handleDeleteVersion(v.crfVersionId)}>
+                    <Button size="small" danger />
                   </Popconfirm>,
                 ]}
               >
                 <List.Item.Meta
-                  title={<Space>{v.name} <Tag>{v.status ?? "unknown"}</Tag></Space>}
-                  description={v.description || v.revisionNotes || "No description"}
+                  title={<Space>{v.name} <span className="status status-default">{v.status ?? "unknown"}</span></Space>}
+                  description={v.description || v.revisionNotes || "无描述"}
                 />
               </List.Item>
             )} />
@@ -210,18 +205,18 @@ export default function CrfAdmin() {
         )}
       </Modal>
 
-      <Modal title="Create Version" open={createVersionOpen}
+      <Modal title="创建版本" open={createVersionOpen}
         onOk={handleCreateVersion}
         onCancel={() => { setCreateVersionOpen(false); versionForm.resetFields(); }}>
         <Form form={versionForm} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="name" label="Version Name" rules={[{ required: true }]}>
-            <Input placeholder="e.g. v1.0" />
+          <Form.Item name="name" label="版本名称" rules={[{ required: true }]}>
+            <Input placeholder="例如：v1.0" />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label="描述">
             <Input.TextArea rows={2} />
           </Form.Item>
-          <Form.Item name="revisionNotes" label="Revision Notes">
-            <Input.TextArea rows={2} placeholder="Changes in this version" />
+          <Form.Item name="revisionNotes" label="修订说明">
+            <Input.TextArea rows={2} placeholder="此版本的变更说明" />
           </Form.Item>
         </Form>
       </Modal>

@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Card, Descriptions, Tag, Typography, Row, Col, Statistic } from "antd";
-import { CheckCircleOutlined, CloseCircleOutlined, InfoCircleOutlined, DatabaseOutlined } from "@ant-design/icons";
+import { Card, Descriptions, Typography, Row, Col, Statistic } from "antd";
 import { SkeletonPage } from "@/components/SkeletonCard";
 
 const { Title, Text } = Typography;
@@ -40,63 +39,63 @@ export default function SystemConfiguration() {
   return (
     <div style={{ padding: "24px 32px", maxWidth: 900 }}>
       <Title level={3} style={{ marginBottom: 24 }}>
-        <InfoCircleOutlined style={{ marginRight: 12 }} />System Configuration
+        系统配置
       </Title>
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col span={8}>
           <Card>
             <Statistic
-              title="System Status"
-              value={isHealthy ? "Healthy" : "Unhealthy"}
-              valueStyle={{ color: isHealthy ? "#099A87" : "#FF4D4F" }}
-              prefix={isHealthy ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
+              title="系统状态"
+              value={isHealthy ? "正常" : "异常"}
+              valueStyle={{ color: isHealthy ? "var(--success)" : "var(--danger)" }}
+              prefix={undefined}
             />
           </Card>
         </Col>
         <Col span={8}>
           <Card>
             <Statistic
-              title="Version"
+              title="版本"
               value={buildInfo?.version ?? "3.18-SNAPSHOT"}
-              prefix={<InfoCircleOutlined />}
+              prefix={undefined}
             />
           </Card>
         </Col>
         <Col span={8}>
           <Card>
             <Statistic
-              title="Database"
+              title="数据库"
               value={dbHealth}
-              valueStyle={{ color: dbHealth === "UP" ? "#099A87" : "#FF4D4F" }}
-              prefix={<DatabaseOutlined />}
+              valueStyle={{ color: dbHealth === "UP" ? "var(--success)" : "var(--danger)" }}
+              prefix={undefined}
             />
           </Card>
         </Col>
       </Row>
 
-      <Card title="Application Info" style={{ borderRadius: 14, marginBottom: 16, border: "1px solid var(--color-border-light, #E5E0D8)" }}>
+      <Card title="应用信息" style={{ marginBottom: 16 }}>
         <Descriptions column={2} size="small" bordered>
-          <Descriptions.Item label="Name">{buildInfo?.name ?? "ResearchEDC"}</Descriptions.Item>
-          <Descriptions.Item label="Version">{buildInfo?.version ?? "3.18-SNAPSHOT"}</Descriptions.Item>
-          <Descriptions.Item label="Build Time">{buildInfo?.time ?? "-"}</Descriptions.Item>
-          <Descriptions.Item label="Java Version">21</Descriptions.Item>
+          <Descriptions.Item label="名称">{buildInfo?.name ?? "ResearchEDC"}</Descriptions.Item>
+          <Descriptions.Item label="版本">{buildInfo?.version ?? "3.18-SNAPSHOT"}</Descriptions.Item>
+          <Descriptions.Item label="构建时间">{buildInfo?.time ?? "-"}</Descriptions.Item>
+          <Descriptions.Item label="Java 版本">21</Descriptions.Item>
           <Descriptions.Item label="Spring Boot">3.2.5</Descriptions.Item>
-          <Descriptions.Item label="Database">PostgreSQL 17</Descriptions.Item>
+          <Descriptions.Item label="数据库">PostgreSQL 17</Descriptions.Item>
         </Descriptions>
       </Card>
 
-      <Card title="Component Status" style={{ borderRadius: 14, border: "1px solid var(--color-border-light, #E5E0D8)" }}>
+      <Card title="组件状态">
         {health?.components ? (
           <Descriptions column={2} size="small" bordered>
             {Object.entries(health.components).map(([key, val]) => (
               <Descriptions.Item label={key} key={key}>
-                <Tag color={val.status === "UP" ? "green" : "red"}>{val.status}</Tag>
+                <span className={val.status === "UP" ? "status status-success" : "status status-danger"}>{val.status}</span>
               </Descriptions.Item>
             ))}
           </Descriptions>
         ) : (
-          <Text type="secondary">Health endpoint not available</Text>
+          <Text type="secondary">健康检查端点不可用</Text>
         )}
       </Card>
     </div>

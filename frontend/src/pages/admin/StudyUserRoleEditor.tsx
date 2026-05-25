@@ -4,7 +4,7 @@ import {
   Card, Typography, Table, Tag, Button, Space, Modal, Select,
   message, Spin, Empty, Breadcrumb, Result,
 } from "antd";
-import { UserOutlined, PlusOutlined } from "@ant-design/icons";
+
 
 const { Title, Text } = Typography;
 
@@ -76,49 +76,48 @@ export default function StudyUserRoleEditor() {
   return (
     <div>
       <Breadcrumb items={[
-        { title: <Link to="/app/admin">Admin</Link> },
-        { title: <Link to="/app/admin/users">Users</Link> },
-        { title: study?.name ?? `Study #${studyId}` },
+        { title: <Link to="/app/admin">管理</Link> },
+        { title: <Link to="/app/admin/users">用户</Link> },
+        { title: study?.name ?? `研究 #${studyId}` },
       ]} style={{ marginBottom: 16 }} />
 
-      <Card style={{ marginBottom: 16, borderRadius: 14 }} styles={{ body: { padding: "16px 24px" } }}>
+      <Card style={{ marginBottom: 16 }} styles={{ body: { padding: "16px 24px" } }}>
         <Space style={{ width: "100%", justifyContent: "space-between" }} align="center">
           <Space>
-            <UserOutlined style={{ fontSize: 22, color: "var(--color-primary, #099A87)" }} />
             <div>
-              <Title level={4} style={{ margin: 0 }}>Study Users — {study?.name ?? `#${studyId}`}</Title>
-              <Text type="secondary">{users.length} user{users.length !== 1 ? "s" : ""} assigned</Text>
+              <Title level={4} style={{ margin: 0 }}>研究用户 — {study?.name ?? `#${studyId}`}</Title>
+              <Text type="secondary">已分配 {users.length} 个用户</Text>
             </div>
           </Space>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setAssignOpen(true)}>
-            Assign User
+          <Button type="primary" onClick={() => setAssignOpen(true)}>
+            分配用户
           </Button>
         </Space>
       </Card>
 
       {users.length === 0 ? (
-        <Card style={{ borderRadius: 14 }}><Empty description="No users assigned to this study" /></Card>
+        <Card><Empty description="暂无用户分配至此研究" /></Card>
       ) : (
-        <Card style={{ borderRadius: 14 }} styles={{ body: { padding: 0 } }}>
+        <Card styles={{ body: { padding: 0 } }}>
           <Table dataSource={users} rowKey={(r: any) => r.userName ?? r.userId}
             columns={[
-              { title: "Username", dataIndex: "userName", key: "userName" },
-              { title: "Name", key: "name", render: (_: any, r: any) => `${r.firstName ?? ""} ${r.lastName ?? ""}`.trim() || "-" },
-              { title: "Role", dataIndex: "role", key: "role", render: (r: string) => <Tag>{r}</Tag> },
+              { title: "用户名", dataIndex: "userName", key: "userName" },
+              { title: "姓名", key: "name", render: (_: any, r: any) => `${r.firstName ?? ""} ${r.lastName ?? ""}`.trim() || "-" },
+              { title: "角色", dataIndex: "role", key: "role", render: (r: string) => <Tag>{r}</Tag> },
             ]}
             pagination={false}
           />
         </Card>
       )}
 
-      <Modal title="Assign User to Study" open={assignOpen}
+      <Modal title="分配用户至研究" open={assignOpen}
         onOk={handleAssign} onCancel={() => setAssignOpen(false)}
         confirmLoading={assigning}>
         <Space direction="vertical" style={{ width: "100%", marginTop: 16 }}>
           <div>
-            <Text strong>User</Text>
+            <Text strong>用户</Text>
             <Select style={{ width: "100%", marginTop: 4 }}
-              placeholder="Select user" showSearch value={selectedUser || undefined}
+              placeholder="选择用户" showSearch value={selectedUser || undefined}
               onChange={setSelectedUser}
               filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
               options={userList.map(u => ({
@@ -128,16 +127,16 @@ export default function StudyUserRoleEditor() {
             />
           </div>
           <div>
-            <Text strong>Role</Text>
+            <Text strong>角色</Text>
             <Select style={{ width: "100%", marginTop: 4 }}
-              placeholder="Select role" value={selectedRole || undefined} onChange={setSelectedRole}
+              placeholder="选择角色" value={selectedRole || undefined} onChange={setSelectedRole}
               options={[
-                { value: "admin", label: "Admin" },
-                { value: "coordinator", label: "Coordinator" },
-                { value: "investigator", label: "Investigator" },
-                { value: "dataManager", label: "Data Manager" },
-                { value: "dataEntry", label: "Data Entry" },
-                { value: "monitor", label: "Monitor" },
+                { value: "admin", label: "管理员" },
+                { value: "coordinator", label: "协调员" },
+                { value: "investigator", label: "研究者" },
+                { value: "dataManager", label: "数据管理员" },
+                { value: "dataEntry", label: "数据录入" },
+                { value: "monitor", label: "监察员" },
               ]}
             />
           </div>
