@@ -14,15 +14,6 @@ import {
   Empty,
   Tooltip,
 } from "antd";
-import {
-  ArrowLeftOutlined,
-  PlusOutlined,
-  LockOutlined,
-  UnlockOutlined,
-  DeleteOutlined,
-  EyeOutlined,
-  FileTextOutlined,
-} from "@ant-design/icons";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   useCrfList,
@@ -41,9 +32,9 @@ const STATUS_LOCKED = 2;
 
 const statusTag = (statusId: number) => {
   if (statusId === STATUS_LOCKED) {
-    return <Tag color="orange"><LockOutlined /> Locked</Tag>;
+    return <Tag color="orange">Locked</Tag>;
   }
-  return <Tag color="success"><UnlockOutlined /> Available</Tag>;
+  return <Tag color="success">Available</Tag>;
 };
 
 export default function CrfVersionManager() {
@@ -164,7 +155,6 @@ export default function CrfVersionManager() {
           <Tooltip title={t("crf.versionManager.preview")}>
             <Button
               size="small"
-              icon={<EyeOutlined />}
               onClick={() => {
                 navigate(`/app/crfs/${String(record.crfVersionId)}`);
               }}
@@ -181,13 +171,6 @@ export default function CrfVersionManager() {
           >
             <Button
               size="small"
-              icon={
-                record.statusId === STATUS_LOCKED ? (
-                  <UnlockOutlined />
-                ) : (
-                  <LockOutlined />
-                )
-              }
               onClick={() => {
                 handleToggleStatus(record);
               }}
@@ -198,7 +181,6 @@ export default function CrfVersionManager() {
             <Button
               size="small"
               danger
-              icon={<DeleteOutlined />}
               onClick={() => {
                 setDeleteConfirmId(record.crfVersionId);
               }}
@@ -215,7 +197,7 @@ export default function CrfVersionManager() {
     return (
       <div>
         <Title level={4} style={{ marginTop: 0 }}>
-          <FileTextOutlined /> {t("crf.versionManager.selectCrf")}
+          {t("crf.versionManager.selectCrf")}
         </Title>
         <Card>
           <Empty description={t("crf.versionManager.selectCrfHint")} />
@@ -236,7 +218,6 @@ export default function CrfVersionManager() {
       >
         <div>
           <Button
-            icon={<ArrowLeftOutlined />}
             onClick={() => {
               navigate("/app/crfs");
             }}
@@ -245,7 +226,7 @@ export default function CrfVersionManager() {
             {t("crf.back")}
           </Button>
           <Title level={4} style={{ margin: 0 }}>
-            <FileTextOutlined /> {crfName}
+            {crfName}
           </Title>
           <Text type="secondary">
             {t("crf.versionManager.versionCount", {
@@ -255,7 +236,6 @@ export default function CrfVersionManager() {
         </div>
         <Button
           type="primary"
-          icon={<PlusOutlined />}
           onClick={() => {
             setCreateModalOpen(true);
           }}

@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Card, Table, Tag, Typography, Empty } from "antd";
-import { FileTextOutlined } from "@ant-design/icons";
+import { Card, Table, Typography, Empty } from "antd";
 import { useAppQuery } from "@/hooks/useQuery";
 import { apiClient } from "@/api/client";
 import { SkeletonPage } from "@/components/SkeletonCard";
@@ -40,7 +39,7 @@ export default function CrfList() {
     },
     { title: t("crf.column.oid"), dataIndex: "ocOid", key: "ocOid" },
     { title: t("crf.column.status"), dataIndex: "status", key: "status",
-      render: (s: string) => <Tag>{s}</Tag>,
+      render: (s: string) => <span className="status status-default">{s}</span>,
     },
     { title: t("crf.column.versions"), dataIndex: "versionCount", key: "versionCount" },
     { title: t("crf.column.created"), dataIndex: "dateCreated", key: "dateCreated",
@@ -50,7 +49,7 @@ export default function CrfList() {
 
   return (
     <div>
-      <Title level={4} style={{ marginTop: 0 }}><FileTextOutlined /> {t("crf.library")}</Title>
+      <Title level={4} style={{ marginTop: 0 }}>{t("crf.library")}</Title>
       <Card style={{ marginTop: 16 }}>
         <Table dataSource={crfs ?? []} columns={columns} rowKey="crfId" pagination={false}
           locale={{ emptyText: <Empty description={t("crf.empty")} /> }} />

@@ -16,7 +16,6 @@ import {
   Empty,
   Breadcrumb,
 } from "antd";
-import { PlusOutlined, DatabaseOutlined, FileTextOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
@@ -92,17 +91,16 @@ export default function DatasetBuilder() {
       <Card style={{ marginBottom: 16, borderRadius: 14 }} styles={{ body: { padding: "16px 24px" } }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Space>
-            <DatabaseOutlined style={{ fontSize: 22, color: "var(--color-primary, #099A87)" }} />
             <div>
               <Title level={4} style={{ margin: 0 }}>Datasets</Title>
               <Text type="secondary">{datasets.length} dataset{datasets.length !== 1 ? "s" : ""}</Text>
             </div>
           </Space>
           <Space>
-            <Button onClick={() => navigate("/app/data-export")} icon={<FileTextOutlined />}>
+            <Button onClick={() => navigate("/app/data-export")}>
               Export Center
             </Button>
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
+            <Button type="primary" onClick={() => setCreateOpen(true)}>
               New Dataset
             </Button>
           </Space>

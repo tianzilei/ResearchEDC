@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Table, Tag, Button, Space, Typography, Modal, Form, Input, Select, DatePicker, message } from "antd";
-import { PlusOutlined, CheckCircleOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { Card, Table, Button, Space, Typography, Modal, Form, Input, Select, DatePicker, message } from "antd";
 import { SkeletonPage } from "@/components/SkeletonCard";
 
 const { Title, Text } = Typography;
@@ -86,37 +85,37 @@ export default function EventList() {
 
   if (loading) return <SkeletonPage />;
 
-  const statusColors: Record<number, string> = {
-    1: "blue", 2: "orange", 3: "purple", 4: "cyan",
-    5: "geekblue", 6: "red", 7: "green",
+  const statusClassMap: Record<number, string> = {
+    1: "status-info", 2: "status-warning", 3: "status-warning", 4: "status-success",
+    5: "status-default", 6: "status-danger", 7: "status-success",
   };
 
   const statusLabels: Record<number, string> = {
-    1: "Initial", 2: "Scheduled", 3: "Data Entry Started",
-    4: "Completed", 5: "Locked", 6: "Stopped", 7: "Signed",
+    1: "初始", 2: "已安排", 3: "数据录入中",
+    4: "已完成", 5: "已锁定", 6: "已停止", 7: "已签名",
   };
 
   const columns = [
-    { title: "Event ID", dataIndex: "studyEventId", key: "id", width: 80 },
+    { title: "事件 ID", dataIndex: "studyEventId", key: "id", width: 80 },
     {
-      title: "Definition ID", dataIndex: "studyEventDefinitionId", key: "def",
-      render: (v: number) => `Def #${v}`,
+      title: "定义 ID", dataIndex: "studyEventDefinitionId", key: "def",
+      render: (v: number) => `定义 #${v}`,
     },
-    { title: "Location", dataIndex: "location", key: "location", render: (v: string) => v || "-" },
+    { title: "地点", dataIndex: "location", key: "location", render: (v: string) => v || "-" },
     {
-      title: "Start", dataIndex: "dateStart", key: "start",
+      title: "开始", dataIndex: "dateStart", key: "start",
       render: (d: string) => d ? new Date(d).toLocaleDateString() : "-",
     },
     {
-      title: "End", dataIndex: "dateEnd", key: "end",
+      title: "结束", dataIndex: "dateEnd", key: "end",
       render: (d: string) => d ? new Date(d).toLocaleDateString() : "-",
     },
     {
-      title: "Status", key: "status",
+      title: "状态", key: "status",
       render: (_: any, record: StudyEvent) => (
-        <Tag color={statusColors[record.statusId] ?? "default"}>
-          {statusLabels[record.statusId] ?? `Status ${record.statusId}`}
-        </Tag>
+        <span className={`status ${statusClassMap[record.statusId] ?? "status-default"}`}>
+          {statusLabels[record.statusId] ?? `状态 ${record.statusId}`}
+        </span>
       ),
     },
     {
@@ -125,10 +124,9 @@ export default function EventList() {
         record.statusId < 7 ? (
           <Button
             size="small"
-            icon={<CheckCircleOutlined />}
             onClick={() => handleComplete(record.studyEventId)}
           >
-            Complete
+            完成
           </Button>
         ) : null
       ),
@@ -139,19 +137,19 @@ export default function EventList() {
     <div style={{ padding: "24px 32px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
         <Space>
-          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>Back</Button>
+          <Button onClick={() => navigate(-1)}>返回</Button>
           <div>
-            <Title level={3} style={{ margin: 0 }}>Events</Title>
-            <Text type="secondary">Subject #{subjectId} &middot; {events.length} events</Text>
+            <Title level={3} style={{ margin: 0 }}>访视事件</Title>
+            <Text type="secondary">受试者 #{subjectId} &middot; {events.length} 个事件</Text>
           </div>
         </Space>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openSchedule}>
-          Schedule Event
+        <Button type="primary" onClick={openSchedule}>
+          安排访视
         </Button>
       </div>
 
       <Card
-        style={{ borderRadius: 14, border: "1px solid var(--color-border-light, #E5E0D8)" }}
+        style={{ borderRadius: "var(--radius-lg)", border: "1px solid var(--border)" }}
         styles={{ body: { padding: 0 } }}
       >
         <Table
@@ -159,22 +157,22 @@ export default function EventList() {
           columns={columns}
           rowKey="studyEventId"
           pagination={false}
-          locale={{ emptyText: "No events scheduled for this subject" }}
+          locale={{ emptyText: "该受试者暂无安排访视" }}
         />
       </Card>
 
       <Modal
-        title="Schedule Event"
+        title="安排访视"
         open={scheduleOpen}
         onOk={handleSchedule}
         onCancel={() => { setScheduleOpen(false); form.resetFields(); }}
-        okText="Schedule"
+        okText="安排"
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="definitionId" label="Event Definition" rules={[{ required: true }]}>
+          <Form.Item name="definitionId" label="事件定义" rules={[{ required: true }]}>
             <Select
               showSearch
-              placeholder="Select event type"
+              placeholder="选择事件类型"
               onFocus={async () => {
                 const r = await fetch(`/api/v1/events/definitions?studyId=0`);
                 if (r.ok) setDefinitions(await r.json());
@@ -187,13 +185,13 @@ export default function EventList() {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item name="location" label="Location">
-            <Input placeholder="e.g. Clinic A" />
+          <Form.Item name="location" label="地点">
+            <Input placeholder="例如：A 诊所" />
           </Form.Item>
-          <Form.Item name="startDate" label="Start Date">
+          <Form.Item name="startDate" label="开始日期">
             <DatePicker style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="endDate" label="End Date">
+          <Form.Item name="endDate" label="结束日期">
             <DatePicker style={{ width: "100%" }} />
           </Form.Item>
         </Form>

@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Card, Typography, Space, Button, Table, Tag, Empty, Descriptions, Divider, Alert } from "antd";
-import { ArrowLeftOutlined, FileTextOutlined } from "@ant-design/icons";
+import { Card, Typography, Space, Button, Table, Empty, Descriptions, Divider, Alert } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAppQuery } from "@/hooks/useQuery";
 import { apiClient } from "@/api/client";
@@ -53,15 +52,15 @@ export default function CrfPreview() {
   return (
     <div>
       <Space style={{ marginBottom: 16 }}>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => { navigate("/app/crfs"); }}>{t("crf.back")}</Button>
+        <Button onClick={() => { navigate("/app/crfs"); }}>{t("crf.back")}</Button>
       </Space>
 
-      <Title level={4}><FileTextOutlined /> {version.name}</Title>
+      <Title level={4}>{version.name}</Title>
 
       <Card>
         <Descriptions column={2} bordered size="small">
           <Descriptions.Item label={t("crf.description.oid")}>{version.ocOid}</Descriptions.Item>
-          <Descriptions.Item label={t("crf.description.status")}><Tag>{version.status}</Tag></Descriptions.Item>
+          <Descriptions.Item label={t("crf.description.status")}><span className="status status-default">{version.status}</span></Descriptions.Item>
           <Descriptions.Item label={t("crf.description.description")} span={2}>{version.description ?? "-"}</Descriptions.Item>
           <Descriptions.Item label={t("crf.description.revisionNotes")} span={2}>{version.revisionNotes ?? "-"}</Descriptions.Item>
           <Descriptions.Item label={t("crf.description.sections")}>{version.sections?.length ?? 0}</Descriptions.Item>

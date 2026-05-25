@@ -4,7 +4,6 @@ import {
   Card, Table, Button, Typography, Space, Modal, Form, Input,
   Spin, message, Empty, Breadcrumb,
 } from "antd";
-import { PlusOutlined, FilterOutlined, EyeOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
@@ -62,7 +61,7 @@ export default function FilterBuilder() {
     {
       title: "", key: "actions",
       render: (_: any, record: FilterItem) => (
-        <Button size="small" icon={<EyeOutlined />}
+        <Button size="small"
           onClick={() => window.open(`/legacy/ViewFilterDetails?id=${record.id}`, "_blank")}>
           View Details
         </Button>
@@ -83,13 +82,12 @@ export default function FilterBuilder() {
       <Card style={{ marginBottom: 16, borderRadius: 14 }} styles={{ body: { padding: "16px 24px" } }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Space>
-            <FilterOutlined style={{ fontSize: 22, color: "var(--color-primary, #099A87)" }} />
             <div>
               <Title level={4} style={{ margin: 0 }}>Filters</Title>
               <Text type="secondary">{filters.length} filter{filters.length !== 1 ? "s" : ""}</Text>
             </div>
           </Space>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
+          <Button type="primary" onClick={() => setCreateOpen(true)}>
             New Filter
           </Button>
         </div>

@@ -11,14 +11,7 @@ import {
   Spin,
   Result,
 } from "antd";
-import {
-  CheckCircleOutlined,
-  LoadingOutlined,
-  ExclamationCircleOutlined,
-  ArrowLeftOutlined,
-  FileTextOutlined,
-  MessageOutlined,
-} from "@ant-design/icons";
+
 import { DataEntryForm } from "@/components/form-engine/DataEntryForm";
 import type { FormItemConfig } from "@/components/form-engine/FormField";
 import type { FormStatusConfig, FormRecordStatus } from "@/components/form-engine/FormStatus";
@@ -202,11 +195,11 @@ export default function DataEntryPage() {
 
   const saveIndicator = () => {
     if (saveStatus === "saving")
-      return { icon: <LoadingOutlined />, text: "Saving...", color: "rgba(0,0,0,0.45)" };
+      return { text: "Saving...", color: "rgba(0,0,0,0.45)" };
     if (saveStatus === "saved")
-      return { icon: <CheckCircleOutlined />, text: "Saved", color: "#52c41a" };
+      return { text: "Saved", color: "#52c41a" };
     if (saveStatus === "error")
-      return { icon: <ExclamationCircleOutlined />, text: "Save failed", color: "#ff4d4f" };
+      return { text: "Save failed", color: "#ff4d4f" };
     return null;
   };
 
@@ -236,12 +229,7 @@ export default function DataEntryPage() {
     ...sectionTabItems,
     {
       key: "notes",
-      label: (
-        <span>
-          <MessageOutlined style={{ marginRight: 4 }} />
-          Notes
-        </span>
-      ),
+      label: "Notes",
       children: parsedEventCrfId ? (
         <div style={{ padding: 16 }}>
           <DiscrepancyNotes
@@ -277,7 +265,6 @@ export default function DataEntryPage() {
       >
         <Space style={{ width: "100%", justifyContent: "space-between" }} align="center">
           <Space>
-            <FileTextOutlined style={{ fontSize: 20, color: "var(--color-primary, #099A87)" }} />
             <div>
               <Title level={4} style={{ margin: 0 }}>
                 {crfVersion.name}
@@ -291,20 +278,19 @@ export default function DataEntryPage() {
           <Space>
             {indicator && (
               <Text style={{ color: indicator.color, fontSize: 13 }}>
-                {indicator.icon} {indicator.text}
+                {indicator.text}
               </Text>
             )}
             {canComplete && (
               <Button
                 type="primary"
-                icon={<CheckCircleOutlined />}
                 onClick={handleCompleteEvent}
                 loading={completeEventMutation.isPending}
               >
                 Complete Event
               </Button>
             )}
-            <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
+            <Button onClick={handleBack}>
               Back
             </Button>
           </Space>

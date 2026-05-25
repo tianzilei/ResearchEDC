@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, Table, Tag, Button, Space, Typography, Modal, Select, Input, message, Empty, Progress } from "antd";
-import { ExportOutlined, ReloadOutlined, StopOutlined, DownloadOutlined } from "@ant-design/icons";
+import { Card, Table, Tag, Button, Space, Typography, Modal, Select, Input, message, Empty } from "antd";
 import { Alert } from "antd";
 import { useCurrentStudy } from "@/hooks/useStudies";
 import { useAppQuery, useAppMutation, useQueryClient } from "@/hooks/useQuery";
@@ -25,8 +24,8 @@ interface ExportJob {
   retryCount?: number;
 }
 
-const statusColors: Record<string, string> = {
-  PENDING: "default", RUNNING: "processing", COMPLETED: "success", FAILED: "error", CANCELLED: "warning",
+const statusClasses: Record<string, string> = {
+  PENDING: "status-default", RUNNING: "status-info", COMPLETED: "status-success", FAILED: "status-danger", CANCELLED: "status-warning",
 };
 
 function useExportJobs(studyId: number) {
@@ -72,10 +71,7 @@ export default function ExportCenter() {
     },
     { title: t("export.column.status"), dataIndex: "status", key: "status",
       render: (s: string) => (
-        <Space>
-          <Tag color={statusColors[s]}>{s}</Tag>
-          {s === "RUNNING" && <Progress size="small" type="circle" percent={50} width={20} />}
-        </Space>
+        <span className={`status ${statusClasses[s] ?? "status-default"}`}>{s}</span>
       ),
     },
     { title: t("export.column.requested"), dataIndex: "requestedDate", key: "requestedDate",
@@ -89,13 +85,13 @@ export default function ExportCenter() {
       render: (_: any, r: ExportJob) => (
         <Space>
           {r.status === "COMPLETED" && r.filePath && (
-            <Button size="small" icon={<DownloadOutlined />} type="link">{t("export.action.download")}</Button>
+            <Button size="small" type="link">{t("export.action.download")}</Button>
           )}
           {(r.status === "PENDING" || r.status === "RUNNING") && (
-            <Button size="small" icon={<StopOutlined />} onClick={() => cancelJob.mutate(r.id)}>{t("export.action.cancel")}</Button>
+            <Button size="small" onClick={() => cancelJob.mutate(r.id)}>{t("export.action.cancel")}</Button>
           )}
           {r.status === "FAILED" && (
-            <Button size="small" icon={<ReloadOutlined />} onClick={() => retryJob.mutate(r.id)}>{t("export.action.retry")}</Button>
+            <Button size="small" onClick={() => retryJob.mutate(r.id)}>{t("export.action.retry")}</Button>
           )}
         </Space>
       ),
@@ -105,8 +101,8 @@ export default function ExportCenter() {
   return (
     <div>
       <Space style={{ justifyContent: "space-between", width: "100%" }}>
-        <Title level={4} style={{ marginTop: 0 }}><ExportOutlined /> {t("export.title")}</Title>
-        <Button type="primary" icon={<ExportOutlined />} onClick={() => setModalOpen(true)}>{t("export.newExport")}</Button>
+        <Title level={4} style={{ marginTop: 0 }}>{t("export.title")}</Title>
+        <Button type="primary" onClick={() => setModalOpen(true)}>{t("export.newExport")}</Button>
       </Space>
 
       <Card style={{ marginTop: 16 }}>
