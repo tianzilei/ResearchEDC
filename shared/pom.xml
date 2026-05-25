@@ -265,6 +265,12 @@
         <dependency>
             <groupId>org.akaza.openclinica.odm</groupId>
             <artifactId>openclinica-odm</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-reload4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- MVEL -->
