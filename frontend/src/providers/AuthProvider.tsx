@@ -3,14 +3,29 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   type ReactNode,
 } from "react";
 
-interface UserInfo {
-  sub: string;
-  name: string;
+export interface UserInfo {
+  userId: number;
+  username: string;
+  firstName: string;
+  lastName: string;
   email: string;
+  enabled: boolean;
   roles: string[];
+}
+
+interface MeResponse {
+  userId: number;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  enabled: boolean;
+  roles: string[];
+  studyRoles: Array<{ studyId: number; roleName: string }>;
 }
 
 interface AuthContextValue {
@@ -19,7 +34,6 @@ interface AuthContextValue {
   isInitialized: boolean;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
-  getAccessToken: () => Promise<string | null>;
   loginError: string | null;
   loginLoading: boolean;
 }
@@ -30,23 +44,29 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-interface LoginResponse {
-  token: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  roles: string[];
+function getCsrfToken(): string | null {
+  for (const cookie of document.cookie.split(";")) {
+    const [name, value] = cookie.trim().split("=");
+    if (name === "XSRF-TOKEN") return value ?? null;
+  }
+  return null;
 }
 
-function parseUserFromToken(token: string): UserInfo | null {
+async function fetchCurrentUser(): Promise<UserInfo | null> {
   try {
-    const payload = JSON.parse(atob(token.split(".")[1] ?? ""));
+    const res = await fetch("/api/v1/auth/me", {
+      credentials: "same-origin",
+    });
+    if (!res.ok) return null;
+    const data: MeResponse = await res.json();
     return {
-      sub: payload.sub ?? "",
-      name: payload.name ?? payload.preferred_username ?? payload.sub ?? "",
-      email: payload.email ?? "",
-      roles: payload.roles ?? [],
+      userId: data.userId,
+      username: data.username,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      enabled: data.enabled,
+      roles: data.roles,
     };
   } catch {
     return null;
@@ -59,28 +79,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
 
-  useState(() => {
-    const token = sessionStorage.getItem("oc_access_token");
-    if (token) {
-      const userInfo = parseUserFromToken(token);
-      if (userInfo) {
-        try {
-          const payload = JSON.parse(atob(token.split(".")[1] ?? ""));
-          const exp = payload.exp;
-          if (exp && Date.now() > exp) {
-            sessionStorage.removeItem("oc_access_token");
-          } else {
-            setUser(userInfo);
-          }
-        } catch {
-          sessionStorage.removeItem("oc_access_token");
-        }
-      } else {
-        sessionStorage.removeItem("oc_access_token");
-      }
-    }
-    setIsInitialized(true);
-  });
+  useEffect(() => {
+    fetchCurrentUser()
+      .then((userInfo) => {
+        setUser(userInfo);
+      })
+      .catch(() => {
+        setUser(null);
+      })
+      .finally(() => {
+        setIsInitialized(true);
+      });
+  }, []);
 
   const login = useCallback(async (username: string, password: string) => {
     setLoginError(null);
@@ -90,27 +100,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
+        credentials: "same-origin",
       });
 
       if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error("Invalid username or password");
-        } else if (response.status === 403) {
-          throw new Error("Account is disabled");
-        } else {
-          throw new Error("Login failed. Please try again.");
-        }
+        setLoginLoading(false);
+        throw new Error("Invalid username or password, or account temporarily unavailable.");
       }
 
-      const data: LoginResponse = await response.json();
-      sessionStorage.setItem("oc_access_token", data.token);
-
-      setUser({
-        sub: data.username,
-        name: `${data.firstName} ${data.lastName}`.trim() || data.username,
-        email: data.email,
-        roles: data.roles,
-      });
+      const userInfo = await fetchCurrentUser();
+      if (userInfo) {
+        setUser(userInfo);
+      } else {
+        throw new Error("Failed to retrieve user information.");
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Login failed";
       setLoginError(message);
@@ -120,14 +123,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
-  const logout = useCallback(() => {
-    sessionStorage.removeItem("oc_access_token");
+  const logout = useCallback(async () => {
+    try {
+      const csrfToken = getCsrfToken();
+      await fetch("/api/v1/auth/logout", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {},
+      });
+    } catch {
+      // Continue with local state cleanup even if server logout fails
+    }
     setUser(null);
     setLoginError(null);
-  }, []);
-
-  const getAccessToken = useCallback(async (): Promise<string | null> => {
-    return sessionStorage.getItem("oc_access_token");
   }, []);
 
   return (
@@ -138,7 +146,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         isInitialized,
         login,
         logout,
-        getAccessToken,
         loginError,
         loginLoading,
       }}

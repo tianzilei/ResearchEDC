@@ -100,7 +100,7 @@ export default function AppLayout() {
   const userMenuItems: MenuProps["items"] = [
     {
       key: "profile",
-      label: user?.email ?? user?.name,
+      label: user?.email ?? (`${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() || user?.username),
       disabled: true,
     },
     { type: "divider" },
@@ -196,7 +196,7 @@ export default function AppLayout() {
             >
               <Space>
                 <UserOutlined style={{ color: "#D4A854", fontSize: 14 }} />
-                {user?.name ?? "User"}
+                {user?.firstName ?? user?.username ?? "User"}
                 <DownOutlined style={{ fontSize: 9, opacity: 0.6 }} />
               </Space>
             </Button>

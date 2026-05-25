@@ -2,9 +2,11 @@ import { lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import AppLayout from "@/layouts/AppLayout";
 import MainMenu from "@/pages/MainMenu";
+import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
 import ErrorPage from "@/pages/ErrorPage";
 import LegacyFrame from "@/components/LegacyFrame";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const RandomizationDashboard = lazy(() => import("@/pages/randomization/RandomizationDashboard"));
@@ -55,222 +57,67 @@ const QuestionnaireMyTasks = lazy(() => import("@/pages/questionnaire/Questionna
 const router = createBrowserRouter([
   {
     path: "/app",
-    element: <AppLayout />,
+    element: (
+      <ProtectedRoute>
+        <AppLayout />
+      </ProtectedRoute>
+    ),
     children: [
-      {
-        index: true,
-        element: <Navigate to="dashboard" replace />,
-      },
-      {
-        path: "dashboard",
-        element: <Dashboard />,
-      },
-      {
-        path: "randomization",
-        element: <RandomizationDashboard />,
-      },
-      {
-        path: "randomization/schemes/:id",
-        element: <SchemeEditor />,
-      },
-      {
-        path: "randomization/schemes/:id/allocate",
-        element: <AllocationPage />,
-      },
-      {
-        path: "randomization/schemes/:id/unblind",
-        element: <UnblindingPage />,
-      },
-      {
-        path: "randomization/schemes/:id/audit",
-        element: <AuditViewer />,
-      },
-      {
-        path: "data-export",
-        element: <ExportCenter />,
-      },
-      {
-        path: "data-export/datasets",
-        element: <DatasetBuilder />,
-      },
-      {
-        path: "data-export/filters",
-        element: <FilterBuilder />,
-      },
-      {
-        path: "crfs",
-        element: <CrfList />,
-      },
-      {
-        path: "crfs/:versionId",
-        element: <CrfPreview />,
-      },
-      {
-        path: "crfs/:crfId/versions",
-        element: <CrfVersionManager />,
-      },
-      {
-        path: "questionnaires/templates",
-        element: <QuestionnaireTemplates />,
-      },
-      {
-        path: "questionnaires/templates/:templateId/versions",
-        element: <QuestionnaireVersionEditor />,
-      },
-      {
-        path: "questionnaires/assignments",
-        element: <QuestionnaireAssignments />,
-      },
-      {
-        path: "questionnaires/responses",
-        element: <QuestionnaireResponses />,
-      },
-      {
-        path: "questionnaires/my-tasks",
-        element: <QuestionnaireMyTasks />,
-      },
-      {
-        path: "questionnaires/export",
-        element: <QuestionnaireExport />,
-      },
-      {
-        path: "studies",
-        element: <StudyList />,
-      },
-      {
-        path: "studies/create",
-        element: <StudyWizard />,
-      },
-      {
-        path: "studies/:id",
-        element: <StudyDetail />,
-      },
-      {
-        path: "studies/:id/edit",
-        element: <StudyEditor />,
-      },
-      {
-        path: "studies/:id/sites",
-        element: <SiteManagement />,
-      },
-      {
-        path: "studies/:studyId/event-definitions",
-        element: <EventDefinitionsPage />,
-      },
-      {
-        path: "studies/:studyId/subject-groups",
-        element: <SubjectGroupsPage />,
-      },
-      {
-        path: "studies/:studyId/rules",
-        element: <RulesListPage />,
-      },
-      {
-        path: "admin/users",
-        element: <UserManagement />,
-      },
-      {
-        path: "admin/audit-log",
-        element: <AuditLogViewer />,
-      },
-      {
-        path: "admin/system",
-        element: <SystemConfiguration />,
-      },
-      {
-        path: "admin",
-        element: <AdminDashboard />,
-      },
-      {
-        path: "admin/crf-library",
-        element: <CrfAdmin />,
-      },
-      {
-        path: "admin/jobs",
-        element: <JobManager />,
-      },
-      {
-        path: "admin/import",
-        element: <ImportManager />,
-      },
-      {
-        path: "admin/password-policy",
-        element: <PasswordPolicy />,
-      },
-      {
-        path: "admin/logs",
-        element: <LogViewer />,
-      },
-      {
-        path: "admin/studies/:studyId/users",
-        element: <StudyUserRoleEditor />,
-      },
-      {
-        path: "subjects",
-        element: <SubjectList />,
-      },
-      {
-        path: "subjects/:id",
-        element: <SubjectDetail />,
-      },
-      {
-        path: "subjects/:subjectId/events",
-        element: <EventList />,
-      },
-      {
-        path: "subjects/:subjectId/events/:eventId/crfs/:eventCrfId/entry",
-        element: <DataEntryPage />,
-      },
-      {
-        path: "profile",
-        element: <Profile />,
-      },
-      {
-        path: "instructions",
-        element: <Instructions />,
-      },
-      {
-        path: "instructions/:topic",
-        element: <Instructions />,
-      },
-      {
-        path: "actions/:entity/:action/:id",
-        element: <EntityAction />,
-      },
-      {
-        path: "audit-log",
-        element: <AuditViewer />,
-      },
-      {
-        path: "403",
-        element: <ErrorPage status={403} />,
-      },
-      {
-        path: "legacy/*",
-        element: <LegacyFrame />,
-      },
+      { index: true, element: <Navigate to="dashboard" replace /> },
+      { path: "dashboard", element: <Dashboard /> },
+      { path: "randomization", element: <RandomizationDashboard /> },
+      { path: "randomization/schemes/:id", element: <SchemeEditor /> },
+      { path: "randomization/schemes/:id/allocate", element: <AllocationPage /> },
+      { path: "randomization/schemes/:id/unblind", element: <UnblindingPage /> },
+      { path: "randomization/schemes/:id/audit", element: <AuditViewer /> },
+      { path: "data-export", element: <ExportCenter /> },
+      { path: "data-export/datasets", element: <DatasetBuilder /> },
+      { path: "data-export/filters", element: <FilterBuilder /> },
+      { path: "crfs", element: <CrfList /> },
+      { path: "crfs/:versionId", element: <CrfPreview /> },
+      { path: "crfs/:crfId/versions", element: <CrfVersionManager /> },
+      { path: "questionnaires/templates", element: <QuestionnaireTemplates /> },
+      { path: "questionnaires/templates/:templateId/versions", element: <QuestionnaireVersionEditor /> },
+      { path: "questionnaires/assignments", element: <QuestionnaireAssignments /> },
+      { path: "questionnaires/responses", element: <QuestionnaireResponses /> },
+      { path: "questionnaires/my-tasks", element: <QuestionnaireMyTasks /> },
+      { path: "questionnaires/export", element: <QuestionnaireExport /> },
+      { path: "studies", element: <StudyList /> },
+      { path: "studies/create", element: <StudyWizard /> },
+      { path: "studies/:id", element: <StudyDetail /> },
+      { path: "studies/:id/edit", element: <StudyEditor /> },
+      { path: "studies/:id/sites", element: <SiteManagement /> },
+      { path: "studies/:studyId/event-definitions", element: <EventDefinitionsPage /> },
+      { path: "studies/:studyId/subject-groups", element: <SubjectGroupsPage /> },
+      { path: "studies/:studyId/rules", element: <RulesListPage /> },
+      { path: "admin/users", element: <UserManagement /> },
+      { path: "admin/audit-log", element: <AuditLogViewer /> },
+      { path: "admin/system", element: <SystemConfiguration /> },
+      { path: "admin", element: <AdminDashboard /> },
+      { path: "admin/crf-library", element: <CrfAdmin /> },
+      { path: "admin/jobs", element: <JobManager /> },
+      { path: "admin/import", element: <ImportManager /> },
+      { path: "admin/password-policy", element: <PasswordPolicy /> },
+      { path: "admin/logs", element: <LogViewer /> },
+      { path: "admin/studies/:studyId/users", element: <StudyUserRoleEditor /> },
+      { path: "subjects", element: <SubjectList /> },
+      { path: "subjects/:id", element: <SubjectDetail /> },
+      { path: "subjects/:subjectId/events", element: <EventList /> },
+      { path: "subjects/:subjectId/events/:eventId/crfs/:eventCrfId/entry", element: <DataEntryPage /> },
+      { path: "profile", element: <Profile /> },
+      { path: "instructions", element: <Instructions /> },
+      { path: "instructions/:topic", element: <Instructions /> },
+      { path: "actions/:entity/:action/:id", element: <EntityAction /> },
+      { path: "audit-log", element: <AuditViewer /> },
+      { path: "403", element: <ErrorPage status={403} /> },
+      { path: "legacy/*", element: <LegacyFrame /> },
     ],
   },
-  {
-    path: "/login",
-    element: <MainMenu />,
-  },
-  {
-    path: "/q/fill/:token",
-    element: <QuestionnaireFill />,
-  },
-  {
-    path: "/error",
-    element: <ErrorPage status={500} />,
-  },
-  {
-    path: "/",
-    element: <MainMenu />,
-  },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
+  { path: "/login", element: <Login /> },
+  { path: "/q/fill/:token", element: <QuestionnaireFill /> },
+  { path: "/error", element: <ErrorPage status={500} /> },
+  { path: "/", element: <MainMenu /> },
+  { path: "*", element: <NotFound /> },
 ]);
 
 export default router;

@@ -1,5 +1,6 @@
-import { Button, Card, Typography, Space } from "antd";
-import { MedicineBoxOutlined } from "@ant-design/icons";
+import { useCallback } from "react";
+import { Button, Card, Typography, Space, Form, Input, Alert } from "antd";
+import { MedicineBoxOutlined, LockOutlined } from "@ant-design/icons";
 import { useAuth } from "@/providers/AuthProvider";
 import { Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -8,10 +9,28 @@ const { Title, Text } = Typography;
 
 export default function Login() {
   const { t } = useTranslation();
-  const { isAuthenticated, isInitialized } = useAuth();
+  const { isAuthenticated, isInitialized, login, loginError, loginLoading } = useAuth();
+  const [form] = Form.useForm();
+
+  const handleSubmit = useCallback(
+    async (values: { username: string; password: string }) => {
+      await login(values.username, values.password);
+    },
+    [login],
+  );
 
   if (!isInitialized) {
-    return null;
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#0F1A2E",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      />
+    );
   }
 
   if (isAuthenticated) {
@@ -32,7 +51,6 @@ export default function Login() {
         overflow: "hidden",
       }}
     >
-      {/* Decorative corner dots */}
       <div
         style={{
           position: "absolute",
@@ -77,7 +95,6 @@ export default function Login() {
           size="middle"
           style={{ width: "100%", textAlign: "center" }}
         >
-          {/* Decorative brass dot */}
           <div
             style={{
               width: 4,
@@ -88,7 +105,6 @@ export default function Login() {
             }}
           />
 
-          {/* Icon with circular background */}
           <div
             style={{
               width: 72,
@@ -101,9 +117,7 @@ export default function Login() {
               margin: "0 auto",
             }}
           >
-            <MedicineBoxOutlined
-              style={{ fontSize: 34, color: "#099A87" }}
-            />
+            <MedicineBoxOutlined style={{ fontSize: 34, color: "#099A87" }} />
           </div>
 
           <div>
@@ -129,7 +143,6 @@ export default function Login() {
             </Text>
           </div>
 
-          {/* Brass divider */}
           <div
             style={{
               width: 40,
@@ -140,23 +153,79 @@ export default function Login() {
             }}
           />
 
-          <Button
-            type="primary"
-            size="large"
-            block
-            onClick={() => { window.location.href = "/"; }}
-            style={{
-              height: 48,
-              fontSize: 15,
-              borderRadius: 12,
-              fontWeight: 500,
-              boxShadow: "0 2px 8px rgba(9,154,135,0.30)",
-              fontFamily: "'DM Sans', sans-serif",
-              marginTop: 4,
-            }}
+          {loginError && (
+            <Alert
+              message={loginError}
+              type="error"
+              showIcon
+              closable
+              style={{
+                borderRadius: 10,
+                textAlign: "left",
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 13,
+              }}
+            />
+          )}
+
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmit}
+            style={{ width: "100%", textAlign: "left" }}
+            requiredMark={false}
           >
-            {t("login.signIn")}
-          </Button>
+            <Form.Item
+              name="username"
+              rules={[{ required: true, message: "Please enter your username" }]}
+            >
+              <Input
+                size="large"
+                placeholder="Username"
+                autoComplete="username"
+                style={{
+                  borderRadius: 10,
+                  fontFamily: "'DM Sans', sans-serif",
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: "Please enter your password" }]}
+            >
+              <Input.Password
+                size="large"
+                placeholder="Password"
+                autoComplete="current-password"
+                prefix={<LockOutlined style={{ color: "#9CA3AF" }} />}
+                style={{
+                  borderRadius: 10,
+                  fontFamily: "'DM Sans', sans-serif",
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Button
+                type="primary"
+                size="large"
+                block
+                htmlType="submit"
+                loading={loginLoading}
+                style={{
+                  height: 48,
+                  fontSize: 15,
+                  borderRadius: 12,
+                  fontWeight: 500,
+                  boxShadow: "0 2px 8px rgba(9,154,135,0.30)",
+                  fontFamily: "'DM Sans', sans-serif",
+                }}
+              >
+                {t("login.signIn")}
+              </Button>
+            </Form.Item>
+          </Form>
         </Space>
       </Card>
     </div>

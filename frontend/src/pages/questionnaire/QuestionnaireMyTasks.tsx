@@ -42,7 +42,7 @@ export default function QuestionnaireMyTasks() {
     expired: { color: "warning", icon: <CloseCircleOutlined />, label: "Expired" },
     withdrawn: { color: "error", icon: <CloseCircleOutlined />, label: "Withdrawn" },
   };
-  const subjectId = user?.sub;
+  const subjectId = user?.username;
 
   const { data: assignments, isLoading } = useAppQuery<Assignment[]>({
     queryKey: ["my-questionnaire-tasks"],

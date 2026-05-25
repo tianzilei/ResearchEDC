@@ -290,7 +290,7 @@ export default function Dashboard() {
               fontSize: 22,
             }}
           >
-            {getGreeting(t)}, {user?.name ?? t("dashboard.greeting.user")}
+            {getGreeting(t)}, {user?.firstName ?? user?.username ?? t("dashboard.greeting.user")}
           </Title>
           <Text style={{ color: "#6B7280", fontSize: 13, letterSpacing: "0.01em" }}>
             {t("dashboard.subtitle")}
