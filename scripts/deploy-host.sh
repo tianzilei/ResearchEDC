@@ -407,6 +407,12 @@ cmd_start() {
     generate_datainfo app/src/main/resources
     generate_questionnaire_env
 
+    log_info "Building frontend..."
+    cd "${PROJECT_DIR}/frontend"
+    pnpm install --frozen-lockfile || pnpm install
+    pnpm build
+    cd "${PROJECT_DIR}"
+
     log_info "Starting App on port ${APP_PORT}..."
 
     # Kill any existing app on the port

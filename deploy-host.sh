@@ -152,6 +152,12 @@ cmd_start() {
     lsof -ti:"${APP_PORT}" 2>/dev/null | xargs kill 2>/dev/null || true
     sleep 1
 
+    log_info "Building frontend..."
+    cd "${PROJECT_DIR}/frontend"
+    pnpm install --frozen-lockfile || pnpm install
+    pnpm build
+    cd "${PROJECT_DIR}"
+
     log_info "Starting ResearchEDF on port ${APP_PORT}..."
 
     if command -v tmux &>/dev/null; then
