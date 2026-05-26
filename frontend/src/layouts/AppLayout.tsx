@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { Layout, Menu, Button, Dropdown, Space, Select } from "antd";
 import type { MenuProps } from "antd";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/providers/AuthProvider";
+import { useTheme } from "@/providers/ThemeProvider";
 import { useNavigate, useLocation } from "react-router-dom";
 import { usePermissions } from "@/hooks/usePermissions";
 import StudySwitcher from "@/components/StudySwitcher";
@@ -64,19 +65,7 @@ export default function AppLayout() {
   const location = useLocation();
   const menuItems = useMenuItems();
   const { i18n } = useTranslation();
-
-  const [theme, setTheme] = useState<"daylight" | "night">(() => {
-    return (localStorage.getItem("theme") as "daylight" | "night") ?? "daylight";
-  });
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  const toggleTheme = useCallback(() => {
-    setTheme((prev) => (prev === "daylight" ? "night" : "daylight"));
-  }, []);
+  const { mode, toggleTheme } = useTheme();
 
   const defaultOpenKeys = location.pathname.startsWith("/app/questionnaires")
     ? ["questionnaires"]
@@ -144,7 +133,7 @@ export default function AppLayout() {
               padding: "0 10px",
             }}
           >
-            {theme === "daylight" ? "夜间模式" : "日间模式"}
+            {mode === "daylight" ? "夜间模式" : "日间模式"}
           </Button>
           <Select
             value={i18n.language?.startsWith("zh") ? "zh" : "en"}
