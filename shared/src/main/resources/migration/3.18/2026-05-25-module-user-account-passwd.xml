@@ -15,18 +15,18 @@
 
     <changeSet author="research-edc" id="2026-05-25-module-user-account-passwd-copy-2">
         <comment>Copy existing password hashes from legacy user_account table</comment>
-        <sql>
+        <sql splitStatements="false"><![CDATA[
             UPDATE module_user_account m
             SET passwd = u.passwd
             FROM user_account u
             WHERE m.user_id = u.user_id
               AND u.passwd IS NOT NULL
-        </sql>
+        ]]></sql>
     </changeSet>
 
     <changeSet author="research-edc" id="2026-05-25-module-user-account-passwd-sync-trigger-3" dbms="postgresql">
         <comment>Update sync trigger to include passwd column in module_user_account → user_account sync</comment>
-        <sql>
+        <sql splitStatements="false"><![CDATA[
             CREATE OR REPLACE FUNCTION sync_module_user_account_to_user_account()
             RETURNS TRIGGER AS $$
             BEGIN
@@ -70,7 +70,7 @@
                 END IF;
             END;
             $$ LANGUAGE plpgsql;
-        </sql>
+        ]]></sql>
         <rollback>
             -- Restore original sync trigger without passwd column
             CREATE OR REPLACE FUNCTION sync_module_user_account_to_user_account()

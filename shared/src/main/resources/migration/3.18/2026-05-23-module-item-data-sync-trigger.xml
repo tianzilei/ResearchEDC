@@ -8,7 +8,7 @@
 
     <changeSet author="research-edc" id="2026-05-23-module-item-data-sync-trigger" dbms="postgresql">
         <comment>Create sync function and trigger: module_item_data → item_data</comment>
-        <sql>
+        <sql splitStatements="false"><![CDATA[
             CREATE OR REPLACE FUNCTION sync_module_item_data_to_item_data()
             RETURNS TRIGGER AS $$
             BEGIN
@@ -48,7 +48,7 @@
             CREATE TRIGGER trg_sync_module_item_data
             AFTER INSERT OR UPDATE OR DELETE ON module_item_data
             FOR EACH ROW EXECUTE FUNCTION sync_module_item_data_to_item_data();
-        </sql>
+        ]]></sql>
         <rollback>
             DROP TRIGGER IF EXISTS trg_sync_module_item_data ON module_item_data;
             DROP FUNCTION IF EXISTS sync_module_item_data_to_item_data();

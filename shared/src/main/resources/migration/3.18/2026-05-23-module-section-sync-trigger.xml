@@ -8,7 +8,7 @@
 
     <changeSet author="research-edc" id="2026-05-23-module-section-sync-trigger" dbms="postgresql">
         <comment>Create sync function and trigger: module_section → section</comment>
-        <sql>
+        <sql splitStatements="false"><![CDATA[
             CREATE OR REPLACE FUNCTION sync_module_section_to_section()
             RETURNS TRIGGER AS $$
             BEGIN
@@ -52,7 +52,7 @@
             CREATE TRIGGER trg_sync_module_section
             AFTER INSERT OR UPDATE OR DELETE ON module_section
             FOR EACH ROW EXECUTE FUNCTION sync_module_section_to_section();
-        </sql>
+        ]]></sql>
         <rollback>
             DROP TRIGGER IF EXISTS trg_sync_module_section ON module_section;
             DROP FUNCTION IF EXISTS sync_module_section_to_section();

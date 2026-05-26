@@ -8,7 +8,7 @@
 
     <changeSet author="research-edc" id="2026-05-23-module-user-account-sync-trigger" dbms="postgresql">
         <comment>Create sync function and trigger: module_user_account → user_account</comment>
-        <sql>
+        <sql splitStatements="false"><![CDATA[
             CREATE OR REPLACE FUNCTION sync_module_user_account_to_user_account()
             RETURNS TRIGGER AS $$
             BEGIN
@@ -53,7 +53,7 @@
             CREATE TRIGGER trg_sync_module_user_account
             AFTER INSERT OR UPDATE OR DELETE ON module_user_account
             FOR EACH ROW EXECUTE FUNCTION sync_module_user_account_to_user_account();
-        </sql>
+        ]]></sql>
         <rollback>
             DROP TRIGGER IF EXISTS trg_sync_module_user_account ON module_user_account;
             DROP FUNCTION IF EXISTS sync_module_user_account_to_user_account();

@@ -8,7 +8,7 @@
 
     <changeSet author="research-edc" id="2026-05-23-module-event-crf-sync-trigger" dbms="postgresql">
         <comment>Create sync function and trigger: module_event_crf → event_crf</comment>
-        <sql>
+        <sql splitStatements="false"><![CDATA[
             CREATE OR REPLACE FUNCTION sync_module_event_crf_to_event_crf()
             RETURNS TRIGGER AS $$
             BEGIN
@@ -62,7 +62,7 @@
             CREATE TRIGGER trg_sync_module_event_crf
             AFTER INSERT OR UPDATE OR DELETE ON module_event_crf
             FOR EACH ROW EXECUTE FUNCTION sync_module_event_crf_to_event_crf();
-        </sql>
+        ]]></sql>
         <rollback>
             DROP TRIGGER IF EXISTS trg_sync_module_event_crf ON module_event_crf;
             DROP FUNCTION IF EXISTS sync_module_event_crf_to_event_crf();

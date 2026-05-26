@@ -8,7 +8,7 @@
 
     <changeSet author="research-edc" id="2026-05-23-module-response-set-sync-trigger" dbms="postgresql">
         <comment>Create sync function and trigger: module_response_set → response_set</comment>
-        <sql>
+        <sql splitStatements="false"><![CDATA[
             CREATE OR REPLACE FUNCTION sync_module_response_set_to_response_set()
             RETURNS TRIGGER AS $$
             BEGIN
@@ -41,7 +41,7 @@
             CREATE TRIGGER trg_sync_module_response_set
             AFTER INSERT OR UPDATE OR DELETE ON module_response_set
             FOR EACH ROW EXECUTE FUNCTION sync_module_response_set_to_response_set();
-        </sql>
+        ]]></sql>
         <rollback>
             DROP TRIGGER IF EXISTS trg_sync_module_response_set ON module_response_set;
             DROP FUNCTION IF EXISTS sync_module_response_set_to_response_set();

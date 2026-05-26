@@ -8,7 +8,7 @@
 
     <changeSet author="research-edc" id="2026-05-23-module-crf-version-sync-trigger" dbms="postgresql">
         <comment>Create sync function and trigger: module_crf_version → crf_version</comment>
-        <sql>
+        <sql splitStatements="false"><![CDATA[
             CREATE OR REPLACE FUNCTION sync_module_crf_version_to_crf_version()
             RETURNS TRIGGER AS $$
             BEGIN
@@ -46,7 +46,7 @@
             CREATE TRIGGER trg_sync_module_crf_version
             AFTER INSERT OR UPDATE OR DELETE ON module_crf_version
             FOR EACH ROW EXECUTE FUNCTION sync_module_crf_version_to_crf_version();
-        </sql>
+        ]]></sql>
         <rollback>
             DROP TRIGGER IF EXISTS trg_sync_module_crf_version ON module_crf_version;
             DROP FUNCTION IF EXISTS sync_module_crf_version_to_crf_version();

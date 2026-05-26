@@ -8,7 +8,7 @@
 
     <changeSet author="research-edc" id="2026-05-23-module-study-event-sync-trigger" dbms="postgresql">
         <comment>Create sync function and trigger: module_study_event → study_event</comment>
-        <sql>
+        <sql splitStatements="false"><![CDATA[
             CREATE OR REPLACE FUNCTION sync_module_study_event_to_study_event()
             RETURNS TRIGGER AS $$
             BEGIN
@@ -55,7 +55,7 @@
             CREATE TRIGGER trg_sync_module_study_event
             AFTER INSERT OR UPDATE OR DELETE ON module_study_event
             FOR EACH ROW EXECUTE FUNCTION sync_module_study_event_to_study_event();
-        </sql>
+        ]]></sql>
         <rollback>
             DROP TRIGGER IF EXISTS trg_sync_module_study_event ON module_study_event;
             DROP FUNCTION IF EXISTS sync_module_study_event_to_study_event();
