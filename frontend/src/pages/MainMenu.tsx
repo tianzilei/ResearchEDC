@@ -54,7 +54,7 @@ function AuthenticatedMenu() {
               letterSpacing: "0.02em",
             }}
           >
-            ResearchEDF
+            ResearchEDC
           </span>
         </Space>
       </div>
@@ -140,7 +140,7 @@ function AuthenticatedMenu() {
             fontSize: 12,
           }}
         >
-          ResearchEDF — 临床研究数据管理平台
+          ResearchEDC — 临床研究数据管理平台
         </Text>
       </div>
     </div>

@@ -117,7 +117,7 @@ export default function AppLayout() {
       >
         <Space size="middle">
           <div style={{ fontWeight: 600, fontSize: 14, color: "var(--header-text)", letterSpacing: "0.02em" }}>
-            ResearchEDF
+            ResearchEDC
           </div>
           <div style={{ borderLeft: "1px solid var(--border)", height: 20, width: 1 }} />
           <StudySwitcher />
