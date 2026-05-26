@@ -282,14 +282,9 @@ cmd_init_db() {
         exit 1
     }
 
-    # ---- Try sudo-based database reset (requires sudo access) ----
-    local SUDO_AVAILABLE=false
-    if sudo -n true 2>/dev/null; then
-        SUDO_AVAILABLE=true
-    fi
-
-    if [ "${SUDO_AVAILABLE}" = true ]; then
-        log_info "Creating user and databases (may prompt for sudo password)..."
+    # ---- Database reset (prompts for sudo if needed) ----
+    log_info "Requesting sudo access for PostgreSQL admin operations..."
+    if sudo -v 2>/dev/null; then
         sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'" | grep -q 1 \
             || sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASS}';"
 
@@ -303,7 +298,7 @@ cmd_init_db() {
         done
         log_ok "Databases recreated from scratch"
     else
-        log_warn "sudo not available — skipping database drop/recreate"
+        log_warn "sudo password prompt failed — skipping database drop/recreate"
         log_info "  Ensure databases '${DB_NAME}' and '${Q_DB}' exist manually if needed."
         log_info "  To enable full reset: grant this user passwordless sudo, or run:"
         log_info "    sudo -u postgres psql -c \"DROP DATABASE IF EXISTS ${DB_NAME}; CREATE DATABASE ${DB_NAME} OWNER ${DB_USER};\""

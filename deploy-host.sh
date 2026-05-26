@@ -66,13 +66,8 @@ cmd_init() {
     }
 
     # ---- Database reset (requires sudo for full drop/recreate) ----
-    local SUDO_AVAILABLE=false
-    if sudo -n true 2>/dev/null; then
-        SUDO_AVAILABLE=true
-    fi
-
-    if [ "${SUDO_AVAILABLE}" = true ]; then
-        log_info "Creating user (may need sudo)..."
+    log_info "Requesting sudo access for PostgreSQL admin operations..."
+    if sudo -v 2>/dev/null; then
         sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'" | grep -q 1 \
             || sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASS}';"
 
@@ -83,7 +78,7 @@ cmd_init() {
         sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE \"${DB_NAME}\" TO ${DB_USER};"
         log_ok "Database recreated from scratch"
     else
-        log_warn "sudo not available — skipping database drop/recreate"
+        log_warn "sudo password prompt failed — skipping database drop/recreate"
         log_info "  Ensure database '${DB_NAME}' exists manually if needed."
     fi
 
