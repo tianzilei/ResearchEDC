@@ -43,7 +43,7 @@ MODULE_IMPORTS=$(grep -rl --include='*.java' 'import org\.akaza\.openclinica\.co
 MODULE_LEGACY_IMPORTS=$(echo "$MODULE_IMPORTS" | grep -c . || true)
 
 cat > "${REPORT_FILE}" <<HEADER
-# ResearchEDF Legacy Refactor Report
+# ResearchEDC Legacy Refactor Report
 
 Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 

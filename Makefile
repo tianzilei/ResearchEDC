@@ -1,5 +1,5 @@
 # ============================================================================
-# ResearchEDF — Makefile
+# ResearchEDC — Makefile
 #
 # Common development and deployment commands.
 # Usage: make <target>

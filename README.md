@@ -1,4 +1,4 @@
-# ResearchEDF
+# ResearchEDC
 
 **版本:** 0.1  
 **最后更新:** 2026-05-26  
