@@ -297,8 +297,9 @@ cmd_init_db() {
 
     log_ok "Databases ready"
 
-    # ---- Generate datainfo.properties for Liquibase ----
-    mkdir -p app/src/main/resources
+    # ---- Generate datainfo.properties for Liquibase (shared module + app) ----
+    mkdir -p shared/src/main/resources app/src/main/resources
+    generate_datainfo shared/src/main/resources
     generate_datainfo app/src/main/resources
 
     # ---- Run Liquibase migrations ----

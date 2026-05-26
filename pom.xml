@@ -28,7 +28,7 @@
 		<git.url>git://github.com/research-edc/research-edc.git</git.url>
 
 		<!-- Config file - required by liquibase plugin -->
-		<config.file>app/src/main/resources/datainfo.properties</config.file>
+		<config.file>src/main/resources/datainfo.properties</config.file>
 
 		<!-- Library Versions -->
 		<spring.version>6.1.5</spring.version>
