@@ -123,27 +123,32 @@ export default function AppLayout() {
           <StudySwitcher />
         </Space>
         <Space size="small">
-          <Button
-            type="text"
+          <button
             onClick={toggleTheme}
             style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
               color: "var(--header-text)",
-              fontSize: 12,
+              fontSize: 13,
               height: 32,
               padding: "0 10px",
+              lineHeight: "32px",
+              fontFamily: "inherit",
             }}
           >
             {mode === "daylight" ? "夜间模式" : "日间模式"}
-          </Button>
+          </button>
           <Select
             value={i18n.language?.startsWith("zh") ? "zh" : "en"}
             onChange={(lng) => { i18n.changeLanguage(lng); }}
-            size="small"
             variant="borderless"
+            className="header-lang-select"
             style={{
-              minWidth: 64,
+              minWidth: 56,
+              width: 64,
               color: "var(--header-text)",
-              fontSize: 12,
+              fontSize: 13,
             }}
             popupMatchSelectWidth={false}
             options={SUPPORTED_LANGUAGES.map((l) => ({
@@ -151,17 +156,27 @@ export default function AppLayout() {
               label: l.label,
             }))}
           />
-          <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-            <Button
-              type="text"
+          <Dropdown
+            menu={{ items: userMenuItems }}
+            placement="bottomRight"
+            dropdownRender={(menu) => (
+              <div className="header-user-dropdown">{menu}</div>
+            )}
+          >
+            <button
               style={{
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
                 color: "var(--header-text)",
-                height: 52,
                 fontSize: 13,
+                height: 52,
+                padding: "0 8px",
+                fontFamily: "inherit",
               }}
             >
               {user?.firstName ?? user?.username ?? "用户"}
-            </Button>
+            </button>
           </Dropdown>
         </Space>
       </Header>

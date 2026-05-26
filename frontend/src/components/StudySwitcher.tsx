@@ -3,6 +3,11 @@ import { Select, Space } from "antd";
 import { useStudies, useCurrentStudy } from "@/hooks/useStudies";
 import type { Study } from "@/types/study";
 
+const PLACEHOLDER_STYLE: React.CSSProperties = {
+  color: "var(--header-text)",
+  opacity: 0.55,
+};
+
 export default function StudySwitcher() {
   const { data: studies } = useStudies();
   const { currentStudy, setCurrentStudy } = useCurrentStudy();
@@ -21,14 +26,16 @@ export default function StudySwitcher() {
     <Select
       showSearch
       value={currentStudy ? currentStudy.name : undefined}
-      placeholder="选择项目"
+      placeholder={<span style={PLACEHOLDER_STYLE}>选择项目</span>}
       open={open}
       onDropdownVisibleChange={setOpen}
       onChange={handleChange}
       variant="borderless"
+      className="study-switcher-select"
       style={{
         minWidth: 200,
         color: "var(--header-text)",
+        fontSize: 13,
       }}
       popupMatchSelectWidth={320}
       optionFilterProp="label"

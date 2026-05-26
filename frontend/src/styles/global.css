@@ -331,6 +331,54 @@ code, pre {
   background: rgba(255,255,255,0.08);
 }
 
+/* ── Header: StudySwitcher, language select, user dropdown ── */
+[data-theme="night"] .study-switcher-select .ant-select-selection-placeholder {
+  color: var(--header-text) !important;
+  opacity: 0.55 !important;
+}
+[data-theme="night"] .study-switcher-select .ant-select-selector {
+  color: var(--header-text) !important;
+}
+[data-theme="night"] .study-switcher-select .ant-select-arrow {
+  color: var(--header-text) !important;
+  opacity: 0.55;
+}
+[data-theme="night"] .study-switcher-select .ant-select-selection-item {
+  color: var(--header-text) !important;
+}
+
+[data-theme="night"] .header-lang-select .ant-select-selector {
+  color: var(--header-text) !important;
+}
+[data-theme="night"] .header-lang-select .ant-select-arrow {
+  color: var(--header-text) !important;
+  opacity: 0.55;
+}
+[data-theme="night"] .header-lang-select .ant-select-selection-item {
+  color: var(--header-text) !important;
+}
+
+[data-theme="night"] .header-user-dropdown {
+  background: #222220;
+  border: 1px solid #383832;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+[data-theme="night"] .header-user-dropdown .ant-dropdown-menu {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+[data-theme="night"] .header-user-dropdown .ant-dropdown-menu-item {
+  color: #b8b8ae;
+}
+[data-theme="night"] .header-user-dropdown .ant-dropdown-menu-item:hover {
+  background: rgba(255,255,255,0.06);
+  color: #ecece5;
+}
+[data-theme="night"] .header-user-dropdown .ant-dropdown-menu-item-disabled {
+  color: #7a7a72 !important;
+}
+
 /* ── Night mode Login / Form overrides ── */
 [data-theme="night"] .ant-input,
 [data-theme="night"] .ant-input-password {
