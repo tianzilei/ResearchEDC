@@ -351,31 +351,26 @@ code, pre {
   background: rgba(255,255,255,0.08);
 }
 
-/* ── Header: StudySwitcher, language select, user dropdown ── */
-[data-theme="night"] .study-switcher-select .ant-select-selection-placeholder {
-  color: var(--header-text) !important;
-  opacity: 0.55 !important;
+/* ── Header: StudySwitcher, language select, user dropdown (fixed light color on dark header) ── */
+.study-switcher-select .ant-select-selection-placeholder {
+  color: var(--text-secondary) !important;
 }
-[data-theme="night"] .study-switcher-select .ant-select-selector {
+.study-switcher-select .ant-select-selector,
+.study-switcher-select .ant-select-selection-item {
   color: var(--header-text) !important;
 }
-[data-theme="night"] .study-switcher-select .ant-select-arrow {
+.study-switcher-select .ant-select-arrow {
   color: var(--header-text) !important;
   opacity: 0.55;
-}
-[data-theme="night"] .study-switcher-select .ant-select-selection-item {
-  color: var(--header-text) !important;
 }
 
-[data-theme="night"] .header-lang-select .ant-select-selector {
+.header-lang-select .ant-select-selector,
+.header-lang-select .ant-select-selection-item {
   color: var(--header-text) !important;
 }
-[data-theme="night"] .header-lang-select .ant-select-arrow {
+.header-lang-select .ant-select-arrow {
   color: var(--header-text) !important;
   opacity: 0.55;
-}
-[data-theme="night"] .header-lang-select .ant-select-selection-item {
-  color: var(--header-text) !important;
 }
 
 [data-theme="night"] .header-user-dropdown {
