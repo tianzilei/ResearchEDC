@@ -353,7 +353,8 @@ code, pre {
 
 /* ── Header: StudySwitcher, language select, user dropdown (fixed light color on dark header) ── */
 .study-switcher-select .ant-select-selection-placeholder {
-  color: var(--text-secondary) !important;
+  color: var(--header-text) !important;
+  opacity: 0.5 !important;
 }
 .study-switcher-select .ant-select-selector,
 .study-switcher-select .ant-select-selection-item {
@@ -364,6 +365,10 @@ code, pre {
   opacity: 0.55;
 }
 
+.header-lang-select {
+  min-width: 80px !important;
+  width: 80px !important;
+}
 .header-lang-select .ant-select-selector,
 .header-lang-select .ant-select-selection-item {
   color: var(--header-text) !important;

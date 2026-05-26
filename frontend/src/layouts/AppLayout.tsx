@@ -145,6 +145,7 @@ export default function AppLayout() {
             variant="borderless"
             className="header-lang-select"
             style={{
+              minWidth: 80,
               width: 80,
               color: "var(--header-text)",
               fontSize: 13,
