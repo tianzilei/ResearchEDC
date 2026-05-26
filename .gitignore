@@ -172,3 +172,4 @@ lib/
 # Stale backup directories from refactoring
 target-old*/
 *.bak/
+org/springframework/
