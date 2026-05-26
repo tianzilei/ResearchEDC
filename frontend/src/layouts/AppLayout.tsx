@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
-import { Layout, Menu, Button, Dropdown, Space, Select } from "antd";
+import { Layout, Menu, Dropdown, Space, Select } from "antd";
 import type { MenuProps } from "antd";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/providers/AuthProvider";
