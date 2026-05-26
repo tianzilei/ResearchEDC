@@ -1,4 +1,4 @@
-# ResearchEDC 宿主机部署指南
+# ResearchEDF 宿主机部署指南
 
 无 Docker，直接在宿主机运行所有服务。适用于开发和测试环境。
 

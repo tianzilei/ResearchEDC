@@ -1,10 +1,10 @@
 # =============================================================================
-# ResearchEDC Development Docker Compose
+# ResearchEDF Development Docker Compose
 #
 # Services:
 #   postgres  — PostgreSQL 17 database
-#   web       — ResearchEDC Web application (Tomcat 10.1 + JDK 21)
-#   ws        — ResearchEDC Web Services (Tomcat 10.1 + JDK 21)
+#   web       — ResearchEDF Web application (Tomcat 10.1 + JDK 21)
+#   ws        — ResearchEDF Web Services (Tomcat 10.1 + JDK 21)
 #   mailhog   — SMTP test server (captures emails without sending)
 #   adminer   — Database administration UI
 # =============================================================================
@@ -38,7 +38,7 @@ services:
       start_period: 30s
     logging: *default-logging
 
-  # ---- ResearchEDC Web ----
+  # ---- ResearchEDF Web ----
   web:
     build:
       context: ../..
@@ -72,7 +72,7 @@ services:
         condition: service_healthy
     logging: *default-logging
 
-  # ---- ResearchEDC Web Services ----
+  # ---- ResearchEDF Web Services ----
   ws:
     build:
       context: ../..
@@ -102,7 +102,7 @@ services:
         condition: service_healthy
     logging: *default-logging
 
-  # ---- ResearchEDC App (Spring Boot + React SPA) ----
+  # ---- ResearchEDF App (Spring Boot + React SPA) ----
   app:
     build:
       context: ../..

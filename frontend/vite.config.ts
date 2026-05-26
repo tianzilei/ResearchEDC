@@ -42,6 +42,7 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       sourcemap: isDev,
       manifest: false,
+      chunkSizeWarningLimit: 1500,
     },
   };
 });

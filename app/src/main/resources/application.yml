@@ -1,5 +1,5 @@
 # =============================================================================
-# ResearchEDC Spring Boot Configuration
+# ResearchEDF Spring Boot Configuration
 # =============================================================================
 # Profiles: dev, test, prod
 # Usage: --spring.profiles.active=dev
@@ -23,12 +23,6 @@ logging:
     uri-encoding: UTF-8
 
 spring:
-  mail:
-    host: ${RESEARCHEDC_MAIL_HOST:localhost}
-    port: ${RESEARCHEDC_MAIL_PORT:1025}
-    protocol: smtp
-    username:
-    password:
   main:
     allow-bean-definition-overriding: true
     allow-circular-references: true
@@ -43,7 +37,7 @@ spring:
       hibernate.id.db_structure_naming_strategy: legacy
       hibernate.id.optimizer.pooled.preferred: none
   application:
-    name: ResearchEDC
+    name: ResearchEDF
     version: ${project.version}
 
   # JSP view resolution (legacy UI)

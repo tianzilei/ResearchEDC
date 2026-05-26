@@ -10,6 +10,7 @@ package org.researchedc.dao.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -248,15 +249,18 @@ public class SQLFactory {
             DAODigester newDaoDigester = new DAODigester();
 
             try {
-         
-                if (System.getProperty("catalina.home") == null) {
-                    String path = getPropertiesDir();
-                    newDaoDigester.setInputStream(new FileInputStream(path + DAOFileName));
-                } else {
-                    String path = CoreResources.PROPERTIES_DIR;
-                    newDaoDigester.setInputStream(resourceLoader.getResource("classpath:properties/" + DAOFileName).getInputStream());
-                    //newDaoDigester.setInputStream(new FileInputStream(path + DAOFileName));
+                // Use ClassLoader resource loading which works with both
+                // regular filesystem and Spring Boot nested JARs
+                InputStream daoStream = null;
+                String resourcePath = "properties/" + DAOFileName;
+                URL resourceUrl = Thread.currentThread().getContextClassLoader().getResource(resourcePath);
+                if (resourceUrl != null) {
+                    daoStream = resourceUrl.openStream();
                 }
+                if (daoStream == null) {
+                    daoStream = resourceLoader.getResource("classpath:properties/" + DAOFileName).getInputStream();
+                }
+                newDaoDigester.setInputStream(daoStream);
                 try {
                     newDaoDigester.run();
                     digesters.put(DAOName, newDaoDigester);

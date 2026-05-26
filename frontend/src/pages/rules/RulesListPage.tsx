@@ -59,7 +59,7 @@ export default function RulesListPage() {
       ellipsis: true,
       render: (val) =>
         val ? (
-          <code style={{ fontSize: 12, background: "#F5F5F5", padding: "2px 6px", borderRadius: 4 }}>
+          <code style={{ fontSize: 12, background: "var(--panel-muted)", padding: "2px 6px", borderRadius: 4 }}>
             {val}
           </code>
         ) : (

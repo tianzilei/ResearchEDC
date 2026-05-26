@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# ResearchEDC — Release & Rollback Workflow
+# ResearchEDF — Release & Rollback Workflow
 #
 # Orchestrates the full release process: build, scan, tag, push, deploy.
 # Also supports rollback to a previous release.
@@ -23,7 +23,7 @@ if [ -z "${ACTION}" ]; then
     echo "  $0 rollback <previous-tag>        Rollback to previous version"
     echo ""
     echo "Examples:"
-    echo "  $0 3.18.0                        Release version 3.18.0"
+    echo "  $0 0.1                           Release version 0.1"
     echo "  $0 rollback 3.17.3               Rollback to 3.17.3"
     exit 1
 fi
@@ -36,7 +36,7 @@ case "${ACTION}" in
             exit 1
         fi
 
-        echo "=== ResearchEDC Rollback to ${VERSION} ==="
+        echo "=== ResearchEDF Rollback to ${VERSION} ==="
         echo ""
 
         # Check that the previous images exist
@@ -69,7 +69,7 @@ case "${ACTION}" in
     *)
         # ========== Release ==========
         VERSION="${ACTION}"
-        echo "=== ResearchEDC Release ${VERSION} ==="
+        echo "=== ResearchEDF Release ${VERSION} ==="
         echo ""
 
         # Step 1: Verify clean git state
@@ -114,7 +114,7 @@ case "${ACTION}" in
 
         # Step 6: Tag and push
         echo "Step 6: Tagging release..."
-        git tag -a "v${VERSION}" -m "ResearchEDC release ${VERSION}"
+        git tag -a "v${VERSION}" -m "ResearchEDF release ${VERSION}"
         echo "  Tagged as v${VERSION}"
         echo ""
 

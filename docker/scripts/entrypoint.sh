@@ -102,7 +102,7 @@ hibernate.ddl.auto=${RESEARCHEDC_HIBERNATE_DDL_AUTO:-none}
 extract.number=${RESEARCHEDC_EXTRACT_PAGE_SIZE:-99}
 collectStats=${RESEARCHEDC_COLLECT_STATS:-false}
 designerURL=${RESEARCHEDC_DESIGNER_URL:-https://designer13.openclinica.com/}
-OpenClinica.version=3.18-SNAPSHOT
+OpenClinica.version=0.1
 EOF
 
 # Security: only write credentials to CONFIG_DIR, not to WEBAPP_CLASSES.

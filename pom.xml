@@ -4,9 +4,9 @@
 	<groupId>org.researchedc</groupId>
 	<artifactId>research-edc</artifactId>
 	<packaging>pom</packaging>
-	<version>3.18-SNAPSHOT</version>
-	<name>ResearchEDC</name>
-	<description>ResearchEDC: A research EDC platform derived from OpenClinica v3.x</description>
+	<version>0.1</version>
+	<name>ResearchEDF</name>
+	<description>ResearchEDF: A research EDC platform derived from OpenClinica v3.x</description>
 
 	<modules>
 		<module>research-edc-bom</module>
@@ -456,9 +456,9 @@
 		<!-- @pgawade 22-Nov-2010 Added the logback access; it will be needed to
 			get the web application usage pattern data -->
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-access</artifactId>
-			<version>1.5.7</version>
+			<groupId>ch.qos.logback.access</groupId>
+			<artifactId>common</artifactId>
+			<version>2.0.1</version>
 		</dependency>
 
 		<dependency>
@@ -658,7 +658,7 @@
 						<source>${java.version}</source>
 						<target>${java.version}</target>
 						<release>${java.version}</release>
-						<compilerArgument>-Xlint:all</compilerArgument>
+						<compilerArgument>-Xlint:all,-rawtypes,-unchecked,-serial</compilerArgument>
 						<parameters>true</parameters>
 					</configuration>
 				</plugin>

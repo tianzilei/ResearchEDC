@@ -1,8 +1,8 @@
 #!/bin/bash
 # =============================================================================
-# ResearchEDC — Caddy Reverse Proxy Deployment
+# ResearchEDF — Caddy Reverse Proxy Deployment
 #
-# Deploys the ResearchEDC stack with Caddy as the reverse proxy (pure proxy
+# Deploys the ResearchEDF stack with Caddy as the reverse proxy (pure proxy
 # mode — no static file serving, all traffic proxied to backend containers).
 #
 # Usage:
@@ -72,7 +72,7 @@ fi
 
 # ---- Stoppage ----
 if [ "${STOP}" = true ]; then
-    echo "=== Stopping ResearchEDC (Caddy) ==="
+    echo "=== Stopping ResearchEDF (Caddy) ==="
     ${DOCKER_COMPOSE} -f "${COMPOSE_DIR}/docker-compose.${MODE}.yml" \
         -f "${COMPOSE_DIR}/docker-compose.caddy.yml" down
     echo "=== Stopped ==="
@@ -81,7 +81,7 @@ fi
 
 # ---- Build only ----
 if [ "${BUILD_ONLY}" = true ]; then
-    echo "=== Building ResearchEDC ==="
+    echo "=== Building ResearchEDF ==="
     cd "${PROJECT_DIR}/frontend"
     if [ ! -d node_modules ]; then
         pnpm install --frozen-lockfile
@@ -139,7 +139,7 @@ if [ "${REBUILD}" = true ]; then
 fi
 
 # ---- Deploy ----
-echo "=== ResearchEDC Caddy Deployment ==="
+echo "=== ResearchEDF Caddy Deployment ==="
 echo "  Mode:      ${MODE}"
 echo "  Access:    ${PROTO}://${ACCESS_ADDR}"
 echo "  Compose:   ${MODE}.yml + caddy.yml"

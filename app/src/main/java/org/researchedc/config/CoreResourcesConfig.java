@@ -1,5 +1,6 @@
 package org.researchedc.config;
 
+import java.io.InputStream;
 import java.util.Properties;
 import org.researchedc.dao.core.CoreResources;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -7,7 +8,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 @Configuration
@@ -17,7 +17,10 @@ public class CoreResourcesConfig {
     public Properties dataInfo() {
         Properties props = new Properties();
         try {
-            props.load(new ClassPathResource("datainfo.properties").getInputStream());
+            try (InputStream is = Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream("datainfo.properties")) {
+                if (is != null) props.load(is);
+            }
         } catch (Exception e) {
             throw new RuntimeException("Failed to load datainfo.properties", e);
         }
@@ -28,7 +31,10 @@ public class CoreResourcesConfig {
     public Properties extractInfo() {
         Properties props = new Properties();
         try {
-            props.load(new ClassPathResource("extract.properties").getInputStream());
+            try (InputStream is = Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream("extract.properties")) {
+                if (is != null) props.load(is);
+            }
         } catch (Exception e) {
             throw new RuntimeException("Failed to load extract.properties", e);
         }
@@ -39,7 +45,10 @@ public class CoreResourcesConfig {
     public Properties enterpriseInfo() {
         Properties props = new Properties();
         try {
-            props.load(new ClassPathResource("enterprise.properties").getInputStream());
+            try (InputStream is = Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream("enterprise.properties")) {
+                if (is != null) props.load(is);
+            }
         } catch (Exception e) {
             throw new RuntimeException("Failed to load enterprise.properties", e);
         }

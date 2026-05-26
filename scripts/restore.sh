@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# ResearchEDC — Database & Files Restore
+# ResearchEDF — Database & Files Restore
 #
 # Restores from a backup created by scripts/backup.sh.
 # Usage: bash scripts/restore.sh <TIMESTAMP> [--db-only] [--data-only]
@@ -36,7 +36,7 @@ DB_CONTAINER="oc-prod-postgres"
 DB_USER="${POSTGRES_USER:-researchedc}"
 DB_NAME="${POSTGRES_DB:-researchedc}"
 
-echo "=== ResearchEDC Restore (${TIMESTAMP}) ==="
+echo "=== ResearchEDF Restore (${TIMESTAMP}) ==="
 echo ""
 
 # Sanity checks

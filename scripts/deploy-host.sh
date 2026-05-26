@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# ResearchEDC — Host Machine Deployment (No Docker)
+# ResearchEDF — Host Machine Deployment (No Docker)
 #
 # Usage: bash scripts/deploy-host.sh <command>
 # Commands: setup, init-db, build, start, stop, restart, status, logs, clean
@@ -113,7 +113,7 @@ hibernate.ddl.auto=none
 extract.number=99
 collectStats=false
 designerURL=https://designer13.openclinica.com/
-OpenClinica.version=3.18-SNAPSHOT
+OpenClinica.version=0.1
 PROPS
 }
 
@@ -293,6 +293,48 @@ cmd_init_db() {
     done
 
     log_ok "Databases ready"
+
+    # ---- Run Liquibase migrations ----
+    log_info "Applying Liquibase migrations..."
+    cd "${PROJECT_DIR}"
+    mvn liquibase:update \
+        -pl shared \
+        -Dliquibase.url="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}" \
+        -Dliquibase.username="${DB_USER}" \
+        -Dliquibase.password="${DB_PASS}" \
+        -q 2>/dev/null || {
+        log_warn "Liquibase migration failed — trying direct Maven run..."
+        mvn compile -pl shared -DskipTests -q
+        mvn liquibase:update \
+            -pl shared \
+            -Dliquibase.url="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}" \
+            -Dliquibase.username="${DB_USER}" \
+            -Dliquibase.password="${DB_PASS}" \
+            -q 2>/dev/null || log_warn "Liquibase skipped — schema may already exist"
+    }
+    log_ok "Migrations applied"
+
+    # ---- Create admin/admin account ----
+    log_info "Creating admin account..."
+    local bcrypt_hash
+    bcrypt_hash=$(python3 -c "
+import bcrypt
+h = bcrypt.hashpw(b'admin', bcrypt.gensalt(rounds=10)).decode()
+print('{bcrypt}' + h)
+" 2>/dev/null)
+
+    if [ -n "${bcrypt_hash}" ]; then
+        PGPASSWORD="${DB_PASS}" psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}" -c "
+INSERT INTO user_account (user_name, passwd, first_name, last_name, email, status_id, owner_id, date_created, enabled, account_non_locked)
+SELECT 'admin', '${bcrypt_hash}', '管理', '员', 'admin@example.com', 1, 1, CURRENT_DATE, true, true
+WHERE NOT EXISTS (SELECT 1 FROM user_account WHERE user_name = 'admin');
+INSERT INTO study_user_role (user_name, role_name, study_id, status_id, owner_id, date_created)
+SELECT 'admin', 'Study_Director', 1, 1, 1, CURRENT_DATE
+WHERE NOT EXISTS (SELECT 1 FROM study_user_role WHERE user_name = 'admin' AND role_name = 'Study_Director');
+" 2>/dev/null && log_ok "Admin account created (admin / admin)" || log_warn "Failed to create admin account"
+    else
+        log_error "bcrypt hash generation failed — admin account not created"
+    fi
 }
 
 cmd_build() {
@@ -338,23 +380,32 @@ cmd_start() {
     mkdir -p "${DATA_DIR}" "${LOG_DIR}" "${PID_DIR}" "${CONFIG_DIR}"
 
     local java_home="${JAVA_HOME:-$(dirname "$(dirname "$(readlink -f "$(which java)")")")}"
-    generate_datainfo "${CONFIG_DIR}"
     generate_datainfo app/src/main/resources
     generate_questionnaire_env
 
     log_info "Starting App on port ${APP_PORT}..."
-    cd "${PROJECT_DIR}"
-    JAVA_HOME="${java_home}" \
-    RESEARCHEDC_DB_HOST="${DB_HOST}" \
-    RESEARCHEDC_DB_PORT="${DB_PORT}" \
-    RESEARCHEDC_DB_NAME="${DB_NAME}" \
-    RESEARCHEDC_DB_USER="${DB_USER}" \
-    RESEARCHEDC_DB_PASS="${DB_PASS}" \
-    nohup mvn spring-boot:run \
-        -pl app \
-        -Dspring-boot.run.profiles=dev \
-        -Dspring-boot.run.arguments="--server.port=${APP_PORT} --spring.config.additional-location=file:${CONFIG_DIR}/" \
-        > "${LOG_DIR}/app.log" 2>&1 &
+
+    # Kill any existing app on the port
+    lsof -ti:"${APP_PORT}" 2>/dev/null | xargs kill 2>/dev/null || true
+    sleep 1
+
+    # Start in a tmux session for persistence
+    if command -v tmux &>/dev/null; then
+        tmux kill-session -t researchedc 2>/dev/null || true
+        tmux new-session -d -s researchedc -c "${PROJECT_DIR}"
+        tmux send-keys -t researchedc "export RESEARCHEDC_DB_PORT=${DB_PORT}" Enter
+        tmux send-keys -t researchedc "java -jar app/target/ResearchEDF.war --server.port=${APP_PORT} 2>&1 | tee ${LOG_DIR}/app.log" Enter
+        log_ok "App started in tmux session 'researchedc'"
+    else
+        # Fallback: nohup
+        cd "${PROJECT_DIR}"
+        RESEARCHEDC_DB_PORT="${DB_PORT}" \
+        nohup java -jar app/target/ResearchEDF.war \
+            --server.port="${APP_PORT}" \
+            > "${LOG_DIR}/app.log" 2>&1 &
+        echo $! > "${PID_DIR}/app.pid"
+        log_ok "App started (PID $(cat "${PID_DIR}/app.pid"))"
+    fi
 
     log_info "Starting Questionnaire Service on port ${Q_PORT}..."
     cd "${PROJECT_DIR}/questionnaire-service/apps/api"

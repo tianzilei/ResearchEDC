@@ -311,7 +311,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
     <Layout style={{ minHeight: 500, background: "#fff" }}>
       <Sider width={280} theme="light" style={{ borderRight: "1px solid #f0f0f0", overflow: "auto", padding: 12 }}>
         <Space direction="vertical" style={{ width: "100%" }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: "#888", marginBottom: 4 }}>{t("builder.pages")}</div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>{t("builder.pages")}</div>
           {survey.pages.map((page, pi) => (
             <div key={page.name}>
               <div
@@ -337,7 +337,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
               {selectedPageIdx === pi && (
                 <div style={{ paddingLeft: 16, marginTop: 4 }}>
                   {page.elements.length === 0 && (
-                    <Text type="secondary" style={{ fontSize: 11, display: "block", padding: "4px 0" }}>
+                    <Text type="secondary" style={{ fontSize: 12, display: "block", padding: "4px 0" }}>
                       {t("builder.noQuestions")}
                     </Text>
                   )}
@@ -358,7 +358,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                       onClick={() => setSelectedQIdx(qi)}
                     >
                       <Space size={4}>
-                        <Text code style={{ fontSize: 10 }}>{q.name}</Text>
+                        <Text code style={{ fontSize: 12 }}>{q.name}</Text>
                         <Text ellipsis style={{ maxWidth: 100, fontSize: 12 }}>
                           {q.title || t("builder.untitled")}
                         </Text>
@@ -532,7 +532,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
           value={importJson}
           onChange={(e) => setImportJson(e.target.value)}
           placeholder={t("builder.importPlaceholder")}
-          style={{ fontFamily: "monospace", fontSize: 12 }}
+          style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}
         />
       </Modal>
     </Layout>

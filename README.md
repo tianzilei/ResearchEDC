@@ -1,13 +1,15 @@
-# ResearchEDC
+# ResearchEDF
 
-**版本:** 3.18-SNAPSHOT  
-**最后更新:** 2026-05-25  
+**版本:** 0.1  
+**最后更新:** 2026-05-26  
 **JSP 迁移进度:** 225/419 (54%) — 194 页通过 LegacyFrame 向后兼容  
 **许可证:** GNU LGPL
 
 ResearchEDC is an independently maintained research electronic data capture and clinical research data management platform derived from OpenClinica v3.x.
 
 该项目专注于研究者发起的临床研究，支持电子病例报告表、受试者管理、研究工作流、数据导出以及未来扩展的随机化、问卷集成、针刺临床试验工作流和神经生理数据元数据管理。
+
+> ⚠️ **免责声明：** 本项目的源代码按"原样"提供，仅供学习和研究参考。**这是一个实验性项目，不适用于实际生产环境。** 任何直接或间接使用本项目代码、构建产物或部署实例所导致的任何损失，包括但不限于数据丢失、系统故障、法律合规风险及其他任何形式的损害，项目贡献者及维护者均不承担任何责任。使用者应自行评估风险并承担全部责任。
 
 ---
 

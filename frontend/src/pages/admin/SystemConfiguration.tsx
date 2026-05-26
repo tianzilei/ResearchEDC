@@ -57,7 +57,7 @@ export default function SystemConfiguration() {
           <Card>
             <Statistic
               title="版本"
-              value={buildInfo?.version ?? "3.18-SNAPSHOT"}
+              value={buildInfo?.version ?? "0.1"}
               prefix={undefined}
             />
           </Card>
@@ -76,8 +76,8 @@ export default function SystemConfiguration() {
 
       <Card title="应用信息" style={{ marginBottom: 16 }}>
         <Descriptions column={2} size="small" bordered>
-          <Descriptions.Item label="名称">{buildInfo?.name ?? "ResearchEDC"}</Descriptions.Item>
-          <Descriptions.Item label="版本">{buildInfo?.version ?? "3.18-SNAPSHOT"}</Descriptions.Item>
+          <Descriptions.Item label="名称">{buildInfo?.name ?? "ResearchEDF"}</Descriptions.Item>
+          <Descriptions.Item label="版本">{buildInfo?.version ?? "0.1"}</Descriptions.Item>
           <Descriptions.Item label="构建时间">{buildInfo?.time ?? "-"}</Descriptions.Item>
           <Descriptions.Item label="Java 版本">21</Descriptions.Item>
           <Descriptions.Item label="Spring Boot">3.2.5</Descriptions.Item>

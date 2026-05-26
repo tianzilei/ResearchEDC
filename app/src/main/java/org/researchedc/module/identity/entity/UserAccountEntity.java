@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "ModuleUserAccount")
-@Table(name = "module_user_account")
+@Table(name = "user_account")
 public class UserAccountEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-    @SequenceGenerator(name = "user_seq", sequenceName = "module_user_account_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "user_seq", sequenceName = "user_account_user_id_seq", allocationSize = 1)
     @Column(name = "user_id")
     private Integer userId;
 
@@ -37,7 +37,7 @@ public class UserAccountEntity {
     @Column(name = "status_id")
     private Integer statusId;
 
-    @Column(name = "active_study_id")
+    @Column(name = "active_study")
     private Integer activeStudyId;
 
     @Column

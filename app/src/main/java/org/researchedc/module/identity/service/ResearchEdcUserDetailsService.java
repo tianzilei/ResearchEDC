@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.researchedc.module.identity.entity.RoleEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.researchedc.module.identity.entity.UserAccountEntity;
 import org.researchedc.module.identity.repository.RoleRepository;
 import org.researchedc.module.identity.repository.UserAccountRepository;
@@ -21,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class ResearchEdcUserDetailsService implements UserDetailsService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ResearchEdcUserDetailsService.class);
 
     private final UserAccountRepository userAccountRepository;
     private final RoleRepository roleRepository;
@@ -45,11 +49,16 @@ public class ResearchEdcUserDetailsService implements UserDetailsService {
             throw new LockedException("Account locked");
         }
 
-        Collection<GrantedAuthority> authorities = roleRepository.findByUserName(username)
-                .stream()
-                .map(RoleEntity::getRoleName)
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
-                .collect(Collectors.toSet());
+        Collection<GrantedAuthority> authorities = new java.util.ArrayList<>();
+        try {
+            authorities = roleRepository.findByUserName(username)
+                    .stream()
+                    .map(RoleEntity::getRoleName)
+                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+                    .collect(Collectors.toSet());
+        } catch (Exception e) {
+            logger.warn("Failed to load roles for user {}: {}", username, e.getMessage());
+        }
 
         return new User(
                 user.getUserName(),

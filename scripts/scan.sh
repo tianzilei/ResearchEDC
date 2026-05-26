@@ -12,7 +12,7 @@ PROJECT_DIR="$(dirname "${SCRIPT_DIR}")"
 
 SCAN_TYPE="${1:-image}"  # image, filesystem, or sbom
 SEVERITY="${SEVERITY:-CRITICAL,HIGH}"
-TAG="${TAG:-3.18-SNAPSHOT}"
+TAG="${TAG:-0.1}"
 EXIT_ON_FINDING="${EXIT_ON_FINDING:-false}"
 
 echo "=== ResearchEDC Vulnerability Scan ==="

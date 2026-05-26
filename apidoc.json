@@ -1,6 +1,6 @@
 {
   "name": "ResearchEDC API",
-  "version": "3.18-SNAPSHOT",
+  "version": "0.1",
   "description": "The ResearchEDC REST API",
   "title": "The ResearchEDC REST API",
   "template": {

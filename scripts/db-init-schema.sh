@@ -1,8 +1,8 @@
 #!/bin/bash
 # =============================================================================
-# ResearchEDC — Database Schema Initialization
+# ResearchEDF — Database Schema Initialization
 #
-# Creates a fresh ResearchEDC database and applies Liquibase migrations.
+# Creates a fresh ResearchEDF database and applies Liquibase migrations.
 # Used for setting up a new development or test environment.
 # =============================================================================
 set -euo pipefail
@@ -19,7 +19,7 @@ if [ ! -f "${COMPOSE_FILE}" ]; then
     exit 1
 fi
 
-echo "=== ResearchEDC Database Initialization (${MODE}) ==="
+echo "=== ResearchEDF Database Initialization (${MODE}) ==="
 echo ""
 
 # Step 1: Start PostgreSQL
@@ -55,7 +55,7 @@ echo ""
 
 echo "=== Initialization Complete ==="
 echo ""
-echo "The database 'researchedc' now has the full ResearchEDC schema."
+echo "The database 'researchedc' now has the full ResearchEDF schema."
 echo "Next steps:"
 echo "  1. Access the application at http://localhost:8080"
 echo "  2. Default admin account: admin / (check Docker logs for generated password)"

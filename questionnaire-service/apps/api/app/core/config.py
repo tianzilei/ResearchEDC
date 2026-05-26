@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     # Database
     database_url: str = (
-        "postgresql+psycopg://researchedc:researchedc@localhost:5432/researchedc_questionnaire"
+        "postgresql+psycopg://researchedf:researchedf@localhost:5432/researchedf_questionnaire"
     )
     database_pool_size: int = 10
     database_max_overflow: int = 20
@@ -36,8 +36,8 @@ class Settings(BaseSettings):
 
     # Keycloak
     keycloak_url: str = "http://localhost:8080/auth"
-    keycloak_realm: str = "researchedc"
-    keycloak_client_id: str = "researchedc-frontend"
+    keycloak_realm: str = "researchedf"
+    keycloak_client_id: str = "researchedf-frontend"
 
     # CORS
     cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]

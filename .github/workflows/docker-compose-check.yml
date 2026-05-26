@@ -41,7 +41,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.29.0
         with:
-          image-ref: researchedc-app:latest
+          image-ref: researchedf-app:latest
           format: table
           exit-code: "1"
           severity: CRITICAL,HIGH

@@ -25,7 +25,7 @@ export default function PageHeader({ title, subtitle, actions, className }: Page
 export function PageHeaderStat({ label, value }: { label: string; value: string | number }) {
   return (
     <div style={{ textAlign: "center" }}>
-      <div className="number-display" style={{ fontSize: 20, fontWeight: 600, color: "var(--text)" }}>{value}</div>
+      <div className="number-display" style={{ fontSize: 24, fontWeight: 600, color: "var(--text)" }}>{value}</div>
       <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{label}</div>
     </div>
   );

@@ -105,17 +105,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (!response.ok) {
         setLoginLoading(false);
-        throw new Error("Invalid username or password, or account temporarily unavailable.");
+        throw new Error("用户名或密码错误，或账户暂时不可用。");
       }
 
       const userInfo = await fetchCurrentUser();
       if (userInfo) {
         setUser(userInfo);
       } else {
-        throw new Error("Failed to retrieve user information.");
+        throw new Error("无法获取用户信息。");
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Login failed";
+      const message = err instanceof Error ? err.message : "登录失败";
       setLoginError(message);
       throw err;
     } finally {

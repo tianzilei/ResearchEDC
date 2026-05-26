@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>research-edc-shared</artifactId>
     <packaging>jar</packaging>
-    <name>ResearchEDC Shared</name>
+    <name>ResearchEDF Shared</name>
     <parent>
         <groupId>org.researchedc</groupId>
         <artifactId>research-edc</artifactId>
-        <version>3.18-SNAPSHOT</version>
+        <version>0.1</version>
     </parent>
 
     <properties>

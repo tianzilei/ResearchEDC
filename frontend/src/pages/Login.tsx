@@ -65,7 +65,7 @@ export default function Login() {
                 color: "var(--text)",
               }}
             >
-              ResearchEDC
+              ResearchEDF
             </Title>
             <Text
               style={{

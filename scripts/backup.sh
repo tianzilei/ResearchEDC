@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# ResearchEDC — Database & Files Backup
+# ResearchEDF — Database & Files Backup
 #
 # Creates a timestamped backup of PostgreSQL database and application data.
 # Supports local and S3 (via aws cli) destinations.
@@ -35,7 +35,7 @@ DB_USER="${POSTGRES_USER:-researchedc}"
 DB_NAME="${POSTGRES_DB:-researchedc}"
 DATA_VOLUME="oc-prod-data"
 
-echo "=== ResearchEDC Backup (${TIMESTAMP}) ==="
+echo "=== ResearchEDF Backup (${TIMESTAMP}) ==="
 echo "  Mode:      ${MODE}"
 echo "  Backup dir: ${BACKUP_DIR}"
 echo ""

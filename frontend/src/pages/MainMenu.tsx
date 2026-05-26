@@ -49,12 +49,12 @@ function AuthenticatedMenu() {
           <span
             style={{
               color: "var(--header-text)",
-              fontSize: 18,
-              fontWeight: 500,
-              letterSpacing: "0.04em",
+              fontSize: 15,
+              fontWeight: 600,
+              letterSpacing: "0.02em",
             }}
           >
-            ResearchEDC
+            ResearchEDF
           </span>
         </Space>
       </div>
@@ -118,7 +118,7 @@ function AuthenticatedMenu() {
                   }}
                   styles={{ body: { padding: 20 } }}
                 >
-                  <div style={{ fontWeight: 600, fontSize: 15, color: "var(--header-text)" }}>
+                  <div style={{ fontWeight: 600, fontSize: 16, color: "var(--text)" }}>
                     {item.label}
                   </div>
                 </Card>
@@ -140,7 +140,7 @@ function AuthenticatedMenu() {
             fontSize: 12,
           }}
         >
-          ResearchEDC — 临床研究数据管理平台
+          ResearchEDF — 临床研究数据管理平台
         </Text>
       </div>
     </div>

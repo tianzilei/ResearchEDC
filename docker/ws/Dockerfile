@@ -1,5 +1,5 @@
 # =============================================================================
-# ResearchEDC Web Services — Multi-stage Docker Build
+# ResearchEDF Web Services — Multi-stage Docker Build
 # Stage 1: Build WAR with Maven
 # Stage 2: Deploy WAR to Tomcat 10.1 + JDK 21
 # =============================================================================
@@ -12,6 +12,7 @@ WORKDIR /build
 
 # Copy parent POM first for dependency caching
 COPY pom.xml ./
+COPY research-edc-bom/pom.xml ./research-edc-bom/
 COPY shared/pom.xml ./shared/
 COPY web/pom.xml ./web/
 COPY ws/pom.xml ./ws/
@@ -35,8 +36,8 @@ RUN mvn clean package -DskipTests -pl ws -am
 # =============================================================================
 FROM tomcat:10.1-jdk21-temurin
 
-LABEL org.opencontainers.image.title="ResearchEDC" \
-      org.opencontainers.image.description="ResearchEDC Web Services — SOAP Web Services (Tomcat 10.1 + JDK 21)"
+LABEL org.opencontainers.image.title="ResearchEDF" \
+      org.opencontainers.image.description="ResearchEDF Web Services — SOAP Web Services (Tomcat 10.1 + JDK 21)"
 
 # Remove default webapps
 RUN rm -rf /usr/local/tomcat/webapps/*

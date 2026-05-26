@@ -32,7 +32,7 @@
   	<file>
   		<source>${project.build.directory}/${project.build.finalName}.war</source>
   		<outputDirectory>distribution</outputDirectory>
-  		<destName>OpenClinica.war</destName>
+  		<destName>ResearchEDF.war</destName>
   	</file>
   </files>
 </assembly>

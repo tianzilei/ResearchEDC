@@ -14,7 +14,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "${SCRIPT_DIR}")"
 
 PUSH=false
-TAG="${TAG:-3.18-SNAPSHOT}"
+TAG="${TAG:-0.1}"
 PLATFORM="${PLATFORM:-linux/amd64}"
 
 while [[ $# -gt 0 ]]; do
@@ -33,44 +33,44 @@ echo "  Push:     $([ "${PUSH}" = true ] && echo 'YES' || echo 'no')"
 echo ""
 
 # Build web image
-echo "Building researchedc-web:${TAG}..."
+echo "Building researchedf-web:${TAG}..."
 DOCKER_BUILDKIT=1 docker build \
     --platform "${PLATFORM}" \
-    -t "researchedc-web:${TAG}" \
+    -t "researchedf-web:${TAG}" \
     -f "${PROJECT_DIR}/docker/web/Dockerfile" \
     "${PROJECT_DIR}"
 
 # Tag as latest if not already
 if [ "${TAG}" != "latest" ]; then
-    docker tag "researchedc-web:${TAG}" "researchedc-web:latest"
+    docker tag "researchedf-web:${TAG}" "researchedf-web:latest"
 fi
 echo ""
 
 # Build ws image
-echo "Building researchedc-ws:${TAG}..."
+echo "Building researchedf-ws:${TAG}..."
 DOCKER_BUILDKIT=1 docker build \
     --platform "${PLATFORM}" \
-    -t "researchedc-ws:${TAG}" \
+    -t "researchedf-ws:${TAG}" \
     -f "${PROJECT_DIR}/docker/ws/Dockerfile" \
     "${PROJECT_DIR}"
 
 if [ "${TAG}" != "latest" ]; then
-    docker tag "researchedc-ws:${TAG}" "researchedc-ws:latest"
+    docker tag "researchedf-ws:${TAG}" "researchedf-ws:latest"
 fi
 echo ""
 
 # Push to registry (if --push)
 if [ "${PUSH}" = true ]; then
     echo "Pushing images..."
-    docker push "researchedc-web:${TAG}"
-    docker push "researchedc-ws:${TAG}"
+    docker push "researchedf-web:${TAG}"
+    docker push "researchedf-ws:${TAG}"
     if [ "${TAG}" != "latest" ]; then
-        docker push "researchedc-web:latest"
-        docker push "researchedc-ws:latest"
+        docker push "researchedf-web:latest"
+        docker push "researchedf-ws:latest"
     fi
 fi
 
 echo "=== Docker Build Complete ==="
-docker images --filter=reference='researchedc-*' --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}"
+docker images --filter=reference='researchedf-*' --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}"
 echo ""
 echo "Next: bash scripts/smoke-test.sh"

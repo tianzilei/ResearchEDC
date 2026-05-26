@@ -1,13 +1,13 @@
 #!/bin/bash
 # =============================================================================
-# ResearchEDC — Hibernate Schema Validation
+# ResearchEDF — Hibernate Schema Validation
 #
 # Validates that Hibernate entity mappings match the actual database schema
 # using hibernate.hbm2ddl.auto=validate in a Docker environment.
 #
 # Prerequisites:
 #   - Docker and docker-compose installed
-#   - A PostgreSQL instance with ResearchEDC schema (or use the compose setup)
+#   - A PostgreSQL instance with ResearchEDF schema (or use the compose setup)
 # =============================================================================
 set -euo pipefail
 
@@ -15,7 +15,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "${SCRIPT_DIR}")"
 COMPOSE_FILE="${PROJECT_DIR}/deploy/compose/docker-compose.dev.yml"
 
-echo "=== ResearchEDC Hibernate Schema Validation ==="
+echo "=== ResearchEDF Hibernate Schema Validation ==="
 echo ""
 
 # Ensure Docker is available

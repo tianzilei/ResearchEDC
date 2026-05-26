@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# ResearchEDC — Docker Compose Smoke Test
+# ResearchEDF — Docker Compose Smoke Test
 #
 # Starts the application stack and verifies endpoints respond correctly.
 # Designed to run as a non-interactive validation step.
@@ -27,7 +27,7 @@ check() {
     fi
 }
 
-echo "=== ResearchEDC Smoke Test ==="
+echo "=== ResearchEDF Smoke Test ==="
 echo ""
 
 # Ensure stack is running

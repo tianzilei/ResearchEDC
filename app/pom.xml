@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>research-edc-app</artifactId>
     <packaging>war</packaging>
-    <name>ResearchEDC Spring Boot Application</name>
+    <name>ResearchEDF Spring Boot Application</name>
     <description>Spring Boot modular monolith combining web + ws modules</description>
     <parent>
         <groupId>org.researchedc</groupId>
         <artifactId>research-edc</artifactId>
-        <version>3.18-SNAPSHOT</version>
+        <version>0.1</version>
     </parent>
 
     <dependencyManagement>
@@ -199,7 +199,7 @@
     </dependencies>
 
     <build>
-        <finalName>OpenClinica</finalName>
+        <finalName>ResearchEDF</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

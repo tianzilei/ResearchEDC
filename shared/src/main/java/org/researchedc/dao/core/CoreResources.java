@@ -134,7 +134,16 @@ public class CoreResources implements ResourceLoaderAware {
         try {
             // setPROPERTIES_DIR(resourceLoader);
             // @pgawade 18-April-2011 Fix for issue 8394
-            webapp = getWebAppName(resourceLoader.getResource("/").getURI().getPath());
+            try {
+                String path = resourceLoader.getResource("/").getURI().getPath();
+                webapp = getWebAppName(path);
+            } catch (Exception e) {
+                // Embedded mode: resource loader returns null path, default to ROOT
+                webapp = "ROOT";
+            }
+            if (webapp == null) {
+                webapp = "ROOT";
+            }
             getPropertiesSource();
 
             String filePath = "$catalina.home/$WEBAPP.lower.config";
@@ -152,6 +161,30 @@ public class CoreResources implements ResourceLoaderAware {
                 dataInfo = OC_dataDataInfoProperties;
             if (OC_dataExtractProperties != null)
                 extractInfo = OC_dataExtractProperties;
+
+            // Fallback: load from classpath for embedded mode where catalina.home is a temp dir
+            if (dataInfo == null) {
+                try {
+                    Resource r = resourceLoader.getResource("classpath:datainfo.properties");
+                    if (r.exists()) {
+                        dataInfo = new Properties();
+                        dataInfo.load(r.getInputStream());
+                    }
+                } catch (Exception e) {
+                    // Classpath fallback failed, will error downstream
+                }
+            }
+            if (extractInfo == null) {
+                try {
+                    Resource r = resourceLoader.getResource("classpath:extract.properties");
+                    if (r.exists()) {
+                        extractInfo = new Properties();
+                        extractInfo.load(r.getInputStream());
+                    }
+                } catch (Exception e) {
+                    // Classpath fallback failed, will error downstream
+                }
+            }
 
             String dbName = dataInfo.getProperty("dbType");
 
@@ -401,31 +434,7 @@ public class CoreResources implements ResourceLoaderAware {
     }
 
     private void setMailProps() {
-
-        DATAINFO.setProperty("mail.host", DATAINFO.getProperty("mailHost"));
-        DATAINFO.setProperty("mail.port", DATAINFO.getProperty("mailPort"));
-        DATAINFO.setProperty("mail.protocol", DATAINFO.getProperty("mailProtocol"));
-        DATAINFO.setProperty("mail.username", DATAINFO.getProperty("mailUsername"));
-        DATAINFO.setProperty("mail.password", DATAINFO.getProperty("mailPassword"));
-        DATAINFO.setProperty("mail.smtp.auth", DATAINFO.getProperty("mailSmtpAuth"));
-        DATAINFO.setProperty("mail.smtp.starttls.enable", DATAINFO.getProperty("mailSmtpStarttls.enable"));
-        DATAINFO.setProperty("mail.smtps.auth", DATAINFO.getProperty("mailSmtpsAuth"));
-        DATAINFO.setProperty("mail.smtps.starttls.enable", DATAINFO.getProperty("mailSmtpsStarttls.enable"));
-        DATAINFO.setProperty("mail.smtp.connectiontimeout", DATAINFO.getProperty("mailSmtpConnectionTimeout"));
-        /**
-         * As Microsoft are currently deprecating TLS versions 1.0 and 1.1
-         * set default value
-         */
-        if(DATAINFO.getProperty("mailSmtpStarttls.required") != null) {
-        	DATAINFO.setProperty("mail.smtp.starttls.required", DATAINFO.getProperty("mailSmtpStarttls.required"));
-        }
-        
-        if(DATAINFO.getProperty("mailSmtpSslProtocols") != null) {
-        	DATAINFO.setProperty("mail.smtp.ssl.protocols", DATAINFO.getProperty("mailSmtpSslProtocols"));
-        }
-        
-        DATAINFO.setProperty("mail.errormsg", DATAINFO.getProperty("mailErrorMsg"));
-
+        // Mail service disabled — no configuration needed
     }
 
     private void setRuleDesignerProps() {
@@ -881,18 +890,10 @@ public class CoreResources implements ResourceLoaderAware {
      *          location during application initialization
      */
     public void setODM_MAPPING_DIR() {
-        String resource = "classpath:datainfo.properties";
-
-        Resource scr = resourceLoader.getResource(resource);
-        String absolutePath = null;
         try {
-
-            absolutePath = scr.getFile().getAbsolutePath();
-
             ODM_MAPPING_DIR = getField("filePath");
-            // System.out.println("ODM_MAPPING_DIR: " + ODM_MAPPING_DIR);
-        } catch (IOException e) {
-            throw new OpenClinicaSystemException(e.getMessage(), e.fillInStackTrace());
+        } catch (Exception e) {
+            // In embedded mode, file path resolution may fail silently
         }
     }
 

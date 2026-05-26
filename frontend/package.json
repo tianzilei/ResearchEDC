@@ -1,6 +1,6 @@
 {
-  "name": "research-edc-frontend",
-  "version": "3.18.0",
+  "name": "research-edf-frontend",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {

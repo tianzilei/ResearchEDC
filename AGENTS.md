@@ -196,7 +196,7 @@ python -m pytest app/tests/ -v
 - **Security:** Spring Security form login (Session Cookie + CSRF); Legacy Spring Security for JSP
 - **Routing:** `/app/*` -> React SPA, `/legacy/*` -> JSP, `/q/*` -> questionnaire, `/api/*` -> REST
 - **Modulith:** Only `org.researchedc.module.*` is verified; `shared/` packages are excluded
-- **Version:** 3.18-SNAPSHOT
+- **Version:** 0.1
 - **legacy-core → shared:** `legacy-core/` was removed on 2026-05-23. All code consolidated into `shared/` module with `@Repository`/`@Service` annotations and package rename to `org.researchedc`.
 - **Frontend TypeScript:** Currently 0 errors (after session auth migration).
 - **DAO deletion blocked:** ~1,100 `DaoProvider.getDao()` call sites in `web/`/`ws/` still reference concrete DAO classes by name. Migration to `@Autowired` SPI interfaces is the next major refactoring step.

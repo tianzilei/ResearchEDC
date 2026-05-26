@@ -3,7 +3,7 @@ package org.researchedc.module.identity.entity;
 import jakarta.persistence.*;
 
 @Entity(name = "ModuleStudyUserRole")
-@Table(name = "module_study_user_role")
+@Table(name = "study_user_role")
 public class RoleEntity {
 
     @Id

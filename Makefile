@@ -1,5 +1,5 @@
 # ============================================================================
-# ResearchEDC — Makefile
+# ResearchEDF — Makefile
 #
 # Common development and deployment commands.
 # Usage: make <target>
@@ -12,7 +12,7 @@ SHELL := /bin/bash
 COMPOSE_DEV   := deploy/compose/docker-compose.dev.yml
 COMPOSE_TEST  := deploy/compose/docker-compose.test.yml
 COMPOSE_PROD  := deploy/compose/docker-compose.prod.yml
-TAG           ?= 3.18-SNAPSHOT
+TAG           ?= 0.1
 
 .PHONY: help build docker-build smoke-test test scan \
         up-dev down-dev up-test down-test \
@@ -95,7 +95,7 @@ shell: ## Open shell in web container
 	docker compose -f $(COMPOSE_DEV) exec web bash
 
 psql: ## Open PostgreSQL shell
-	docker compose -f $(COMPOSE_DEV) exec postgres psql -U researchedc -d researchedc
+	docker compose -f $(COMPOSE_DEV) exec postgres psql -U researchedf -d researchedf
 
 clean: ## Remove all build artifacts
 	rm -rf legacy-core/target web/target ws/target

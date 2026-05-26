@@ -74,7 +74,7 @@ export default function QuestionnaireMyTasks() {
       <Card size="small" style={{ marginBottom: 24 }}>
         <Space style={{ width: "100%", justifyContent: "space-around" }}>
           <div style={{ textAlign: "center" }}>
-            <Text style={{ fontSize: 24, fontWeight: 600, color: "#1890ff" }}>
+            <Text style={{ fontSize: 24, fontWeight: 600, color: "var(--warning)" }}>
               {pendingTasks.length}
             </Text>
             <div>
@@ -82,7 +82,7 @@ export default function QuestionnaireMyTasks() {
             </div>
           </div>
           <div style={{ textAlign: "center" }}>
-            <Text style={{ fontSize: 24, fontWeight: 600, color: "#52c41a" }}>
+            <Text style={{ fontSize: 24, fontWeight: 600, color: "var(--success)" }}>
               {completed}
             </Text>
             <div>

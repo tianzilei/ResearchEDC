@@ -175,7 +175,7 @@ export default function QuestionnaireVersionEditor() {
       dataIndex: "schema_hash",
       key: "schema_hash",
       render: (h: string) => (
-        <Text copyable style={{ fontSize: 11, fontFamily: "monospace" }}>
+        <Text copyable style={{ fontSize: 12, fontFamily: "var(--font-mono)" }}>
           {h.slice(0, 12)}...
         </Text>
       ),
@@ -307,7 +307,7 @@ export default function QuestionnaireVersionEditor() {
                       value={surveyJson}
                       onChange={(e) => setSurveyJson(e.target.value)}
                       placeholder={t("version.form.jsonPlaceholder")}
-                      style={{ fontFamily: "monospace", fontSize: 12 }}
+                      style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}
                     />
                   ),
                 },

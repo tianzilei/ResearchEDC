@@ -1,7 +1,7 @@
 # ResearchEDC 修改记录
 
 **项目:** ResearchEDC — 基于 OpenClinica v3.x 的科研电子数据采集平台  
-**基础版本:** 3.18-SNAPSHOT (基于 3.14)  
+**基础版本:** 0.1 (基于 3.14)  
 **许可证:** GNU LGPL 
 
 ---

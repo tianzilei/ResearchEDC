@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>research-edc-ws</artifactId>
     <packaging>war</packaging>
-    <name>ResearchEDC Web Services</name>
+    <name>ResearchEDF Web Services</name>
     <parent>
         <groupId>org.researchedc</groupId>
         <artifactId>research-edc</artifactId>
-        <version>3.18-SNAPSHOT</version>
+        <version>0.1</version>
     </parent>
 
     <dependencies>

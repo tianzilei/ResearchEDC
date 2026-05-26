@@ -82,7 +82,7 @@ export default function Instructions() {
         <Space style={{ marginBottom: 16 }}>
           <Title level={4} style={{ margin: 0 }}>{instruction.title}</Title>
         </Space>
-        <Paragraph style={{ fontSize: 15, lineHeight: 1.8, whiteSpace: "pre-line" }}>
+        <Paragraph style={{ fontSize: 14, lineHeight: 1.6, whiteSpace: "pre-line" }}>
           {instruction.content}
         </Paragraph>
         <Button onClick={() => window.history.back()}>

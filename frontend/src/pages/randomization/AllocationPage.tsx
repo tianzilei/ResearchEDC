@@ -54,7 +54,7 @@ export default function AllocationPage() {
         content: (
           <div>
             <p>{t("allocation.assignedTo")} <strong>#{subjectId}</strong>:</p>
-            <Tag color="blue" style={{ fontSize: 16, padding: "4px 12px" }}>{result.armName}</Tag>
+            <Tag color="blue" style={{ padding: "4px 12px" }}>{result.armName}</Tag>
           </div>
         ),
       });

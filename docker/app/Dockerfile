@@ -1,5 +1,5 @@
 # =============================================================================
-# ResearchEDC App (Spring Boot + React SPA) — Multi-stage Docker Build
+# ResearchEDF App (Spring Boot + React SPA) — Multi-stage Docker Build
 # Stage 1: Build frontend (pnpm)
 # Stage 2: Build WAR with Maven
 # Stage 3: Deploy WAR to Tomcat 10.1 + JDK 21
@@ -24,6 +24,7 @@ WORKDIR /build
 
 # Copy parent POM first for dependency caching
 COPY pom.xml ./
+COPY research-edc-bom/pom.xml ./research-edc-bom/
 COPY shared/pom.xml ./shared/
 COPY web/pom.xml ./web/
 COPY ws/pom.xml ./ws/
@@ -41,7 +42,7 @@ COPY shared/ ./shared/
 COPY app/ ./app/
 
 # Copy frontend build output into app's static resources
-COPY --from=frontend-build /build/app/src/main/resources/static/ ./app/src/main/resources/static/
+COPY --from=frontend-build /build/frontend/dist/ ./app/src/main/resources/static/
 
 # Build the WAR (skip tests)
 RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests -pl app -am
@@ -50,8 +51,8 @@ RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests -pl app -a
 # =============================================================================
 FROM tomcat:10.1-jdk21-temurin
 
-LABEL org.opencontainers.image.title="ResearchEDC" \
-      org.opencontainers.image.description="ResearchEDC App — Spring Boot + React SPA"
+LABEL org.opencontainers.image.title="ResearchEDF" \
+      org.opencontainers.image.description="ResearchEDF App — Spring Boot + React SPA"
 
 # Remove default webapps
 RUN rm -rf /usr/local/tomcat/webapps/*

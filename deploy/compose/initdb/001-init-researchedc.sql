@@ -1,5 +1,5 @@
 -- =============================================================================
--- ResearchEDC — PostgreSQL Initial Schema
+-- ResearchEDF — PostgreSQL Initial Schema
 --
 -- This script runs on first container startup (PostgreSQL initdb).
 -- It creates the minimal schema objects needed for Liquibase to run.
@@ -9,7 +9,7 @@
 --   1. Place the dump file at ./initdb/researchedc_dump.sql
 --   2. It will auto-execute if named *.sql or *.sql.gz
 --   3. Or restore manually:
---      docker exec -i oc-postgres psql -U researchedc -d researchedc < dump.sql
+--      docker exec -i oc-postgres psql -U researchedf -d researchedf < dump.sql
 -- =============================================================================
 
 -- Liquibase tracking tables are created by Liquibase itself.

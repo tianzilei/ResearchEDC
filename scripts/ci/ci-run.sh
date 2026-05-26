@@ -2,7 +2,7 @@
 set -euo pipefail
 FAILED=0
 echo "============================================"
-echo " ResearchEDC CI - Full Modernisation Check"
+echo " ResearchEDF CI - Full Modernisation Check"
 echo "============================================"
 
 echo ""

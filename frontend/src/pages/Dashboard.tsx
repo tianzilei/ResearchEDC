@@ -51,7 +51,7 @@ function ModuleCard({ mod }: { mod: ModuleInfo }) {
             color: "var(--text-secondary)",
             fontSize: 12,
             marginTop: 4,
-            lineHeight: 1.4,
+            lineHeight: 1.5,
           }}
         >
           {mod.description}
@@ -179,7 +179,7 @@ export default function Dashboard() {
             style={{
               margin: "0 0 12px",
               fontWeight: 600,
-              fontSize: 15,
+              fontSize: 16,
               color: "var(--text)",
             }}
           >
@@ -199,7 +199,7 @@ export default function Dashboard() {
           style={{
             margin: "0 0 12px",
             fontWeight: 600,
-            fontSize: 15,
+            fontSize: 16,
             color: "var(--text)",
           }}
         >
@@ -317,7 +317,7 @@ export default function Dashboard() {
         <Col xs={24} lg={16}>
           <Card
             title={
-              <span style={{ fontSize: 15, fontWeight: 600, color: "var(--text)" }}>
+              <span style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>
                 {t("dashboard.recentActivity")}
               </span>
             }
@@ -350,7 +350,7 @@ export default function Dashboard() {
                     style={{
                       fontSize: 13,
                       color: "var(--text)",
-                      lineHeight: 1.4,
+                      lineHeight: 1.5,
                       flex: 1,
                     }}
                   >
@@ -358,7 +358,7 @@ export default function Dashboard() {
                   </span>
                   <span
                     style={{
-                      fontSize: 11,
+                      fontSize: 12,
                       color: "var(--text-muted)",
                       whiteSpace: "nowrap",
                       marginLeft: 12,
@@ -388,7 +388,7 @@ export default function Dashboard() {
         <Col xs={24} lg={8}>
           <Card
             title={
-              <span style={{ fontSize: 15, fontWeight: 600, color: "var(--text)" }}>
+              <span style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>
                 {t("dashboard.systemStatus")}
               </span>
             }

@@ -465,7 +465,8 @@ function StepReview({ values }: { values: StudyFormValues }) {
             <Text
               strong
               style={{
-                fontSize: 14,
+                fontSize: 16,
+                fontWeight: 600,
                 color: "var(--text)",
                 display: "block",
                 marginBottom: 8,
@@ -700,7 +701,7 @@ export default function StudyWizard() {
               <Text
                 strong
                 style={{
-                  fontSize: 17,
+                  fontSize: 18,
                   color: "var(--text)",
                 }}
               >

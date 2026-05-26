@@ -5,7 +5,7 @@ services:
       - "8000:8000"
     env_file: ../apps/api/.env
     environment:
-      - DATABASE_URL=postgresql+psycopg://researchedc:researchedc@postgres:5432/researchedc_questionnaire
+      - DATABASE_URL=postgresql+psycopg://researchedf:researchedf@postgres:5432/researchedf_questionnaire
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=dev-secret-key-change-in-production
       - CORS_ORIGINS=["http://localhost:3000"]
@@ -23,7 +23,7 @@ services:
     build: ../apps/api
     env_file: ../apps/api/.env
     environment:
-      - DATABASE_URL=postgresql+psycopg://researchedc:researchedc@postgres:5432/researchedc_questionnaire
+      - DATABASE_URL=postgresql+psycopg://researchedf:researchedf@postgres:5432/researchedf_questionnaire
       - REDIS_URL=redis://redis:6379/0
     depends_on:
       postgres:
@@ -35,15 +35,15 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: researchedc
-      POSTGRES_PASSWORD: researchedc
-      POSTGRES_DB: researchedc_questionnaire
+      POSTGRES_USER: researchedf
+      POSTGRES_PASSWORD: researchedf
+      POSTGRES_DB: researchedf_questionnaire
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U researchedc -d researchedc_questionnaire"]
+      test: ["CMD-SHELL", "pg_isready -U researchedf -d researchedf_questionnaire"]
       interval: 5s
       timeout: 5s
       retries: 5
