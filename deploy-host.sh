@@ -45,6 +45,10 @@ cmd_build() {
     pnpm build
     cd "${PROJECT_DIR}"
 
+    log_info "Copying frontend to app resources..."
+    mkdir -p app/src/main/resources/static
+    cp -r frontend/dist/* app/src/main/resources/static/
+
     log_info "Building backend WAR..."
     mvn clean package -DskipTests -pl app -am
 
