@@ -111,7 +111,7 @@ public class StudySubjectEndpoint {
         this.subjectService = subjectService;
         this.dataSource = dataSource;
         this.messages = messages;
-        this.locale = new Locale("en_US");
+        this.locale = Locale.of("en_US");
     }
 
     /**
@@ -161,7 +161,7 @@ public class StudySubjectEndpoint {
     @PayloadRoot(localPart = "listAllByStudyRequest", namespace = NAMESPACE_URI_V1)
     public ListAllByStudyResponse listStudySubjectsInStudy(JAXBElement<ListStudySubjectsInStudyType> requestElement) throws Exception {
         try {
-            ResourceBundleProvider.updateLocale(new Locale("en_US"));
+            ResourceBundleProvider.updateLocale(Locale.of("en_US"));
             ListStudySubjectsInStudyType listStudySubjectsInStudyType = requestElement.getValue();
             StudyBean study = null;
             try {

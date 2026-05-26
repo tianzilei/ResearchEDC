@@ -66,7 +66,7 @@ public class StudyEndpoint {
     		CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao) {
         this.dataSource = dataSource;
         this.messages = messages;
-        this.locale = new Locale("en_US");
+        this.locale = Locale.of("en_US");
         this.coreResources = coreResources;
         this.ruleSetRuleDao = ruleSetRuleDao;
         
@@ -80,7 +80,7 @@ public class StudyEndpoint {
      */
     @PayloadRoot(localPart = "getMetadataRequest", namespace = NAMESPACE_URI_V1)
     public Source getStudyMetadata(@XPathParam("//study:studyMetadata") NodeList studyNodeList) throws Exception {
-        ResourceBundleProvider.updateLocale(new Locale("en_US"));
+        ResourceBundleProvider.updateLocale(Locale.of("en_US"));
         Element studyRefElement = (Element) studyNodeList.item(0);
 
         //StudyMetadataRequestBean studyMetadataRequestBean = unMarshallRequest(studyRefElement);
@@ -199,7 +199,7 @@ public class StudyEndpoint {
      */
     @PayloadRoot(localPart = "listAllRequest", namespace = NAMESPACE_URI_V1)
     public Source getStudyList() throws Exception {
-        ResourceBundleProvider.updateLocale(new Locale("en_US"));
+        ResourceBundleProvider.updateLocale(Locale.of("en_US"));
         return new DOMSource(mapConfirmation(messages.getMessage("studyEndpoint.success", null, "Success", locale)));
     }
 

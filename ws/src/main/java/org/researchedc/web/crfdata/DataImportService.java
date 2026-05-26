@@ -79,13 +79,13 @@ public class DataImportService {
 
     public Locale getLocale() {
         if (locales == null)
-            locales = new Locale("en-US");
+            locales = Locale.of("en-US");
         return locales;
     }
 
     public void setLocale(Locale locale) {
         if (locale == null)
-            locale = new Locale("en-us");
+            locale = Locale.of("en-us");
         this.locales = locale;
     }
 
@@ -168,7 +168,7 @@ public class DataImportService {
             if (eventCRFStatus.equals(Status.AVAILABLE) || dataEntryStage.equals(DataEntryStage.INITIAL_DATA_ENTRY)
                     || dataEntryStage.equals(DataEntryStage.INITIAL_DATA_ENTRY_COMPLETE) || dataEntryStage.equals(DataEntryStage.DOUBLE_DATA_ENTRY_COMPLETE)
                     || dataEntryStage.equals(DataEntryStage.DOUBLE_DATA_ENTRY)) {
-                permittedEventCRFIds.add(new Integer(eventCRFBean.getId()));
+                permittedEventCRFIds.add(Integer.valueOf(eventCRFBean.getId()));
             } else {
                 errors.add(respage.getString("your_listed_crf_in_the_file") + " " + eventCRFBean.getEventName());
                 continue;
@@ -312,8 +312,8 @@ public class DataImportService {
                         }
                     }
 
-                    if (!eventCrfInts.contains(new Integer(eventCrfBean.getId()))) {
-                        String eventCRFStatus = importedCRFStatuses.get(new Integer(eventCrfBean.getId()));
+                    if (!eventCrfInts.contains(Integer.valueOf(eventCrfBean.getId()))) {
+                        String eventCRFStatus = importedCRFStatuses.get(Integer.valueOf(eventCrfBean.getId()));
 
                         if (eventCRFStatus != null && eventCRFStatus.equals(DataEntryStage.INITIAL_DATA_ENTRY.getName())
                                 && eventCrfBean.getStatus().isAvailable()) {
@@ -321,7 +321,7 @@ public class DataImportService {
                         } else {
                             crfBusinessLogicHelper.markCRFComplete(eventCrfBean, userBean, true);
                         }
-                        eventCrfInts.add(new Integer(eventCrfBean.getId()));
+                        eventCrfInts.add(Integer.valueOf(eventCrfBean.getId()));
                     }
                 }
                 // Reset the SDV status if item data has been changed or added

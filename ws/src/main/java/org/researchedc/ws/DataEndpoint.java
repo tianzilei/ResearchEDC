@@ -87,7 +87,7 @@ public class DataEndpoint {
         this.coreResources = coreResources;
         this.ruleSetService = getRuleSetService();
 
-        this.locale = new Locale("en_US");
+        this.locale = Locale.of("en_US");
     }
 
     /**
@@ -110,7 +110,7 @@ public class DataEndpoint {
     }
 
     protected Source importDataInTransaction(Element odmElement) throws Exception {
-        ResourceBundleProvider.updateLocale(new Locale("en_US"));
+        ResourceBundleProvider.updateLocale(Locale.of("en_US"));
 
         // logger.debug("rootElement=" + odmElement);
         LOG.debug("rootElement=" + odmElement);

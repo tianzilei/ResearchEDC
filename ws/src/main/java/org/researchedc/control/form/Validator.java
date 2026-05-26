@@ -713,8 +713,8 @@ public class Validator {
                 float lowerBound = v.getFloat(0);
                 float upperBound = v.getFloat(1);
                 errorMessage =
-                    resexception.getString("input_should_be_between") + new Float(lowerBound).intValue() + " " + resword.getString("and")
-                        + new Float(upperBound).intValue() + ".";
+                    resexception.getString("input_should_be_between") + Float.valueOf(lowerBound).intValue() + " " + resword.getString("and")
+                        + Float.valueOf(upperBound).intValue() + ".";
                 break;
             case IS_A_DATE:
                 errorMessage = resexception.getString("input_not_valid_date") + getDateRegEx().getDescription() + " " + resexception.getString("format1") + ".";
@@ -764,7 +764,7 @@ public class Validator {
             case COMPARES_TO_STATIC_VALUE:
                 NumericComparisonOperator operator = (NumericComparisonOperator) v.getArg(0);
                 float compareTo = v.getFloat(1);
-                errorMessage = resexception.getString("input_provided_is_not") + operator.getDescription() + " " + new Float(compareTo).intValue() + ".";
+                errorMessage = resexception.getString("input_provided_is_not") + operator.getDescription() + " " + Float.valueOf(compareTo).intValue() + ".";
                 break;
             case LENGTH_NUMERIC_COMPARISON:
                 NumericComparisonOperator operator2 = (NumericComparisonOperator) v.getArg(0);
@@ -1796,23 +1796,23 @@ public class Validator {
         ArrayList args;
 
         HashMap numArgsByFunction = new HashMap();
-        numArgsByFunction.put("range", new Integer(2));
-        numArgsByFunction.put("gt", new Integer(1));
-        numArgsByFunction.put("lt", new Integer(1));
-        numArgsByFunction.put("gte", new Integer(1));
-        numArgsByFunction.put("lte", new Integer(1));
-        numArgsByFunction.put("ne", new Integer(1));
-        numArgsByFunction.put("eq", new Integer(1));
-        numArgsByFunction.put("getExternalValue", new Integer(3));
+        numArgsByFunction.put("range", Integer.valueOf(2));
+        numArgsByFunction.put("gt", Integer.valueOf(1));
+        numArgsByFunction.put("lt", Integer.valueOf(1));
+        numArgsByFunction.put("gte", Integer.valueOf(1));
+        numArgsByFunction.put("lte", Integer.valueOf(1));
+        numArgsByFunction.put("ne", Integer.valueOf(1));
+        numArgsByFunction.put("eq", Integer.valueOf(1));
+        numArgsByFunction.put("getExternalValue", Integer.valueOf(3));
 
         HashMap valTypeByFunction = new HashMap();
-        valTypeByFunction.put("range", new Integer(Validator.IS_IN_RANGE));
-        valTypeByFunction.put("gt", new Integer(Validator.COMPARES_TO_STATIC_VALUE));
-        valTypeByFunction.put("lt", new Integer(Validator.COMPARES_TO_STATIC_VALUE));
-        valTypeByFunction.put("gte", new Integer(Validator.COMPARES_TO_STATIC_VALUE));
-        valTypeByFunction.put("lte", new Integer(Validator.COMPARES_TO_STATIC_VALUE));
-        valTypeByFunction.put("ne", new Integer(Validator.COMPARES_TO_STATIC_VALUE));
-        valTypeByFunction.put("eq", new Integer(Validator.COMPARES_TO_STATIC_VALUE));
+        valTypeByFunction.put("range", Integer.valueOf(Validator.IS_IN_RANGE));
+        valTypeByFunction.put("gt", Integer.valueOf(Validator.COMPARES_TO_STATIC_VALUE));
+        valTypeByFunction.put("lt", Integer.valueOf(Validator.COMPARES_TO_STATIC_VALUE));
+        valTypeByFunction.put("gte", Integer.valueOf(Validator.COMPARES_TO_STATIC_VALUE));
+        valTypeByFunction.put("lte", Integer.valueOf(Validator.COMPARES_TO_STATIC_VALUE));
+        valTypeByFunction.put("ne", Integer.valueOf(Validator.COMPARES_TO_STATIC_VALUE));
+        valTypeByFunction.put("eq", Integer.valueOf(Validator.COMPARES_TO_STATIC_VALUE));
 
         HashMap compareOpByFunction = new HashMap();
         compareOpByFunction.put("gt", NumericComparisonOperator.GREATER_THAN);

@@ -78,7 +78,7 @@ public class EventEndpoint {
         this.eventService = eventService;
         this.messages = messages;
         this.dataSource = dataSource;
-        this.locale = new Locale("en_US");
+        this.locale = Locale.of("en_US");
     }
 
     /**
@@ -105,7 +105,7 @@ public class EventEndpoint {
     }
 
     protected Source scheduleEventInTransaction(NodeList event) throws Exception {
-        ResourceBundleProvider.updateLocale(new Locale("en_US"));
+        ResourceBundleProvider.updateLocale(Locale.of("en_US"));
         Element eventElement = (Element) event.item(0);
         StudyEventTransferBean studyEventTransferBean = unMarshallToEventTransfer(eventElement);
 

@@ -66,7 +66,7 @@ public class StudyEventDefinitionEndpoint {
     public StudyEventDefinitionEndpoint(DataSource dataSource, MessageSource messages) {
         this.dataSource = dataSource;
         this.messages = messages;
-        this.locale = new Locale("en_US");
+        this.locale = Locale.of("en_US");
     }
 
     /**
@@ -77,7 +77,7 @@ public class StudyEventDefinitionEndpoint {
      */
     @PayloadRoot(localPart = "listAllRequest", namespace = NAMESPACE_URI_V1)
     public Source getStudyList(@XPathParam("//sed:studyEventDefinitionListAll") NodeList studyNodeList) throws Exception {
-        ResourceBundleProvider.updateLocale(new Locale("en_US"));
+        ResourceBundleProvider.updateLocale(Locale.of("en_US"));
         Element studyRefElement = (Element) studyNodeList.item(0);
 
        // StudyEventDefinitionRequestBean studyEventDefinitionRequestBean = unMarshallRequest(studyRefElement);

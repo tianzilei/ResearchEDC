@@ -210,7 +210,7 @@ public class ImportCRFDataService {
                         // below to prevent duplicates
 
                         for (EventCRFBean ecb : eventCrfBeans) {
-                            Integer ecbId = new Integer(ecb.getId());
+                            Integer ecbId = Integer.valueOf(ecb.getId());
 
                             if ((upsert.isDataEntryStarted() && ecb.getStage().equals(DataEntryStage.INITIAL_DATA_ENTRY))
                                     || (upsert.isDataEntryComplete() && ecb.getStage().equals(DataEntryStage.DOUBLE_DATA_ENTRY_COMPLETE)))
@@ -261,7 +261,7 @@ public class ImportCRFDataService {
                     for (CRFVersionBean crfVersionBean : crfVersionBeans) {
                         ArrayList<EventCRFBean> eventCrfBeans = eventCrfDAO.findByEventSubjectVersion(studyEventBean, studySubjectBean, crfVersionBean);
                         for (EventCRFBean ecb : eventCrfBeans) {
-                            Integer ecbId = new Integer(ecb.getId());
+                            Integer ecbId = Integer.valueOf(ecb.getId());
 
                             if (!importedCRFStatuses.keySet().contains(ecbId) && formDataBean.getEventCRFStatus() != null) {
                                 importedCRFStatuses.put(ecb.getId(), formDataBean.getEventCRFStatus());
@@ -341,7 +341,7 @@ public class ImportCRFDataService {
 
                 int ordinal = 1;
                 try {
-                    ordinal = new Integer(studyEventDataBean.getStudyEventRepeatKey()).intValue();
+                    ordinal = Integer.valueOf(studyEventDataBean.getStudyEventRepeatKey()).intValue();
                 } catch (Exception e) {
                     // trying to catch NPEs, because tags can be without the
                     // repeat key
@@ -392,7 +392,7 @@ public class ImportCRFDataService {
                     EventDefinitionCRFBean eventDefinitionCRF = eventDefinitionCRFDAO.findByStudyEventIdAndCRFVersionId(studyBean, studyEvent.getId(),
                             crfVersion.getId());
                     if (eventCRFBean != null) {
-                        if (permittedEventCRFIds.contains(new Integer(eventCRFBean.getId()))) {
+                        if (permittedEventCRFIds.contains(Integer.valueOf(eventCRFBean.getId()))) {
                             for (ImportItemGroupDataBean itemGroupDataBean : itemGroupDataBeans) {
                                 groupMaxOrdinals.put(itemGroupDataBean.getItemGroupOID(),1);
                             }
@@ -434,7 +434,7 @@ public class ImportCRFDataService {
                                         int groupOrdinal = 1;
                                         if (itemGroupDataBean.getItemGroupRepeatKey() != null) {
                                             try {
-                                                groupOrdinal = new Integer(itemGroupDataBean.getItemGroupRepeatKey()).intValue();
+                                                groupOrdinal = Integer.valueOf(itemGroupDataBean.getItemGroupRepeatKey()).intValue();
                                                 if (groupOrdinal > groupMaxOrdinals.get(itemGroupDataBean.getItemGroupOID())) {
                                                     groupMaxOrdinals.put(itemGroupDataBean.getItemGroupOID(),groupOrdinal);
                                                 }
@@ -701,7 +701,7 @@ public class ImportCRFDataService {
                         // below to prevent duplicates
 
                         for (EventCRFBean ecb : eventCrfBeans) {
-                            Integer ecbId = new Integer(ecb.getId());
+                            Integer ecbId = Integer.valueOf(ecb.getId());
                             if (!(ecb.getStage().equals(DataEntryStage.INITIAL_DATA_ENTRY) && upsert.isDataEntryStarted())
                                     && !(ecb.getStage().equals(DataEntryStage.DOUBLE_DATA_ENTRY_COMPLETE) && upsert.isDataEntryComplete()))
                                 return false;
@@ -776,7 +776,7 @@ public class ImportCRFDataService {
             // what if it's a number? should be only numbers
             else if (displayItemBean.getItem().getDataType().equals(ItemDataType.INTEGER)) {
                 try {
-                    Integer testInt = new Integer(displayItemBean.getData().getValue());
+                    Integer testInt = Integer.valueOf(displayItemBean.getData().getValue());
                     int width = Validator.parseWidth(widthDecimal);
                     if (width > 0 && displayItemBean.getData().getValue().length() > width) {
                         hardv.put(itemOid, "This value exceeds required width=" + width);
@@ -792,13 +792,13 @@ public class ImportCRFDataService {
             // what if it's a float? should be only numbers
             else if (displayItemBean.getItem().getDataType().equals(ItemDataType.REAL)) {
                 try {
-                    Float testFloat = new Float(displayItemBean.getData().getValue());
+                    Float testFloat = Float.valueOf(displayItemBean.getData().getValue());
                     int width = Validator.parseWidth(widthDecimal);
                     if (width > 0 && displayItemBean.getData().getValue().length() > width) {
                         hardv.put(itemOid, "This value exceeds required width=" + width);
                     }
                     int decimal = Validator.parseDecimal(widthDecimal);
-                    if (decimal > 0 && BigDecimal.valueOf(new Double(displayItemBean.getData().getValue()).doubleValue()).scale() > decimal) {
+                    if (decimal > 0 && BigDecimal.valueOf(Double.valueOf(displayItemBean.getData().getValue()).doubleValue()).scale() > decimal) {
                         hardv.put(itemOid, "This value exceeds required decimal=" + decimal);
                     }
                 } catch (Exception ee) {
@@ -821,7 +821,7 @@ public class ImportCRFDataService {
                 int decimal = Validator.parseDecimal(widthDecimal);
                 if (decimal > 0) {
                     try {
-                        Double d = new Double(displayItemBean.getData().getValue());
+                        Double d = Double.valueOf(displayItemBean.getData().getValue());
                         if (BigDecimal.valueOf(d).scale() > decimal) {
                             hardv.put(itemOid, "This value exceeds required decimal=" + decimal);
                         }

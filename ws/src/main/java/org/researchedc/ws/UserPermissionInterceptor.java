@@ -27,7 +27,7 @@ public class UserPermissionInterceptor implements EndpointInterceptor {
     }
 
     public boolean handleRequest(MessageContext messageContext, Object endpoint) throws Exception {
-        ResourceBundleProvider.updateLocale(new Locale("en_US"));
+        ResourceBundleProvider.updateLocale(Locale.of("en_US"));
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = null;
         if (principal instanceof UserDetails) {
