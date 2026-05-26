@@ -1,5 +1,5 @@
 # =============================================================================
-# ResearchEDF Spring Boot Configuration
+# ResearchEDC Spring Boot Configuration
 # =============================================================================
 # Profiles: dev, test, prod
 # Usage: --spring.profiles.active=dev
@@ -37,7 +37,7 @@ spring:
       hibernate.id.db_structure_naming_strategy: legacy
       hibernate.id.optimizer.pooled.preferred: none
   application:
-    name: ResearchEDF
+    name: ResearchEDC
     version: ${project.version}
 
   # JSP view resolution (legacy UI)

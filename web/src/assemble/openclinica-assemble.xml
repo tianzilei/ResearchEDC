@@ -32,7 +32,7 @@
   	<file>
   		<source>${project.build.directory}/${project.build.finalName}.war</source>
   		<outputDirectory>distribution</outputDirectory>
-  		<destName>ResearchEDF.war</destName>
+  		<destName>ResearchEDC.war</destName>
   	</file>
   </files>
 </assembly>
