@@ -14,8 +14,8 @@ from app.api.v1.routers import (
 )
 
 app = FastAPI(
-    title="ResearchEDF Questionnaire Service",
-    description="ResearchEDF Questionnaire Service API",
+    title="ResearchEDC Questionnaire Service",
+    description="ResearchEDC Questionnaire Service API",
     version="0.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
