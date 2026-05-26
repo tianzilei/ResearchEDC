@@ -1,4 +1,4 @@
-# Standalone Nginx reverse proxy for ResearchEDF
+# Standalone Nginx reverse proxy for ResearchEDC
 # Use this when you want Nginx as a separate service.
 # For the integrated setup, see docker-compose.prod.yml (nginx is included there).
 

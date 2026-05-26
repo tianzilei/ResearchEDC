@@ -1,6 +1,6 @@
-# ResearchEDF — Caddy Reverse Proxy
+# ResearchEDC — Caddy Reverse Proxy
 #
-# Standalone Caddy configuration for proxying to ResearchEDF backend services.
+# Standalone Caddy configuration for proxying to ResearchEDC backend services.
 # Start with: caddy run --config deploy/caddy/Caddyfile
 #
 # Session-based auth (Spring Security):
