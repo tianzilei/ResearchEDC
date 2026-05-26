@@ -366,8 +366,8 @@ code, pre {
 }
 
 .header-lang-select {
-  min-width: 80px !important;
-  width: 80px !important;
+  min-width: 100px !important;
+  width: 100px !important;
 }
 .header-lang-select .ant-select-selector,
 .header-lang-select .ant-select-selection-item {

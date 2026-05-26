@@ -116,7 +116,7 @@ export default function AppLayout() {
         }}
       >
         <Space size="middle">
-          <div style={{ fontWeight: 600, fontSize: 15, color: "var(--header-text)", letterSpacing: "0.02em" }}>
+          <div style={{ fontWeight: 600, fontSize: 14, color: "var(--header-text)", letterSpacing: "0.02em" }}>
             ResearchEDF
           </div>
           <div style={{ borderLeft: "1px solid var(--border)", height: 20, width: 1 }} />
@@ -145,8 +145,8 @@ export default function AppLayout() {
             variant="borderless"
             className="header-lang-select"
             style={{
-              minWidth: 80,
-              width: 80,
+              minWidth: 100,
+              width: 100,
               color: "var(--header-text)",
               fontSize: 13,
             }}
