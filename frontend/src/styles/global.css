@@ -16,6 +16,7 @@
   color-scheme: light;
   --bg: #f7f7f4;
   --bg-layout: #efefe9;
+  --bg-secondary: #f0f0eb;
   --panel: #ffffff;
   --panel-muted: #f0f0eb;
   --text: #151515;
@@ -54,6 +55,7 @@
   color-scheme: dark;
   --bg: #11110f;
   --bg-layout: #161614;
+  --bg-secondary: #22221f;
   --panel: #181816;
   --panel-muted: #22221f;
   --text: #ecece5;
@@ -298,6 +300,35 @@ code, pre {
 
 .card-hover {
   /* No-op: hover transform removed for performance */
+}
+
+/* ── Night mode Ant Design overrides (ensures contrast when theme tokens don't reach) ── */
+[data-theme="night"] .ant-card,
+[data-theme="night"] .ant-card-head {
+  background: var(--panel);
+}
+[data-theme="night"] .ant-card-head {
+  border-color: var(--border-light);
+}
+[data-theme="night"] .ant-card-extra {
+  color: var(--text-secondary);
+}
+[data-theme="night"] .ant-statistic-title {
+  color: var(--text-secondary);
+}
+[data-theme="night"] .ant-statistic-content {
+  color: var(--text);
+}
+[data-theme="night"] .ant-alert-warning {
+  background: var(--warning-bg);
+  border-color: var(--warning);
+}
+[data-theme="night"] .ant-alert-warning .ant-alert-message {
+  color: var(--warning);
+}
+[data-theme="night"] .ant-skeleton-content .ant-skeleton-title,
+[data-theme="night"] .ant-skeleton-content .ant-skeleton-paragraph > li {
+  background: rgba(255,255,255,0.08);
 }
 
 /* ── Loading shimmer (minimal) ── */
