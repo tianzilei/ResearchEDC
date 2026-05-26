@@ -5,11 +5,13 @@ import javax.sql.DataSource;
 import org.researchedc.job.JobExecutionExceptionListener;
 import org.researchedc.job.JobTriggerListener;
 import org.researchedc.job.OpenClinicaSchedulerFactoryBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
+@ConditionalOnProperty(name = "researchedc.scheduler.enabled", havingValue = "true", matchIfMissing = false)
 public class SchedulerConfig {
 
     private final DataSource dataSource;

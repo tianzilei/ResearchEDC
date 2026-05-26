@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.researchedc.service.JobTriggerService;
 
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -19,20 +20,31 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * traditional WAR deployment to Tomcat as a fallback.</p>
  */
 @SpringBootApplication
-@ComponentScan(basePackages = {
-    "org.researchedc.controller",
-    "org.researchedc.service",
-    "org.researchedc.domain",
-    "org.researchedc.ws",
-    "org.researchedc.web",
-    "org.researchedc.config",
-    "org.researchedc.module"
-}, excludeFilters = {
-    @ComponentScan.Filter(
-        type = FilterType.REGEX,
-        pattern = "org\\.researchedc\\.controller\\.StudyController"
-    )
-})
+@ComponentScan(
+    basePackages = {"org.researchedc"},
+    excludeFilters = {
+        @ComponentScan.Filter(
+            type = FilterType.REGEX,
+            pattern = "org\\.researchedc\\.controller\\..*"
+        ),
+        @ComponentScan.Filter(
+            type = FilterType.REGEX,
+            pattern = "org\\.researchedc\\.control\\..*"
+        ),
+        @ComponentScan.Filter(
+            type = FilterType.REGEX,
+            pattern = "org\\.researchedc\\.ws\\..*"
+        ),
+        @ComponentScan.Filter(
+            type = FilterType.REGEX,
+            pattern = "org\\.researchedc\\.job\\..*"
+        ),
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            value = JobTriggerService.class
+        )
+    }
+)
 @EntityScan(basePackages = {
     "org.researchedc.domain",
     "org.researchedc.module"
@@ -40,8 +52,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 
 @ServletComponentScan(basePackages = {
-    "org.researchedc.control",
-    "org.researchedc.web"
+    "org.researchedc.web.filter",
+    "org.researchedc.web.listener"
 })
 public class OpenClinicaApplication extends OpenClinicaServletInitializer {
 

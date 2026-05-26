@@ -35,7 +35,6 @@ spring:
     web-application-type: servlet
   autoconfigure:
     exclude:
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
       - org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
   jpa:
     hibernate:

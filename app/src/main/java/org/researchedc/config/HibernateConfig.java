@@ -7,8 +7,15 @@ import org.researchedc.dao.QueryStore;
 import org.researchedc.dao.hibernate.*;
 import org.researchedc.dao.managestudy.ViewNotesDaoImpl;
 import jakarta.persistence.EntityManagerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Java @Configuration replacing applicationContext-core-hibernate.xml.
@@ -23,6 +30,28 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class HibernateConfig {
+
+    // ──────────────────────────────────────────────────────────────────────
+    //  EntityManagerFactory (for Spring Data JPA repositories)
+    // ──────────────────────────────────────────────────────────────────────
+
+    @Primary
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
+            DataSource dataSource, JpaProperties jpaProperties) {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource);
+        em.setPackagesToScan("org.researchedc.domain", "org.researchedc.module");
+        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        em.setJpaPropertyMap(jpaProperties.getProperties());
+        return em;
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(
+            @Qualifier("entityManagerFactory") EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
+    }
 
     // ──────────────────────────────────────────────────────────────────────
     //  SessionFactory (for legacy DAOs that use Hibernate directly)

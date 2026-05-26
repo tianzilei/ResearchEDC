@@ -12,6 +12,8 @@ import org.researchedc.module.identity.entity.RoleEntity;
 import org.researchedc.module.identity.entity.UserAccountEntity;
 import org.researchedc.module.identity.repository.RoleRepository;
 import org.researchedc.module.identity.repository.UserAccountRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +22,10 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +39,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserAccountRepository userAccountRepository;
     private final RoleRepository roleRepository;
+    private final SecurityContextRepository securityContextRepository;
 
     public AuthController(AuthenticationManager authenticationManager,
                           UserAccountRepository userAccountRepository,
@@ -41,17 +47,23 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
         this.userAccountRepository = userAccountRepository;
         this.roleRepository = roleRepository;
+        this.securityContextRepository = new HttpSessionSecurityContextRepository();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request,
+                                                HttpServletRequest httpRequest,
+                                                HttpServletResponse httpResponse) {
         String username = request.username().trim();
         String password = request.password();
 
         try {
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password));
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(auth);
+            SecurityContextHolder.setContext(context);
+            securityContextRepository.saveContext(context, httpRequest, httpResponse);
         } catch (BadCredentialsException | DisabledException | LockedException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

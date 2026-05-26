@@ -4,7 +4,7 @@ import javax.sql.DataSource;
 import liquibase.integration.spring.SpringLiquibase;
 import org.researchedc.core.ExtendedBasicDataSource;
 import org.researchedc.dao.QueryStore;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -14,11 +14,16 @@ public class DbConfig {
 
     @Bean
     public DataSource dataSource() {
+        String dbHost = System.getenv().getOrDefault("RESEARCHEDC_DB_HOST", "localhost");
+        String dbPort = System.getenv().getOrDefault("RESEARCHEDC_DB_PORT", "5432");
+        String dbName = System.getenv().getOrDefault("RESEARCHEDC_DB_NAME", "researchedc");
+        String dbUser = System.getenv().getOrDefault("RESEARCHEDC_DB_USER", "researchedc");
+        String dbPass = System.getenv().getOrDefault("RESEARCHEDC_DB_PASS", "researchedc");
         ExtendedBasicDataSource ds = new ExtendedBasicDataSource();
         ds.setDriverClassName("org.postgresql.Driver");
-        ds.setUrl("jdbc:postgresql://localhost:5432/openclinica");
-        ds.setUsername("clinica");
-        ds.setPassword("clinica");
+        ds.setUrl("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + dbName);
+        ds.setUsername(dbUser);
+        ds.setPassword(dbPass);
         ds.setMaxActive(50);
         ds.setMaxIdle(2);
         ds.setMaxWait(180000);
@@ -34,10 +39,12 @@ public class DbConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "researchedc.liquibase.enabled", havingValue = "true", matchIfMissing = false)
     public SpringLiquibase liquibase(DataSource dataSource) {
         SpringLiquibase lb = new SpringLiquibase();
         lb.setDataSource(dataSource);
         lb.setChangeLog("classpath:migration/master.xml");
+        lb.setDropFirst(true);
         return lb;
     }
 

@@ -976,6 +976,7 @@ public class CoreResources implements ResourceLoaderAware {
 
     public void setDataInfo(Properties dataInfo) {
         this.dataInfo = dataInfo;
+        DATAINFO = dataInfo;
     }
 
     public Properties getExtractInfo() {
