@@ -331,6 +331,37 @@ code, pre {
   background: rgba(255,255,255,0.08);
 }
 
+/* ── Night mode Login / Form overrides ── */
+[data-theme="night"] .ant-input,
+[data-theme="night"] .ant-input-password {
+  background: #11110f;
+  color: #ecece5;
+  border-color: #383832;
+}
+[data-theme="night"] .ant-input::placeholder {
+  color: #7a7a72;
+}
+[data-theme="night"] .ant-input-affix-wrapper {
+  background: #11110f;
+  border-color: #383832;
+}
+[data-theme="night"] .ant-input-affix-wrapper .ant-input {
+  background: transparent;
+}
+[data-theme="night"] .ant-form-item .ant-form-item-label > label {
+  color: #b8b8ae;
+}
+[data-theme="night"] .ant-btn-primary {
+  background: #ecece5;
+  color: #11110f;
+  border-color: #ecece5;
+}
+[data-theme="night"] .ant-btn-primary:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
 /* ── Loading shimmer (minimal) ── */
 
 @keyframes shimmer {
