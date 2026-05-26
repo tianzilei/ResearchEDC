@@ -362,7 +362,6 @@ code, pre {
 }
 .study-switcher-select .ant-select-arrow {
   color: var(--header-text) !important;
-  opacity: 0.55;
 }
 
 .header-lang-select {
@@ -375,7 +374,6 @@ code, pre {
 }
 .header-lang-select .ant-select-arrow {
   color: var(--header-text) !important;
-  opacity: 0.55;
 }
 
 [data-theme="night"] .header-user-dropdown {
