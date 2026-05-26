@@ -5,8 +5,8 @@
 	<artifactId>research-edc</artifactId>
 	<packaging>pom</packaging>
 	<version>0.1</version>
-	<name>ResearchEDF</name>
-	<description>ResearchEDF: A research EDC platform derived from OpenClinica v3.x</description>
+	<name>ResearchEDC</name>
+	<description>ResearchEDC: A research EDC platform derived from OpenClinica v3.x</description>
 
 	<modules>
 		<module>research-edc-bom</module>
