@@ -6,6 +6,7 @@ export type StudyRole =
   | "dataEntry"
   | "monitor"
   | "studyDirector"
+  | "Study_Director"
   | "principalInvestigator";
 
 export interface UserStudyRole {
@@ -42,6 +43,19 @@ export type Permission =
   | "admin:access";
 
 export const ROLE_PERMISSIONS: Record<StudyRole, Permission[]> = {
+  "Study_Director": [
+    "study:view", "study:edit", "study:create",
+    "site:view", "site:create",
+    "subject:view", "subject:create", "subject:edit",
+    "crf:design", "crf:enter", "crf:review",
+    "data:export",
+    "user:manage",
+    "randomization:view", "randomization:configure", "randomization:activate",
+    "randomization:assign", "randomization:view_unblinded", "randomization:unblind",
+    "randomization:export",
+    "audit:view",
+    "admin:access",
+  ],
   admin: [
     "study:view", "study:edit", "study:create",
     "site:view", "site:create",
