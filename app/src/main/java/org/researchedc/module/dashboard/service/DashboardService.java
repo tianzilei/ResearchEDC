@@ -180,6 +180,9 @@ public class DashboardService {
         Map.entry("dataManager", List.of("subjects", "crf", "events", "queries", "exports", "audit-logs")),
         Map.entry("dataEntry", List.of("subjects", "crf")),
         Map.entry("studyDirector", List.of("subjects", "crf", "study-mgmt", "exports", "audit-logs")),
-        Map.entry("principalInvestigator", List.of("subjects", "crf", "events", "queries", "surveys", "reports", "audit-logs"))
+        Map.entry("principalInvestigator", List.of("subjects", "crf", "events", "queries", "surveys", "reports", "audit-logs")),
+        Map.entry("study_director", List.of("subjects", "crf", "randomization", "events", "queries",
+            "quality-checks", "surveys", "exports", "reports", "audit-logs",
+            "study-mgmt", "site-mgmt", "users", "settings"))
     );
 }
