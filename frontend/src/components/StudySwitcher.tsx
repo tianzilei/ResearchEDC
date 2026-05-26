@@ -4,8 +4,7 @@ import { useStudies, useCurrentStudy } from "@/hooks/useStudies";
 import type { Study } from "@/types/study";
 
 const PLACEHOLDER_STYLE: React.CSSProperties = {
-  color: "var(--header-text)",
-  opacity: 0.55,
+  color: "var(--text-secondary)",
 };
 
 export default function StudySwitcher() {
