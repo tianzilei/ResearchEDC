@@ -282,44 +282,63 @@ cmd_init_db() {
         exit 1
     }
 
-    log_info "Creating user and databases (may prompt for sudo password)..."
-    sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'" | grep -q 1 \
-        || sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASS}';"
+    # ---- Try sudo-based database reset (requires sudo access) ----
+    local SUDO_AVAILABLE=false
+    if sudo -n true 2>/dev/null; then
+        SUDO_AVAILABLE=true
+    fi
 
-    # Drop existing databases and recreate fresh
-    for db in "${DB_NAME}" "${Q_DB}"; do
-        log_info "Dropping database '${db}' if exists..."
-        sudo -u postgres psql -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='${db}' AND pid <> pg_backend_pid();" 2>/dev/null || true
-        sudo -u postgres psql -c "DROP DATABASE IF EXISTS \"${db}\";"
-        sudo -u postgres psql -c "CREATE DATABASE \"${db}\" OWNER ${DB_USER};"
-        sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE \"${db}\" TO ${DB_USER};"
-    done
+    if [ "${SUDO_AVAILABLE}" = true ]; then
+        log_info "Creating user and databases (may prompt for sudo password)..."
+        sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'" | grep -q 1 \
+            || sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASS}';"
 
-    log_ok "Databases ready"
+        # Drop existing databases and recreate fresh
+        for db in "${DB_NAME}" "${Q_DB}"; do
+            log_info "Dropping database '${db}' if exists..."
+            sudo -u postgres psql -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='${db}' AND pid <> pg_backend_pid();" 2>/dev/null || true
+            sudo -u postgres psql -c "DROP DATABASE IF EXISTS \"${db}\";"
+            sudo -u postgres psql -c "CREATE DATABASE \"${db}\" OWNER ${DB_USER};"
+            sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE \"${db}\" TO ${DB_USER};"
+        done
+        log_ok "Databases recreated from scratch"
+    else
+        log_warn "sudo not available — skipping database drop/recreate"
+        log_info "  Ensure databases '${DB_NAME}' and '${Q_DB}' exist manually if needed."
+        log_info "  To enable full reset: grant this user passwordless sudo, or run:"
+        log_info "    sudo -u postgres psql -c \"DROP DATABASE IF EXISTS ${DB_NAME}; CREATE DATABASE ${DB_NAME} OWNER ${DB_USER};\""
+    fi
 
     # ---- Generate datainfo.properties for Liquibase (shared module + app) ----
     mkdir -p shared/src/main/resources app/src/main/resources
     generate_datainfo shared/src/main/resources
     generate_datainfo app/src/main/resources
 
-    # ---- Run Liquibase migrations ----
+    # ---- Run Liquibase migrations (directly via liquibase-core to avoid Maven plugin classpath issues) ----
     log_info "Applying Liquibase migrations..."
     cd "${PROJECT_DIR}"
-    mvn liquibase:update \
-        -pl shared \
-        -Dliquibase.url="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}" \
-        -Dliquibase.username="${DB_USER}" \
-        -Dliquibase.password="${DB_PASS}" \
-        -q 2>/dev/null || {
-        log_warn "Liquibase migration failed — trying direct Maven run..."
-        mvn compile -pl shared -DskipTests -q
-        mvn liquibase:update \
-            -pl shared \
-            -Dliquibase.url="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}" \
-            -Dliquibase.username="${DB_USER}" \
-            -Dliquibase.password="${DB_PASS}" \
-            -q 2>/dev/null || log_warn "Liquibase skipped — schema may already exist"
+    mvn compile -pl shared -DskipTests -q 2>/dev/null || {
+        log_warn "Maven compile failed — cannot run Liquibase"
+        return
     }
+    local lb_classpath
+    lb_classpath=$(mvn dependency:build-classpath -pl shared -DincludeScope=runtime -q -Dmdep.outputFile=/dev/stdout 2>/dev/null):shared/target/classes
+    # Drop all existing objects first (fresh schema from scratch)
+    java -cp "${lb_classpath}" liquibase.integration.commandline.Main \
+        --changeLogFile=migration/master.xml \
+        --url="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}" \
+        --username="${DB_USER}" \
+        --password="${DB_PASS}" \
+        --classpath=shared/target/classes \
+        dropAll 2>&1 | grep -v "^##\|^$" || true
+    # Apply all migrations
+    java -cp "${lb_classpath}" liquibase.integration.commandline.Main \
+        --changeLogFile=migration/master.xml \
+        --url="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}" \
+        --username="${DB_USER}" \
+        --password="${DB_PASS}" \
+        --classpath=shared/target/classes \
+        update 2>&1 | grep -v "^##\|^$" || log_warn "Liquibase migration failed — check logs above"
     log_ok "Migrations applied"
 
     # ---- Create admin/admin account ----

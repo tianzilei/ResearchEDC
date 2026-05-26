@@ -746,6 +746,7 @@
 					<version>4.28.0</version>
 					<configuration>
 						<propertyFile>${config.file}</propertyFile>
+						<changeLogFile>src/main/resources/migration/master.xml</changeLogFile>
 					</configuration>
 				</plugin>
 				<plugin>

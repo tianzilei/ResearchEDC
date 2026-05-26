@@ -32,7 +32,7 @@
     </changeSet>
 
     <changeSet author="research-edc" id="2026-05-23-module-rule-set-copy-4">
-        <sql>INSERT INTO module_rule_set (rule_set_id, rule_expression_id, study_event_definition_id, crf_id, crf_version_id, study_id, run_schedule, run_time, status_id, owner_id, date_created, date_updated, update_id, version) SELECT rule_set_id, rule_expression_id, study_event_definition_id, crf_id, crf_version_id, study_id, run_schedule, run_time, status_id, owner_id, date_created, date_updated, update_id, version FROM rule_set</sql>
+        <sql>INSERT INTO module_rule_set (rule_set_id, rule_expression_id, study_event_definition_id, crf_id, crf_version_id, study_id, run_schedule, run_time, status_id, owner_id, date_created, date_updated, update_id, "version") SELECT rule_set_id, rule_expression_id, study_event_definition_id, crf_id, crf_version_id, study_id, run_schedule, run_time, status_id, owner_id, date_created, date_updated, update_id, "version" FROM rule_set</sql>
     </changeSet>
 
     <changeSet author="research-edc" id="2026-05-23-module-rule-set-seq-val-5">

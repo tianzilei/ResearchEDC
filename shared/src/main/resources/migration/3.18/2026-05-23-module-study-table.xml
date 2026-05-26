@@ -100,7 +100,7 @@
                 gender, age_max, age_min, healthy_volunteer_accepted,
                 purpose, allocation, masking, control, assignment, endpoint,
                 interventions, duration, selection, timing,
-                official_title, results_reference, oc_oid, old_status_id, version,
+                official_title, results_reference, oc_oid, old_status_id, "version",
                 feature_flags
             )
             SELECT
@@ -118,7 +118,7 @@
                 gender, age_max, age_min, healthy_volunteer_accepted,
                 purpose, allocation, masking, control, assignment, endpoint,
                 interventions, duration, selection, timing,
-                official_title, results_reference, oc_oid, old_status_id, version,
+                official_title, results_reference, oc_oid, old_status_id, "version",
                 feature_flags
             FROM study
         </sql>

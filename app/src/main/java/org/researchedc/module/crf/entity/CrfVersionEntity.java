@@ -46,7 +46,7 @@ public class CrfVersionEntity {
     @Column(name = "xform")
     private String xform;
 
-    @Column(name = "xformName")
+    @Column(name = "xform_name")
     private String xformName;
 
     public Integer getCrfVersionId() { return crfVersionId; }

@@ -27,7 +27,7 @@
     </changeSet>
 
     <changeSet author="research-edc" id="2026-05-23-module-rule-set-rule-copy-4">
-        <sql>INSERT INTO module_rule_set_rule (rule_set_rule_id, rule_set_id, rule_id, status_id, owner_id, date_created, date_updated, update_id, version) SELECT rule_set_rule_id, rule_set_id, rule_id, status_id, owner_id, date_created, date_updated, update_id, version FROM rule_set_rule</sql>
+        <sql>INSERT INTO module_rule_set_rule (rule_set_rule_id, rule_set_id, rule_id, status_id, owner_id, date_created, date_updated, update_id, "version") SELECT rule_set_rule_id, rule_set_id, rule_id, status_id, owner_id, date_created, date_updated, update_id, "version" FROM rule_set_rule</sql>
     </changeSet>
 
     <changeSet author="research-edc" id="2026-05-23-module-rule-set-rule-seq-val-5">

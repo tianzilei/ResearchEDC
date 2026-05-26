@@ -30,7 +30,7 @@
     </changeSet>
 
     <changeSet author="research-edc" id="2026-05-23-module-rule-copy-4">
-        <sql>INSERT INTO module_rule (rule_id, oc_oid, name, description, enabled, rule_expression_id, status_id, owner_id, date_created, date_updated, update_id, version) SELECT rule_id, oc_oid, name, description, enabled, rule_expression_id, status_id, owner_id, date_created, date_updated, update_id, version FROM rule</sql>
+        <sql>INSERT INTO module_rule (rule_id, oc_oid, name, description, enabled, rule_expression_id, status_id, owner_id, date_created, date_updated, update_id, "version") SELECT rule_id, oc_oid, name, description, enabled, rule_expression_id, status_id, owner_id, date_created, date_updated, update_id, "version" FROM rule</sql>
     </changeSet>
 
     <changeSet author="research-edc" id="2026-05-23-module-rule-seq-val-5">

@@ -27,7 +27,7 @@
     </changeSet>
 
     <changeSet author="research-edc" id="2026-05-23-module-rule-expression-copy-4">
-        <sql>INSERT INTO module_rule_expression (rule_expression_id, value, context, status_id, owner_id, date_created, date_updated, update_id, version) SELECT rule_expression_id, value, context, status_id, owner_id, date_created, date_updated, update_id, version FROM rule_expression</sql>
+        <sql>INSERT INTO module_rule_expression (rule_expression_id, value, context, status_id, owner_id, date_created, date_updated, update_id, "version") SELECT rule_expression_id, value, context, status_id, owner_id, date_created, date_updated, update_id, "version" FROM rule_expression</sql>
     </changeSet>
 
     <changeSet author="research-edc" id="2026-05-23-module-rule-expression-seq-val-5">

@@ -5,6 +5,13 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.26.xsd">
 
+    <changeSet id="2026-05-20-02" author="research-edc">
+        <comment>Add version column to study table (for module study data copy)</comment>
+        <addColumn tableName="study">
+            <column name="version" type="INT" defaultValue="1"/>
+        </addColumn>
+    </changeSet>
+
     <changeSet id="2026-05-20-03" author="sisyphus">
         <comment>Add feature_flags JSONB column to study table</comment>
         <addColumn tableName="study">
