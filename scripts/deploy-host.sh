@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# ResearchEDF — Host Machine Deployment (No Docker)
+# ResearchEDC — Host Machine Deployment (No Docker)
 #
 # Usage: bash scripts/deploy-host.sh <command>
 # Commands: setup, init-db, build, start, stop, restart, status, logs, clean
@@ -424,13 +424,13 @@ cmd_start() {
         tmux kill-session -t researchedc 2>/dev/null || true
         tmux new-session -d -s researchedc -c "${PROJECT_DIR}"
         tmux send-keys -t researchedc "export RESEARCHEDC_DB_PORT=${DB_PORT}" Enter
-        tmux send-keys -t researchedc "java -jar app/target/ResearchEDF.war --server.port=${APP_PORT} 2>&1 | tee ${LOG_DIR}/app.log" Enter
+        tmux send-keys -t researchedc "java -jar app/target/ResearchEDC.war --server.port=${APP_PORT} 2>&1 | tee ${LOG_DIR}/app.log" Enter
         log_ok "App started in tmux session 'researchedc'"
     else
         # Fallback: nohup
         cd "${PROJECT_DIR}"
         RESEARCHEDC_DB_PORT="${DB_PORT}" \
-        nohup java -jar app/target/ResearchEDF.war \
+        nohup java -jar app/target/ResearchEDC.war \
             --server.port="${APP_PORT}" \
             > "${LOG_DIR}/app.log" 2>&1 &
         echo $! > "${PID_DIR}/app.pid"

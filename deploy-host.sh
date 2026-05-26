@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# ResearchEDF — Host Machine Deployment (No Docker)
+# ResearchEDC — Host Machine Deployment (No Docker)
 #
 # Usage: bash deploy-host.sh <command>
 # Commands:
@@ -26,7 +26,7 @@ DB_PASS="${RESEARCHEDC_DB_PASS:-researchedc}"
 
 APP_PORT="${RESEARCHEDC_APP_PORT:-8080}"
 
-WAR="${PROJECT_DIR}/app/target/ResearchEDF.war"
+WAR="${PROJECT_DIR}/app/target/ResearchEDC.war"
 DATA_DIR="${PROJECT_DIR}/data"
 LOG_DIR="${PROJECT_DIR}/logs"
 
@@ -158,7 +158,7 @@ cmd_start() {
     pnpm build
     cd "${PROJECT_DIR}"
 
-    log_info "Starting ResearchEDF on port ${APP_PORT}..."
+    log_info "Starting ResearchEDC on port ${APP_PORT}..."
 
     if command -v tmux &>/dev/null; then
         tmux kill-session -t researchedc 2>/dev/null || true
@@ -253,7 +253,7 @@ case "${1:-help}" in
     clean)    cmd_clean   ;;
     help|*)
         cat << EOF
-ResearchEDF Host Deployment (no Docker)
+ResearchEDC Host Deployment (no Docker)
 
 Usage: bash deploy-host.sh <command>
 
