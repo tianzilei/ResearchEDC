@@ -78,8 +78,8 @@ Locale locale;
             }
         }
         request.setAttribute("sites", sites);
-        request.setAttribute("sitesCount", new Integer(sites.size()));
-        request.setAttribute("allSitesCount", new Integer(allSites.size()));
+        request.setAttribute("sitesCount", Integer.valueOf(sites.size()));
+        request.setAttribute("allSitesCount", Integer.valueOf(allSites.size()));
         // BWP 3057: add study name to JSP
         if (currentStudy != null) {
             request.setAttribute("studyIdentifier", currentStudy.getIdentifier());
@@ -89,15 +89,15 @@ Locale locale;
         ArrayList seds = (ArrayList) edao.findAllByStudyAndLimit(currentStudy.getId());
         ArrayList allSeds = edao.findAllByStudy(currentStudy);
         request.setAttribute("seds", seds);
-        request.setAttribute("sedsCount", new Integer(seds.size()));
-        request.setAttribute("allSedsCount", new Integer(allSeds.size()));
+        request.setAttribute("sedsCount", Integer.valueOf(seds.size()));
+        request.setAttribute("allSedsCount", Integer.valueOf(allSeds.size()));
 
         IUserAccountDAO udao = this.userAccountDao;
         ArrayList users = udao.findAllUsersByStudyIdAndLimit(currentStudy.getId(), true);
         ArrayList allUsers = udao.findAllUsersByStudy(currentStudy.getId());
         request.setAttribute("users", users);
-        request.setAttribute("usersCount", new Integer(users.size()));
-        request.setAttribute("allUsersCount", new Integer(allUsers.size()));
+        request.setAttribute("usersCount", Integer.valueOf(users.size()));
+        request.setAttribute("allUsersCount", Integer.valueOf(allUsers.size()));
 
         IStudySubjectDAO ssdao = this.studySubjectDao;
         // ArrayList subjects = (ArrayList)
@@ -111,8 +111,8 @@ Locale locale;
             }
         }
         request.setAttribute("subs", subjects);
-        request.setAttribute("subsCount", new Integer(subjects.size()));
-        request.setAttribute("allSubsCount", new Integer(allSubjects.size()));
+        request.setAttribute("subsCount", Integer.valueOf(subjects.size()));
+        request.setAttribute("allSubsCount", Integer.valueOf(allSubjects.size()));
 
         // added tbh, 9-21-2005
         // IAuditEventDAO aedao = this.auditEventDao;
@@ -122,16 +122,16 @@ Locale locale;
         resetPanel();
 
         if (allSubjects.size() > 0) {
-            setToPanel("Subjects", new Integer(allSubjects.size()).toString());
+            setToPanel("Subjects", Integer.valueOf(allSubjects.size()).toString());
         }
         if (allUsers.size() > 0) {
-            setToPanel("Users", new Integer(allUsers.size()).toString());
+            setToPanel("Users", Integer.valueOf(allUsers.size()).toString());
         }
         if (allSites.size() > 0) {
-            setToPanel("Sites", new Integer(allSites.size()).toString());
+            setToPanel("Sites", Integer.valueOf(allSites.size()).toString());
         }
         if (allSeds.size() > 0) {
-            setToPanel("Event Definitions", new Integer(allSeds.size()).toString());
+            setToPanel("Event Definitions", Integer.valueOf(allSeds.size()).toString());
         }
         String proto = request.getParameter("proto");
         if (proto == null || "".equalsIgnoreCase(proto)) {

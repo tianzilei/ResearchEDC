@@ -118,7 +118,7 @@ public class AuditLogStudyServlet extends SecureController {
             StudySubjectBean studySubject = (StudySubjectBean) studySubjects.get(ss);
             // request.setAttribute("studySub"+ss, studySubject);
             SubjectBean subject = (SubjectBean) sdao.findByPK(studySubject.getSubjectId());
-            subjectHashMap.put(new Integer(studySubject.getId()), subject);
+            subjectHashMap.put(Integer.valueOf(studySubject.getId()), subject);
             // logger.info("just set a subject with a status of
             // "+subject.getStatus().getName());
             // request.setAttribute("subject"+ss, subject);
@@ -136,7 +136,7 @@ public class AuditLogStudyServlet extends SecureController {
             // value
             // changed
 
-            studySubjectAuditsHashMap.put(new Integer(studySubject.getId()), studySubjectAudits);
+            studySubjectAuditsHashMap.put(Integer.valueOf(studySubject.getId()), studySubjectAudits);
             // request.setAttribute("studySubjectAudits"+ss,
             // studySubjectAudits);
 
@@ -165,7 +165,7 @@ public class AuditLogStudyServlet extends SecureController {
             // eventCRFAudits.addAll(adao.findEventCRFAuditEvents(eventCRF.getId()));
             // }
             // }
-            eventsHashMap.put(new Integer(studySubject.getId()), events);
+            eventsHashMap.put(Integer.valueOf(studySubject.getId()), events);
             // request.setAttribute("events"+ss, events);
             // eventCRFAuditsHashMap.put(new Integer(studySubject.getId()),
             // eventCRFAudits);

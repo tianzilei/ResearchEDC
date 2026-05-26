@@ -101,7 +101,7 @@ public class UserInfoController {
     @RequestMapping(value = "/study/{studyOid}/crc", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getCrcAccountBySession(@PathVariable("studyOid") String studyOid) throws Exception {
 
-        ResourceBundleProvider.updateLocale(new Locale("en_US"));
+        ResourceBundleProvider.updateLocale(Locale.of("en_US"));
         sdao = this.studyDao;
         udao = this.userAccountDao;
         boolean isRequestValid = true;

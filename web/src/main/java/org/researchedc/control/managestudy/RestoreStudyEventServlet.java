@@ -93,7 +93,7 @@ public class RestoreStudyEventServlet extends SecureController {
 
         if (studyEventId == 0) {
             addPageMessage(respage.getString("please_choose_a_SE_to_restore"));
-            request.setAttribute("id", new Integer(studySubId).toString());
+            request.setAttribute("id", Integer.valueOf(studySubId).toString());
             forwardPage(Page.VIEW_STUDY_SUBJECT_SERVLET);
         } else {
 
@@ -105,7 +105,7 @@ public class RestoreStudyEventServlet extends SecureController {
             if ("removed".equalsIgnoreCase(s.getName()) || "auto-removed".equalsIgnoreCase(s.getName())) {
                 addPageMessage(resword.getString("study_event") + resterm.getString("could_not_be") + resterm.getString("restored") + "."
                     + respage.getString("study_subject_has_been_deleted"));
-                request.setAttribute("id", new Integer(studySubId).toString());
+                request.setAttribute("id", Integer.valueOf(studySubId).toString());
                 forwardPage(Page.VIEW_STUDY_SUBJECT_SERVLET);
             }
             // YW
@@ -127,7 +127,7 @@ public class RestoreStudyEventServlet extends SecureController {
                 if (event.getStatus().equals(Status.AVAILABLE)) {
                     addPageMessage(respage.getString("this_event_is_already_available_for_study") + " "
                         + respage.getString("please_contact_sysadmin_for_more_information"));
-                    request.setAttribute("id", new Integer(studySubId).toString());
+                    request.setAttribute("id", Integer.valueOf(studySubId).toString());
                     forwardPage(Page.VIEW_STUDY_SUBJECT_SERVLET);
                     return;
                 }
@@ -188,7 +188,7 @@ public class RestoreStudyEventServlet extends SecureController {
 
                 addPageMessage(emailBody);
 //                sendEmail(emailBody);
-                request.setAttribute("id", new Integer(studySubId).toString());
+                request.setAttribute("id", Integer.valueOf(studySubId).toString());
                 forwardPage(Page.VIEW_STUDY_SUBJECT_SERVLET);
             }
         }
@@ -211,7 +211,7 @@ public class RestoreStudyEventServlet extends SecureController {
         int i;
         for (i = 0; i < eventDefinitionCRFs.size(); i++) {
             EventDefinitionCRFBean edc = (EventDefinitionCRFBean) eventDefinitionCRFs.get(i);
-            definitionsById.put(new Integer(edc.getStudyEventDefinitionId()), edc);
+            definitionsById.put(Integer.valueOf(edc.getStudyEventDefinitionId()), edc);
         }
 
         IStudyEventDAO sedao = this.studyEventDao;
@@ -234,7 +234,7 @@ public class RestoreStudyEventServlet extends SecureController {
             int studyEventId = ecb.getStudyEventId();
             int studyEventDefinitionId = sedao.getDefinitionIdFromStudyEventId(studyEventId);
 
-            EventDefinitionCRFBean edc = (EventDefinitionCRFBean) definitionsById.get(new Integer(studyEventDefinitionId));
+            EventDefinitionCRFBean edc = (EventDefinitionCRFBean) definitionsById.get(Integer.valueOf(studyEventDefinitionId));
 
             DisplayEventCRFBean dec = new DisplayEventCRFBean();
             dec.setFlags(ecb, ub, currentRole, edc.isDoubleEntry());

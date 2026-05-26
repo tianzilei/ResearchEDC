@@ -576,7 +576,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
             } else {
                 tabNum = fp.getInt("tabId");
             }
-            request.setAttribute("tabId", new Integer(tabNum).toString());
+            request.setAttribute("tabId", Integer.valueOf(tabNum).toString());
 
             // 2808: Signal interviewer.jsp that the containing page is
             // viewSectionData,

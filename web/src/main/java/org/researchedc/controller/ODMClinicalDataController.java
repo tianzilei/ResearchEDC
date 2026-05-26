@@ -36,7 +36,7 @@ public class ODMClinicalDataController {
 			@RequestParam(value = "includeAudits", defaultValue = "n", required = false) String includeAudits,
 			HttpServletRequest request) throws Exception {
 
-		ResourceBundleProvider.updateLocale(new Locale("en_US"));
+		ResourceBundleProvider.updateLocale(Locale.of("en_US"));
 
 		String result = odmClinicaDataResource.getODMClinicaldata(
 				studyOID,formVersionOID,studyEventOID,studySubjectIdentifier,includeDns,includeAudits,request);

@@ -510,7 +510,7 @@ public static final String INPUT_START_DATE = "startDate";
 
         errors = v.validate();
         boolean isInterventional = updateStudy2();
-        session.setAttribute("isInterventionalFlag", new Boolean(isInterventional));
+        session.setAttribute("isInterventionalFlag", Boolean.valueOf(isInterventional));
 
         if (errors.isEmpty()) {
             logger.info("no errors");

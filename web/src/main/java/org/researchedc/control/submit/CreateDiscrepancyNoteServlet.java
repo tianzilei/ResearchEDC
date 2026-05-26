@@ -209,7 +209,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
 	        int isGroup = fp.getInt(IS_GROUP_ITEM);
 	      //  request.setAttribute(IS_GROUP_ITEM, new Integer(isGroup));
 	        int eventCRFId = fp.getInt(EVENT_CRF_ID);
-	        request.setAttribute(EVENT_CRF_ID, new Integer(eventCRFId));
+	        request.setAttribute(EVENT_CRF_ID, Integer.valueOf(eventCRFId));
 	        int rowCount = fp.getInt(PARENT_ROW_COUNT);
 	    // run only once: try to recalculate writeToDB
 	    if (!StringUtils.isBlank(entityType) && "itemData".equalsIgnoreCase(entityType)

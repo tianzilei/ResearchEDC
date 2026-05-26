@@ -270,7 +270,7 @@ public class BeanFactory {
                 }
                 try {
 
-                    igMetaBean.setRepeatMax(new Integer(numFormatter.format(Double.parseDouble(tempValue))));
+                    igMetaBean.setRepeatMax(Integer.valueOf(numFormatter.format(Double.parseDouble(tempValue))));
 
                 } catch (NumberFormatException nfe) {
                     // BWP >>an arbitrarily large number allows infinite
@@ -291,7 +291,7 @@ public class BeanFactory {
                     tempValue = "1";
                 }
                 try {
-                    igMetaBean.setRepeatNum(new Integer(numFormatter.format(Double.parseDouble(tempValue))));
+                    igMetaBean.setRepeatNum(Integer.valueOf(numFormatter.format(Double.parseDouble(tempValue))));
 
                 } catch (NumberFormatException nfe) {
                     // BWP 10-13-07
@@ -339,7 +339,7 @@ public class BeanFactory {
                 tempValue = "1";
             }
             try {
-                fBean.getMeta().setRepeatNum(new Integer(numFormatter.format(Double.parseDouble(tempValue))));
+                fBean.getMeta().setRepeatNum(Integer.valueOf(numFormatter.format(Double.parseDouble(tempValue))));
             } catch (NumberFormatException nfe) {
                 // BWP 10-13-07
                 fBean.getMeta().setRepeatNum(1);
@@ -351,7 +351,7 @@ public class BeanFactory {
                 tempValue = "22000";
             }
             try {
-                fBean.getMeta().setRepeatMax(new Integer(numFormatter.format(Double.parseDouble(tempValue))));
+                fBean.getMeta().setRepeatMax(Integer.valueOf(numFormatter.format(Double.parseDouble(tempValue))));
             } catch (NumberFormatException nfe) {
                 // BWP >>an arbitrarily large number allows infinite repeats; it
                 // could also be -1
@@ -384,7 +384,7 @@ public class BeanFactory {
         Collections.sort(children, new Comparator<DisplayItemBean>() {
 
             public int compare(DisplayItemBean displayItemBean, DisplayItemBean displayItemBean1) {
-                return new Integer(displayItemBean.getMetadata().getColumnNumber()).compareTo(displayItemBean1.getMetadata().getColumnNumber());
+                return Integer.valueOf(displayItemBean.getMetadata().getColumnNumber()).compareTo(displayItemBean1.getMetadata().getColumnNumber());
             }
         });
         return children;
@@ -717,7 +717,7 @@ public class BeanFactory {
             // set borders property
             String bordersTemp = sectionVals.get("borders");
             if (bordersTemp != null) {
-                borders = new Integer(bordersTemp);
+                borders = Integer.valueOf(bordersTemp);
             }
             secBean.setBorders(borders);
             secBean.setParent(createSectionBean(sectionVals.get("parent_section")));

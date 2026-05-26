@@ -105,7 +105,7 @@ public class IdtViewController {
     @RequestMapping(value = "/sdv/{filternumber}/{studyoid}/paginated", params = { "page", "per_page" }, method = RequestMethod.GET)
     public ResponseEntity<List<IdtView>> getPaginatedIdtViewData(@PathVariable("filternumber") String filterNumber, @PathVariable("studyoid") String studyOid,
             @RequestParam("page") int page, @RequestParam("per_page") int per_page) throws Exception {
-        ResourceBundleProvider.updateLocale(new Locale("en_US"));
+        ResourceBundleProvider.updateLocale(Locale.of("en_US"));
         List<IdtView> idtDTO = null;
         if (page == 0)
             page = 1;

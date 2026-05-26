@@ -118,7 +118,7 @@ public final class SpreadsheetPreview implements Preview {
                     }
                     // item_name
 
-                    allRows.put(new Integer(j), rowCells);
+                    allRows.put(Integer.valueOf(j), rowCells);
                 }// end inner for loop
             }// end if
         }// end outer for
@@ -178,7 +178,7 @@ public final class SpreadsheetPreview implements Preview {
         case CellType.NUMERIC:
             return Double.toString(cell.getNumericCellValue());
         case CellType.BOOLEAN:
-            return new Boolean(cell.getBooleanCellValue()).toString();
+            return Boolean.valueOf(cell.getBooleanCellValue()).toString();
         case CellType.FORMULA:
             return cell.getCellFormula().toString();
         }
@@ -246,7 +246,7 @@ public final class SpreadsheetPreview implements Preview {
                             val = Double.toString(cell.getNumericCellValue());
                             break;
                         case CellType.BOOLEAN:
-                            val = new Boolean(cell.getBooleanCellValue()).toString();
+                            val = Boolean.valueOf(cell.getBooleanCellValue()).toString();
                             break;
                         case CellType.FORMULA:
                             cell.getCellFormula().toString();

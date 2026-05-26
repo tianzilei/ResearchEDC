@@ -317,7 +317,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
         try {
             request.setAttribute("tabId", Integer.toString(tabNum));
         } catch (NumberFormatException nfe) {
-            request.setAttribute("tabId", new Integer("1"));
+            request.setAttribute("tabId", Integer.valueOf("1"));
         }
         if (hasGroups) {
             LOGGER.debug("has group, new_table is true");
@@ -354,7 +354,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
         // if the borders property is null, return 0; otherwise return the value stored
         // in the HashMap
         if (tempBorder != null) {
-            return new Integer(tempBorder);
+            return Integer.valueOf(tempBorder);
 
         } else {
             return 0;

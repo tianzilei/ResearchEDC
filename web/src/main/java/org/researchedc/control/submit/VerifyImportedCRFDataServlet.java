@@ -304,16 +304,16 @@ public class VerifyImportedCRFDataServlet extends SecureController {
                         }
                         // logger.info("created:
                         // "+displayItemBean.getDbData().getName());
-                        if (!eventCrfInts.contains(new Integer(eventCrfBean.getId()))) {
+                        if (!eventCrfInts.contains(Integer.valueOf(eventCrfBean.getId()))) {
 
-                            String eventCRFStatus = importedCRFStatuses.get(new Integer(eventCrfBean.getId()));
+                            String eventCRFStatus = importedCRFStatuses.get(Integer.valueOf(eventCrfBean.getId()));
                             if (eventCRFStatus != null && eventCRFStatus.equals(DataEntryStage.INITIAL_DATA_ENTRY.getName())
                                     && eventCrfBean.getStatus().isAvailable()) {
                                 crfBusinessLogicHelper.markCRFStarted(eventCrfBean, ub);
                             } else {
                                 crfBusinessLogicHelper.markCRFComplete(eventCrfBean, ub);
                             }
-                            eventCrfInts.add(new Integer(eventCrfBean.getId()));
+                            eventCrfInts.add(Integer.valueOf(eventCrfBean.getId()));
                         }
                     }
                     // Reset the SDV status if item data has been changed or added

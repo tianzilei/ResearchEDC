@@ -163,10 +163,10 @@ Locale locale;
         }
         request.setAttribute("studyGroupClasses", studyGroupClasses);
         request.setAttribute("allDefsArray", allDefs);
-        request.setAttribute("allDefsNumber", new Integer(allDefs.size()));
-        request.setAttribute("groupSize", new Integer(studyGroupClasses.size()));
-        request.setAttribute("eventDefCRFSize", new Integer(eventDefinitionCRFs.size()));
-        request.setAttribute("tabId", new Integer(tabId));
+        request.setAttribute("allDefsNumber", Integer.valueOf(allDefs.size()));
+        request.setAttribute("groupSize", Integer.valueOf(studyGroupClasses.size()));
+        request.setAttribute("eventDefCRFSize", Integer.valueOf(eventDefinitionCRFs.size()));
+        request.setAttribute("tabId", Integer.valueOf(tabId));
         request.setAttribute("studyEventDef", sed);
         request.setAttribute("eventDefCRFs", eventDefinitionCRFs);
 

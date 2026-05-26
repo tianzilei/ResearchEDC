@@ -80,12 +80,12 @@ public class AddCRFToDefinitionServlet extends SecureController {
         HashMap crfIds = new HashMap();
         for (int i = 0; i < edcs.size(); i++) {
             EventDefinitionCRFBean edc = (EventDefinitionCRFBean) edcs.get(i);
-            Integer crfId = new Integer(edc.getCrfId());
+            Integer crfId = Integer.valueOf(edc.getCrfId());
             crfIds.put(crfId, edc);
         }
         for (int i = 0; i < crfs.size(); i++) {
             CRFBean crf = (CRFBean) crfs.get(i);
-            if (crfIds.containsKey(new Integer(crf.getId()))) {
+            if (crfIds.containsKey(Integer.valueOf(crf.getId()))) {
                 crf.setSelected(true);
             }
         }
@@ -158,7 +158,7 @@ public class AddCRFToDefinitionServlet extends SecureController {
         args.put("actionName", "next");
         args.put("pageNum", "1");
         args.put("name", def1.getName());
-        args.put("repeating", new Boolean(def1.isRepeating()).toString());
+        args.put("repeating", Boolean.valueOf(def1.isRepeating()).toString());
         args.put("category", def1.getCategory());
         args.put("description", def1.getDescription());
         args.put("type", def1.getType());

@@ -91,7 +91,7 @@ public class RestoreEventCRFServlet extends SecureController {
 
         if (eventCRFId == 0) {
             addPageMessage(respage.getString("please_choose_an_event_CRF_to_restore"));
-            request.setAttribute("id", new Integer(studySubId).toString());
+            request.setAttribute("id", Integer.valueOf(studySubId).toString());
             forwardPage(Page.VIEW_STUDY_SUBJECT_SERVLET);
         } else {
             EventCRFBean eventCRF = (EventCRFBean) ecdao.findByPK(eventCRFId);
@@ -103,7 +103,7 @@ public class RestoreEventCRFServlet extends SecureController {
             if ("removed".equalsIgnoreCase(s.getName()) || "auto-removed".equalsIgnoreCase(s.getName())) {
                 addPageMessage(resword.getString("event_CRF") + resterm.getString("could_not_be") + resterm.getString("restored") + "."
                     + respage.getString("study_subject_has_been_deleted"));
-                request.setAttribute("id", new Integer(studySubId).toString());
+                request.setAttribute("id", Integer.valueOf(studySubId).toString());
                 forwardPage(Page.VIEW_STUDY_SUBJECT_SERVLET);
             }
             // YW
@@ -153,7 +153,7 @@ public class RestoreEventCRFServlet extends SecureController {
                 if (!eventCRF.getStatus().equals(Status.DELETED) && !eventCRF.getStatus().equals(Status.AUTO_DELETED)) {
                     addPageMessage(respage.getString("this_event_CRF_avilable_for_study") + " " + " "
                         + respage.getString("please_contact_sysadmin_for_more_information"));
-                    request.setAttribute("id", new Integer(studySubId).toString());
+                    request.setAttribute("id", Integer.valueOf(studySubId).toString());
                     forwardPage(Page.VIEW_STUDY_SUBJECT_SERVLET);
                     return;
                 }
@@ -208,7 +208,7 @@ public class RestoreEventCRFServlet extends SecureController {
 
                 addPageMessage(emailBody);
                 sendEmail(emailBody);
-                request.setAttribute("id", new Integer(studySubId).toString());
+                request.setAttribute("id", Integer.valueOf(studySubId).toString());
                 forwardPage(Page.VIEW_STUDY_SUBJECT_SERVLET);
             }
         }

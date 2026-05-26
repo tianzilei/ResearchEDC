@@ -110,7 +110,7 @@ public class MainMenuServlet extends SecureController {
 
         // a flag tells whether users are required to change pwd upon the first
         // time log in or pwd expired
-        int pwdChangeRequired = new Integer(SQLInitServlet.getField("change_passwd_required")).intValue();
+        int pwdChangeRequired = Integer.valueOf(SQLInitServlet.getField("change_passwd_required")).intValue();
         // update last visit date to current date
         IUserAccountDAO udao = this.userAccountDao;
         UserAccountBean ub1 = (UserAccountBean) udao.findByPK(ub.getId());

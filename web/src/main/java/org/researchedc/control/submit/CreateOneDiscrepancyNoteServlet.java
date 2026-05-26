@@ -105,7 +105,7 @@ public class CreateOneDiscrepancyNoteServlet extends SecureController {
         DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
 
         int eventCRFId = fp.getInt(CreateDiscrepancyNoteServlet.EVENT_CRF_ID);
-        request.setAttribute(CreateDiscrepancyNoteServlet.EVENT_CRF_ID, new Integer(eventCRFId));
+        request.setAttribute(CreateDiscrepancyNoteServlet.EVENT_CRF_ID, Integer.valueOf(eventCRFId));
         
         int parentId = fp.getInt(PARENT_ID);
         DiscrepancyNoteBean parent = parentId > 0 ? (DiscrepancyNoteBean) dndao.findByPK(parentId) : new DiscrepancyNoteBean();

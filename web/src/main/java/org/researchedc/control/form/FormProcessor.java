@@ -416,17 +416,17 @@ public class FormProcessor {
     }
 
     public void addPresetValue(String fieldName, int value) {
-        Integer fieldValue = new Integer(value);
+        Integer fieldValue = Integer.valueOf(value);
         presetValues.put(fieldName, fieldValue);
     }
 
     public void addPresetValue(String fieldName, float value) {
-        Float fieldValue = new Float(value);
+        Float fieldValue = Float.valueOf(value);
         presetValues.put(fieldName, fieldValue);
     }
 
     public void addPresetValue(String fieldName, boolean value) {
-        Boolean fieldValue = new Boolean(value);
+        Boolean fieldValue = Boolean.valueOf(value);
         presetValues.put(fieldName, fieldValue);
     }
 

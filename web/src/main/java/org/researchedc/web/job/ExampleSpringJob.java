@@ -99,7 +99,7 @@ public class ExampleSpringJob extends QuartzJobBean {
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         // need to generate a Locale so that user beans and other things will
         // generate normally
-        Locale locale = new Locale("en-US");
+        Locale locale = Locale.of("en-US");
         ResourceBundleProvider.updateLocale(locale);
         ResourceBundle pageMessages = ResourceBundleProvider.getPageMessagesBundle();
         // logger.debug("--");
@@ -129,7 +129,7 @@ public class ExampleSpringJob extends QuartzJobBean {
             String alertEmail = dataMap.getString(EMAIL);
             String localeStr = dataMap.getString(LOCALE);
             if (localeStr != null) {
-                locale = new Locale(localeStr);
+                locale = Locale.of(localeStr);
                 ResourceBundleProvider.updateLocale(locale);
                 pageMessages = ResourceBundleProvider.getPageMessagesBundle();
 
@@ -408,7 +408,7 @@ public class ExampleSpringJob extends QuartzJobBean {
 
     private int getFileIdInt(HashMap fileName) {
         // String fileNameStr = "";
-        Integer fileID = new Integer(0);
+        Integer fileID = Integer.valueOf(0);
         for (Iterator it = fileName.entrySet().iterator(); it.hasNext();) {
             java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
             Object key = entry.getKey();

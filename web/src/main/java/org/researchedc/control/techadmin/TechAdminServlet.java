@@ -68,16 +68,16 @@ public class TechAdminServlet extends SecureController {
         panel.setOrderedData(true);
         setToPanel(resword.getString("in_the_application"), "");
         if (allSubjects.size() > 0) {
-            setToPanel(resword.getString("subjects"), new Integer(allSubjects.size()).toString());
+            setToPanel(resword.getString("subjects"), Integer.valueOf(allSubjects.size()).toString());
         }
         if (allUsers.size() > 0) {
-            setToPanel(resword.getString("users"), new Integer(allUsers.size()).toString());
+            setToPanel(resword.getString("users"), Integer.valueOf(allUsers.size()).toString());
         }
         if (allStudies.size() > 0) {
-            setToPanel(resword.getString("studies"), new Integer(allStudies.size()).toString());
+            setToPanel(resword.getString("studies"), Integer.valueOf(allStudies.size()).toString());
         }
         if (allCrfs.size() > 0) {
-            setToPanel(resword.getString("CRFs"), new Integer(allCrfs.size()).toString());
+            setToPanel(resword.getString("CRFs"), Integer.valueOf(allCrfs.size()).toString());
         }
         forwardPage(Page.TECH_ADMIN_SYSTEM);
     }

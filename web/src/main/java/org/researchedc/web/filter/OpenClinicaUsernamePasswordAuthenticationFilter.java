@@ -146,7 +146,7 @@ public class OpenClinicaUsernamePasswordAuthenticationFilter extends AbstractAut
 
         Authentication authentication = null;
         UserAccountBean userAccountBean = null;
-        ResourceBundleProvider.updateLocale(new Locale("en_US"));
+        ResourceBundleProvider.updateLocale(Locale.of("en_US"));
         try {
             EntityBean eb = getUserAccountDao().findByUserName(username);
             userAccountBean = eb.getId() != 0 ? (UserAccountBean) eb : null;

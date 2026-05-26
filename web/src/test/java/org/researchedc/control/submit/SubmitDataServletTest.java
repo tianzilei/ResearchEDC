@@ -17,7 +17,7 @@ public class SubmitDataServletTest extends TestCase {
     }
 
     public static void setup(){
-    	ResourceBundleProvider.updateLocale(new Locale("us"));
+    	ResourceBundleProvider.updateLocale(Locale.of("us"));
     	
     }
     

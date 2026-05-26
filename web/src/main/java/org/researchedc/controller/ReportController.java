@@ -77,7 +77,7 @@ public class ReportController {
 		String serverTime = hashMap.get("serverTime");
 
 		HashMap<String, Boolean> map = new HashMap<>();
-		ResourceBundleProvider.updateLocale(new Locale("en_US"));
+		ResourceBundleProvider.updateLocale(Locale.of("en_US"));
 		Boolean result = ruleSetService.calculateTimezoneDiff(TimeZone.getTimeZone(serverZoneId), TimeZone.getTimeZone(ssZoneId), Integer.valueOf(runTime), Integer.valueOf(serverTime));
 		map.put("result", result);
 
@@ -115,7 +115,7 @@ public class ReportController {
 
 	@RequestMapping(value = "/rulecurrentdate", method = RequestMethod.POST)
 	public ResponseEntity<HashMap> getSSZone(@RequestBody HashMap<String, String> hashMap) throws Exception {
-		ResourceBundleProvider.updateLocale(new Locale("en_US"));
+		ResourceBundleProvider.updateLocale(Locale.of("en_US"));
 		String ssZoneId = hashMap.get("ssZoneId");
 		String serverZoneId = hashMap.get("serverZoneId");
 		HashMap<String, String> map = expressionService.getSSDate(ssZoneId, serverZoneId);
@@ -139,7 +139,7 @@ public class ReportController {
 
 	@RequestMapping(value = "/runtime", method = RequestMethod.POST)
 	public ResponseEntity<HashMap> getRunTime() throws Exception {
-		ResourceBundleProvider.updateLocale(new Locale("en_US"));
+		ResourceBundleProvider.updateLocale(Locale.of("en_US"));
 		HashMap<String, Integer> map = new HashMap<>();
 		int result = ruleSetService.getRunTimeWhenTimeIsNotSet();
 		map.put("result", result);

@@ -152,7 +152,7 @@ public class ImportSpringJob extends QuartzJobBean {
     }
 
     protected void executeInternalInTransaction(JobExecutionContext context) {
-        locale = new Locale("en-US");
+        locale = Locale.of("en-US");
         ResourceBundleProvider.updateLocale(locale);
         respage = ResourceBundleProvider.getPageMessagesBundle();
         resword = ResourceBundleProvider.getWordsBundle();
@@ -185,7 +185,7 @@ public class ImportSpringJob extends QuartzJobBean {
             String studyOid = dataMap.getString(STUDY_OID);
             String localeStr = dataMap.getString(ExampleSpringJob.LOCALE);
             if (localeStr != null) {
-                locale = new Locale(localeStr);
+                locale = Locale.of(localeStr);
                 ResourceBundleProvider.updateLocale(locale);
                 respage = ResourceBundleProvider.getPageMessagesBundle();
                 resword = ResourceBundleProvider.getWordsBundle();
@@ -477,7 +477,7 @@ public class ImportSpringJob extends QuartzJobBean {
                     if (eventCRFStatus.equals(Status.AVAILABLE) || dataEntryStage.equals(DataEntryStage.INITIAL_DATA_ENTRY)
                             || dataEntryStage.equals(DataEntryStage.INITIAL_DATA_ENTRY_COMPLETE)
                             || dataEntryStage.equals(DataEntryStage.DOUBLE_DATA_ENTRY_COMPLETE) || dataEntryStage.equals(DataEntryStage.DOUBLE_DATA_ENTRY)) {
-                        permittedEventCRFIds.add(new Integer(eventCRFBean.getId()));
+                        permittedEventCRFIds.add(Integer.valueOf(eventCRFBean.getId()));
                     } else {
                         // break out here with an exception
 
@@ -706,8 +706,8 @@ public class ImportSpringJob extends QuartzJobBean {
                                 }
                             }
                             // Update CRF status
-                            if (!eventCrfInts.contains(new Integer(eventCrfBean.getId()))) {
-                                String eventCRFStatus = importedCRFStatuses.get(new Integer(eventCrfBean.getId()));
+                            if (!eventCrfInts.contains(Integer.valueOf(eventCrfBean.getId()))) {
+                                String eventCRFStatus = importedCRFStatuses.get(Integer.valueOf(eventCrfBean.getId()));
                                 if (eventCRFStatus != null && eventCRFStatus.equals(DataEntryStage.INITIAL_DATA_ENTRY.getName())
                                         && eventCrfBean.getStatus().isAvailable()) {
                                     crfBusinessLogicHelper.markCRFStarted(eventCrfBean, ub);
@@ -715,7 +715,7 @@ public class ImportSpringJob extends QuartzJobBean {
                                     crfBusinessLogicHelper.markCRFComplete(eventCrfBean, ub);
                                 }
                                 logger.debug("*** just updated event crf bean: " + eventCrfBean.getId());
-                                eventCrfInts.add(new Integer(eventCrfBean.getId()));
+                                eventCrfInts.add(Integer.valueOf(eventCrfBean.getId()));
                             }
                         }
                         itemDataDao.setFormatDates(true);

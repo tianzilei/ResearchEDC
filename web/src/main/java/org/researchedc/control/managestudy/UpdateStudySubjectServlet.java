@@ -113,7 +113,7 @@ public class UpdateStudySubjectServlet extends SecureController {
             HashMap gMaps = new HashMap();
             for (int i = 0; i < groupMaps.size(); i++) {
                 SubjectGroupMapBean groupMap = (SubjectGroupMapBean) groupMaps.get(i);
-                gMaps.put(new Integer(groupMap.getStudyGroupClassId()), groupMap);
+                gMaps.put(Integer.valueOf(groupMap.getStudyGroupClassId()), groupMap);
 
             }
 
@@ -133,7 +133,7 @@ public class UpdateStudySubjectServlet extends SecureController {
                     StudyGroupClassBean group = (StudyGroupClassBean) classes.get(i);
                     ArrayList studyGroups = sgdao.findAllByGroupClass(group);
                     group.setStudyGroups(studyGroups);
-                    SubjectGroupMapBean gMap = (SubjectGroupMapBean) gMaps.get(new Integer(group.getId()));
+                    SubjectGroupMapBean gMap = (SubjectGroupMapBean) gMaps.get(Integer.valueOf(group.getId()));
                     if (gMap != null) {
                         group.setStudyGroupId(gMap.getStudyGroupId());
                         group.setGroupNotes(gMap.getNotes());
@@ -180,7 +180,7 @@ public class UpdateStudySubjectServlet extends SecureController {
                             }
                         } else {
                             SubjectGroupMapBean sgm = new SubjectGroupMapBean();
-                            SubjectGroupMapBean gMap = (SubjectGroupMapBean) gMaps.get(new Integer(sgc.getId()));
+                            SubjectGroupMapBean gMap = (SubjectGroupMapBean) gMaps.get(Integer.valueOf(sgc.getId()));
                             sgm.setStudyGroupId(sgc.getStudyGroupId());
                             sgm.setNotes(sgc.getGroupNotes());
                             sgm.setStudyGroupClassId(sgc.getId());
@@ -205,7 +205,7 @@ public class UpdateStudySubjectServlet extends SecureController {
                 session.removeAttribute("groups");
                 session.removeAttribute("enrollDateStr");
                 session.removeAttribute(AddNewSubjectServlet.FORM_DISCREPANCY_NOTES_NAME);
-                request.setAttribute("id", new Integer(studySubId).toString());
+                request.setAttribute("id", Integer.valueOf(studySubId).toString());
 
                 forwardPage(Page.VIEW_STUDY_SUBJECT_SERVLET);
             } else {
