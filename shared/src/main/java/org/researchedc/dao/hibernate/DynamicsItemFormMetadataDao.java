@@ -35,9 +35,9 @@ public class DynamicsItemFormMetadataDao extends AbstractDomainDao<DynamicsItemF
                 "metadata.itemDataId = :item_data_id order by metadata.id desc ";
 
         Query q = getCurrentSession().createQuery(query);
-        q.setParameter("item_id", new Integer(metadataBean.getItemId()));
-        q.setParameter("event_crf_id", new Integer(eventCrfBean.getId()));
-        q.setParameter("item_data_id", new Integer(itemDataBean.getId()));
+        q.setParameter("item_id", Integer.valueOf(metadataBean.getItemId()));
+        q.setParameter("event_crf_id", Integer.valueOf(eventCrfBean.getId()));
+        q.setParameter("item_data_id", Integer.valueOf(itemDataBean.getId()));
         ArrayList <DynamicsItemFormMetadataBean> list = (ArrayList<DynamicsItemFormMetadataBean>) q.list();
         return list.size() !=0 ? list.get(0) : null;
     }
@@ -52,7 +52,7 @@ public class DynamicsItemFormMetadataDao extends AbstractDomainDao<DynamicsItemF
 
         Query q = getCurrentSession().createQuery(query);
         q.setParameter("item_id", itemId);
-        q.setParameter("event_crf_id", new Integer(eventCrfBean.getId()));
+        q.setParameter("event_crf_id", Integer.valueOf(eventCrfBean.getId()));
         ArrayList <DynamicsItemFormMetadataBean> list = (ArrayList<DynamicsItemFormMetadataBean>) q.list();
         return list;
     }
@@ -62,7 +62,7 @@ public class DynamicsItemFormMetadataDao extends AbstractDomainDao<DynamicsItemF
         String query = "from " + getDomainClassName() + " metadata where metadata.itemDataId = :item_data_id ";
         Query q = getCurrentSession().createQuery(query);
 
-        q.setParameter("item_data_id", new Integer(itemDataBean.getId()));
+        q.setParameter("item_data_id", Integer.valueOf(itemDataBean.getId()));
         return (DynamicsItemFormMetadataBean) q.uniqueResult();
     }
 

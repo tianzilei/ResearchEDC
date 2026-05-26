@@ -385,13 +385,13 @@ public class UserAccountBean extends AuditableEntityBean {
             return;
         }
 
-        Integer key = new Integer(sur.getStudyId());
+        Integer key = Integer.valueOf(sur.getStudyId());
         if (rolesByStudy.containsKey(key)) {
             Integer index = (Integer) rolesByStudy.get(key);
             roles.set(index.intValue(), sur);
         } else {
             roles.add(sur);
-            rolesByStudy.put(key, new Integer(roles.size() - 1));
+            rolesByStudy.put(key, Integer.valueOf(roles.size() - 1));
         }
     }
 
@@ -400,7 +400,7 @@ public class UserAccountBean extends AuditableEntityBean {
     }
 
     public StudyUserRoleBean getRoleByStudy(int studyId) {
-        Integer key = new Integer(studyId);
+        Integer key = Integer.valueOf(studyId);
 
         if (rolesByStudy.containsKey(key)) {
             Integer index = (Integer) rolesByStudy.get(key);
@@ -473,8 +473,8 @@ public class UserAccountBean extends AuditableEntityBean {
 
             this.roles.add(sur);
 
-            Integer key = new Integer(sur.getStudyId());
-            Integer value = new Integer(this.roles.size() - 1);
+            Integer key = Integer.valueOf(sur.getStudyId());
+            Integer value = Integer.valueOf(this.roles.size() - 1);
             rolesByStudy.put(key, value);
         }
     }

@@ -465,7 +465,7 @@ public class StudyEventDAO extends AuditableEntityDAO implements IStudyEventDAO,
         this.setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(ID));
+        variables.put(Integer.valueOf(1), Integer.valueOf(ID));
 
         String sql = digester.getQuery("findByPK");
         ArrayList alist = this.selectByCache(sql, variables);

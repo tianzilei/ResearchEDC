@@ -625,7 +625,7 @@ public class OdmExtractDAO extends DatasetDAO {
         
         //OC-17141
         HashMap<Integer, Object> param = new HashMap<Integer, Object>();        
-        param.put(new Integer(1), crfVersionOID);
+        param.put(Integer.valueOf(1), crfVersionOID);
         ArrayList rows = this.select(getStudyMeasurementUnitsSqlbyCrfVersionOid(),param);
         
         Iterator it = rows.iterator();
@@ -896,7 +896,7 @@ public class OdmExtractDAO extends DatasetDAO {
     	formDetails.setParentFormOid(crfBean.getOid());
     	
     	
-    setSectionBean(formDetails,new Integer(crfVBean.getId()));
+    setSectionBean(formDetails,Integer.valueOf(crfVBean.getId()));
     	
     formDef.setFormDetails(formDetails);
     	
@@ -1539,7 +1539,7 @@ public class OdmExtractDAO extends DatasetDAO {
     private FormDetailsBean setSectionBean(FormDetailsBean formDetail,Integer crfVId){
     	
     	HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(crfVId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(crfVId));
         ArrayList<SectionDetails>sectionBeans = new ArrayList<SectionDetails>();
         
         SectionDAO secdao = new SectionDAO(this.ds);

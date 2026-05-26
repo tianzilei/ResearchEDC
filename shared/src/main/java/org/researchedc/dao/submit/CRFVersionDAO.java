@@ -65,13 +65,13 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
         // CRF_VERSION_ID=?
         CRFVersionBean ib = (CRFVersionBean) eb;
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(ib.getCrfId()));
-        variables.put(new Integer(2), new Integer(ib.getStatus().getId()));
-        variables.put(new Integer(3), ib.getName());
-        variables.put(new Integer(4), ib.getDescription());
-        variables.put(new Integer(5), new Integer(ib.getUpdater().getId()));
-        variables.put(new Integer(6), ib.getRevisionNotes());
-        variables.put(new Integer(7), new Integer(ib.getId()));
+        variables.put(Integer.valueOf(1), Integer.valueOf(ib.getCrfId()));
+        variables.put(Integer.valueOf(2), Integer.valueOf(ib.getStatus().getId()));
+        variables.put(Integer.valueOf(3), ib.getName());
+        variables.put(Integer.valueOf(4), ib.getDescription());
+        variables.put(Integer.valueOf(5), Integer.valueOf(ib.getUpdater().getId()));
+        variables.put(Integer.valueOf(6), ib.getRevisionNotes());
+        variables.put(Integer.valueOf(7), Integer.valueOf(ib.getId()));
         this.execute(digester.getQuery("update"), variables);
         return eb;
     }
@@ -185,7 +185,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
     public Collection findAllByCRF(int crfId) {
         this.setTypesExpected();
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(crfId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(crfId));
         String sql = digester.getQuery("findAllByCRF");
         ArrayList alist = this.select(sql, variables);
         ArrayList al = new ArrayList();
@@ -200,7 +200,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
     public Collection findAllActiveByCRF(int crfId) {
         this.setTypesExpected();
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(crfId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(crfId));
         String sql = digester.getQuery("findAllActiveByCRF");
         ArrayList alist = this.select(sql, variables);
         ArrayList al = new ArrayList();
@@ -218,7 +218,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
         this.setTypeExpected(2, TypeNames.STRING);
         this.setTypeExpected(3, TypeNames.INT);
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(versionId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(versionId));
         String sql = digester.getQuery("findItemFromMap");
         ArrayList alist = this.select(sql, variables);
         ArrayList al = new ArrayList();
@@ -242,7 +242,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
         this.setTypeExpected(2, TypeNames.STRING);
         this.setTypeExpected(3, TypeNames.INT);
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(versionId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(versionId));
         String sql = digester.getQuery("findItemUsedByOtherVersion");
         ArrayList alist = this.select(sql, variables);
         ArrayList al = new ArrayList();
@@ -264,8 +264,8 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
         this.setTypeExpected(2, TypeNames.STRING);
         this.setTypeExpected(3, TypeNames.INT);
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(versionId));
-        variables.put(new Integer(2), new Integer(versionId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(versionId));
+        variables.put(Integer.valueOf(2), Integer.valueOf(versionId));
         String sql = digester.getQuery("findNotSharedItemsByVersion");
         ArrayList alist = this.select(sql, variables);
         ArrayList al = new ArrayList();
@@ -284,7 +284,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
     public ArrayList findDefCRFVersionsByStudyEvent(int studyEventDefinitionId) {
         this.setTypesExpected();
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(studyEventDefinitionId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(studyEventDefinitionId));
         String sql = digester.getQuery("findDefCRFVersionsByStudyEvent");
         ArrayList alist = this.select(sql, variables);
         ArrayList al = new ArrayList();
@@ -299,7 +299,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
     public boolean isItemUsedByOtherVersion(int versionId) {
         this.setTypesExpected();
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(versionId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(versionId));
         String sql = digester.getQuery("isItemUsedByOtherVersion");
         ArrayList alist = this.select(sql, variables);
         ArrayList al = new ArrayList();
@@ -313,7 +313,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
     public boolean hasItemData(int itemId) {
         this.setTypesExpected();
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(itemId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(itemId));
         String sql = digester.getQuery("hasItemData");
         ArrayList alist = this.select(sql, variables);
         ArrayList al = new ArrayList();
@@ -329,7 +329,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
         this.setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(ID));
+        variables.put(Integer.valueOf(1), Integer.valueOf(ID));
 
         String sql = digester.getQuery("findByPK");
         ArrayList alist = this.select(sql, variables);
@@ -347,8 +347,8 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
         this.setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), version);
-        variables.put(new Integer(2), crfName);
+        variables.put(Integer.valueOf(1), version);
+        variables.put(Integer.valueOf(2), crfName);
 
         String sql = digester.getQuery("findByFullName");
         ArrayList alist = this.select(sql, variables);
@@ -366,7 +366,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
      */
     public void delete(int id) {
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(id));
+        variables.put(Integer.valueOf(1), Integer.valueOf(id));
 
         String sql = digester.getQuery("delete");
         this.execute(sql, variables);
@@ -444,7 +444,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
 
     public ArrayList findAllByOid(String oid) {
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), oid);
+        variables.put(Integer.valueOf(1), oid);
 
         return executeFindAllQuery("findAllByOid", variables);
     }
@@ -456,7 +456,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
         this.setTypeExpected(1, TypeNames.INT);
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(CRFVersionId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(CRFVersionId));
 
         String sql = digester.getQuery("getCRFIdFromCRFVersionId");
         ArrayList rows = select(sql, variables);
@@ -470,7 +470,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
 
     public ArrayList findAllByCRFId(int CRFId) {
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(CRFId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(CRFId));
 
         return executeFindAllQuery("findAllByCRFId", variables);
     }
@@ -479,8 +479,8 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
         this.unsetTypeExpected();
         this.setTypeExpected(1, TypeNames.INT);
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(crfId));
-        variables.put(new Integer(2), versionName);
+        variables.put(Integer.valueOf(1), Integer.valueOf(crfId));
+        variables.put(Integer.valueOf(2), versionName);
         ArrayList result = this.select(digester.getQuery("findCRFVersionId"), variables);
         HashMap map;
         Integer crfVersionId = null;
@@ -497,7 +497,7 @@ public class CRFVersionDAO<K extends String, V extends ArrayList> extends Audita
         setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), oid);
+        variables.put(Integer.valueOf(1), oid);
         String sql = digester.getQuery("findByOID");
 
         ArrayList rows = this.select(sql, variables);

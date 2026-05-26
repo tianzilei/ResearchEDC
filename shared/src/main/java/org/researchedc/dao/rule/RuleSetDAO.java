@@ -153,9 +153,9 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
         HashMap<Integer, Integer> variables = new HashMap<Integer, Integer>();
 
-        variables.put(new Integer(1), new Integer(ub.getId()));
-        variables.put(new Integer(2), new Integer(Status.DELETED.getId()));
-        variables.put(new Integer(3), new Integer(ruleSetBean.getId()));
+        variables.put(Integer.valueOf(1), Integer.valueOf(ub.getId()));
+        variables.put(Integer.valueOf(2), Integer.valueOf(Status.DELETED.getId()));
+        variables.put(Integer.valueOf(3), Integer.valueOf(ruleSetBean.getId()));
 
         this.execute(digester.getQuery("removeOrRestore"), variables);
 
@@ -175,9 +175,9 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
         HashMap<Integer, Integer> variables = new HashMap<Integer, Integer>();
 
-        variables.put(new Integer(1), new Integer(ub.getId()));
-        variables.put(new Integer(2), new Integer(Status.AVAILABLE.getId()));
-        variables.put(new Integer(3), new Integer(ruleSetBean.getId()));
+        variables.put(Integer.valueOf(1), Integer.valueOf(ub.getId()));
+        variables.put(Integer.valueOf(2), Integer.valueOf(Status.AVAILABLE.getId()));
+        variables.put(Integer.valueOf(3), Integer.valueOf(ruleSetBean.getId()));
 
         this.execute(digester.getQuery("removeOrRestore"), variables);
 
@@ -199,23 +199,23 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
         if (eb.getId() == 0) {
             HashMap<Integer, Object> variables = new HashMap<Integer, Object>();
             HashMap<Integer, Object> nullVars = new HashMap<Integer, Object>();
-            variables.put(new Integer(1), getExpressionDao().create(ruleSetBean.getTarget()).getId());
-            variables.put(new Integer(2), new Integer(ruleSetBean.getStudyEventDefinition().getId()));
+            variables.put(Integer.valueOf(1), getExpressionDao().create(ruleSetBean.getTarget()).getId());
+            variables.put(Integer.valueOf(2), Integer.valueOf(ruleSetBean.getStudyEventDefinition().getId()));
             if (ruleSetBean.getCrf() == null) {
-                nullVars.put(new Integer(3), new Integer(Types.INTEGER));
-                variables.put(new Integer(3), null);
+                nullVars.put(Integer.valueOf(3), Integer.valueOf(Types.INTEGER));
+                variables.put(Integer.valueOf(3), null);
         } else {
-                variables.put(new Integer(3), new Integer(ruleSetBean.getCrf().getId()));
+                variables.put(Integer.valueOf(3), Integer.valueOf(ruleSetBean.getCrf().getId()));
             }
             if (ruleSetBean.getCrfVersion() == null) {
-                nullVars.put(new Integer(4), new Integer(Types.INTEGER));
-                variables.put(new Integer(4), null);
+                nullVars.put(Integer.valueOf(4), Integer.valueOf(Types.INTEGER));
+                variables.put(Integer.valueOf(4), null);
             } else {
-                variables.put(new Integer(4), new Integer(ruleSetBean.getCrfVersion().getId()));
+                variables.put(Integer.valueOf(4), Integer.valueOf(ruleSetBean.getCrfVersion().getId()));
             }
-            variables.put(new Integer(5), new Integer(ruleSetBean.getStudy().getId()));
-            variables.put(new Integer(6), new Integer(ruleSetBean.getOwnerId()));
-            variables.put(new Integer(7), new Integer(Status.AVAILABLE.getId()));
+            variables.put(Integer.valueOf(5), Integer.valueOf(ruleSetBean.getStudy().getId()));
+            variables.put(Integer.valueOf(6), Integer.valueOf(ruleSetBean.getOwnerId()));
+            variables.put(Integer.valueOf(7), Integer.valueOf(Status.AVAILABLE.getId()));
 
             executeWithPK(digester.getQuery("create"), variables, nullVars);
             if (isQuerySuccessful()) {
@@ -256,8 +256,8 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
         Context c = ruleSetBean.getTarget().getContext() == null ? Context.OC_RULES_V1 : ruleSetBean.getTarget().getContext();
         this.setTypesExpected();
         HashMap<Integer, Object> variables = new HashMap<Integer, Object>();
-        variables.put(new Integer(1), c.getCode());
-        variables.put(new Integer(2), ruleSetBean.getTarget().getValue());
+        variables.put(Integer.valueOf(1), c.getCode());
+        variables.put(Integer.valueOf(2), ruleSetBean.getTarget().getValue());
 
         String sql = digester.getQuery("findByExpression");
         ArrayList<?> alist = this.select(sql, variables);
@@ -281,8 +281,8 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
         this.setTypesExpected();
         HashMap<Integer, Object> variables = new HashMap<Integer, Object>();
-        variables.put(new Integer(1), crfBean.getId());
-        variables.put(new Integer(2), getStudyId(currentStudy));
+        variables.put(Integer.valueOf(1), crfBean.getId());
+        variables.put(Integer.valueOf(2), getStudyId(currentStudy));
 
         String sql = digester.getQuery("findByCrfId");
         ArrayList<?> alist = this.select(sql, variables);
@@ -301,9 +301,9 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
         this.setTypesExpected();
         HashMap<Integer, Object> variables = new HashMap<Integer, Object>();
-        variables.put(new Integer(1), crfVersionBean.getId());
-        variables.put(new Integer(2), getStudyId(currentStudy));
-        variables.put(new Integer(3), sed.getId());
+        variables.put(Integer.valueOf(1), crfVersionBean.getId());
+        variables.put(Integer.valueOf(2), getStudyId(currentStudy));
+        variables.put(Integer.valueOf(3), sed.getId());
 
         String sql = digester.getQuery("findByCrfVersionStudyAndStudyEventDefinition");
         ArrayList<?> alist = this.select(sql, variables);
@@ -322,11 +322,11 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
         this.setTypesExpected();
         HashMap<Integer, Object> variables = new HashMap<Integer, Object>();
-        variables.put(new Integer(1), getStudyId(currentStudy));
-        variables.put(new Integer(2), sed.getId());
-        variables.put(new Integer(3), crfVersion.getId());
-        variables.put(new Integer(4), crfBean.getId());
-        variables.put(new Integer(5), crfBean.getId());
+        variables.put(Integer.valueOf(1), getStudyId(currentStudy));
+        variables.put(Integer.valueOf(2), sed.getId());
+        variables.put(Integer.valueOf(3), crfVersion.getId());
+        variables.put(Integer.valueOf(4), crfBean.getId());
+        variables.put(Integer.valueOf(5), crfBean.getId());
 
         String sql = digester.getQuery("findByCrfVersionOrCrfStudyAndStudyEventDefinition");
         ArrayList<?> alist = this.select(sql, variables);
@@ -344,9 +344,9 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
         this.setTypesExpected();
         HashMap<Integer, Object> variables = new HashMap<Integer, Object>();
-        variables.put(new Integer(1), crfBean.getId());
-        variables.put(new Integer(2), getStudyId(currentStudy));
-        variables.put(new Integer(3), sed.getId());
+        variables.put(Integer.valueOf(1), crfBean.getId());
+        variables.put(Integer.valueOf(2), getStudyId(currentStudy));
+        variables.put(Integer.valueOf(3), sed.getId());
 
         String sql = digester.getQuery("findByCrfStudyAndStudyEventDefinition");
         ArrayList<?> alist = this.select(sql, variables);
@@ -365,7 +365,7 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
         this.setTypesExpected();
         HashMap<Integer, Object> variables = new HashMap<Integer, Object>();
-        variables.put(new Integer(1), getStudyId(currentStudy));
+        variables.put(Integer.valueOf(1), getStudyId(currentStudy));
 
         String sql = digester.getQuery("findAllByStudy");
         ArrayList<?> alist = this.select(sql, variables);
@@ -395,7 +395,7 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
         this.setTypesExpected();
 
         HashMap<Integer, Object> variables = new HashMap<Integer, Object>();
-        variables.put(new Integer(1), new Integer(ID));
+        variables.put(Integer.valueOf(1), Integer.valueOf(ID));
 
         String sql = digester.getQuery("findByPK");
         ArrayList alist = this.select(sql, variables);
@@ -413,7 +413,7 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
         HashMap<Integer, Object> variables = new HashMap<Integer, Object>();
         Integer studyEventDefinitionId = Integer.valueOf(studyEventDefinition.getId());
-        variables.put(new Integer(1), studyEventDefinitionId);
+        variables.put(Integer.valueOf(1), studyEventDefinitionId);
 
         String sql = digester.getQuery("findByStudyEventDefinition");
         ArrayList alist = this.select(sql, variables);

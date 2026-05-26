@@ -124,7 +124,7 @@ public class ResolutionStatus extends Term {
     }
 
     public static void main(String[] args) {
-        ResourceBundleProvider.updateLocale(new Locale("en"));
+        ResourceBundleProvider.updateLocale(Locale.of("en"));
 
         ResolutionStatus test = new ResolutionStatus(1, "New", null, null);
     }

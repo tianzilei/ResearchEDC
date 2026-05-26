@@ -146,71 +146,71 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
          * update user_account set date_lastvisit=?, passwd_timestamp=?, passwd_challenge_question=?, passwd_challenge_answer=?, phone=? where user_name=?
          */
 
-        variables.put(new Integer(1), uab.getName());
-        variables.put(new Integer(2), uab.getPasswd());
-        variables.put(new Integer(3), uab.getFirstName());
-        variables.put(new Integer(4), uab.getLastName());
-        variables.put(new Integer(5), uab.getEmail());
+        variables.put(Integer.valueOf(1), uab.getName());
+        variables.put(Integer.valueOf(2), uab.getPasswd());
+        variables.put(Integer.valueOf(3), uab.getFirstName());
+        variables.put(Integer.valueOf(4), uab.getLastName());
+        variables.put(Integer.valueOf(5), uab.getEmail());
         if (uab.getActiveStudyId() == 0) {
-            nullVars.put(new Integer(6), new Integer(TypeNames.INT));
-            variables.put(new Integer(6), null);
+            nullVars.put(Integer.valueOf(6), Integer.valueOf(TypeNames.INT));
+            variables.put(Integer.valueOf(6), null);
         } else {
-            variables.put(new Integer(6), new Integer(uab.getActiveStudyId()));
+            variables.put(Integer.valueOf(6), Integer.valueOf(uab.getActiveStudyId()));
         }
-        variables.put(new Integer(7), uab.getInstitutionalAffiliation());
-        variables.put(new Integer(8), new Integer(uab.getStatus().getId()));
-        variables.put(new Integer(9), new Integer(uab.getUpdaterId()));
+        variables.put(Integer.valueOf(7), uab.getInstitutionalAffiliation());
+        variables.put(Integer.valueOf(8), Integer.valueOf(uab.getStatus().getId()));
+        variables.put(Integer.valueOf(9), Integer.valueOf(uab.getUpdaterId()));
         if (uab.getLastVisitDate() == null) {
-            nullVars.put(new Integer(10), new Integer(TypeNames.TIMESTAMP));
-            variables.put(new Integer(10), null);
+            nullVars.put(Integer.valueOf(10), Integer.valueOf(TypeNames.TIMESTAMP));
+            variables.put(Integer.valueOf(10), null);
         } else {
-            variables.put(new Integer(10), new Timestamp(uab.getLastVisitDate().getTime()));
+            variables.put(Integer.valueOf(10), new Timestamp(uab.getLastVisitDate().getTime()));
         }
         if (uab.getPasswdTimestamp() == null) {
-            nullVars.put(new Integer(11), new Integer(TypeNames.DATE));
-            variables.put(new Integer(11), null);
+            nullVars.put(Integer.valueOf(11), Integer.valueOf(TypeNames.DATE));
+            variables.put(Integer.valueOf(11), null);
         } else {
-            variables.put(new Integer(11), uab.getPasswdTimestamp());
+            variables.put(Integer.valueOf(11), uab.getPasswdTimestamp());
         }
-        variables.put(new Integer(12), uab.getPasswdChallengeQuestion());
-        variables.put(new Integer(13), uab.getPasswdChallengeAnswer());
-        variables.put(new Integer(14), uab.getPhone());
+        variables.put(Integer.valueOf(12), uab.getPasswdChallengeQuestion());
+        variables.put(Integer.valueOf(13), uab.getPasswdChallengeAnswer());
+        variables.put(Integer.valueOf(14), uab.getPhone());
 
         if (uab.isTechAdmin()) {
-            variables.put(new Integer(15), new Integer(UserType.TECHADMIN.getId()));
+            variables.put(Integer.valueOf(15), Integer.valueOf(UserType.TECHADMIN.getId()));
         } else if (uab.isSysAdmin()) {
-            variables.put(new Integer(15), new Integer(UserType.SYSADMIN.getId()));
+            variables.put(Integer.valueOf(15), Integer.valueOf(UserType.SYSADMIN.getId()));
         } else {
-            variables.put(new Integer(15), new Integer(UserType.USER.getId()));
+            variables.put(Integer.valueOf(15), Integer.valueOf(UserType.USER.getId()));
         }
 
-        variables.put(new Integer(16), uab.getAccountNonLocked());
-        variables.put(new Integer(17), uab.getLockCounter());
-        variables.put(new Integer(18), uab.getRunWebservices());
+        variables.put(Integer.valueOf(16), uab.getAccountNonLocked());
+        variables.put(Integer.valueOf(17), uab.getLockCounter());
+        variables.put(Integer.valueOf(18), uab.getRunWebservices());
 
         if (uab.getAccessCode() == null || uab.getAccessCode().equals("") || uab.getAccessCode().equals("null")) {
-            nullVars.put(new Integer(19), new Integer(TypeNames.STRING));
-            variables.put(new Integer(19), null);
+            nullVars.put(Integer.valueOf(19), Integer.valueOf(TypeNames.STRING));
+            variables.put(Integer.valueOf(19), null);
         } else {
-            variables.put(new Integer(19), uab.getAccessCode());
+            variables.put(Integer.valueOf(19), uab.getAccessCode());
         }
         
         if (uab.getTime_zone() == null || uab.getTime_zone().equals("")) {
-            nullVars.put(new Integer(20), new Integer(TypeNames.STRING));
-            variables.put(new Integer(20), null);
+            nullVars.put(Integer.valueOf(20), Integer.valueOf(TypeNames.STRING));
+            variables.put(Integer.valueOf(20), null);
         } else {
-            variables.put(new Integer(20), uab.getTime_zone());
+            variables.put(Integer.valueOf(20), uab.getTime_zone());
         }
-        variables.put(new Integer(21), uab.isEnableApiKey());
+        variables.put(Integer.valueOf(21), uab.isEnableApiKey());
         
         if (uab.getApiKey() == null || uab.getApiKey().equals("")) {
-            nullVars.put(new Integer(22), new Integer(TypeNames.STRING));
-            variables.put(new Integer(22), null);        
+            nullVars.put(Integer.valueOf(22), Integer.valueOf(TypeNames.STRING));
+            variables.put(Integer.valueOf(22), null);        
         }else{
-        variables.put(new Integer(22), uab.getApiKey());
+        variables.put(Integer.valueOf(22), uab.getApiKey());
         }
         
-        variables.put(new Integer(23), new Integer(uab.getId()));
+        variables.put(Integer.valueOf(23), Integer.valueOf(uab.getId()));
 
 
         String sql = digester.getQuery("update");
@@ -239,7 +239,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
      */
     public void deleteTestOnly(String name) {
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), name);
+        variables.put(Integer.valueOf(1), name);
         this.execute(digester.getQuery("deleteTestOnly"), variables);
     }
 
@@ -247,41 +247,41 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         HashMap variables = new HashMap();
 
         variables = new HashMap();
-        variables.put(new Integer(1), u.getName());
+        variables.put(Integer.valueOf(1), u.getName());
         /*
          * this.execute(digester.getQuery("deleteStudyUserRolesByUserID"), variables);
          */
         this.execute(digester.getQuery("deleteStudyUserRolesIncludeAutoRemove"), variables);
 
-        variables.put(new Integer(1), new Integer(u.getUpdaterId()));
-        variables.put(new Integer(2), new Integer(u.getId()));
+        variables.put(Integer.valueOf(1), Integer.valueOf(u.getUpdaterId()));
+        variables.put(Integer.valueOf(2), Integer.valueOf(u.getId()));
         this.execute(digester.getQuery("delete"), variables);
     }
 
     public void restore(UserAccountBean u) {
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), u.getPasswd());
-        variables.put(new Integer(2), new Integer(u.getUpdaterId()));
-        variables.put(new Integer(3), new Integer(u.getId()));
+        variables.put(Integer.valueOf(1), u.getPasswd());
+        variables.put(Integer.valueOf(2), Integer.valueOf(u.getUpdaterId()));
+        variables.put(Integer.valueOf(3), Integer.valueOf(u.getId()));
         this.execute(digester.getQuery("restore"), variables);
 
         variables = new HashMap();
-        variables.put(new Integer(1), u.getName());
+        variables.put(Integer.valueOf(1), u.getName());
         this.execute(digester.getQuery("restoreStudyUserRolesByUserID"), variables);
     }
 
     public void updateLockCounter(Integer id, Integer newCounterNumber) {
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(newCounterNumber));
-        variables.put(new Integer(2), new Integer(id));
+        variables.put(Integer.valueOf(1), Integer.valueOf(newCounterNumber));
+        variables.put(Integer.valueOf(2), Integer.valueOf(id));
         this.execute(digester.getQuery("updateLockCounter"), variables);
     }
 
     public void lockUser(Integer id) {
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Boolean(false));
-        variables.put(new Integer(2), new Integer(Status.LOCKED.getId()));
-        variables.put(new Integer(3), new Integer(id));
+        variables.put(Integer.valueOf(1), Boolean.valueOf(false));
+        variables.put(Integer.valueOf(2), Integer.valueOf(Status.LOCKED.getId()));
+        variables.put(Integer.valueOf(3), Integer.valueOf(id));
         this.execute(digester.getQuery("lockUser"), variables);
     }
 
@@ -290,32 +290,32 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         UserAccountBean uab = (UserAccountBean) eb;
         HashMap variables = new HashMap();
         int id = getNextPK();
-        variables.put(new Integer(1), new Integer(id));
-        variables.put(new Integer(2), uab.getName());
-        variables.put(new Integer(3), uab.getPasswd());
-        variables.put(new Integer(4), uab.getFirstName());
-        variables.put(new Integer(5), uab.getLastName());
-        variables.put(new Integer(6), uab.getEmail());
-        variables.put(new Integer(7), new Integer(uab.getActiveStudyId()));
-        variables.put(new Integer(8), uab.getInstitutionalAffiliation());
-        variables.put(new Integer(9), new Integer(uab.getStatus().getId()));
-        variables.put(new Integer(10), new Integer(uab.getOwnerId()));
-        variables.put(new Integer(11), uab.getPasswdChallengeQuestion());
-        variables.put(new Integer(12), uab.getPasswdChallengeAnswer());
-        variables.put(new Integer(13), uab.getPhone());
+        variables.put(Integer.valueOf(1), Integer.valueOf(id));
+        variables.put(Integer.valueOf(2), uab.getName());
+        variables.put(Integer.valueOf(3), uab.getPasswd());
+        variables.put(Integer.valueOf(4), uab.getFirstName());
+        variables.put(Integer.valueOf(5), uab.getLastName());
+        variables.put(Integer.valueOf(6), uab.getEmail());
+        variables.put(Integer.valueOf(7), Integer.valueOf(uab.getActiveStudyId()));
+        variables.put(Integer.valueOf(8), uab.getInstitutionalAffiliation());
+        variables.put(Integer.valueOf(9), Integer.valueOf(uab.getStatus().getId()));
+        variables.put(Integer.valueOf(10), Integer.valueOf(uab.getOwnerId()));
+        variables.put(Integer.valueOf(11), uab.getPasswdChallengeQuestion());
+        variables.put(Integer.valueOf(12), uab.getPasswdChallengeAnswer());
+        variables.put(Integer.valueOf(13), uab.getPhone());
 
         if (uab.isTechAdmin()) {
-            variables.put(new Integer(14), new Integer(UserType.TECHADMIN.getId()));
+            variables.put(Integer.valueOf(14), Integer.valueOf(UserType.TECHADMIN.getId()));
         } else if (uab.isSysAdmin()) {
-            variables.put(new Integer(14), new Integer(UserType.SYSADMIN.getId()));
+            variables.put(Integer.valueOf(14), Integer.valueOf(UserType.SYSADMIN.getId()));
         } else {
-            variables.put(new Integer(14), new Integer(UserType.USER.getId()));
+            variables.put(Integer.valueOf(14), Integer.valueOf(UserType.USER.getId()));
         }
 
-        variables.put(new Integer(15), uab.getRunWebservices());
-        variables.put(new Integer(16), uab.getAccessCode());
-        variables.put(new Integer(17), uab.isEnableApiKey());
-        variables.put(new Integer(18), uab.getApiKey());
+        variables.put(Integer.valueOf(15), uab.getRunWebservices());
+        variables.put(Integer.valueOf(16), uab.getAccessCode());
+        variables.put(Integer.valueOf(17), uab.isEnableApiKey());
+        variables.put(Integer.valueOf(18), uab.getApiKey());
 
         
         boolean success = true;
@@ -347,11 +347,11 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         Locale currentLocale = ResourceBundleProvider.getLocale();
         ResourceBundleProvider.updateLocale(Locale.US); 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), studyRole.getRoleName());
-        variables.put(new Integer(2), new Integer(studyRole.getStudyId()));
-        variables.put(new Integer(3), new Integer(studyRole.getStatus().getId()));
-        variables.put(new Integer(4), user.getName());
-        variables.put(new Integer(5), new Integer(studyRole.getOwnerId()));
+        variables.put(Integer.valueOf(1), studyRole.getRoleName());
+        variables.put(Integer.valueOf(2), Integer.valueOf(studyRole.getStudyId()));
+        variables.put(Integer.valueOf(3), Integer.valueOf(studyRole.getStatus().getId()));
+        variables.put(Integer.valueOf(4), user.getName());
+        variables.put(Integer.valueOf(5), Integer.valueOf(studyRole.getOwnerId()));
         this.execute(digester.getQuery("insertStudyUserRole"), variables);
         ResourceBundleProvider.updateLocale(currentLocale);
         return studyRole;
@@ -368,10 +368,10 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         this.setTypeExpected(8, TypeNames.STRING);
         HashMap variables = new HashMap();
 
-        variables.put(new Integer(1),  studyRole.getRoleName());
-        variables.put(new Integer(2),  new Integer(studyRole.getStudyId()));
-        variables.put(new Integer(3), new Integer(studyRole.getStatus().getId()));
-        variables.put(new Integer(4), user.getName());
+        variables.put(Integer.valueOf(1),  studyRole.getRoleName());
+        variables.put(Integer.valueOf(2),  Integer.valueOf(studyRole.getStudyId()));
+        variables.put(Integer.valueOf(3), Integer.valueOf(studyRole.getStatus().getId()));
+        variables.put(Integer.valueOf(4), user.getName());
 
         ArrayList alist = this.select(digester.getQuery("findStudyUserRole"), variables);
         UserAccountBean eb = new UserAccountBean();
@@ -549,7 +549,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         this.setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(ID));
+        variables.put(Integer.valueOf(1), Integer.valueOf(ID));
 
         String sql = digester.getQuery("findByPK");
         ArrayList alist = this.select(sql, variables);
@@ -566,7 +566,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
     public EntityBean findByPK(int ID, boolean findOwner) {
         this.setTypesExpected();
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(ID));
+        variables.put(Integer.valueOf(1), Integer.valueOf(ID));
         ArrayList alist = this.select(digester.getQuery("findByPK"), variables);
         UserAccountBean eb = new UserAccountBean();
         Iterator it = alist.iterator();
@@ -580,7 +580,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         this.setTypesExpected();
         HashMap variables = new HashMap();
 
-        variables.put(new Integer(1), name);
+        variables.put(Integer.valueOf(1), name);
 
         ArrayList alist = this.select(digester.getQuery("findByUserName"), variables);
         UserAccountBean eb = new UserAccountBean();
@@ -596,7 +596,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         this.setTypesExpected();
         HashMap variables = new HashMap();
 
-        variables.put(new Integer(1), name);
+        variables.put(Integer.valueOf(1), name);
 
         ArrayList alist = this.select(digester.getQuery("findByAccessCode"), variables);
         UserAccountBean eb = new UserAccountBean();
@@ -611,7 +611,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         this.setTypesExpected();
         HashMap variables = new HashMap();
 
-        variables.put(new Integer(1), name);
+        variables.put(Integer.valueOf(1), name);
 
         ArrayList alist = this.select(digester.getQuery("findByApiKey"), variables);
         UserAccountBean eb = new UserAccountBean();
@@ -626,7 +626,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
     public Collection findAllParticipantsByStudyOid(String studyOid) {
         this.setTypesExpected();
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), studyOid+".%");
+        variables.put(Integer.valueOf(1), studyOid+".%");
         ArrayList alist = this.select(digester.getQuery("findAllParticipantsByStudyOid"), variables);
 
         ArrayList al = new ArrayList();
@@ -657,7 +657,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         HashMap allStudyUserRoleBeans = new HashMap();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), userName);
+        variables.put(Integer.valueOf(1), userName);
         ArrayList alist = this.select(digester.getQuery("findStudyByUser"), variables);
         Iterator it = alist.iterator();
 
@@ -699,7 +699,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
             }
 
             boolean parentAdded = false;
-            Integer studyId = new Integer(parent.getId());
+            Integer studyId = Integer.valueOf(parent.getId());
             StudyUserRoleBean roleInStudy;
 
             ArrayList subTreeRoles = new ArrayList();
@@ -722,7 +722,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
 
             for (int j = 0; j < children.size(); j++) {
                 StudyBean child = (StudyBean) children.get(j);
-                Integer childId = new Integer(child.getId());
+                Integer childId = Integer.valueOf(child.getId());
 
                 if (allStudyUserRoleBeans.containsKey(childId)) {
                     if (!parentAdded) {
@@ -827,7 +827,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         this.setTypeExpected(1, TypeNames.INT);
         this.setTypeExpected(2, TypeNames.STRING);
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), parentStudyId);
+        variables.put(Integer.valueOf(1), parentStudyId);
         ArrayList alist = this.select(digester.getQuery("findAllByParent"), variables);
         ArrayList al = new ArrayList();
         Iterator it = alist.iterator();
@@ -846,7 +846,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         ArrayList answer = new ArrayList();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), userName);
+        variables.put(Integer.valueOf(1), userName);
         ArrayList alist = this.select(digester.getQuery("findAllRolesByUserName"), variables);
         Iterator it = alist.iterator();
         while (it.hasNext()) {
@@ -878,8 +878,8 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         ArrayList answer = new ArrayList();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(studyId));
-        variables.put(new Integer(2), new Integer(studyId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(studyId));
+        variables.put(Integer.valueOf(2), Integer.valueOf(studyId));
         ArrayList alist = null;
         if (isLimited) {
             alist = this.select(digester.getQuery("findAllByStudyIdAndLimit"), variables);
@@ -929,8 +929,8 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         ArrayList answer = new ArrayList();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(studyId));
-        variables.put(new Integer(2), new Integer(studyId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(studyId));
+        variables.put(Integer.valueOf(2), Integer.valueOf(studyId));
         ArrayList alist = this.select(digester.getQuery("findAllUsersByStudy"), variables);
         Iterator it = alist.iterator();
         while (it.hasNext()) {
@@ -979,8 +979,8 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         ArrayList answer = new ArrayList();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(studyId));
-        variables.put(new Integer(2), new Integer(studyId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(studyId));
+        variables.put(Integer.valueOf(2), Integer.valueOf(studyId));
         ArrayList alist = this.select(digester.getQuery("findAllAssignedUsersByStudy"), variables);
         Iterator it = alist.iterator();
         while (it.hasNext()) {
@@ -1024,9 +1024,9 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         ArrayList answer = new ArrayList();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(studyId));
-        variables.put(new Integer(2), new Integer(parentStudyId));
-        variables.put(new Integer(3), new Integer(studySubjectId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(studyId));
+        variables.put(Integer.valueOf(2), Integer.valueOf(parentStudyId));
+        variables.put(Integer.valueOf(3), Integer.valueOf(studySubjectId));
         ArrayList alist = this.select(digester.getQuery("findAllUsersByStudyOrSite"), variables);
         Iterator it = alist.iterator();
         while (it.hasNext()) {
@@ -1056,7 +1056,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         this.setPrivilegeTypesExpected();
         ArrayList al = new ArrayList();
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(roleId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(roleId));
         ArrayList alist = this.select(digester.getQuery("findPrivilegesByRole"), variables);
         Iterator it = alist.iterator();
         while (it.hasNext()) {
@@ -1070,7 +1070,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         this.setPrivilegeTypesExpected();
         ArrayList al = new ArrayList();
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), roleName);
+        variables.put(Integer.valueOf(1), roleName);
         ArrayList alist = this.select(digester.getQuery("findPrivilegesByRoleName"), variables);
         Iterator it = alist.iterator();
         while (it.hasNext()) {
@@ -1099,11 +1099,11 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         ResourceBundleProvider.updateLocale(Locale.US);
         HashMap variables = new HashMap();
 
-        variables.put(new Integer(1), s.getRoleName());
-        variables.put(new Integer(2), new Integer(s.getStatus().getId()));
-        variables.put(new Integer(3), new Integer(s.getUpdaterId()));
-        variables.put(new Integer(4), new Integer(s.getStudyId()));
-        variables.put(new Integer(5), userName);
+        variables.put(Integer.valueOf(1), s.getRoleName());
+        variables.put(Integer.valueOf(2), Integer.valueOf(s.getStatus().getId()));
+        variables.put(Integer.valueOf(3), Integer.valueOf(s.getUpdaterId()));
+        variables.put(Integer.valueOf(4), Integer.valueOf(s.getStudyId()));
+        variables.put(Integer.valueOf(5), userName);
 
         String sql = digester.getQuery("updateStudyUserRole");
         this.execute(sql, variables);
@@ -1133,14 +1133,14 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
 
         this.setRoleTypesExpected();
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), userName);
-        variables.put(new Integer(2), studyId);
+        variables.put(Integer.valueOf(1), userName);
+        variables.put(Integer.valueOf(2), studyId);
 
         ArrayList alist = new ArrayList();
         if(childStudyId == 0){
             alist = this.select(digester.getQuery("findRoleCountByUserNameAndStudyId"), variables);
         } else {
-            variables.put(new Integer(3), childStudyId);
+            variables.put(Integer.valueOf(3), childStudyId);
             alist = this.select(digester.getQuery("findRoleByUserNameAndStudyIdOrSiteId"), variables);
         }
         return alist.size();
@@ -1149,15 +1149,15 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
 
     public void setSysAdminRole(UserAccountBean uab, boolean creating) {
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), uab.getName());
+        variables.put(Integer.valueOf(1), uab.getName());
 
         if (uab.isSysAdmin() && !uab.isTechAdmin()) {
             // we remove first so that there are no duplicate roles
             this.execute(digester.getQuery("removeSysAdminRole"), variables);
 
             int ownerId = creating ? uab.getOwnerId() : uab.getUpdaterId();
-            variables.put(new Integer(2), new Integer(ownerId));
-            variables.put(new Integer(3), new Integer(ownerId));
+            variables.put(Integer.valueOf(2), Integer.valueOf(ownerId));
+            variables.put(Integer.valueOf(3), Integer.valueOf(ownerId));
             this.execute(digester.getQuery("addSysAdminRole"), variables);
         } else {
             this.execute(digester.getQuery("removeSysAdminRole"), variables);
@@ -1171,8 +1171,8 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
     public Collection findAllByRole(String role1, String role2) {
         this.setTypesExpected();
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), role1);
-        variables.put(new Integer(2), role2);
+        variables.put(Integer.valueOf(1), role1);
+        variables.put(Integer.valueOf(2), role2);
         ArrayList alist = null;
         alist = this.select(digester.getQuery("findAllByRole"), variables);
         ArrayList al = new ArrayList();

@@ -598,24 +598,24 @@ public abstract class EntityDAO<K extends String, V extends ArrayList> implement
                             break;
                         case TypeNames.DOUBLE:
                             // logger.warn("double: "+column);
-                            hm.put(column, new Double(rs.getDouble(i)));
+                            hm.put(column, Double.valueOf(rs.getDouble(i)));
                             if (rs.wasNull()) {
-                                hm.put(column, new Double(0));
+                                hm.put(column, Double.valueOf(0));
                             }
                             break;
                         case TypeNames.BOOL:
                             // BADS FLAG
                             if (CoreResources.getDBName().equals("oracle")) {
-                                hm.put(column, new Boolean(rs.getString(i).equals("1") ? true : false));
+                                hm.put(column, Boolean.valueOf(rs.getString(i).equals("1") ? true : false));
                                 if (rs.wasNull()) {
                                     if (column.equalsIgnoreCase("start_time_flag") || column.equalsIgnoreCase("end_time_flag")) {
-                                        hm.put(column, new Boolean(false));
+                                        hm.put(column, Boolean.valueOf(false));
                                     } else {
-                                        hm.put(column, new Boolean(true));
+                                        hm.put(column, Boolean.valueOf(true));
                                     }
                                 }
                             } else {
-                                hm.put(column, new Boolean(rs.getBoolean(i)));
+                                hm.put(column, Boolean.valueOf(rs.getBoolean(i)));
                                 if (rs.wasNull()) {
                                     // YW 08-17-2007 << Since I didn't
                                     // investigate
@@ -626,18 +626,18 @@ public abstract class EntityDAO<K extends String, V extends ArrayList> implement
                                     // the
                                     // table study_event
                                     if (column.equalsIgnoreCase("start_time_flag") || column.equalsIgnoreCase("end_time_flag")) {
-                                        hm.put(column, new Boolean(false));
+                                        hm.put(column, Boolean.valueOf(false));
                                     } else {
-                                        hm.put(column, new Boolean(true));
+                                        hm.put(column, Boolean.valueOf(true));
                                     }
                                     // bad idea? what to put, then?
                                 }
                             }
                             break;
                         case TypeNames.FLOAT:
-                            hm.put(column, new Float(rs.getFloat(i)));
+                            hm.put(column, Float.valueOf(rs.getFloat(i)));
                             if (rs.wasNull()) {
-                                hm.put(column, new Float(0.0));
+                                hm.put(column, Float.valueOf(0.0f));
                             }
                             break;
                         case TypeNames.INT:
@@ -656,7 +656,7 @@ public abstract class EntityDAO<K extends String, V extends ArrayList> implement
                             hm.put(column, rs.getString(i));
                             if (rs.wasNull()) {
                                 char x = 'x';
-                                hm.put(column, new Character(x));
+                                hm.put(column, Character.valueOf(x));
                             }
                             break;
                         default:
@@ -1088,7 +1088,7 @@ public abstract class EntityDAO<K extends String, V extends ArrayList> implement
 
                 // Date of birth
                 if (CoreResources.getDBName().equals("oracle")) {
-                    obj.setDobCollected(new Boolean(rs.getString("dob_collected").equals("1") ? true : false));
+                    obj.setDobCollected(Boolean.valueOf(rs.getString("dob_collected").equals("1") ? true : false));
                 } else {
                     obj.setDobCollected(rs.getBoolean("dob_collected"));
                 }
@@ -1675,17 +1675,17 @@ public abstract class EntityDAO<K extends String, V extends ArrayList> implement
                 // start_time_flag
                 Boolean vstart_time_flag;
                 if (CoreResources.getDBName().equals("oracle")) {
-                    vstart_time_flag = new Boolean(rs.getString("start_time_flag").equals("1") ? true : false);
+                    vstart_time_flag = Boolean.valueOf(rs.getString("start_time_flag").equals("1") ? true : false);
                     if (rs.wasNull()) {
                         // if (column.equalsIgnoreCase("start_time_flag") ||
                         // column.equalsIgnoreCase("end_time_flag")) {
-                        vstart_time_flag = new Boolean(false);
+                        vstart_time_flag = Boolean.valueOf(false);
                         // } else {
                         // hm.put(column, new Boolean(true));
                         // }
                     }
                 } else {
-                    vstart_time_flag = new Boolean(rs.getBoolean("start_time_flag"));
+                    vstart_time_flag = Boolean.valueOf(rs.getBoolean("start_time_flag"));
                     if (rs.wasNull()) {
                         // YW 08-17-2007 << Since I didn't investigate
                         // what's the impact if changing true to false,
@@ -1694,7 +1694,7 @@ public abstract class EntityDAO<K extends String, V extends ArrayList> implement
                         // table study_event
                         // if (column.equalsIgnoreCase("start_time_flag") ||
                         // column.equalsIgnoreCase("end_time_flag")) {
-                        vstart_time_flag = new Boolean(false);
+                        vstart_time_flag = Boolean.valueOf(false);
                         // } else {
                         // hm.put(column, new Boolean(true));
                         // }
@@ -1705,17 +1705,17 @@ public abstract class EntityDAO<K extends String, V extends ArrayList> implement
                 // end_time_flag
                 Boolean vend_time_flag;
                 if (CoreResources.getDBName().equals("oracle")) {
-                    vend_time_flag = new Boolean(rs.getString("end_time_flag").equals("1") ? true : false);
+                    vend_time_flag = Boolean.valueOf(rs.getString("end_time_flag").equals("1") ? true : false);
                     if (rs.wasNull()) {
                         // if (column.equalsIgnoreCase("start_time_flag") ||
                         // column.equalsIgnoreCase("end_time_flag")) {
-                        vend_time_flag = new Boolean(false);
+                        vend_time_flag = Boolean.valueOf(false);
                         // } else {
                         // hm.put(column, new Boolean(true));
                         // }
                     }
                 } else {
-                    vend_time_flag = new Boolean(rs.getBoolean("end_time_flag"));
+                    vend_time_flag = Boolean.valueOf(rs.getBoolean("end_time_flag"));
                     if (rs.wasNull()) {
                         // YW 08-17-2007 << Since I didn't investigate
                         // what's the impact if changing true to false,
@@ -1724,7 +1724,7 @@ public abstract class EntityDAO<K extends String, V extends ArrayList> implement
                         // table study_event
                         // if (column.equalsIgnoreCase("start_time_flag") ||
                         // column.equalsIgnoreCase("end_time_flag")) {
-                        vend_time_flag = new Boolean(false);
+                        vend_time_flag = Boolean.valueOf(false);
                         // } else {
                         // hm.put(column, new Boolean(true));
                         // }
@@ -2405,7 +2405,7 @@ public abstract class EntityDAO<K extends String, V extends ArrayList> implement
                 String key = stsed + "_" + stso + "_" + stcrf + "_" + stitem + "_" + stgn;
 
                 // add
-                al.put(key, new Boolean(true));
+                al.put(key, Boolean.valueOf(true));
 
             } // while
         } catch (SQLException sqle) {

@@ -117,7 +117,7 @@ public class XsltTransformJob extends QuartzJobBean {
         initDependencies(context.getScheduler());
         // need to generate a Locale for emailing users with i18n
         // TODO make dynamic?
-        Locale locale = new Locale("en-US");
+        Locale locale = Locale.of("en-US");
         ResourceBundleProvider.updateLocale(locale);
         ResourceBundle pageMessages = ResourceBundleProvider.getPageMessagesBundle();
         List<File> markForDelete = new LinkedList<File>();
@@ -130,7 +130,7 @@ public class XsltTransformJob extends QuartzJobBean {
         int cnt = dataMap.getInt("count");
         DatasetBean datasetBean = null;
         if (localeStr != null) {
-            locale = new Locale(localeStr);
+            locale = Locale.of(localeStr);
             ResourceBundleProvider.updateLocale(locale);
             pageMessages = ResourceBundleProvider.getPageMessagesBundle();
         }
@@ -298,7 +298,7 @@ public class XsltTransformJob extends QuartzJobBean {
                 // logic to prevent deleting the file being created.
 
             }
-            final double done = setFormat(new Double(System.currentTimeMillis() - start)/1000);
+            final double done = setFormat(Double.valueOf(System.currentTimeMillis() - start)/1000);
             logger.info("--> job completed in " + done + " ms");
             // run post processing
 

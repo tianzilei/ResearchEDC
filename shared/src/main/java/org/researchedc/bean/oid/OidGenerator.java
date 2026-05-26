@@ -71,7 +71,7 @@ public abstract class OidGenerator {
             input = "";
         if (!input.endsWith("_"))
             input = input + "_";
-        input = input + new Double((Math.random() * 10000)).intValue();
+        input = input + Double.valueOf((Math.random() * 10000)).intValue();
         return input;
     }
 

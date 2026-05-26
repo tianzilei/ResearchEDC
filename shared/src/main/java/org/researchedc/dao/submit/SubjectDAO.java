@@ -164,13 +164,13 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
 
     public ArrayList findAllFemalesNotSelf(int id) {
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(id));
+        variables.put(Integer.valueOf(1), Integer.valueOf(id));
         return executeFindAllQuery("findAllFemalesNotSelf", variables);
     }
 
     public ArrayList findAllMalesNotSelf(int id) {
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(id));
+        variables.put(Integer.valueOf(1), Integer.valueOf(id));
         return executeFindAllQuery("findAllMalesNotSelf", variables);
     }
 
@@ -179,8 +179,8 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
         setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), currentStudy.getId());
-        variables.put(new Integer(2), currentStudy.getId());
+        variables.put(Integer.valueOf(1), currentStudy.getId());
+        variables.put(Integer.valueOf(2), currentStudy.getId());
         String sql = digester.getQuery("getWithFilterAndSort");
         sql = sql + filter.execute("");
 
@@ -208,8 +208,8 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
         setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), currentStudy.getId());
-        variables.put(new Integer(2), currentStudy.getId());
+        variables.put(Integer.valueOf(1), currentStudy.getId());
+        variables.put(Integer.valueOf(2), currentStudy.getId());
         String sql = digester.getQuery("getCountWithFilter");
         sql += filter.execute("");
 
@@ -275,8 +275,8 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
         this.setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), name);
-        variables.put(new Integer(2), new Integer(subjectId));
+        variables.put(Integer.valueOf(1), name);
+        variables.put(Integer.valueOf(2), Integer.valueOf(subjectId));
 
         String sql = digester.getQuery("findAnotherByIdentifier");
         ArrayList alist = this.select(sql, variables);
@@ -291,8 +291,8 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
     public Collection findAllChildrenByPK(int subjectId) {
         this.setTypesExpected();
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(subjectId));
-        variables.put(new Integer(2), new Integer(subjectId));
+        variables.put(Integer.valueOf(1), Integer.valueOf(subjectId));
+        variables.put(Integer.valueOf(2), Integer.valueOf(subjectId));
         ArrayList alist = this.select(digester.getQuery("findAllChildrenByPK"), variables);
         ArrayList al = new ArrayList();
         Iterator it = alist.iterator();
@@ -317,9 +317,9 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
         this.setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), uniqueIdentifier);
-        variables.put(new Integer(2), new Integer(studyId));
-        variables.put(new Integer(3), new Integer(studyId));
+        variables.put(Integer.valueOf(1), uniqueIdentifier);
+        variables.put(Integer.valueOf(2), Integer.valueOf(studyId));
+        variables.put(Integer.valueOf(3), Integer.valueOf(studyId));
 
         String sql = digester.getQuery("findByUniqueIdentifierAndAnyStudy");
         ArrayList alist = this.select(sql, variables);
@@ -339,8 +339,8 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
         this.setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), uniqueIdentifier);
-        variables.put(new Integer(2), new Integer(studyId));
+        variables.put(Integer.valueOf(1), uniqueIdentifier);
+        variables.put(Integer.valueOf(2), Integer.valueOf(studyId));
 
         String sql = digester.getQuery("findByUniqueIdentifierAndStudy");
         ArrayList alist = this.select(sql, variables);
@@ -367,8 +367,8 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
         this.setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), uniqueIdentifier);
-        variables.put(new Integer(2), new Integer(studyId));
+        variables.put(Integer.valueOf(1), uniqueIdentifier);
+        variables.put(Integer.valueOf(2), Integer.valueOf(studyId));
 
         String sql = digester.getQuery("findByUniqueIdentifierAndParentStudy");
         ArrayList alist = this.select(sql, variables);
@@ -393,7 +393,7 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
         this.setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), new Integer(ID));
+        variables.put(Integer.valueOf(1), Integer.valueOf(ID));
 
         String sql = digester.getQuery("findByPK");
         ArrayList alist = this.select(sql, variables);
@@ -417,24 +417,24 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
         // FATHER_ID,MOTHER_ID, STATUS_ID,
         // DATE_OF_BIRTH,GENDER,UNIQUE_IDENTIFIER,DATE_CREATED,
         // OWNER_ID
-        variables.put(new Integer(1), new Integer(sb.getStatus().getId()));
+        variables.put(Integer.valueOf(1), Integer.valueOf(sb.getStatus().getId()));
         if (sb.getDateOfBirth() == null) {
-            nullVars.put(new Integer(4), new Integer(Types.DATE));
-            variables.put(new Integer(4), null);
+            nullVars.put(Integer.valueOf(4), Integer.valueOf(Types.DATE));
+            variables.put(Integer.valueOf(4), null);
         } else {
-            variables.put(new Integer(4), sb.getDateOfBirth());
+            variables.put(Integer.valueOf(4), sb.getDateOfBirth());
         }
         if (sb.getGender() != 'm' && sb.getGender() != 'f') {
-            nullVars.put(new Integer(5), new Integer(Types.CHAR));
-            variables.put(new Integer(5), null);
+            nullVars.put(Integer.valueOf(5), Integer.valueOf(Types.CHAR));
+            variables.put(Integer.valueOf(5), null);
         } else {
             char[] ch = { sb.getGender() };
-            variables.put(new Integer(5), new String(ch));
+            variables.put(Integer.valueOf(5), new String(ch));
         }
 
-        variables.put(new Integer(6), sb.getUniqueIdentifier());
+        variables.put(Integer.valueOf(6), sb.getUniqueIdentifier());
         // DATE_CREATED is now()
-        variables.put(new Integer(7), new Integer(sb.getOwner().getId()));
+        variables.put(Integer.valueOf(7), Integer.valueOf(sb.getOwner().getId()));
 
         execute(digester.getQuery("create"), variables, nullVars);
 
@@ -464,30 +464,30 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
 
         
 
-        variables.put(new Integer(ind), new Integer(sb.getStatus().getId()));
+        variables.put(Integer.valueOf(ind), Integer.valueOf(sb.getStatus().getId()));
         ind++;
 
         if (sb.getDateOfBirth() == null) {
-            nullVars.put(new Integer(ind), new Integer(Types.DATE));
-            variables.put(new Integer(ind), null);
+            nullVars.put(Integer.valueOf(ind), Integer.valueOf(Types.DATE));
+            variables.put(Integer.valueOf(ind), null);
         } else {
-            variables.put(new Integer(ind), sb.getDateOfBirth());
+            variables.put(Integer.valueOf(ind), sb.getDateOfBirth());
         }
         ind++;
 
         if (sb.getGender() != 'm' && sb.getGender() != 'f') {
-            nullVars.put(new Integer(ind), new Integer(Types.CHAR));
-            variables.put(new Integer(ind), null);
+            nullVars.put(Integer.valueOf(ind), Integer.valueOf(Types.CHAR));
+            variables.put(Integer.valueOf(ind), null);
         } else {
             char[] ch = { sb.getGender() };
-            variables.put(new Integer(ind), new String(ch));
+            variables.put(Integer.valueOf(ind), new String(ch));
         }
         ind++;
-        variables.put(new Integer(ind), sb.getUniqueIdentifier());
+        variables.put(Integer.valueOf(ind), sb.getUniqueIdentifier());
         ind++;
-        variables.put(new Integer(ind), new Integer(sb.getOwnerId()));
+        variables.put(Integer.valueOf(ind), Integer.valueOf(sb.getOwnerId()));
         ind++;
-        variables.put(new Integer(ind), new Boolean(sb.isDobCollected()));
+        variables.put(Integer.valueOf(ind), Boolean.valueOf(sb.isDobCollected()));
         ind++;
 
         executeWithPK(digester.getQuery("create"), variables, nullVars);
@@ -533,7 +533,7 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
         this.setTypesExpected();
 
         HashMap variables = new HashMap();
-        variables.put(new Integer(1), uniqueIdentifier);
+        variables.put(Integer.valueOf(1), uniqueIdentifier);
 
         String sql = digester.getQuery("findByUniqueIdentifier");
         ArrayList alist = this.select(sql, variables);
@@ -562,30 +562,30 @@ public class SubjectDAO extends AuditableEntityDAO implements ISubjectDAO {
         // UPDATE_ID=? DOB_COLLECTED=? WHERE SUBJECT_ID=?
         // YW <<
         int ind = 1;
-        variables.put(new Integer(ind++), new Integer(sb.getStatus().getId()));
+        variables.put(Integer.valueOf(ind++), Integer.valueOf(sb.getStatus().getId()));
         if (sb.getDateOfBirth() != null) {
-            variables.put(new Integer(ind), sb.getDateOfBirth());
+            variables.put(Integer.valueOf(ind), sb.getDateOfBirth());
         } else {
-            nullVars.put(new Integer(ind), new Integer(Types.DATE));
-            variables.put(new Integer(ind), null);
+            nullVars.put(Integer.valueOf(ind), Integer.valueOf(Types.DATE));
+            variables.put(Integer.valueOf(ind), null);
         }
         ind++;
         if (sb.getGender() != 'm' && sb.getGender() != 'f') {
-            nullVars.put(new Integer(ind), new Integer(Types.CHAR));
-            variables.put(new Integer(ind), null);
+            nullVars.put(Integer.valueOf(ind), Integer.valueOf(Types.CHAR));
+            variables.put(Integer.valueOf(ind), null);
         } else {
             char[] ch = { sb.getGender() };
-            variables.put(new Integer(ind), new String(ch));
+            variables.put(Integer.valueOf(ind), new String(ch));
         }
         ind++;
-        variables.put(new Integer(ind++), new String(sb.getUniqueIdentifier()));
+        variables.put(Integer.valueOf(ind++), new String(sb.getUniqueIdentifier()));
         // date_updated is set to now()
         //    variables.put(new Integer(ind++), new java.util.Date());
-        variables.put(new Integer(ind++), new Integer(sb.getUpdater().getId()));
-        variables.put(new Integer(ind++), new Boolean(sb.isDobCollected()));
+        variables.put(Integer.valueOf(ind++), Integer.valueOf(sb.getUpdater().getId()));
+        variables.put(Integer.valueOf(ind++), Boolean.valueOf(sb.isDobCollected()));
         // YW >>
 
-        variables.put(new Integer(ind++), new Integer(sb.getId()));
+        variables.put(Integer.valueOf(ind++), Integer.valueOf(sb.getId()));
 
         String sql = digester.getQuery("update");
         this.execute(sql, variables, nullVars);
