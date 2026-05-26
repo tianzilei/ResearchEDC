@@ -286,13 +286,20 @@ cmd_init_db() {
     sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'" | grep -q 1 \
         || sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASS}';"
 
+    # Drop existing databases and recreate fresh
     for db in "${DB_NAME}" "${Q_DB}"; do
-        sudo -u postgres psql -tc "SELECT 1 FROM pg_database WHERE datname='${db}'" | grep -q 1 \
-            || sudo -u postgres psql -c "CREATE DATABASE ${db} OWNER ${DB_USER};"
-        sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${db} TO ${DB_USER};" 2>/dev/null || true
+        log_info "Dropping database '${db}' if exists..."
+        sudo -u postgres psql -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='${db}' AND pid <> pg_backend_pid();" 2>/dev/null || true
+        sudo -u postgres psql -c "DROP DATABASE IF EXISTS \"${db}\";"
+        sudo -u postgres psql -c "CREATE DATABASE \"${db}\" OWNER ${DB_USER};"
+        sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE \"${db}\" TO ${DB_USER};"
     done
 
     log_ok "Databases ready"
+
+    # ---- Generate datainfo.properties for Liquibase ----
+    mkdir -p app/src/main/resources
+    generate_datainfo app/src/main/resources
 
     # ---- Run Liquibase migrations ----
     log_info "Applying Liquibase migrations..."
