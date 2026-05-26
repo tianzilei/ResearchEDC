@@ -32,7 +32,7 @@ class ApiClient {
   }
 
   private async request<T>(config: RequestConfig): Promise<T> {
-    const url = new URL(`${this.baseUrl}${config.path}`);
+    const url = new URL(`${this.baseUrl}${config.path}`, window.location.origin);
 
     if (config.params) {
       for (const [key, value] of Object.entries(config.params)) {
