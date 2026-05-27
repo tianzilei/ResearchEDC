@@ -56,6 +56,16 @@ function ModuleCard({ mod }: { mod: ModuleInfo }) {
         >
           {mod.description}
         </div>
+        <div
+          style={{
+            color: "var(--text-muted)",
+            fontSize: 11,
+            marginTop: 6,
+            fontFamily: "var(--font-mono)",
+          }}
+        >
+          {mod.path}
+        </div>
       </Card>
     </Col>
   );
@@ -146,6 +156,7 @@ export default function Dashboard() {
               borderRadius: 6,
               fontSize: 12,
               color: "var(--text-secondary)",
+              flexWrap: "wrap",
             }}
           >
             <span>
@@ -154,6 +165,24 @@ export default function Dashboard() {
                 {bootstrap.defaultStudy.name}
               </strong>
             </span>
+            {bootstrap.defaultSiteName && (
+              <>
+                <span
+                  style={{
+                    display: "inline-block",
+                    width: 1,
+                    height: 14,
+                    background: "var(--border-light)",
+                  }}
+                />
+                <span>
+                  当前站点：
+                  <strong style={{ color: "var(--text)" }}>
+                    {bootstrap.defaultSiteName}
+                  </strong>
+                </span>
+              </>
+            )}
             <span
               style={{
                 display: "inline-block",

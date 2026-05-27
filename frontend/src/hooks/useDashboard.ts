@@ -29,6 +29,7 @@ export interface BootstrapResponse {
   user: UserInfo;
   studies: StudyInfo[];
   defaultStudy: StudyInfo | null;
+  defaultSiteName: string | null;
   modules: ModuleInfo[];
 }
 
