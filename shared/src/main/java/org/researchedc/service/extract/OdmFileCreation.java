@@ -56,6 +56,8 @@ public class OdmFileCreation {
     private RuleSetRuleDao ruleSetRuleDao;
     private DataSource dataSource;
     private CoreResources coreResources;
+    private DatasetDAO datasetDao;
+    private ArchivedDatasetFileDAO archivedDatasetFileDao;
 
     private static File files[]=null;
     private static List<File> oldFiles = new LinkedList<File>();
@@ -168,13 +170,12 @@ public class OdmFileCreation {
         //////////////////////////////////////////
         ////////// ClinicalData Extraction ///////
 
-        DatasetDAO dsdao = new DatasetDAO(dataSource);
         String sql = eb.getDataset().getSQLStatement();
-        String st_sed_in = dsdao.parseSQLDataset(sql, true, true);
-        String st_itemid_in = dsdao.parseSQLDataset(sql, false, true);
+        String st_sed_in = getDatasetDao().parseSQLDataset(sql, true, true);
+        String st_itemid_in = getDatasetDao().parseSQLDataset(sql, false, true);
         int datasetItemStatusId = eb.getDataset().getDatasetItemStatus().getId();
-        String ecStatusConstraint = dsdao.getECStatusConstraint(datasetItemStatusId);
-        String itStatusConstraint = dsdao.getItemDataStatusConstraint(datasetItemStatusId);
+        String ecStatusConstraint = getDatasetDao().getECStatusConstraint(datasetItemStatusId);
+        String itStatusConstraint = getDatasetDao().getItemDataStatusConstraint(datasetItemStatusId);
 
         Iterator<OdmStudyBase> it = cdc.getStudyBaseMap().values().iterator();
         while (it.hasNext()) {
@@ -182,7 +183,7 @@ public class OdmFileCreation {
 
             OdmStudyBase u = it.next();
             ArrayList newRows =
-                dsdao.selectStudySubjects(u.getStudy().getId(), 0, st_sed_in, st_itemid_in, dsdao.genDatabaseDateConstraint(eb), ecStatusConstraint,
+                getDatasetDao().selectStudySubjects(u.getStudy().getId(), 0, st_sed_in, st_itemid_in, getDatasetDao().genDatabaseDateConstraint(eb), ecStatusConstraint,
                         itStatusConstraint);
 
             ///////////////
@@ -352,10 +353,9 @@ public class OdmFileCreation {
                 // logger.info("ODM setOwnerId: " + sm.getUserBean().getId() );
                 fb.setDateCreated(new Date(System.currentTimeMillis()));
                 boolean write = true;
-                ArchivedDatasetFileDAO asdfDAO = new ArchivedDatasetFileDAO(dataSource);
                 // eliminating all checks so that we create multiple files, tbh 6-7
                 if (write) {
-                    fbFinal = (ArchivedDatasetFileBean) asdfDAO.create(fb);
+                    fbFinal = (ArchivedDatasetFileBean) getArchivedDatasetFileDao().create(fb);
                 } else {
                     LOG.info("duplicate found: " + fb.getName());
                 }
@@ -385,6 +385,20 @@ public class OdmFileCreation {
         }catch (NumberFormatException e) {
             return 99;
         }
+    }
+
+    private DatasetDAO getDatasetDao() {
+        if (datasetDao == null) {
+            datasetDao = new DatasetDAO(dataSource);
+        }
+        return datasetDao;
+    }
+
+    private ArchivedDatasetFileDAO getArchivedDatasetFileDao() {
+        if (archivedDatasetFileDao == null) {
+            archivedDatasetFileDao = new ArchivedDatasetFileDAO(dataSource);
+        }
+        return archivedDatasetFileDao;
     }
 
     public DataSource getDataSource() {

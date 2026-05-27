@@ -407,10 +407,8 @@ public class AuditEventDAO extends AuditableEntityDAO implements IAuditEventDAO 
     // int studyId = ((Integer) hm.get("study_id")).intValue();
     // int subjectId = ((Integer) hm.get("subject_id")).intValue();
     // try {
-    // SubjectDAO sdao = new SubjectDAO(ds);
     // SubjectBean sbean = (SubjectBean)sdao.findByPK(subjectId);
     // aeb.setSubjectName(sbean.getName());
-    // StudyDAO stdao = new StudyDAO(ds);
     // StudyBean stbean = (StudyBean)stdao.findByPK(studyId);
     // aeb.setStudyName(stbean.getName());
     // } catch (RuntimeException e) {

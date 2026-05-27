@@ -440,7 +440,6 @@ public class ItemDataDAO extends AuditableEntityDAO implements org.researchedc.d
     }
 
     // public boolean isPDateType(int itemId) {
-    // ItemDAO itemDAO = new ItemDAO(this.getDs());
     // ItemBean itemBean = (ItemBean)itemDAO.findByPK(itemId);
     // if (itemBean.getDataType().equals(ItemDataType.PDATE)) {
     // return true;

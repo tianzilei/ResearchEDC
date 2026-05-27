@@ -72,6 +72,12 @@ public class ScoreCalculator {
 
     private final ArrayList<String> errors = new ArrayList<String>();
 
+    private ItemFormMetadataDAO itemFormMetadataDao;
+
+    private ItemDAO itemDao;
+
+    private ItemDataDAO itemDataDao;
+
     private static int DEFAULT_DECIMAL = 4;
 
     public ScoreCalculator(SessionManager sm, EventCRFBean ecb, UserAccountBean ub) {
@@ -98,10 +104,7 @@ public class ScoreCalculator {
      * if(itemdata==null) { //here, actually only record errors but doesn't
      * return errors. logger.error("In scoreCalculator doCalculations(), items
      * are empty!"); errors.add("Calculation cannot be started because needed
-     * items are empty!"); return updateFailedItems; } ItemFormMetadataDAO
-     * ifmdao = new ItemFormMetadataDAO(sm.getDataSource()); ItemDAO idao = new
-     * ItemDAO(sm.getDataSource()); ItemDataDAO iddao = new
-     * ItemDataDAO(sm.getDataSource());
+     * items are empty!"); return updateFailedItems; }
      * 
      * NumberFormat nf = NumberFormat.getInstance(); Parser parser = new
      * Parser(items,itemdata); try { //for calculation type List<ItemFormMetadataBean>
@@ -257,20 +260,17 @@ public class ScoreCalculator {
             errors.add("In ScoreCalculator redoCalculations(), 'changeItems' set is empty!");
             return updateFailedItems;
         }
-        ItemFormMetadataDAO ifmdao = new ItemFormMetadataDAO(sm.getDataSource());
-        ItemDAO idao = new ItemDAO(sm.getDataSource());
-        ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
-
         NumberFormat nf = NumberFormat.getInstance();
         Parser parser = new Parser(items, itemdata);
         try {
             // for calculation type
-            List<ItemFormMetadataBean> derivedItemList = ifmdao.findAllByCRFVersionIdAndResponseTypeId(ecb.getCRFVersionId(), ResponseType.CALCULATION.getId());
+            List<ItemFormMetadataBean> derivedItemList = getItemFormMetadataDao().findAllByCRFVersionIdAndResponseTypeId(ecb.getCRFVersionId(),
+                    ResponseType.CALCULATION.getId());
             if (derivedItemList.size() > 0) {
                 Collections.sort(derivedItemList);
                 for (ItemFormMetadataBean ifmb : derivedItemList) {
                     if (ifmb.getSectionId() != sectionId) {
-                        ItemBean ib = (ItemBean) idao.findByPK(ifmb.getItemId());
+                        ItemBean ib = (ItemBean) getItemDao().findByPK(ifmb.getItemId());
                         ResponseOptionBean rob = (ResponseOptionBean) ifmb.getResponseSet().getOptions().get(0);
                         int groupsize = 1;
                         if (itemOrdinals.containsKey(ib.getId())) {
@@ -279,7 +279,7 @@ public class ScoreCalculator {
                         String value = "";
                         ArrayList<ScoreToken> parsedExp = new ArrayList<ScoreToken>();
                         for (int i = 0; i < groupsize; ++i) {
-                            ItemDataBean idb = iddao.findByItemIdAndEventCRFIdAndOrdinal(ifmb.getItemId(), ecb.getId(), i + 1);
+                            ItemDataBean idb = getItemDataDao().findByItemIdAndEventCRFIdAndOrdinal(ifmb.getItemId(), ecb.getId(), i + 1);
                             // is there any changed item
                             Parser p = new Parser(items, itemdata);
                             parsedExp = parser.parseScoreTokens(rob.getValue());
@@ -293,7 +293,7 @@ public class ScoreCalculator {
                                     if (idb.isActive()) {
                                         idb.setValue("<erased>");
                                         idb.setStatus(Status.UNAVAILABLE);
-                                        idb = (ItemDataBean) iddao.update(idb);
+                                        idb = (ItemDataBean) getItemDataDao().update(idb);
                                         if (!idb.isActive()) {
                                             String key = i + 1 > 1 ? ifmb.getLeftItemText() + "_" + (i + 1) : ifmb.getLeftItemText();
                                             updateFailedItems.add(key);
@@ -328,12 +328,13 @@ public class ScoreCalculator {
                 }
             }
 
-            List<ItemFormMetadataBean> itemList = ifmdao.findAllByCRFVersionIdAndResponseTypeId(ecb.getCRFVersionId(), ResponseType.GROUP_CALCULATION.getId());
+            List<ItemFormMetadataBean> itemList = getItemFormMetadataDao().findAllByCRFVersionIdAndResponseTypeId(ecb.getCRFVersionId(),
+                    ResponseType.GROUP_CALCULATION.getId());
             if (itemList.size() > 0) {
                 Collections.sort(itemList);
                 for (ItemFormMetadataBean ifmb : itemList) {
                     if (ifmb.getSectionId() != sectionId) {
-                        ItemBean ib = (ItemBean) idao.findByPK(ifmb.getItemId());
+                        ItemBean ib = (ItemBean) getItemDao().findByPK(ifmb.getItemId());
                         ResponseOptionBean rob = (ResponseOptionBean) ifmb.getResponseSet().getOptions().get(0);
                         String value = "";
                         Parser p = new Parser(items, itemdata);
@@ -342,13 +343,13 @@ public class ScoreCalculator {
                             StringBuffer err = new StringBuffer();
                             parser.setErrors(err);
                             parsedExp = parser.assignVariables(parsedExp, itemOrdinals);
-                            ItemDataBean idb = iddao.findByItemIdAndEventCRFIdAndOrdinal(ifmb.getItemId(), ecb.getId(), 1);
+                            ItemDataBean idb = getItemDataDao().findByItemIdAndEventCRFIdAndOrdinal(ifmb.getItemId(), ecb.getId(), 1);
                             if (parser.getErrors().length() > 0) {
                                 err.append(parser.getErrors());
                                 if (idb.isActive()) {
                                     idb.setValue("<erased>");
                                     idb.setStatus(Status.UNAVAILABLE);
-                                    idb = (ItemDataBean) iddao.update(idb);
+                                    idb = (ItemDataBean) getItemDataDao().update(idb);
                                     if (!idb.isActive()) {
                                         updateFailedItems.add(ifmb.getLeftItemText());
                                     }
@@ -384,7 +385,6 @@ public class ScoreCalculator {
     }
 
     protected boolean writeToDB(ItemBean ib, ItemFormMetadataBean ifm, ItemDataBean idb, String exp, String value, StringBuffer err) {
-        ItemDataDAO iddao = new ItemDataDAO(sm.getDataSource());
         NumberFormat nf = NumberFormat.getInstance();
 
         if (idb == null) {
@@ -412,9 +412,9 @@ public class ScoreCalculator {
             idb.setItemId(ib.getId());
             idb.setEventCRFId(ecb.getId());
 
-            idb = (ItemDataBean) iddao.create(idb);
+            idb = (ItemDataBean) getItemDataDao().create(idb);
         } else {
-            idb = (ItemDataBean) iddao.update(idb);
+            idb = (ItemDataBean) getItemDataDao().update(idb);
         }
 
         return idb.isActive();
@@ -498,5 +498,26 @@ public class ScoreCalculator {
             }
         }
         return value;
+    }
+
+    private ItemFormMetadataDAO getItemFormMetadataDao() {
+        if (itemFormMetadataDao == null) {
+            itemFormMetadataDao = new ItemFormMetadataDAO(sm.getDataSource());
+        }
+        return itemFormMetadataDao;
+    }
+
+    private ItemDAO getItemDao() {
+        if (itemDao == null) {
+            itemDao = new ItemDAO(sm.getDataSource());
+        }
+        return itemDao;
+    }
+
+    private ItemDataDAO getItemDataDao() {
+        if (itemDataDao == null) {
+            itemDataDao = new ItemDataDAO(sm.getDataSource());
+        }
+        return itemDataDao;
     }
 }

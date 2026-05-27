@@ -93,6 +93,8 @@ public class RulesPostImportContainerService {
     private InsertActionValidator insertActionValidator;
     private EventActionValidator eventActionValidator;
     private RandomizeActionValidator randomizeActionValidator;
+    private StudyGroupClassDAO studyGroupClassDao;
+    private StudyEventDefinitionDAO studyEventDefinitionDao;
     ResourceBundle respage;
 
     public RulesPostImportContainerService(DataSource ds, StudyBean currentStudy) {
@@ -468,8 +470,7 @@ public class RulesPostImportContainerService {
                          if (param.startsWith(prefix)){
                         String gcName= param.substring(21,param.indexOf("\"]"));
 
-                     StudyGroupClassDAO studyGroupClassDAO =new StudyGroupClassDAO(ds);
-                     ArrayList <StudyGroupClassBean> studyGroupClasses = studyGroupClassDAO.findAllByStudy(currentStudy);
+                     ArrayList <StudyGroupClassBean> studyGroupClasses = getStudyGroupClassDao().findAllByStudy(currentStudy);
                      for (StudyGroupClassBean studyGroupClass :studyGroupClasses){
                            if (studyGroupClass.getName().equalsIgnoreCase(gcName.trim())){
                                sgcExist= true;
@@ -618,9 +619,7 @@ public class RulesPostImportContainerService {
 	}
 
 	public boolean isEventTypeRepeating(String event) {
-		boolean isRepeating = false;
-		StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(ds);
-		StudyEventDefinitionBean studyEventDefinition = (StudyEventDefinitionBean) seddao.findByOid(event);
+		StudyEventDefinitionBean studyEventDefinition = (StudyEventDefinitionBean) getStudyEventDefinitionDao().findByOid(event);
 		return studyEventDefinition.isRepeating();
 	}
 
@@ -935,5 +934,18 @@ public class RulesPostImportContainerService {
         return expressionService;
     }
 
+    private StudyGroupClassDAO getStudyGroupClassDao() {
+        if (studyGroupClassDao == null) {
+            studyGroupClassDao = new StudyGroupClassDAO(ds);
+        }
+        return studyGroupClassDao;
+    }
+
+    private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+        if (studyEventDefinitionDao == null) {
+            studyEventDefinitionDao = new StudyEventDefinitionDAO(ds);
+        }
+        return studyEventDefinitionDao;
+    }
 
 }

@@ -25,6 +25,9 @@ public class RuleExecutionBusinessObject {
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     protected StudyBean currentStudy;
     protected UserAccountBean ub;
+    private DiscrepancyNoteDAO discrepancyNoteDao;
+    private EventCRFDAO eventCrfDao;
+    private RuleDAO ruleDao;
 
     public RuleExecutionBusinessObject(SessionManager sm, StudyBean currentStudy, UserAccountBean ub) {
         this.sm = sm;
@@ -82,26 +85,43 @@ public class RuleExecutionBusinessObject {
         note.setColumn("value");
         note.setStudyId(currentStudy.getId());
 
-        DiscrepancyNoteDAO discrepancyNoteDao = new DiscrepancyNoteDAO(sm.getDataSource());
-        note = (DiscrepancyNoteBean) discrepancyNoteDao.create(note);
-        discrepancyNoteDao.createMapping(note);
+        note = (DiscrepancyNoteBean) getDiscrepancyNoteDao().create(note);
+        getDiscrepancyNoteDao().createMapping(note);
 
     }
 
     // These are dao mostly calls see how to reduce redundancy
     private EventCRFBean getEventCRFBean(int eventCrfBeanId) {
-        EventCRFDAO eventCrfDao = new EventCRFDAO(sm.getDataSource());
-        return eventCrfBeanId > 0 ? (EventCRFBean) eventCrfDao.findByPK(eventCrfBeanId) : null;
+        return eventCrfBeanId > 0 ? (EventCRFBean) getEventCrfDao().findByPK(eventCrfBeanId) : null;
     }
 
     private RuleSetBean getRuleSetBean(EventCRFBean eventCrfBean) {
-        // RuleSetDAO ruleSetDao = new RuleSetDAO(sm.getDataSource());
         return null;
     }
 
     private ArrayList<RuleBean> getRuleBeans(RuleSetBean ruleSet) {
-        RuleDAO ruleDao = new RuleDAO(sm.getDataSource());
-        return ruleSet != null ? ruleDao.findByRuleSet(ruleSet) : new ArrayList<RuleBean>();
+        return ruleSet != null ? getRuleDao().findByRuleSet(ruleSet) : new ArrayList<RuleBean>();
+    }
+
+    private DiscrepancyNoteDAO getDiscrepancyNoteDao() {
+        if (discrepancyNoteDao == null) {
+            discrepancyNoteDao = new DiscrepancyNoteDAO(sm.getDataSource());
+        }
+        return discrepancyNoteDao;
+    }
+
+    private EventCRFDAO getEventCrfDao() {
+        if (eventCrfDao == null) {
+            eventCrfDao = new EventCRFDAO(sm.getDataSource());
+        }
+        return eventCrfDao;
+    }
+
+    private RuleDAO getRuleDao() {
+        if (ruleDao == null) {
+            ruleDao = new RuleDAO(sm.getDataSource());
+        }
+        return ruleDao;
     }
 
 }

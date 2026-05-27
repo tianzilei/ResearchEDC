@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 public class StudyConfigService {
 
     private DataSource ds;
+    private StudyDAO studyDao;
+    private StudyParameterValueDAO studyParameterValueDao;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     public StudyConfigService(DataSource ds) {
@@ -61,16 +63,13 @@ public class StudyConfigService {
      * @return
      */
     public String hasDefinedParameterValue(int studyId, String parameterHandle) {
-        StudyDAO sdao = new StudyDAO(ds);
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(ds);
-
         if (studyId <= 0 || StringUtil.isBlank(parameterHandle)) {
             return null;
         }
 
-        StudyParameterValueBean spv = spvdao.findByHandleAndStudy(studyId, parameterHandle);
-        StudyParameter sp = spvdao.findParameterByHandle(parameterHandle);
-        StudyBean study = (StudyBean) sdao.findByPK(studyId);
+        StudyParameterValueBean spv = getStudyParameterValueDao().findByHandleAndStudy(studyId, parameterHandle);
+        StudyParameter sp = getStudyParameterValueDao().findParameterByHandle(parameterHandle);
+        StudyBean study = (StudyBean) getStudyDao().findByPK(studyId);
         if (spv.getId() > 0) {// there is a row for that study, no matter it
             // is a
             // top study or not
@@ -78,7 +77,7 @@ public class StudyConfigService {
         }
         int parentId = study.getParentStudyId();
         if (parentId > 0) {
-            StudyParameterValueBean spvParent = spvdao.findByHandleAndStudy(parentId, parameterHandle);
+            StudyParameterValueBean spvParent = getStudyParameterValueDao().findByHandleAndStudy(parentId, parameterHandle);
             if (spvParent.getId() > 0 && sp.isInheritable()) {
                 return spvParent.getValue();
             }
@@ -95,15 +94,14 @@ public class StudyConfigService {
      * @return
      */
     public StudyBean setParametersForStudy(StudyBean study) {
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(ds);
-        ArrayList parameters = spvdao.findAllParameters();
+        ArrayList parameters = getStudyParameterValueDao().findAllParameters();
         StudyParameterConfig spc = new StudyParameterConfig();
 
         for (int i = 0; i < parameters.size(); i++) {
             StudyParameter sp = (StudyParameter) parameters.get(i);
             String handle = sp.getHandle();
             // logger.info("handle:" + handle);
-            StudyParameterValueBean spv = spvdao.findByHandleAndStudy(study.getId(), handle);
+            StudyParameterValueBean spv = getStudyParameterValueDao().findByHandleAndStudy(study.getId(), handle);
             // TO DO: will change to use java reflection later
             if (spv.getId() > 0) {
                 if (handle.equalsIgnoreCase("collectDob")) {
@@ -154,11 +152,10 @@ public class StudyConfigService {
     }
 
     public StudyBean setParameterValuesForStudy(StudyBean study) {
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(ds);
-        ArrayList theParameters = spvdao.findParamConfigByStudy(study);
+        ArrayList theParameters = getStudyParameterValueDao().findParamConfigByStudy(study);
         study.setStudyParameters(theParameters);
 
-        ArrayList parameters = spvdao.findAllParameterValuesByStudy(study);
+        ArrayList parameters = getStudyParameterValueDao().findAllParameterValuesByStudy(study);
 
         for (int i = 0; i < parameters.size(); i++) {
             StudyParameterValueBean spvb = (StudyParameterValueBean) parameters.get(i);
@@ -214,12 +211,10 @@ public class StudyConfigService {
     }
 
     public StudyBean setParametersForSite(StudyBean site) {
-        StudyDAO sdao = new StudyDAO(ds);
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(ds);
-        StudyBean parent = (StudyBean) sdao.findByPK(site.getParentStudyId());
+        StudyBean parent = (StudyBean) getStudyDao().findByPK(site.getParentStudyId());
         parent = this.setParameterValuesForStudy(parent);
         site.setStudyParameterConfig(parent.getStudyParameterConfig());
-        ArrayList siteParameters = spvdao.findAllParameterValuesByStudy(site);
+        ArrayList siteParameters = getStudyParameterValueDao().findAllParameterValuesByStudy(site);
 
         for (int i = 0; i < siteParameters.size(); i++) {
             StudyParameterValueBean spvb = (StudyParameterValueBean) siteParameters.get(i);
@@ -270,6 +265,20 @@ public class StudyConfigService {
         }
         return site;
 
+    }
+
+    private StudyDAO getStudyDao() {
+        if (studyDao == null) {
+            studyDao = new StudyDAO(ds);
+        }
+        return studyDao;
+    }
+
+    private StudyParameterValueDAO getStudyParameterValueDao() {
+        if (studyParameterValueDao == null) {
+            studyParameterValueDao = new StudyParameterValueDAO(ds);
+        }
+        return studyParameterValueDao;
     }
 
 }

@@ -1563,16 +1563,6 @@ public class OdmExtractDAO extends DatasetDAO {
     public void getMetadataOC1_3(int parentStudyId, int studyId, MetaDataVersionBean metadata, String odmVersion) {
         this.getOCMetadata(parentStudyId, studyId, metadata, odmVersion);
 
-        //StudyBean study = metadata.getStudy();
-        //if(study.getId()>0) {
-        //} else {
-        //    StudyDAO sdao = new StudyDAO(this.ds);
-        //    study = (StudyBean)sdao.findByPK(studyId);
-        //}
-        //StudyConfigService studyConfig = new StudyConfigService(this.ds);
-        //study = studyConfig.setParametersForStudy(study);
-
-
         this.getStudyEventAndFormMetaOC1_3(parentStudyId, studyId, metadata, odmVersion, false);
 
         String cvIds = metadata.getCvIds();

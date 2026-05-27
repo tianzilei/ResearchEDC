@@ -71,12 +71,9 @@ public class AuditableEntityBean extends EntityBean {
         }
 
         try {
-            if (udao == null) {
-                //SessionManager sm = new SessionManager();
-                udao = new UserAccountDAO(SessionManager.getStaticDataSource());
-            }
+            UserAccountDAO userAccountDao = getUserAccountDao();
             if (owner == null || owner.getId() != ownerId) {
-                owner = (UserAccountBean) udao.findByPK(ownerId);
+                owner = (UserAccountBean) userAccountDao.findByPK(ownerId);
             }
         } catch (Exception e) {
             owner = null;
@@ -127,12 +124,9 @@ public class AuditableEntityBean extends EntityBean {
         }
 
         try {
-            if (udao == null) {
-                //SessionManager sm = new SessionManager();
-                udao = new UserAccountDAO(SessionManager.getStaticDataSource());
-            }
+            UserAccountDAO userAccountDao = getUserAccountDao();
             if (updater == null || updater.getId() != updaterId) {
-                updater = (UserAccountBean) udao.findByPK(updaterId);
+                updater = (UserAccountBean) userAccountDao.findByPK(updaterId);
             }
 
         } catch (Exception e) {
@@ -142,7 +136,6 @@ public class AuditableEntityBean extends EntityBean {
         // try {
         // if (udao == null) {
         // SessionManager sm = new SessionManager(null, "tomh");
-        // udao = new UserAccountDAO(sm.getDataSource());
         // }
         // updater = (UserAccountBean) udao.findByPK(updaterId);
         // }
@@ -151,6 +144,13 @@ public class AuditableEntityBean extends EntityBean {
         // }
 
         return updater;
+    }
+
+    private UserAccountDAO getUserAccountDao() {
+        if (udao == null) {
+            udao = new UserAccountDAO(SessionManager.getStaticDataSource());
+        }
+        return udao;
     }
 
     /**

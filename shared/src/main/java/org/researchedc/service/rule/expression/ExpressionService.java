@@ -1457,51 +1457,34 @@ public class ExpressionService {
     }
 
     private ItemDAO getItemDao() {
-        // itemDao = this.itemDao != null ? itemDao : new ItemDAO(ds);
         return new ItemDAO(ds);
     }
 
     private ItemDataDAO getItemDataDao() {
-        // itemDataDao = this.itemDataDao != null ? itemDataDao : new
-        // ItemDataDAO(ds);
         return new ItemDataDAO(ds);
     }
 
     private CRFVersionDAO getCrfVersionDao() {
-        // crfVersionDao = this.crfVersionDao != null ? crfVersionDao : new
-        // CRFVersionDAO(ds);
         return new CRFVersionDAO(ds);
     }
 
     private CRFDAO getCrfDao() {
-        // crfDao = this.crfDao != null ? crfDao : new CRFDAO(ds);
         return new CRFDAO(ds);
     }
 
     private ItemGroupDAO getItemGroupDao() {
-        // itemGroupDao = this.itemGroupDao != null ? itemGroupDao : new
-        // ItemGroupDAO(ds);
         return new ItemGroupDAO(ds);
     }
 
     private ItemGroupMetadataDAO getItemGroupMetadataDao() {
-        // itemGroupMetadataDao = this.itemGroupMetadataDao != null ?
-        // itemGroupMetadataDao : new ItemGroupMetadataDAO(ds);
-        // return itemGroupMetadataDao;
         return new ItemGroupMetadataDAO(ds);
     }
 
     private EventDefinitionCRFDAO getEventDefinitionCRFDao() {
-        // eventDefinitionCRFDao = this.eventDefinitionCRFDao != null ?
-        // eventDefinitionCRFDao : new EventDefinitionCRFDAO(ds);
-        // return eventDefinitionCRFDao;
         return new EventDefinitionCRFDAO(ds);
     }
 
     private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
-        // studyEventDefinitionDao = this.studyEventDefinitionDao != null ?
-        // studyEventDefinitionDao : new StudyEventDefinitionDAO(ds);
-        // return studyEventDefinitionDao;
         return new StudyEventDefinitionDAO(ds);
     }
 

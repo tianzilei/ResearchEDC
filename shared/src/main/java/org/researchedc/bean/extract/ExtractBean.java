@@ -77,6 +77,14 @@ public class ExtractBean {
     private String showUniqueId = "1";
 
     private StudyBean parentStudy;
+    private StudyEventDefinitionDAO studyEventDefinitionDao;
+    private CRFDAO crfDao;
+    private CRFVersionDAO crfVersionDao;
+    private ItemDAO itemDao;
+    private ItemFormMetadataDAO itemFormMetadataDao;
+    private StudyGroupDAO studyGroupDao;
+    private StudyGroupClassDAO studyGroupClassDao;
+    private StudyEventDAO studyEventDao;
 
     private StudyBean study;
 
@@ -797,14 +805,13 @@ public class ExtractBean {
      * called after DatasetDAO.getDatasetData();
      */
     public void getMetadata() {
-        StudyEventDefinitionDAO seddao = new StudyEventDefinitionDAO(ds);
-        CRFDAO cdao = new CRFDAO(ds);
-        CRFVersionDAO cvdao = new CRFVersionDAO(ds);
-        ItemDAO idao = new ItemDAO(ds);
-        ItemFormMetadataDAO ifmDAO = new ItemFormMetadataDAO(this.ds);
-        StudyGroupDAO studygroupDAO = new StudyGroupDAO(ds);
-        StudyGroupClassDAO studygroupclassDAO = new StudyGroupClassDAO(ds);
-        // SubjectGroupMapDAO subjectGroupMapDAO = new SubjectGroupMapDAO(ds);
+        StudyEventDefinitionDAO seddao = getStudyEventDefinitionDao();
+        CRFDAO cdao = getCrfDao();
+        CRFVersionDAO cvdao = getCrfVersionDao();
+        ItemDAO idao = getItemDao();
+        ItemFormMetadataDAO ifmDAO = getItemFormMetadataDao();
+        StudyGroupDAO studygroupDAO = getStudyGroupDao();
+        StudyGroupClassDAO studygroupclassDAO = getStudyGroupClassDao();
         studyGroupClasses = new ArrayList();
         studyGroupMap = new HashMap();
         studyGroupMaps = new HashMap<Integer, ArrayList>();
@@ -1148,8 +1155,8 @@ public class ExtractBean {
             return;
         }
         // YW 08-21-2007 << fetch start_time_flag and end_time_flag
-        StudyEventDAO sedao = new StudyEventDAO(ds);
-        StudyEventBean se = (StudyEventBean) sedao.findByStudySubjectIdAndDefinitionIdAndOrdinal(studySubjectId, studyEventDefinitionId, sampleOrdinal);
+        StudyEventBean se =
+                (StudyEventBean) getStudyEventDao().findByStudySubjectIdAndDefinitionIdAndOrdinal(studySubjectId, studyEventDefinitionId, sampleOrdinal);
         // YW >>
         if (se == null) {
             se.setStatus(Status.INVALID);
@@ -1182,7 +1189,6 @@ public class ExtractBean {
         eventCRF.setDateInterviewed(dateInterviewed);
         // eventCRF.setStatus(status); //this is the one that we want, tbh
 
-        // EventCRFDAO ecrfdao = new EventCRFDAO(ds);
         // ArrayList events = ecrfdao.findAllByStudyEvent(se);
 
         CRFVersionBean crfVersion = new CRFVersionBean();
@@ -2946,6 +2952,62 @@ public class ExtractBean {
      */
     public void setABASE_ITEMDATAID(ArrayList abase_itemdataid) {
         aBASE_ITEMDATAID = abase_itemdataid;
+    }
+
+    private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+        if (studyEventDefinitionDao == null) {
+            studyEventDefinitionDao = new StudyEventDefinitionDAO(ds);
+        }
+        return studyEventDefinitionDao;
+    }
+
+    private CRFDAO getCrfDao() {
+        if (crfDao == null) {
+            crfDao = new CRFDAO(ds);
+        }
+        return crfDao;
+    }
+
+    private CRFVersionDAO getCrfVersionDao() {
+        if (crfVersionDao == null) {
+            crfVersionDao = new CRFVersionDAO(ds);
+        }
+        return crfVersionDao;
+    }
+
+    private ItemDAO getItemDao() {
+        if (itemDao == null) {
+            itemDao = new ItemDAO(ds);
+        }
+        return itemDao;
+    }
+
+    private ItemFormMetadataDAO getItemFormMetadataDao() {
+        if (itemFormMetadataDao == null) {
+            itemFormMetadataDao = new ItemFormMetadataDAO(ds);
+        }
+        return itemFormMetadataDao;
+    }
+
+    private StudyGroupDAO getStudyGroupDao() {
+        if (studyGroupDao == null) {
+            studyGroupDao = new StudyGroupDAO(ds);
+        }
+        return studyGroupDao;
+    }
+
+    private StudyGroupClassDAO getStudyGroupClassDao() {
+        if (studyGroupClassDao == null) {
+            studyGroupClassDao = new StudyGroupClassDAO(ds);
+        }
+        return studyGroupClassDao;
+    }
+
+    private StudyEventDAO getStudyEventDao() {
+        if (studyEventDao == null) {
+            studyEventDao = new StudyEventDAO(ds);
+        }
+        return studyEventDao;
     }
 
 }

@@ -42,6 +42,14 @@ public class ImportDataHelper {
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     protected SessionManager sm;
     protected UserAccountBean ub;
+    private EventCRFDAO eventCrfDao;
+    private StudyDAO studyDao;
+    private StudySubjectDAO studySubjectDao;
+    private StudyEventDefinitionDAO studyEventDefinitionDao;
+    private CRFVersionDAO crfVersionDao;
+    private StudyEventDAO studyEventDao;
+    private CRFDAO crfDao;
+    private SubjectDAO subjectDao;
 
     public void setSessionManager(SessionManager sm) {
         this.sm = sm;
@@ -70,48 +78,39 @@ public class ImportDataHelper {
         // << tbh
         int eventCRFId = 0;
 
-        EventCRFDAO eventCrfDao = new EventCRFDAO(sm.getDataSource());
-        StudyDAO studyDao = new StudyDAO(sm.getDataSource());
-        StudySubjectDAO studySubjectDao = new StudySubjectDAO(sm.getDataSource());
-        StudyEventDefinitionDAO studyEventDefinistionDao = new StudyEventDefinitionDAO(sm.getDataSource());
-        CRFVersionDAO crfVersionDao = new CRFVersionDAO(sm.getDataSource());
-        StudyEventDAO studyEventDao = new StudyEventDAO(sm.getDataSource());
-        CRFDAO crfdao = new CRFDAO(sm.getDataSource());
-        SubjectDAO subjectDao = new SubjectDAO(sm.getDataSource());
-
-        StudyBean studyBean = (StudyBean) studyDao.findByName(studyName);
+        StudyBean studyBean = (StudyBean) getStudyDao().findByName(studyName);
         // .findByPK(studyId);
 
         // generate the subject bean first, so that we can have the subject id
         // below...
-        SubjectBean subjectBean = subjectDao// .findByUniqueIdentifierAndStudy(subjectName,
+        SubjectBean subjectBean = getSubjectDao()// .findByUniqueIdentifierAndStudy(subjectName,
                 // studyBean.getId());
                 .findByUniqueIdentifier(subjectName);
 
-        StudySubjectBean studySubjectBean = studySubjectDao.findBySubjectIdAndStudy(subjectBean.getId(), studyBean);
+        StudySubjectBean studySubjectBean = getStudySubjectDao().findBySubjectIdAndStudy(subjectBean.getId(), studyBean);
         // .findByLabelAndStudy(subjectName, studyBean);
         logger.info("::: found study subject id here: " + studySubjectBean.getId() + " with the following: subject ID " + subjectBean.getId()
             + " study bean name " + studyBean.getName());
 
-        StudyEventBean studyEventBean = (StudyEventBean) studyEventDao.findByPK(studyEventId);
+        StudyEventBean studyEventBean = (StudyEventBean) getStudyEventDao().findByPK(studyEventId);
         // TODO need to replace, can't really replace
 
         logger.info("found study event status: " + studyEventBean.getStatus().getName());
 
         // [study] event should be scheduled, event crf should be not started
 
-        CRFVersionBean crfVersion = (CRFVersionBean) crfVersionDao.findByFullName(crfVersionName, crfName);
+        CRFVersionBean crfVersion = (CRFVersionBean) getCrfVersionDao().findByFullName(crfVersionName, crfName);
         // .findByPK(crfVersionId);
         // replaced by findByName(name, version)
 
         logger.info("found crf version name here: " + crfVersion.getName());
 
-        EntityBean crf = crfdao.findByPK(crfVersion.getCrfId());
+        EntityBean crf = getCrfDao().findByPK(crfVersion.getCrfId());
 
         logger.info("found crf name here: " + crf.getName());
 
         // trying it again up here since down there doesn't seem to work, tbh
-        StudyEventDefinitionBean studyEventDefinitionBean = (StudyEventDefinitionBean) studyEventDefinistionDao.findByName(eventDefinitionCRFName);
+        StudyEventDefinitionBean studyEventDefinitionBean = (StudyEventDefinitionBean) getStudyEventDefinitionDao().findByName(eventDefinitionCRFName);
         // .findByEventDefinitionCRFId(eventDefinitionCRFId);
         // replaced by findbyname
 
@@ -121,7 +120,7 @@ public class ImportDataHelper {
         }
 
         // >> tbh repeating items:
-        ArrayList eventCrfBeans = eventCrfDao.findByEventSubjectVersion(studyEventBean, studySubjectBean, crfVersion);
+        ArrayList eventCrfBeans = getEventCrfDao().findByEventSubjectVersion(studyEventBean, studySubjectBean, crfVersion);
         // TODO repeating items here? not yet
         if (eventCrfBeans.size() > 1) {
             logger.info("found more than one");
@@ -142,7 +141,7 @@ public class ImportDataHelper {
                 studyWithSED.setId(studyBean.getParentStudyId());
             }
 
-            AuditableEntityBean studyEvent = studyEventDao.findByPKAndStudy(studyEventId, studyWithSED);
+            AuditableEntityBean studyEvent = getStudyEventDao().findByPKAndStudy(studyEventId, studyWithSED);
             // TODO need to replace
 
             if (studyEvent.getId() <= 0) {
@@ -189,7 +188,7 @@ public class ImportDataHelper {
                 eventCrfBean.setValidatorAnnotations("");
 
                 try {
-                    eventCrfBean = (EventCRFBean) eventCrfDao.create(eventCrfBean);
+                    eventCrfBean = (EventCRFBean) getEventCrfDao().create(eventCrfBean);
                     // TODO review
                     // eventCrfBean.setCrfVersion((CRFVersionBean)crfVersion);
                     // eventCrfBean.setCrf((CRFBean)crf);
@@ -211,12 +210,12 @@ public class ImportDataHelper {
                 if (eventCrfBean.getStatus().equals(Status.PENDING)) {
                     logger.info("Not Started???");
                 }
-                eventCrfBean = (EventCRFBean) eventCrfDao.findByPK(eventCRFId);
+                eventCrfBean = (EventCRFBean) getEventCrfDao().findByPK(eventCRFId);
                 eventCrfBean.setCRFVersionId(crfVersion.getId());
 
                 eventCrfBean.setUpdatedDate(new Date());
                 eventCrfBean.setUpdater(ub);
-                eventCrfBean = (EventCRFBean) eventCrfDao.update(eventCrfBean);
+                eventCrfBean = (EventCRFBean) getEventCrfDao().update(eventCrfBean);
 
                 // eventCrfBean.setCrfVersion((CRFVersionBean)crfVersion);
                 // eventCrfBean.setCrf((CRFBean)crf);
@@ -230,7 +229,7 @@ public class ImportDataHelper {
                 studyEventBean.setSubjectEventStatus(SubjectEventStatus.DATA_ENTRY_STARTED);
                 studyEventBean.setUpdater(ub);
                 studyEventBean.setUpdatedDate(new Date());
-                studyEventDao.update(studyEventBean);
+                getStudyEventDao().update(studyEventBean);
 
             }
 
@@ -240,5 +239,61 @@ public class ImportDataHelper {
 
         // repeating?
         return eventCrfBean;
+    }
+
+    private EventCRFDAO getEventCrfDao() {
+        if (eventCrfDao == null) {
+            eventCrfDao = new EventCRFDAO(sm.getDataSource());
+        }
+        return eventCrfDao;
+    }
+
+    private StudyDAO getStudyDao() {
+        if (studyDao == null) {
+            studyDao = new StudyDAO(sm.getDataSource());
+        }
+        return studyDao;
+    }
+
+    private StudySubjectDAO getStudySubjectDao() {
+        if (studySubjectDao == null) {
+            studySubjectDao = new StudySubjectDAO(sm.getDataSource());
+        }
+        return studySubjectDao;
+    }
+
+    private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+        if (studyEventDefinitionDao == null) {
+            studyEventDefinitionDao = new StudyEventDefinitionDAO(sm.getDataSource());
+        }
+        return studyEventDefinitionDao;
+    }
+
+    private CRFVersionDAO getCrfVersionDao() {
+        if (crfVersionDao == null) {
+            crfVersionDao = new CRFVersionDAO(sm.getDataSource());
+        }
+        return crfVersionDao;
+    }
+
+    private StudyEventDAO getStudyEventDao() {
+        if (studyEventDao == null) {
+            studyEventDao = new StudyEventDAO(sm.getDataSource());
+        }
+        return studyEventDao;
+    }
+
+    private CRFDAO getCrfDao() {
+        if (crfDao == null) {
+            crfDao = new CRFDAO(sm.getDataSource());
+        }
+        return crfDao;
+    }
+
+    private SubjectDAO getSubjectDao() {
+        if (subjectDao == null) {
+            subjectDao = new SubjectDAO(sm.getDataSource());
+        }
+        return subjectDao;
     }
 }

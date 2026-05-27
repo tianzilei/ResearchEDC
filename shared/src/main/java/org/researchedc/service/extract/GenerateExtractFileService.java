@@ -52,6 +52,9 @@ public class GenerateExtractFileService {
     private static File files[]=null;
     private static List<File> oldFiles = new LinkedList<File>();
     private final RuleSetRuleDao ruleSetRuleDao;
+    private DatasetDAO datasetDao;
+    private ItemFormMetadataDAO itemFormMetadataDao;
+    private ArchivedDatasetFileDAO archivedDatasetFileDao;
 
     public GenerateExtractFileService(DataSource ds, HttpServletRequest request, CoreResources coreResources,
             RuleSetRuleDao ruleSetRuleDao) {
@@ -87,9 +90,8 @@ public class GenerateExtractFileService {
 
         TabReportBean answer = new TabReportBean();
 
-        DatasetDAO dsdao = new DatasetDAO(ds);
         // create the extract bean here, tbh
-        eb = dsdao.getDatasetData(eb, activeStudyId, parentStudyId);
+        eb = getDatasetDao().getDatasetData(eb, activeStudyId, parentStudyId);
         eb.getMetadata();
         eb.computeReport(answer);
 
@@ -166,8 +168,6 @@ public class GenerateExtractFileService {
 
         SPSSVariableNameValidator svnv = new SPSSVariableNameValidator();
         answer.setDatFileName(SPSSFileName);
-        // DatasetDAO dsdao = new DatasetDAO(ds);
-
         // create the extract bean here, tbh
         // ExtractBean eb = this.generateExtractBean(db, currentStudy,
         // parentStudy);
@@ -183,13 +183,11 @@ public class GenerateExtractFileService {
         // itemMetadata
 
         // set up response sets for each item here
-        ItemDAO itemdao = new ItemDAO(ds);
-        ItemFormMetadataDAO imfdao = new ItemFormMetadataDAO(ds);
         ArrayList items = answer.getItems();
         for (int i = 0; i < items.size(); i++) {
             DisplayItemHeaderBean dih = (DisplayItemHeaderBean) items.get(i);
             ItemBean item = dih.getItem();
-            ArrayList metas = imfdao.findAllByItemId(item.getId());
+            ArrayList metas = getItemFormMetadataDao().findAllByItemId(item.getId());
             // for (int h = 0; h < metas.size(); h++) {
             // ItemFormMetadataBean ifmb = (ItemFormMetadataBean)
             // metas.get(h);
@@ -331,10 +329,8 @@ public class GenerateExtractFileService {
                 fb.setDateCreated(new Date(System.currentTimeMillis()));
 
                 boolean write = true;
-                ArchivedDatasetFileDAO asdfDAO = new ArchivedDatasetFileDAO(ds);
-
                 if (write) {
-                    fbFinal = (ArchivedDatasetFileBean) asdfDAO.create(fb);
+                    fbFinal = (ArchivedDatasetFileBean) getArchivedDatasetFileDao().create(fb);
                     logger.info("Created ADSFile!: " + fbFinal.getId() + " for " + zipName + ".zip");
                 } else {
                     logger.info("duplicate found: " + fb.getName());
@@ -433,10 +429,9 @@ public class GenerateExtractFileService {
                 // logger.info("ODM setOwnerId: " + sm.getUserBean().getId() );
                 fb.setDateCreated(new Date(System.currentTimeMillis()));
                 boolean write = true;
-                ArchivedDatasetFileDAO asdfDAO = new ArchivedDatasetFileDAO(ds);
                 // eliminating all checks so that we create multiple files, tbh 6-7
                 if (write) {
-                    fbFinal = (ArchivedDatasetFileBean) asdfDAO.create(fb);
+                    fbFinal = (ArchivedDatasetFileBean) getArchivedDatasetFileDao().create(fb);
                 } else {
                     logger.info("duplicate found: " + fb.getName());
                 }
@@ -552,10 +547,9 @@ public class GenerateExtractFileService {
                 // logger.info("ODM setOwnerId: " + sm.getUserBean().getId() );
                 fb.setDateCreated(new Date(System.currentTimeMillis()));
                 boolean write = true;
-                ArchivedDatasetFileDAO asdfDAO = new ArchivedDatasetFileDAO(ds);
                 // eliminating all checks so that we create multiple files, tbh 6-7
                 if (write) {
-                    fbFinal = (ArchivedDatasetFileBean) asdfDAO.create(fb);
+                    fbFinal = (ArchivedDatasetFileBean) getArchivedDatasetFileDao().create(fb);
                 } else {
                     logger.info("duplicate found: " + fb.getName());
                 }
@@ -658,6 +652,27 @@ public class GenerateExtractFileService {
            oldFiles = temp;
             logger.info("finished zipping up file...");
        // }
+    }
+
+    private DatasetDAO getDatasetDao() {
+        if (datasetDao == null) {
+            datasetDao = new DatasetDAO(ds);
+        }
+        return datasetDao;
+    }
+
+    private ItemFormMetadataDAO getItemFormMetadataDao() {
+        if (itemFormMetadataDao == null) {
+            itemFormMetadataDao = new ItemFormMetadataDAO(ds);
+        }
+        return itemFormMetadataDao;
+    }
+
+    private ArchivedDatasetFileDAO getArchivedDatasetFileDao() {
+        if (archivedDatasetFileDao == null) {
+            archivedDatasetFileDao = new ArchivedDatasetFileDAO(ds);
+        }
+        return archivedDatasetFileDao;
     }
 
 }
