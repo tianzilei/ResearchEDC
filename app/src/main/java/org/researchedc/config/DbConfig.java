@@ -24,9 +24,13 @@ public class DbConfig {
         ds.setUrl("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + dbName);
         ds.setUsername(dbUser);
         ds.setPassword(dbPass);
-        ds.setMaxActive(50);
-        ds.setMaxIdle(2);
-        ds.setMaxWait(180000);
+
+        // Connection pool tuned for single-site deployment (≤20 users, ≤10 concurrent).
+        // Per optimization plan: small pool avoids context-switch overhead.
+        ds.setMaxActive(12);             // maximumPoolSize equivalent
+        ds.setMaxIdle(4);                // minimumIdle equivalent
+        ds.setMinIdle(2);
+        ds.setMaxWait(5000);             // fail fast if DB is unavailable
         ds.setRemoveAbandoned(true);
         ds.setRemoveAbandonedTimeout(300);
         ds.setLogAbandoned(true);
