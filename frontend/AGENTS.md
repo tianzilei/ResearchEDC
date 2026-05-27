@@ -57,7 +57,7 @@ frontend/src/
 - **Data fetching:** TanStack Query 5 via typed `useAppQuery`/`useAppMutation` (see `useQuery.ts`)
 - **API client:** Fetch-based `ApiClient` class (JSON + FormData, `credentials: same-origin`, CSRF token injection)
 - **Auth:** Spring Security form login via `AuthProvider` (server-side Session, HttpOnly cookie)
-- **Quality:** `pnpm typecheck` (⚠️ 41 errors, 79 warnings) | `pnpm lint` (0 errors) | `pnpm build` (no warnings)
+- **Quality:** `pnpm typecheck` (0 errors) | `pnpm lint` (3 errors, 77 warnings) | `pnpm build` (no warnings)
 - **Testing:** Vitest + `test-setup.ts`, 4 test files (`.test.tsx`), 25 tests pass
 
 ## API LAYER

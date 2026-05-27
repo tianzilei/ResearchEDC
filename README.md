@@ -62,9 +62,9 @@ ResearchEDC/
 │   │   ├── layouts/    # AppLayout (顶栏 + 侧栏 + 内容区)
 │   │   ├── pages/      # 28 页面组件 (admin/ crf/ datacapture/ events/ export/ questionnaire/
 │   │   │   │           #   randomization/ rules/ studies/ subject/)
-│   │   ├── providers/  # AuthProvider (Keycloak OIDC) + AppProviders
+│   │   ├── providers/  # AuthProvider (Spring Security form login) + AppProviders
 │   │   ├── router/     # React Router 7 配置 (30+ routes)
-│   │   ├── styles/     # 设计系统: dot-grid 纹理, glass panel, 动效, Ant Design 主题
+│   │   ├── styles/     # 设计系统: 灰度主题, 昼夜模式, Ant Design 覆盖
 │   │   └── types/      # 10+ TypeScript 类型文件 (study, crf, event, datacapture, rules, user)
 │   ├── vite.config.ts  # Vite 6 配置 (API 代理 / 构建输出)
 │   └── package.json
@@ -76,7 +76,7 @@ ResearchEDC/
 │   ├── src/main/java/
 │   │   └── org/researchedc/
 │   │       ├── config/      # WebMvcConfig (SPA fallback), WebServiceConfig, OpenApiConfig
-│   │       └── module/      # Spring Modulith 模块 (16 个, 244 文件)
+│   │       └── module/      # Spring Modulith 模块 (17 个, ~250 文件)
 │   │           ├── randomization/  # 随机化系统 (算法 + API)
 │   │           ├── export/         # 导出中心 (异步任务)
 │   │           ├── crf/            # CRF 元数据 (REST API)
@@ -88,6 +88,7 @@ ResearchEDC/
 │   │           ├── event/          # 访视管理 (study_event/event_crf 桥接)
 │   │           ├── datacapture/    # 数据采集 (item_data/response_set 桥接)
 │   │           ├── identity/       # 身份权限 (user_account/study_user_role 桥接)
+│   │           ├── dashboard/      # 仪表盘 (用户/研究/站点上下文 + 待办 + 状态 + 最近访问)
 │   │           ├── rule/           # 规则引擎 (JPA 实体 + 仓库)
 │   │           ├── dataset/        # 数据集管理 (JPA 实体 + 仓库)
 │   │           ├── filter/         # 过滤器管理 (JPA 实体 + 仓库)
@@ -213,17 +214,17 @@ python -m pytest app/tests/ -v  # 31 tests
 ### 前端质量门禁
 | 检查 | 命令 | 状态 |
 |------|------|------|
-| TypeScript strict | `pnpm typecheck` | ⚠️ **41 errors, 79 warnings** |
-| ESLint | `pnpm lint` | ✅ 0 errors |
+| TypeScript strict | `pnpm typecheck` | ✅ **0 errors** |
+| ESLint | `pnpm lint` | ⚠️ **3 errors, 77 warnings** |
 | 构建 | `pnpm build` | ✅ |
 | 测试 | `pnpm test --run` | ✅ **25/25 tests pass** |
 
-### 设计系统 (2026-05-18 "Precision Clinical" 重构)
-- **配色**: Jade teal (`#099A87`) 主色 + warm brass (`#D4A854`) 点缀 + deep slate (`#0F1A2E`) 基底 + warm paper (`#F8F5F0`) 表面色
-- **排版**: Sora (标题) + DM Sans (正文) Google Fonts
-- **动效**: 页面进场 `fadeInUp` 动画、卡片 hover 上浮、统计卡片交错进场
-- **背景**: 全局 dot-grid 图纸纹理 (radial-gradient)
-- **组件**: AppLayout 精修 (brass 边框 header, max-width 内容区), Dashboard 重设计 (问候头像、彩色统计卡片、活动时间线、SVG 环形图、快捷操作), ErrorPage/NotFound 定制页面
+### 设计系统 (Mono-Performance)
+- **配色**: 灰度/中性色系 — 仅黑、白、灰阶 (`colorPrimary: #1f1f1f` 日间, `#ecece5` 夜间)，无点缀色
+- **排版**: 系统字体栈 (`system-ui, -apple-system, BlinkMacSystemFont, sans-serif`)，无外部 Web Font
+- **动效**: 全部禁用 — 所有动画 class 已 no-op，保持极简渲染路径
+- **背景**: 纯色背景，无纹理、无渐变、无图案
+- **组件**: 纯文本卡片 (无图片、无图标)，Ant Design 灰度主题，昼夜双主题 (daylight/night)
 
 测试数据文件: `shared/src/test/resources/org/researchedc/{dao,service}/testdata/`
 
@@ -236,7 +237,7 @@ python -m pytest app/tests/ -v  # 31 tests
 - **SecureController:** 所有 Servlet 继承此类自动处理会话/权限
 - **服务层:** `@Service` + `@Transactional` 封装业务编排
 - **Modulith 模块:** `@ApplicationModule` 定义模块边界，`ApplicationEvents` 跨模块通信
-- **前端权限矩阵:** 8 种角色 × 18 种权限，通过 JWT token claims 驱动菜单显示
+- **前端权限矩阵:** 8 种角色 × 18 种权限，通过 `usePermissions()` 钩子从后端角色映射驱动菜单显示
 
 ---
 
@@ -271,6 +272,7 @@ python -m pytest app/tests/ -v  # 31 tests
 | **访视模块** | `module/event/` | study_event/event_crf 桥接 |
 | **数据采集模块** | `module/datacapture/` | item_data/response_set 桥接 |
 | **身份模块** | `module/identity/` | user_account/study_user_role 桥接 |
+| **仪表盘模块** | `module/dashboard/` | 引导上下文、模块入口、待办、状态、最近活动 |
 | **规则模块** | `module/rule/` | 规则集/规则/表达式 JPA 实体 + 仓库 |
 | **数据集模块** | `module/dataset/` | 数据集 JPA 实体 + 仓库 |
 | **过滤器模块** | `module/filter/` | 过滤器 JPA 实体 + 仓库 |

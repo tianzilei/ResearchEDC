@@ -12,14 +12,14 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 
 **当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 31/31 ✅ | Docker Compose ✅ | E2E API ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: LegacyDaoConfig 归零** ✅ | **legacy-core → shared 合并** ✅ | **Java module tests 150+** ✅
 
-⚠️ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors (需要修复)
+✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 
 ## STRUCTURE
 
 ```
 ./
 ├── app/                     # Spring Boot modular monolith entry point (WAR)
-│   └── module/              # Spring Modulith modules (16 个, 244 文件)
+│   └── module/              # Spring Modulith modules (17 个, ~250 文件)
 │       ├── randomization/   # 随机化系统 (算法 + API, 37 文件)
 │       ├── export/          # 导出中心 (异步任务, 9 文件)
 │       ├── crf/             # CRF 元数据 (含 LegacyCrfAdapter, 21 文件)
@@ -31,6 +31,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │       ├── event/           # 访视管理 (映射 study_event/event_crf, 24 文件)
 │       ├── datacapture/     # 数据采集 (映射 item_data/response_set, 14 文件)
 │       ├── identity/        # 身份权限 (映射 user_account/study_user_role, 11 文件)
+│       ├── dashboard/       # 仪表盘 Bootstrap (用户/研究/站点上下文 + 待办 + 状态, 8 文件)
 │       ├── rule/            # 规则引擎 (JPA 实体 + 仓库, 13 文件)
 │       ├── dataset/         # 数据集管理 (JPA 实体 + 仓库, 7 文件)
 │       ├── filter/          # 过滤器管理 (JPA 实体 + 仓库, 7 文件)
@@ -70,6 +71,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | API routers | `questionnaire-service/apps/api/app/api/v1/routers/` | 9 router modules |
 | **Randomization module** | `app/.../module/randomization/` | 3 种算法, 8 实体, REST API |
 | **Export module** | `app/.../module/export/` | 异步任务状态机, REST API |
+| **Dashboard module** | `app/.../module/dashboard/` | 引导 (用户/研究/站点上下文 + 模块列表), 待办, 状态, 最近活动 |
 | **CRF module** | `app/.../module/crf/` | CRF 列表/版本/预览, LegacyCrfAdapter |
 | **Notification module** | `app/.../module/notification/` | 事件驱动, ApplicationEvent 模式 |
 | **Legacy Gateway** | `app/.../module/legacy/` | `/api/legacy/*` DAO REST 封装 |
@@ -117,7 +119,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 - **Data fetching:** TanStack Query 5 via typed `useAppQuery`/`useAppMutation` wrappers
 - **API client:** Fetch-based `ApiClient` class (JSON + FormData support, `credentials: same-origin`, CSRF token injection)
 - **Auth:** Spring Security form login with server-side Session (HttpOnly cookie + CookieCsrfTokenRepository)
-- **Quality:** `pnpm typecheck` (⚠️ 41 errors, 79 warnings — needs fix) | `pnpm lint` (0 errors) | `pnpm test` (25/25 ✅)
+- **Quality:** `pnpm typecheck` (0 errors) | `pnpm lint` (3 errors, 77 warnings) | `pnpm test` (25/25 ✅)
 
 ## MODULITH MODULES INVENTORY
 
@@ -131,6 +133,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | `audit` | ✅ Extracted | 1 | 1 | 1 | 1 | 1 | `/api/v1/audit` |
 | `study` | ✅ Extracted | 1 | 1 | 1 | 1 | 2 | `/api/v1/studies` |
 | `subject` | ✅ Extracted | 2 | 2 | 1 | 1 | 2 | `/api/v1/subjects` |
+| `dashboard` | ✅ Complete | 0 | 0 | 1 | 1 | 4 | `/api/v1/dashboard` |
 | `event` | ✅ Extracted | 3 | 3 | 1 | 1 | 3 | `/api/v1/events` |
 | `datacapture` | ✅ Extracted | 3 | 3 | 1 | 1 | 3 | `/api/v1/data-capture` |
 | `identity` | ✅ Built | 2 | 2 | 1 | 1 | 2 | `/api/v1/identity` |
@@ -182,7 +185,7 @@ mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifie
 
 # === Frontend ===
 cd frontend && pnpm install && pnpm build && cd ..
-pnpm typecheck  # ⚠️ 41 errors, 79 warnings
+pnpm typecheck  # 0 errors
 pnpm test --run
 
 # === Questionnaire Service ===
@@ -198,7 +201,7 @@ python -m pytest app/tests/ -v
 - **Modulith:** Only `org.researchedc.module.*` is verified; `shared/` packages are excluded
 - **Version:** 0.1
 - **legacy-core → shared:** `legacy-core/` was removed on 2026-05-23. All code consolidated into `shared/` module with `@Repository`/`@Service` annotations and package rename to `org.researchedc`.
-- **Frontend TypeScript:** Currently 0 errors (after session auth migration).
+- **Frontend TypeScript:** ✅ `pnpm typecheck` — 0 errors (strict mode).
 - **DAO deletion blocked:** ~1,100 `DaoProvider.getDao()` call sites in `web/`/`ws/` still reference concrete DAO classes by name. Migration to `@Autowired` SPI interfaces is the next major refactoring step.
 
 ## SUBMODULE REFERENCES
