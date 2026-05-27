@@ -3,6 +3,7 @@ package org.researchedc.domain.rule.action;
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
@@ -20,11 +21,12 @@ public class ActionProcessorFacade {
     public static ActionProcessor getActionProcessor(ActionType actionType, DataSource ds, JavaMailSenderImpl mailSender,
             DynamicsMetadataService itemMetadataService, RuleSetBean ruleSet, RuleActionRunLogDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule,
             StudyDAO studyDao, StudySubjectDAO studySubjectDao, StudyEventDAO studyEventDao,
-            StudyEventDefinitionDAO studyEventDefinitionDao, StudyParameterValueDAO studyParameterValueDao, UserAccountDAO userAccountDao)
+            StudyEventDefinitionDAO studyEventDefinitionDao, StudyParameterValueDAO studyParameterValueDao, UserAccountDAO userAccountDao,
+            DiscrepancyNoteDAO discrepancyNoteDao)
             throws OpenClinicaSystemException {
         switch (actionType) {
         case FILE_DISCREPANCY_NOTE:
-            return new DiscrepancyNoteActionProcessor(ds, ruleActionRunLogDao, ruleSetRule);
+            return new DiscrepancyNoteActionProcessor(ds, ruleActionRunLogDao, ruleSetRule, discrepancyNoteDao);
         case EMAIL:
             return new EmailActionProcessor(ds, mailSender, ruleActionRunLogDao, ruleSetRule);
         case NOTIFICATION:

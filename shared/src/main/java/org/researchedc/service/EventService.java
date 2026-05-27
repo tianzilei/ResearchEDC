@@ -22,7 +22,10 @@ import org.researchedc.dao.submit.SubjectDAO;
 import org.researchedc.exception.OpenClinicaSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service("legacyEventService")
 public class EventService implements EventServiceInterface {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
@@ -40,6 +43,24 @@ public class EventService implements EventServiceInterface {
 
     public EventService(SessionManager sessionManager) {
         this.dataSource = sessionManager.getDataSource();
+    }
+
+    @Autowired
+    public EventService(
+            DataSource dataSource,
+            SubjectDAO subjectDao,
+            StudyDAO studyDao,
+            StudySubjectDAO studySubjectDao,
+            UserAccountDAO userAccountDao,
+            StudyEventDefinitionDAO studyEventDefinitionDao,
+            StudyEventDAO studyEventDao) {
+        this.dataSource = dataSource;
+        this.subjectDao = subjectDao;
+        this.studyDao = studyDao;
+        this.studySubjectDao = studySubjectDao;
+        this.userAccountDao = userAccountDao;
+        this.studyEventDefinitionDao = studyEventDefinitionDao;
+        this.studyEventDao = studyEventDao;
     }
 
     public HashMap<String, String> scheduleEvent(UserAccountBean user, Date startDateTime, Date endDateTime, String location, String studyUniqueId,
@@ -97,7 +118,6 @@ public class EventService implements EventServiceInterface {
      * @return the subjectDao
      */
     public SubjectDAO getSubjectDao() {
-        subjectDao = subjectDao != null ? subjectDao : new SubjectDAO(dataSource);
         return subjectDao;
     }
 
@@ -105,7 +125,6 @@ public class EventService implements EventServiceInterface {
      * @return the subjectDao
      */
     public StudyDAO getStudyDao() {
-        studyDao = studyDao != null ? studyDao : new StudyDAO(dataSource);
         return studyDao;
     }
 
@@ -113,7 +132,6 @@ public class EventService implements EventServiceInterface {
      * @return the subjectDao
      */
     public StudySubjectDAO getStudySubjectDao() {
-        studySubjectDao = studySubjectDao != null ? studySubjectDao : new StudySubjectDAO(dataSource);
         return studySubjectDao;
     }
 
@@ -121,7 +139,6 @@ public class EventService implements EventServiceInterface {
      * @return the UserAccountDao
      */
     public UserAccountDAO getUserAccountDao() {
-        userAccountDao = userAccountDao != null ? userAccountDao : new UserAccountDAO(dataSource);
         return userAccountDao;
     }
 
@@ -129,7 +146,6 @@ public class EventService implements EventServiceInterface {
      * @return the StudyEventDefinitionDao
      */
     public StudyEventDefinitionDAO getStudyEventDefinitionDao() {
-        studyEventDefinitionDao = studyEventDefinitionDao != null ? studyEventDefinitionDao : new StudyEventDefinitionDAO(dataSource);
         return studyEventDefinitionDao;
     }
 
@@ -137,7 +153,6 @@ public class EventService implements EventServiceInterface {
      * @return the StudyEventDao
      */
     public StudyEventDAO getStudyEventDao() {
-        studyEventDao = studyEventDao != null ? studyEventDao : new StudyEventDAO(dataSource);
         return studyEventDao;
     }
 

@@ -70,7 +70,7 @@ ResearchEDC/
 │   └── package.json
 ├── questionnaire-service/  # Python FastAPI 问卷微服务 (独立部署)
 │   ├── apps/api/            # FastAPI 后端 (models, services, scoring, routers, workers)
-│   ├── infra/               # Docker Compose (PostgreSQL, Redis, MinIO)
+│   ├── infra/               # deployment infrastructure notes
 │   └── packages/            # SurveyJS 问卷 schema (ISI, GAD-7, PHQ-9, ESS)
 ├── app/                # Spring Boot 模块化单体入口
 │   ├── src/main/java/
@@ -111,14 +111,12 @@ ResearchEDC/
 │   └── webapp/         # JSP 页面 (剩余 194 页通过 LegacyFrame iframe 访问)
 ├── ws/                 # SOAP Web 服务 (75 源文件)
 │   └── endpoint/       # Spring WS 端点
-├── deploy/             # Docker Compose + Nginx 配置
-│   ├── compose/        # dev/test/prod 三层 Compose
-│   └── nginx/          # 生产级 Nginx 配置
+├── deploy/             # Bare host reverse proxy / observability configs
 ├── research-edc-bom/   # Maven BOM 版本管理
-|── scripts/            # 构建/部署/发布脚本
-├── .dockerignore       # Docker 构建忽略规则
-├── Makefile            # 常用开发/部署命令
-└── .github/workflows/  # CI 工作流 (5 个: backend, frontend, docker, legacy-refactor)
+|── scripts/            # CI helper scripts
+├── deploy.sh           # Single bare host deploy entry point
+├── Makefile            # 常用 bare deploy 命令
+└── .github/workflows/  # CI 工作流
 ```
 
 ---
@@ -160,17 +158,14 @@ pnpm dev  # localhost:5173
 # === Modulith 模块验证 ===
 mvn test -pl app -am -Dtest=ModulithVerificationTest
 
-# === 部署 ===
-mvn clean package -DskipTests
-cp app/target/OpenClinica.war $CATALINA_HOME/webapps/
-
-# === Docker (含 Maven cache mount 加速) ===
-docker compose -f deploy/compose/docker-compose.dev.yml up --build
+# === Bare deploy ===
+bash deploy.sh setup
+bash deploy.sh init-db
+bash deploy.sh build
+bash deploy.sh start
 
 # === 问卷服务 (Python FastAPI) ===
-cd questionnaire-service/infra
-docker compose up -d                         # 启动 PostgreSQL + Redis + MinIO
-cd ../apps/api
+cd questionnaire-service/apps/api
 PYTHONPATH="$PWD" alembic upgrade head        # 数据库迁移
 PYTHONPATH="$PWD" uvicorn app.main:app        # 启动 API (localhost:8000)
 python -m pytest app/tests/ -v               # 运行 31 个测试
@@ -188,21 +183,18 @@ python -m pytest app/tests/ -v               # 运行 31 个测试
 | DAO 集成测试 | `HibernateOcDbTestCase` (DBUnit) | ✅ | ⚠️ 待启用 (shared 模块) |
 | **前端测试** | Vitest + React Testing Library | ❌ | **✅ 25 tests pass** |
 | **问卷服务单元测试** | **pytest** | ❌ | **✅ 31 tests pass** |
-| **问卷服务 E2E** | **curl + pytest** | ✅ | **✅ Docker Compose + API** |
+| **问卷服务 E2E** | **curl + pytest** | ✅ | **✅ Bare host + API** |
 
 ### 运行测试
 ```bash
-# Java 全量测试 (需要 PostgreSQL Docker)
+# Java 全量测试 (需要 PostgreSQL)
 mvn test
 
 # Modulith 模块验证 (无需数据库)
 mvn test -pl app -am -Dtest=ModulithVerificationTest
 
-# 启动 PostgreSQL Docker
-docker run -d --name oc-test-pg -e POSTGRES_USER=clinica \
-  -e POSTGRES_PASSWORD=clinica \
-  -e POSTGRES_DB=openclinica-TEST-3.12 \
-  -p 5432:5432 postgres:17-alpine
+# 初始化本地 PostgreSQL
+bash deploy.sh init-db
 
 # 问卷服务测试 (Python)
 cd questionnaire-service/apps/api

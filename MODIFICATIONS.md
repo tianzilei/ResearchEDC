@@ -6,6 +6,30 @@
 
 ---
 
+## 2026-05-27 — 部署方式收敛为 Bare Deploy
+
+- **模块:** deploy, scripts, docs, CI
+- **原因:** 删除 Docker/Compose 部署入口，保留单一宿主机 bare deploy 流程。
+
+### 变更内容
+
+1. **单一部署脚本:**
+   - 新增根目录 `deploy.sh` 作为唯一部署入口。
+   - 删除重复的 `deploy-host.sh` 与 `scripts/deploy-host.sh`。
+   - `Makefile` 部署命令统一代理到 `bash deploy.sh <command>`。
+
+2. **移除 Docker Compose 部署入口:**
+   - 删除 `deploy/nginx/docker-compose.yml`。
+   - 删除 `questionnaire-service/infra/docker-compose.yml`。
+   - 删除剩余 Docker 构建文件: `.dockerignore`、`questionnaire-service/apps/api/.dockerignore`、`questionnaire-service/apps/api/Dockerfile`。
+   - 删除 `.github/workflows/docker-compose-check.yml`，并从 `ci-modernization.yml` 移除该 job。
+
+3. **文档更新:**
+   - README、AGENTS、HOST_DEPLOYMENT、questionnaire-service/AGENTS 改为只记录 bare host deploy。
+   - logrotate 配置改为宿主机路径，不再包含 Docker container log 配置。
+
+---
+
 ## 2026-05-27 — Legacy DAO 构造迁移进展
 
 - **模块:** `shared`, `web`, `ws`, `app`

@@ -1,6 +1,6 @@
-# ResearchEDC 宿主机部署指南
+# ResearchEDC Bare Deploy Guide
 
-无 Docker，直接在宿主机运行所有服务。适用于开发和测试环境。
+Bare deploy is the only supported deploy method in this repository. It runs services directly on the host without Docker.
 
 ## 前置要求
 
@@ -14,17 +14,17 @@ npm install -g pnpm
 ## 快速开始
 
 ```bash
-# 1. 检查环境 + 安装 Python 依赖
-make host-setup
+# 1. 检查环境 + 安装依赖
+bash deploy.sh setup
 
 # 2. 创建数据库 (会提示输入 sudo 密码)
-make host-init-db
+bash deploy.sh init-db
 
 # 3. 构建前端 + 后端
-make host-build
+bash deploy.sh build
 
 # 4. 启动服务
-make host-start
+bash deploy.sh start
 ```
 
 ## 服务端口
@@ -37,9 +37,9 @@ make host-start
 ## 管理命令
 
 ```bash
-make host-status   # 查看服务状态
-make host-logs     # 查看日志
-make host-stop     # 停止所有服务
+bash deploy.sh status   # 查看服务状态
+bash deploy.sh logs     # 查看日志
+bash deploy.sh stop     # 停止所有服务
 ```
 
 ## sudo 权限处理
@@ -53,10 +53,3 @@ make host-stop     # 停止所有服务
 **PostgreSQL 未运行** — `sudo systemctl start postgresql`
 
 **启动日志** — `tail -f logs/app.log` 或 `tail -f logs/questionnaire.log`
-
-## 回退到 Docker
-
-```bash
-make host-stop
-make up-dev
-```

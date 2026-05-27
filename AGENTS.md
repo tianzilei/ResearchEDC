@@ -10,7 +10,7 @@ ResearchEDC is an independently maintained research electronic data capture (EDC
 
 New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. Legacy code consolidated into `shared/` module, with `web/` (484 files + 419 JSP) and `ws/` (75 files) being incrementally strangulated into Modulith modules.
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 31/31 ✅ | Docker Compose ✅ | E2E API ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: LegacyDaoConfig 归零** ✅ | **legacy-core → shared 合并** ✅ | **Java module tests 150+** ✅
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 31/31 ✅ | Bare Deploy ✅ | E2E API ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: LegacyDaoConfig 归零** ✅ | **legacy-core → shared 合并** ✅ | **Java module tests 150+** ✅
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 
@@ -48,13 +48,13 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 ├── questionnaire-service/   # Python FastAPI 问卷微服务 (独立部署, 74 文件)
 ├── web/                     # 遗留 Web UI — ~484 文件 + 419 JSP (待绞杀)
 ├── ws/                      # 遗留 SOAP — ~75 文件 (待绞杀)
-├── deploy/                  # Docker Compose, Nginx, scripts
-├── docker/                  # Dockerfiles
+├── deploy/                  # Bare host reverse proxy / observability configs
+├── deploy.sh                # Single bare host deploy shell
 ├── pom.xml                  # Maven parent
 ├── docs/                    # Documentation
 │   └── refactor/            # Refactoring plans & baseline
 ├── research-edc-bom/        # Maven BOM version management
-├── scripts/                 # Build/deploy/release scripts
+├── scripts/                 # CI helper scripts
 ├── shared/                  # 共享模块 (AGENTS.md)
 ├── AGENTS.md
 ├── MODIFICATIONS.md
@@ -96,7 +96,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | JSP pages | `web/.../webapp/WEB-INF/jsp/**/*.jsp` | 419 页面 |
 | Liquibase migrations | `shared/.../migration/` | 193 个版本化 schema 变更 |
 | i18n strings | `shared/.../i18n/*.properties` | 6 种语言 |
-| Docker Compose | `deploy/compose/` | dev/test/prod 三层 |
+| Bare deploy | `deploy.sh` | single host deployment entry point |
 | SPA fallback config | `app/.../config/WebMvcConfig.java` | `/app/**` -> React index.html |
 
 ## CONVENTIONS

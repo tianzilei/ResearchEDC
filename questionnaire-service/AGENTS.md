@@ -3,7 +3,7 @@
 **Module:** Standalone questionnaire scoring and management microservice  
 **Files:** ~76 Python files  
 
-> Python FastAPI application providing questionnaire CRUD, assignment management, scoring (ISI/GAD-7/PHQ-9/ESS/PSQI), and export. Deployed as a separate Docker container.
+> Python FastAPI application providing questionnaire CRUD, assignment management, scoring (ISI/GAD-7/PHQ-9/ESS/PSQI), and export. Deployed by the root bare host `deploy.sh` script.
 
 ## STRUCTURE
 
@@ -20,7 +20,7 @@ questionnaire-service/
 │   ├── scoring/             # Scoring engine (7 scorers)
 │   ├── workers/             # Background task workers
 │   └── tests/               # pytest test suite (31 tests)
-├── infra/                   # Infrastructure configs
+├── infra/                   # Infrastructure notes/configs
 └── packages/                # Shared Python packages
 ```
 
@@ -63,7 +63,7 @@ scoring/
 - **Scoring:** Strategy pattern via `BaseScorer` with registry
 - **Tests:** pytest with 31 passing tests
 - **DB:** PostgreSQL via SQLAlchemy async session
-- **Deployment:** Docker container, served at `/q/*` path behind Nginx
+- **Deployment:** Bare host service started by root `deploy.sh`, served at `/q/*` behind the host reverse proxy
 
 ## ANTI-PATTERNS
 

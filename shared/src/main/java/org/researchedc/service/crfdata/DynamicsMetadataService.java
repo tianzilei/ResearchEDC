@@ -1045,45 +1045,34 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
 
 
     private EventCRFDAO getEventCRFDAO() {
-    /*    eventCRFDAO = this.eventCRFDAO != null ? eventCRFDAO : new EventCRFDAO(ds);
-        return eventCRFDAO;*/
         return  new EventCRFDAO(ds);
     }
 
     private ItemDataDAO getItemDataDAO() {
-    /*    itemDataDAO = this.itemDataDAO != null ? itemDataDAO : new ItemDataDAO(ds);
-        return itemDataDAO;*/
         return new ItemDataDAO(ds);
     }
 
     private ItemDAO getItemDAO() {
-        /*itemDAO = this.itemDAO != null ? itemDAO : new ItemDAO(ds);
-        return itemDAO;*/
         return new ItemDAO(ds);
     }
 
     private ItemGroupDAO getItemGroupDAO() {
-        //itemGroupDAO = this.itemGroupDAO != null ? itemGroupDAO : new ItemGroupDAO(ds);
         return new ItemGroupDAO(ds);
     }
 
     private SectionDAO getSectionDAO() {
-     //   sectionDAO = this.sectionDAO != null ? sectionDAO : new SectionDAO(ds);
         return new SectionDAO(ds);
     }
 
     private ItemFormMetadataDAO getItemFormMetadataDAO() {
-     //   itemFormMetadataDAO = this.itemFormMetadataDAO != null ? itemFormMetadataDAO : new ItemFormMetadataDAO(ds);
         return new ItemFormMetadataDAO(ds);
     }
 
     private ItemGroupMetadataDAO getItemGroupMetadataDAO() {
-        //itemGroupMetadataDAO = this.itemGroupMetadataDAO != null ? itemGroupMetadataDAO : new ItemGroupMetadataDAO(ds);
         return new ItemGroupMetadataDAO(ds);
     }
 
     public StudyEventDAO getStudyEventDAO() {
-        //studyEventDAO = this.studyEventDAO != null ? studyEventDAO : new StudyEventDAO(ds);
         return new StudyEventDAO(ds);
     }
 

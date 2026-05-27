@@ -171,7 +171,7 @@ public class ImportDataRuleRunner extends RuleRunner {
                     ActionProcessorFacade.getActionProcessor(ruleActionContainer.getRuleAction().getActionType(), ds, getMailSender(), dynamicsMetadataService,
                             ruleActionContainer.getRuleSetBean(), getRuleActionRunLogDao(), ruleActionContainer.getRuleAction().getRuleSetRule(),
                             getStudyDao(), getStudySubjectDao(), getStudyEventDao(), getStudyEventDefinitionDao(), getStudyParameterValueDao(),
-                            getUserAccountDao());
+                            getUserAccountDao(), getDiscrepancyNoteDao());
 
                 ItemDataBean  itemData =
                     getExpressionService().getItemDataBeanFromDb(ruleActionContainer.getRuleSetBean().getTarget().getValue());

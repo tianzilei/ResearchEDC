@@ -26,6 +26,10 @@ public class DiscrepancyNoteService {
         this.ds = ds;
     }
 
+    public DiscrepancyNoteService(DiscrepancyNoteDAO discrepancyNoteDao) {
+        this.discrepancyNoteDao = discrepancyNoteDao;
+    }
+
     public void saveFieldNotes(String description, int entityId, String entityType, StudyBean sb, UserAccountBean ub) {
 
         // Create a new thread each time
@@ -55,7 +59,6 @@ public class DiscrepancyNoteService {
     }
 
     private DiscrepancyNoteDAO getDiscrepancyNoteDao() {
-        discrepancyNoteDao = this.discrepancyNoteDao != null ? discrepancyNoteDao : new DiscrepancyNoteDAO(ds);
         return discrepancyNoteDao;
     }
 

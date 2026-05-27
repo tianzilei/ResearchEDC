@@ -14,9 +14,12 @@ import org.researchedc.bean.rule.RuleSetBean;
 import org.researchedc.dao.rule.RuleDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 
+@Service("legacyRuleService")
 public class RuleService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
@@ -27,6 +30,12 @@ public class RuleService {
     public RuleService(DataSource ds) {
         oidGenerator = new GenericOidGenerator();
         this.ds = ds;
+    }
+
+    @Autowired
+    public RuleService(DataSource ds, RuleDAO ruleDao) {
+        this(ds);
+        this.ruleDao = ruleDao;
     }
 
     public boolean enableRules(RuleSetBean ruleSet) {
@@ -47,7 +56,6 @@ public class RuleService {
     }
 
     private RuleDAO getRuleDao() {
-        ruleDao = this.ruleDao != null ? ruleDao : new RuleDAO(ds);
         return ruleDao;
     }
 

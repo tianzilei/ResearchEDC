@@ -24,10 +24,6 @@ jobs:
     name: Questionnaire Service
     uses: ./.github/workflows/questionnaire-modernization.yml
 
-  docker-compose:
-    name: Docker Compose Check
-    uses: ./.github/workflows/docker-compose-check.yml
-
   legacy-report:
     name: Legacy Refactor Report
     uses: ./.github/workflows/legacy-refactor-report.yml

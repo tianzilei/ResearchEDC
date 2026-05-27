@@ -40,6 +40,7 @@ public abstract class OdmDataCollector {
     private ODMBean odmbean;
     // key is study/site oc_oid.
     private LinkedHashMap<String, OdmStudyBase> studyBaseMap;
+    private StudyDAO studyDao;
     // 0: one Study Element; 1: one parent study and its sites
     private int category;
 
@@ -63,6 +64,7 @@ public abstract class OdmDataCollector {
             logger.info("DataSource is null!");
             return;
         }
+        getStudyDao();
         if(study == null)
         	    	createFakeStudyObj();
        
@@ -131,9 +133,10 @@ public abstract class OdmDataCollector {
             logger.info("DataSource is null!");
             return;
         }
+        getStudyDao();
         this.dataset = dataset;
         odmbean = new ODMBean();
-        StudyBean study = (StudyBean) new StudyDAO(ds).findByPK(dataset.getStudyId());
+        StudyBean study = (StudyBean) getStudyDao().findByPK(dataset.getStudyId());
         if (currentStudy.isSite(currentStudy.getParentStudyId())) {
             this.studyBaseMap = new LinkedHashMap<String, OdmStudyBase>();
             this.studyBaseMap.put(study.getOid(), new OdmStudyBase(ds, study));
@@ -157,8 +160,7 @@ public abstract class OdmDataCollector {
      */
     public LinkedHashMap<String, OdmStudyBase> populateCompletedStudyBaseMap(int parentStudyId) {
         LinkedHashMap<String, OdmStudyBase> Bases = new LinkedHashMap<String, OdmStudyBase>();
-        StudyDAO sdao = new StudyDAO(this.ds);
-        for (StudyBean s : (ArrayList<StudyBean>) sdao.findAllByParentStudyIdOrderedByIdAsc(parentStudyId)) {
+        for (StudyBean s : (ArrayList<StudyBean>) getStudyDao().findAllByParentStudyIdOrderedByIdAsc(parentStudyId)) {
             Bases.put(s.getOid(), new OdmStudyBase(ds, s));
         }
         return Bases;
@@ -173,9 +175,16 @@ public abstract class OdmDataCollector {
      */
     public LinkedHashMap<String, OdmStudyBase> populateStudyBaseMap(int studyId) {
         LinkedHashMap<String, OdmStudyBase> Bases = new LinkedHashMap<String, OdmStudyBase>();
-        StudyBean study = (StudyBean) new StudyDAO(this.ds).findByPK(studyId);
+        StudyBean study = (StudyBean) getStudyDao().findByPK(studyId);
         Bases.put(study.getOid(), new OdmStudyBase(ds, study));
         return Bases;
+    }
+
+    private StudyDAO getStudyDao() {
+        if (studyDao == null) {
+            studyDao = new StudyDAO(ds);
+        }
+        return studyDao;
     }
 
     public abstract void collectFileData();

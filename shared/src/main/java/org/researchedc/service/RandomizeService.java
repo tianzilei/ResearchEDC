@@ -40,6 +40,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -51,8 +52,10 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.json.JSONObject;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+@Service("randomizeService")
 public class RandomizeService extends RandomizationRegistrar {
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     private final String ESCAPED_SEPERATOR = "\\.";
@@ -70,6 +73,11 @@ public class RandomizeService extends RandomizationRegistrar {
     private StudyEventDAO studyEventDAO;
     private EventDefinitionCRFDAO eventDefinitionCRFDAO;
     private ExpressionService expressionService;
+    private StudySubjectDAO studySubjectDAO;
+    private SubjectDAO subjectDAO;
+    private StudyGroupClassDAO studyGroupClassDAO;
+    private StudyGroupDAO studyGroupDAO;
+    private UserAccountDAO userAccountDAO;
     HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
     public static final int RANDOMIZATION_READ_TIMEOUT = 10000;
     StudyDAO sdao=null;
@@ -80,17 +88,31 @@ public class RandomizeService extends RandomizationRegistrar {
         this.expressionService = new ExpressionService(ds);
     }
 
+    @Autowired
+    public RandomizeService(DataSource ds, ExpressionService expressionService, StudySubjectDAO studySubjectDAO, StudyDAO studyDAO, UserAccountDAO userAccountDAO,
+            SubjectDAO subjectDAO, StudyGroupClassDAO studyGroupClassDAO, StudyGroupDAO studyGroupDAO, ItemDataDAO itemDataDAO) {
+        this.ds = ds;
+        this.expressionService = expressionService;
+        this.studySubjectDAO = studySubjectDAO;
+        this.sdao = studyDAO;
+        this.userAccountDAO = userAccountDAO;
+        this.subjectDAO = subjectDAO;
+        this.studyGroupClassDAO = studyGroupClassDAO;
+        this.studyGroupDAO = studyGroupDAO;
+        this.itemDataDAO = itemDataDAO;
+    }
+
     // Rest Call to OCUI to get Randomization
 
     public String getRandomizationCode(EventCRFBean eventCrfBean, List<StratificationFactorBean> stratificationFactorBeans, RuleSetBean ruleSet) {
-        StudySubjectDAO ssdao = new StudySubjectDAO<>(ds);
+        StudySubjectDAO ssdao = getStudySubjectDAO();
         StudySubjectBean ssBean = (StudySubjectBean) ssdao.findByPK(eventCrfBean.getStudySubjectId());
         String identifier = ssBean.getOid(); // study subject oid
-        StudyDAO sdao = new StudyDAO<>(ds);
+        StudyDAO sdao = getStudyDAO();
         StudyBean sBean = (StudyBean) sdao.findByPK(ssBean.getStudyId());
         String siteIdentifier = sBean.getOid(); // site or study oid
         String name = sBean.getName(); // site or study name
-        UserAccountDAO udao = new UserAccountDAO(ds);
+        UserAccountDAO udao = getUserAccountDAO();
         int userId = 0;
         if (eventCrfBean.getUpdaterId() == 0) {
             userId = eventCrfBean.getOwnerId();
@@ -158,11 +180,10 @@ public class RandomizeService extends RandomizationRegistrar {
 
     private String getStudySubjectAttrValue(String expr, EventCRFBean eventCrfBean, RuleSetBean ruleSet) {
         String value = "";
-        StudySubjectDAO<String, ArrayList> ssdao = new StudySubjectDAO<>(ds);
-        SubjectDAO subdao = new SubjectDAO(ds);
-        StudyGroupClassDAO sgcdao = new StudyGroupClassDAO(ds);
-        StudyGroupDAO sgdao = new StudyGroupDAO(ds);
-        StudyDAO<String, ArrayList> sdao = new StudyDAO<>(ds);
+        StudySubjectDAO ssdao = getStudySubjectDAO();
+        SubjectDAO subdao = getSubjectDAO();
+        StudyGroupClassDAO sgcdao = getStudyGroupClassDAO();
+        StudyGroupDAO sgdao = getStudyGroupDAO();
         StudySubjectBean ssBean = (StudySubjectBean) ssdao.findByPK(eventCrfBean.getStudySubjectId());
         SubjectBean subjectBean = (SubjectBean) subdao.findByPK(ssBean.getSubjectId());
 
@@ -299,14 +320,13 @@ public class RandomizeService extends RandomizationRegistrar {
     }
 
     public ItemDataDAO getItemDataDAO() {
-        return new ItemDataDAO(ds);
+        return itemDataDAO;
     }
 
     public void setItemDataDAO(ItemDataDAO itemDataDAO) {
         this.itemDataDAO = itemDataDAO;
     }
     private StudyBean getStudy(String oid) {
-        sdao = new StudyDAO(ds);
         StudyBean studyBean = (StudyBean) sdao.findByOid(oid);
         return studyBean;
     }
@@ -320,6 +340,30 @@ public class RandomizeService extends RandomizationRegistrar {
             return parentStudy;
         }
 
+    }
+
+    public StudySubjectDAO getStudySubjectDAO() {
+        return studySubjectDAO;
+    }
+
+    public StudyDAO getStudyDAO() {
+        return sdao;
+    }
+
+    public UserAccountDAO getUserAccountDAO() {
+        return userAccountDAO;
+    }
+
+    public SubjectDAO getSubjectDAO() {
+        return subjectDAO;
+    }
+
+    public StudyGroupClassDAO getStudyGroupClassDAO() {
+        return studyGroupClassDAO;
+    }
+
+    public StudyGroupDAO getStudyGroupDAO() {
+        return studyGroupDAO;
     }
 
 }

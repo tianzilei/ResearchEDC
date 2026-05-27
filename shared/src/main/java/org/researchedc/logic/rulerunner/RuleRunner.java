@@ -12,6 +12,7 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
@@ -63,6 +64,7 @@ public class RuleRunner {
     private StudyEventDefinitionDAO studyEventDefinitionDao;
     private StudyParameterValueDAO studyParameterValueDao;
     private UserAccountDAO userAccountDao;
+    private DiscrepancyNoteDAO discrepancyNoteDao;
     private ItemFormMetadataDAO itemFormMetadataDao;
     private SectionDAO sectionDao;
     private JavaMailSenderImpl mailSender;
@@ -256,11 +258,15 @@ public class RuleRunner {
         return userAccountDao;
     }
 
+    DiscrepancyNoteDAO getDiscrepancyNoteDao() {
+        return discrepancyNoteDao;
+    }
+
     public void setDaoCollaborators(RuleSetDAO ruleSetDao, CRFDAO crfDao, RuleSetRuleDAO ruleSetRuleDao, RuleActionDAO ruleActionDao,
             StudyEventDAO studyEventDao, ItemDataDAO itemDataDao, EventCRFDAO eventCrfDao, CRFVersionDAO crfVersionDao,
             StudySubjectDAO studySubjectDao, ItemFormMetadataDAO itemFormMetadataDao, SectionDAO sectionDao, StudyDAO studyDao,
             StudyEventDefinitionDAO studyEventDefinitionDao, StudyParameterValueDAO studyParameterValueDao, UserAccountDAO userAccountDao,
-            ExpressionService expressionService) {
+            DiscrepancyNoteDAO discrepancyNoteDao, ExpressionService expressionService) {
         this.ruleSetDao = ruleSetDao;
         this.crfDao = crfDao;
         this.ruleSetRuleDao = ruleSetRuleDao;
@@ -276,6 +282,7 @@ public class RuleRunner {
         this.studyEventDefinitionDao = studyEventDefinitionDao;
         this.studyParameterValueDao = studyParameterValueDao;
         this.userAccountDao = userAccountDao;
+        this.discrepancyNoteDao = discrepancyNoteDao;
         this.expressionService = expressionService;
     }
 

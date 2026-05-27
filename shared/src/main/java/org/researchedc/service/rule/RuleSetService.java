@@ -43,6 +43,7 @@ import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
 import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
@@ -142,7 +143,10 @@ public class RuleSetService implements RuleSetServiceInterface {
     private StudyParameterValueDAO studyParameterValueDao;
     @Autowired
     private UserAccountDAO userAccountDao;
+    @Autowired
+    private DiscrepancyNoteDAO discrepancyNoteDao;
     private DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
+    @Autowired
     private ExpressionService expressionService;
     private String requestURLMinusServletPath;
     private String contextPath;
@@ -1066,7 +1070,6 @@ public class RuleSetService implements RuleSetServiceInterface {
     }
 
     private ExpressionService getExpressionService() {
-        expressionService = this.expressionService != null ? expressionService : new ExpressionService(dataSource);
         return expressionService;
     }
     //JN:No reason to use global variables, they could cause potential concurrency issues.
@@ -1153,7 +1156,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     private void configureRuleRunner(RuleRunner ruleRunner) {
         ruleRunner.setDaoCollaborators(getLegacyRuleSetDao(), getCrfDao(), getLegacyRuleSetRuleDao(), getRuleActionDao(), getStudyEventDao(),
                 getItemDataDao(), getEventCrfDao(), getCrfVersionDao(), getStudySubjectDao(), getItemFormMetadataDao(), getSectionDao(),
-                getStudyDao(), getStudyEventDefinitionDao(), studyParameterValueDao, userAccountDao, getExpressionService());
+                getStudyDao(), getStudyEventDefinitionDao(), studyParameterValueDao, userAccountDao, discrepancyNoteDao, getExpressionService());
     }
 
 

@@ -8,42 +8,37 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
-.PHONY: help build test scan backup restore release clean
+.PHONY: help setup init-db build start stop restart status logs clean
 
 # ---- General ----
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-# ---- Build ----
-build: ## Compile all modules (Maven)
-	bash scripts/build.sh
+# ---- Bare Deploy ----
+setup: ## Install host prerequisites
+	bash deploy.sh setup
 
-# ---- Test ----
-test: ## Run Maven tests
-	bash scripts/build.sh --skip-enforce
+init-db: ## Initialize PostgreSQL databases
+	bash deploy.sh init-db
 
-scan: ## Vulnerability scan (requires Trivy)
-	bash scripts/scan.sh
+build: ## Build frontend + backend
+	bash deploy.sh build
 
-# ---- Database ----
-db-init: ## Initialize database schema
-	bash scripts/db-init-schema.sh
+start: ## Start all bare host services
+	bash deploy.sh start
 
-db-validate: ## Validate Hibernate schema
-	bash scripts/db-schema-validate.sh
+stop: ## Stop all bare host services
+	bash deploy.sh stop
 
-# ---- Backup & Restore ----
-backup: ## Create backup
-	bash scripts/backup.sh
+restart: ## Restart all bare host services
+	bash deploy.sh restart
 
-restore: ## Restore backup (usage: make restore TS=20260517_120000)
-	bash scripts/restore.sh $(TS)
+status: ## Show service status
+	bash deploy.sh status
 
-# ---- Release ----
-release: ## Create a release (usage: make release VERSION=0.1)
-	bash scripts/release.sh $(VERSION)
+logs: ## Tail service logs
+	bash deploy.sh logs
 
-# ---- Clean ----
-clean: ## Remove all build artifacts
-	rm -rf legacy-core/target web/target ws/target
+clean: ## Remove build artifacts and runtime data
+	bash deploy.sh clean

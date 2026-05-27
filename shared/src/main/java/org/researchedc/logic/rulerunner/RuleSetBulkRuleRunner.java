@@ -108,7 +108,7 @@ public class RuleSetBulkRuleRunner extends RuleRunner {
                                 ActionProcessor ap =
                                     ActionProcessorFacade.getActionProcessor(ruleAction.getActionType(), ds, getMailSender(), dynamicsMetadataService, ruleSet,
                                             getRuleActionRunLogDao(), ruleSetRule, getStudyDao(), getStudySubjectDao(), getStudyEventDao(),
-                                            getStudyEventDefinitionDao(), getStudyParameterValueDao(), getUserAccountDao());
+                                            getStudyEventDefinitionDao(), getStudyParameterValueDao(), getUserAccountDao(), getDiscrepancyNoteDao());
                                 RuleActionBean rab =
                                     ap.execute(RuleRunnerMode.RULSET_BULK, ExecutionMode.SAVE, ruleAction, itemData, DiscrepancyNoteBean.ITEM_DATA,
                                             currentStudy, ub, prepareEmailContents(ruleSet, ruleSetRule, currentStudy, ruleAction));
@@ -206,7 +206,7 @@ public class RuleSetBulkRuleRunner extends RuleRunner {
                     ActionProcessorFacade.getActionProcessor(ruleActionContainer.getRuleAction().getActionType(), ds, getMailSender(), dynamicsMetadataService,
                             ruleActionContainer.getRuleSetBean(), getRuleActionRunLogDao(), ruleActionContainer.getRuleAction().getRuleSetRule(),
                             getStudyDao(), getStudySubjectDao(), getStudyEventDao(), getStudyEventDefinitionDao(), getStudyParameterValueDao(),
-                            getUserAccountDao());
+                            getUserAccountDao(), getDiscrepancyNoteDao());
                 RuleActionBean rab =
                     ap.execute(
                             RuleRunnerMode.RULSET_BULK,

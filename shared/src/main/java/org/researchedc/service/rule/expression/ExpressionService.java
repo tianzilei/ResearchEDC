@@ -61,7 +61,10 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ExpressionService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
@@ -111,6 +114,7 @@ public class ExpressionService {
     private HashMap<String, ItemGroupBean> itemGroups;
     private HashMap<String, ItemBean> items;
 
+    @Autowired
     public ExpressionService(DataSource ds) {
         init(ds, null);
     }

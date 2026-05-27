@@ -1,18 +1,18 @@
 #!/bin/bash
 # =============================================================================
-# ResearchEDC — Host Machine Deployment (No Docker)
+# ResearchEDC — Bare Host Deployment
 #
-# Usage: bash scripts/deploy-host.sh <command>
+# Usage: bash deploy.sh <command>
 # Commands: setup, init-db, build, start, stop, restart, status, logs, clean
 # =============================================================================
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(dirname "${SCRIPT_DIR}")"
+PROJECT_DIR="${SCRIPT_DIR}"
 
 # ---- Configuration ----
 load_env() {
-    local env_file="${PROJECT_DIR}/deploy/compose/.env"
+    local env_file="${PROJECT_DIR}/.env"
     if [ -f "${env_file}" ]; then
         set -a; source "${env_file}"; set +a
     fi
@@ -543,9 +543,9 @@ case "${1:-help}" in
     clean)   cmd_clean   ;;
     help|*)
         cat << EOF
-ResearchEDC Host Deployment (no Docker)
+ResearchEDC Bare Host Deployment
 
-Usage: bash scripts/deploy-host.sh <command>
+Usage: bash deploy.sh <command>
 
 Commands:
   setup    Install prerequisites, uv, Python venv
