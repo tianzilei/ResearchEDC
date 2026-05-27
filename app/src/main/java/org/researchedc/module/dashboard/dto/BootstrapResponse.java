@@ -12,16 +12,19 @@ public class BootstrapResponse {
     private UserInfo user;
     private List<StudyInfo> studies;
     private StudyInfo defaultStudy;
+    private String defaultSiteName;
     private List<ModuleInfo> modules;
 
     public BootstrapResponse() {
     }
 
     public BootstrapResponse(UserInfo user, List<StudyInfo> studies,
-                             StudyInfo defaultStudy, List<ModuleInfo> modules) {
+                             StudyInfo defaultStudy, String defaultSiteName,
+                             List<ModuleInfo> modules) {
         this.user = user;
         this.studies = studies;
         this.defaultStudy = defaultStudy;
+        this.defaultSiteName = defaultSiteName;
         this.modules = modules;
     }
 
@@ -33,6 +36,9 @@ public class BootstrapResponse {
 
     public StudyInfo getDefaultStudy() { return defaultStudy; }
     public void setDefaultStudy(StudyInfo defaultStudy) { this.defaultStudy = defaultStudy; }
+
+    public String getDefaultSiteName() { return defaultSiteName; }
+    public void setDefaultSiteName(String defaultSiteName) { this.defaultSiteName = defaultSiteName; }
 
     public List<ModuleInfo> getModules() { return modules; }
     public void setModules(List<ModuleInfo> modules) { this.modules = modules; }
