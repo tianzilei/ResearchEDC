@@ -108,7 +108,9 @@ public class ViewEventCRFContentServlet extends SecureController {
 
         EventCRFDao ecdao = this.eventCrfDao;
         EventCRFBean eventCRF = (EventCRFBean) ecdao.findByPK(eventCRFId);
-        DisplayTableOfContentsBean displayBean = TableOfContentsServlet.getDisplayBean(eventCRF, sm.getDataSource(), currentStudy);
+        DisplayTableOfContentsBean displayBean = TableOfContentsServlet.getDisplayBean(eventCRF, sm.getDataSource(), currentStudy, this.studySubjectDao,
+                this.studyEventDao, this.sectionDao, this.itemGroupDao, this.studyEventDefinitionDao, this.crfVersionDao, this.crfDao, this.studyDao,
+                this.eventDefinitionCrfDao);
         request.setAttribute("toc", displayBean);
         request.getSession().setAttribute(BEAN_STUDY_EVENT, seb);
         forwardPage(Page.VIEW_EVENT_CRF_CONTENT);

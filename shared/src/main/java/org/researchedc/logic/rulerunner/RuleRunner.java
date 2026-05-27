@@ -11,12 +11,15 @@ import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
+import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -57,6 +60,9 @@ public class RuleRunner {
     private EventCRFDAO eventCrfDao;
     private StudySubjectDAO studySubjectDao;
     private StudyDAO studyDao;
+    private StudyEventDefinitionDAO studyEventDefinitionDao;
+    private StudyParameterValueDAO studyParameterValueDao;
+    private UserAccountDAO userAccountDao;
     private ItemFormMetadataDAO itemFormMetadataDao;
     private SectionDAO sectionDao;
     private JavaMailSenderImpl mailSender;
@@ -187,68 +193,90 @@ public class RuleRunner {
     }
 
     ExpressionService getExpressionService() {
-        expressionService = this.expressionService != null ? expressionService : new ExpressionService(ds);
         return expressionService;
     }
 
     RuleSetDAO getRuleSetDao() {
-        ruleSetDao = this.ruleSetDao != null ? ruleSetDao : new RuleSetDAO(ds);
         return ruleSetDao;
     }
 
     CRFDAO getCrfDao() {
-        crfDao = this.crfDao != null ? crfDao : new CRFDAO(ds);
         return crfDao;
     }
 
     RuleSetRuleDAO getRuleSetRuleDao() {
-        ruleSetRuleDao = this.ruleSetRuleDao != null ? ruleSetRuleDao : new RuleSetRuleDAO(ds);
         return ruleSetRuleDao;
     }
 
     RuleActionDAO getRuleActionDao() {
-        ruleActionDao = this.ruleActionDao != null ? ruleActionDao : new RuleActionDAO(ds);
         return ruleActionDao;
     }
 
     StudyEventDAO getStudyEventDao() {
-        studyEventDao = this.studyEventDao != null ? studyEventDao : new StudyEventDAO(ds);
         return studyEventDao;
     }
 
     ItemDataDAO getItemDataDao() {
-        itemDataDao = this.itemDataDao != null ? itemDataDao : new ItemDataDAO(ds);
         return itemDataDao;
     }
 
     EventCRFDAO getEventCrfDao() {
-        eventCrfDao = this.eventCrfDao != null ? eventCrfDao : new EventCRFDAO(ds);
         return eventCrfDao;
     }
 
     CRFVersionDAO getCrfVersionDao() {
-        crfVersionDao = this.crfVersionDao != null ? crfVersionDao : new CRFVersionDAO(ds);
         return crfVersionDao;
     }
 
     StudySubjectDAO getStudySubjectDao() {
-        studySubjectDao = this.studySubjectDao != null ? studySubjectDao : new StudySubjectDAO(ds);
         return studySubjectDao;
     }
 
     ItemFormMetadataDAO getItemFormMetadataDAO() {
-        itemFormMetadataDao = this.itemFormMetadataDao != null ? itemFormMetadataDao : new ItemFormMetadataDAO(ds);
         return itemFormMetadataDao;
     }
 
     SectionDAO getSectionDAO() {
-        sectionDao = this.sectionDao != null ? sectionDao : new SectionDAO(ds);
         return sectionDao;
     }
 
     StudyDAO getStudyDao() {
-        studyDao = this.studyDao != null ? studyDao : new StudyDAO(ds);
         return studyDao;
+    }
+
+    StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+        return studyEventDefinitionDao;
+    }
+
+    StudyParameterValueDAO getStudyParameterValueDao() {
+        return studyParameterValueDao;
+    }
+
+    UserAccountDAO getUserAccountDao() {
+        return userAccountDao;
+    }
+
+    public void setDaoCollaborators(RuleSetDAO ruleSetDao, CRFDAO crfDao, RuleSetRuleDAO ruleSetRuleDao, RuleActionDAO ruleActionDao,
+            StudyEventDAO studyEventDao, ItemDataDAO itemDataDao, EventCRFDAO eventCrfDao, CRFVersionDAO crfVersionDao,
+            StudySubjectDAO studySubjectDao, ItemFormMetadataDAO itemFormMetadataDao, SectionDAO sectionDao, StudyDAO studyDao,
+            StudyEventDefinitionDAO studyEventDefinitionDao, StudyParameterValueDAO studyParameterValueDao, UserAccountDAO userAccountDao,
+            ExpressionService expressionService) {
+        this.ruleSetDao = ruleSetDao;
+        this.crfDao = crfDao;
+        this.ruleSetRuleDao = ruleSetRuleDao;
+        this.ruleActionDao = ruleActionDao;
+        this.studyEventDao = studyEventDao;
+        this.itemDataDao = itemDataDao;
+        this.eventCrfDao = eventCrfDao;
+        this.crfVersionDao = crfVersionDao;
+        this.studySubjectDao = studySubjectDao;
+        this.itemFormMetadataDao = itemFormMetadataDao;
+        this.sectionDao = sectionDao;
+        this.studyDao = studyDao;
+        this.studyEventDefinitionDao = studyEventDefinitionDao;
+        this.studyParameterValueDao = studyParameterValueDao;
+        this.userAccountDao = userAccountDao;
+        this.expressionService = expressionService;
     }
 
     public JavaMailSenderImpl getMailSender() {

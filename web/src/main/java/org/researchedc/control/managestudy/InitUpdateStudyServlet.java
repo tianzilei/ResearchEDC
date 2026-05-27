@@ -56,8 +56,7 @@ public class InitUpdateStudyServlet extends SecureController {
         } else {
             int studyId = Integer.valueOf(idString.trim()).intValue();
             StudyBean study = (StudyBean) sdao.findByPK(studyId);
-            StudyConfigService scs = new StudyConfigService(sm.getDataSource());
-            study = scs.setParametersForStudy(study);
+            study = studyConfigService.setParametersForStudy(study);
 
             logger.info("date created:" + study.getCreatedDate());
             logger.info("protocol Type:" + study.getProtocolType());

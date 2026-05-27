@@ -29,6 +29,7 @@ public class RandomizeActionProcessor implements ActionProcessor {
     RuleSetBean ruleSet;
     RuleSetRuleBean ruleSetRule;
     StudyDAO sdao=null;
+    StudyParameterValueDAO spvdao;
     RandomizationRegistrar randomizationRegistrar=null ;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -40,6 +41,13 @@ public class RandomizeActionProcessor implements ActionProcessor {
         this.ruleSetRule = ruleSetRule;
         this.ruleActionRunLogDao = ruleActionRunLogDao;
         this.ds = ds;
+    }
+
+    public RandomizeActionProcessor(DataSource ds, DynamicsMetadataService itemMetadataService, RuleActionRunLogDao ruleActionRunLogDao, RuleSetBean ruleSet,
+            RuleSetRuleBean ruleSetRule, StudyDAO studyDao, StudyParameterValueDAO studyParameterValueDao) {
+        this(ds, itemMetadataService, ruleActionRunLogDao, ruleSet, ruleSetRule);
+        this.sdao = studyDao;
+        this.spvdao = studyParameterValueDao;
     }
 
     public RuleActionBean execute(RuleRunnerMode ruleRunnerMode, ExecutionMode executionMode, RuleActionBean ruleAction, ItemDataBean itemDataBean,
@@ -117,7 +125,6 @@ public class RandomizeActionProcessor implements ActionProcessor {
         boolean accessPermission = false;
         StudyBean siteStudy = getStudy(studyOid);
         StudyBean study = getParentStudy(studyOid);
-        StudyParameterValueDAO spvdao = new StudyParameterValueDAO(ds);
         StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(study.getId(), "randomization");
 
         randomizationRegistrar = new RandomizationRegistrar();
@@ -137,7 +144,6 @@ public class RandomizeActionProcessor implements ActionProcessor {
     }
 
     private StudyBean getStudy(String oid) {
-        sdao = new StudyDAO(ds);
         StudyBean studyBean = (StudyBean) sdao.findByOid(oid);
         return studyBean;
     }

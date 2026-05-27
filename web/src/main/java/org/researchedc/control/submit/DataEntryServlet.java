@@ -577,7 +577,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         DisplaySectionBean section = getDisplayBean(hasGroup, false, request, isSubmitted);
         //hasSCDItem has been initialized in getDisplayBean() which is online above
 
-        VariableSubstitutionHelper.replaceVariables(section, study, ssb, studyEventDefinition, studyEventBean, dataSource);
+        VariableSubstitutionHelper.replaceVariables(section, study, ssb, studyEventDefinition, studyEventBean, dataSource, this.itemDao);
 
         if(section.getSection().hasSCDItem()) {
             SimpleConditionalDisplayService cds0 = (SimpleConditionalDisplayService) SpringServletAccess.getApplicationContext(getServletContext()).getBean(
@@ -602,7 +602,8 @@ public abstract class DataEntryServlet extends CoreSecureController {
         section.setDisplayItemGroups(displayItemWithGroups);
         DisplayTableOfContentsBean toc =
             TableOfContentsServlet.getDisplayBeanWithShownSections(getDataSource(), (DisplayTableOfContentsBean) request.getAttribute(TOC_DISPLAY),
-                    (DynamicsMetadataService) SpringServletAccess.getApplicationContext(getServletContext()).getBean("dynamicsMetadataService"));
+                    (DynamicsMetadataService) SpringServletAccess.getApplicationContext(getServletContext()).getBean("dynamicsMetadataService"),
+                    this.sectionDao, this.itemGroupDao);
         request.setAttribute(TOC_DISPLAY, toc);
         LinkedList<Integer> sectionIdsInToc = TableOfContentsServlet.sectionIdsInToc(toc);
 
@@ -1868,7 +1869,8 @@ public abstract class DataEntryServlet extends CoreSecureController {
                     this.getItemMetadataService().updateGroupDynamicsInSection(displayItemWithGroups, section.getSection().getId(), ecb);
                     toc =
                         TableOfContentsServlet.getDisplayBeanWithShownSections(getDataSource(), (DisplayTableOfContentsBean) request.getAttribute(TOC_DISPLAY),
-                                (DynamicsMetadataService) SpringServletAccess.getApplicationContext(getServletContext()).getBean("dynamicsMetadataService"));
+                                (DynamicsMetadataService) SpringServletAccess.getApplicationContext(getServletContext()).getBean("dynamicsMetadataService"),
+                                this.sectionDao, this.itemGroupDao);
                     request.setAttribute(TOC_DISPLAY, toc);
                     sectionIdsInToc = TableOfContentsServlet.sectionIdsInToc(toc);
                     sIndex = TableOfContentsServlet.sectionIndexInToc(section.getSection(), toc, sectionIdsInToc);
@@ -2250,7 +2252,8 @@ public abstract class DataEntryServlet extends CoreSecureController {
         }
         // added to allow sections shown on this page
         DisplayTableOfContentsBean displayBean = new DisplayTableOfContentsBean();
-        displayBean = TableOfContentsServlet.getDisplayBean(ecb, getDataSource(), currentStudy);
+        displayBean = TableOfContentsServlet.getDisplayBean(ecb, getDataSource(), currentStudy, this.studySubjectDao, this.studyEventDao, this.sectionDao,
+                this.itemGroupDao, this.studyEventDefinitionDao, this.crfVersionDao, this.crfDao, this.studyDao, this.eventDefinitionCrfDao);
         // escape apostrophe in event name
         displayBean.getStudyEventDefinition().setName(displayBean.getStudyEventDefinition().getName().replace("'", "\\'").replace("\"", "\\\"").replace("\\", "\\\\"));
         request.setAttribute(TOC_DISPLAY, displayBean);
@@ -2565,7 +2568,8 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
             // want to do deep copy here, so always get a fresh copy for items,
             // may use other better way to do, like clone
-            List<DisplayItemBean> dibs = FormBeanUtil.getDisplayBeansFromItems(itBeans, getDataSource(), ecb, sb.getId(), nullValuesList, getServletContext());
+            List<DisplayItemBean> dibs = FormBeanUtil.getDisplayBeansFromItems(itBeans, getDataSource(), ecb, sb.getId(), nullValuesList,
+                    getServletContext(), this.itemFormMetadataDao, this.itemDataDao);
 
             //Process preexisting data marked by the word "manual" from the UI
             if (fp.getStartsWith(igb.getOid() + "_manual" + i + "input")) {
@@ -4423,7 +4427,8 @@ public abstract class DataEntryServlet extends CoreSecureController {
                     if ( nullValuesList != null && nullValuesList.size() >0){
                     	LOGGER.trace("set with nullValuesList of : " + nullValuesList);
                     }
-                    dibs = FormBeanUtil.getDisplayBeansFromItems(itBeans, getDataSource(), ecb, sb.getId(), nullValuesList, getServletContext());
+                    dibs = FormBeanUtil.getDisplayBeansFromItems(itBeans, getDataSource(), ecb, sb.getId(), nullValuesList, getServletContext(),
+                            this.itemFormMetadataDao, this.itemDataDao);
 
                     DisplayItemGroupBean digb2 = new DisplayItemGroupBean();
 
@@ -4619,7 +4624,8 @@ public abstract class DataEntryServlet extends CoreSecureController {
                 // always get a fresh copy for items, may use other
                 // better way to
                 // do deep copy, like clone
-                List<DisplayItemBean> dibs = FormBeanUtil.getDisplayBeansFromItems(itBeans, getDataSource(), ecb, sb.getId(), edcb, 0, getServletContext());
+                List<DisplayItemBean> dibs = FormBeanUtil.getDisplayBeansFromItems(itBeans, getDataSource(), ecb, sb.getId(), edcb, 0, getServletContext(),
+                        this.itemFormMetadataDao, this.itemDataDao);
 
                 digb.setItems(dibs);
                 LOGGER.trace("set with dibs list of : " + dibs.size());
@@ -4661,7 +4667,8 @@ public abstract class DataEntryServlet extends CoreSecureController {
         } else {
             // no data, still add a blank row for displaying
             DisplayItemGroupBean digb2 = new DisplayItemGroupBean();
-            List<DisplayItemBean> dibs = FormBeanUtil.getDisplayBeansFromItems(itBeans, getDataSource(), ecb, sb.getId(), nullValuesList, getServletContext());
+            List<DisplayItemBean> dibs = FormBeanUtil.getDisplayBeansFromItems(itBeans, getDataSource(), ecb, sb.getId(), nullValuesList, getServletContext(),
+                    this.itemFormMetadataDao, this.itemDataDao);
             digb2.setItems(dibs);
             LOGGER.trace("set with nullValuesList of : " + nullValuesList);
             digb2.setEditFlag("initial");

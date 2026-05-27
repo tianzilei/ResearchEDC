@@ -107,7 +107,8 @@ public class RuleSetBulkRuleRunner extends RuleRunner {
                                 // getDiscrepancyNoteService().saveFieldNotes(ruleAction.getSummary(), itemDataBeanId, "ItemData", currentStudy, ub);
                                 ActionProcessor ap =
                                     ActionProcessorFacade.getActionProcessor(ruleAction.getActionType(), ds, getMailSender(), dynamicsMetadataService, ruleSet,
-                                            getRuleActionRunLogDao(), ruleSetRule);
+                                            getRuleActionRunLogDao(), ruleSetRule, getStudyDao(), getStudySubjectDao(), getStudyEventDao(),
+                                            getStudyEventDefinitionDao(), getStudyParameterValueDao(), getUserAccountDao());
                                 RuleActionBean rab =
                                     ap.execute(RuleRunnerMode.RULSET_BULK, ExecutionMode.SAVE, ruleAction, itemData, DiscrepancyNoteBean.ITEM_DATA,
                                             currentStudy, ub, prepareEmailContents(ruleSet, ruleSetRule, currentStudy, ruleAction));
@@ -203,7 +204,9 @@ public class RuleSetBulkRuleRunner extends RuleRunner {
                         curateMessage(ruleActionContainer.getRuleAction(), ruleActionContainer.getRuleAction().getRuleSetRule()));
                 ActionProcessor ap =
                     ActionProcessorFacade.getActionProcessor(ruleActionContainer.getRuleAction().getActionType(), ds, getMailSender(), dynamicsMetadataService,
-                            ruleActionContainer.getRuleSetBean(), getRuleActionRunLogDao(), ruleActionContainer.getRuleAction().getRuleSetRule());
+                            ruleActionContainer.getRuleSetBean(), getRuleActionRunLogDao(), ruleActionContainer.getRuleAction().getRuleSetRule(),
+                            getStudyDao(), getStudySubjectDao(), getStudyEventDao(), getStudyEventDefinitionDao(), getStudyParameterValueDao(),
+                            getUserAccountDao());
                 RuleActionBean rab =
                     ap.execute(
                             RuleRunnerMode.RULSET_BULK,

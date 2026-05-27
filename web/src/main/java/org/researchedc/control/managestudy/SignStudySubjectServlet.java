@@ -39,27 +39,17 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.CreateNewStudyEventServlet;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.spi.IAuditEventDAO;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
-import org.researchedc.dao.submit.SubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.service.DiscrepancyNoteUtil;
 import org.researchedc.view.Page;
@@ -68,7 +58,6 @@ import org.researchedc.web.bean.DisplayStudyEventRow;
 import org.researchedc.web.bean.EntityBeanTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
-import org.researchedc.dao.spi.DaoProvider;
 
 /**
  * Created by IntelliJ IDEA. User: bads Date: Jun 10, 2008 Time: 5:28:46 PM To
@@ -112,13 +101,13 @@ public class SignStudySubjectServlet extends SecureController {
         throw new InsufficientPermissionException(Page.MENU_SERVLET, resexception.getString("not_study_director"), "1");
     }
 
-    public static ArrayList getDisplayStudyEventsForStudySubject(StudyBean study, StudySubjectBean studySub, DataSource ds, UserAccountBean ub,
+    public ArrayList getDisplayStudyEventsForStudySubject(StudyBean study, StudySubjectBean studySub, DataSource ds, UserAccountBean ub,
             StudyUserRoleBean currentRole) {
-        IStudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
-        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
-        EventCRFDao ecdao = DaoProvider.getDao(EventCRFDAO.class);
-        EventDefinitionCRFDao edcdao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
-        IStudySubjectDAO ssdao = DaoProvider.getDao(StudySubjectDAO.class);
+        IStudyEventDefinitionDAO seddao = studyEventDefinitionDao;
+        IStudyEventDAO sedao = studyEventDao;
+        EventCRFDao ecdao = eventCrfDao;
+        EventDefinitionCRFDao edcdao = eventDefinitionCrfDao;
+        IStudySubjectDAO ssdao = studySubjectDao;
 
         ArrayList events = sedao.findAllByStudySubject(studySub);
 
@@ -154,14 +143,13 @@ public class SignStudySubjectServlet extends SecureController {
         return displayEvents;
     }
 
-    public static boolean permitSign(StudySubjectBean studySub, DataSource ds) {
+    public boolean permitSign(StudySubjectBean studySub, DataSource ds) {
         boolean sign = true;
-        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
-        EventCRFDao ecdao = DaoProvider.getDao(EventCRFDAO.class);
-        EventDefinitionCRFDao edcdao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
-        IStudyDAO sdao = DaoProvider.getDao(StudyDAO.class);
+        IStudyEventDAO sedao = studyEventDao;
+        EventCRFDao ecdao = eventCrfDao;
+        EventDefinitionCRFDao edcdao = eventDefinitionCrfDao;
+        IStudyDAO sdao = studyDao;
         StudyBean studyBean = (StudyBean) sdao.findByPK(studySub.getStudyId());
-        // DiscrepancyNoteDAO discDao = DaoProvider.getDao(DiscrepancyNoteDAO.class);
         ArrayList studyEvents = sedao.findAllByStudySubject(studySub);
         for (int l = 0; l < studyEvents.size(); l++) {
             StudyEventBean studyEvent = (StudyEventBean) studyEvents.get(l);
@@ -196,14 +184,12 @@ public class SignStudySubjectServlet extends SecureController {
         return sign;
     }
 
-    public static boolean signSubjectEvents(StudySubjectBean studySub, DataSource ds, UserAccountBean ub) {
+    public boolean signSubjectEvents(StudySubjectBean studySub, DataSource ds, UserAccountBean ub) {
         boolean updated = true;
-        // IStudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
-        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
-        EventCRFDao ecdao = DaoProvider.getDao(EventCRFDAO.class);
-        EventDefinitionCRFDao edcdao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
-        // IStudySubjectDAO ssdao = DaoProvider.getDao(StudySubjectDAO.class);
-        DiscrepancyNoteDAO discDao = DaoProvider.getDao(DiscrepancyNoteDAO.class);
+        IStudyEventDAO sedao = studyEventDao;
+        EventCRFDao ecdao = eventCrfDao;
+        EventDefinitionCRFDao edcdao = eventDefinitionCrfDao;
+        DiscrepancyNoteDAO discDao = (DiscrepancyNoteDAO) discrepancyNoteDao;
         ArrayList studyEvents = sedao.findAllByStudySubject(studySub);
         for (int l = 0; l < studyEvents.size(); l++) {
             try {
@@ -419,7 +405,7 @@ public class SignStudySubjectServlet extends SecureController {
      *            The list of event CRFs for this study event.
      * @return The list of DisplayEventCRFBeans for this study event.
      */
-    public static ArrayList getDisplayEventCRFs(StudyBean study, DataSource ds, ArrayList eventCRFs, UserAccountBean ub, StudyUserRoleBean currentRole,
+    public ArrayList getDisplayEventCRFs(StudyBean study, DataSource ds, ArrayList eventCRFs, UserAccountBean ub, StudyUserRoleBean currentRole,
             SubjectEventStatus status) {
         ArrayList answer = new ArrayList();
 
@@ -431,11 +417,11 @@ public class SignStudySubjectServlet extends SecureController {
          * eventDefinitionCRFs.get(i); definitionsById.put(new
          * Integer(edc.getStudyEventDefinitionId()), edc); }
          */
-        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
-        ICrfDAO cdao = DaoProvider.getDao(CRFDAO.class);
-        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
-        ItemDataDAO iddao = DaoProvider.getDao(ItemDataDAO.class);
-        EventDefinitionCRFDao edcdao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
+        IStudyEventDAO sedao = studyEventDao;
+        ICrfDAO cdao = crfDao;
+        CRFVersionDAO cvdao = crfVersionDao;
+        ItemDataDAO iddao = itemDataDao;
+        EventDefinitionCRFDao edcdao = eventDefinitionCrfDao;
 
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecb = (EventCRFBean) eventCRFs.get(i);
@@ -507,7 +493,7 @@ public class SignStudySubjectServlet extends SecureController {
      *            All of the event CRFs for this study event.
      * @return The list of event definitions for which no event CRF exists.
      */
-    public static ArrayList getUncompletedCRFs(DataSource ds, ArrayList eventDefinitionCRFs, ArrayList eventCRFs, SubjectEventStatus status) {
+    public ArrayList getUncompletedCRFs(DataSource ds, ArrayList eventDefinitionCRFs, ArrayList eventCRFs, SubjectEventStatus status) {
         int i;
         HashMap completed = new HashMap();
         HashMap startedButIncompleted = new HashMap();
@@ -534,8 +520,8 @@ public class SignStudySubjectServlet extends SecureController {
             startedButIncompleted.put(Integer.valueOf(edcrf.getCrfId()), new EventCRFBean());
         }
 
-        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
-        ItemDataDAO iddao = DaoProvider.getDao(ItemDataDAO.class);
+        CRFVersionDAO cvdao = crfVersionDao;
+        ItemDataDAO iddao = itemDataDao;
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecrf = (EventCRFBean) eventCRFs.get(i);
             int crfId = cvdao.getCRFIdFromCRFVersionId(ecrf.getCRFVersionId());
@@ -589,9 +575,9 @@ public class SignStudySubjectServlet extends SecureController {
         return answer;
     }
 
-    public static void populateUncompletedCRFsWithCRFAndVersions(DataSource ds, ArrayList uncompletedEventDefinitionCRFs) {
-        ICrfDAO cdao = DaoProvider.getDao(CRFDAO.class);
-        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
+    public void populateUncompletedCRFsWithCRFAndVersions(DataSource ds, ArrayList uncompletedEventDefinitionCRFs) {
+        ICrfDAO cdao = crfDao;
+        CRFVersionDAO cvdao = crfVersionDao;
 
         int size = uncompletedEventDefinitionCRFs.size();
         for (int i = 0; i < size; i++) {

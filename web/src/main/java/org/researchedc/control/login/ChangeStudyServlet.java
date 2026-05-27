@@ -187,9 +187,8 @@ public class ChangeStudyServlet extends SecureController {
             request.setAttribute("label", Integer.valueOf(nextLabel).toString());
         }
 
-        StudyConfigService scs = new StudyConfigService(sm.getDataSource());
         if (current.getParentStudyId() <= 0) {// top study
-            scs.setParametersForStudy(current);
+            studyConfigService.setParametersForStudy(current);
 
         } else {
             // YW <<
@@ -198,7 +197,7 @@ public class ChangeStudyServlet extends SecureController {
 
             }
             // YW 06-12-2007>>
-            scs.setParametersForSite(current);
+            studyConfigService.setParametersForSite(current);
 
         }
         if (current.getStatus().equals(Status.DELETED) || current.getStatus().equals(Status.AUTO_DELETED)) {

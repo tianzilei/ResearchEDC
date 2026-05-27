@@ -38,7 +38,6 @@ import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
-import org.researchedc.dao.spi.DaoProvider;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
@@ -373,7 +372,7 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
     }
 
     public DiscrepancyNoteDAO getDiscrepancyNoteDAO() {
-        discrepancyNoteDAO = discrepancyNoteDAO == null ? DaoProvider.getDao(DiscrepancyNoteDAO.class) : discrepancyNoteDAO;
+        discrepancyNoteDAO = discrepancyNoteDAO == null ? (DiscrepancyNoteDAO) this.discrepancyNoteDao : discrepancyNoteDAO;
         return discrepancyNoteDAO;
     }
 

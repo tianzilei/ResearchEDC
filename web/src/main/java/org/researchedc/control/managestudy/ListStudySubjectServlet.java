@@ -30,6 +30,7 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.AddNewSubjectServlet;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
@@ -40,6 +41,8 @@ import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.bean.DisplayStudySubjectRow;
@@ -55,7 +58,6 @@ import java.util.Locale;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
-import org.researchedc.dao.spi.DaoProvider;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
@@ -420,11 +422,8 @@ public abstract class ListStudySubjectServlet extends SecureController {
     }
 
     public static DisplayStudyEventBean getDisplayStudyEventsForStudySubject(StudySubjectBean studySub, StudyEventBean event, DataSource ds,
-            UserAccountBean ub, StudyUserRoleBean currentRole, StudyBean study) {
-        IStudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
-        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
-        EventCRFDao ecdao = DaoProvider.getDao(EventCRFDAO.class);
-        EventDefinitionCRFDao edcdao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
+            UserAccountBean ub, StudyUserRoleBean currentRole, StudyBean study, IStudyEventDefinitionDAO seddao, IStudyEventDAO sedao, EventCRFDao ecdao,
+            EventDefinitionCRFDao edcdao, ICrfDAO cdao, CRFVersionDAO cvdao, ItemDataDAO iddao) {
 
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(event.getStudyEventDefinitionId());
         event.setStudyEventDefinition(sed);
@@ -438,8 +437,8 @@ public abstract class ListStudySubjectServlet extends SecureController {
         DisplayStudyEventBean de = new DisplayStudyEventBean();
         de.setStudyEvent(event);
         de.setDisplayEventCRFs(ViewStudySubjectServlet.getDisplayEventCRFs(ds, eventCRFs, eventDefinitionCRFs, ub, currentRole, event.getSubjectEventStatus(),
-                study));
-        ArrayList al = ViewStudySubjectServlet.getUncompletedCRFs(ds, eventDefinitionCRFs, eventCRFs, event.getSubjectEventStatus());
+                study, sedao, cdao, cvdao, iddao, edcdao));
+        ArrayList al = ViewStudySubjectServlet.getUncompletedCRFs(ds, eventDefinitionCRFs, eventCRFs, event.getSubjectEventStatus(), cvdao, iddao);
         // ViewStudySubjectServlet.populateUncompletedCRFsWithCRFAndVersions(ds,
         // al);
         de.setUncompletedCRFs(al);

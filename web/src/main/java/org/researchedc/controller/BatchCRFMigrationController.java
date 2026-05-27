@@ -43,7 +43,6 @@ import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.spi.DaoProvider;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
@@ -102,6 +101,15 @@ public class BatchCRFMigrationController implements Runnable {
 
     @Autowired
     protected AuditDAO auditDao;
+
+    @Autowired
+    private EventCRFDAO legacyEventCrfDao;
+    @Autowired
+    private IStudyEventDAO legacyStudyEventDao;
+    @Autowired
+    private StudySubjectDAO legacyStudySubjectDao;
+    @Autowired
+    private CRFVersionDAO legacyCrfVersionDao;
 
     @Autowired
     private DataSource dataSource;
@@ -539,16 +547,16 @@ public class BatchCRFMigrationController implements Runnable {
 
     @SuppressWarnings("rawtypes")
     private EventCRFDAO ecdao() {
-        return DaoProvider.getDao(EventCRFDAO.class);
+        return this.legacyEventCrfDao;
     }
 
     private IStudyEventDAO sedao() {
-        return DaoProvider.getDao(IStudyEventDAO.class);
+        return this.legacyStudyEventDao;
     }
 
     @SuppressWarnings("rawtypes")
     private StudySubjectDAO ssdao() {
-        return DaoProvider.getDao(StudySubjectDAO.class);
+        return this.legacyStudySubjectDao;
     }
 
     private EventDefinitionCRFDao edcdao() {
@@ -566,7 +574,7 @@ public class BatchCRFMigrationController implements Runnable {
 
     @SuppressWarnings("rawtypes")
     private CRFVersionDAO cvdao() {
-        return DaoProvider.getDao(CRFVersionDAO.class);
+        return this.legacyCrfVersionDao;
     }
 
     private IStudyEventDefinitionDAO seddao() {

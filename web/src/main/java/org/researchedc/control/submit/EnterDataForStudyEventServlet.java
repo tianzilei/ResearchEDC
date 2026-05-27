@@ -43,7 +43,6 @@ import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -56,7 +55,6 @@ import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.crfdata.HideCRFManager;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
-import org.researchedc.dao.spi.DaoProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 
@@ -114,7 +112,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
 
         StudyEventBean seb = (StudyEventBean) aeb;
 
-        IStudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         StudyEventDefinitionBean sedb = (StudyEventDefinitionBean) seddao.findByPK(seb.getStudyEventDefinitionId());
         seb.setStudyEventDefinition(sedb);
         //A. Hamid mantis issue 5048
@@ -229,7 +227,8 @@ public class EnterDataForStudyEventServlet extends SecureController {
 
         ArrayList displayEventCRFs =
             ViewStudySubjectServlet
-                    .getDisplayEventCRFs(sm.getDataSource(), eventCRFs, eventDefinitionCRFs, ub, currentRole, seb.getSubjectEventStatus(), study);
+                    .getDisplayEventCRFs(sm.getDataSource(), eventCRFs, eventDefinitionCRFs, ub, currentRole, seb.getSubjectEventStatus(), study,
+                            this.studyEventDao, this.crfDao, this.crfVersionDao, this.itemDataDao, this.eventDefinitionCrfDao);
 
         // Issue 3212 BWP << hide certain CRFs at the site level
         if (currentStudy.getParentStudyId() > 0) {
@@ -249,7 +248,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
 
         //@pgawade 31-Aug-2012 fix for issue #15315: Reverting to set the request variable "beans" back 
         // this is for generating side info panel
-        ArrayList beans = ViewStudySubjectServlet.getDisplayStudyEventsForStudySubject(studySubjectBean, sm.getDataSource(), ub, currentRole);
+        ArrayList beans = new ArrayList<>(studySubjectService.getDisplayStudyEventsForStudySubject(studySubjectBean, ub, currentRole));
         request.setAttribute("beans", beans);
         EventCRFBean ecb = new EventCRFBean();
         ecb.setStudyEventId(eventId);

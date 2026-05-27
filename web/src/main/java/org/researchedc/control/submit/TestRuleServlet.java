@@ -26,7 +26,6 @@ import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.spi.DaoProvider;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.domain.rule.action.DiscrepancyNoteActionBean;
@@ -498,7 +497,7 @@ else
     }
 
     private ItemFormMetadataDAO getItemFormMetadataDAO() {
-        itemFormMetadataDAO = this.itemFormMetadataDAO != null ? itemFormMetadataDAO : DaoProvider.getDao(ItemFormMetadataDAO.class);
+        itemFormMetadataDAO = this.itemFormMetadataDAO != null ? itemFormMetadataDAO : this.itemFormMetadataDao;
         return itemFormMetadataDAO;
     }
 

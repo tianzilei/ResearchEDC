@@ -15,11 +15,8 @@ import java.util.Locale;
 
 import javax.sql.DataSource;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.bean.core.DataEntryStage;
-import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.ItemDataType;
-import org.researchedc.bean.core.ResolutionStatus;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.Utils;
@@ -37,8 +34,7 @@ import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
@@ -51,7 +47,6 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.job.CrfBusinessLogicHelper;
 import org.researchedc.web.job.ImportSpringJob;
-import org.researchedc.dao.spi.DaoProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -82,48 +77,6 @@ public class VerifyImportedCRFDataServlet extends SecureController {
 
         addPageMessage(respage.getString("no_have_correct_privilege_current_study") + respage.getString("change_study_contact_sysadmin"));
         throw new InsufficientPermissionException(Page.MENU_SERVLET, resexception.getString("may_not_submit_data"), "1");
-    }
-
-    public static DiscrepancyNoteBean createDiscrepancyNote(ItemBean itemBean, String message, EventCRFBean eventCrfBean, DisplayItemBean displayItemBean,
-            Integer parentId, UserAccountBean uab, DataSource ds, StudyBean study) {
-        // DisplayItemBean displayItemBean) {
-        DiscrepancyNoteBean note = new DiscrepancyNoteBean();
-        IStudySubjectDAO ssdao = DaoProvider.getDao(StudySubjectDAO.class);
-        note.setDescription(message);
-        note.setDetailedNotes("Failed Validation Check");
-        note.setOwner(uab);
-        note.setCreatedDate(new Date());
-        note.setResolutionStatusId(ResolutionStatus.OPEN.getId());
-        note.setDiscrepancyNoteTypeId(DiscrepancyNoteType.FAILEDVAL.getId());
-        if (parentId != null) {
-            note.setParentDnId(parentId);
-        }
-
-        note.setField(itemBean.getName());
-        note.setStudyId(study.getId());
-        note.setEntityName(itemBean.getName());
-        note.setEntityType(DiscrepancyNoteBean.ITEM_DATA);
-        note.setEntityValue(displayItemBean.getData().getValue());
-
-        note.setEventName(eventCrfBean.getName());
-        note.setEventStart(eventCrfBean.getCreatedDate());
-        note.setCrfName(displayItemBean.getEventDefinitionCRF().getCrfName());
-
-        StudySubjectBean ss = (StudySubjectBean) ssdao.findByPK(eventCrfBean.getStudySubjectId());
-        note.setSubjectName(ss.getName());
-
-        note.setEntityId(displayItemBean.getData().getId());
-        note.setColumn("value");
-
-        DiscrepancyNoteDAO dndao = DaoProvider.getDao(DiscrepancyNoteDAO.class);
-        note = (DiscrepancyNoteBean) dndao.create(note);
-        // so that the below method works, need to set the entity above
-        // System.out.println("trying to create mapping with " + note.getId() +
-        // " " + note.getEntityId() + " " + note.getColumn() + " " +
-        // note.getEntityType());
-        dndao.createMapping(note);
-        // System.out.println("just created mapping");
-        return note;
     }
 
     @Override
@@ -294,9 +247,9 @@ public class VerifyImportedCRFDataServlet extends SecureController {
                             for (int iter = 0; iter < messageList.size(); iter++) {
                                 String message = (String) messageList.get(iter);
                                 DiscrepancyNoteBean parentDn = ImportSpringJob.createDiscrepancyNote(ibean, message, eventCrfBean, displayItemBean, null, ub,
-                                        sm.getDataSource(), currentStudy);
+                                        sm.getDataSource(), currentStudy, this.studySubjectDao, (DiscrepancyNoteDAO) this.discrepancyNoteDao);
                                 ImportSpringJob.createDiscrepancyNote(ibean, message, eventCrfBean, displayItemBean, parentDn.getId(), ub, sm.getDataSource(),
-                                        currentStudy);
+                                        currentStudy, this.studySubjectDao, (DiscrepancyNoteDAO) this.discrepancyNoteDao);
                                 // System.out.println("*** created disc note with message: "
                                 // + message);
                                 // displayItemBean);

@@ -17,7 +17,6 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.TableOfContentsServlet;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.SectionDAO;
@@ -26,11 +25,6 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.sql.DataSource;
-import org.researchedc.dao.spi.DaoProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * To view the table of content of an event CRF
@@ -64,24 +58,25 @@ public class ViewTableOfContentServlet extends SecureController {
         int sedId = fp.getInt("sedId");
         request.setAttribute("sedId", Integer.valueOf(sedId) + "");
         // YW >>
-        DisplayTableOfContentsBean displayBean = getDisplayBean(sm.getDataSource(), crfVersionId);
+        DisplayTableOfContentsBean displayBean = getDisplayBean(crfVersionId);
         request.setAttribute("toc", displayBean);
         forwardPage(Page.VIEW_TABLE_OF_CONTENT);
     }
 
-    public static DisplayTableOfContentsBean getDisplayBean(DataSource ds, int crfVersionId) {
+    public DisplayTableOfContentsBean getDisplayBean(int crfVersionId) {
+        return getDisplayBean(crfVersionId, this.sectionDao, this.crfVersionDao, this.crfDao);
+    }
+
+    public static DisplayTableOfContentsBean getDisplayBean(int crfVersionId, SectionDAO sectionDao, CRFVersionDAO crfVersionDao, ICrfDAO crfDao) {
         DisplayTableOfContentsBean answer = new DisplayTableOfContentsBean();
 
-        SectionDAO sdao = DaoProvider.getDao(SectionDAO.class);
-        ArrayList sections = getSections(crfVersionId, ds);
+        ArrayList sections = getSections(crfVersionId, sectionDao);
         answer.setSections(sections);
 
-        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
-        CRFVersionBean cvb = (CRFVersionBean) cvdao.findByPK(crfVersionId);
+        CRFVersionBean cvb = (CRFVersionBean) crfVersionDao.findByPK(crfVersionId);
         answer.setCrfVersion(cvb);
 
-        ICrfDAO cdao = DaoProvider.getDao(CRFDAO.class);
-        CRFBean cb = (CRFBean) cdao.findByPK(cvb.getCrfId());
+        CRFBean cb = (CRFBean) crfDao.findByPK(cvb.getCrfId());
         answer.setCrf(cb);
 
         answer.setEventCRF(new EventCRFBean());
@@ -91,8 +86,11 @@ public class ViewTableOfContentServlet extends SecureController {
         return answer;
     }
 
-    public static ArrayList getSections(int crfVersionId, DataSource ds) {
-        SectionDAO sdao = DaoProvider.getDao(SectionDAO.class);
+    public ArrayList getSections(int crfVersionId) {
+        return getSections(crfVersionId, this.sectionDao);
+    }
+
+    public static ArrayList getSections(int crfVersionId, SectionDAO sdao) {
 
         HashMap numItemsBySectionId = sdao.getNumItemsBySectionId();
         ArrayList sections = sdao.findAllByCRFVersionId(crfVersionId);

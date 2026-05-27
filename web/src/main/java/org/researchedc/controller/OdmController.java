@@ -31,8 +31,10 @@ import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.EventCrfDao;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
@@ -89,6 +91,14 @@ public class OdmController {
 
     @Autowired
     protected CRFVersionDAO crfVersionDao;
+    @Autowired
+    protected EventCRFDAO legacyEventCrfDao;
+    @Autowired
+    protected StudyDAO legacyStudyDao;
+    @Autowired
+    protected StudyEventDAO legacyStudyEventDao;
+    @Autowired
+    protected EventDefinitionCRFDAO eventDefinitionCrfDao;
 
     @Autowired
     @Qualifier("dataSource")
@@ -261,14 +271,15 @@ public class OdmController {
         CRFVersionDAO versionDAO = this.crfVersionDao;
         IStudyDAO studyDAO = this.studyDao;
         IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
-        EventCRFDAO eventCRFDAO = org.researchedc.dao.spi.DaoProvider.getDao(org.researchedc.dao.submit.EventCRFDAO.class);
-        ItemDataDAO itemDataDAO = org.researchedc.dao.spi.DaoProvider.getDao(org.researchedc.dao.submit.ItemDataDAO.class);
+        EventCRFDAO eventCRFDAO = this.legacyEventCrfDao;
+        ItemDataDAO itemDataDAO = this.itemDataDao;
         ICrfDAO crfDAO = this.crfDao;
         List<ODMcomplexTypeDefinitionFormData> formDatas = new ArrayList<>();
         try {
             // Retrieve crfs for next event
             StudySubjectBean studySubjectBean = studySubjectDAO.findByOid(ssoid);
-            ParticipantEventService participantEventService = new ParticipantEventService(dataSource);
+            ParticipantEventService participantEventService = new ParticipantEventService(legacyStudyDao, legacyStudyEventDao, eventCRFDAO,
+                    eventDefinitionCrfDao, versionDAO);
             StudyEventBean nextEvent = participantEventService.getNextParticipantEvent(studySubjectBean);
             if (nextEvent != null) {
                 logger.debug("Found event: " + nextEvent.getName() + " - ID: " + nextEvent.getId());

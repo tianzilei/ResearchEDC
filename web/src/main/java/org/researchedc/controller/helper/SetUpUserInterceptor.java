@@ -3,6 +3,9 @@ package org.researchedc.controller.helper;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.dao.service.StudyConfigService;
+import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,12 @@ public class SetUpUserInterceptor implements HandlerInterceptor {
 
     @Autowired
     protected IUserAccountDAO userAccountDao;
+    @Autowired
+    private StudyParameterValueDAO studyParameterValueDao;
+    @Autowired
+    private IStudyDAO studyDao;
+    @Autowired
+    private StudyConfigService studyConfigService;
 
     public static final String USER_BEAN_NAME = "userBean";
 
@@ -70,7 +79,7 @@ public class SetUpUserInterceptor implements HandlerInterceptor {
 
         userBean = userBean.getId() > 0 ? (UserAccountBean) userAccountDAO.findByPK(userBean.getId()) : userBean;
 
-        SetUpStudyRole setupStudy = new SetUpStudyRole(dataSource);
+        SetUpStudyRole setupStudy = new SetUpStudyRole(dataSource, studyParameterValueDao, studyDao, studyConfigService);
         setupStudy.setUp(currentSession, userBean);
 
         return true;

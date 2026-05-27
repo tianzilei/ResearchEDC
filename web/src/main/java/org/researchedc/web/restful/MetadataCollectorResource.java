@@ -37,6 +37,8 @@ public class MetadataCollectorResource {
 
     @Autowired
     protected StudyParameterValueDAO studyParameterValueDao;
+    @Autowired
+    protected StudyConfigService studyConfigService;
 
     private static final int INDENT_LEVEL = 2;
 	private DataSource dataSource;
@@ -255,15 +257,14 @@ public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
 		ArrayList studyParameters = spvdao.findParamConfigByStudy(studyBean);
 
 		  studyBean.setStudyParameters(studyParameters);
-		  StudyConfigService scs = new StudyConfigService(this.dataSource);
           if (studyBean.getParentStudyId() <= 0) {// top study
-        	  studyBean =      scs.setParametersForStudy(studyBean);
+              studyBean = studyConfigService.setParametersForStudy(studyBean);
 
           } else {
               // YW <<
-        	  studyBean.setParentStudyName(((StudyBean) getStudyDao().findByPK(studyBean.getParentStudyId())).getName());
+              studyBean.setParentStudyName(((StudyBean) getStudyDao().findByPK(studyBean.getParentStudyId())).getName());
               // YW >>
-        	  studyBean =  scs.setParametersForSite(studyBean);
+              studyBean = studyConfigService.setParametersForSite(studyBean);
           }
 		 
 	return studyBean;

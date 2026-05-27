@@ -53,9 +53,9 @@ import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 public class ViewEventDefinitionServlet extends SecureController {
    
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    protected CRFVersionDAO crfVersionDao;
     @Autowired
-    private EventDefinitionCRFDao eventDefinitionCrfDao;
+    protected EventDefinitionCRFDao eventDefinitionCrfDao;
 
 EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
    

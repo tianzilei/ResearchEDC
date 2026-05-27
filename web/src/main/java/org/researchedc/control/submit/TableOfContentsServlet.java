@@ -65,7 +65,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.sql.DataSource;
-import org.researchedc.dao.spi.DaoProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 
@@ -416,12 +415,13 @@ public class TableOfContentsServlet extends SecureController {
 
         }
 
-        DisplayTableOfContentsBean displayBean = getDisplayBean(ecb, sm.getDataSource(), currentStudy);
+        DisplayTableOfContentsBean displayBean = getDisplayBean(ecb, sm.getDataSource(), currentStudy, this.studySubjectDao, this.studyEventDao,
+                this.sectionDao, this.itemGroupDao, this.studyEventDefinitionDao, this.crfVersionDao, this.crfDao, this.studyDao, this.eventDefinitionCrfDao);
 
         // this is for generating side info panel
         IStudySubjectDAO ssdao = this.studySubjectDao;
         StudySubjectBean ssb = (StudySubjectBean) ssdao.findByPK(ecb.getStudySubjectId());
-        ArrayList beans = ViewStudySubjectServlet.getDisplayStudyEventsForStudySubject(ssb, sm.getDataSource(), ub, currentRole);
+        ArrayList beans = new ArrayList<>(studySubjectService.getDisplayStudyEventsForStudySubject(ssb, ub, currentRole));
         request.setAttribute("studySubject", ssb);
         request.setAttribute("beans", beans);
         request.setAttribute("eventCRF", ecb);
@@ -597,10 +597,7 @@ public class TableOfContentsServlet extends SecureController {
         return "";
     }
 
-    public static ArrayList getSections(EventCRFBean ecb, DataSource ds) {
-        SectionDAO sdao = DaoProvider.getDao(SectionDAO.class);
-        ItemGroupDAO igdao = DaoProvider.getDao(ItemGroupDAO.class);
-
+    public static ArrayList getSections(EventCRFBean ecb, DataSource ds, SectionDAO sdao, ItemGroupDAO igdao) {
         HashMap numItemsBySectionId = sdao.getNumItemsBySectionId();
         HashMap numItemsPlusRepeatBySectionId = sdao.getNumItemsPlusRepeatBySectionId(ecb);
         HashMap numItemsCompletedBySectionId = sdao.getNumItemsCompletedBySectionId(ecb);
@@ -646,39 +643,34 @@ public class TableOfContentsServlet extends SecureController {
         return sections;
     }
 
-    public static DisplayTableOfContentsBean getDisplayBean(EventCRFBean ecb, DataSource ds, StudyBean currentStudy) {
+    public static DisplayTableOfContentsBean getDisplayBean(EventCRFBean ecb, DataSource ds, StudyBean currentStudy, IStudySubjectDAO ssdao,
+            IStudyEventDAO sedao, SectionDAO sdao, ItemGroupDAO igdao, IStudyEventDefinitionDAO seddao, CRFVersionDAO cvdao, ICrfDAO cdao, IStudyDAO studyDao,
+            EventDefinitionCRFDao edcdao) {
         DisplayTableOfContentsBean answer = new DisplayTableOfContentsBean();
 
         answer.setEventCRF(ecb);
 
         // get data
-        IStudySubjectDAO ssdao = DaoProvider.getDao(StudySubjectDAO.class);
         StudySubjectBean ssb = (StudySubjectBean) ssdao.findByPK(ecb.getStudySubjectId());
         answer.setStudySubject(ssb);
 
-        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
         StudyEventBean seb = (StudyEventBean) sedao.findByPK(ecb.getStudyEventId());
         answer.setStudyEvent(seb);
 
-        SectionDAO sdao = DaoProvider.getDao(SectionDAO.class);
-        ArrayList sections = getSections(ecb, ds);
+        ArrayList sections = getSections(ecb, ds, sdao, igdao);
         answer.setSections(sections);
 
         // get metadata
-        IStudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
         StudyEventDefinitionBean sedb = (StudyEventDefinitionBean) seddao.findByPK(seb.getStudyEventDefinitionId());
         answer.setStudyEventDefinition(sedb);
 
-        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
         CRFVersionBean cvb = (CRFVersionBean) cvdao.findByPK(ecb.getCRFVersionId());
         answer.setCrfVersion(cvb);
 
-        ICrfDAO cdao = DaoProvider.getDao(CRFDAO.class);
         CRFBean cb = (CRFBean) cdao.findByPK(cvb.getCrfId());
         answer.setCrf(cb);
 
-        StudyBean studyForStudySubject = DaoProvider.getDao(StudyDAO.class).findByStudySubjectId(ssb.getId());
-        EventDefinitionCRFDao edcdao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
+        StudyBean studyForStudySubject = studyDao.findByStudySubjectId(ssb.getId());
         EventDefinitionCRFBean edcb = edcdao.findByStudyEventDefinitionIdAndCRFId(studyForStudySubject, sedb.getId(), cb.getId());
         answer.setEventDefinitionCRF(edcb);
 
@@ -696,13 +688,12 @@ public class TableOfContentsServlet extends SecureController {
      * @return
      */
     public static DisplayTableOfContentsBean getDisplayBeanWithShownSections(DataSource ds, DisplayTableOfContentsBean displayTableOfContentsBean,
-            DynamicsMetadataService dynamicsMetadataService) {
+            DynamicsMetadataService dynamicsMetadataService, SectionDAO sectionDAO, ItemGroupDAO itemGroupDAO) {
         if(displayTableOfContentsBean == null) {
             return displayTableOfContentsBean;
         }
         EventCRFBean ecb = displayTableOfContentsBean.getEventCRF();
-        SectionDAO sectionDAO = DaoProvider.getDao(SectionDAO.class);
-        ArrayList<SectionBean> sectionBeans = getSections(ecb, ds);
+        ArrayList<SectionBean> sectionBeans = getSections(ecb, ds, sectionDAO, itemGroupDAO);
         ArrayList<SectionBean> showSections = new ArrayList<SectionBean>();
         if(sectionBeans != null && sectionBeans.size()>0) {
             for(SectionBean s : sectionBeans) {

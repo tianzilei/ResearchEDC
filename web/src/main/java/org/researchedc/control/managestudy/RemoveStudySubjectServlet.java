@@ -99,7 +99,8 @@ public class RemoveStudySubjectServlet extends SecureController {
             // find study events
             IStudyEventDAO sedao = this.studyEventDao;
 //            ArrayList events = sedao.findAllByStudyAndStudySubjectId(study, studySubId);
-            ArrayList<DisplayStudyEventBean> displayEvents = ViewStudySubjectServlet.getDisplayStudyEventsForStudySubject(studySub, sm.getDataSource(), ub, currentRole);
+            ArrayList<DisplayStudyEventBean> displayEvents =
+                    new ArrayList<>(studySubjectService.getDisplayStudyEventsForStudySubject(studySub, ub, currentRole));
             String action = request.getParameter("action");
             if ("confirm".equalsIgnoreCase(action)) {
                 if (!studySub.getStatus().equals(Status.AVAILABLE)) {

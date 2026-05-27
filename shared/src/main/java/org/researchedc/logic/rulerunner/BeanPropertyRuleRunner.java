@@ -8,8 +8,6 @@ import javax.sql.DataSource;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.datamap.StudyEvent;
 import org.researchedc.domain.rule.RuleBean;
@@ -37,8 +35,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  */
 public class BeanPropertyRuleRunner extends RuleRunner{
 	NotificationActionProcessor notificationActionProcessor;
-	StudyEventDAO studyEventDAO;
-	
+
 	public BeanPropertyRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, JavaMailSenderImpl mailSender) {
 		super(ds, contextPath, contextPath, mailSender);
 		// TODO Auto-generated constructor stub
@@ -69,8 +66,7 @@ public class BeanPropertyRuleRunner extends RuleRunner{
                     {
 	                    RuleBean rule = ruleSetRule.getRuleBean();
 	             //       StudyBean currentStudy = rule.getStudy();//TODO:Fix me!
-	                    StudyDAO sdao = new StudyDAO(ds);
-	                    StudyBean currentStudy = (StudyBean) sdao.findByPK(rule.getStudyId());
+	                    StudyBean currentStudy = (StudyBean) getStudyDao().findByPK(rule.getStudyId());
 	                    ExpressionBeanObjectWrapper eow = new ExpressionBeanObjectWrapper(ds, currentStudy, rule.getExpression(), ruleSet,studySubjectBeanId, studyEventDaoHib, studyEventDefDaoHib);
 	                    try {
 	                       // StopWatch sw = new StopWatch();
@@ -92,7 +88,9 @@ public class BeanPropertyRuleRunner extends RuleRunner{
 	                        	if (ruleActionBean instanceof EventActionBean){
 	                        		beanPropertyService.runAction(ruleActionBean,eow,userId,changeDetails.getRunningInTransaction());
 	                        	}else if (ruleActionBean instanceof NotificationActionBean){
-                                    notificationActionProcessor = new NotificationActionProcessor(ds, mailSender, ruleSetRule); 
+                                    notificationActionProcessor =
+                                            new NotificationActionProcessor(ds, mailSender, ruleSetRule, getStudySubjectDao(), getUserAccountDao(),
+                                                    getStudyParameterValueDao(), getStudyDao(), getStudyEventDao(), getStudyEventDefinitionDao());
                                     notificationActionProcessor.runNotificationAction(ruleActionBean,ruleSet,studySubjectBeanId,eventOrdinal);
 	                        	}                	
 	                        }
@@ -150,10 +148,4 @@ public class BeanPropertyRuleRunner extends RuleRunner{
 		return result;
 	}
 
-	
-	public StudyEventDAO getStudyEventDao(DataSource ds) {
-		return new StudyEventDAO(ds);
-	}
-
-	
 }

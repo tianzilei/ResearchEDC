@@ -31,6 +31,7 @@ public class SetUpStudyRole {
 
     @Autowired
     protected IStudyDAO studyDao;
+    private StudyConfigService studyConfigService;
 /*
     @Autowired
     @Qualifier("dataSource")*/
@@ -40,6 +41,14 @@ public class SetUpStudyRole {
 
     public SetUpStudyRole(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    public SetUpStudyRole(DataSource dataSource, StudyParameterValueDAO studyParameterValueDao, IStudyDAO studyDao,
+            StudyConfigService studyConfigService) {
+        this.dataSource = dataSource;
+        this.studyParameterValueDao = studyParameterValueDao;
+        this.studyDao = studyDao;
+        this.studyConfigService = studyConfigService;
     }
 
     public DataSource getDataSource() {
@@ -66,15 +75,14 @@ public class SetUpStudyRole {
 
             currentStudy.setStudyParameters(studyParameters);
 
-            StudyConfigService scs = new StudyConfigService(dataSource);
             if (currentStudy.getParentStudyId() <= 0) {// top study
-                scs.setParametersForStudy(currentStudy);
+                studyConfigService.setParametersForStudy(currentStudy);
 
             } else {
                 // YW <<
                 currentStudy.setParentStudyName(((StudyBean) sdao.findByPK(currentStudy.getParentStudyId())).getName());
                 // YW >>
-                scs.setParametersForSite(currentStudy);
+                studyConfigService.setParametersForSite(currentStudy);
             }
 
             // set up the panel here, tbh

@@ -8,11 +8,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.spi.DaoProvider;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,8 +23,7 @@ public class ApiSecurityFilter extends OncePerRequestFilter {
     private String realm = "Protected";
 
     @Autowired
-    private DataSource dataSource;
-
+    private IUserAccountDAO userAccountDao;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -48,8 +45,7 @@ public class ApiSecurityFilter extends OncePerRequestFilter {
                             String _username = credentials.substring(0, p).trim();
                             String _password = credentials.substring(p + 1).trim();
 
-                            UserAccountDAO userAccountDAO = DaoProvider.getDao(UserAccountDAO.class);
-                            UserAccountBean ub = (UserAccountBean) userAccountDAO.findByApiKey(_username);
+                            UserAccountBean ub = (UserAccountBean) userAccountDao.findByApiKey(_username);
                             if (!_username.equals("") && ub.getId() != 0) {
                                 request.getSession().setAttribute("userBean",ub);
                             }else{

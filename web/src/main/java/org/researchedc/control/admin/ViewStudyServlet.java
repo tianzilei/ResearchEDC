@@ -84,8 +84,7 @@ public class ViewStudyServlet extends SecureController {
             StudyBean study = (StudyBean) sdao.findByPK(studyId);
 
 
-            StudyConfigService scs = new StudyConfigService(sm.getDataSource());
-            study = scs.setParametersForStudy(study);
+            study = studyConfigService.setParametersForStudy(study);
 
             IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
             String randomizationStatusInOC = spvdao.findByHandleAndStudy(study.getId(), "randomization").getValue();

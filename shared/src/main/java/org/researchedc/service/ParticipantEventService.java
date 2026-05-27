@@ -31,6 +31,15 @@ public class ParticipantEventService {
     public ParticipantEventService(DataSource dataSource) { 
         this.dataSource = dataSource;
     }
+
+    public ParticipantEventService(StudyDAO studyDAO, StudyEventDAO studyEventDAO, EventCRFDAO eventCRFDAO,
+            EventDefinitionCRFDAO eventDefCRFDAO, CRFVersionDAO crfVersionDAO) {
+        this.studyDAO = studyDAO;
+        this.studyEventDAO = studyEventDAO;
+        this.eventCRFDAO = eventCRFDAO;
+        this.eventDefCRFDAO = eventDefCRFDAO;
+        this.crfVersionDAO = crfVersionDAO;
+    }
     
     public StudyEventBean getNextParticipantEvent(StudySubjectBean studySubject) {
         List<StudyEventBean> studyEvents = (ArrayList<StudyEventBean>)getStudyEventDAO().findAllBySubjectIdOrdered(studySubject.getId());
@@ -122,7 +131,6 @@ public class ParticipantEventService {
      * @return the StudyDAO
      */
     private StudyDAO getStudyDAO() {
-        studyDAO = studyDAO != null ? studyDAO : new StudyDAO(dataSource);
         return studyDAO;
     }
 
@@ -130,7 +138,6 @@ public class ParticipantEventService {
      * @return the StudyEventDAO
      */
     private StudyEventDAO getStudyEventDAO() {
-        studyEventDAO = studyEventDAO != null ? studyEventDAO : new StudyEventDAO(dataSource);
         return studyEventDAO;
     }
 
@@ -138,7 +145,6 @@ public class ParticipantEventService {
      * @return the EventCRFDAO
      */
     private EventCRFDAO getEventCRFDAO() {
-        eventCRFDAO = eventCRFDAO != null ? eventCRFDAO : new EventCRFDAO(dataSource);
         return eventCRFDAO;
     }
 
@@ -146,7 +152,6 @@ public class ParticipantEventService {
      * @return the EventDefinitionCRFDAO
      */
     private EventDefinitionCRFDAO getEventDefCRFDAO() {
-        eventDefCRFDAO = eventDefCRFDAO != null ? eventDefCRFDAO : new EventDefinitionCRFDAO(dataSource);
         return eventDefCRFDAO;
     }
 
@@ -154,7 +159,6 @@ public class ParticipantEventService {
      * @return the CRFVersionDAO
      */
     private CRFVersionDAO getCRFVersionDAO() {
-        crfVersionDAO = crfVersionDAO != null ? crfVersionDAO : new CRFVersionDAO(dataSource);
         return crfVersionDAO;
     }
 

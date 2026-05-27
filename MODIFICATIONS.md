@@ -6,6 +6,36 @@
 
 ---
 
+## 2026-05-27 — Legacy DAO 构造迁移进展
+
+- **模块:** `shared`, `web`, `ws`, `app`
+- **原因:** 继续 Phase C legacy refactor，移除静态 `DaoProvider` 访问并推进直接 DAO 构造迁移。
+
+### 变更内容
+
+1. **DaoProvider 清零:**
+   - `DaoProvider.getDao()` 在 app/web/ws/shared 中已降为 0 个匹配。
+   - Web/ws 基础控制器、servlet 辅助类、SOAP 辅助类改为通过 Spring 注入 DAO/服务协作者。
+
+2. **规则执行链改造:**
+   - `RuleSetService` 向 `RuleRunner` 注入 legacy DAO 协作者。
+   - `ActionProcessorFacade` 将 `StudyDAO`、`StudySubjectDAO`、`StudyEventDAO`、`StudyEventDefinitionDAO`、`StudyParameterValueDAO`、`UserAccountDAO` 传入规则 action processor。
+   - `NotificationActionProcessor`、`RandomizeActionProcessor` 不再在执行路径内直接构造这些 DAO。
+
+3. **服务与过滤器迁移:**
+   - `StudySubjectServiceImpl`、`ParticipantEventService`、`JobTriggerService`、`ApiSecurityFilter`、`SubjectTransferValidator`、`SetUpStudyRole`、`MetadataCollectorResource` 改为使用注入协作者。
+   - `StudyConfigService` 注册为 Spring service，并在 legacy 调用点开始复用注入实例。
+
+### 当前状态统计
+
+| 指标 | 数值 |
+|------|------|
+| `DaoProvider.getDao()` | 0 |
+| 直接 `new XxxDAO(...)` / `new StudyConfigService(...)` 匹配 | 215 |
+| Maven 编译 | ✅ `mvn -pl app -am compile -DskipTests` |
+
+---
+
 ## 2026-05-23 — 全项目文档更新 & legacy-core → shared 合并反映
 
 - **模块:** 全项目

@@ -79,7 +79,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.researchedc.dao.spi.DaoProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -101,6 +100,10 @@ public class ImportSpringJob extends QuartzJobBean {
 
     @Autowired
     protected AuditEventDAO auditEventDao;
+    @Autowired
+    protected IStudySubjectDAO studySubjectDao;
+    @Autowired
+    protected DiscrepancyNoteDAO discrepancyNoteDao;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -699,8 +702,9 @@ public class ImportSpringJob extends QuartzJobBean {
                                     String message = (String) messageList.get(iter);
 
                                     DiscrepancyNoteBean parentDn = createDiscrepancyNote(ibean, message, eventCrfBean, displayItemBean, null, ub, dataSource,
-                                            studyBean);
-                                    createDiscrepancyNote(ibean, message, eventCrfBean, displayItemBean, parentDn.getId(), ub, dataSource, studyBean);
+                                            studyBean, studySubjectDao, discrepancyNoteDao);
+                                    createDiscrepancyNote(ibean, message, eventCrfBean, displayItemBean, parentDn.getId(), ub, dataSource, studyBean,
+                                            studySubjectDao, discrepancyNoteDao);
                                     logger.debug("*** created disc note with message: " + message);
                                     // displayItemBean);
                                 }
@@ -765,10 +769,9 @@ public class ImportSpringJob extends QuartzJobBean {
     }
 
     public static DiscrepancyNoteBean createDiscrepancyNote(ItemBean itemBean, String message, EventCRFBean eventCrfBean, DisplayItemBean displayItemBean,
-            Integer parentId, UserAccountBean uab, DataSource ds, StudyBean study) {
+            Integer parentId, UserAccountBean uab, DataSource ds, StudyBean study, IStudySubjectDAO ssdao, DiscrepancyNoteDAO dndao) {
         // DisplayItemBean displayItemBean) {
         DiscrepancyNoteBean note = new DiscrepancyNoteBean();
-        IStudySubjectDAO ssdao = DaoProvider.getDao(StudySubjectDAO.class);
         note.setDescription(message);
         note.setDetailedNotes("Failed Validation Check");
         note.setOwner(uab);
@@ -795,7 +798,6 @@ public class ImportSpringJob extends QuartzJobBean {
         note.setEntityId(displayItemBean.getData().getId());
         note.setColumn("value");
 
-        DiscrepancyNoteDAO dndao = DaoProvider.getDao(DiscrepancyNoteDAO.class);
         note = (DiscrepancyNoteBean) dndao.create(note);
         // so that the below method works, need to set the entity above
         // System.out.println("trying to create mapping with " + note.getId() +

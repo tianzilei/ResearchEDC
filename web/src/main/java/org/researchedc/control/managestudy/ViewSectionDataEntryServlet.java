@@ -332,7 +332,9 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
             request.setAttribute("resolvedNum", resolvedNum + "");
             request.setAttribute("notAppNum", notAppNum + "");
 
-            DisplayTableOfContentsBean displayBean = TableOfContentsServlet.getDisplayBean(ecb, getDataSource(), currentStudy);
+            DisplayTableOfContentsBean displayBean = TableOfContentsServlet.getDisplayBean(ecb, getDataSource(), currentStudy, this.studySubjectDao,
+                    this.studyEventDao, this.sectionDao, this.itemGroupDao, this.studyEventDefinitionDao, this.crfVersionDao, this.crfDao, this.studyDao,
+                    this.eventDefinitionCrfDao);
             // Make sure that the interviewDate in the eventCRF is properly
             // formatted
             // for viewSectionDataEntry.jsp --> interviewer.jsp
@@ -371,7 +373,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
                 return;
             }
         } else if (crfVersionId > 0) {// for viewing blank CRF
-            DisplayTableOfContentsBean displayBean = ViewTableOfContentServlet.getDisplayBean(getDataSource(), crfVersionId);
+            DisplayTableOfContentsBean displayBean = ViewTableOfContentServlet.getDisplayBean(crfVersionId, this.sectionDao, this.crfVersionDao, this.crfDao);
             request.setAttribute("toc", displayBean);
             ArrayList sections = displayBean.getSections();
 
@@ -486,7 +488,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
         StudyEventBean studyEvent = (StudyEventBean) studyEventDAO.findByPK(ecb.getStudyEventId());
         VariableSubstitutionHelper.replaceVariables(dsb, currentStudy,
                 (StudySubjectBean) studySubjectDAO.findByPK(studySubjectId), studyEventDefinition, studyEvent,
-                getDataSource());
+                getDataSource(), this.itemDao);
 
         FormDiscrepancyNotes discNotes = (FormDiscrepancyNotes) session.getAttribute(AddNewSubjectServlet.FORM_DISCREPANCY_NOTES_NAME);
         if (discNotes == null) {

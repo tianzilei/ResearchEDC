@@ -202,7 +202,7 @@ python -m pytest app/tests/ -v
 - **Version:** 0.1
 - **legacy-core → shared:** `legacy-core/` was removed on 2026-05-23. All code consolidated into `shared/` module with `@Repository`/`@Service` annotations and package rename to `org.researchedc`.
 - **Frontend TypeScript:** ✅ `pnpm typecheck` — 0 errors (strict mode).
-- **DAO deletion blocked:** ~1,100 `DaoProvider.getDao()` call sites in `web/`/`ws/` still reference concrete DAO classes by name. Migration to `@Autowired` SPI interfaces is the next major refactoring step.
+- **DAO deletion blocked:** `DaoProvider.getDao()` call sites are now 0. Remaining blocker is direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) across legacy services, DAO internals, ODM/export logic, validators, and a few web/ws helpers (215 matches as of 2026-05-27).
 
 ## SUBMODULE REFERENCES
 

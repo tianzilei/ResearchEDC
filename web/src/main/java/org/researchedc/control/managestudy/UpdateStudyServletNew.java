@@ -80,8 +80,7 @@ public class UpdateStudyServletNew extends SecureController {
         }
 
         study.setId(studyId);
-        StudyConfigService scs = new StudyConfigService(sm.getDataSource());
-        study = scs.setParametersForStudy(study);
+        study = studyConfigService.setParametersForStudy(study);
         request.setAttribute("studyToView", study);
         request.setAttribute("studyId", studyId + "");
         request.setAttribute("studyPhaseMap", CreateStudyServlet.studyPhaseMap);

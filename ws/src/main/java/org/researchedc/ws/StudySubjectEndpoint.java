@@ -99,6 +99,8 @@ public class StudySubjectEndpoint {
     private StudyEventDAO studyEventDao;
     @Autowired
     private StudyEventDefinitionDAO studyEventDefinitionDao;
+    @Autowired
+    private SubjectTransferValidator subjectTransferValidator;
     private final Locale locale;
 
     /**
@@ -133,7 +135,6 @@ public class StudySubjectEndpoint {
             DataBinder dataBinder = new DataBinder((subjectTransferBean));
             errors = dataBinder.getBindingResult();
             subjectTransferBean.setOwner(getUserAccount());
-            SubjectTransferValidator subjectTransferValidator = new SubjectTransferValidator(dataSource);
             subjectTransferValidator.validate((subjectTransferBean), errors);
             if (!errors.hasErrors()) {
                 String label = create(subjectTransferBean);
@@ -199,7 +200,6 @@ public class StudySubjectEndpoint {
 
         DataBinder dataBinder = new DataBinder((subjectStudyBean));
         Errors errors = dataBinder.getBindingResult();
-        SubjectTransferValidator subjectTransferValidator = new SubjectTransferValidator(dataSource);
         subjectTransferValidator.validateIsSubjectExists((subjectStudyBean), errors);
         if (subjectStudyBean.getSubjectOIDId() == null ){//case for core misfunction
             errors.reject("studySubjectEndpoint.fail");

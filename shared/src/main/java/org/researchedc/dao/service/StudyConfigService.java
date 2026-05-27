@@ -20,6 +20,9 @@ import java.util.ArrayList;
 
 import javax.sql.DataSource;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class StudyConfigService {
 
     private DataSource ds;

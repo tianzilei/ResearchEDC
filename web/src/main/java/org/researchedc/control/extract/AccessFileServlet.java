@@ -7,24 +7,18 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.extract.ArchivedDatasetFileBean;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.Locale;
-import org.researchedc.dao.spi.DaoProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author thickerson
@@ -47,11 +41,9 @@ public class AccessFileServlet extends SecureController {
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
         int fileId = fp.getInt("fileId");
-        ArchivedDatasetFileDAO asdfdao = DaoProvider.getDao(ArchivedDatasetFileDAO.class);
-        DatasetDAO dsDao = DaoProvider.getDao(DatasetDAO.class);
-        ArchivedDatasetFileBean asdfBean = (ArchivedDatasetFileBean) asdfdao.findByPK(fileId);
-        IStudyDAO studyDao = DaoProvider.getDao(StudyDAO.class);
-        DatasetBean dsBean = (DatasetBean) dsDao.findByPK(asdfBean.getDatasetId());
+        ArchivedDatasetFileBean asdfBean = (ArchivedDatasetFileBean) archivedDatasetFileDao.findByPK(fileId);
+        IStudyDAO studyDao = this.studyDao;
+        DatasetBean dsBean = (DatasetBean) datasetDao.findByPK(asdfBean.getDatasetId());
         int parentId = currentStudy.getParentStudyId();
         if(parentId==0)//Logged in at study level
         {

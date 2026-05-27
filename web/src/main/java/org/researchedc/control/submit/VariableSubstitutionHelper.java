@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.researchedc.dao.spi.DaoProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Performs the variable substitution in the CRF fields that support it.
@@ -42,9 +40,9 @@ public class VariableSubstitutionHelper {
      * @param studySubject Subject associated with the display section.
      */
     public static void replaceVariables(DisplaySectionBean section, StudyBean study, StudySubjectBean studySubject,
-                                        StudyEventDefinitionBean eventDef, StudyEventBean event, DataSource dataSource) {
+                                        StudyEventDefinitionBean eventDef, StudyEventBean event, DataSource dataSource, ItemDAO itemDAO) {
 
-        StrSubstitutor subst = new StrSubstitutor(buildTokensMap(section, studySubject, study, eventDef, event, dataSource));
+        StrSubstitutor subst = new StrSubstitutor(buildTokensMap(section, studySubject, study, eventDef, event, dataSource, itemDAO));
 
         for (DisplayItemBean displayItem: section.getItems()) {
             ItemFormMetadataBean metadata = displayItem.getMetadata();
@@ -63,9 +61,7 @@ public class VariableSubstitutionHelper {
     @SuppressWarnings("unchecked")
     private static Map<String, String> buildTokensMap(DisplaySectionBean section, StudySubjectBean studySubject,
                                                       StudyBean study, StudyEventDefinitionBean eventDef,
-                                                      StudyEventBean event, DataSource dataSource) {
-
-        ItemDAO itemDAO = DaoProvider.getDao(ItemDAO.class);
+                                                      StudyEventBean event, DataSource dataSource, ItemDAO itemDAO) {
 
         List<ItemBean> items = itemDAO.findAllWithItemDataByCRFVersionId(
                 section.getCrfVersion().getId(), section.getEventCRF().getId());

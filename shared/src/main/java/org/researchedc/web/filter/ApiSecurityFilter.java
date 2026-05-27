@@ -8,8 +8,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
-
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.apache.commons.codec.binary.Base64;
@@ -24,7 +22,7 @@ public class ApiSecurityFilter extends OncePerRequestFilter {
     private String realm = "Protected";
 
     @Autowired
-    private DataSource dataSource;
+    private UserAccountDAO userAccountDao;
 
 
     @Override
@@ -47,8 +45,7 @@ public class ApiSecurityFilter extends OncePerRequestFilter {
                             String _username = credentials.substring(0, p).trim();
                             String _password = credentials.substring(p + 1).trim();
 
-                            UserAccountDAO userAccountDAO = new UserAccountDAO(dataSource);
-                            UserAccountBean ub = (UserAccountBean) userAccountDAO.findByApiKey(_username);
+                            UserAccountBean ub = (UserAccountBean) userAccountDao.findByApiKey(_username);
                             if (!_username.equals("") && ub.getId() != 0) {
                                 request.getSession().setAttribute("userBean",ub);
                             }else{

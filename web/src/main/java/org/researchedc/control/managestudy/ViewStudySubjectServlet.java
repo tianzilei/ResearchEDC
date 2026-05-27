@@ -79,7 +79,6 @@ import org.researchedc.web.bean.EntityBeanTable;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
-import org.researchedc.dao.spi.DaoProvider;
 
 /**
  * @author jxu
@@ -145,49 +144,6 @@ public class ViewStudySubjectServlet extends SecureController {
 
         addPageMessage(respage.getString("no_have_correct_privilege_current_study") + " " + respage.getString("change_study_contact_sysadmin"));
         throw new InsufficientPermissionException(Page.LIST_STUDY_SUBJECTS, resexception.getString("not_study_director"), "1");
-    }
-
-    public static ArrayList<DisplayStudyEventBean> getDisplayStudyEventsForStudySubject(StudySubjectBean studySub, DataSource ds, UserAccountBean ub,
-            StudyUserRoleBean currentRole) {
-        IStudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
-        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
-        EventCRFDao ecdao = DaoProvider.getDao(EventCRFDAO.class);
-        EventDefinitionCRFDao edcdao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
-        IStudySubjectDAO ssdao = DaoProvider.getDao(StudySubjectDAO.class);
-        IStudyDAO sdao = DaoProvider.getDao(StudyDAO.class);
-
-        ArrayList events = sedao.findAllByStudySubject(studySub);
-
-        ArrayList displayEvents = new ArrayList();
-        for (int i = 0; i < events.size(); i++) {
-            StudyEventBean event = (StudyEventBean) events.get(i);
-            StudySubjectBean studySubject = (StudySubjectBean) ssdao.findByPK(event.getStudySubjectId());
-
-            StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(event.getStudyEventDefinitionId());
-            event.setStudyEventDefinition(sed);
-
-            // find all active crfs in the definition
-            StudyBean study = (StudyBean) sdao.findByPK(studySubject.getStudyId());
-            ArrayList eventDefinitionCRFs = (ArrayList) edcdao.findAllActiveByEventDefinitionId(study, sed.getId());
-            ArrayList eventCRFs = ecdao.findAllByStudyEvent(event);
-
-            // construct info needed on view study event page
-            DisplayStudyEventBean de = new DisplayStudyEventBean();
-            de.setStudyEvent(event);
-            de.setDisplayEventCRFs(getDisplayEventCRFs(ds, eventCRFs, eventDefinitionCRFs, ub, currentRole, event.getSubjectEventStatus(), study));
-            ArrayList al = getUncompletedCRFs(ds, eventDefinitionCRFs, eventCRFs, event.getSubjectEventStatus());
-            populateUncompletedCRFsWithCRFAndVersions(ds, al);
-            de.setUncompletedCRFs(al);
-
-            de.setMaximumSampleOrdinal(sedao.getMaxSampleOrdinal(sed, studySubject));
-
-            displayEvents.add(de);
-            // event.setEventCRFs(createAllEventCRFs(eventCRFs,
-            // eventDefinitionCRFs));
-
-        }
-
-        return displayEvents;
     }
 
     @Override
@@ -317,13 +273,12 @@ public class ViewStudySubjectServlet extends SecureController {
 
             // find study events
             IStudyEventDAO sedao = this.studyEventDao;
-        IStudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
+            IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
 
             StudySubjectService studySubjectService = (StudySubjectService)
                     WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("studySubjectService");
             List<DisplayStudyEventBean> displayEvents =
                     studySubjectService.getDisplayStudyEventsForStudySubject(studySub, ub, currentRole);
-            //ArrayList<DisplayStudyEventBean> displayEvents = getDisplayStudyEventsForStudySubject(studySub, sm.getDataSource(), ub, currentRole);
             //A. Hamid.
             // Mantis Issue 5048: Preventing Investigators from Unlocking Events
             for(int i = 0; i < displayEvents.size(); i++){
@@ -433,7 +388,8 @@ public class ViewStudySubjectServlet extends SecureController {
      * @return The list of DisplayEventCRFBeans for this study event.
      */
     public static ArrayList getDisplayEventCRFs(DataSource ds, ArrayList eventCRFs, ArrayList eventDefinitionCRFs, UserAccountBean ub,
-            StudyUserRoleBean currentRole, SubjectEventStatus status, StudyBean study) {
+            StudyUserRoleBean currentRole, SubjectEventStatus status, StudyBean study, IStudyEventDAO sedao, ICrfDAO cdao, CRFVersionDAO cvdao,
+            ItemDataDAO iddao, EventDefinitionCRFDao edcdao) {
         ArrayList answer = new ArrayList();
 
         // HashMap definitionsById = new HashMap();
@@ -444,12 +400,6 @@ public class ViewStudySubjectServlet extends SecureController {
          * eventDefinitionCRFs.get(i); definitionsById.put(new
          * Integer(edc.getStudyEventDefinitionId()), edc); }
          */
-
-        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
-        ICrfDAO cdao = DaoProvider.getDao(CRFDAO.class);
-        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
-        ItemDataDAO iddao = DaoProvider.getDao(ItemDataDAO.class);
-        EventDefinitionCRFDao edcdao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
 
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecb = (EventCRFBean) eventCRFs.get(i);
@@ -524,7 +474,8 @@ public class ViewStudySubjectServlet extends SecureController {
      *            All of the event CRFs for this study event.
      * @return The list of event definitions for which no event CRF exists.
      */
-    public static ArrayList getUncompletedCRFs(DataSource ds, ArrayList eventDefinitionCRFs, ArrayList eventCRFs, SubjectEventStatus status) {
+    public static ArrayList getUncompletedCRFs(DataSource ds, ArrayList eventDefinitionCRFs, ArrayList eventCRFs, SubjectEventStatus status,
+            CRFVersionDAO cvdao, ItemDataDAO iddao) {
         int i;
         HashMap completed = new HashMap();
         HashMap startedButIncompleted = new HashMap();
@@ -551,8 +502,6 @@ public class ViewStudySubjectServlet extends SecureController {
             startedButIncompleted.put(Integer.valueOf(edcrf.getCrfId()), new EventCRFBean());
         }
 
-        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
-        ItemDataDAO iddao = DaoProvider.getDao(ItemDataDAO.class);
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecrf = (EventCRFBean) eventCRFs.get(i);
             // System.out.println("########event crf id:" + ecrf.getId());
@@ -608,10 +557,7 @@ public class ViewStudySubjectServlet extends SecureController {
         return answer;
     }
 
-    public static void populateUncompletedCRFsWithCRFAndVersions(DataSource ds, ArrayList uncompletedEventDefinitionCRFs) {
-        ICrfDAO cdao = DaoProvider.getDao(CRFDAO.class);
-        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
-
+    public static void populateUncompletedCRFsWithCRFAndVersions(DataSource ds, ArrayList uncompletedEventDefinitionCRFs, ICrfDAO cdao, CRFVersionDAO cvdao) {
         int size = uncompletedEventDefinitionCRFs.size();
         for (int i = 0; i < size; i++) {
             DisplayEventDefinitionCRFBean dedcrf = (DisplayEventDefinitionCRFBean) uncompletedEventDefinitionCRFs.get(i);

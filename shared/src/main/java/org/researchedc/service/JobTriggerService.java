@@ -34,6 +34,12 @@ public class JobTriggerService {
     DataSource ds;
     @Autowired
     RuleSetService ruleSetService;
+    @Autowired
+    StudySubjectDAO studySubjectDao;
+    @Autowired
+    UserAccountDAO userAccountDao;
+    @Autowired
+    StudyDAO studyDao;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     private static final SimpleDateFormat currentDateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -86,15 +92,15 @@ public class JobTriggerService {
 
 
     public StudySubjectDAO getStudySubjecdao() {
-        return new StudySubjectDAO(ds);
+        return studySubjectDao;
     }
 
     public UserAccountDAO getUserAccountDao() {
-        return new UserAccountDAO(ds);
+        return userAccountDao;
     }
 
     public StudyDAO getStudyDao() {
-        return new StudyDAO(ds);
+        return studyDao;
     }
 
 }

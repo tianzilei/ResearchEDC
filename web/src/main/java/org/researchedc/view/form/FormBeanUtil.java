@@ -44,7 +44,6 @@ import java.util.TreeMap;
 
 import jakarta.servlet.ServletContext;
 import javax.sql.DataSource;
-import org.researchedc.dao.spi.DaoProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
@@ -127,13 +126,11 @@ public class FormBeanUtil {
             EventCRFBean eventCrfBean, 
             int sectionId,
             List<String> nullValuesList, 
-            ServletContext context) {
+            ServletContext context, ItemFormMetadataDAO metaDao, ItemDataDAO itemDataDAO) {
         // logger = LoggerFactory.getLogger(getClass().getName());
         List<DisplayItemBean> disBeans = new ArrayList<DisplayItemBean>();
         if (itemBeans == null || itemBeans.isEmpty())
             return disBeans;
-        ItemFormMetadataDAO metaDao = DaoProvider.getDao(ItemFormMetadataDAO.class);
-        ItemDataDAO itemDataDAO = DaoProvider.getDao(ItemDataDAO.class);
         DisplayItemBean displayBean;
         ItemFormMetadataBean meta;
 
@@ -206,13 +203,11 @@ public class FormBeanUtil {
             int sectionId,
             List<String> nullValuesList, 
             ServletContext context,
-            int crfVersionId) {
+            int crfVersionId, ItemFormMetadataDAO metaDao, ItemDataDAO itemDataDAO) {
         // logger = LoggerFactory.getLogger(getClass().getName());
         List<DisplayItemBean> disBeans = new ArrayList<DisplayItemBean>();
         if (itemBeans == null || itemBeans.isEmpty())
             return disBeans;
-        ItemFormMetadataDAO metaDao = DaoProvider.getDao(ItemFormMetadataDAO.class);
-        ItemDataDAO itemDataDAO = DaoProvider.getDao(ItemDataDAO.class);
         DisplayItemBean displayBean;
         ItemFormMetadataBean meta;
 
@@ -278,13 +273,11 @@ public class FormBeanUtil {
     }
 
     public static List<DisplayItemBean> getDisplayBeansFromItems(List<ItemBean> itemBeans, DataSource dataSource, EventCRFBean eventCrfBean, int sectionId,
-            EventDefinitionCRFBean edcb, int test, ServletContext context) {
+            EventDefinitionCRFBean edcb, int test, ServletContext context, ItemFormMetadataDAO metaDao, ItemDataDAO itemDataDao) {
         //int test is for method overloading. 
         List<DisplayItemBean> disBeans = new ArrayList<DisplayItemBean>();
         if (itemBeans == null || itemBeans.isEmpty())
             return disBeans;
-        ItemFormMetadataDAO metaDao = DaoProvider.getDao(ItemFormMetadataDAO.class);
-        ItemDataDAO itemDataDao = DaoProvider.getDao(ItemDataDAO.class);
         DisplayItemBean displayBean;
         ItemFormMetadataBean meta;
         for (ItemBean iBean : itemBeans) {
@@ -878,7 +871,7 @@ public class FormBeanUtil {
                 ItemGroupMetadataBean meta = metadata.get(0);
                 itemGroup.setMeta(meta);
             }
-            displayItems = getDisplayBeansFromItems(itBeans, dataSource, eventCrfBean, sectionId, nullValuesList, context);
+            displayItems = getDisplayBeansFromItems(itBeans, dataSource, eventCrfBean, sectionId, nullValuesList, context, metaDao, this.itemDataDao);
             displayItemGBean = this.createDisplayFormGroup(displayItems, itemGroup);
             displayFormBeans.add(displayItemGBean);
         }
@@ -985,7 +978,8 @@ public class FormBeanUtil {
                 ItemGroupMetadataBean meta = metadata.get(0);
                 itemGroup.setMeta(meta);
             }
-            displayItems = getDisplayBeansFromItemsForPrint(itBeans, dataSource, eventCrfBean, sectionId, nullValuesList, context,crfVersionId);
+            displayItems = getDisplayBeansFromItemsForPrint(itBeans, dataSource, eventCrfBean, sectionId, nullValuesList, context, crfVersionId, metaDao,
+                    this.itemDataDao);
             displayItemGBean = this.createDisplayFormGroup(displayItems, itemGroup);
             displayFormBeans.add(displayItemGBean);
         }
@@ -1308,7 +1302,8 @@ public class FormBeanUtil {
                 itemGroup.setMeta(meta);
             }
             // TODO: the last arg is a list of null value strings
-            displayItems = getDisplayBeansFromItems(itBeans, sm.getDataSource(), eventCrfBean, sectionBean.getId(), null, context);
+            displayItems = getDisplayBeansFromItems(itBeans, sm.getDataSource(), eventCrfBean, sectionBean.getId(), null, context, this.itemFormMetadataDao,
+                    this.itemDataDao);
             displayFormGBean = this.createDisplayFormGroup(displayItems, itemGroup);
             displayFormBeans.add(displayFormGBean);
         }
@@ -1404,7 +1399,8 @@ public class FormBeanUtil {
             }
             // include arrayList parameter until I determine difference in
             // classes
-            displayItems = getDisplayBeansFromItems(itBeans, sm.getDataSource(), eventCrfBean, sectionId, nullValuesList, context);
+            displayItems = getDisplayBeansFromItems(itBeans, sm.getDataSource(), eventCrfBean, sectionId, nullValuesList, context, this.itemFormMetadataDao,
+                    this.itemDataDao);
             displayItemGBean = this.createDisplayFormGroup(displayItems, itemGroup);
             displayFormBeans.add(displayItemGBean);
         }

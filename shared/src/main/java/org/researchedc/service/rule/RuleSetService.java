@@ -42,15 +42,21 @@ import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
+import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.rule.RuleSetDAO;
+import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
+import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.crfdata.DynamicsItemFormMetadataBean;
 import org.researchedc.domain.datamap.StudyEvent;
@@ -75,6 +81,7 @@ import org.researchedc.logic.rulerunner.ExecutionMode;
 import org.researchedc.logic.rulerunner.ImportDataRuleRunner;
 import org.researchedc.logic.rulerunner.ImportDataRuleRunnerContainer;
 import org.researchedc.logic.rulerunner.MessageContainer;
+import org.researchedc.logic.rulerunner.RuleRunner;
 import org.researchedc.logic.rulerunner.RuleSetBulkRuleRunner;
 import org.researchedc.patterns.ocobserver.StudyEventChangeDetails;
 import org.researchedc.service.BulkEmailSenderService;
@@ -83,6 +90,7 @@ import org.researchedc.service.crfdata.DynamicsMetadataService;
 import org.researchedc.service.rule.expression.ExpressionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,17 +109,39 @@ public class RuleSetService implements RuleSetServiceInterface {
     private BulkEmailSenderService bulkEmailSenderService;
 
     // Jdbc based DAOs
+    @Autowired
     private StudyDAO studyDao;
+    @Autowired
     private StudyEventDefinitionDAO studyEventDefinitionDao;
+    @Autowired
     private StudySubjectDAO studySubjecdao;
+    @Autowired
     private CRFDAO crfDao;
+    @Autowired
     private CRFVersionDAO crfVersionDao;
 
+    @Autowired
+    private RuleSetDAO legacyRuleSetDao;
+    @Autowired
+    private RuleSetRuleDAO legacyRuleSetRuleDao;
+    @Autowired
     private RuleActionDAO ruleActionDao;
+    @Autowired
     private StudyEventDAO studyEventDao;
+    @Autowired
+    private EventCRFDAO eventCrfDao;
+    @Autowired
     private ItemDAO itemDao;
+    @Autowired
     private ItemDataDAO itemDataDao;
+    @Autowired
     private ItemFormMetadataDAO itemFormMetadataDao;
+    @Autowired
+    private SectionDAO sectionDao;
+    @Autowired
+    private StudyParameterValueDAO studyParameterValueDao;
+    @Autowired
+    private UserAccountDAO userAccountDao;
     private DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
     private ExpressionService expressionService;
     private String requestURLMinusServletPath;
@@ -278,6 +308,7 @@ public class RuleSetService implements RuleSetServiceInterface {
         ruleSets = filterRuleSetsByStudyEventOrdinal(ruleSets, null);
         ruleSets = filterRuleSetsByGroupOrdinal(ruleSets);
         CrfBulkRuleRunner ruleRunner = new CrfBulkRuleRunner(dataSource, requestURLMinusServletPath, contextPath, mailSender);
+        configureRuleRunner(ruleRunner);
         dynamicsMetadataService.setExpressionService(getExpressionService());
         ruleRunner.setDynamicsMetadataService(dynamicsMetadataService);
         ruleRunner.setRuleActionRunLogDao(ruleActionRunLogDao);
@@ -302,6 +333,7 @@ public class RuleSetService implements RuleSetServiceInterface {
         ruleSets = filterRuleSetsByStudyEventOrdinal(ruleSets, crfVersionId);
         ruleSets = filterRuleSetsByGroupOrdinal(ruleSets);
         CrfBulkRuleRunner ruleRunner = new CrfBulkRuleRunner(dataSource, requestURLMinusServletPath, contextPath, mailSender);
+        configureRuleRunner(ruleRunner);
         dynamicsMetadataService.setExpressionService(getExpressionService());
         ruleRunner.setDynamicsMetadataService(dynamicsMetadataService);
         ruleRunner.setRuleActionRunLogDao(ruleActionRunLogDao);
@@ -330,6 +362,7 @@ public class RuleSetService implements RuleSetServiceInterface {
         }
         ruleSets = filterRuleSetsByGroupOrdinal(ruleSets);
         RuleSetBulkRuleRunner ruleRunner = new RuleSetBulkRuleRunner(dataSource, requestURLMinusServletPath, contextPath, mailSender);
+        configureRuleRunner(ruleRunner);
         dynamicsMetadataService.setExpressionService(getExpressionService());
         ruleRunner.setDynamicsMetadataService(dynamicsMetadataService);
         ruleRunner.setRuleActionRunLogDao(ruleActionRunLogDao);
@@ -347,6 +380,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     public MessageContainer runRulesInDataEntry(List<RuleSetBean> ruleSets, Boolean dryRun, StudyBean currentStudy, UserAccountBean ub,
             HashMap<String, String> variableAndValue, Phase phase,EventCRFBean ecb, HttpServletRequest request) {
         DataEntryRuleRunner ruleRunner = new DataEntryRuleRunner(dataSource, requestURLMinusServletPath, contextPath, mailSender,ecb);
+        configureRuleRunner(ruleRunner);
         dynamicsMetadataService.setExpressionService(getExpressionService());
         ruleRunner.setDynamicsMetadataService(dynamicsMetadataService);
         ruleRunner.setRuleActionRunLogDao(ruleActionRunLogDao);
@@ -361,6 +395,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     public HashMap<String, ArrayList<String>> runRulesInImportData(List<ImportDataRuleRunnerContainer> containers,
             StudyBean study, UserAccountBean ub, ExecutionMode executionMode) {
         ImportDataRuleRunner ruleRunner = new ImportDataRuleRunner(dataSource, requestURLMinusServletPath, contextPath, mailSender);
+        configureRuleRunner(ruleRunner);
         dynamicsMetadataService.setExpressionService(getExpressionService());
         ruleRunner.setDynamicsMetadataService(dynamicsMetadataService);
         ruleRunner.setRuleActionRunLogDao(ruleActionRunLogDao);
@@ -999,25 +1034,35 @@ public class RuleSetService implements RuleSetServiceInterface {
     }
 
     private CRFDAO getCrfDao() {
-        //crfDao = this.crfDao != null ? crfDao : new CRFDAO(dataSource);
-        return new CRFDAO(dataSource);
+        return crfDao;
+    }
+
+    private RuleSetDAO getLegacyRuleSetDao() {
+        return legacyRuleSetDao;
+    }
+
+    private RuleSetRuleDAO getLegacyRuleSetRuleDao() {
+        return legacyRuleSetRuleDao;
+    }
+
+    private RuleActionDAO getRuleActionDao() {
+        return ruleActionDao;
     }
 
     private StudyEventDAO getStudyEventDao() {
-      //  studyEventDao = this.studyEventDao != null ? studyEventDao : new StudyEventDAO(dataSource);
-        return new StudyEventDAO(dataSource);
+        return studyEventDao;
+    }
+
+    private EventCRFDAO getEventCrfDao() {
+        return eventCrfDao;
     }
 
     private ItemDAO getItemDao() {
-       // itemDao = this.itemDao != null ? itemDao : new ItemDAO(dataSource);
-        return new ItemDAO(dataSource);
+        return itemDao;
     }
 
     private ItemFormMetadataDAO getItemFormMetadataDao() {
-
-       // itemFormMetadataDao = this.itemFormMetadataDao != null ? itemFormMetadataDao : new ItemFormMetadataDAO(dataSource);
-      //  return itemFormMetadataDao;
-        return new ItemFormMetadataDAO(dataSource);
+        return itemFormMetadataDao;
     }
 
     private ExpressionService getExpressionService() {
@@ -1027,24 +1072,28 @@ public class RuleSetService implements RuleSetServiceInterface {
     //JN:No reason to use global variables, they could cause potential concurrency issues.
 
     public StudyEventDefinitionDAO getStudyEventDefinitionDao() {
-    //    studyEventDefinitionDao = this.studyEventDefinitionDao != null ? studyEventDefinitionDao : new StudyEventDefinitionDAO(dataSource);
-        return  new StudyEventDefinitionDAO(dataSource);
+        return studyEventDefinitionDao;
     }
 
 
     public StudyDAO getStudyDao() {
-       // studyDao = this.studyDao != null ? studyDao : new StudyDAO(dataSource);
-        return new StudyDAO(dataSource);
+        return studyDao;
     }
 
     private ItemDataDAO getItemDataDao() {
-      //  itemDataDao = this.itemDataDao != null ? itemDataDao : new ItemDataDAO(dataSource);
-        return  new ItemDataDAO(dataSource);
+        return itemDataDao;
     }
 
     private CRFVersionDAO getCrfVersionDao() {
-       // crfVersionDao = this.crfVersionDao != null ? crfVersionDao : new CRFVersionDAO(dataSource);
-        return new CRFVersionDAO(dataSource);
+        return crfVersionDao;
+    }
+
+    private StudySubjectDAO getStudySubjectDao() {
+        return studySubjecdao;
+    }
+
+    private SectionDAO getSectionDao() {
+        return sectionDao;
     }
 
     public DynamicsItemFormMetadataDao getDynamicsItemFormMetadataDao() {
@@ -1101,9 +1150,16 @@ public class RuleSetService implements RuleSetServiceInterface {
         this.dataSource = dataSource;
     }
 
+    private void configureRuleRunner(RuleRunner ruleRunner) {
+        ruleRunner.setDaoCollaborators(getLegacyRuleSetDao(), getCrfDao(), getLegacyRuleSetRuleDao(), getRuleActionDao(), getStudyEventDao(),
+                getItemDataDao(), getEventCrfDao(), getCrfVersionDao(), getStudySubjectDao(), getItemFormMetadataDao(), getSectionDao(),
+                getStudyDao(), getStudyEventDefinitionDao(), studyParameterValueDao, userAccountDao, getExpressionService());
+    }
+
 
     public void runRulesInBeanProperty(List<RuleSetBean> ruleSets,Integer userId,StudyEventChangeDetails changeDetails) {	
     	    BeanPropertyRuleRunner ruleRunner = new BeanPropertyRuleRunner(dataSource, requestURLMinusServletPath, contextPath, mailSender);
+            configureRuleRunner(ruleRunner);
     	    ruleSets = (ArrayList<RuleSetBean>) filterByStatusEqualsAvailable(ruleSets);
     	    ruleSets = (ArrayList<RuleSetBean>) filterRuleSetsByStudyEventOrdinal(ruleSets, null);
     	    try {
@@ -1126,6 +1182,7 @@ public class RuleSetService implements RuleSetServiceInterface {
           }
     	}    	
 	    BeanPropertyRuleRunner ruleRunner = new BeanPropertyRuleRunner(dataSource, requestURLMinusServletPath, contextPath, mailSender);
+        configureRuleRunner(ruleRunner);
  		ruleRunner.runRules(ruleSetBeans,dataSource,beanPropertyService, getStudyEventDomainDao(), getStudyEventDefDomainDao(),changeDetails,userId,mailSender);
 }
 
@@ -1147,7 +1204,7 @@ public class RuleSetService implements RuleSetServiceInterface {
 	}
 
 	public StudySubjectDAO getStudySubjecdao() {
-        return new StudySubjectDAO(dataSource);
+        return studySubjecdao;
 	}
 
 	public void setStudySubjecdao(StudySubjectDAO studySubjecdao) {

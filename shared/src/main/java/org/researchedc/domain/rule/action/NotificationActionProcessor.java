@@ -49,6 +49,9 @@ public class NotificationActionProcessor implements ActionProcessor, Runnable {
 	StudySubjectDAO ssdao;
 	UserAccountDAO udao;
 	StudyParameterValueDAO spvdao;
+	StudyDAO sdao;
+	StudyEventDAO studyEventDao;
+	StudyEventDefinitionDAO studyEventDefinitionDao;
 	RuleSetService ruleSetService;
 	RuleSetDao ruleSetDao;
 	ParticipantDTO pDTO;
@@ -92,11 +95,18 @@ public class NotificationActionProcessor implements ActionProcessor, Runnable {
 		this.ds = ds;
 		this.mailSender = mailSender;
 		this.ruleSetRule = ruleSetRule;
-		ssdao = new StudySubjectDAO(ds);
-		udao = new UserAccountDAO(ds);
-  	   spvdao = new StudyParameterValueDAO(ds);
+	}
 
-
+	public NotificationActionProcessor(DataSource ds, JavaMailSenderImpl mailSender, RuleSetRuleBean ruleSetRule, StudySubjectDAO studySubjectDao,
+			UserAccountDAO userAccountDao, StudyParameterValueDAO studyParameterValueDao, StudyDAO studyDao, StudyEventDAO studyEventDao,
+			StudyEventDefinitionDAO studyEventDefinitionDao) {
+		this(ds, mailSender, ruleSetRule);
+		this.ssdao = studySubjectDao;
+		this.udao = userAccountDao;
+		this.spvdao = studyParameterValueDao;
+		this.sdao = studyDao;
+		this.studyEventDao = studyEventDao;
+		this.studyEventDefinitionDao = studyEventDefinitionDao;
 
 	}
 
@@ -314,19 +324,16 @@ public class NotificationActionProcessor implements ActionProcessor, Runnable {
 	}
 
 	public ArrayList<StudySubjectBean> getAllParticipantStudySubjectsPerStudy(int studyId, DataSource ds) {
-		StudySubjectDAO ssdao = new StudySubjectDAO(ds);
 		ArrayList<StudySubjectBean> ssBeans = ssdao.findAllByStudyId(studyId);
 		return ssBeans;
 	}
 
 	public StudyEventBean getStudyEvent(StudySubjectBean ssBean, DataSource ds) {
-		StudyEventDAO studyEventDao = new StudyEventDAO(ds);
 		StudyEventBean seBean = (StudyEventBean) studyEventDao.getNextScheduledEvent(ssBean.getOid());
 		return seBean;
 	}
 
 	private StudyBean getParentStudy(DataSource ds, StudyBean study) {
-		StudyDAO sdao = new StudyDAO(ds);
 		if (study.getParentStudyId() == 0) {
 			return study;
 		} else {
@@ -337,12 +344,10 @@ public class NotificationActionProcessor implements ActionProcessor, Runnable {
 	}
 
 	public StudyEventDefinitionBean getStudyEventDefnBean(int sed_Id) {
-		StudyEventDefinitionDAO sedao = new StudyEventDefinitionDAO(ds);
-		return (StudyEventDefinitionBean) sedao.findByPK(sed_Id);
+		return (StudyEventDefinitionBean) studyEventDefinitionDao.findByPK(sed_Id);
 	};
 
 	public StudyBean getStudyBean(int studyId) {
-		StudyDAO sdao = new StudyDAO(ds);
 		return (StudyBean) sdao.findByPK(studyId);
 
 	}

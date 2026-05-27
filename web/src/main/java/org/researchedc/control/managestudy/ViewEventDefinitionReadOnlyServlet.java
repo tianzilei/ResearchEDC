@@ -7,7 +7,6 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
@@ -15,20 +14,15 @@ import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;
 import org.researchedc.view.Page;
 
 import java.util.ArrayList;
-import org.researchedc.dao.spi.DaoProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * View the details of a study event definition
@@ -62,11 +56,11 @@ public class ViewEventDefinitionReadOnlyServlet extends ViewEventDefinitionServl
         // definition id
         StudyEventDefinitionBean sed = defId > 0 ? (StudyEventDefinitionBean) sdao.findByPK(defId) : (StudyEventDefinitionBean) sdao.findByOid(eventOid);
 
-        EventDefinitionCRFDao edao = DaoProvider.getDao(EventDefinitionCRFDAO.class);
+        EventDefinitionCRFDao edao = this.eventDefinitionCrfDao;
         ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllByDefinition(this.currentStudy, sed.getId());
 
-        CRFVersionDAO cvdao = DaoProvider.getDao(CRFVersionDAO.class);
-        ICrfDAO cdao = DaoProvider.getDao(CRFDAO.class);
+        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfDAO cdao = this.crfDao;
 
         for (int i = 0; i < eventDefinitionCRFs.size(); i++) {
             EventDefinitionCRFBean edc = (EventDefinitionCRFBean) eventDefinitionCRFs.get(i);
@@ -87,8 +81,7 @@ public class ViewEventDefinitionReadOnlyServlet extends ViewEventDefinitionServl
             CRFVersionBean defaultVersion = (CRFVersionBean) cvdao.findByPK(edc.getDefaultVersionId());
             edc.setDefaultVersionName(defaultVersion.getName());
         }
-        StudyParameterValueDAO spvdao = DaoProvider.getDao(StudyParameterValueDAO.class);    
-        String participateFormStatus = spvdao.findByHandleAndStudy(sed.getStudyId(), "participantPortal").getValue();
+        String participateFormStatus = this.studyParameterValueDao.findByHandleAndStudy(sed.getStudyId(), "participantPortal").getValue();
     
         request.setAttribute("participateFormStatus",participateFormStatus );
 

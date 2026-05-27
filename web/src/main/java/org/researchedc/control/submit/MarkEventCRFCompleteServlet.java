@@ -187,9 +187,12 @@ public class MarkEventCRFCompleteServlet extends SecureController {
         }
 
         if (!fp.isSubmitted()) {
-            DisplayTableOfContentsBean toc = TableOfContentsServlet.getDisplayBean(ecb, sm.getDataSource(), currentStudy);
+            DisplayTableOfContentsBean toc = TableOfContentsServlet.getDisplayBean(ecb, sm.getDataSource(), currentStudy, this.studySubjectDao,
+                    this.studyEventDao, this.sectionDao, this.itemGroupDao, this.studyEventDefinitionDao, this.crfVersionDao, this.crfDao, this.studyDao,
+                    this.eventDefinitionCrfDao);
             toc = TableOfContentsServlet.getDisplayBeanWithShownSections(sm.getDataSource(), toc,
-                    (DynamicsMetadataService)SpringServletAccess.getApplicationContext(getServletContext()).getBean("dynamicsMetadataService"));
+                    (DynamicsMetadataService)SpringServletAccess.getApplicationContext(getServletContext()).getBean("dynamicsMetadataService"),
+                    this.sectionDao, this.itemGroupDao);
             request.setAttribute(BEAN_DISPLAY, toc);
 
             resetPanel();

@@ -41,27 +41,35 @@ import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 /**
  * @author Doug Rodrigues (douglas.rodrigues@openclinica.com)
- * 
+ *
  */
+@Service("studySubjectService")
 public class StudySubjectServiceImpl implements StudySubjectService {
 
     private DataSource dataSource;
+    @Autowired
+    private StudyEventDAO studyEventDao;
+    @Autowired
+    private StudyEventDefinitionDAO studyEventDefinitionDao;
+    @Autowired
+    private StudyDAO studyDao;
+    @Autowired
+    private EventDefinitionCRFDAO eventDefinitionCrfDao;
+    @Autowired
+    private EventCRFDAO eventCrfDao;
+    @Autowired
+    private CRFDAO crfDao;
+    @Autowired
+    private CRFVersionDAO crfVersionDao;
 
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<DisplayStudyEventBean> getDisplayStudyEventsForStudySubject(StudySubjectBean studySubject, UserAccountBean userAccount,
             StudyUserRoleBean currentRole) {
-
-        StudyEventDAO studyEventDao = new StudyEventDAO(dataSource);
-        StudyEventDefinitionDAO studyEventDefinitionDao = new StudyEventDefinitionDAO(dataSource);
-        StudyDAO studyDao = new StudyDAO(dataSource);
-        EventDefinitionCRFDAO eventDefinitionCrfDao = new EventDefinitionCRFDAO(dataSource);
-        EventCRFDAO eventCrfDao = new EventCRFDAO(dataSource);
-        CRFDAO crfDao = new CRFDAO(dataSource);
-        CRFVersionDAO crfVersionDao = new CRFVersionDAO(dataSource);
 
         ArrayList events = studyEventDao.findAllByStudySubject(studySubject);
 
@@ -261,8 +269,6 @@ public class StudySubjectServiceImpl implements StudySubjectService {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void populateUncompletedCRFsWithCRFAndVersions(ArrayList<DisplayEventDefinitionCRFBean> uncompletedEventDefinitionCRFs,
             Map<Integer, CRFVersionBean> crfVersionById, Map<Integer, CRFBean> crfById) {
-
-        CRFVersionDAO crfVersionDao = new CRFVersionDAO(dataSource);
 
         int size = uncompletedEventDefinitionCRFs.size();
         for (int i = 0; i < size; i++) {

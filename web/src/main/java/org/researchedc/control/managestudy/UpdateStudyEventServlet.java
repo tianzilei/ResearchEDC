@@ -439,7 +439,7 @@ public static final String EVENT_ID = "event_id";
 
                 ArrayList displayEventCRFs =
                     ViewStudySubjectServlet.getDisplayEventCRFs(sm.getDataSource(), eventCRFs, eventDefinitionCRFs, ub, currentRole, studyEvent
-                            .getSubjectEventStatus(), study);
+                            .getSubjectEventStatus(), study, this.studyEventDao, this.crfDao, this.crfVersionDao, this.itemDataDao, this.eventDefinitionCrfDao);
 
                 request.setAttribute("studySubject", ssb);
                 request.setAttribute("uncompletedEventDefinitionCRFs", uncompletedEventDefinitionCRFs);
@@ -577,7 +577,7 @@ public static final String EVENT_ID = "event_id";
 
                 ArrayList displayEventCRFs =
                     ViewStudySubjectServlet.getDisplayEventCRFs(sm.getDataSource(), eventCRFs, eventDefinitionCRFs, ub, currentRole, studyEvent
-                            .getSubjectEventStatus(), study);
+                            .getSubjectEventStatus(), study, this.studyEventDao, this.crfDao, this.crfVersionDao, this.itemDataDao, this.eventDefinitionCrfDao);
 
                 request.setAttribute("studySubject", ssb);
                 request.setAttribute("uncompletedEventDefinitionCRFs", uncompletedEventDefinitionCRFs);

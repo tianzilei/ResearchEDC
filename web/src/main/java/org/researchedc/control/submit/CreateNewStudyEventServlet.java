@@ -23,11 +23,9 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.hibernate.RuleSetDao;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.exception.OpenClinicaException;
@@ -48,7 +46,6 @@ import java.util.TreeSet;
 
 import javax.sql.DataSource;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.spi.DaoProvider;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -110,7 +107,7 @@ public class CreateNewStudyEventServlet extends SecureController {
         int studyEventDefinitionId = fp.getInt(INPUT_STUDY_EVENT_DEFINITION);
 
         // TODO: make this sensitive to permissions
-        IStudySubjectDAO sdao = DaoProvider.getDao(StudySubjectDAO.class);
+        IStudySubjectDAO sdao = this.studySubjectDao;
         StudySubjectBean ssb;
         if (studySubjectId <= 0) {
             ssb = (StudySubjectBean) request.getAttribute(INPUT_STUDY_SUBJECT);
@@ -134,7 +131,7 @@ public class CreateNewStudyEventServlet extends SecureController {
         // ArrayList subjects = sdao.findAllActiveByStudyOrderByLabel(currentStudy);
 
         // TODO: make this sensitive to permissions
-        StudyEventDefinitionDAO seddao = DaoProvider.getDao(StudyEventDefinitionDAO.class);
+        StudyEventDefinitionDAO seddao = (StudyEventDefinitionDAO) this.studyEventDefinitionDao;
 
         StudyBean studyWithEventDefinitions = currentStudy;
         if (currentStudy.getParentStudyId() > 0) {
@@ -170,7 +167,6 @@ public class CreateNewStudyEventServlet extends SecureController {
         ArrayList eventDefinitionsScheduled = eventDefinitions;
 
         if (!fp.isSubmitted()) {
-            // IStudyEventDAO sed = DaoProvider.getDao(StudyEventDAO.class);
             // sed.updateSampleOrdinals_v092();
 
             HashMap presetValues = new HashMap();
@@ -669,7 +665,7 @@ public class CreateNewStudyEventServlet extends SecureController {
      * @return <code>true</code> if the subject may receive an additional study
      *         event, <code>false</code> otherwise.
      */
-    public static boolean subjectMayReceiveStudyEvent(DataSource ds, StudyEventDefinitionBean studyEventDefinition, StudySubjectBean studySubject) {
+    public boolean subjectMayReceiveStudyEvent(DataSource ds, StudyEventDefinitionBean studyEventDefinition, StudySubjectBean studySubject) {
 
         if (studyEventDefinition.isRepeating()) {
             // System.out.println("this def is repeating" +
@@ -677,7 +673,7 @@ public class CreateNewStudyEventServlet extends SecureController {
             return true;
         }
 
-        IStudyEventDAO sedao = DaoProvider.getDao(StudyEventDAO.class);
+        IStudyEventDAO sedao = this.studyEventDao;
         ArrayList allEvents = sedao.findAllByDefinitionAndSubject(studyEventDefinition, studySubject);
 
         if (allEvents.size() > 0) {

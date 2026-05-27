@@ -43,17 +43,18 @@ import org.researchedc.core.SessionManager;
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
@@ -104,6 +105,8 @@ public abstract class CoreSecureController extends HttpServlet {
     @Autowired
     protected StudyParameterValueDAO studyParameterValueDao;
     @Autowired
+    protected StudyConfigService studyConfigService;
+    @Autowired
     protected IStudyEventDefinitionDAO studyEventDefinitionDao;
     @Autowired
     protected StudyGroupClassDAO studyGroupClassDao;
@@ -111,6 +114,12 @@ public abstract class CoreSecureController extends HttpServlet {
     protected StudyGroupDAO studyGroupDao;
     @Autowired
     protected ICrfDAO crfDao;
+    @Autowired
+    protected CRFVersionDAO crfVersionDao;
+    @Autowired
+    protected SectionDAO sectionDao;
+    @Autowired
+    protected ItemGroupDAO itemGroupDao;
     @Autowired
     protected IStudySubjectDAO studySubjectDao;
     @Autowired
@@ -326,9 +335,7 @@ public abstract class CoreSecureController extends HttpServlet {
 
     private String decodeLINKURL(String successMsg, Integer datasetId) {
 
-        ArchivedDatasetFileDAO asdfDAO = new ArchivedDatasetFileDAO(getDataSource());
-
-        ArrayList<ArchivedDatasetFileBean> fileBeans = asdfDAO.findByDatasetId(datasetId);
+        ArrayList<ArchivedDatasetFileBean> fileBeans = archivedDatasetFileDao.findByDatasetId(datasetId);
 
         successMsg =
                 successMsg.replace("$linkURL", "<a href=\"" + CoreResources.getField("sysURL.base") + "AccessFile?fileId=" + fileBeans.get(0).getId()
@@ -416,25 +423,24 @@ public abstract class CoreSecureController extends HttpServlet {
             request.getSession().setAttribute("sm", sm);
             session.setAttribute("userBean", ub);
 
-            IStudyDAO sdao = new StudyDAO(getDataSource());
+            IStudyDAO sdao = studyDao;
             if (currentStudy == null || currentStudy.getId() <= 0) {
                 if (ub.getId() > 0 && ub.getActiveStudyId() > 0) {
-                    StudyParameterValueDAO spvdao = new StudyParameterValueDAO(getDataSource());
+                    StudyParameterValueDAO spvdao = studyParameterValueDao;
                     currentStudy = (StudyBean) sdao.findByPK(ub.getActiveStudyId());
 
                     ArrayList studyParameters = spvdao.findParamConfigByStudy(currentStudy);
 
                     currentStudy.setStudyParameters(studyParameters);
 
-                    StudyConfigService scs = new StudyConfigService(getDataSource());
                     if (currentStudy.getParentStudyId() <= 0) {// top study
-                        scs.setParametersForStudy(currentStudy);
+                        studyConfigService.setParametersForStudy(currentStudy);
 
                     } else {
                         // YW <<
                         currentStudy.setParentStudyName(((StudyBean) sdao.findByPK(currentStudy.getParentStudyId())).getName());
                         // YW >>
-                        scs.setParametersForSite(currentStudy);
+                        studyConfigService.setParametersForSite(currentStudy);
                     }
 
                     // set up the panel here, tbh
@@ -818,7 +824,7 @@ public abstract class CoreSecureController extends HttpServlet {
      *            javax.sql.DataSource
      */
     protected boolean entityIncluded(int entityId, String userName, AuditableEntityDAO adao, DataSource ds) {
-        IStudyDAO sdao = new StudyDAO(ds);
+        IStudyDAO sdao = studyDao;
         ArrayList<StudyBean> studies = (ArrayList<StudyBean>) sdao.findAllByUserNotRemoved(userName);
         for (int i = 0; i < studies.size(); ++i) {
             if (adao.findByPKAndStudy(entityId, studies.get(i)).getId() > 0) {
@@ -906,8 +912,8 @@ public abstract class CoreSecureController extends HttpServlet {
     }
 
     public ArrayList getEventDefinitionsByCurrentStudy(HttpServletRequest request) {
-        IStudyDAO studyDAO = new StudyDAO(getDataSource());
-        IStudyEventDefinitionDAO studyEventDefinitionDAO = new StudyEventDefinitionDAO(getDataSource());
+        IStudyDAO studyDAO = studyDao;
+        IStudyEventDefinitionDAO studyEventDefinitionDAO = studyEventDefinitionDao;
         StudyBean currentStudy = (StudyBean) request.getSession().getAttribute("study");
         int parentStudyId = currentStudy.getParentStudyId();
         ArrayList allDefs = new ArrayList();
@@ -922,9 +928,9 @@ public abstract class CoreSecureController extends HttpServlet {
     }
 
     public ArrayList getStudyGroupClassesByCurrentStudy(HttpServletRequest request) {
-        IStudyDAO studyDAO = new StudyDAO(getDataSource());
-        StudyGroupClassDAO studyGroupClassDAO = new StudyGroupClassDAO(getDataSource());
-        StudyGroupDAO studyGroupDAO = new StudyGroupDAO(getDataSource());
+        IStudyDAO studyDAO = studyDao;
+        StudyGroupClassDAO studyGroupClassDAO = studyGroupClassDao;
+        StudyGroupDAO studyGroupDAO = studyGroupDao;
         StudyBean currentStudy = (StudyBean) request.getSession().getAttribute("study");
         int parentStudyId = currentStudy.getParentStudyId();
         ArrayList studyGroupClasses = new ArrayList();

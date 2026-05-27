@@ -207,7 +207,9 @@ Locale locale;
             for (int k = 0; k < events.size(); k++) {
                 StudyEventBean seb = (StudyEventBean) events.get(k);
                 DisplayStudyEventBean dseb =
-                    ListStudySubjectServlet.getDisplayStudyEventsForStudySubject(studySub, seb, sm.getDataSource(), ub, currentRole, this.currentStudy);
+                    ListStudySubjectServlet.getDisplayStudyEventsForStudySubject(studySub, seb, sm.getDataSource(), ub, currentRole, this.currentStudy,
+                            this.studyEventDefinitionDao, this.studyEventDao, this.eventCrfDao, this.eventDefinitionCrfDao, this.crfDao, this.crfVersionDao,
+                            this.itemDataDao);
 
                 // ArrayList eventCRFs = ecdao.findAllByStudyEvent(seb);
                 // ArrayList al =

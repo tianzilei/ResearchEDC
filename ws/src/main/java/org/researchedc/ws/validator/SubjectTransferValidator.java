@@ -22,9 +22,11 @@ import org.researchedc.dao.submit.SubjectDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.ws.bean.SubjectStudyDefinitionBean;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+@Component
 public class SubjectTransferValidator implements Validator {
 
     DataSource dataSource;
