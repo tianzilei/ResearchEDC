@@ -103,6 +103,7 @@ app/src/main/resources/static/
 temp/
 .tmp/
 **/catalina.home_IS_UNDEFINED/
+$catalina.home/
 app/$catalina.home/
 
 # Runtime data
@@ -110,6 +111,15 @@ app/$catalina.home/
 .tomcat/
 config/
 data/
+logs/
+
+# Deploy artifacts (built frontend assets copied to Caddy/Nginx)
+deploy/caddy/www/
+deploy/nginx/www/
+
+# Test output (Playwright screenshots, videos, traces)
+frontend/test-results/
+test-results/
 
 # Generated properties (produced by entrypoint.sh at container start)
 app/src/main/resources/datainfo.properties
