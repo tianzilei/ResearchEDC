@@ -5,6 +5,7 @@
 
 > React 19 + TypeScript 5.8 strict + Vite 6 + Ant Design 5. Serves at `/app/*` path behind Nginx.
 > Build output goes to `frontend/dist/` (Vite `outDir: "dist"`), served by Nginx in production.
+> Frontend styleguide: [`docs/FRONTEND_STYLEGUIDE.md`](../docs/FRONTEND_STYLEGUIDE.md).
 
 ## STRUCTURE
 
