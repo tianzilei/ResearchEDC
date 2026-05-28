@@ -36,7 +36,6 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IRuleDAO;
@@ -100,9 +99,8 @@ public class ExportDatasetServlet extends SecureController {
         ArchivedDatasetFileDAO asdfdao = this.archivedDatasetFileDao;
         FormProcessor fp = new FormProcessor(request);
 
-        GenerateExtractFileService generateFileService = new GenerateExtractFileService(sm.getDataSource(),
-                (CoreResources) SpringServletAccess.getApplicationContext(context).getBean("coreResources"),
-                (RuleSetRuleDao) SpringServletAccess.getApplicationContext(context).getBean("ruleSetRuleDao"));
+        GenerateExtractFileService generateFileService = SpringServletAccess.getApplicationContext(context)
+                .getBean(GenerateExtractFileService.class);
         String action = fp.getString("action");
         int datasetId = fp.getInt("datasetId");
         int adfId = fp.getInt("adfId");

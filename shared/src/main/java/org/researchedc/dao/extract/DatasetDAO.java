@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -43,6 +44,7 @@ public class DatasetDAO extends AuditableEntityDAO implements org.researchedc.da
     // private DataSource ds;
     // private DAODigester digester;
     private ItemDAO itemDao;
+    private Function<DataSource, ItemDAO> itemDaoFactory = ItemDAO::new;
 
     @Override
     protected void setDigesterName() {
@@ -705,7 +707,7 @@ public class DatasetDAO extends AuditableEntityDAO implements org.researchedc.da
 
     private ItemDAO getItemDao() {
         if (itemDao == null) {
-            itemDao = new ItemDAO(ds);
+            itemDao = itemDaoFactory.apply(ds);
         }
         return itemDao;
     }

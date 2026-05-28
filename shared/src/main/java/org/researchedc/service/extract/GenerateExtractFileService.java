@@ -52,22 +52,29 @@ public class GenerateExtractFileService {
     private static File files[]=null;
     private static List<File> oldFiles = new LinkedList<File>();
     private final RuleSetRuleDao ruleSetRuleDao;
-    private DatasetDAO datasetDao;
-    private ItemFormMetadataDAO itemFormMetadataDao;
-    private ArchivedDatasetFileDAO archivedDatasetFileDao;
+    private final DatasetDAO datasetDao;
+    private final ItemFormMetadataDAO itemFormMetadataDao;
+    private final ArchivedDatasetFileDAO archivedDatasetFileDao;
+    private final OdmFileCreation odmFileCreation;
 
     public GenerateExtractFileService(DataSource ds, HttpServletRequest request, CoreResources coreResources,
-            RuleSetRuleDao ruleSetRuleDao) {
+            RuleSetRuleDao ruleSetRuleDao, DatasetDAO datasetDao, ItemFormMetadataDAO itemFormMetadataDao,
+            ArchivedDatasetFileDAO archivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         this.ds = ds;
         this.request = request;
         this.coreResources = coreResources;
         this.ruleSetRuleDao = ruleSetRuleDao;
+        this.datasetDao = datasetDao;
+        this.itemFormMetadataDao = itemFormMetadataDao;
+        this.archivedDatasetFileDao = archivedDatasetFileDao;
+        this.odmFileCreation = odmFileCreation;
     }
 
-    public GenerateExtractFileService(DataSource ds, CoreResources coreResources,RuleSetRuleDao ruleSetRuleDao) {
-        this.ds = ds;
-        this.coreResources = coreResources;
-        this.ruleSetRuleDao = ruleSetRuleDao;
+    public GenerateExtractFileService(DataSource ds, CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao,
+            DatasetDAO datasetDao, ItemFormMetadataDAO itemFormMetadataDao,
+            ArchivedDatasetFileDAO archivedDatasetFileDao, OdmFileCreation odmFileCreation) {
+        this(ds, null, coreResources, ruleSetRuleDao, datasetDao, itemFormMetadataDao,
+                archivedDatasetFileDao, odmFileCreation);
     }
 
     public void setUpResourceBundles() {
@@ -140,7 +147,7 @@ public class GenerateExtractFileService {
             StudyBean currentStudy, String generalFileDirCopy,ExtractBean eb,
             Integer currentStudyId, Integer parentStudyId, String studySubjectNumber, boolean zipped, boolean saveToDB, boolean deleteOld, String odmType, UserAccountBean userBean){
 
-        return new OdmFileCreation().createODMFile(odmVersion, sysTimeBegin, generalFileDir, datasetBean,
+        return getOdmFileCreation().createODMFile(odmVersion, sysTimeBegin, generalFileDir, datasetBean,
                 currentStudy, generalFileDirCopy, eb,
                 currentStudyId, parentStudyId, studySubjectNumber, zipped, saveToDB, deleteOld, odmType, userBean);
     }
@@ -655,24 +662,19 @@ public class GenerateExtractFileService {
     }
 
     private DatasetDAO getDatasetDao() {
-        if (datasetDao == null) {
-            datasetDao = new DatasetDAO(ds);
-        }
         return datasetDao;
     }
 
     private ItemFormMetadataDAO getItemFormMetadataDao() {
-        if (itemFormMetadataDao == null) {
-            itemFormMetadataDao = new ItemFormMetadataDAO(ds);
-        }
         return itemFormMetadataDao;
     }
 
     private ArchivedDatasetFileDAO getArchivedDatasetFileDao() {
-        if (archivedDatasetFileDao == null) {
-            archivedDatasetFileDao = new ArchivedDatasetFileDAO(ds);
-        }
         return archivedDatasetFileDao;
+    }
+
+    private OdmFileCreation getOdmFileCreation() {
+        return odmFileCreation;
     }
 
 }

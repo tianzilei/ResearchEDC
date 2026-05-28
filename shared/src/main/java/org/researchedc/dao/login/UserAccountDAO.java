@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -51,6 +52,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
     // private DataSource ds;
     // private DAODigester digester;
     private StudyDAO studyDao;
+    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
 
     @Override
     protected void setDigesterName() {
@@ -823,7 +825,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
 
     private StudyDAO getStudyDao() {
         if (studyDao == null) {
-            studyDao = new StudyDAO(ds);
+            studyDao = studyDaoFactory.apply(ds);
         }
         return studyDao;
     }

@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -44,6 +45,7 @@ import org.researchedc.dao.spi.EventDefinitionCRFDao;
 public class EventDefinitionCRFDAO extends AuditableEntityDAO implements EventDefinitionCRFDao {
     // private DAODigester digester;
     private StudyDAO studyDao;
+    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
 
     private void setQueryNames() {
         getCurrentPKName = "getCurrentPK";
@@ -1045,7 +1047,7 @@ public class EventDefinitionCRFDAO extends AuditableEntityDAO implements EventDe
 
     private StudyDAO getStudyDao() {
         if (studyDao == null) {
-            studyDao = new StudyDAO(this.ds);
+            studyDao = studyDaoFactory.apply(this.ds);
         }
         return studyDao;
     }

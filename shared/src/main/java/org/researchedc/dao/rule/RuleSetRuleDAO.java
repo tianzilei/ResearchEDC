@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -41,6 +42,9 @@ public class RuleSetRuleDAO extends AuditableEntityDAO {
     private RuleDAO ruleDao;
     private RuleSetDAO ruleSetDao;
     private RuleSetRuleAuditDAO ruleSetRuleAuditDao;
+    private Function<DataSource, RuleDAO> ruleDaoFactory = RuleDAO::new;
+    private Function<DataSource, RuleSetDAO> ruleSetDaoFactory = RuleSetDAO::new;
+    private Function<DataSource, RuleSetRuleAuditDAO> ruleSetRuleAuditDaoFactory = RuleSetRuleAuditDAO::new;
 
     private void setQueryNames() {
         this.findByPKAndStudyName = "findByPKAndStudy";
@@ -54,14 +58,14 @@ public class RuleSetRuleDAO extends AuditableEntityDAO {
 
     private RuleDAO getRuleDao() {
         if (ruleDao == null) {
-            ruleDao = new RuleDAO(ds);
+            ruleDao = ruleDaoFactory.apply(ds);
         }
         return ruleDao;
     }
 
     private RuleSetDAO getRuleSetDao() {
         if (ruleSetDao == null) {
-            ruleSetDao = new RuleSetDAO(ds);
+            ruleSetDao = ruleSetDaoFactory.apply(ds);
         }
         return ruleSetDao;
     }
@@ -74,7 +78,7 @@ public class RuleSetRuleDAO extends AuditableEntityDAO {
 
     private RuleSetRuleAuditDAO getRuleSetRuleAuditDao() {
         if (ruleSetRuleAuditDao == null) {
-            ruleSetRuleAuditDao = new RuleSetRuleAuditDAO(ds);
+            ruleSetRuleAuditDao = ruleSetRuleAuditDaoFactory.apply(ds);
         }
         return ruleSetRuleAuditDao;
     }

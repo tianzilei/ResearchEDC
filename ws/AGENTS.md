@@ -6,7 +6,7 @@
 ## STRUCTURE
 
 ```
-ws/src/main/java/org/akaza/openclinica/
+ws/src/main/java/org/researchedc/
 ├── ws/              # SOAP endpoints
 │   ├── StudyEndpoint.java
 │   ├── StudySubjectEndpoint.java

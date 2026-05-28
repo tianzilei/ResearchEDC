@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -31,6 +32,8 @@ public class RuleSetAuditDAO extends EntityDAO {
 
     RuleSetDAO ruleSetDao;
     UserAccountDAO userAccountDao;
+    private Function<DataSource, RuleSetDAO> ruleSetDaoFactory = RuleSetDAO::new;
+    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
 
     public RuleSetAuditDAO(DataSource ds) {
         super(ds);
@@ -61,14 +64,14 @@ public class RuleSetAuditDAO extends EntityDAO {
 
     private RuleSetDAO getRuleSetDao() {
         if (ruleSetDao == null) {
-            ruleSetDao = new RuleSetDAO(ds);
+            ruleSetDao = ruleSetDaoFactory.apply(ds);
         }
         return ruleSetDao;
     }
 
     private UserAccountDAO getUserAccountDao() {
         if (userAccountDao == null) {
-            userAccountDao = new UserAccountDAO(ds);
+            userAccountDao = userAccountDaoFactory.apply(ds);
         }
         return userAccountDao;
     }

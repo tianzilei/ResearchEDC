@@ -28,6 +28,7 @@ import org.springframework.validation.Validator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -42,9 +43,19 @@ public class InsertActionValidator implements Validator {
     EventDefinitionCRFBean eventDefinitionCRFBean;
     ExpressionService expressionService;
     RuleSetBean ruleSetBean;
+    private final Function<DataSource, ItemDAO> itemDaoFactory;
+    private final Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
+    private final Function<DataSource, CRFDAO> crfDaoFactory;
+    private final Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory;
+    private final Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
 
     public InsertActionValidator(DataSource dataSource) {
         this.dataSource = dataSource;
+        this.itemDaoFactory = ItemDAO::new;
+        this.studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
+        this.crfDaoFactory = CRFDAO::new;
+        this.eventDefinitionCrfDaoFactory = EventDefinitionCRFDAO::new;
+        this.itemFormMetadataDaoFactory = ItemFormMetadataDAO::new;
     }
 
     /**
@@ -312,35 +323,35 @@ public class InsertActionValidator implements Validator {
 
     public ItemDAO getItemDAO() {
         if (itemDAO == null) {
-            itemDAO = new ItemDAO(dataSource);
+            itemDAO = itemDaoFactory.apply(dataSource);
         }
         return itemDAO;
     }
 
     public StudyEventDefinitionDAO getStudyEventDefinitionDAO() {
         if (studyEventDefinitionDAO == null) {
-            studyEventDefinitionDAO = new StudyEventDefinitionDAO(dataSource);
+            studyEventDefinitionDAO = studyEventDefinitionDaoFactory.apply(dataSource);
         }
         return studyEventDefinitionDAO;
     }
 
     public CRFDAO getCrfDAO() {
         if (crfDAO == null) {
-            crfDAO = new CRFDAO(dataSource);
+            crfDAO = crfDaoFactory.apply(dataSource);
         }
         return crfDAO;
     }
 
     public EventDefinitionCRFDAO getEventDefinitionCRFDAO() {
         if (eventDefinitionCRFDAO == null) {
-            eventDefinitionCRFDAO = new EventDefinitionCRFDAO(dataSource);
+            eventDefinitionCRFDAO = eventDefinitionCrfDaoFactory.apply(dataSource);
         }
         return eventDefinitionCRFDAO;
     }
 
     public ItemFormMetadataDAO getItemFormMetadataDAO() {
         if (itemFormMetadataDAO == null) {
-            itemFormMetadataDAO = new ItemFormMetadataDAO(dataSource);
+            itemFormMetadataDAO = itemFormMetadataDaoFactory.apply(dataSource);
         }
         return itemFormMetadataDAO;
     }

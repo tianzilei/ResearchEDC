@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -25,6 +26,8 @@ import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 
 /**
@@ -34,11 +37,16 @@ import org.researchedc.dao.submit.EventCRFDAO;
  */
 public class DiscrepancyNoteUtil {
     private DataSource daoDataSource;
-    private StudySubjectDAO studySubjectDao;
+    private IStudySubjectDAO studySubjectDao;
     private EventCRFDAO eventCrfDao;
     private DiscrepancyNoteDAO discrepancyNoteDao;
-    private StudyDAO studyDao;
+    private IStudyDAO studyDao;
     private EventDefinitionCRFDAO eventDefinitionCrfDao;
+    private Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = StudySubjectDAO::new;
+    private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
+    private Function<DataSource, DiscrepancyNoteDAO> discrepancyNoteDaoFactory = DiscrepancyNoteDAO::new;
+    private Function<DataSource, IStudyDAO> studyDaoFactory = StudyDAO::new;
+    private Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory = EventDefinitionCRFDAO::new;
 
     // TODO: initialize these static members from the database.
     public static final Map<String, Integer> TYPES = new HashMap<String, Integer>();
@@ -1547,10 +1555,10 @@ public class DiscrepancyNoteUtil {
         }
     }
 
-    private StudySubjectDAO getStudySubjectDao(DataSource dataSource) {
+    private IStudySubjectDAO getStudySubjectDao(DataSource dataSource) {
         prepareDaoCache(dataSource);
         if (studySubjectDao == null) {
-            studySubjectDao = new StudySubjectDAO(dataSource);
+            studySubjectDao = studySubjectDaoFactory.apply(dataSource);
         }
         return studySubjectDao;
     }
@@ -1558,7 +1566,7 @@ public class DiscrepancyNoteUtil {
     private EventCRFDAO getEventCrfDao(DataSource dataSource) {
         prepareDaoCache(dataSource);
         if (eventCrfDao == null) {
-            eventCrfDao = new EventCRFDAO(dataSource);
+            eventCrfDao = eventCrfDaoFactory.apply(dataSource);
         }
         return eventCrfDao;
     }
@@ -1566,15 +1574,15 @@ public class DiscrepancyNoteUtil {
     private DiscrepancyNoteDAO getDiscrepancyNoteDao(DataSource dataSource) {
         prepareDaoCache(dataSource);
         if (discrepancyNoteDao == null) {
-            discrepancyNoteDao = new DiscrepancyNoteDAO(dataSource);
+            discrepancyNoteDao = discrepancyNoteDaoFactory.apply(dataSource);
         }
         return discrepancyNoteDao;
     }
 
-    private StudyDAO getStudyDao(DataSource dataSource) {
+    private IStudyDAO getStudyDao(DataSource dataSource) {
         prepareDaoCache(dataSource);
         if (studyDao == null) {
-            studyDao = new StudyDAO(dataSource);
+            studyDao = studyDaoFactory.apply(dataSource);
         }
         return studyDao;
     }
@@ -1582,7 +1590,7 @@ public class DiscrepancyNoteUtil {
     private EventDefinitionCRFDAO getEventDefinitionCrfDao(DataSource dataSource) {
         prepareDaoCache(dataSource);
         if (eventDefinitionCrfDao == null) {
-            eventDefinitionCrfDao = new EventDefinitionCRFDAO(dataSource);
+            eventDefinitionCrfDao = eventDefinitionCrfDaoFactory.apply(dataSource);
         }
         return eventDefinitionCrfDao;
     }

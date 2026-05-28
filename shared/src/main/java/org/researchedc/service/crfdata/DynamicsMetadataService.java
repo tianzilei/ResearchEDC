@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -83,22 +84,43 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
     private DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
     private DynamicsItemGroupMetadataDao dynamicsItemGroupMetadataDao;
     DataSource ds;
-    private EventCRFDAO eventCRFDAO;
-    private ItemDataDAO itemDataDAO;
-    private ItemDAO itemDAO;
-    private ItemGroupDAO itemGroupDAO;
-    private SectionDAO sectionDAO;
-    // private CRFVersionDAO crfVersionDAO;
-    private ItemFormMetadataDAO itemFormMetadataDAO;
-    private ItemGroupMetadataDAO itemGroupMetadataDAO;
-    private StudyEventDAO studyEventDAO;
-    private EventDefinitionCRFDAO eventDefinitionCRFDAO;
+    private final Function<DataSource, EventCRFDAO> eventCrfDaoFactory;
+    private final Function<DataSource, ItemDataDAO> itemDataDaoFactory;
+    private final Function<DataSource, ItemDAO> itemDaoFactory;
+    private final Function<DataSource, ItemGroupDAO> itemGroupDaoFactory;
+    private final Function<DataSource, SectionDAO> sectionDaoFactory;
+    private final Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
+    private final Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory;
+    private final Function<DataSource, StudyEventDAO> studyEventDaoFactory;
+    private final Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory;
     private ExpressionService expressionService;
     private RandomizeService randomizeService;
     
     public DynamicsMetadataService(DataSource ds) {
-        // itemsAlreadyShown = new ArrayList<Integer>();
+        this(ds, EventCRFDAO::new, ItemDataDAO::new, ItemDAO::new, ItemGroupDAO::new,
+                SectionDAO::new, ItemFormMetadataDAO::new, ItemGroupMetadataDAO::new,
+                StudyEventDAO::new, EventDefinitionCRFDAO::new);
+    }
+
+    public DynamicsMetadataService(DataSource ds, Function<DataSource, EventCRFDAO> eventCrfDaoFactory,
+            Function<DataSource, ItemDataDAO> itemDataDaoFactory,
+            Function<DataSource, ItemDAO> itemDaoFactory,
+            Function<DataSource, ItemGroupDAO> itemGroupDaoFactory,
+            Function<DataSource, SectionDAO> sectionDaoFactory,
+            Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory,
+            Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory,
+            Function<DataSource, StudyEventDAO> studyEventDaoFactory,
+            Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory) {
         this.ds = ds;
+        this.eventCrfDaoFactory = eventCrfDaoFactory;
+        this.itemDataDaoFactory = itemDataDaoFactory;
+        this.itemDaoFactory = itemDaoFactory;
+        this.itemGroupDaoFactory = itemGroupDaoFactory;
+        this.sectionDaoFactory = sectionDaoFactory;
+        this.itemFormMetadataDaoFactory = itemFormMetadataDaoFactory;
+        this.itemGroupMetadataDaoFactory = itemGroupMetadataDaoFactory;
+        this.studyEventDaoFactory = studyEventDaoFactory;
+        this.eventDefinitionCrfDaoFactory = eventDefinitionCrfDaoFactory;
     }
 
     public boolean hide(Object metadataBean, EventCRFBean eventCrfBean) {
@@ -1045,40 +1067,39 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
 
 
     private EventCRFDAO getEventCRFDAO() {
-        return  new EventCRFDAO(ds);
+        return eventCrfDaoFactory.apply(ds);
     }
 
     private ItemDataDAO getItemDataDAO() {
-        return new ItemDataDAO(ds);
+        return itemDataDaoFactory.apply(ds);
     }
 
     private ItemDAO getItemDAO() {
-        return new ItemDAO(ds);
+        return itemDaoFactory.apply(ds);
     }
 
     private ItemGroupDAO getItemGroupDAO() {
-        return new ItemGroupDAO(ds);
+        return itemGroupDaoFactory.apply(ds);
     }
 
     private SectionDAO getSectionDAO() {
-        return new SectionDAO(ds);
+        return sectionDaoFactory.apply(ds);
     }
 
     private ItemFormMetadataDAO getItemFormMetadataDAO() {
-        return new ItemFormMetadataDAO(ds);
+        return itemFormMetadataDaoFactory.apply(ds);
     }
 
     private ItemGroupMetadataDAO getItemGroupMetadataDAO() {
-        return new ItemGroupMetadataDAO(ds);
+        return itemGroupMetadataDaoFactory.apply(ds);
     }
 
     public StudyEventDAO getStudyEventDAO() {
-        return new StudyEventDAO(ds);
+        return studyEventDaoFactory.apply(ds);
     }
 
     public EventDefinitionCRFDAO getEventDefinitionCRfDAO() {
-        eventDefinitionCRFDAO = this.eventDefinitionCRFDAO != null ? eventDefinitionCRFDAO : new EventDefinitionCRFDAO(ds);
-        return eventDefinitionCRFDAO;
+        return eventDefinitionCrfDaoFactory.apply(ds);
     }
 
     public ExpressionService getExpressionService() {

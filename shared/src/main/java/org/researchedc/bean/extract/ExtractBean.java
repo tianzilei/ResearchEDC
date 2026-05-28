@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -85,6 +86,14 @@ public class ExtractBean {
     private StudyGroupDAO studyGroupDao;
     private StudyGroupClassDAO studyGroupClassDao;
     private StudyEventDAO studyEventDao;
+    private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
+    private Function<DataSource, CRFDAO> crfDaoFactory = CRFDAO::new;
+    private Function<DataSource, CRFVersionDAO> crfVersionDaoFactory = CRFVersionDAO::new;
+    private Function<DataSource, ItemDAO> itemDaoFactory = ItemDAO::new;
+    private Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory = ItemFormMetadataDAO::new;
+    private Function<DataSource, StudyGroupDAO> studyGroupDaoFactory = StudyGroupDAO::new;
+    private Function<DataSource, StudyGroupClassDAO> studyGroupClassDaoFactory = StudyGroupClassDAO::new;
+    private Function<DataSource, StudyEventDAO> studyEventDaoFactory = StudyEventDAO::new;
 
     private StudyBean study;
 
@@ -2956,56 +2965,56 @@ public class ExtractBean {
 
     private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
         if (studyEventDefinitionDao == null) {
-            studyEventDefinitionDao = new StudyEventDefinitionDAO(ds);
+            studyEventDefinitionDao = studyEventDefinitionDaoFactory.apply(ds);
         }
         return studyEventDefinitionDao;
     }
 
     private CRFDAO getCrfDao() {
         if (crfDao == null) {
-            crfDao = new CRFDAO(ds);
+            crfDao = crfDaoFactory.apply(ds);
         }
         return crfDao;
     }
 
     private CRFVersionDAO getCrfVersionDao() {
         if (crfVersionDao == null) {
-            crfVersionDao = new CRFVersionDAO(ds);
+            crfVersionDao = crfVersionDaoFactory.apply(ds);
         }
         return crfVersionDao;
     }
 
     private ItemDAO getItemDao() {
         if (itemDao == null) {
-            itemDao = new ItemDAO(ds);
+            itemDao = itemDaoFactory.apply(ds);
         }
         return itemDao;
     }
 
     private ItemFormMetadataDAO getItemFormMetadataDao() {
         if (itemFormMetadataDao == null) {
-            itemFormMetadataDao = new ItemFormMetadataDAO(ds);
+            itemFormMetadataDao = itemFormMetadataDaoFactory.apply(ds);
         }
         return itemFormMetadataDao;
     }
 
     private StudyGroupDAO getStudyGroupDao() {
         if (studyGroupDao == null) {
-            studyGroupDao = new StudyGroupDAO(ds);
+            studyGroupDao = studyGroupDaoFactory.apply(ds);
         }
         return studyGroupDao;
     }
 
     private StudyGroupClassDAO getStudyGroupClassDao() {
         if (studyGroupClassDao == null) {
-            studyGroupClassDao = new StudyGroupClassDAO(ds);
+            studyGroupClassDao = studyGroupClassDaoFactory.apply(ds);
         }
         return studyGroupClassDao;
     }
 
     private StudyEventDAO getStudyEventDao() {
         if (studyEventDao == null) {
-            studyEventDao = new StudyEventDAO(ds);
+            studyEventDao = studyEventDaoFactory.apply(ds);
         }
         return studyEventDao;
     }

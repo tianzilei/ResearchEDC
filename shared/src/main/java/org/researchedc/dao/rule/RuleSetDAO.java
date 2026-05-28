@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -56,6 +57,14 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
     private ExpressionService expressionService;
     private RuleSetRuleDAO ruleSetRuleDao;
     private RuleSetAuditDAO ruleSetAuditDao;
+    private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
+    private Function<DataSource, CRFDAO> crfDaoFactory = CRFDAO::new;
+    private Function<DataSource, CRFVersionDAO> crfVersionDaoFactory = CRFVersionDAO::new;
+    private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
+    private Function<DataSource, RuleDAO> ruleDaoFactory = RuleDAO::new;
+    private Function<DataSource, RuleSetAuditDAO> ruleSetAuditDaoFactory = RuleSetAuditDAO::new;
+    private Function<DataSource, ExpressionDAO> expressionDaoFactory = ExpressionDAO::new;
+    private Function<DataSource, RuleSetRuleDAO> ruleSetRuleDaoFactory = RuleSetRuleDAO::new;
 
     private void setQueryNames() {
         this.findByPKAndStudyName = "findByPKAndStudy";
@@ -69,49 +78,49 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
     private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
         if (studyEventDefinitionDAO == null) {
-            studyEventDefinitionDAO = new StudyEventDefinitionDAO(ds);
+            studyEventDefinitionDAO = studyEventDefinitionDaoFactory.apply(ds);
         }
         return studyEventDefinitionDAO;
     }
 
     private CRFDAO getCrfDao() {
         if (crfDao == null) {
-            crfDao = new CRFDAO(ds);
+            crfDao = crfDaoFactory.apply(ds);
         }
         return crfDao;
     }
 
     private CRFVersionDAO getCrfVersionDao() {
         if (crfVersionDao == null) {
-            crfVersionDao = new CRFVersionDAO(ds);
+            crfVersionDao = crfVersionDaoFactory.apply(ds);
         }
         return crfVersionDao;
     }
 
     private EventCRFDAO getEventCrfDao() {
         if (eventCrfDao == null) {
-            eventCrfDao = new EventCRFDAO(ds);
+            eventCrfDao = eventCrfDaoFactory.apply(ds);
         }
         return eventCrfDao;
     }
 
     private RuleDAO getRuleDao() {
         if (ruleDao == null) {
-            ruleDao = new RuleDAO(ds);
+            ruleDao = ruleDaoFactory.apply(ds);
         }
         return ruleDao;
     }
 
     private RuleSetAuditDAO getRuleSetAuditDao() {
         if (ruleSetAuditDao == null) {
-            ruleSetAuditDao = new RuleSetAuditDAO(ds);
+            ruleSetAuditDao = ruleSetAuditDaoFactory.apply(ds);
         }
         return ruleSetAuditDao;
     }
 
     private ExpressionDAO getExpressionDao() {
         if (expressionDao == null) {
-            expressionDao = new ExpressionDAO(ds);
+            expressionDao = expressionDaoFactory.apply(ds);
         }
         return expressionDao;
     }
@@ -125,7 +134,7 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
     private RuleSetRuleDAO getRuleSetRuleDao() {
         if (ruleSetRuleDao == null) {
-            ruleSetRuleDao = new RuleSetRuleDAO(ds);
+            ruleSetRuleDao = ruleSetRuleDaoFactory.apply(ds);
         }
         return ruleSetRuleDao;
     }

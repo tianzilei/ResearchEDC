@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -57,6 +58,12 @@ public class ImportDataRuleRunnerContainer {
     private StudyEventDAO studyEventDao;
     private ItemDAO<String, ArrayList> itemDao;
     private ItemGroupMetadataDAO<String, ArrayList> itemGroupMetadataDao;
+    private final Function<DataSource, StudySubjectDAO<String, ArrayList>> studySubjectDaoFactory = StudySubjectDAO::new;
+    private final Function<DataSource, StudyEventDefinitionDAO<String, ArrayList>> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
+    private final Function<DataSource, CRFVersionDAO<String, ArrayList>> crfVersionDaoFactory = CRFVersionDAO::new;
+    private final Function<DataSource, StudyEventDAO> studyEventDaoFactory = StudyEventDAO::new;
+    private final Function<DataSource, ItemDAO<String, ArrayList>> itemDaoFactory = ItemDAO::new;
+    private final Function<DataSource, ItemGroupMetadataDAO<String, ArrayList>> itemGroupMetadataDaoFactory = ItemGroupMetadataDAO::new;
 
     /**
      * Populate importDataTrueRuleSets and variableAndValue.
@@ -201,42 +208,42 @@ public class ImportDataRuleRunnerContainer {
 
     private StudySubjectDAO<String, ArrayList> getStudySubjectDao(DataSource ds) {
         if (studySubjectDao == null) {
-            studySubjectDao = new StudySubjectDAO<String, ArrayList>(ds);
+            studySubjectDao = studySubjectDaoFactory.apply(ds);
         }
         return studySubjectDao;
     }
 
     private StudyEventDefinitionDAO<String, ArrayList> getStudyEventDefinitionDao(DataSource ds) {
         if (studyEventDefinitionDao == null) {
-            studyEventDefinitionDao = new StudyEventDefinitionDAO<String, ArrayList>(ds);
+            studyEventDefinitionDao = studyEventDefinitionDaoFactory.apply(ds);
         }
         return studyEventDefinitionDao;
     }
 
     private CRFVersionDAO<String, ArrayList> getCrfVersionDao(DataSource ds) {
         if (crfVersionDao == null) {
-            crfVersionDao = new CRFVersionDAO<String, ArrayList>(ds);
+            crfVersionDao = crfVersionDaoFactory.apply(ds);
         }
         return crfVersionDao;
     }
 
     private StudyEventDAO getStudyEventDao(DataSource ds) {
         if (studyEventDao == null) {
-            studyEventDao = new StudyEventDAO(ds);
+            studyEventDao = studyEventDaoFactory.apply(ds);
         }
         return studyEventDao;
     }
 
     private ItemDAO<String, ArrayList> getItemDao(DataSource ds) {
         if (itemDao == null) {
-            itemDao = new ItemDAO<String, ArrayList>(ds);
+            itemDao = itemDaoFactory.apply(ds);
         }
         return itemDao;
     }
 
     private ItemGroupMetadataDAO<String, ArrayList> getItemGroupMetadataDao(DataSource ds) {
         if (itemGroupMetadataDao == null) {
-            itemGroupMetadataDao = new ItemGroupMetadataDAO<String, ArrayList>(ds);
+            itemGroupMetadataDao = itemGroupMetadataDaoFactory.apply(ds);
         }
         return itemGroupMetadataDao;
     }

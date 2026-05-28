@@ -2,6 +2,9 @@ package org.researchedc.bean.rule;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.function.Function;
+
+import javax.sql.DataSource;
 
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
@@ -28,6 +31,9 @@ public class RuleExecutionBusinessObject {
     private DiscrepancyNoteDAO discrepancyNoteDao;
     private EventCRFDAO eventCrfDao;
     private RuleDAO ruleDao;
+    private Function<DataSource, DiscrepancyNoteDAO> discrepancyNoteDaoFactory = DiscrepancyNoteDAO::new;
+    private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
+    private Function<DataSource, RuleDAO> ruleDaoFactory = RuleDAO::new;
 
     public RuleExecutionBusinessObject(SessionManager sm, StudyBean currentStudy, UserAccountBean ub) {
         this.sm = sm;
@@ -105,21 +111,21 @@ public class RuleExecutionBusinessObject {
 
     private DiscrepancyNoteDAO getDiscrepancyNoteDao() {
         if (discrepancyNoteDao == null) {
-            discrepancyNoteDao = new DiscrepancyNoteDAO(sm.getDataSource());
+            discrepancyNoteDao = discrepancyNoteDaoFactory.apply(sm.getDataSource());
         }
         return discrepancyNoteDao;
     }
 
     private EventCRFDAO getEventCrfDao() {
         if (eventCrfDao == null) {
-            eventCrfDao = new EventCRFDAO(sm.getDataSource());
+            eventCrfDao = eventCrfDaoFactory.apply(sm.getDataSource());
         }
         return eventCrfDao;
     }
 
     private RuleDAO getRuleDao() {
         if (ruleDao == null) {
-            ruleDao = new RuleDAO(sm.getDataSource());
+            ruleDao = ruleDaoFactory.apply(sm.getDataSource());
         }
         return ruleDao;
     }

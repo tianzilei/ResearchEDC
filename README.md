@@ -1,7 +1,7 @@
 # ResearchEDC
 
 **版本:** 0.1  
-**最后更新:** 2026-05-26  
+**最后更新:** 2026-05-28
 **JSP 迁移进度:** 225/419 (54%) — 194 页通过 LegacyFrame 向后兼容  
 **许可证:** GNU LGPL
 
@@ -70,7 +70,7 @@ ResearchEDC/
 │   └── package.json
 ├── questionnaire-service/  # Python FastAPI 问卷微服务 (独立部署)
 │   ├── apps/api/            # FastAPI 后端 (models, services, scoring, routers, workers)
-│   ├── infra/               # deployment infrastructure notes
+│   ├── infra/               # bare host infrastructure notes
 │   └── packages/            # SurveyJS 问卷 schema (ISI, GAD-7, PHQ-9, ESS)
 ├── app/                # Spring Boot 模块化单体入口
 │   ├── src/main/java/
@@ -97,7 +97,7 @@ ResearchEDC/
 │   └── src/main/resources/
 │       ├── application.yml # profile 配置
 │       └── static/         # 前端构建产物 (自动生成)
-├── shared/              # 共享领域逻辑 & 数据访问 (770 源文件, 取代 legacy-core)
+├── shared/              # 共享领域逻辑 & 数据访问 (775 源文件, 取代 legacy-core)
 │   ├── dao/             # 数据访问层 (169 文件: hibernate 67, spi 29, 各子域 DAOs)
 │   ├── domain/          # Hibernate 实体 (166 文件, 含 datamap/ 62 实体)
 │   ├── service/         # 业务服务层 (60 文件)
@@ -225,6 +225,7 @@ python -m pytest app/tests/ -v  # 31 tests
 ## 核心架构模式
 
 - **DAO 模式:** 所有数据库访问通过 `EntityDAO<K>` 子类或 SPI 接口
+- **Legacy DAO constructor baseline:** `DaoProvider` 已删除；`shared/`、`web/`、`ws/` 中直接 `new *DAO(...)` / `new StudyConfigService(...)` 匹配为 0
 - **Bean 模式:** DTO 继承 `EntityBean` 含审计字段 (id, createdDate, ownerId...)
 - **SecureController:** 所有 Servlet 继承此类自动处理会话/权限
 - **服务层:** `@Service` + `@Transactional` 封装业务编排

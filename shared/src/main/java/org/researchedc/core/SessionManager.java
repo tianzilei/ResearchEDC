@@ -9,6 +9,7 @@ package org.researchedc.core;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 import javax.naming.Context;
@@ -53,6 +54,7 @@ public class SessionManager {
 
     private String dbName;
     private UserAccountDAO uDAO = null;
+    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
 
     //TODO: this is a hack needs to be refactord
     private static DataSource staticDataSource;
@@ -157,7 +159,7 @@ public class SessionManager {
 
     private UserAccountDAO getUserAccountDao() {
         if (uDAO == null) {
-            uDAO = new UserAccountDAO(ds);
+            uDAO = userAccountDaoFactory.apply(ds);
         }
         return uDAO;
     }

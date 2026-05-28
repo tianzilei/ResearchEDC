@@ -60,6 +60,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TreeSet;
+import java.util.function.Function;
+
+import javax.sql.DataSource;
 
 public class ScoreCalculator {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
@@ -69,6 +72,12 @@ public class ScoreCalculator {
     private final EventCRFBean ecb;
 
     private final UserAccountBean ub;
+
+    private final Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
+
+    private final Function<DataSource, ItemDAO> itemDaoFactory;
+
+    private final Function<DataSource, ItemDataDAO> itemDataDaoFactory;
 
     private final ArrayList<String> errors = new ArrayList<String>();
 
@@ -81,9 +90,19 @@ public class ScoreCalculator {
     private static int DEFAULT_DECIMAL = 4;
 
     public ScoreCalculator(SessionManager sm, EventCRFBean ecb, UserAccountBean ub) {
+        this(sm, ecb, ub, ItemFormMetadataDAO::new, ItemDAO::new, ItemDataDAO::new);
+    }
+
+    ScoreCalculator(SessionManager sm, EventCRFBean ecb, UserAccountBean ub,
+            Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory,
+            Function<DataSource, ItemDAO> itemDaoFactory,
+            Function<DataSource, ItemDataDAO> itemDataDaoFactory) {
         this.sm = sm;
         this.ecb = ecb;
         this.ub = ub;
+        this.itemFormMetadataDaoFactory = itemFormMetadataDaoFactory;
+        this.itemDaoFactory = itemDaoFactory;
+        this.itemDataDaoFactory = itemDataDaoFactory;
     }
 
     /*
@@ -502,21 +521,21 @@ public class ScoreCalculator {
 
     private ItemFormMetadataDAO getItemFormMetadataDao() {
         if (itemFormMetadataDao == null) {
-            itemFormMetadataDao = new ItemFormMetadataDAO(sm.getDataSource());
+            itemFormMetadataDao = itemFormMetadataDaoFactory.apply(sm.getDataSource());
         }
         return itemFormMetadataDao;
     }
 
     private ItemDAO getItemDao() {
         if (itemDao == null) {
-            itemDao = new ItemDAO(sm.getDataSource());
+            itemDao = itemDaoFactory.apply(sm.getDataSource());
         }
         return itemDao;
     }
 
     private ItemDataDAO getItemDataDao() {
         if (itemDataDao == null) {
-            itemDataDao = new ItemDataDAO(sm.getDataSource());
+            itemDataDao = itemDataDaoFactory.apply(sm.getDataSource());
         }
         return itemDataDao;
     }

@@ -10,6 +10,7 @@
 package org.researchedc.logic.odmExport;
 
 import java.util.HashMap;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -38,6 +39,7 @@ public class OdmUnit {
     // 0: one Study Element; 1: one parent study and its sites
     private int category;
     private OdmExtractDAO odmExtractDao;
+    private Function<DataSource, OdmExtractDAO> odmExtractDaoFactory = OdmExtractDAO::new;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -149,7 +151,7 @@ public class OdmUnit {
 
     protected OdmExtractDAO getSharedOdmExtractDao() {
         if (odmExtractDao == null) {
-            odmExtractDao = new OdmExtractDAO(this.ds);
+            odmExtractDao = odmExtractDaoFactory.apply(this.ds);
         }
         return odmExtractDao;
     }

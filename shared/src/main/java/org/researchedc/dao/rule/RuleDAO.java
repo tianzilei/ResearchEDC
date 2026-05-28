@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -45,6 +46,12 @@ public class RuleDAO extends AuditableEntityDAO implements IRuleDAO {
     private StudyEventDefinitionDAO studyEventDefinitionDao;
     private CRFVersionDAO crfVersionDao;
     private ExpressionDAO expressionDao;
+    private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
+    private Function<DataSource, RuleSetDAO> ruleSetDaoFactory = RuleSetDAO::new;
+    private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
+    private Function<DataSource, CRFVersionDAO> crfVersionDaoFactory = CRFVersionDAO::new;
+    private Function<DataSource, ItemDataDAO> itemDataDaoFactory = ItemDataDAO::new;
+    private Function<DataSource, ExpressionDAO> expressionDaoFactory = ExpressionDAO::new;
 
     private void setQueryNames() {
         this.findByPKAndStudyName = "findByPKAndStudy";
@@ -58,42 +65,42 @@ public class RuleDAO extends AuditableEntityDAO implements IRuleDAO {
 
     private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
         if (studyEventDefinitionDao == null) {
-            studyEventDefinitionDao = new StudyEventDefinitionDAO(ds);
+            studyEventDefinitionDao = studyEventDefinitionDaoFactory.apply(ds);
         }
         return studyEventDefinitionDao;
     }
 
     private RuleSetDAO getRuleSetDao() {
         if (ruleSetDao == null) {
-            ruleSetDao = new RuleSetDAO(ds);
+            ruleSetDao = ruleSetDaoFactory.apply(ds);
         }
         return ruleSetDao;
     }
 
     private EventCRFDAO getEventCrfDao() {
         if (eventCrfDao == null) {
-            eventCrfDao = new EventCRFDAO(ds);
+            eventCrfDao = eventCrfDaoFactory.apply(ds);
         }
         return eventCrfDao;
     }
 
     private CRFVersionDAO getCrfVersionDao() {
         if (crfVersionDao == null) {
-            crfVersionDao = new CRFVersionDAO(ds);
+            crfVersionDao = crfVersionDaoFactory.apply(ds);
         }
         return crfVersionDao;
     }
 
     private ItemDataDAO getItemDataDao() {
         if (itemDataDao == null) {
-            itemDataDao = new ItemDataDAO(ds);
+            itemDataDao = itemDataDaoFactory.apply(ds);
         }
         return itemDataDao;
     }
 
     private ExpressionDAO getExpressionDao() {
         if (expressionDao == null) {
-            expressionDao = new ExpressionDAO(ds);
+            expressionDao = expressionDaoFactory.apply(ds);
         }
         return expressionDao;
     }

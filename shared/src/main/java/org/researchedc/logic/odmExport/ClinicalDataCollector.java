@@ -11,6 +11,7 @@ package org.researchedc.logic.odmExport;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -34,6 +35,7 @@ import org.researchedc.job.JobTerminationMonitor;
 public class ClinicalDataCollector extends OdmDataCollector {
     private LinkedHashMap<String, OdmClinicalDataBean> odmClinicalDataMap;
     private StudySubjectDAO studySubjectDao;
+    private Function<DataSource, StudySubjectDAO> studySubjectDaoFactory = StudySubjectDAO::new;
 
 
     /**
@@ -67,7 +69,7 @@ public class ClinicalDataCollector extends OdmDataCollector {
 
     private StudySubjectDAO getStudySubjectDao() {
         if (studySubjectDao == null) {
-            studySubjectDao = new StudySubjectDAO(this.ds);
+            studySubjectDao = studySubjectDaoFactory.apply(this.ds);
         }
         return studySubjectDao;
     }

@@ -30,6 +30,36 @@
 
 ---
 
+## 2026-05-28 — DaoProvider bridge removal
+
+- **模块:** `app`, `shared`, `web`
+- **原因:** `DaoProvider.getDao()` 调用点已经清零，继续删除未使用的静态 DAO bridge，避免后续代码回退到 legacy 访问模式。
+
+### 变更内容
+
+1. 删除 `shared/src/main/java/org/researchedc/dao/spi/DaoProvider.java`。
+2. 删除 `app/src/main/java/org/researchedc/config/DaoProviderInitializer.java`。
+3. 修正 `DynamicsMetadataService` 中与并发注释不一致的共享 `EventDefinitionCRFDAO` 缓存。
+4. 将 `HideCRFManager` 的临时 DAO 构造收敛到本地 helper。
+5. 修正 `GenerateExtractFileService` 的 ODM 委托，复用带依赖配置的 `OdmFileCreation` 实例。
+6. 新增 prototype-scoped extract service Spring wiring，替换 legacy export servlet/job 中的手工 service 构造。
+7. 将 `InstantOnChangeService` 的 `ItemFormMetadataDAO` 改为构造期依赖。
+8. 将 `DynamicsMetadataService` / `ExpressionService` / rule action validators 的 lazy DAO 构造改为 factory-backed collaborators。
+9. 将 `SubjectTransferValidator` 与 `RulesPostImportContainerService` 的 lazy DAO 构造改为 factory-backed collaborators。
+10. 将 rule runner、score/import/export/ODM/discrepancy-note legacy helpers 的 lazy DAO 构造改为 factory-backed collaborators。
+11. 将 legacy DAO 内部交叉构造 (`dao/rule`, `dao/managestudy`, `dao/extract`, `dao/submit`, `SessionManager`) 改为 factory-backed collaborators。
+12. 将部分 import/discrepancy/subject-transfer legacy helper 的 deprecated DAO 字段收窄为现有 SPI 接口。
+
+### 当前状态统计
+
+| 指标 | 数值 |
+|------|------|
+| `DaoProvider` / `DaoProviderInitializer` 引用 | 0 |
+| 直接 `new XxxDAO(...)` / `new StudyConfigService(...)` 匹配 | 0 |
+| Maven 编译 | ✅ `mvn -pl app -am compile -DskipTests` |
+
+---
+
 ## 2026-05-27 — Legacy DAO 构造迁移进展
 
 - **模块:** `shared`, `web`, `ws`, `app`
@@ -55,7 +85,7 @@
 | 指标 | 数值 |
 |------|------|
 | `DaoProvider.getDao()` | 0 |
-| 直接 `new XxxDAO(...)` / `new StudyConfigService(...)` 匹配 | 215 |
+| 直接 `new XxxDAO(...)` / `new StudyConfigService(...)` 匹配 | 当时 215；2026-05-28 已清零 |
 | Maven 编译 | ✅ `mvn -pl app -am compile -DskipTests` |
 
 ---
@@ -118,14 +148,14 @@
 | 前端 ESLint | ✅ 0 errors |
 | 问卷服务 pytest | ✅ 31/31 通过 |
 | Java 模块测试文件 | 22 个测试文件 (~150 tests) |
-| Spring Modulith 模块 | 16 个 (244 Java 文件) |
+| Spring Modulith 模块 | 17 个 (~250 Java 文件) |
 | shared 模块 | 770 Java 文件 (DAO 169, Domain 166, Bean 253, Service 60, Logic 57) |
 | web 模块 | 484 Java + 419 JSP |
 | ws 模块 | 75 Java 文件 |
 | frontend | 94 TypeScript/TSX 文件 |
 | questionnaire-service | 74 Python 文件 |
 | Liquibase 迁移 | 193 个 XML 文件 |
-| Docker Compose | dev/test/prod 三层 |
+| 部署方式 | Bare deploy only (`deploy.sh`) |
 | GitHub Workflows | 5 个 CI 工作流 |
 
 ### 文档完整性
@@ -406,7 +436,7 @@
 - **Celery 异步任务**: 导出 + 过期 token 自动清理
 - **MinIO 存储**: 导出文件上传到对象存储
 - **事件 Webhook**: `randomization-completed` 和 `visit-started` 端点用于 Java 后端联动
-- **Docker Compose**: API + Worker + PostgreSQL + Redis + MinIO
+- **部署:** 当前统一由根目录 `deploy.sh` bare host 流程启动；最初的 Docker Compose 方案已在 2026-05-27 删除
 - **数据库迁移**: Alembic 初始迁移 (7 张表)
 
 ### 前端 (React 19) — 8 个新页面
@@ -424,7 +454,7 @@
 - TypeScript `typecheck`: ✅ 0 errors
 - `pnpm build`: ✅ (chunk size warning 非阻断)
 - E2E API (模板 → 版本 → 发布 → 分配): ✅ 全部 HTTP 200/201
-- Docker Compose (PostgreSQL + Redis): ✅ 启动/迁移/停止正常
+- Bare deploy / API E2E: ✅ 启动/迁移/接口验证正常
 
 ---
 
@@ -510,7 +540,7 @@
 ### Milestone 9: 性能优化与可观测性
 - Micrometer Prometheus registry 集成
 - `/actuator/prometheus` 端点启用
-- Prometheus + Grafana Docker Compose 生产部署配置
+- Prometheus + Grafana bare host/reverse proxy 观测配置
 - Prometheus 抓取配置 + Grafana 自动配置
 
 ### Milestone 10: 后续升级评估

@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -48,6 +49,12 @@ public class DiscrepancyNoteDAO extends AuditableEntityDAO implements IDiscrepan
     // only applies to functions which return a single bean
     private boolean fetchMapping = false;
     private UserAccountDAO userAccountDao;
+    private static final Function<DataSource, SubjectDAO> SUBJECT_DAO_FACTORY = SubjectDAO::new;
+    private static final Function<DataSource, StudySubjectDAO> STUDY_SUBJECT_DAO_FACTORY = StudySubjectDAO::new;
+    private static final Function<DataSource, EventCRFDAO> EVENT_CRF_DAO_FACTORY = EventCRFDAO::new;
+    private static final Function<DataSource, StudyEventDAO> STUDY_EVENT_DAO_FACTORY = StudyEventDAO::new;
+    private static final Function<DataSource, ItemDataDAO> ITEM_DATA_DAO_FACTORY = ItemDataDAO::new;
+    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
 
     /**
      * @return Returns the fetchMapping.
@@ -1882,15 +1889,15 @@ public class DiscrepancyNoteDAO extends AuditableEntityDAO implements IDiscrepan
     public static AuditableEntityDAO getAEDAO(DiscrepancyNoteBean note, DataSource ds) {
         String entityType = note.getEntityType();
         if ("subject".equalsIgnoreCase(entityType)) {
-            return new SubjectDAO(ds);
+            return SUBJECT_DAO_FACTORY.apply(ds);
         } else if ("studySub".equalsIgnoreCase(entityType)) {
-            return new StudySubjectDAO(ds);
+            return STUDY_SUBJECT_DAO_FACTORY.apply(ds);
         } else if ("eventCrf".equalsIgnoreCase(entityType)) {
-            return new EventCRFDAO(ds);
+            return EVENT_CRF_DAO_FACTORY.apply(ds);
         } else if ("studyEvent".equalsIgnoreCase(entityType)) {
-            return new StudyEventDAO(ds);
+            return STUDY_EVENT_DAO_FACTORY.apply(ds);
         } else if ("itemData".equalsIgnoreCase(entityType)) {
-            return new ItemDataDAO(ds);
+            return ITEM_DATA_DAO_FACTORY.apply(ds);
         }
 
         return null;
@@ -2142,7 +2149,7 @@ public class DiscrepancyNoteDAO extends AuditableEntityDAO implements IDiscrepan
 
     private UserAccountDAO getUserAccountDao() {
         if (userAccountDao == null) {
-            userAccountDao = new UserAccountDAO(ds);
+            userAccountDao = userAccountDaoFactory.apply(ds);
         }
         return userAccountDao;
     }

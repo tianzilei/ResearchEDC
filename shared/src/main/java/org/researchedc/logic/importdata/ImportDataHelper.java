@@ -15,10 +15,13 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.core.SessionManager;
 import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.SubjectDAO;
@@ -28,6 +31,9 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.function.Function;
+
+import javax.sql.DataSource;
 
 /**
  * ImportDataHelper the entire focus of this piece of code is to generate the
@@ -43,13 +49,44 @@ public class ImportDataHelper {
     protected SessionManager sm;
     protected UserAccountBean ub;
     private EventCRFDAO eventCrfDao;
-    private StudyDAO studyDao;
-    private StudySubjectDAO studySubjectDao;
+    private IStudyDAO studyDao;
+    private IStudySubjectDAO studySubjectDao;
     private StudyEventDefinitionDAO studyEventDefinitionDao;
     private CRFVersionDAO crfVersionDao;
     private StudyEventDAO studyEventDao;
     private CRFDAO crfDao;
-    private SubjectDAO subjectDao;
+    private ISubjectDAO subjectDao;
+    private final Function<DataSource, EventCRFDAO> eventCrfDaoFactory;
+    private final Function<DataSource, IStudyDAO> studyDaoFactory;
+    private final Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory;
+    private final Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
+    private final Function<DataSource, CRFVersionDAO> crfVersionDaoFactory;
+    private final Function<DataSource, StudyEventDAO> studyEventDaoFactory;
+    private final Function<DataSource, CRFDAO> crfDaoFactory;
+    private final Function<DataSource, ISubjectDAO> subjectDaoFactory;
+
+    public ImportDataHelper() {
+        this(EventCRFDAO::new, StudyDAO::new, StudySubjectDAO::new, StudyEventDefinitionDAO::new,
+                CRFVersionDAO::new, StudyEventDAO::new, CRFDAO::new, SubjectDAO::new);
+    }
+
+    ImportDataHelper(Function<DataSource, EventCRFDAO> eventCrfDaoFactory,
+            Function<DataSource, IStudyDAO> studyDaoFactory,
+            Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory,
+            Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory,
+            Function<DataSource, CRFVersionDAO> crfVersionDaoFactory,
+            Function<DataSource, StudyEventDAO> studyEventDaoFactory,
+            Function<DataSource, CRFDAO> crfDaoFactory,
+            Function<DataSource, ISubjectDAO> subjectDaoFactory) {
+        this.eventCrfDaoFactory = eventCrfDaoFactory;
+        this.studyDaoFactory = studyDaoFactory;
+        this.studySubjectDaoFactory = studySubjectDaoFactory;
+        this.studyEventDefinitionDaoFactory = studyEventDefinitionDaoFactory;
+        this.crfVersionDaoFactory = crfVersionDaoFactory;
+        this.studyEventDaoFactory = studyEventDaoFactory;
+        this.crfDaoFactory = crfDaoFactory;
+        this.subjectDaoFactory = subjectDaoFactory;
+    }
 
     public void setSessionManager(SessionManager sm) {
         this.sm = sm;
@@ -243,56 +280,56 @@ public class ImportDataHelper {
 
     private EventCRFDAO getEventCrfDao() {
         if (eventCrfDao == null) {
-            eventCrfDao = new EventCRFDAO(sm.getDataSource());
+            eventCrfDao = eventCrfDaoFactory.apply(sm.getDataSource());
         }
         return eventCrfDao;
     }
 
-    private StudyDAO getStudyDao() {
+    private IStudyDAO getStudyDao() {
         if (studyDao == null) {
-            studyDao = new StudyDAO(sm.getDataSource());
+            studyDao = studyDaoFactory.apply(sm.getDataSource());
         }
         return studyDao;
     }
 
-    private StudySubjectDAO getStudySubjectDao() {
+    private IStudySubjectDAO getStudySubjectDao() {
         if (studySubjectDao == null) {
-            studySubjectDao = new StudySubjectDAO(sm.getDataSource());
+            studySubjectDao = studySubjectDaoFactory.apply(sm.getDataSource());
         }
         return studySubjectDao;
     }
 
     private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
         if (studyEventDefinitionDao == null) {
-            studyEventDefinitionDao = new StudyEventDefinitionDAO(sm.getDataSource());
+            studyEventDefinitionDao = studyEventDefinitionDaoFactory.apply(sm.getDataSource());
         }
         return studyEventDefinitionDao;
     }
 
     private CRFVersionDAO getCrfVersionDao() {
         if (crfVersionDao == null) {
-            crfVersionDao = new CRFVersionDAO(sm.getDataSource());
+            crfVersionDao = crfVersionDaoFactory.apply(sm.getDataSource());
         }
         return crfVersionDao;
     }
 
     private StudyEventDAO getStudyEventDao() {
         if (studyEventDao == null) {
-            studyEventDao = new StudyEventDAO(sm.getDataSource());
+            studyEventDao = studyEventDaoFactory.apply(sm.getDataSource());
         }
         return studyEventDao;
     }
 
     private CRFDAO getCrfDao() {
         if (crfDao == null) {
-            crfDao = new CRFDAO(sm.getDataSource());
+            crfDao = crfDaoFactory.apply(sm.getDataSource());
         }
         return crfDao;
     }
 
-    private SubjectDAO getSubjectDao() {
+    private ISubjectDAO getSubjectDao() {
         if (subjectDao == null) {
-            subjectDao = new SubjectDAO(sm.getDataSource());
+            subjectDao = subjectDaoFactory.apply(sm.getDataSource());
         }
         return subjectDao;
     }

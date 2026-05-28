@@ -69,6 +69,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,17 +96,23 @@ public class RulesPostImportContainerService {
     private RandomizeActionValidator randomizeActionValidator;
     private StudyGroupClassDAO studyGroupClassDao;
     private StudyEventDefinitionDAO studyEventDefinitionDao;
+    private final Function<DataSource, StudyGroupClassDAO> studyGroupClassDaoFactory;
+    private final Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
     ResourceBundle respage;
 
     public RulesPostImportContainerService(DataSource ds, StudyBean currentStudy) {
         oidGenerator = new GenericOidGenerator();
         this.ds = ds;
         this.currentStudy = currentStudy;
+        this.studyGroupClassDaoFactory = StudyGroupClassDAO::new;
+        this.studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
     }
 
     public RulesPostImportContainerService(DataSource ds) {
         oidGenerator = new GenericOidGenerator();
         this.ds = ds;
+        this.studyGroupClassDaoFactory = StudyGroupClassDAO::new;
+        this.studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
     }
 
     public RulesPostImportContainer validateRuleSetRuleDefs(RulesPostImportContainer importContainer, RuleSetRuleBean ruleSetRuleForm) {
@@ -936,14 +943,14 @@ public class RulesPostImportContainerService {
 
     private StudyGroupClassDAO getStudyGroupClassDao() {
         if (studyGroupClassDao == null) {
-            studyGroupClassDao = new StudyGroupClassDAO(ds);
+            studyGroupClassDao = studyGroupClassDaoFactory.apply(ds);
         }
         return studyGroupClassDao;
     }
 
     private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
         if (studyEventDefinitionDao == null) {
-            studyEventDefinitionDao = new StudyEventDefinitionDAO(ds);
+            studyEventDefinitionDao = studyEventDefinitionDaoFactory.apply(ds);
         }
         return studyEventDefinitionDao;
     }

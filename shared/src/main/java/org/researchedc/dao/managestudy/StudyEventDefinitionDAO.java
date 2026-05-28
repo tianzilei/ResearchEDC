@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -34,6 +35,7 @@ import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 
 public class StudyEventDefinitionDAO<K extends String,V extends ArrayList> extends AuditableEntityDAO implements IStudyEventDefinitionDAO {
     private StudyDAO studyDao;
+    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
 
     private void setQueryNames() {
         findAllByStudyName = "findAllByStudy";
@@ -486,7 +488,7 @@ public class StudyEventDefinitionDAO<K extends String,V extends ArrayList> exten
 
     private StudyDAO getStudyDao() {
         if (studyDao == null) {
-            studyDao = new StudyDAO(this.getDs());
+            studyDao = studyDaoFactory.apply(this.getDs());
         }
         return studyDao;
     }

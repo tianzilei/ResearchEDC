@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -50,6 +51,10 @@ public class MetadataUnit extends OdmUnit {
     private OdmExtractDAO odmExtractDao;
     private StudyConfigService studyConfigService;
     private StudyParameterValueDAO studyParameterValueDao;
+    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
+    private Function<DataSource, OdmExtractDAO> odmExtractDaoFactory = OdmExtractDAO::new;
+    private Function<DataSource, StudyConfigService> studyConfigServiceFactory = StudyConfigService::new;
+    private Function<DataSource, StudyParameterValueDAO> studyParameterValueDaoFactory = StudyParameterValueDAO::new;
 
     public static final String FAKE_STUDY_NAME ="OC_FORM_LIB_STUDY";
     public static final String FAKE_STUDY_OID = "OC_FORM_LIB";
@@ -261,28 +266,28 @@ public class MetadataUnit extends OdmUnit {
 
     private StudyDAO getStudyDao() {
         if (studyDao == null) {
-            studyDao = new StudyDAO(ds);
+            studyDao = studyDaoFactory.apply(ds);
         }
         return studyDao;
     }
 
     private OdmExtractDAO getOdmExtractDao() {
         if (odmExtractDao == null) {
-            odmExtractDao = new OdmExtractDAO(ds);
+            odmExtractDao = odmExtractDaoFactory.apply(ds);
         }
         return odmExtractDao;
     }
 
     private StudyConfigService getStudyConfigService() {
         if (studyConfigService == null) {
-            studyConfigService = new StudyConfigService(ds);
+            studyConfigService = studyConfigServiceFactory.apply(ds);
         }
         return studyConfigService;
     }
 
     private StudyParameterValueDAO getStudyParameterValueDao() {
         if (studyParameterValueDao == null) {
-            studyParameterValueDao = new StudyParameterValueDAO(ds);
+            studyParameterValueDao = studyParameterValueDaoFactory.apply(ds);
         }
         return studyParameterValueDao;
     }

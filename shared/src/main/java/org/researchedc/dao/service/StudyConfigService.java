@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -28,6 +29,8 @@ public class StudyConfigService {
     private DataSource ds;
     private StudyDAO studyDao;
     private StudyParameterValueDAO studyParameterValueDao;
+    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
+    private Function<DataSource, StudyParameterValueDAO> studyParameterValueDaoFactory = StudyParameterValueDAO::new;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     public StudyConfigService(DataSource ds) {
@@ -269,14 +272,14 @@ public class StudyConfigService {
 
     private StudyDAO getStudyDao() {
         if (studyDao == null) {
-            studyDao = new StudyDAO(ds);
+            studyDao = studyDaoFactory.apply(ds);
         }
         return studyDao;
     }
 
     private StudyParameterValueDAO getStudyParameterValueDao() {
         if (studyParameterValueDao == null) {
-            studyParameterValueDao = new StudyParameterValueDAO(ds);
+            studyParameterValueDao = studyParameterValueDaoFactory.apply(ds);
         }
         return studyParameterValueDao;
     }

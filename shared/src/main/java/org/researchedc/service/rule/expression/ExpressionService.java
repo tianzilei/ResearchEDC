@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -101,6 +102,18 @@ public class ExpressionService {
     private StudyEventDAO studyEventDao;
     private StudySubjectDAO studySubjectDao;
     private ItemFormMetadataDAO itemFormMetadataDao;
+    private Function<DataSource, ItemDAO> itemDaoFactory;
+    private Function<DataSource, ItemDataDAO> itemDataDaoFactory;
+    private Function<DataSource, CRFVersionDAO> crfVersionDaoFactory;
+    private Function<DataSource, CRFDAO> crfDaoFactory;
+    private Function<DataSource, ItemGroupDAO> itemGroupDaoFactory;
+    private Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory;
+    private Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory;
+    private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
+    private Function<DataSource, StudyEventDAO> studyEventDaoFactory;
+    private Function<DataSource, StudySubjectDAO> studySubjectDaoFactory;
+    private Function<DataSource, EventCRFDAO> eventCrfDaoFactory;
+    private Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
     public final static String STARTDATE = ".STARTDATE";
     public final static String STATUS = ".STATUS";
     public static final String STUDY_EVENT_OID_START_KEY = "SE_";
@@ -116,14 +129,46 @@ public class ExpressionService {
 
     @Autowired
     public ExpressionService(DataSource ds) {
-        init(ds, null);
+        init(ds, null, ItemDAO::new, ItemDataDAO::new, CRFVersionDAO::new,
+                CRFDAO::new, ItemGroupDAO::new, ItemGroupMetadataDAO::new,
+                EventDefinitionCRFDAO::new, StudyEventDefinitionDAO::new,
+                StudyEventDAO::new, StudySubjectDAO::new, EventCRFDAO::new,
+                ItemFormMetadataDAO::new);
     }
 
     public ExpressionService(ExpressionObjectWrapper expressionWrapper) {
-        init(expressionWrapper.getDs(), expressionWrapper);
+        init(expressionWrapper.getDs(), expressionWrapper, ItemDAO::new, ItemDataDAO::new,
+                CRFVersionDAO::new, CRFDAO::new, ItemGroupDAO::new,
+                ItemGroupMetadataDAO::new, EventDefinitionCRFDAO::new,
+                StudyEventDefinitionDAO::new, StudyEventDAO::new, StudySubjectDAO::new,
+                EventCRFDAO::new, ItemFormMetadataDAO::new);
     }
 
-    private void init(DataSource ds, ExpressionObjectWrapper expressionWrapper) {
+    private void init(DataSource ds, ExpressionObjectWrapper expressionWrapper,
+            Function<DataSource, ItemDAO> itemDaoFactory,
+            Function<DataSource, ItemDataDAO> itemDataDaoFactory,
+            Function<DataSource, CRFVersionDAO> crfVersionDaoFactory,
+            Function<DataSource, CRFDAO> crfDaoFactory,
+            Function<DataSource, ItemGroupDAO> itemGroupDaoFactory,
+            Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory,
+            Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory,
+            Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory,
+            Function<DataSource, StudyEventDAO> studyEventDaoFactory,
+            Function<DataSource, StudySubjectDAO> studySubjectDaoFactory,
+            Function<DataSource, EventCRFDAO> eventCrfDaoFactory,
+            Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory) {
+        this.itemDaoFactory = itemDaoFactory;
+        this.itemDataDaoFactory = itemDataDaoFactory;
+        this.crfVersionDaoFactory = crfVersionDaoFactory;
+        this.crfDaoFactory = crfDaoFactory;
+        this.itemGroupDaoFactory = itemGroupDaoFactory;
+        this.itemGroupMetadataDaoFactory = itemGroupMetadataDaoFactory;
+        this.eventDefinitionCrfDaoFactory = eventDefinitionCrfDaoFactory;
+        this.studyEventDefinitionDaoFactory = studyEventDefinitionDaoFactory;
+        this.studyEventDaoFactory = studyEventDaoFactory;
+        this.studySubjectDaoFactory = studySubjectDaoFactory;
+        this.eventCrfDaoFactory = eventCrfDaoFactory;
+        this.itemFormMetadataDaoFactory = itemFormMetadataDaoFactory;
         pattern = new Pattern[4];
         pattern[3] = Pattern.compile(STUDY_EVENT_DEFINITION_OR_ITEM_GROUP_PATTERN); // STUDY_EVENT_DEFINITION_OID
                                                                                     // +
@@ -1458,77 +1503,77 @@ public class ExpressionService {
 
     private ItemDAO getItemDao() {
         if (itemDao == null) {
-            itemDao = new ItemDAO(ds);
+            itemDao = itemDaoFactory.apply(ds);
         }
         return itemDao;
     }
 
     private ItemDataDAO getItemDataDao() {
         if (itemDataDao == null) {
-            itemDataDao = new ItemDataDAO(ds);
+            itemDataDao = itemDataDaoFactory.apply(ds);
         }
         return itemDataDao;
     }
 
     private CRFVersionDAO getCrfVersionDao() {
         if (crfVersionDao == null) {
-            crfVersionDao = new CRFVersionDAO(ds);
+            crfVersionDao = crfVersionDaoFactory.apply(ds);
         }
         return crfVersionDao;
     }
 
     private CRFDAO getCrfDao() {
         if (crfDao == null) {
-            crfDao = new CRFDAO(ds);
+            crfDao = crfDaoFactory.apply(ds);
         }
         return crfDao;
     }
 
     private ItemGroupDAO getItemGroupDao() {
         if (itemGroupDao == null) {
-            itemGroupDao = new ItemGroupDAO(ds);
+            itemGroupDao = itemGroupDaoFactory.apply(ds);
         }
         return itemGroupDao;
     }
 
     private ItemGroupMetadataDAO getItemGroupMetadataDao() {
         if (itemGroupMetadataDao == null) {
-            itemGroupMetadataDao = new ItemGroupMetadataDAO(ds);
+            itemGroupMetadataDao = itemGroupMetadataDaoFactory.apply(ds);
         }
         return itemGroupMetadataDao;
     }
 
     private EventDefinitionCRFDAO getEventDefinitionCRFDao() {
         if (eventDefinitionCRFDao == null) {
-            eventDefinitionCRFDao = new EventDefinitionCRFDAO(ds);
+            eventDefinitionCRFDao = eventDefinitionCrfDaoFactory.apply(ds);
         }
         return eventDefinitionCRFDao;
     }
 
     private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
         if (studyEventDefinitionDao == null) {
-            studyEventDefinitionDao = new StudyEventDefinitionDAO(ds);
+            studyEventDefinitionDao = studyEventDefinitionDaoFactory.apply(ds);
         }
         return studyEventDefinitionDao;
     }
 
     private StudyEventDAO getStudyEventDao() {
         if (studyEventDao == null) {
-            studyEventDao = new StudyEventDAO(ds);
+            studyEventDao = studyEventDaoFactory.apply(ds);
         }
         return studyEventDao;
     }
 
     private StudySubjectDAO getStudySubjectDao() {
         if (studySubjectDao == null) {
-            studySubjectDao = new StudySubjectDAO(ds);
+            studySubjectDao = studySubjectDaoFactory.apply(ds);
         }
         return studySubjectDao;
     }
 
     private EventCRFDAO getEventCRFDao() {
         if (eventCRFDao == null) {
-            eventCRFDao = new EventCRFDAO(ds);
+            eventCRFDao = eventCrfDaoFactory.apply(ds);
         }
         return eventCRFDao;
     }
@@ -1539,7 +1584,7 @@ public class ExpressionService {
 
     public ItemFormMetadataDAO getItemFormMetadataDao() {
         if (itemFormMetadataDao == null) {
-            itemFormMetadataDao = new ItemFormMetadataDAO(ds);
+            itemFormMetadataDao = itemFormMetadataDaoFactory.apply(ds);
         }
         return itemFormMetadataDao;
     }

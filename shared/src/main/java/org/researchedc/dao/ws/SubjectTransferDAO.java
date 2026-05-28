@@ -25,12 +25,14 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
 public class SubjectTransferDAO extends EntityDAO {
 
     UserAccountDAO userAccountDao;
+    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
 
     public SubjectTransferDAO(DataSource ds) {
         super(ds);
@@ -61,7 +63,7 @@ public class SubjectTransferDAO extends EntityDAO {
 
     private UserAccountDAO getUserAccountDao() {
         if (userAccountDao == null) {
-            userAccountDao = new UserAccountDAO(ds);
+            userAccountDao = userAccountDaoFactory.apply(ds);
         }
         return userAccountDao;
     }

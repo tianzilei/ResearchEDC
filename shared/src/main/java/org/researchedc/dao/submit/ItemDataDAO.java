@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -49,6 +50,7 @@ public class ItemDataDAO extends AuditableEntityDAO implements org.researchedc.d
 
     boolean formatDates = true;
     private ItemDAO itemDao;
+    private Function<DataSource, ItemDAO> itemDaoFactory = ItemDAO::new;
 
     // YW 12-06-2007 <<!!! Be careful when there is item with data-type as
     // "Date".
@@ -441,7 +443,7 @@ public class ItemDataDAO extends AuditableEntityDAO implements org.researchedc.d
 
     private ItemDAO getItemDao() {
         if (itemDao == null) {
-            itemDao = new ItemDAO(this.getDs());
+            itemDao = itemDaoFactory.apply(this.getDs());
         }
         return itemDao;
     }

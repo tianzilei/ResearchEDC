@@ -56,7 +56,7 @@ shared/src/main/resources/
 - **DAOs:** `*DAO` suffix, extend `EntityDAO<K extends EntityBean>` or `AbstractDomainDao`
 - **Services:** `@Service` + `@Transactional` for business logic orchestration
 - **Entities:** Hibernate `@Entity` + XML mapping files in `domain/datamap/` (~62 entities)
-- **DAO access:** Use `DaoProvider.getDao(XxxDAO.class)` in web/ws code; `@Autowired` in Spring beans
+- **DAO access:** Prefer Spring-injected DAO/SPI collaborators in managed beans; keep remaining legacy manual construction isolated behind local adapters/helpers until each path is strangulated.
 - **Package:** All classes in `org.researchedc.*` (migrated from `org.akaza.openclinica`)
 
 ## TESTING
@@ -78,7 +78,7 @@ test methods awaiting reactivation.
 | SPI interfaces | ✅ 29 interfaces for DI (replaces direct DAO class references) |
 | Liquibase migrations | ✅ ~193 XML files, versioned from 3.x through 3.18 |
 | Strangulation target | 🔶 Active — new code goes to `app/module/` |
-| DAO deletion blocked | 🔶 ~1,100 `DaoProvider.getDao()` call sites in web/ws still reference concrete DAO classes |
+| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0; remaining blockers are concrete DAO type dependencies and module extraction |
 
 ## ANTI-PATTERNS
 

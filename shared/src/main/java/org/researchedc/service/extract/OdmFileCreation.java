@@ -62,6 +62,18 @@ public class OdmFileCreation {
     private static File files[]=null;
     private static List<File> oldFiles = new LinkedList<File>();
 
+    public OdmFileCreation() {
+    }
+
+    public OdmFileCreation(DataSource dataSource, CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao,
+            DatasetDAO datasetDao, ArchivedDatasetFileDAO archivedDatasetFileDao) {
+        this.dataSource = dataSource;
+        this.coreResources = coreResources;
+        this.ruleSetRuleDao = ruleSetRuleDao;
+        this.datasetDao = datasetDao;
+        this.archivedDatasetFileDao = archivedDatasetFileDao;
+    }
+
     public HashMap<String,Integer> createODMFile(String odmVersion, long sysTimeBegin, String generalFileDir,
             DatasetBean datasetBean, StudyBean currentStudy, String generalFileDirCopy, ExtractBean eb,
             Integer currentStudyId, Integer parentStudyId, String studySubjectNumber, boolean zipped,
@@ -388,16 +400,10 @@ public class OdmFileCreation {
     }
 
     private DatasetDAO getDatasetDao() {
-        if (datasetDao == null) {
-            datasetDao = new DatasetDAO(dataSource);
-        }
         return datasetDao;
     }
 
     private ArchivedDatasetFileDAO getArchivedDatasetFileDao() {
-        if (archivedDatasetFileDao == null) {
-            archivedDatasetFileDao = new ArchivedDatasetFileDAO(dataSource);
-        }
         return archivedDatasetFileDao;
     }
 

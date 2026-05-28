@@ -9,7 +9,7 @@
 ## STRUCTURE
 
 ```
-web/src/main/java/org/akaza/openclinica/
+web/src/main/java/org/researchedc/
 ├── control/          # Servlets (MVC controllers)
 │   ├── admin/        # Admin functions
 │   ├── extract/      # Data extraction

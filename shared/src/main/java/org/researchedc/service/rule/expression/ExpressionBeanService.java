@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -56,6 +57,7 @@ public class ExpressionBeanService {
     Pattern[] ruleActionPattern;
     ExpressionBeanObjectWrapper expressionBeanWrapper;
     private StudySubjectDAO studySubjectDao;
+    private Function<DataSource, StudySubjectDAO> studySubjectDaoFactory;
 
     public static String STUDYEVENTKEY="SE";
 
@@ -70,18 +72,26 @@ public class ExpressionBeanService {
     private HashMap<String, ItemBean> items;
 
     public ExpressionBeanService(DataSource ds) {
-        init(ds, null);
+        init(ds, null, StudySubjectDAO::new);
     }
 
     public ExpressionBeanService(ExpressionBeanObjectWrapper expressionBeanWrapper) {
-        init(expressionBeanWrapper.getDs(), expressionBeanWrapper);
+        init(expressionBeanWrapper.getDs(), expressionBeanWrapper, StudySubjectDAO::new);
     }
 
-    
-    private void init(DataSource ds, ExpressionBeanObjectWrapper expressionBeanWrapper) {
+    public ExpressionBeanService(DataSource ds, StudySubjectDAO studySubjectDao) {
+        init(ds, null, dataSource -> studySubjectDao);
+    }
+
+    public ExpressionBeanService(ExpressionBeanObjectWrapper expressionBeanWrapper, StudySubjectDAO studySubjectDao) {
+        init(expressionBeanWrapper.getDs(), expressionBeanWrapper, dataSource -> studySubjectDao);
+    }
+    private void init(DataSource ds, ExpressionBeanObjectWrapper expressionBeanWrapper,
+            Function<DataSource, StudySubjectDAO> studySubjectDaoFactory) {
         //TODO add stuff here
         this.ds = ds;
         this.expressionBeanWrapper = expressionBeanWrapper;
+        this.studySubjectDaoFactory = studySubjectDaoFactory;
 
     }
 
@@ -154,7 +164,7 @@ public class ExpressionBeanService {
 
     private StudySubjectDAO getStudySubjectDao() {
         if (studySubjectDao == null) {
-            studySubjectDao = new StudySubjectDAO(ds);
+            studySubjectDao = studySubjectDaoFactory.apply(ds);
         }
         return studySubjectDao;
     }

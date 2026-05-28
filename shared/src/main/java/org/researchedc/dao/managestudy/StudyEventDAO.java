@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -52,9 +53,11 @@ public class StudyEventDAO extends AuditableEntityDAO implements IStudyEventDAO,
     
 	
 	private Observer observer;
-	// private DAODigester digester;
+    // private DAODigester digester;
     private CRFDAO crfDao;
     private CRFVersionDAO crfVersionDao;
+    private Function<DataSource, CRFDAO> crfDaoFactory = CRFDAO::new;
+    private Function<DataSource, CRFVersionDAO> crfVersionDaoFactory = CRFVersionDAO::new;
 
 	    private void setQueryNames() {
         findByPKAndStudyName = "findByPKAndStudy";
@@ -1293,14 +1296,14 @@ public class StudyEventDAO extends AuditableEntityDAO implements IStudyEventDAO,
 
     private CRFDAO getCrfDao() {
         if (crfDao == null) {
-            crfDao = new CRFDAO(this.ds);
+            crfDao = crfDaoFactory.apply(this.ds);
         }
         return crfDao;
     }
 
     private CRFVersionDAO getCrfVersionDao() {
         if (crfVersionDao == null) {
-            crfVersionDao = new CRFVersionDAO(this.ds);
+            crfVersionDao = crfVersionDaoFactory.apply(this.ds);
         }
         return crfVersionDao;
     }

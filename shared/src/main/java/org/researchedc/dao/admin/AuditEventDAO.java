@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -41,6 +42,9 @@ public class AuditEventDAO extends AuditableEntityDAO implements IAuditEventDAO 
     private StudyDAO studyDao;
     private SubjectDAO subjectDao;
     private UserAccountDAO userAccountDao;
+    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
+    private Function<DataSource, SubjectDAO> subjectDaoFactory = SubjectDAO::new;
+    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
 
     public AuditEventDAO(DataSource ds) {
         super(ds);
@@ -156,21 +160,21 @@ public class AuditEventDAO extends AuditableEntityDAO implements IAuditEventDAO 
 
     private StudyDAO getStudyDao() {
         if (studyDao == null) {
-            studyDao = new StudyDAO(this.ds);
+            studyDao = studyDaoFactory.apply(this.ds);
         }
         return studyDao;
     }
 
     private SubjectDAO getSubjectDao() {
         if (subjectDao == null) {
-            subjectDao = new SubjectDAO(this.ds);
+            subjectDao = subjectDaoFactory.apply(this.ds);
         }
         return subjectDao;
     }
 
     private UserAccountDAO getUserAccountDao() {
         if (userAccountDao == null) {
-            userAccountDao = new UserAccountDAO(this.ds);
+            userAccountDao = userAccountDaoFactory.apply(this.ds);
         }
         return userAccountDao;
     }

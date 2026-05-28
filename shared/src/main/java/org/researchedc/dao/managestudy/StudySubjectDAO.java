@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -43,6 +44,7 @@ public class StudySubjectDAO<K extends String,V extends ArrayList> extends Audit
 
     // private DAODigester digester;
     private SubjectGroupMapDAO subjectGroupMapDao;
+    private Function<DataSource, SubjectGroupMapDAO> subjectGroupMapDaoFactory = SubjectGroupMapDAO::new;
 
     public void setQueryNames() {
         findAllByStudyName = "findAllByStudy";
@@ -1349,7 +1351,7 @@ public class StudySubjectDAO<K extends String,V extends ArrayList> extends Audit
 
     private SubjectGroupMapDAO getSubjectGroupMapDao() {
         if (subjectGroupMapDao == null) {
-            subjectGroupMapDao = new SubjectGroupMapDAO(ds);
+            subjectGroupMapDao = subjectGroupMapDaoFactory.apply(ds);
         }
         return subjectGroupMapDao;
     }

@@ -12,6 +12,9 @@ import org.researchedc.core.SessionManager;
 import org.researchedc.dao.login.UserAccountDAO;
 
 import java.util.Date;
+import java.util.function.Function;
+
+import javax.sql.DataSource;
 
 /**
  * <P>
@@ -50,6 +53,7 @@ public class AuditableEntityBean extends EntityBean {
 
     // used to retrieve the owner and updater when needed
     protected UserAccountDAO udao;
+    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
 
     public AuditableEntityBean() {
         createdDate = new Date(0);
@@ -148,7 +152,7 @@ public class AuditableEntityBean extends EntityBean {
 
     private UserAccountDAO getUserAccountDao() {
         if (udao == null) {
-            udao = new UserAccountDAO(SessionManager.getStaticDataSource());
+            udao = userAccountDaoFactory.apply(SessionManager.getStaticDataSource());
         }
         return udao;
     }

@@ -11,6 +11,7 @@ import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -20,6 +21,10 @@ import javax.sql.DataSource;
  * "hidden." User: bruceperry Date: Feb 9, 2009
  */
 public class HideCRFManager {
+    private DataSource eventDefinitionCrfDataSource;
+    private EventDefinitionCRFDAO eventDefinitionCrfDao;
+    private Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory = EventDefinitionCRFDAO::new;
+
     public static org.researchedc.service.crfdata.HideCRFManager createHideCRFManager() {
         return new org.researchedc.service.crfdata.HideCRFManager();
     }
@@ -169,15 +174,25 @@ public class HideCRFManager {
         if (crfBeans == null || crfBeans.isEmpty()) {
             return newBeans;
         }
-        EventDefinitionCRFDAO eventDefinitionCRFDAO = new EventDefinitionCRFDAO(dataSource);
         EventDefinitionCRFBean tempBean = new EventDefinitionCRFBean();
         for (CRFBean crfBean : crfBeans) {
-            tempBean = eventDefinitionCRFDAO.findByStudyEventDefinitionIdAndCRFId(study, studyEventBean.getId(), crfBean.getId());
+            tempBean = getEventDefinitionCrfDao(dataSource).findByStudyEventDefinitionIdAndCRFId(study, studyEventBean.getId(), crfBean.getId());
             if (tempBean != null && !tempBean.isHideCrf()) {
                 newBeans.add(crfBean);
             }
         }
 
         return newBeans;
+    }
+
+    private EventDefinitionCRFDAO getEventDefinitionCrfDao(DataSource dataSource) {
+        if (eventDefinitionCrfDataSource != dataSource) {
+            eventDefinitionCrfDataSource = dataSource;
+            eventDefinitionCrfDao = null;
+        }
+        if (eventDefinitionCrfDao == null) {
+            eventDefinitionCrfDao = eventDefinitionCrfDaoFactory.apply(dataSource);
+        }
+        return eventDefinitionCrfDao;
     }
 }

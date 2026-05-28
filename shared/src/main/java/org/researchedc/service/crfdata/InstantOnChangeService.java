@@ -34,10 +34,11 @@ public class InstantOnChangeService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     DataSource dataSource;
-    private ItemFormMetadataDAO itemFormMetadataDao;
+    private final ItemFormMetadataDAO itemFormMetadataDao;
 
-    public InstantOnChangeService(DataSource dataSource) {
+    public InstantOnChangeService(DataSource dataSource, ItemFormMetadataDAO itemFormMetadataDao) {
         this.dataSource = dataSource;
+        this.itemFormMetadataDao = itemFormMetadataDao;
     }
 
     public boolean needRunInstantInSection(int sectionId) {
@@ -203,9 +204,6 @@ public class InstantOnChangeService {
 
 
     public ItemFormMetadataDAO getItemFormMetadataDAO() {
-        if (itemFormMetadataDao == null) {
-            itemFormMetadataDao = new ItemFormMetadataDAO(dataSource);
-        }
         return itemFormMetadataDao;
     }
 

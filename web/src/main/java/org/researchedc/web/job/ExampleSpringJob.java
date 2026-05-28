@@ -22,7 +22,6 @@ import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.DatasetDAO;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
@@ -92,8 +91,6 @@ public class ExampleSpringJob extends QuartzJobBean {
     private GenerateExtractFileService generateFileService;
     private UserAccountBean userBean;
     private JobDetailFactoryBean jobDetailFactoryBean;
-    private CoreResources coreResources;
-    private RuleSetRuleDao ruleSetRuleDao;
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
@@ -110,8 +107,6 @@ public class ExampleSpringJob extends QuartzJobBean {
         try {
             ApplicationContext appContext = (ApplicationContext) context.getScheduler().getContext().get("applicationContext");
             String studySubjectNumber = ((CoreResources) appContext.getBean("coreResources")).getField("extract.number");
-            coreResources = (CoreResources) appContext.getBean("coreResources");
-            ruleSetRuleDao = (RuleSetRuleDao) appContext.getBean("ruleSetRuleDao");
             dataSource = (DataSource) appContext.getBean("dataSource");
             mailSender = (OpenClinicaMailSender) appContext.getBean("openClinicaMailSender");
             IAuditEventDAO auditEventDAO = this.auditEventDao;
@@ -197,7 +192,7 @@ public class ExampleSpringJob extends QuartzJobBean {
                 userBean = (UserAccountBean) userAccountDAO.findByPK(userId);
                 // needs to also be captured by the servlet, tbh
                 // logger.debug("-- gen tab file 00");
-                generateFileService = new GenerateExtractFileService(dataSource, coreResources, ruleSetRuleDao);
+                generateFileService = appContext.getBean(GenerateExtractFileService.class);
 
                 // logger.debug("-- gen tab file 00");
 

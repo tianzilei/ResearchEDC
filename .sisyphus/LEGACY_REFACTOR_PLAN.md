@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-05-27 (Phase C resumed: `DaoProvider.getDao()` call sites are now 0 across app/web/ws/shared. Direct legacy DAO and `StudyConfigService` construction is reduced to 215 matches; DAO deletion remains blocked until those constructors and concrete DAO dependencies are removed.)
+> **Last updated:** 2026-05-28 (Phase C resumed: `DaoProvider.getDao()` call sites are now 0 across app/web/ws/shared. Direct legacy DAO and `StudyConfigService` construction is now 0 matches across shared/web/ws; DAO deletion remains blocked until concrete DAO dependencies are replaced by module-owned services.)
 > **Scope:** All remaining legacy code in `shared/`, `web/`, `ws/`
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -128,7 +128,7 @@ Modules communicate via:
 
 > **Status (2026-05-27):** Phase C is now complete for app/ module changes. All 28 SPI Impl wrapper files have been deleted. `DaoProvider.getDao()` has been fully removed from app/web/ws/shared call sites. Web/ws/base-controller and rule-runner paths now use injected DAO collaborators instead of the previous static provider bridge. 22 hardcoded userId=1 instances across 11 modulith controllers have been replaced with CurrentUserUtils JWT extraction. 7 new module test files have been written.
 >
-> **Remaining blocker:** The DAO `.java` files in `shared/` cannot be deleted because 215 direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches remain across legacy services, DAO internals, ODM/export/import logic, validators, and a few web/ws helpers. These must be migrated to injected collaborators or replaced by module-owned services before DAO deletion.
+> **Remaining blocker:** The direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches have been eliminated. The DAO `.java` files in `shared/` still cannot be deleted because legacy services, DAO internals, ODM/export/import logic, validators, and web/ws helpers still depend on concrete DAO types. These must be migrated to module-owned services or repository-backed ports before DAO deletion.
 >
 > **Completed in Sequence 18-19 (2026-05-23):**
 > - **DaoProvider** (`legacy-core/.../dao/spi/DaoProvider.java`): static Spring context bridge for legacy servlets/SOAP endpoints
@@ -150,8 +150,8 @@ Modules communicate via:
 > - **`mvn -pl app -am compile -DskipTests`** ✅
 >
 > **Next steps for DAO deletion:**
-> 1. Replace the remaining 215 direct legacy constructor matches with injected collaborators or module-owned services.
-> 2. Remove concrete DAO dependencies from legacy service constructors and helper factories where possible.
+> 1. Replace concrete DAO typed fields/parameters in legacy services and helpers with module-owned service ports.
+> 2. Move remaining DAO-heavy web/ws workflows behind Modulith APIs.
 > 3. Only then can the legacy DAO `.java` files be assessed for safe deletion.
 
 ### C0: Already Deleted (Safe Cleanup)
@@ -164,7 +164,7 @@ Modules communicate via:
 
 ### C1: DAO Files Still Present (Blocked by web/ws consumption)
 
-The following DAO `.java` files still exist in `shared/`. As of 2026-05-27, **0 `DaoProvider.getDao()` call sites remain** across app/web/ws/shared. The DAO files survive because direct `new XxxDAO(...)` / `new StudyConfigService(...)` construction and concrete DAO field dependencies remain in legacy services, DAO internals, ODM/export/import logic, validators, and a few web/ws helpers.
+The following DAO `.java` files still exist in `shared/`. As of 2026-05-28, **0 `DaoProvider.getDao()` call sites** and **0 direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches** remain across app/web/ws/shared. The DAO files survive because concrete DAO field/type dependencies remain in legacy services, DAO internals, ODM/export/import logic, validators, and a few web/ws helpers.
 
 | DAO File | SPI Wrapper | `new` eliminated | Can delete? |
 |----------|-------------|-------------------|-------------|
@@ -200,7 +200,7 @@ Before deleting any legacy DAO `.java` file, verify ALL of:
 - [x] **✅ `ModulithVerificationTest` passes** — Verified
 - [x] **✅ No Spring XML config references the deleted class** — 9 XML files deleted, remaining stubs are minimal
 - [x] **✅ `DaoProvider.getDao()` call sites migrated away** — 0 matches across app/web/ws/shared (2026-05-27)
-- [ ] **215 direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches eliminated** — BLOCKER
+- [x] **Direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches eliminated** — 0 matches across shared/web/ws (2026-05-28)
 - [ ] **3 `@Deprecated(forRemoval=true)` DAO classes removed** — StudyDAO, StudySubjectDAO, SubjectDAO (each has 100+ callers)
 
 ### C5: @Deprecated DAO Assessment (Plan 4)
@@ -209,12 +209,12 @@ Three DAO classes are marked `@Deprecated(since="3.18", forRemoval=true)`:
 
 | DAO | Direct constructor sites | DaoProvider.getDao() calls | Field declarations | Status |
 |-----|---------------------|---------------------------|-------------------|--------|
-| **StudyDAO** | Still active in shared/web/ws legacy paths | 0 | many typed fields | ❌ Cannot delete |
-| **StudySubjectDAO** | Still active in shared/web/ws legacy paths | 0 | many typed fields | ❌ Cannot delete |
-| **SubjectDAO** | Still active in shared/ws legacy paths | 0 | typed fields remain | ❌ Cannot delete |
+| **StudyDAO** | 0 direct constructor matches | 0 | many typed fields | ❌ Cannot delete |
+| **StudySubjectDAO** | 0 direct constructor matches | 0 | many typed fields | ❌ Cannot delete |
+| **SubjectDAO** | 0 direct constructor matches | 0 | typed fields remain | ❌ Cannot delete |
 
-**Total:** 215 direct legacy constructor matches remain across app/web/ws/shared.
-**All three must remain** until the JSP strangler and servlet migration are largely complete.
+**Total:** 0 direct legacy constructor matches remain across app/web/ws/shared.
+**All three must remain** until concrete DAO field/type dependencies and the JSP strangler migration are largely complete.
 
 ---
 
@@ -362,7 +362,7 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 |-------|-------------|-----------------|--------------|
 | A1-A5 | Write operations | ✅ COMPLETE | None |
 | B1-B3 | Schema ownership | ✅ Documentation complete. Wave 0 (schema mismatches) done | Phase A complete |
-| C1-C4 | Legacy code deletion | 🔶 Blocked | **28 SPI Impl wrappers deleted, 22 hardcoded userId=1 fixed, 7 module tests added, `DaoProvider.getDao()` references reduced to 0. Remaining: 215 direct legacy constructor matches must be migrated before DAO .java deletion** |
+| C1-C4 | Legacy code deletion | 🔶 Blocked | **28 SPI Impl wrappers deleted, 22 hardcoded userId=1 fixed, 7 module tests added, `DaoProvider.getDao()` references reduced to 0, direct legacy constructor matches reduced to 0. Remaining: concrete DAO dependencies must be replaced before DAO .java deletion** |
 | D1-D2 | Config migration | ✅ Complete | 11 XML → Java Config, dead XML stubs cleanup (2026-05-23) |
 | E1-E2 | Auth unification | ✅ Complete | Dual SecurityFilterChain (JWT API + OIDC web) |
 | F1-F2 | SOAP adapters | ✅ Infrastructure built | 3 adapters created; SOAP DAO access is now partly injection-based, with no remaining `DaoProvider.getDao()` calls |

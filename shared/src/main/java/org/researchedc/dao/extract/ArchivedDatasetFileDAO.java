@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -33,6 +34,7 @@ import javax.sql.DataSource;
 public class ArchivedDatasetFileDAO extends AuditableEntityDAO {
     private DAODigester digester;
     private UserAccountDAO userAccountDao;
+    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
 
     public ArchivedDatasetFileDAO(DataSource ds) {
         super(ds);
@@ -122,7 +124,7 @@ public class ArchivedDatasetFileDAO extends AuditableEntityDAO {
 
     private UserAccountDAO getUserAccountDao() {
         if (userAccountDao == null) {
-            userAccountDao = new UserAccountDAO(this.ds);
+            userAccountDao = userAccountDaoFactory.apply(this.ds);
         }
         return userAccountDao;
     }

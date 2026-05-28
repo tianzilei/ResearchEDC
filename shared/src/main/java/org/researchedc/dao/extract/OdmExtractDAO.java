@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -100,6 +101,10 @@ public class OdmExtractDAO extends DatasetDAO {
     private SectionDAO sectionDao;
     private StudyDAO studyDao;
     private StudyParameterValueDAO studyParameterValueDao;
+    private Function<DataSource, CRFDAO<String, ArrayList>> crfDaoFactory = CRFDAO::new;
+    private Function<DataSource, SectionDAO> sectionDaoFactory = SectionDAO::new;
+    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
+    private Function<DataSource, StudyParameterValueDAO> studyParameterValueDaoFactory = StudyParameterValueDAO::new;
 	
 
     public OdmExtractDAO(DataSource ds) {
@@ -3156,28 +3161,28 @@ private void fetchItemGroupMetaData(MetaDataVersionBean metadata,String cvIds, S
 
     private CRFDAO<String, ArrayList> getCrfDao() {
         if (crfDao == null) {
-            crfDao = new CRFDAO<String, ArrayList>(this.ds);
+            crfDao = crfDaoFactory.apply(this.ds);
         }
         return crfDao;
     }
 
     private SectionDAO getSectionDao() {
         if (sectionDao == null) {
-            sectionDao = new SectionDAO(this.ds);
+            sectionDao = sectionDaoFactory.apply(this.ds);
         }
         return sectionDao;
     }
 
     private StudyDAO getStudyDao() {
         if (studyDao == null) {
-            studyDao = new StudyDAO(this.ds);
+            studyDao = studyDaoFactory.apply(this.ds);
         }
         return studyDao;
     }
 
     private StudyParameterValueDAO getStudyParameterValueDao() {
         if (studyParameterValueDao == null) {
-            studyParameterValueDao = new StudyParameterValueDAO(this.ds);
+            studyParameterValueDao = studyParameterValueDaoFactory.apply(this.ds);
         }
         return studyParameterValueDao;
     }

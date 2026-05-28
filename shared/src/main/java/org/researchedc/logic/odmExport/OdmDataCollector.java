@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -41,6 +42,7 @@ public abstract class OdmDataCollector {
     // key is study/site oc_oid.
     private LinkedHashMap<String, OdmStudyBase> studyBaseMap;
     private StudyDAO studyDao;
+    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
     // 0: one Study Element; 1: one parent study and its sites
     private int category;
 
@@ -182,7 +184,7 @@ public abstract class OdmDataCollector {
 
     private StudyDAO getStudyDao() {
         if (studyDao == null) {
-            studyDao = new StudyDAO(ds);
+            studyDao = studyDaoFactory.apply(ds);
         }
         return studyDao;
     }

@@ -9,24 +9,33 @@ import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
 public class SubjectTransferValidator implements Validator {
 
     DataSource dataSource;
-    StudyDAO studyDAO;
-    StudySubjectDAO studySubjectDAO;
+    IStudyDAO studyDAO;
+    IStudySubjectDAO studySubjectDAO;
     StudyParameterValueDAO studyParameterValueDAO;
+    private final Function<DataSource, IStudyDAO> studyDaoFactory;
+    private final Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory;
+    private final Function<DataSource, StudyParameterValueDAO> studyParameterValueDaoFactory;
 
     public SubjectTransferValidator(DataSource dataSource) {
         this.dataSource = dataSource;
+        this.studyDaoFactory = StudyDAO::new;
+        this.studySubjectDaoFactory = StudySubjectDAO::new;
+        this.studyParameterValueDaoFactory = StudyParameterValueDAO::new;
     }
 
     public boolean supports(Class clazz) {
@@ -142,23 +151,23 @@ public class SubjectTransferValidator implements Validator {
         }
     }
 
-    public StudyDAO getStudyDAO() {
+    public IStudyDAO getStudyDAO() {
         if (studyDAO == null) {
-            studyDAO = new StudyDAO(dataSource);
+            studyDAO = studyDaoFactory.apply(dataSource);
         }
         return studyDAO;
     }
 
-    public StudySubjectDAO getStudySubjectDAO() {
+    public IStudySubjectDAO getStudySubjectDAO() {
         if (studySubjectDAO == null) {
-            studySubjectDAO = new StudySubjectDAO(dataSource);
+            studySubjectDAO = studySubjectDaoFactory.apply(dataSource);
         }
         return studySubjectDAO;
     }
 
     public StudyParameterValueDAO getStudyParameterValueDAO() {
         if (studyParameterValueDAO == null) {
-            studyParameterValueDAO = new StudyParameterValueDAO(dataSource);
+            studyParameterValueDAO = studyParameterValueDaoFactory.apply(dataSource);
         }
         return studyParameterValueDAO;
     }

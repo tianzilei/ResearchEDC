@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -29,6 +30,7 @@ public class OdmStudyBase {
     private StudyBean study;
     private List<StudyEventDefinitionBean> sedBeansInStudy;
     private StudyEventDefinitionDAO studyEventDefinitionDao;
+    private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -99,7 +101,7 @@ public class OdmStudyBase {
 
     private StudyEventDefinitionDAO getStudyEventDefinitionDao(DataSource ds) {
         if (studyEventDefinitionDao == null) {
-            studyEventDefinitionDao = new StudyEventDefinitionDAO(ds);
+            studyEventDefinitionDao = studyEventDefinitionDaoFactory.apply(ds);
         }
         return studyEventDefinitionDao;
     }
