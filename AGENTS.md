@@ -204,6 +204,22 @@ python -m pytest app/tests/ -v
 - **Frontend TypeScript:** ✅ `pnpm typecheck` — 0 errors (strict mode).
 - **DAO constructor baseline:** `DaoProvider` bridge has been removed. Direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) is now 0 matches across `shared/`, `web/`, and `ws/` as of 2026-05-28; remaining legacy removal work is module extraction and concrete DAO type dependency replacement.
 
+### Paused Legacy DAO Refactor Handoff (2026-05-28)
+
+- **Pause point:** committed `0be81d278` (`Refactor legacy DAO dependencies to SPI`), then user requested to pause the refactor and persist the state here.
+- **Verified gates at pause:** `mvn -pl app -am compile -DskipTests` ✅, `mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` ✅, `git diff --check` ✅.
+- **Completed in latest slice:** WS layer concrete `StudyDAO` / `StudySubjectDAO` / `SubjectDAO` references are 0; shared/web/ws/app concrete type matches for this DAO family dropped to 269; new `shared/src/main/java/org/researchedc/dao/LegacyDaoFactory.java` centralizes default SPI-returning construction for `IStudyDAO`, `IStudySubjectDAO`, and `ISubjectDAO`; `IStudySubjectDAO` was extended with `findStudySubjectIdsByStudyIds`.
+- **Current measured state:** `rg -n "\b(StudyDAO|StudySubjectDAO|SubjectDAO)\b" shared/src/main/java web/src/main/java ws/src/main/java app/src/main/java -g '*.java' | wc -l` returns `269`.
+- **Remaining `::new` hotspots:** `shared/.../dao/admin/AuditEventDAO.java`, `shared/.../dao/login/UserAccountDAO.java`, `shared/.../dao/extract/OdmExtractDAO.java`, `shared/.../dao/service/StudyConfigService.java`, `shared/.../dao/managestudy/{DiscrepancyNoteDAO,EventDefinitionCRFDAO,StudyEventDefinitionDAO}.java`. These are DAO implementation internals; inspect carefully before converting because some may legitimately remain as containment points until module extraction.
+- **Next low-risk resume targets:** web consumer classes with local concrete imports/fields such as `web/src/main/java/org/researchedc/web/table/sdv/SDVUtil.java`, `web/src/main/java/org/researchedc/controller/{OdmController,BatchCRFMigrationController}.java`, and `web/src/main/java/org/researchedc/control/**` servlets. Prefer widening fields/constructor parameters to `IStudyDAO`, `IStudySubjectDAO`, or `ISubjectDAO` when the SPI already exposes the needed method.
+- **Resume commands:**
+  - `git status --short`
+  - `rg -n "\b(StudyDAO|StudySubjectDAO|SubjectDAO)\b" shared/src/main/java web/src/main/java ws/src/main/java app/src/main/java -g '*.java' | wc -l`
+  - `rg -n "\b(StudyDAO|StudySubjectDAO|SubjectDAO)\b" shared/src/main/java web/src/main/java ws/src/main/java app/src/main/java -g '*.java' | cut -d: -f1 | sort | uniq -c | sort -nr | head -80`
+  - `mvn -pl app -am compile -DskipTests`
+  - `mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+- **Refactor rule of thumb:** do not modify released migrations, do not bypass `SecureController`, do not add new legacy code to `shared/` unless it is a temporary containment helper, and do not change concrete DAO implementation internals without verifying the SPI covers every invoked method.
+
 ## SUBMODULE REFERENCES
 
 - [shared/AGENTS.md](./shared/AGENTS.md) — Shared domain logic and data access
