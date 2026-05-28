@@ -293,7 +293,7 @@ export default function QuestionnaireVersionEditor() {
                   key: "builder",
                   label: t("version.form.builder"),
                   children: (
-                    <div style={{ border: "1px solid #d9d9d9", borderRadius: 6, overflow: "hidden" }}>
+                    <div style={{ border: "1px solid var(--border)", borderRadius: 6, overflow: "hidden" }}>
                       <QuestionnaireBuilder value={builderJson} onChange={setBuilderJson} />
                     </div>
                   ),
@@ -340,7 +340,7 @@ export default function QuestionnaireVersionEditor() {
                 key: "builder",
                 label: "Visual Builder",
                 children: (
-                  <div style={{ border: "1px solid #d9d9d9", borderRadius: 6, overflow: "hidden" }}>
+                  <div style={{ border: "1px solid var(--border)", borderRadius: 6, overflow: "hidden" }}>
                     <QuestionnaireBuilder value={editJson} onChange={handleBuilderChange} />
                   </div>
                 ),

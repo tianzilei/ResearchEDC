@@ -54,8 +54,8 @@ export default function LegacyFrame() {
         <Card
           style={{
             maxWidth: 480,
-            borderRadius: 14,
-            border: "1px solid var(--color-border-light, #E5E0D8)",
+            borderRadius: 6,
+            border: "1px solid var(--border-light)",
           }}
         >
           <Alert
@@ -63,7 +63,7 @@ export default function LegacyFrame() {
             message="Failed to load legacy page"
             description={
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <Text style={{ color: "var(--color-text-secondary, #6B7280)" }}>
+                <Text style={{ color: "var(--text-secondary)" }}>
                   The requested legacy page could not be loaded. It may be
                   temporarily unavailable or the URL may be incorrect.
                 </Text>
@@ -71,8 +71,8 @@ export default function LegacyFrame() {
                   code
                   style={{
                     fontSize: 12,
-                    background: "var(--color-surface-alt, #EFEBE4)",
-                    borderRadius: "var(--radius-md, 8px)",
+                    background: "var(--panel-muted)",
+                    borderRadius: "var(--radius-md)",
                     padding: "4px 8px",
                   }}
                 >
@@ -82,7 +82,7 @@ export default function LegacyFrame() {
             }
             showIcon
             style={{
-              borderRadius: "var(--radius-md, 8px)",
+              borderRadius: "var(--radius-md)",
               border: "none",
             }}
           />
@@ -91,8 +91,8 @@ export default function LegacyFrame() {
           type="primary"
           onClick={handleRetry}
           style={{
-            background: "var(--color-primary, #099A87)",
-            borderColor: "var(--color-primary, #099A87)",
+            background: "var(--accent)",
+            borderColor: "var(--accent)",
           }}
         >
           Retry
@@ -129,8 +129,8 @@ export default function LegacyFrame() {
           width: "100%",
           height: "calc(100vh - 60px - 56px)",
           border: "none",
-          borderRadius: "var(--radius-lg, 14px)",
-          background: "#FFFFFF",
+          borderRadius: "var(--radius-lg)",
+          background: "var(--panel)",
           opacity: isLoading ? 0 : 1,
           transition: "opacity var(--transition-base, 0.25s) ease",
         }}

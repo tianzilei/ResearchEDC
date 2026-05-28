@@ -1,31 +1,33 @@
 import { Card, Col, Row, Typography, Space, Layout } from "antd";
 import { useAuth } from "@/providers/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 const { Content } = Layout;
 
 interface NavItem {
   key: string;
-  label: string;
+  labelKey: string;
   route: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { key: "dashboard", label: "总览", route: "/app/dashboard" },
-  { key: "studies", label: "项目", route: "/app/studies" },
-  { key: "subjects", label: "受试者", route: "/app/subjects" },
-  { key: "crfs", label: "CRF 库", route: "/app/crfs" },
-  { key: "questionnaires", label: "问卷", route: "/app/questionnaires/templates" },
-  { key: "export", label: "数据导出", route: "/app/data-export" },
-  { key: "randomization", label: "随机", route: "/app/randomization" },
-  { key: "audit", label: "审计日志", route: "/app/audit-log" },
-  { key: "admin", label: "管理", route: "/app/admin" },
+  { key: "dashboard", labelKey: "layout.dashboard", route: "/app/dashboard" },
+  { key: "studies", labelKey: "layout.studies", route: "/app/studies" },
+  { key: "subjects", labelKey: "layout.subjects", route: "/app/subjects" },
+  { key: "crfs", labelKey: "layout.crfs", route: "/app/crfs" },
+  { key: "questionnaires", labelKey: "layout.questionnaires", route: "/app/questionnaires/templates" },
+  { key: "export", labelKey: "layout.dataExport", route: "/app/data-export" },
+  { key: "randomization", labelKey: "layout.randomization", route: "/app/randomization" },
+  { key: "audit", labelKey: "layout.auditLog", route: "/app/audit-log" },
+  { key: "admin", labelKey: "layout.admin", route: "/app/admin" },
 ];
 
 function AuthenticatedMenu() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div
@@ -82,7 +84,7 @@ function AuthenticatedMenu() {
             color: "var(--header-text)",
           }}
         >
-          欢迎，{user?.firstName ?? user?.username ?? "用户"}
+          {t("main.welcome", { name: user?.firstName ?? user?.username ?? t("common.user") })}
         </Title>
         <Text
           style={{
@@ -92,7 +94,7 @@ function AuthenticatedMenu() {
             display: "block",
           }}
         >
-          请选择一个模块开始使用
+          {t("main.chooseModule")}
         </Text>
       </div>
 
@@ -119,7 +121,7 @@ function AuthenticatedMenu() {
                   styles={{ body: { padding: 20 } }}
                 >
                   <div style={{ fontWeight: 600, fontSize: 16, color: "var(--text)" }}>
-                    {item.label}
+                    {t(item.labelKey)}
                   </div>
                 </Card>
               </Col>
@@ -140,7 +142,7 @@ function AuthenticatedMenu() {
             fontSize: 12,
           }}
         >
-          ResearchEDC — 临床研究数据管理平台
+          {t("app.footer")}
         </Text>
       </div>
     </div>

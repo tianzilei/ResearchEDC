@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   Table,
@@ -16,6 +17,7 @@ import {
   Empty,
   Breadcrumb,
 } from "antd";
+import { apiClient } from "@/api/client";
 
 const { Title, Text } = Typography;
 
@@ -32,6 +34,7 @@ interface Dataset {
 
 export default function DatasetBuilder() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [studies, setStudies] = useState<{ studyId: number; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,11 +44,11 @@ export default function DatasetBuilder() {
   const fetchData = () => {
     setLoading(true);
     Promise.all([
-      fetch("/api/legacy/datasets").then(r => r.ok ? r.json() : []),
-      fetch("/api/v1/studies").then(r => r.ok ? r.json() : []),
+      apiClient.get<Dataset[]>("/api/legacy/datasets").catch(() => []),
+      apiClient.get<{ studyId?: number; id?: number; name: string }[]>("/api/v1/studies").catch(() => []),
     ]).then(([ds, ss]) => {
       setDatasets(ds);
-      setStudies(Array.isArray(ss) ? ss.map((s: any) => ({ studyId: s.studyId ?? s.id, name: s.name })) : []);
+      setStudies(Array.isArray(ss) ? ss.map((s) => ({ studyId: s.studyId ?? s.id ?? 0, name: s.name })) : []);
       setLoading(false);
     }).catch(() => setLoading(false));
   };
@@ -55,15 +58,17 @@ export default function DatasetBuilder() {
   const handleCreate = async () => {
     try {
       const vals = await form.validateFields();
-      const res = await fetch(`/api/legacy/datasets?name=${encodeURIComponent(vals.name)}&studyId=${vals.studyId}`, {
-        method: "POST",
+      await apiClient.post<Dataset>("/api/legacy/datasets", undefined, {
+        name: vals.name,
+        studyId: vals.studyId,
       });
-      if (!res.ok) { message.error("Failed to create dataset"); return; }
-      message.success("Dataset created");
+      message.success(t("dataset.created"));
       setCreateOpen(false);
       form.resetFields();
       fetchData();
-    } catch { void 0; }
+    } catch {
+      message.error(t("dataset.createFailed"));
+    }
   };
 
   if (loading) {
@@ -71,62 +76,62 @@ export default function DatasetBuilder() {
   }
 
   const columns = [
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Description", dataIndex: "description", key: "description", render: (v: string) => v || "-" },
-    { title: "Study", dataIndex: "studyName", key: "study", render: (v: string) => v || "-" },
-    { title: "Status", dataIndex: "status", key: "status", render: (s: string) => <Tag>{s || "available"}</Tag> },
-    { title: "Created", dataIndex: "dateCreated", key: "created", render: (v: string) => v ? new Date(v).toLocaleDateString() : "-" },
+    { title: t("dataset.column.name"), dataIndex: "name", key: "name" },
+    { title: t("dataset.column.description"), dataIndex: "description", key: "description", render: (v: string) => v || "-" },
+    { title: t("dataset.column.study"), dataIndex: "studyName", key: "study", render: (v: string) => v || "-" },
+    { title: t("dataset.column.status"), dataIndex: "status", key: "status", render: (s: string) => <Tag>{s || "available"}</Tag> },
+    { title: t("dataset.column.created"), dataIndex: "dateCreated", key: "created", render: (v: string) => v ? new Date(v).toLocaleDateString() : "-" },
   ];
 
   return (
     <div>
       <Breadcrumb
         items={[
-          { title: <Link to="/app/data-export">Export Center</Link> },
-          { title: "Datasets" },
+          { title: <Link to="/app/data-export">{t("export.title")}</Link> },
+          { title: t("dataset.title") },
         ]}
         style={{ marginBottom: 16 }}
       />
 
-      <Card style={{ marginBottom: 16, borderRadius: 14 }} styles={{ body: { padding: "16px 24px" } }}>
+      <Card style={{ marginBottom: 16, borderRadius: 6 }} styles={{ body: { padding: "16px 24px" } }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Space>
             <div>
-              <Title level={4} style={{ margin: 0 }}>Datasets</Title>
-              <Text type="secondary">{datasets.length} dataset{datasets.length !== 1 ? "s" : ""}</Text>
+              <Title level={4} style={{ margin: 0 }}>{t("dataset.title")}</Title>
+              <Text type="secondary">{t("dataset.count", { count: datasets.length })}</Text>
             </div>
           </Space>
           <Space>
             <Button onClick={() => navigate("/app/data-export")}>
-              Export Center
+              {t("export.title")}
             </Button>
             <Button type="primary" onClick={() => setCreateOpen(true)}>
-              New Dataset
+              {t("dataset.new")}
             </Button>
           </Space>
         </div>
       </Card>
 
       {datasets.length === 0 ? (
-        <Card style={{ borderRadius: 14 }}><Empty description="No datasets defined" /></Card>
+        <Card style={{ borderRadius: 6 }}><Empty description={t("dataset.empty")} /></Card>
       ) : (
-        <Card style={{ borderRadius: 14 }} styles={{ body: { padding: 0 } }}>
+        <Card style={{ borderRadius: 6 }} styles={{ body: { padding: 0 } }}>
           <Table dataSource={datasets} columns={columns} rowKey="datasetId" pagination={false} />
         </Card>
       )}
 
       <Modal
-        title="Create Dataset"
+        title={t("dataset.create")}
         open={createOpen}
         onOk={handleCreate}
         onCancel={() => { setCreateOpen(false); form.resetFields(); }}
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="name" label="Dataset Name" rules={[{ required: true }]}>
-            <Input placeholder="e.g. Primary Analysis Dataset" />
+          <Form.Item name="name" label={t("dataset.form.name")} rules={[{ required: true }]}>
+            <Input placeholder={t("dataset.form.namePlaceholder")} />
           </Form.Item>
-          <Form.Item name="studyId" label="Study" rules={[{ required: true }]}>
-            <Select placeholder="Select study" showSearch>
+          <Form.Item name="studyId" label={t("dataset.form.study")} rules={[{ required: true }]}>
+            <Select placeholder={t("dataset.form.studyPlaceholder")} showSearch>
               {studies.map((s) => (
                 <Select.Option key={s.studyId} value={s.studyId}>{s.name}</Select.Option>
               ))}

@@ -25,7 +25,7 @@ interface MeResponse {
   email: string;
   enabled: boolean;
   roles: string[];
-  studyRoles: Array<{ studyId: number; roleName: string }>;
+  studyRoles: { studyId: number; roleName: string }[];
 }
 
 interface AuthContextValue {

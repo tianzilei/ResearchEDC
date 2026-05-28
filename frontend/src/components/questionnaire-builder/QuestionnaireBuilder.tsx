@@ -308,8 +308,8 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
   }));
 
   return (
-    <Layout style={{ minHeight: 500, background: "#fff" }}>
-      <Sider width={280} theme="light" style={{ borderRight: "1px solid #f0f0f0", overflow: "auto", padding: 12 }}>
+    <Layout style={{ minHeight: 500, background: "var(--panel)" }}>
+      <Sider width={280} theme="light" style={{ borderRight: "1px solid var(--border-light)", overflow: "auto", padding: 12 }}>
         <Space direction="vertical" style={{ width: "100%" }}>
           <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>{t("builder.pages")}</div>
           {survey.pages.map((page, pi) => (
@@ -322,7 +322,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                   padding: "4px 8px",
                   cursor: "pointer",
                   borderRadius: 4,
-                  background: selectedPageIdx === pi ? "#e6f4ff" : undefined,
+                  background: selectedPageIdx === pi ? "var(--info-bg)" : undefined,
                 }}
                 onClick={() => {
                   setSelectedPageIdx(pi);
@@ -351,7 +351,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                         padding: "3px 6px",
                         borderRadius: 3,
                         cursor: "pointer",
-                        background: selectedQIdx === qi ? "#f0f5ff" : undefined,
+                        background: selectedQIdx === qi ? "var(--info-bg)" : undefined,
                         fontSize: 12,
                         marginBottom: 2,
                       }}
@@ -498,7 +498,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
         ) : null}
       </Content>
 
-      <div style={{ padding: 12, borderTop: "1px solid #f0f0f0", display: "flex", justifyContent: "space-between" }}>
+      <div style={{ padding: 12, borderTop: "1px solid var(--border-light)", display: "flex", justifyContent: "space-between" }}>
         <Space>
           <Button icon={<EyeOutlined />} onClick={() => setShowPreview(!showPreview)}>
             {showPreview ? t("builder.hidePreview") : t("builder.showPreview")}
@@ -513,7 +513,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
       </div>
 
       {showPreview && (
-        <div style={{ padding: 16, borderTop: "1px solid #f0f0f0", background: "#fafafa" }}>
+        <div style={{ padding: 16, borderTop: "1px solid var(--border-light)", background: "var(--bg-secondary)" }}>
           <Text strong style={{ display: "block", marginBottom: 8 }}>{t("builder.livePreview")}</Text>
           <div style={{ maxWidth: 600, margin: "0 auto" }}>
             <Survey model={previewModel} />

@@ -37,8 +37,8 @@ export default function Profile() {
       .catch(() => setLoading(false));
   }, [user]);
 
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
+    logout();
     void navigate("/login");
   };
 
@@ -68,7 +68,7 @@ export default function Profile() {
       </Card>
 
       <Card>
-        <Button danger onClick={() => { void handleLogout(); }}>退出登录</Button>
+        <Button danger onClick={handleLogout}>退出登录</Button>
       </Card>
     </div>
   );

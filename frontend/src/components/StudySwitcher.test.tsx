@@ -51,12 +51,14 @@ vi.mock("react-i18next", () => ({
 describe("StudySwitcher", () => {
   it("renders placeholder text when no study is selected", () => {
     render(<StudySwitcher />);
-    expect(screen.getByText("选择项目")).toBeInTheDocument();
+    expect(screen.getByText("Select a study")).toBeInTheDocument();
   });
 
   it("opens dropdown and shows study names on click", () => {
     render(<StudySwitcher />);
-    const selector = document.querySelector(".ant-select-selector")!;
+    const selector = document.querySelector(".ant-select-selector");
+    expect(selector).not.toBeNull();
+    if (!selector) return;
     fireEvent.mouseDown(selector);
     expect(screen.getByText("Clinical Trial A")).toBeInTheDocument();
   });

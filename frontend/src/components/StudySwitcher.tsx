@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Select, Space } from "antd";
+import { useTranslation } from "react-i18next";
 import { useStudies, useCurrentStudy } from "@/hooks/useStudies";
 import type { Study } from "@/types/study";
 
 export default function StudySwitcher() {
+  const { t } = useTranslation();
   const { data: studies } = useStudies();
   const { currentStudy, setCurrentStudy } = useCurrentStudy();
   const [open, setOpen] = useState(false);
@@ -21,9 +23,9 @@ export default function StudySwitcher() {
     <Select
       showSearch
       value={currentStudy ? currentStudy.name : undefined}
-      placeholder={"选择项目"}
+      placeholder={t("layout.selectStudy")}
       open={open}
-      onDropdownVisibleChange={setOpen}
+      onOpenChange={setOpen}
       onChange={handleChange}
       variant="borderless"
       className="study-switcher-select"

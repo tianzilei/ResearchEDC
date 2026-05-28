@@ -195,11 +195,11 @@ export default function DataEntryPage() {
 
   const saveIndicator = () => {
     if (saveStatus === "saving")
-      return { text: "Saving...", color: "rgba(0,0,0,0.45)" };
+      return { text: "Saving...", color: "var(--text-muted)" };
     if (saveStatus === "saved")
-      return { text: "Saved", color: "#52c41a" };
+      return { text: "Saved", color: "var(--success)" };
     if (saveStatus === "error")
-      return { text: "Save failed", color: "#ff4d4f" };
+      return { text: "Save failed", color: "var(--danger)" };
     return null;
   };
 
@@ -260,7 +260,7 @@ export default function DataEntryPage() {
       />
 
       <Card
-        style={{ marginBottom: 16, borderRadius: 14 }}
+        style={{ marginBottom: 16, borderRadius: 6 }}
         styles={{ body: { padding: "16px 24px" } }}
       >
         <Space style={{ width: "100%", justifyContent: "space-between" }} align="center">
@@ -297,7 +297,7 @@ export default function DataEntryPage() {
         </Space>
       </Card>
 
-      <Card style={{ borderRadius: 14 }} styles={{ body: { padding: 0 } }}>
+      <Card style={{ borderRadius: 6 }} styles={{ body: { padding: 0 } }}>
         <Tabs
           activeKey={activeTab}
           onChange={setActiveTab}

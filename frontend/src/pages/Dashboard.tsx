@@ -12,25 +12,25 @@ import {
 
 const { Title, Text } = Typography;
 
-function getGreeting(): string {
+function getGreetingKey(): string {
   const hour = new Date().getHours();
-  if (hour < 12) return "早上好";
-  if (hour < 18) return "下午好";
-  return "晚上好";
+  if (hour < 12) return "dashboard.greeting.morning";
+  if (hour < 18) return "dashboard.greeting.afternoon";
+  return "dashboard.greeting.evening";
 }
 
-function formatTimestamp(ts: string): string {
+function formatTimestamp(ts: string, locale: string, t: (key: string, options?: Record<string, unknown>) => string): string {
   const date = new Date(ts);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffMin = Math.floor(diffMs / 60000);
-  if (diffMin < 1) return "刚刚";
-  if (diffMin < 60) return `${diffMin} 分钟前`;
+  if (diffMin < 1) return t("time.justNow");
+  if (diffMin < 60) return t("time.minutesAgo", { count: diffMin });
   const diffHour = Math.floor(diffMin / 60);
-  if (diffHour < 24) return `${diffHour} 小时前`;
+  if (diffHour < 24) return t("time.hoursAgo", { count: diffHour });
   const diffDay = Math.floor(diffHour / 24);
-  if (diffDay < 7) return `${diffDay} 天前`;
-  return date.toLocaleDateString("zh-CN");
+  if (diffDay < 7) return t("time.daysAgo", { count: diffDay });
+  return date.toLocaleDateString(locale.startsWith("zh") ? "zh-CN" : "en-US");
 }
 
 function ModuleCard({ mod }: { mod: ModuleInfo }) {
@@ -72,7 +72,7 @@ function ModuleCard({ mod }: { mod: ModuleInfo }) {
 }
 
 export default function Dashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
   const {
@@ -116,7 +116,7 @@ export default function Dashboard() {
     bootstrap.user.firstName ||
     bootstrap.user.lastName ||
     bootstrap.user.username ||
-    "用户";
+    t("common.user");
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -137,7 +137,7 @@ export default function Dashboard() {
               level={4}
               style={{ margin: 0, fontWeight: 600 }}
             >
-              {getGreeting()}，{displayName}
+              {t(getGreetingKey())}, {displayName}
             </Title>
             <Text style={{ color: "var(--text-secondary)", fontSize: 13 }}>
               {t("dashboard.subtitle")}
@@ -160,7 +160,7 @@ export default function Dashboard() {
             }}
           >
             <span>
-              当前研究：
+              {t("dashboard.currentStudy")}:
               <strong style={{ color: "var(--text)" }}>
                 {bootstrap.defaultStudy.name}
               </strong>
@@ -176,7 +176,7 @@ export default function Dashboard() {
                   }}
                 />
                 <span>
-                  当前站点：
+                  {t("dashboard.currentSite")}:
                   <strong style={{ color: "var(--text)" }}>
                     {bootstrap.defaultSiteName}
                   </strong>
@@ -192,7 +192,7 @@ export default function Dashboard() {
               }}
             />
             <span>
-              角色：
+              {t("dashboard.currentRole")}:
               <strong style={{ color: "var(--text)" }}>
                 {bootstrap.defaultStudy.role}
               </strong>
@@ -394,7 +394,7 @@ export default function Dashboard() {
                       flexShrink: 0,
                     }}
                   >
-                    {formatTimestamp(item.timestamp)}
+                    {formatTimestamp(item.timestamp, i18n.language, t)}
                   </span>
                 </div>
               ))
@@ -473,7 +473,7 @@ export default function Dashboard() {
                     style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 500 }}
                   >
                     {status.lastBackup
-                      ? formatTimestamp(status.lastBackup)
+                      ? formatTimestamp(status.lastBackup, i18n.language, t)
                       : t("dashboard.statusUnknown")}
                   </span>
                 </div>

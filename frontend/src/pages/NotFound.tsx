@@ -1,10 +1,12 @@
 import { Button, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const { Title, Text } = Typography;
 
 export default function NotFound() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div
@@ -25,7 +27,7 @@ export default function NotFound() {
             color: "var(--header-text)",
             margin: 0,
             lineHeight: 1,
-            letterSpacing: "-0.03em",
+            letterSpacing: 0,
           }}
         >
           404
@@ -39,7 +41,7 @@ export default function NotFound() {
             marginTop: 16,
           }}
         >
-          页面未找到
+          {t("notFound.message")}
         </Text>
         <Button
           type="primary"
@@ -53,7 +55,7 @@ export default function NotFound() {
             marginTop: 24,
           }}
         >
-          返回首页
+          {t("common.backHome")}
         </Button>
       </div>
     </div>

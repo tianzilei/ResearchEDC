@@ -149,7 +149,7 @@ export default function QuestionnaireFill() {
       {survey && (
         <div
           style={{
-            background: "#fff",
+            background: "var(--panel)",
             borderRadius: 8,
             padding: 24,
             boxShadow: "0 2px 8px rgba(0,0,0,0.06)",

@@ -15,45 +15,46 @@ import { SUPPORTED_LANGUAGES } from "@/i18n";
 const { Header, Sider, Content } = Layout;
 
 function useMenuItems(): MenuProps["items"] {
+  const { t } = useTranslation();
   const permissions = usePermissions();
   const has = (p: Permission) => permissions.includes(p);
 
   const items: NonNullable<MenuProps["items"]> = [
-    { key: "/app/dashboard", label: "总览" },
+    { key: "/app/dashboard", label: t("layout.dashboard") },
   ];
 
   if (has("study:view")) {
-    items.push({ key: "/app/studies", label: "项目" });
+    items.push({ key: "/app/studies", label: t("layout.studies") });
   }
   if (has("subject:view")) {
-    items.push({ key: "/app/subjects", label: "受试者" });
+    items.push({ key: "/app/subjects", label: t("layout.subjects") });
   }
   if (has("crf:design")) {
-    items.push({ key: "/app/crfs", label: "CRF" });
+    items.push({ key: "/app/crfs", label: t("layout.crfs") });
   }
   if (has("crf:design")) {
     items.push({
       key: "questionnaires",
-      label: "问卷",
+      label: t("layout.questionnaires"),
       children: [
-        { key: "/app/questionnaires/templates", label: "模板" },
-        { key: "/app/questionnaires/assignments", label: "分配" },
-        { key: "/app/questionnaires/responses", label: "回复" },
-        { key: "/app/questionnaires/export", label: "导出" },
+        { key: "/app/questionnaires/templates", label: t("layout.templates") },
+        { key: "/app/questionnaires/assignments", label: t("layout.assignments") },
+        { key: "/app/questionnaires/responses", label: t("layout.responses") },
+        { key: "/app/questionnaires/export", label: t("layout.export") },
       ],
     });
   }
   if (has("data:export")) {
-    items.push({ key: "/app/data-export", label: "数据导出" });
+    items.push({ key: "/app/data-export", label: t("layout.dataExport") });
   }
   if (has("randomization:view")) {
-    items.push({ key: "/app/randomization", label: "随机" });
+    items.push({ key: "/app/randomization", label: t("layout.randomization") });
   }
   if (has("audit:view")) {
-    items.push({ key: "/app/audit-log", label: "审计日志" });
+    items.push({ key: "/app/audit-log", label: t("layout.auditLog") });
   }
   if (has("admin:access")) {
-    items.push({ key: "/app/admin", label: "管理" });
+    items.push({ key: "/app/admin", label: t("layout.admin") });
   }
 
   return items;
@@ -64,7 +65,7 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const menuItems = useMenuItems();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const { mode, toggleTheme } = useTheme();
 
   const defaultOpenKeys = location.pathname.startsWith("/app/questionnaires")
@@ -87,11 +88,11 @@ export default function AppLayout() {
       disabled: true,
     },
     { type: "divider" },
-    { key: "profile-page", label: "账户设置", onClick: () => navigate("/app/profile") },
+    { key: "profile-page", label: t("layout.accountSettings"), onClick: () => navigate("/app/profile") },
     { type: "divider" },
     {
       key: "logout",
-      label: "退出登录",
+      label: t("layout.logout"),
       onClick: () => {
         logout();
         navigate("/login");
@@ -137,7 +138,7 @@ export default function AppLayout() {
               fontFamily: "inherit",
             }}
           >
-            {mode === "daylight" ? "夜间模式" : "日间模式"}
+            {mode === "daylight" ? t("layout.themeNight") : t("layout.themeDay")}
           </button>
           <Select
             value={i18n.language?.startsWith("zh") ? "zh" : "en"}
@@ -159,7 +160,7 @@ export default function AppLayout() {
           <Dropdown
             menu={{ items: userMenuItems }}
             placement="bottomRight"
-            dropdownRender={(menu) => (
+            popupRender={(menu) => (
               <div className="header-user-dropdown">{menu}</div>
             )}
           >
@@ -175,7 +176,7 @@ export default function AppLayout() {
                 fontFamily: "inherit",
               }}
             >
-              {user?.firstName ?? user?.username ?? "用户"}
+              {user?.firstName ?? user?.username ?? t("common.user")}
             </button>
           </Dropdown>
         </Space>

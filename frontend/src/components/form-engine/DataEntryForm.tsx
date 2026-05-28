@@ -63,11 +63,11 @@ export function DataEntryForm({
   const fieldsDisabled = useMemo(() => isFieldDisabled(statusConfig), [statusConfig]);
 
   const statusTag = useMemo(() => {
-    if (saving) return { text: t("form.saving"), color: "rgba(0,0,0,0.45)" };
-    if (manualSaveStatus === "saved") return { text: t("form.saved"), color: "#52c41a" };
-    if (manualSaveStatus === "error") return { text: t("form.saveFailed"), color: "#ff4d4f" };
+    if (saving) return { text: t("form.saving"), color: "var(--text-muted)" };
+    if (manualSaveStatus === "saved") return { text: t("form.saved"), color: "var(--success)" };
+    if (manualSaveStatus === "error") return { text: t("form.saveFailed"), color: "var(--danger)" };
     return null;
-  }, [saving, manualSaveStatus]);
+  }, [saving, manualSaveStatus, t]);
 
   return (
     <div>

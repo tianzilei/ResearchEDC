@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, Table, Button, Typography, Modal, Form, Input, Select, message, Tabs } from "antd";
 import { SkeletonPage } from "@/components/SkeletonCard";
 
@@ -34,7 +34,7 @@ export default function UserManagement() {
   const [form] = Form.useForm();
   const [roleForm] = Form.useForm();
 
-  useState(() => {
+  useEffect(() => {
     const fetchAll = async () => {
       try {
         const r = await fetch("/api/v1/identity/users?query=");
@@ -43,7 +43,7 @@ export default function UserManagement() {
       setLoading(false);
     };
     fetchAll();
-  });
+  }, []);
 
   const handleCreate = async () => {
     try {
@@ -108,7 +108,7 @@ export default function UserManagement() {
     },
     { title: "姓名", key: "name", render: (_: any, r: UserDTO) => `${r.firstName} ${r.lastName}` },
     { title: "邮箱", dataIndex: "email", key: "email" },
-    { title: "电话", dataIndex: "phone", key: "phone", render: (v: string | null) => v || "-" },
+    { title: "电话", dataIndex: "phone", key: "phone", render: (v: string | null) => v ?? "-" },
     {
       title: "状态", dataIndex: "enabled", key: "enabled",
       render: (v: boolean) => v

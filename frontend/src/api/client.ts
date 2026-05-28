@@ -75,10 +75,10 @@ class ApiClient {
   }
 
   get<T>(path: string, params?: RequestConfig["params"]) { return this.request<T>({ method: "GET", path, params }); }
-  post<T>(path: string, body?: unknown) { return this.request<T>({ method: "POST", path, body }); }
-  put<T>(path: string, body?: unknown) { return this.request<T>({ method: "PUT", path, body }); }
-  patch<T>(path: string, body?: unknown) { return this.request<T>({ method: "PATCH", path, body }); }
-  delete<T>(path: string) { return this.request<T>({ method: "DELETE", path }); }
+  post<T>(path: string, body?: unknown, params?: RequestConfig["params"]) { return this.request<T>({ method: "POST", path, body, params }); }
+  put<T>(path: string, body?: unknown, params?: RequestConfig["params"]) { return this.request<T>({ method: "PUT", path, body, params }); }
+  patch<T>(path: string, body?: unknown, params?: RequestConfig["params"]) { return this.request<T>({ method: "PATCH", path, body, params }); }
+  delete<T>(path: string, params?: RequestConfig["params"]) { return this.request<T>({ method: "DELETE", path, params }); }
 }
 
 export const apiClient = new ApiClient(APP_CONFIG.apiBaseUrl);

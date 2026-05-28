@@ -22,6 +22,7 @@ import {
 import { useRuleSet, useRule } from "@/hooks/useRules";
 import { useQueryClient } from "@/hooks/useQuery";
 import PageHeader from "@/components/PageHeader";
+import { apiClient } from "@/api/client";
 
 const { Text, Paragraph } = Typography;
 
@@ -42,9 +43,9 @@ function RuleDetailRow({ ruleId }: { ruleId: number }) {
           <Text strong>Expression: </Text>
           <pre
             style={{
-              background: "var(--color-surface-alt, #EFEBE4)",
+              background: "var(--panel-muted)",
               padding: 12,
-              borderRadius: 8,
+              borderRadius: 6,
               fontSize: 13,
               marginTop: 8,
               whiteSpace: "pre-wrap",
@@ -149,12 +150,7 @@ export default function RuleSetDetail() {
   const handleAddRule = async () => {
     try {
       const vals = await addForm.validateFields();
-      const res = await fetch(`/api/legacy/rule-sets/${parsedRuleSetIdNum}/rules`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ruleId: vals.ruleId }),
-      });
-      if (!res.ok) throw new Error("Add failed");
+      await apiClient.post<void>(`/api/legacy/rule-sets/${parsedRuleSetIdNum}/rules`, { ruleId: vals.ruleId });
       message.success("Rule added");
       setAddOpen(false);
       addForm.resetFields();
@@ -164,10 +160,7 @@ export default function RuleSetDetail() {
 
   const handleRemoveRule = async (ruleId: number) => {
     try {
-      const res = await fetch(`/api/legacy/rule-sets/${parsedRuleSetIdNum}/rules/${ruleId}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Delete failed");
+      await apiClient.delete<void>(`/api/legacy/rule-sets/${parsedRuleSetIdNum}/rules/${ruleId}`);
       message.success("Rule removed");
       queryClient.invalidateQueries({ queryKey: ["rule-set", parsedRuleSetId] });
     } catch {
@@ -217,8 +210,8 @@ export default function RuleSetDetail() {
         <Card
           title="Details"
           style={{
-            borderRadius: 14,
-            border: "1px solid var(--color-border-light, #E5E0D8)",
+            borderRadius: 6,
+            border: "1px solid var(--border-light)",
           }}
         >
           <Descriptions column={1} size="small">
@@ -229,7 +222,7 @@ export default function RuleSetDetail() {
               <Descriptions.Item label="CRF">
                 {ruleSet.crfName}
                 {ruleSet.crfVersionName && (
-                  <Text style={{ color: "var(--color-text-secondary)" }}>
+                  <Text style={{ color: "var(--text-secondary)" }}>
                     {" "}
                     ({ruleSet.crfVersionName})
                   </Text>
@@ -252,8 +245,8 @@ export default function RuleSetDetail() {
         <Card
           title="Info"
           style={{
-            borderRadius: 14,
-            border: "1px solid var(--color-border-light, #E5E0D8)",
+            borderRadius: 6,
+            border: "1px solid var(--border-light)",
           }}
         >
           <Descriptions column={1} size="small">
@@ -285,8 +278,8 @@ export default function RuleSetDetail() {
         }
         style={{
           marginTop: 24,
-          borderRadius: 14,
-          border: "1px solid var(--color-border-light, #E5E0D8)",
+          borderRadius: 6,
+          border: "1px solid var(--border-light)",
         }}
       >
         {ruleData.length > 0 ? (

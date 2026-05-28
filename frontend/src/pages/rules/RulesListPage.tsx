@@ -105,7 +105,7 @@ export default function RulesListPage() {
       />
 
       <Card
-        style={{ marginBottom: 16, borderRadius: 14 }}
+        style={{ marginBottom: 16, borderRadius: 6 }}
         styles={{ body: { padding: "16px 24px" } }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -121,14 +121,14 @@ export default function RulesListPage() {
       </Card>
 
       {!dataSource.length ? (
-        <Card style={{ borderRadius: 14 }}>
+        <Card style={{ borderRadius: 6 }}>
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             description="No rule sets defined for this study"
           />
         </Card>
       ) : (
-        <Card style={{ borderRadius: 14 }} styles={{ body: { padding: 0 } }}>
+        <Card style={{ borderRadius: 6 }} styles={{ body: { padding: 0 } }}>
           <Table
             dataSource={dataSource}
             columns={columns}
@@ -171,7 +171,7 @@ export default function RulesListPage() {
               expandIcon: ({ expanded, onExpand, record }) => (
                 <span
                   onClick={(e) => onExpand(record, e)}
-                  style={{ cursor: "pointer", color: "var(--color-primary, #099A87)", display: "inline-block", transform: expanded ? "rotate(90deg)" : "none", transition: "transform 0.2s" }}
+                  style={{ cursor: "pointer", color: "var(--accent)", display: "inline-block", transform: expanded ? "rotate(90deg)" : "none", transition: "transform 0.2s" }}
                 >
                   ▶
                 </span>

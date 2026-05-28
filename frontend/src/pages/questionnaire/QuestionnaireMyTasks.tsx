@@ -182,7 +182,7 @@ export default function QuestionnaireMyTasks() {
 
       {expiredTasks.length > 0 && (
         <>
-          <Title level={5} style={{ marginTop: 24, color: "#faad14" }}>
+          <Title level={5} style={{ marginTop: 24, color: "var(--warning)" }}>
             {t("tasks.expiredWithdrawn")}
           </Title>
           <List

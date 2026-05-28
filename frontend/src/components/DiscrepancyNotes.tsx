@@ -76,7 +76,7 @@ export default function DiscrepancyNotes({ eventCrfId, studyId, entityId }: Disc
       </Space>
 
       {!notes || notes.length === 0 ? (
-        <Card style={{ borderRadius: 10, background: "var(--color-surface-alt, #FAFAF8)" }}>
+        <Card style={{ borderRadius: 6, background: "var(--panel-muted)" }}>
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             description="No discrepancy notes for this CRF"
