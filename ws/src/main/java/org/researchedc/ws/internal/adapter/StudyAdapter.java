@@ -1,15 +1,15 @@
 package org.researchedc.ws.internal.adapter;
 
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class StudyAdapter {
 
-    private final StudyDAO delegate;
+    private final IStudyDAO delegate;
 
-    public StudyAdapter(StudyDAO delegate) {
+    public StudyAdapter(IStudyDAO delegate) {
         this.delegate = delegate;
     }
 

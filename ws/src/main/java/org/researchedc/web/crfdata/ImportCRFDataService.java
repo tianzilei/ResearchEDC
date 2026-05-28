@@ -50,10 +50,10 @@ import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.Validator;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
@@ -80,11 +80,11 @@ public class ImportCRFDataService {
     @Autowired
     private EventCRFDAO eventCrfDAO;
     @Autowired
-    private StudySubjectDAO studySubjectDAO;
+    private IStudySubjectDAO studySubjectDAO;
     @Autowired
     private StudyEventDefinitionDAO studyEventDefinitionDAO;
     @Autowired
-    private StudyDAO studyDAO;
+    private IStudyDAO studyDAO;
     @Autowired
     private StudyEventDAO studyEventDAO;
     @Autowired

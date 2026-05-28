@@ -9,9 +9,9 @@ import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.ws.bean.StudyEventTransferBean;
@@ -26,11 +26,11 @@ public class StudyEventTransferValidator implements Validator {
 
     DataSource dataSource;
     @Autowired
-    private StudyDAO studyDAO;
+    private IStudyDAO studyDAO;
     @Autowired
-    private StudySubjectDAO studySubjectDAO;
+    private IStudySubjectDAO studySubjectDAO;
     @Autowired
-    private StudyEventDefinitionDAO studyEventDefinitionDAO;
+    private IStudyEventDefinitionDAO studyEventDefinitionDAO;
     BaseVSValidatorImplementation helper;
     @Autowired
     private IStudyParameterValueDAO studyParameterValueDAO;

@@ -6,7 +6,7 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.ws.bean.BaseStudyDefinitionBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class CRFDataImportValidator implements Validator {
 
     DataSource dataSource;
     @Autowired
-    private StudyDAO studyDAO;
+    private IStudyDAO studyDAO;
     @Autowired
     private UserAccountDAO userAccountDAO;
     BaseVSValidatorImplementation helper;

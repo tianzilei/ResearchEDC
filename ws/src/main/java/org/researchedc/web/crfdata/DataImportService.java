@@ -28,7 +28,7 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -63,7 +63,7 @@ public class DataImportService {
     @Autowired
     private ItemDAO itemDao;
     @Autowired
-    private StudySubjectDAO studySubjectDao;
+    private IStudySubjectDAO studySubjectDao;
     @Autowired
     private DiscrepancyNoteDAO discrepancyNoteDao;
 

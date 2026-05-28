@@ -12,9 +12,10 @@ import org.researchedc.bean.submit.crfdata.ImportItemDataBean;
 import org.researchedc.bean.submit.crfdata.ImportItemGroupDataBean;
 import org.researchedc.bean.submit.crfdata.StudyEventDataBean;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
@@ -52,13 +53,13 @@ public class ImportDataRuleRunnerContainer {
     private String studyOid;
     private String studySubjectOid;
     private Boolean shouldRunRules;
-    private StudySubjectDAO<String, ArrayList> studySubjectDao;
+    private IStudySubjectDAO studySubjectDao;
     private StudyEventDefinitionDAO<String, ArrayList> studyEventDefinitionDao;
     private CRFVersionDAO<String, ArrayList> crfVersionDao;
     private StudyEventDAO studyEventDao;
     private ItemDAO<String, ArrayList> itemDao;
     private ItemGroupMetadataDAO<String, ArrayList> itemGroupMetadataDao;
-    private final Function<DataSource, StudySubjectDAO<String, ArrayList>> studySubjectDaoFactory = StudySubjectDAO::new;
+    private final Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
     private final Function<DataSource, StudyEventDefinitionDAO<String, ArrayList>> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
     private final Function<DataSource, CRFVersionDAO<String, ArrayList>> crfVersionDaoFactory = CRFVersionDAO::new;
     private final Function<DataSource, StudyEventDAO> studyEventDaoFactory = StudyEventDAO::new;
@@ -206,7 +207,7 @@ public class ImportDataRuleRunnerContainer {
         return isRepeatForSure;
     }
 
-    private StudySubjectDAO<String, ArrayList> getStudySubjectDao(DataSource ds) {
+    private IStudySubjectDAO getStudySubjectDao(DataSource ds) {
         if (studySubjectDao == null) {
             studySubjectDao = studySubjectDaoFactory.apply(ds);
         }

@@ -8,11 +8,11 @@ import org.researchedc.bean.managestudy.SubjectTransferBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.core.SessionManager;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +27,11 @@ import javax.sql.DataSource;
 public class SubjectService implements SubjectServiceInterface {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-    SubjectDAO subjectDao;
-    StudyParameterValueDAO studyParameterValueDAO;
-    StudySubjectDAO studySubjectDao;
-    UserAccountDAO userAccountDao;
-    StudyDAO studyDao;
+    ISubjectDAO subjectDao;
+    IStudyParameterValueDAO studyParameterValueDAO;
+    IStudySubjectDAO studySubjectDao;
+    IUserAccountDAO userAccountDao;
+    IStudyDAO studyDao;
     DataSource dataSource;
 
     public SubjectService(DataSource dataSource) {
@@ -45,11 +45,11 @@ public class SubjectService implements SubjectServiceInterface {
     @Autowired
     public SubjectService(
             DataSource dataSource,
-            SubjectDAO subjectDao,
-            StudyParameterValueDAO studyParameterValueDAO,
-            StudyDAO studyDao,
-            StudySubjectDAO studySubjectDao,
-            UserAccountDAO userAccountDao) {
+            ISubjectDAO subjectDao,
+            IStudyParameterValueDAO studyParameterValueDAO,
+            IStudyDAO studyDao,
+            IStudySubjectDAO studySubjectDao,
+            IUserAccountDAO userAccountDao) {
         this.dataSource = dataSource;
         this.subjectDao = subjectDao;
         this.studyParameterValueDAO = studyParameterValueDAO;
@@ -130,32 +130,32 @@ public class SubjectService implements SubjectServiceInterface {
     /**
      * @return the subjectDao
      */
-    public SubjectDAO getSubjectDao() {
+    public ISubjectDAO getSubjectDao() {
         return subjectDao;
     }
     
-    public StudyParameterValueDAO getStudyParameterValueDAO() {
+    public IStudyParameterValueDAO getStudyParameterValueDAO() {
         return studyParameterValueDAO;
     }
 
     /**
      * @return the subjectDao
      */
-    public StudyDAO getStudyDao() {
+    public IStudyDAO getStudyDao() {
         return studyDao;
     }
 
     /**
      * @return the subjectDao
      */
-    public StudySubjectDAO getStudySubjectDao() {
+    public IStudySubjectDAO getStudySubjectDao() {
         return studySubjectDao;
     }
 
     /**
      * @return the UserAccountDao
      */
-    public UserAccountDAO getUserAccountDao() {
+    public IUserAccountDAO getUserAccountDao() {
         return userAccountDao;
     }
 

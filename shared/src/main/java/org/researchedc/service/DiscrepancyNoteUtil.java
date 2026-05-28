@@ -22,10 +22,9 @@ import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.DisplayEventCRFBean;
 import org.researchedc.bean.submit.EventCRFBean;
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
@@ -42,10 +41,10 @@ public class DiscrepancyNoteUtil {
     private DiscrepancyNoteDAO discrepancyNoteDao;
     private IStudyDAO studyDao;
     private EventDefinitionCRFDAO eventDefinitionCrfDao;
-    private Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = StudySubjectDAO::new;
+    private Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
     private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
     private Function<DataSource, DiscrepancyNoteDAO> discrepancyNoteDaoFactory = DiscrepancyNoteDAO::new;
-    private Function<DataSource, IStudyDAO> studyDaoFactory = StudyDAO::new;
+    private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
     private Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory = EventDefinitionCRFDAO::new;
 
     // TODO: initialize these static members from the database.

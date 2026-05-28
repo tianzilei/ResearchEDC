@@ -61,7 +61,6 @@ import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.CrfVersionMediaDao;
 import org.researchedc.dao.hibernate.RuleActionPropertyDao;
 import org.researchedc.dao.hibernate.SCDItemMetadataDao;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -110,6 +109,9 @@ public class OpenRosaServices {
     protected IStudyDAO studyDao;
 
     @Autowired
+    protected IStudySubjectDAO studySubjectDao;
+
+    @Autowired
     protected CRFVersionDAO crfVersionDao;
 
     public static final String INPUT_USER_SOURCE = "userSource";
@@ -134,7 +136,6 @@ public class OpenRosaServices {
     ParticipantPortalRegistrar participantPortalRegistrar;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     IStudyDAO sdao;
-    IStudySubjectDAO studySubjectDao;
 
     /**
      * @api {get} /rest2/openrosa/:studyOID/formList Get Form List
@@ -490,8 +491,7 @@ public class OpenRosaServices {
             @PathParam("studyOID") String studyOID, @RequestHeader("Authorization") String authorization) throws Exception {
 
         String ssoid = request.getParameter("studySubjectOID");
-        IStudySubjectDAO ssdao = new org.researchedc.dao.managestudy.StudySubjectDAO<String, java.util.ArrayList>(dataSource);
-        StudySubjectBean ssBean = ssdao.findByOid(ssoid);
+        StudySubjectBean ssBean = studySubjectDao.findByOid(ssoid);
         if (!mayProceedSubmission(studyOID, ssBean))
             return null;
 

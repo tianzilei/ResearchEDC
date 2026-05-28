@@ -6,8 +6,8 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.logic.rulerunner.ExecutionMode;
@@ -28,8 +28,8 @@ public class RandomizeActionProcessor implements ActionProcessor {
     RuleActionRunLogDao ruleActionRunLogDao;
     RuleSetBean ruleSet;
     RuleSetRuleBean ruleSetRule;
-    StudyDAO sdao=null;
-    StudyParameterValueDAO spvdao;
+    IStudyDAO sdao=null;
+    IStudyParameterValueDAO spvdao;
     RandomizationRegistrar randomizationRegistrar=null ;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -44,7 +44,7 @@ public class RandomizeActionProcessor implements ActionProcessor {
     }
 
     public RandomizeActionProcessor(DataSource ds, DynamicsMetadataService itemMetadataService, RuleActionRunLogDao ruleActionRunLogDao, RuleSetBean ruleSet,
-            RuleSetRuleBean ruleSetRule, StudyDAO studyDao, StudyParameterValueDAO studyParameterValueDao) {
+            RuleSetRuleBean ruleSetRule, IStudyDAO studyDao, IStudyParameterValueDAO studyParameterValueDao) {
         this(ds, itemMetadataService, ruleActionRunLogDao, ruleSet, ruleSetRule);
         this.sdao = studyDao;
         this.spvdao = studyParameterValueDao;

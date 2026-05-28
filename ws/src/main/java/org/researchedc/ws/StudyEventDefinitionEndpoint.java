@@ -9,8 +9,8 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class StudyEventDefinitionEndpoint {
     private final MessageSource messages;
     private final Locale locale;
     @Autowired
-    private StudyDAO studyDao;
+    private IStudyDAO studyDao;
     @Autowired
     private UserAccountDAO userAccountDao;
     @Autowired

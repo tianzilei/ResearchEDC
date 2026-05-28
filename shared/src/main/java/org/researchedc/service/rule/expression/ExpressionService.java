@@ -38,11 +38,12 @@ import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
@@ -100,7 +101,7 @@ public class ExpressionService {
     private CRFVersionDAO crfVersionDao;
     private ItemDataDAO itemDataDao;
     private StudyEventDAO studyEventDao;
-    private StudySubjectDAO studySubjectDao;
+    private IStudySubjectDAO studySubjectDao;
     private ItemFormMetadataDAO itemFormMetadataDao;
     private Function<DataSource, ItemDAO> itemDaoFactory;
     private Function<DataSource, ItemDataDAO> itemDataDaoFactory;
@@ -111,7 +112,7 @@ public class ExpressionService {
     private Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory;
     private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
     private Function<DataSource, StudyEventDAO> studyEventDaoFactory;
-    private Function<DataSource, StudySubjectDAO> studySubjectDaoFactory;
+    private Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory;
     private Function<DataSource, EventCRFDAO> eventCrfDaoFactory;
     private Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
     public final static String STARTDATE = ".STARTDATE";
@@ -132,7 +133,7 @@ public class ExpressionService {
         init(ds, null, ItemDAO::new, ItemDataDAO::new, CRFVersionDAO::new,
                 CRFDAO::new, ItemGroupDAO::new, ItemGroupMetadataDAO::new,
                 EventDefinitionCRFDAO::new, StudyEventDefinitionDAO::new,
-                StudyEventDAO::new, StudySubjectDAO::new, EventCRFDAO::new,
+                StudyEventDAO::new, LegacyDaoFactory::studySubjectDao, EventCRFDAO::new,
                 ItemFormMetadataDAO::new);
     }
 
@@ -140,7 +141,7 @@ public class ExpressionService {
         init(expressionWrapper.getDs(), expressionWrapper, ItemDAO::new, ItemDataDAO::new,
                 CRFVersionDAO::new, CRFDAO::new, ItemGroupDAO::new,
                 ItemGroupMetadataDAO::new, EventDefinitionCRFDAO::new,
-                StudyEventDefinitionDAO::new, StudyEventDAO::new, StudySubjectDAO::new,
+                StudyEventDefinitionDAO::new, StudyEventDAO::new, LegacyDaoFactory::studySubjectDao,
                 EventCRFDAO::new, ItemFormMetadataDAO::new);
     }
 
@@ -154,7 +155,7 @@ public class ExpressionService {
             Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory,
             Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory,
             Function<DataSource, StudyEventDAO> studyEventDaoFactory,
-            Function<DataSource, StudySubjectDAO> studySubjectDaoFactory,
+            Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory,
             Function<DataSource, EventCRFDAO> eventCrfDaoFactory,
             Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory) {
         this.itemDaoFactory = itemDaoFactory;
@@ -1564,7 +1565,7 @@ public class ExpressionService {
         return studyEventDao;
     }
 
-    private StudySubjectDAO getStudySubjectDao() {
+    private IStudySubjectDAO getStudySubjectDao() {
         if (studySubjectDao == null) {
             studySubjectDao = studySubjectDaoFactory.apply(ds);
         }

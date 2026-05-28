@@ -11,9 +11,8 @@ import javax.sql.DataSource;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.dao.hibernate.RuleSetDao;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.expression.ExpressionBean;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -35,11 +34,9 @@ public class JobTriggerService {
     @Autowired
     RuleSetService ruleSetService;
     @Autowired
-    StudySubjectDAO studySubjectDao;
+    IUserAccountDAO userAccountDao;
     @Autowired
-    UserAccountDAO userAccountDao;
-    @Autowired
-    StudyDAO studyDao;
+    IStudyDAO studyDao;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     private static final SimpleDateFormat currentDateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -88,18 +85,11 @@ public class JobTriggerService {
             }
         }
     }
-
-
-
-    public StudySubjectDAO getStudySubjecdao() {
-        return studySubjectDao;
-    }
-
-    public UserAccountDAO getUserAccountDao() {
+    public IUserAccountDAO getUserAccountDao() {
         return userAccountDao;
     }
 
-    public StudyDAO getStudyDao() {
+    public IStudyDAO getStudyDao() {
         return studyDao;
     }
 

@@ -44,6 +44,7 @@ public interface IStudySubjectDAO {
     StudySubjectBean findSameByLabelAndStudy(String label, int studyId, int id);
     StudySubjectBean findByOidAndStudy(String oid, int studyId);
     StudySubjectBean findByOid(String oid);
+    String findStudySubjectIdsByStudyIds(String studyIds);
     StudySubjectBean findBySubjectIdAndStudy(int subjectId, StudyBean study);
     ArrayList findAllByStudyId(int studyId);
     ArrayList findAllByStudyIdAndLimit(int studyId, boolean isLimited);

@@ -6,8 +6,7 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.SubjectTransferBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -33,8 +32,8 @@ public class SubjectTransferValidator implements Validator {
 
     public SubjectTransferValidator(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.studyDaoFactory = StudyDAO::new;
-        this.studySubjectDaoFactory = StudySubjectDAO::new;
+        this.studyDaoFactory = LegacyDaoFactory::studyDao;
+        this.studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
         this.studyParameterValueDaoFactory = StudyParameterValueDAO::new;
     }
 

@@ -11,16 +11,16 @@ import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -59,11 +59,11 @@ public class RuleRunner {
     private ItemDataDAO itemDataDao;
     private ExpressionService expressionService;
     private EventCRFDAO eventCrfDao;
-    private StudySubjectDAO studySubjectDao;
-    private StudyDAO studyDao;
+    private IStudySubjectDAO studySubjectDao;
+    private IStudyDAO studyDao;
     private StudyEventDefinitionDAO studyEventDefinitionDao;
-    private StudyParameterValueDAO studyParameterValueDao;
-    private UserAccountDAO userAccountDao;
+    private IStudyParameterValueDAO studyParameterValueDao;
+    private IUserAccountDAO userAccountDao;
     private DiscrepancyNoteDAO discrepancyNoteDao;
     private ItemFormMetadataDAO itemFormMetadataDao;
     private SectionDAO sectionDao;
@@ -230,7 +230,7 @@ public class RuleRunner {
         return crfVersionDao;
     }
 
-    StudySubjectDAO getStudySubjectDao() {
+    IStudySubjectDAO getStudySubjectDao() {
         return studySubjectDao;
     }
 
@@ -242,7 +242,7 @@ public class RuleRunner {
         return sectionDao;
     }
 
-    StudyDAO getStudyDao() {
+    IStudyDAO getStudyDao() {
         return studyDao;
     }
 
@@ -250,11 +250,11 @@ public class RuleRunner {
         return studyEventDefinitionDao;
     }
 
-    StudyParameterValueDAO getStudyParameterValueDao() {
+    IStudyParameterValueDAO getStudyParameterValueDao() {
         return studyParameterValueDao;
     }
 
-    UserAccountDAO getUserAccountDao() {
+    IUserAccountDAO getUserAccountDao() {
         return userAccountDao;
     }
 
@@ -264,8 +264,8 @@ public class RuleRunner {
 
     public void setDaoCollaborators(RuleSetDAO ruleSetDao, CRFDAO crfDao, RuleSetRuleDAO ruleSetRuleDao, RuleActionDAO ruleActionDao,
             StudyEventDAO studyEventDao, ItemDataDAO itemDataDao, EventCRFDAO eventCrfDao, CRFVersionDAO crfVersionDao,
-            StudySubjectDAO studySubjectDao, ItemFormMetadataDAO itemFormMetadataDao, SectionDAO sectionDao, StudyDAO studyDao,
-            StudyEventDefinitionDAO studyEventDefinitionDao, StudyParameterValueDAO studyParameterValueDao, UserAccountDAO userAccountDao,
+            IStudySubjectDAO studySubjectDao, ItemFormMetadataDAO itemFormMetadataDao, SectionDAO sectionDao, IStudyDAO studyDao,
+            StudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
             DiscrepancyNoteDAO discrepancyNoteDao, ExpressionService expressionService) {
         this.ruleSetDao = ruleSetDao;
         this.crfDao = crfDao;

@@ -20,10 +20,10 @@ import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.bean.submit.crfdata.StudyEventDataBean;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.bean.submit.crfdata.UpsertOnBean;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 
@@ -41,11 +41,11 @@ public class ImportCRFInfoContainer {
     @Autowired
     private EventCRFDAO eventCrfDAO;
     @Autowired
-    private StudySubjectDAO studySubjectDAO;
+    private IStudySubjectDAO studySubjectDAO;
     @Autowired
     private StudyEventDefinitionDAO studyEventDefinitionDAO;
     @Autowired
-    private StudyDAO studyDAO;
+    private IStudyDAO studyDAO;
     @Autowired
     private StudyEventDAO studyEventDAO;
     @Autowired

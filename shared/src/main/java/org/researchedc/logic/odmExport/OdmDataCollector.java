@@ -25,7 +25,8 @@ import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.odmbeans.ODMBean;
-import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +42,8 @@ public abstract class OdmDataCollector {
     private ODMBean odmbean;
     // key is study/site oc_oid.
     private LinkedHashMap<String, OdmStudyBase> studyBaseMap;
-    private StudyDAO studyDao;
-    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
+    private IStudyDAO studyDao;
+    private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
     // 0: one Study Element; 1: one parent study and its sites
     private int category;
 
@@ -182,7 +183,7 @@ public abstract class OdmDataCollector {
         return Bases;
     }
 
-    private StudyDAO getStudyDao() {
+    private IStudyDAO getStudyDao() {
         if (studyDao == null) {
             studyDao = studyDaoFactory.apply(ds);
         }

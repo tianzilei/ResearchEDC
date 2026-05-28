@@ -6,14 +6,14 @@ import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.springframework.validation.Errors;
 
 public class BaseVSValidatorImplementation implements BaseWSValidatorInterface{
 
 	
 	
-	public StudyBean verifyStudy( StudyDAO dao, String study_id, Status[] included_status,
+	public StudyBean verifyStudy( IStudyDAO dao, String study_id, Status[] included_status,
 			 Errors errors){
 		
 		StudyBean study = dao.findByUniqueIdentifier(study_id);
@@ -39,7 +39,7 @@ public class BaseVSValidatorImplementation implements BaseWSValidatorInterface{
       
 	}
 	
-	public StudyBean verifyStudyByOID( StudyDAO dao, String study_id, Status[] included_status,
+	public StudyBean verifyStudyByOID( IStudyDAO dao, String study_id, Status[] included_status,
 			 Errors errors){
 		
 		StudyBean study = dao.findByOid(study_id);
@@ -65,7 +65,7 @@ public class BaseVSValidatorImplementation implements BaseWSValidatorInterface{
      
 	}
 	
-	public StudyBean verifySite( StudyDAO dao, String study_id, String site_id, Status[] included_status,
+	public StudyBean verifySite( IStudyDAO dao, String study_id, String site_id, Status[] included_status,
 			 Errors errors){
 		
 		 if ( site_id == null) return null;

@@ -6,10 +6,17 @@ import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
 import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.hibernate.RuleDao;
+import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.service.crfdata.InstantOnChangeService;
 import org.researchedc.service.extract.GenerateExtractFileService;
 import org.researchedc.service.extract.OdmFileCreation;
+import org.researchedc.service.rule.RulesPostImportContainerService;
+import org.researchedc.validator.rule.action.EventActionValidator;
+import org.researchedc.validator.rule.action.InsertActionValidator;
+import org.researchedc.validator.rule.action.RandomizeActionValidator;
 import org.researchedc.web.table.sdv.SDVUtil;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
@@ -77,5 +84,18 @@ public class WebBeansConfig {
         return new GenerateExtractFileService(dataSource, coreResources, ruleSetRuleDao,
                 extractDatasetDao, extractItemFormMetadataDao, extractArchivedDatasetFileDao,
                 odmFileCreation);
+    }
+
+    @Bean("rulesPostImportContainerService")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public RulesPostImportContainerService rulesPostImportContainerService(DataSource dataSource,
+            RuleDao ruleDao, RuleSetDao ruleSetDao, IStudyDAO studyDao) {
+        RulesPostImportContainerService service = new RulesPostImportContainerService(dataSource);
+        service.setRuleDao(ruleDao);
+        service.setRuleSetDao(ruleSetDao);
+        service.setInsertActionValidator(new InsertActionValidator(dataSource));
+        service.setEventActionValidator(new EventActionValidator(dataSource, studyDao));
+        service.setRandomizeActionValidator(new RandomizeActionValidator(dataSource));
+        return service;
     }
 }

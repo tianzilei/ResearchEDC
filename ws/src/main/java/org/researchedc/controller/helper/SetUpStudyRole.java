@@ -1,8 +1,8 @@
 package org.researchedc.controller.helper;
 
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.service.StudyConfigService;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -28,7 +28,7 @@ public class SetUpStudyRole {
     @Qualifier("dataSource")*/
     private DataSource dataSource;
     @Autowired
-    private StudyDAO studyDao;
+    private IStudyDAO studyDao;
     @Autowired
     private StudyParameterValueDAO studyParameterValueDao;
     private StudyConfigService studyConfigService;
@@ -39,7 +39,7 @@ public class SetUpStudyRole {
         this.dataSource = dataSource;
     }
 
-    public SetUpStudyRole(DataSource dataSource, StudyDAO studyDao, StudyParameterValueDAO studyParameterValueDao,
+    public SetUpStudyRole(DataSource dataSource, IStudyDAO studyDao, StudyParameterValueDAO studyParameterValueDao,
             StudyConfigService studyConfigService) {
         this.dataSource = dataSource;
         this.studyDao = studyDao;

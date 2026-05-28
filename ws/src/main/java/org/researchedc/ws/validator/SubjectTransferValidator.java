@@ -15,10 +15,10 @@ import org.researchedc.bean.managestudy.SubjectTransferBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
-import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.ws.bean.SubjectStudyDefinitionBean;
@@ -31,11 +31,11 @@ public class SubjectTransferValidator implements Validator {
 
     DataSource dataSource;
     @Autowired
-    private StudyDAO studyDAO;
+    private IStudyDAO studyDAO;
     @Autowired
-    private SubjectDAO subjectDao;
+    private ISubjectDAO subjectDao;
     @Autowired
-    private StudySubjectDAO studySubjectDAO;
+    private IStudySubjectDAO studySubjectDAO;
     @Autowired
     private IStudyParameterValueDAO studyParameterValueDAO;
     @Autowired

@@ -1,15 +1,15 @@
 package org.researchedc.ws.internal.adapter;
 
 import org.researchedc.bean.submit.SubjectBean;
-import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class SubjectAdapter {
 
-    private final SubjectDAO delegate;
+    private final ISubjectDAO delegate;
 
-    public SubjectAdapter(SubjectDAO delegate) {
+    public SubjectAdapter(ISubjectDAO delegate) {
         this.delegate = delegate;
     }
 
@@ -21,7 +21,7 @@ public class SubjectAdapter {
         return delegate.findByUniqueIdentifierAndAnyStudy(uniqueIdentifier, studyId);
     }
 
-    public SubjectDAO getDelegate() {
+    public ISubjectDAO getDelegate() {
         return delegate;
     }
 }

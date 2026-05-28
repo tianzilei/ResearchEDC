@@ -18,7 +18,8 @@ import javax.sql.DataSource;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.odmbeans.OdmClinicalDataBean;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.job.JobTerminationMonitor;
 
 /**
@@ -34,8 +35,8 @@ import org.researchedc.job.JobTerminationMonitor;
 
 public class ClinicalDataCollector extends OdmDataCollector {
     private LinkedHashMap<String, OdmClinicalDataBean> odmClinicalDataMap;
-    private StudySubjectDAO studySubjectDao;
-    private Function<DataSource, StudySubjectDAO> studySubjectDaoFactory = StudySubjectDAO::new;
+    private IStudySubjectDAO studySubjectDao;
+    private Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
 
 
     /**
@@ -67,7 +68,7 @@ public class ClinicalDataCollector extends OdmDataCollector {
         }
     }
 
-    private StudySubjectDAO getStudySubjectDao() {
+    private IStudySubjectDAO getStudySubjectDao() {
         if (studySubjectDao == null) {
             studySubjectDao = studySubjectDaoFactory.apply(this.ds);
         }

@@ -3,15 +3,13 @@ package org.researchedc.validator.rule.action;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
 
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.dao.hibernate.StudyDao;
-import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.domain.rule.AuditableBeanWrapper;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.action.EventActionBean;
@@ -31,6 +29,7 @@ import javax.sql.DataSource;
 public class EventActionValidator implements Validator {
 
     DataSource dataSource;
+    private IStudyDAO studyDao;
 	ExpressionService expressionService;
     AuditableBeanWrapper<RuleSetBean> ruleSetBeanWrapper;
     ResourceBundle respage;
@@ -41,6 +40,11 @@ public class EventActionValidator implements Validator {
 
 	public EventActionValidator(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    public EventActionValidator(DataSource dataSource, IStudyDAO studyDao) {
+        this(dataSource);
+        this.studyDao = studyDao;
     }
 
     /**
@@ -98,8 +102,7 @@ public class EventActionValidator implements Validator {
 
     private boolean isEventActionValueExpressionValid(PropertyBean property, AuditableBeanWrapper<RuleSetBean> ruleSetBeanWrapper) {
 
-        StudyDAO studyDAO =  new StudyDAO<String, ArrayList>(getDataSource());
-        StudyBean study = (StudyBean) studyDAO.findByPK(ruleSetBeanWrapper.getAuditableBean().getStudyId());
+        StudyBean study = (StudyBean) getStudyDao().findByPK(ruleSetBeanWrapper.getAuditableBean().getStudyId());
                
         ExpressionBean expressionBean = isExpressionValid(property.getValueExpression(), ruleSetBeanWrapper);
         ExpressionObjectWrapper eow = new ExpressionObjectWrapper(dataSource,study, expressionBean, ruleSetBeanWrapper.getAuditableBean(),
@@ -192,6 +195,14 @@ public class EventActionValidator implements Validator {
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
+
+    public IStudyDAO getStudyDao() {
+        return studyDao;
+    }
+
+    public void setStudyDao(IStudyDAO studyDao) {
+        this.studyDao = studyDao;
+    }
 
 
 }

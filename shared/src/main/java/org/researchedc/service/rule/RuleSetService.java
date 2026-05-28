@@ -42,16 +42,16 @@ import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
@@ -111,11 +111,11 @@ public class RuleSetService implements RuleSetServiceInterface {
 
     // Jdbc based DAOs
     @Autowired
-    private StudyDAO studyDao;
+    private IStudyDAO studyDao;
     @Autowired
     private StudyEventDefinitionDAO studyEventDefinitionDao;
     @Autowired
-    private StudySubjectDAO studySubjecdao;
+    private IStudySubjectDAO studySubjecdao;
     @Autowired
     private CRFDAO crfDao;
     @Autowired
@@ -140,9 +140,9 @@ public class RuleSetService implements RuleSetServiceInterface {
     @Autowired
     private SectionDAO sectionDao;
     @Autowired
-    private StudyParameterValueDAO studyParameterValueDao;
+    private IStudyParameterValueDAO studyParameterValueDao;
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     @Autowired
     private DiscrepancyNoteDAO discrepancyNoteDao;
     private DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
@@ -1009,7 +1009,7 @@ public class RuleSetService implements RuleSetServiceInterface {
         return requestURLMinusServletPath;
     }
 
-    public void setStudyDao(StudyDAO studyDao) {
+    public void setStudyDao(IStudyDAO studyDao) {
         this.studyDao = studyDao;
     }
 
@@ -1079,7 +1079,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     }
 
 
-    public StudyDAO getStudyDao() {
+    public IStudyDAO getStudyDao() {
         return studyDao;
     }
 
@@ -1091,7 +1091,7 @@ public class RuleSetService implements RuleSetServiceInterface {
         return crfVersionDao;
     }
 
-    private StudySubjectDAO getStudySubjectDao() {
+    private IStudySubjectDAO getStudySubjectDao() {
         return studySubjecdao;
     }
 
@@ -1206,11 +1206,11 @@ public class RuleSetService implements RuleSetServiceInterface {
 		this.studyEventDefDomainDao = studyEventDefDomainDao;
 	}
 
-	public StudySubjectDAO getStudySubjecdao() {
+	public IStudySubjectDAO getStudySubjecdao() {
         return studySubjecdao;
 	}
 
-	public void setStudySubjecdao(StudySubjectDAO studySubjecdao) {
+	public void setStudySubjecdao(IStudySubjectDAO studySubjecdao) {
 		this.studySubjecdao = studySubjecdao;
 	}
 

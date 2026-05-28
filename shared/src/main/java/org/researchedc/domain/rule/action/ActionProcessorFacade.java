@@ -1,13 +1,13 @@
 package org.researchedc.domain.rule.action;
 
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.exception.OpenClinicaSystemException;
@@ -20,8 +20,8 @@ public class ActionProcessorFacade {
 
     public static ActionProcessor getActionProcessor(ActionType actionType, DataSource ds, JavaMailSenderImpl mailSender,
             DynamicsMetadataService itemMetadataService, RuleSetBean ruleSet, RuleActionRunLogDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule,
-            StudyDAO studyDao, StudySubjectDAO studySubjectDao, StudyEventDAO studyEventDao,
-            StudyEventDefinitionDAO studyEventDefinitionDao, StudyParameterValueDAO studyParameterValueDao, UserAccountDAO userAccountDao,
+            IStudyDAO studyDao, IStudySubjectDAO studySubjectDao, StudyEventDAO studyEventDao,
+            StudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
             DiscrepancyNoteDAO discrepancyNoteDao)
             throws OpenClinicaSystemException {
         switch (actionType) {

@@ -18,12 +18,12 @@ import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.core.EmailEngine;
 import org.researchedc.dao.hibernate.RuleSetDao;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.exception.OpenClinicaSystemException;
@@ -46,10 +46,10 @@ public class NotificationActionProcessor implements ActionProcessor, Runnable {
 	EmailEngine emailEngine;
 	JavaMailSenderImpl mailSender;
 	RuleSetRuleBean ruleSetRule;
-	StudySubjectDAO ssdao;
-	UserAccountDAO udao;
-	StudyParameterValueDAO spvdao;
-	StudyDAO sdao;
+	IStudySubjectDAO ssdao;
+	IUserAccountDAO udao;
+	IStudyParameterValueDAO spvdao;
+	IStudyDAO sdao;
 	StudyEventDAO studyEventDao;
 	StudyEventDefinitionDAO studyEventDefinitionDao;
 	RuleSetService ruleSetService;
@@ -97,8 +97,8 @@ public class NotificationActionProcessor implements ActionProcessor, Runnable {
 		this.ruleSetRule = ruleSetRule;
 	}
 
-	public NotificationActionProcessor(DataSource ds, JavaMailSenderImpl mailSender, RuleSetRuleBean ruleSetRule, StudySubjectDAO studySubjectDao,
-			UserAccountDAO userAccountDao, StudyParameterValueDAO studyParameterValueDao, StudyDAO studyDao, StudyEventDAO studyEventDao,
+	public NotificationActionProcessor(DataSource ds, JavaMailSenderImpl mailSender, RuleSetRuleBean ruleSetRule, IStudySubjectDAO studySubjectDao,
+			IUserAccountDAO userAccountDao, IStudyParameterValueDAO studyParameterValueDao, IStudyDAO studyDao, StudyEventDAO studyEventDao,
 			StudyEventDefinitionDAO studyEventDefinitionDao) {
 		this(ds, mailSender, ruleSetRule);
 		this.ssdao = studySubjectDao;

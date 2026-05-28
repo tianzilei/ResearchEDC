@@ -20,10 +20,11 @@ import javax.sql.DataSource;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemGroupBean;
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.domain.datamap.StudyEvent;
 import org.researchedc.domain.datamap.StudyEventDefinition;
 import org.researchedc.domain.rule.expression.ExpressionBeanObjectWrapper;
@@ -56,8 +57,8 @@ public class ExpressionBeanService {
     Pattern[] rulePattern;
     Pattern[] ruleActionPattern;
     ExpressionBeanObjectWrapper expressionBeanWrapper;
-    private StudySubjectDAO studySubjectDao;
-    private Function<DataSource, StudySubjectDAO> studySubjectDaoFactory;
+    private IStudySubjectDAO studySubjectDao;
+    private Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory;
 
     public static String STUDYEVENTKEY="SE";
 
@@ -72,22 +73,22 @@ public class ExpressionBeanService {
     private HashMap<String, ItemBean> items;
 
     public ExpressionBeanService(DataSource ds) {
-        init(ds, null, StudySubjectDAO::new);
+        init(ds, null, LegacyDaoFactory::studySubjectDao);
     }
 
     public ExpressionBeanService(ExpressionBeanObjectWrapper expressionBeanWrapper) {
-        init(expressionBeanWrapper.getDs(), expressionBeanWrapper, StudySubjectDAO::new);
+        init(expressionBeanWrapper.getDs(), expressionBeanWrapper, LegacyDaoFactory::studySubjectDao);
     }
 
-    public ExpressionBeanService(DataSource ds, StudySubjectDAO studySubjectDao) {
+    public ExpressionBeanService(DataSource ds, IStudySubjectDAO studySubjectDao) {
         init(ds, null, dataSource -> studySubjectDao);
     }
 
-    public ExpressionBeanService(ExpressionBeanObjectWrapper expressionBeanWrapper, StudySubjectDAO studySubjectDao) {
+    public ExpressionBeanService(ExpressionBeanObjectWrapper expressionBeanWrapper, IStudySubjectDAO studySubjectDao) {
         init(expressionBeanWrapper.getDs(), expressionBeanWrapper, dataSource -> studySubjectDao);
     }
     private void init(DataSource ds, ExpressionBeanObjectWrapper expressionBeanWrapper,
-            Function<DataSource, StudySubjectDAO> studySubjectDaoFactory) {
+            Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory) {
         //TODO add stuff here
         this.ds = ds;
         this.expressionBeanWrapper = expressionBeanWrapper;
@@ -162,7 +163,7 @@ public class ExpressionBeanService {
           return ssBean.getTime_zone().trim();
         }
 
-    private StudySubjectDAO getStudySubjectDao() {
+    private IStudySubjectDAO getStudySubjectDao() {
         if (studySubjectDao == null) {
             studySubjectDao = studySubjectDaoFactory.apply(ds);
         }

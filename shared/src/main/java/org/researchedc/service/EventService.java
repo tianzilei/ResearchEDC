@@ -13,12 +13,12 @@ import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.core.SessionManager;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.exception.OpenClinicaSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,12 +29,12 @@ import org.springframework.stereotype.Service;
 public class EventService implements EventServiceInterface {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-    SubjectDAO subjectDao;
-    StudySubjectDAO studySubjectDao;
-    UserAccountDAO userAccountDao;
-    StudyEventDefinitionDAO studyEventDefinitionDao;
-    StudyEventDAO studyEventDao;
-    StudyDAO studyDao;
+    ISubjectDAO subjectDao;
+    IStudySubjectDAO studySubjectDao;
+    IUserAccountDAO userAccountDao;
+    IStudyEventDefinitionDAO studyEventDefinitionDao;
+    IStudyEventDAO studyEventDao;
+    IStudyDAO studyDao;
     DataSource dataSource;
 
     public EventService(DataSource dataSource) {
@@ -48,12 +48,12 @@ public class EventService implements EventServiceInterface {
     @Autowired
     public EventService(
             DataSource dataSource,
-            SubjectDAO subjectDao,
-            StudyDAO studyDao,
-            StudySubjectDAO studySubjectDao,
-            UserAccountDAO userAccountDao,
-            StudyEventDefinitionDAO studyEventDefinitionDao,
-            StudyEventDAO studyEventDao) {
+            ISubjectDAO subjectDao,
+            IStudyDAO studyDao,
+            IStudySubjectDAO studySubjectDao,
+            IUserAccountDAO userAccountDao,
+            IStudyEventDefinitionDAO studyEventDefinitionDao,
+            IStudyEventDAO studyEventDao) {
         this.dataSource = dataSource;
         this.subjectDao = subjectDao;
         this.studyDao = studyDao;
@@ -117,42 +117,42 @@ public class EventService implements EventServiceInterface {
     /**
      * @return the subjectDao
      */
-    public SubjectDAO getSubjectDao() {
+    public ISubjectDAO getSubjectDao() {
         return subjectDao;
     }
 
     /**
      * @return the subjectDao
      */
-    public StudyDAO getStudyDao() {
+    public IStudyDAO getStudyDao() {
         return studyDao;
     }
 
     /**
      * @return the subjectDao
      */
-    public StudySubjectDAO getStudySubjectDao() {
+    public IStudySubjectDAO getStudySubjectDao() {
         return studySubjectDao;
     }
 
     /**
      * @return the UserAccountDao
      */
-    public UserAccountDAO getUserAccountDao() {
+    public IUserAccountDAO getUserAccountDao() {
         return userAccountDao;
     }
 
     /**
      * @return the StudyEventDefinitionDao
      */
-    public StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+    public IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
         return studyEventDefinitionDao;
     }
 
     /**
      * @return the StudyEventDao
      */
-    public StudyEventDAO getStudyEventDao() {
+    public IStudyEventDAO getStudyEventDao() {
         return studyEventDao;
     }
 

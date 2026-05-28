@@ -20,11 +20,12 @@ import org.researchedc.bean.odmbeans.ODMBean;
 import org.researchedc.bean.odmbeans.OdmStudyBean;
 import org.researchedc.bean.odmbeans.RangeCheckBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.extract.OdmExtractDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -47,11 +48,11 @@ public class MetadataUnit extends OdmUnit {
 
 	private StudyBean parentStudy;
     private RuleSetRuleDao ruleSetRuleDao;
-    private StudyDAO studyDao;
+    private IStudyDAO studyDao;
     private OdmExtractDAO odmExtractDao;
     private StudyConfigService studyConfigService;
     private StudyParameterValueDAO studyParameterValueDao;
-    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
+    private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
     private Function<DataSource, OdmExtractDAO> odmExtractDaoFactory = OdmExtractDAO::new;
     private Function<DataSource, StudyConfigService> studyConfigServiceFactory = StudyConfigService::new;
     private Function<DataSource, StudyParameterValueDAO> studyParameterValueDaoFactory = StudyParameterValueDAO::new;
@@ -264,7 +265,7 @@ public class MetadataUnit extends OdmUnit {
         }
     }
 
-    private StudyDAO getStudyDao() {
+    private IStudyDAO getStudyDao() {
         if (studyDao == null) {
             studyDao = studyDaoFactory.apply(ds);
         }

@@ -7,7 +7,7 @@
 
 ResearchEDC is an independently maintained research electronic data capture and clinical research data management platform derived from OpenClinica v3.x.
 
-该项目专注于研究者发起的临床研究，支持电子病例报告表、受试者管理、研究工作流、数据导出以及未来扩展的随机化、问卷集成、针刺临床试验工作流和神经生理数据元数据管理。
+该项目专注于研究者发起的临床研究，支持电子病例报告表、受试者管理、研究工作流、数据导出以及未来扩展的随机化、问卷集成等数据管理。
 
 > ⚠️ **免责声明：** 本项目的源代码按"原样"提供，仅供学习和研究参考。**这是一个实验性项目，不适用于实际生产环境。** 任何直接或间接使用本项目代码、构建产物或部署实例所导致的任何损失，包括但不限于数据丢失、系统故障、法律合规风险及其他任何形式的损害，项目贡献者及维护者均不承担任何责任。使用者应自行评估风险并承担全部责任。
 
@@ -226,6 +226,7 @@ python -m pytest app/tests/ -v  # 31 tests
 
 - **DAO 模式:** 所有数据库访问通过 `EntityDAO<K>` 子类或 SPI 接口
 - **Legacy DAO constructor baseline:** `DaoProvider` 已删除；`shared/`、`web/`、`ws/` 中直接 `new *DAO(...)` / `new StudyConfigService(...)` 匹配为 0
+- **Legacy DAO type cleanup:** `StudyDAO` / `StudySubjectDAO` / `SubjectDAO` 消费端继续收敛到 SPI 接口；WS 层已清零该类具体 DAO 引用，跨 `shared/`、`web/`、`ws/`、`app/` 剩余具体类型引用 269 处，默认构造集中到 `LegacyDaoFactory`
 - **Bean 模式:** DTO 继承 `EntityBean` 含审计字段 (id, createdDate, ownerId...)
 - **SecureController:** 所有 Servlet 继承此类自动处理会话/权限
 - **服务层:** `@Service` + `@Transactional` 封装业务编排
