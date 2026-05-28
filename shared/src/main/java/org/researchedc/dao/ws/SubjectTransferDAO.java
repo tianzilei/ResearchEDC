@@ -60,7 +60,10 @@ public class SubjectTransferDAO extends EntityDAO {
     }
 
     private UserAccountDAO getUserAccountDao() {
-        return this.userAccountDao != null ? this.userAccountDao : new UserAccountDAO(ds);
+        if (userAccountDao == null) {
+            userAccountDao = new UserAccountDAO(ds);
+        }
+        return userAccountDao;
     }
 
     @Override

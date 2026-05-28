@@ -18,5 +18,7 @@ public interface RandomizationAssignmentRepository extends JpaRepository<Randomi
 
     long countBySchemeIdAndArmIdAndStatus(Long schemeId, Long armId, AssignmentStatus status);
 
+    long countBySchemeIdAndArmIdAndStratumPathAndStatus(Long schemeId, Long armId, String stratumPath, AssignmentStatus status);
+
     List<RandomizationAssignment> findBySchemeIdAndStatusOrderByAssignedDateDesc(Long schemeId, AssignmentStatus status);
 }

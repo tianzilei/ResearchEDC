@@ -42,6 +42,9 @@ public class BlockRandomization implements RandomizationAlgorithmStrategy {
         }
 
         int totalRatio = arms.stream().mapToInt(RandomizationArm::getRatio).sum();
+        if (totalRatio <= 0) {
+            throw new IllegalStateException("Total arm ratio must be positive for scheme " + scheme.getId());
+        }
         int blockSize = scheme.getMinBlockSize() != null ? scheme.getMinBlockSize() : totalRatio;
 
         // Find current block for this stratum path

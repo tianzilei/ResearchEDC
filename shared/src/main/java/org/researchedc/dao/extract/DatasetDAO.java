@@ -42,6 +42,7 @@ public class DatasetDAO extends AuditableEntityDAO implements org.researchedc.da
 
     // private DataSource ds;
     // private DAODigester digester;
+    private ItemDAO itemDao;
 
     @Override
     protected void setDigesterName() {
@@ -663,7 +664,6 @@ public class DatasetDAO extends AuditableEntityDAO implements org.researchedc.da
      * @author ywang (Feb., 2008)
      */
     public DatasetBean initialDatasetData(int datasetId) {
-        ItemDAO idao = new ItemDAO(ds);
         DatasetBean db = (DatasetBean) findByPK(datasetId);
         String sql = db.getSQLStatement();
         sql = sql.split("study_event_definition_id in")[1];
@@ -678,7 +678,7 @@ public class DatasetDAO extends AuditableEntityDAO implements org.researchedc.da
         Iterator it = alist.iterator();
         while (it.hasNext()) {
             HashMap row = (HashMap) it.next();
-            ItemBean ib = (ItemBean) idao.getEntityFromHashMap(row);
+            ItemBean ib = (ItemBean) getItemDao().getEntityFromHashMap(row);
             Integer defId = (Integer) row.get("sed_id");
             String defName = (String) row.get("sed_name");
             String crfName = (String) row.get("crf_name");
@@ -701,6 +701,13 @@ public class DatasetDAO extends AuditableEntityDAO implements org.researchedc.da
         }
         db.setSubjectGroupIds(getGroupIds(db.getId()));
         return db;
+    }
+
+    private ItemDAO getItemDao() {
+        if (itemDao == null) {
+            itemDao = new ItemDAO(ds);
+        }
+        return itemDao;
     }
 
     protected String getDefinitionCrfItemSql(String sedIds, String itemIds) {

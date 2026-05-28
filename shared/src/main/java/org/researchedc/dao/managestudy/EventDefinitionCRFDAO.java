@@ -43,6 +43,7 @@ import org.researchedc.dao.spi.EventDefinitionCRFDao;
 
 public class EventDefinitionCRFDAO extends AuditableEntityDAO implements EventDefinitionCRFDao {
     // private DAODigester digester;
+    private StudyDAO studyDao;
 
     private void setQueryNames() {
         getCurrentPKName = "getCurrentPK";
@@ -685,7 +686,7 @@ public class EventDefinitionCRFDAO extends AuditableEntityDAO implements EventDe
      * @return boolean to tell us if it's required or not.
      */
     public boolean isRequiredInDefinition(int crfVersionId, StudyEventBean studyEvent) {
-        StudyBean study = new StudyDAO(this.ds).findByStudySubjectId(studyEvent.getStudySubjectId());
+        StudyBean study = getStudyDao().findByStudySubjectId(studyEvent.getStudySubjectId());
         int studyEventId = studyEvent.getId();
 
         /*
@@ -1040,6 +1041,13 @@ public class EventDefinitionCRFDAO extends AuditableEntityDAO implements EventDe
             return comparison == 0 ? -1 : comparison;
         }
 
+    }
+
+    private StudyDAO getStudyDao() {
+        if (studyDao == null) {
+            studyDao = new StudyDAO(this.ds);
+        }
+        return studyDao;
     }
 
 }

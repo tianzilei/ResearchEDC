@@ -143,15 +143,24 @@ public class SubjectTransferValidator implements Validator {
     }
 
     public StudyDAO getStudyDAO() {
-        return this.studyDAO != null ? studyDAO : new StudyDAO(dataSource);
+        if (studyDAO == null) {
+            studyDAO = new StudyDAO(dataSource);
+        }
+        return studyDAO;
     }
 
     public StudySubjectDAO getStudySubjectDAO() {
-        return this.studySubjectDAO != null ? studySubjectDAO : new StudySubjectDAO(dataSource);
+        if (studySubjectDAO == null) {
+            studySubjectDAO = new StudySubjectDAO(dataSource);
+        }
+        return studySubjectDAO;
     }
 
     public StudyParameterValueDAO getStudyParameterValueDAO() {
-        return this.studyParameterValueDAO != null ? studyParameterValueDAO : new StudyParameterValueDAO(dataSource);
+        if (studyParameterValueDAO == null) {
+            studyParameterValueDAO = new StudyParameterValueDAO(dataSource);
+        }
+        return studyParameterValueDAO;
     }
 
 }

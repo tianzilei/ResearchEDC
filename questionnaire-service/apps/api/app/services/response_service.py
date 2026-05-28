@@ -1,3 +1,4 @@
+import inspect
 import uuid
 from datetime import datetime, timezone
 
@@ -206,5 +207,7 @@ class ResponseService:
                 answer_data["value_json"] = value
             else:
                 answer_data["value_text"] = str(value) if value is not None else None
-            self.session.add(QuestionnaireAnswer(**answer_data))
+            add_result = self.session.add(QuestionnaireAnswer(**answer_data))
+            if inspect.isawaitable(add_result):
+                await add_result
         await self.session.flush()

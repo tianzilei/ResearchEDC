@@ -153,7 +153,10 @@ public class ExpressionBeanService {
         }
 
     private StudySubjectDAO getStudySubjectDao() {
-        return  new StudySubjectDAO(ds);
+        if (studySubjectDao == null) {
+            studySubjectDao = new StudySubjectDAO(ds);
+        }
+        return studySubjectDao;
     }
 
 }

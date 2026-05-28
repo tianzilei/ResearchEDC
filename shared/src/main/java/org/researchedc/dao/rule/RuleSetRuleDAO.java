@@ -53,11 +53,17 @@ public class RuleSetRuleDAO extends AuditableEntityDAO {
     }
 
     private RuleDAO getRuleDao() {
-        return this.ruleDao != null ? this.ruleDao : new RuleDAO(ds);
+        if (ruleDao == null) {
+            ruleDao = new RuleDAO(ds);
+        }
+        return ruleDao;
     }
 
     private RuleSetDAO getRuleSetDao() {
-        return this.ruleSetDao != null ? this.ruleSetDao : new RuleSetDAO(ds);
+        if (ruleSetDao == null) {
+            ruleSetDao = new RuleSetDAO(ds);
+        }
+        return ruleSetDao;
     }
 
     public RuleSetRuleDAO(DataSource ds, DAODigester digester) {
@@ -67,7 +73,10 @@ public class RuleSetRuleDAO extends AuditableEntityDAO {
     }
 
     private RuleSetRuleAuditDAO getRuleSetRuleAuditDao() {
-        return this.ruleSetRuleAuditDao != null ? this.ruleSetRuleAuditDao : new RuleSetRuleAuditDAO(ds);
+        if (ruleSetRuleAuditDao == null) {
+            ruleSetRuleAuditDao = new RuleSetRuleAuditDAO(ds);
+        }
+        return ruleSetRuleAuditDao;
     }
 
     @Override

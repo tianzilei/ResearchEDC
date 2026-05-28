@@ -50,6 +50,7 @@ import org.researchedc.i18n.util.ResourceBundleProvider;
 public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDAO {
     // private DataSource ds;
     // private DAODigester digester;
+    private StudyDAO studyDao;
 
     @Override
     protected void setDigesterName() {
@@ -687,9 +688,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
 
         ArrayList answer = new ArrayList();
 
-        StudyDAO sdao = new StudyDAO(ds);
-
-        HashMap childrenByParentId = sdao.getChildrenByParentIds(allStudies);
+        HashMap childrenByParentId = getStudyDao().getChildrenByParentIds(allStudies);
 
         for (int i = 0; i < allStudies.size(); i++) {
             StudyBean parent = (StudyBean) allStudies.get(i);
@@ -820,6 +819,13 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         // }
 
         return answer;
+    }
+
+    private StudyDAO getStudyDao() {
+        if (studyDao == null) {
+            studyDao = new StudyDAO(ds);
+        }
+        return studyDao;
     }
 
     private ArrayList findAllByParent(Integer parentStudyId) {

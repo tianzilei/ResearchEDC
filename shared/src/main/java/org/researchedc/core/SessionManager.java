@@ -19,7 +19,6 @@ import javax.sql.DataSource;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,13 +90,10 @@ public class SessionManager {
     public void setupUser(UserAccountBean userFromSession, String userName) {
         if (userFromSession == null || StringUtil.isBlank(userFromSession.getName())) {
             // create a new user account bean form database
-            SQLFactory factory = SQLFactory.getInstance();
-
-            uDAO = new UserAccountDAO(ds);
             if (userName == null) {
                 userName = "";
             }
-            ub = (UserAccountBean) uDAO.findByUserName(userName);
+            ub = (UserAccountBean) getUserAccountDao().findByUserName(userName);
             logger.debug("User  : {} , email address : {} Logged In ", ub.getName(), ub.getEmail());
 
         } else {
@@ -157,6 +153,13 @@ public class SessionManager {
 
     public static DataSource getStaticDataSource() {
         return staticDataSource;
+    }
+
+    private UserAccountDAO getUserAccountDao() {
+        if (uDAO == null) {
+            uDAO = new UserAccountDAO(ds);
+        }
+        return uDAO;
     }
 
 }

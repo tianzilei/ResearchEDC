@@ -48,6 +48,7 @@ import org.researchedc.i18n.util.ResourceBundleProvider;
 public class ItemDataDAO extends AuditableEntityDAO implements org.researchedc.dao.spi.IItemDataDAO {
 
     boolean formatDates = true;
+    private ItemDAO itemDao;
 
     // YW 12-06-2007 <<!!! Be careful when there is item with data-type as
     // "Date".
@@ -434,9 +435,15 @@ public class ItemDataDAO extends AuditableEntityDAO implements org.researchedc.d
      * Small check to make sure the type is a date, tbh
      */
     public ItemDataType getDataType(int itemId) {
-        ItemDAO itemDAO = new ItemDAO(this.getDs());
-        ItemBean itemBean = (ItemBean) itemDAO.findByPK(itemId);
+        ItemBean itemBean = (ItemBean) getItemDao().findByPK(itemId);
         return itemBean.getDataType();
+    }
+
+    private ItemDAO getItemDao() {
+        if (itemDao == null) {
+            itemDao = new ItemDAO(this.getDs());
+        }
+        return itemDao;
     }
 
     // public boolean isPDateType(int itemId) {

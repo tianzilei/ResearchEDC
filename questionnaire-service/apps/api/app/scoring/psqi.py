@@ -45,6 +45,13 @@ class PSQIScorer(BaseScorer):
 
         subscale_scores: dict[str, int] = {}
         for component, items in self._component_mapping.items():
+            if component == "sleep_efficiency":
+                subscale_scores[component] = _score_sleep_efficiency(response)
+                continue
+            if component == "sleep_duration":
+                subscale_scores[component] = _score_sleep_duration(response)
+                continue
+
             component_total = 0
             for item in items:
                 val = int(response.get(item, 0))
@@ -56,25 +63,6 @@ class PSQIScorer(BaseScorer):
                 elif raw <= 2:
                     subscale_scores[component] = 1
                 elif raw <= 4:
-                    subscale_scores[component] = 2
-                else:
-                    subscale_scores[component] = 3
-            elif component == "sleep_efficiency":
-                raw_bedtime = _parse_time_to_minutes(
-                    str(response.get("PSQI_01", "0")))
-                raw_waketime = _parse_time_to_minutes(
-                    str(response.get("PSQI_03", "0")))
-                hours_in_bed = max(0, (raw_waketime - raw_bedtime) / 60.0)
-                hours_sleep = float(response.get("PSQI_04", 0))
-                if hours_in_bed > 0:
-                    efficiency = (hours_sleep / hours_in_bed) * 100
-                else:
-                    efficiency = 0
-                if efficiency >= 85:
-                    subscale_scores[component] = 0
-                elif efficiency >= 75:
-                    subscale_scores[component] = 1
-                elif efficiency >= 65:
                     subscale_scores[component] = 2
                 else:
                     subscale_scores[component] = 3
@@ -106,6 +94,35 @@ class PSQIScorer(BaseScorer):
             "severity": severity,
             "subscale_scores": subscale_scores,
         }
+
+
+def _score_sleep_efficiency(response: dict[str, Any]) -> int:
+    raw_bedtime = _parse_time_to_minutes(str(response.get("PSQI_01", "0")))
+    raw_waketime = _parse_time_to_minutes(str(response.get("PSQI_03", "0")))
+    if raw_waketime <= raw_bedtime:
+        raw_waketime += 24 * 60
+
+    hours_in_bed = max(0, (raw_waketime - raw_bedtime) / 60.0)
+    hours_sleep = float(response.get("PSQI_04", 0))
+    efficiency = (hours_sleep / hours_in_bed) * 100 if hours_in_bed > 0 else 0
+    if efficiency >= 85:
+        return 0
+    if efficiency >= 75:
+        return 1
+    if efficiency >= 65:
+        return 2
+    return 3
+
+
+def _score_sleep_duration(response: dict[str, Any]) -> int:
+    hours_sleep = float(response.get("PSQI_04", 0))
+    if hours_sleep >= 7:
+        return 0
+    if hours_sleep >= 6:
+        return 1
+    if hours_sleep >= 5:
+        return 2
+    return 3
 
 
 def _parse_time_to_minutes(time_str: str) -> float:

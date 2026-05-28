@@ -64,47 +64,12 @@ public class RandomizationService {
     }
 
     public SchemeDTO createScheme(SchemeDTO dto, Integer userId) {
+        validateSchemeDefinition(dto);
+
         RandomizationScheme scheme = new RandomizationScheme();
-        scheme.setStudyId(dto.getStudyId());
-        scheme.setName(dto.getName());
-        scheme.setAlgorithm(dto.getAlgorithm());
-        scheme.setMinBlockSize(dto.getMinBlockSize());
-        scheme.setMaxBlockSize(dto.getMaxBlockSize());
         scheme.setStatus(SchemeStatus.DRAFT);
         scheme.setCreatedBy(userId);
-
-        if (dto.getArms() != null) {
-            for (ArmDTO armDTO : dto.getArms()) {
-                RandomizationArm arm = new RandomizationArm();
-                arm.setName(armDTO.getName());
-                arm.setDisplayName(armDTO.getDisplayName());
-                arm.setRatio(armDTO.getRatio() != null ? armDTO.getRatio() : 1);
-                arm.setOrderNumber(armDTO.getOrderNumber());
-                arm.setScheme(scheme);
-                scheme.getArms().add(arm);
-            }
-        }
-
-        if (dto.getStratifications() != null) {
-            for (StratumDTO sDTO : dto.getStratifications()) {
-                RandomizationStratum stratum = new RandomizationStratum();
-                stratum.setName(sDTO.getName());
-                stratum.setStratumType(sDTO.getStratumType());
-                stratum.setOrderNumber(sDTO.getOrderNumber());
-                stratum.setScheme(scheme);
-                if (sDTO.getOptions() != null) {
-                    for (StratumOptionDTO oDTO : sDTO.getOptions()) {
-                        RandomizationStratumOption option = new RandomizationStratumOption();
-                        option.setLabel(oDTO.getLabel());
-                        option.setValue(oDTO.getValue());
-                        option.setOrderNumber(oDTO.getOrderNumber());
-                        option.setStratum(stratum);
-                        stratum.getOptions().add(option);
-                    }
-                }
-                scheme.getStratifications().add(stratum);
-            }
-        }
+        applySchemeDefinition(scheme, dto);
 
         scheme = schemeRepository.save(scheme);
 
@@ -115,6 +80,8 @@ public class RandomizationService {
     }
 
     public SchemeDTO updateScheme(Long id, SchemeDTO dto, Integer userId) {
+        validateSchemeDefinition(dto);
+
         RandomizationScheme scheme = schemeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Scheme not found: " + id));
 
@@ -122,43 +89,8 @@ public class RandomizationService {
             throw new IllegalStateException("Only DRAFT schemes can be modified");
         }
 
-        scheme.setName(dto.getName());
         scheme.setUpdatedBy(userId);
-
-        scheme.getArms().clear();
-        if (dto.getArms() != null) {
-            for (ArmDTO armDTO : dto.getArms()) {
-                RandomizationArm arm = new RandomizationArm();
-                arm.setName(armDTO.getName());
-                arm.setDisplayName(armDTO.getDisplayName());
-                arm.setRatio(armDTO.getRatio() != null ? armDTO.getRatio() : 1);
-                arm.setOrderNumber(armDTO.getOrderNumber());
-                arm.setScheme(scheme);
-                scheme.getArms().add(arm);
-            }
-        }
-
-        scheme.getStratifications().clear();
-        if (dto.getStratifications() != null) {
-            for (StratumDTO sDTO : dto.getStratifications()) {
-                RandomizationStratum stratum = new RandomizationStratum();
-                stratum.setName(sDTO.getName());
-                stratum.setStratumType(sDTO.getStratumType());
-                stratum.setOrderNumber(sDTO.getOrderNumber());
-                stratum.setScheme(scheme);
-                if (sDTO.getOptions() != null) {
-                    for (StratumOptionDTO oDTO : sDTO.getOptions()) {
-                        RandomizationStratumOption option = new RandomizationStratumOption();
-                        option.setLabel(oDTO.getLabel());
-                        option.setValue(oDTO.getValue());
-                        option.setOrderNumber(oDTO.getOrderNumber());
-                        option.setStratum(stratum);
-                        stratum.getOptions().add(option);
-                    }
-                }
-                scheme.getStratifications().add(stratum);
-            }
-        }
+        applySchemeDefinition(scheme, dto);
 
         scheme = schemeRepository.save(scheme);
 
@@ -171,6 +103,12 @@ public class RandomizationService {
     public void activateScheme(Long id, Integer userId) {
         RandomizationScheme scheme = schemeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Scheme not found: " + id));
+        if (scheme.getStatus() != SchemeStatus.DRAFT) {
+            throw new IllegalStateException("Only DRAFT schemes can be activated");
+        }
+        if (scheme.getArms().isEmpty()) {
+            throw new IllegalStateException("At least one arm is required before activation");
+        }
         scheme.setStatus(SchemeStatus.ACTIVE);
         scheme.setUpdatedBy(userId);
         schemeRepository.save(scheme);
@@ -182,17 +120,23 @@ public class RandomizationService {
     public void closeScheme(Long id, Integer userId) {
         RandomizationScheme scheme = schemeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Scheme not found: " + id));
+        SchemeStatus oldStatus = scheme.getStatus();
+        if (oldStatus == SchemeStatus.CLOSED) {
+            return;
+        }
         scheme.setStatus(SchemeStatus.CLOSED);
         scheme.setUpdatedBy(userId);
         schemeRepository.save(scheme);
 
         logAudit(scheme.getId(), scheme.getStudyId(), AuditAction.SCHEME_CLOSED,
-                "RandomizationScheme", scheme.getId(), scheme.getStatus().name(), "CLOSED", userId);
+                "RandomizationScheme", scheme.getId(), oldStatus.name(), "CLOSED", userId);
     }
 
     // === Randomization ===
 
     public AssignmentDTO randomize(RandomizeRequest request, Integer userId) {
+        validateRandomizeRequest(request);
+
         RandomizationScheme scheme = schemeRepository.findById(request.getSchemeId())
                 .orElseThrow(() -> new NoSuchElementException("Scheme not found: " + request.getSchemeId()));
 
@@ -208,6 +152,9 @@ public class RandomizationService {
         }
 
         List<RandomizationArm> arms = armRepository.findBySchemeIdOrderByOrderNumber(scheme.getId());
+        if (arms.isEmpty()) {
+            throw new IllegalStateException("No arms configured for scheme " + scheme.getId());
+        }
 
         // Build stratum path
         String stratumPath = buildStratumPath(scheme, request);
@@ -281,10 +228,10 @@ public class RandomizationService {
             return "";
         }
         if (request.getStratumValues() == null || request.getStratumValues().isEmpty()) {
-            return "";
+            throw new IllegalArgumentException("Stratum values are required for " + scheme.getAlgorithm());
         }
         return scheme.getStratifications().stream()
-                .map(s -> s.getName() + "=" + request.getStratumValues().getOrDefault(s.getName(), ""))
+                .map(s -> s.getName() + "=" + requireStratumValue(request, s.getName()))
                 .collect(Collectors.joining("|"));
     }
 
@@ -292,10 +239,105 @@ public class RandomizationService {
         List<RandomizationArm> arms = armRepository.findBySchemeIdOrderByOrderNumber(schemeId);
         Map<Long, Long> counts = new HashMap<>();
         for (RandomizationArm arm : arms) {
-            counts.put(arm.getId(),
-                    assignmentRepository.countBySchemeIdAndArmIdAndStatus(schemeId, arm.getId(), AssignmentStatus.ACTIVE));
+            long count = stratumPath == null || stratumPath.isBlank()
+                    ? assignmentRepository.countBySchemeIdAndArmIdAndStatus(schemeId, arm.getId(), AssignmentStatus.ACTIVE)
+                    : assignmentRepository.countBySchemeIdAndArmIdAndStratumPathAndStatus(
+                            schemeId, arm.getId(), stratumPath, AssignmentStatus.ACTIVE);
+            counts.put(arm.getId(), count);
         }
         return counts;
+    }
+
+    private void applySchemeDefinition(RandomizationScheme scheme, SchemeDTO dto) {
+        scheme.setStudyId(dto.getStudyId());
+        scheme.setName(dto.getName());
+        scheme.setAlgorithm(dto.getAlgorithm());
+        scheme.setMinBlockSize(dto.getMinBlockSize());
+        scheme.setMaxBlockSize(dto.getMaxBlockSize());
+
+        scheme.getArms().clear();
+        if (dto.getArms() != null) {
+            for (ArmDTO armDTO : dto.getArms()) {
+                scheme.getArms().add(toArmEntity(armDTO, scheme));
+            }
+        }
+
+        scheme.getStratifications().clear();
+        if (dto.getStratifications() != null) {
+            for (StratumDTO sDTO : dto.getStratifications()) {
+                scheme.getStratifications().add(toStratumEntity(sDTO, scheme));
+            }
+        }
+    }
+
+    private RandomizationArm toArmEntity(ArmDTO armDTO, RandomizationScheme scheme) {
+        RandomizationArm arm = new RandomizationArm();
+        arm.setName(armDTO.getName());
+        arm.setDisplayName(armDTO.getDisplayName());
+        arm.setRatio(armDTO.getRatio() != null ? armDTO.getRatio() : 1);
+        arm.setOrderNumber(armDTO.getOrderNumber());
+        arm.setScheme(scheme);
+        return arm;
+    }
+
+    private RandomizationStratum toStratumEntity(StratumDTO sDTO, RandomizationScheme scheme) {
+        RandomizationStratum stratum = new RandomizationStratum();
+        stratum.setName(sDTO.getName());
+        stratum.setStratumType(sDTO.getStratumType());
+        stratum.setOrderNumber(sDTO.getOrderNumber());
+        stratum.setScheme(scheme);
+        if (sDTO.getOptions() != null) {
+            for (StratumOptionDTO oDTO : sDTO.getOptions()) {
+                RandomizationStratumOption option = new RandomizationStratumOption();
+                option.setLabel(oDTO.getLabel());
+                option.setValue(oDTO.getValue());
+                option.setOrderNumber(oDTO.getOrderNumber());
+                option.setStratum(stratum);
+                stratum.getOptions().add(option);
+            }
+        }
+        return stratum;
+    }
+
+    private void validateSchemeDefinition(SchemeDTO dto) {
+        Objects.requireNonNull(dto, "Scheme is required");
+        if (dto.getStudyId() == null) {
+            throw new IllegalArgumentException("studyId is required");
+        }
+        if (dto.getName() == null || dto.getName().isBlank()) {
+            throw new IllegalArgumentException("name is required");
+        }
+        if (dto.getAlgorithm() == null) {
+            throw new IllegalArgumentException("algorithm is required");
+        }
+        if (dto.getArms() != null) {
+            for (ArmDTO arm : dto.getArms()) {
+                if (arm.getName() == null || arm.getName().isBlank()) {
+                    throw new IllegalArgumentException("arm name is required");
+                }
+                if (arm.getRatio() != null && arm.getRatio() <= 0) {
+                    throw new IllegalArgumentException("arm ratio must be positive");
+                }
+            }
+        }
+    }
+
+    private void validateRandomizeRequest(RandomizeRequest request) {
+        Objects.requireNonNull(request, "Randomize request is required");
+        if (request.getSchemeId() == null) {
+            throw new IllegalArgumentException("schemeId is required");
+        }
+        if (request.getStudySubjectId() == null) {
+            throw new IllegalArgumentException("studySubjectId is required");
+        }
+    }
+
+    private String requireStratumValue(RandomizeRequest request, String name) {
+        String value = request.getStratumValues().get(name);
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Missing stratum value for " + name);
+        }
+        return value;
     }
 
     private void logAudit(Long schemeId, Integer studyId, AuditAction action,

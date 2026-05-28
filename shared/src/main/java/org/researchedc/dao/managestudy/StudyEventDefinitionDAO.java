@@ -33,6 +33,7 @@ import org.researchedc.dao.core.TypeNames;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 
 public class StudyEventDefinitionDAO<K extends String,V extends ArrayList> extends AuditableEntityDAO implements IStudyEventDefinitionDAO {
+    private StudyDAO studyDao;
 
     private void setQueryNames() {
         findAllByStudyName = "findAllByStudy";
@@ -265,13 +266,11 @@ public class StudyEventDefinitionDAO<K extends String,V extends ArrayList> exten
     @Override
     public ArrayList findAllByStudy(StudyBean study) {
 
-        StudyDAO studyDao = new StudyDAO(this.getDs());
-
         if (study.getParentStudyId() > 0) {
             // If the study has a parent than it is a site, in this case we
             // should get the event definitions of the parent
             StudyBean parentStudy = new StudyBean();
-            parentStudy = (StudyBean) studyDao.findByPK(study.getParentStudyId());
+            parentStudy = (StudyBean) getStudyDao().findByPK(study.getParentStudyId());
             return super.findAllByStudy(parentStudy);
         } else {
             return super.findAllByStudy(study);
@@ -483,6 +482,13 @@ public class StudyEventDefinitionDAO<K extends String,V extends ArrayList> exten
             result.put((Integer) hm.get("study_event_definition_id"), (Integer) hm.get("max_ord"));
         }
         return result;
+    }
+
+    private StudyDAO getStudyDao() {
+        if (studyDao == null) {
+            studyDao = new StudyDAO(this.getDs());
+        }
+        return studyDao;
     }
 
 }

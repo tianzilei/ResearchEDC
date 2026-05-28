@@ -51,6 +51,12 @@ public class ImportDataRuleRunnerContainer {
     private String studyOid;
     private String studySubjectOid;
     private Boolean shouldRunRules;
+    private StudySubjectDAO<String, ArrayList> studySubjectDao;
+    private StudyEventDefinitionDAO<String, ArrayList> studyEventDefinitionDao;
+    private CRFVersionDAO<String, ArrayList> crfVersionDao;
+    private StudyEventDAO studyEventDao;
+    private ItemDAO<String, ArrayList> itemDao;
+    private ItemGroupMetadataDAO<String, ArrayList> itemGroupMetadataDao;
 
     /**
      * Populate importDataTrueRuleSets and variableAndValue.
@@ -68,7 +74,7 @@ public class ImportDataRuleRunnerContainer {
         studyOid = studyBean.getOid();
         studySubjectOid = subjectDataBean.getSubjectOID();
         StudySubjectBean studySubject =
-                new StudySubjectDAO<String, ArrayList>(ds).findByOid(studySubjectOid);
+                getStudySubjectDao(ds).findByOid(studySubjectOid);
 
         HashMap<String, StudyEventDefinitionBean> seds = new HashMap<String, StudyEventDefinitionBean>();
         HashMap<String, CRFVersionBean> cvs = new HashMap<String, CRFVersionBean>();
@@ -79,7 +85,7 @@ public class ImportDataRuleRunnerContainer {
             if(seds.containsKey(sedOid))
                 sed = seds.get(sedOid);
             else {
-                sed = new StudyEventDefinitionDAO<String, ArrayList>(ds).findByOid(sedOid);
+                sed = getStudyEventDefinitionDao(ds).findByOid(sedOid);
                 seds.put(sedOid, sed);
             }
             ArrayList<FormDataBean> formDataBeans = studyEventDataBean.getFormData();
@@ -89,12 +95,12 @@ public class ImportDataRuleRunnerContainer {
                 if(cvs.containsKey(cvOid))
                     crfVersion = cvs.get(cvOid);
                 else {
-                    crfVersion = new CRFVersionDAO<String, ArrayList>(ds).findByOid(cvOid);
+                    crfVersion = getCrfVersionDao(ds).findByOid(cvOid);
                     cvs.put(cvOid, crfVersion);
                 }
                 String sedOrd = studyEventDataBean.getStudyEventRepeatKey();
                 Integer sedOrdinal = sedOrd != null && !sedOrd.isEmpty() ? Integer.valueOf(sedOrd) : 1;
-                StudyEventBean studyEvent = (StudyEventBean)new StudyEventDAO(ds).findByStudySubjectIdAndDefinitionIdAndOrdinal(
+                StudyEventBean studyEvent = (StudyEventBean)getStudyEventDao(ds).findByStudySubjectIdAndDefinitionIdAndOrdinal(
                         studySubject.getId(), sed.getId(), sedOrdinal);
                 List<RuleSetBean> ruleSets = ruleSetService.getRuleSetsByCrfStudyAndStudyEventDefinition(studyBean, sed, crfVersion);
                 //Set<String> targetItemOids = new HashSet<String>();
@@ -114,7 +120,7 @@ public class ImportDataRuleRunnerContainer {
                                 ArrayList<ImportItemDataBean> itemDataBeans = itemGroupDataBean.getItemData();
                                 for (ImportItemDataBean importItemDataBean : itemDataBeans) {
                                     //if(targetItemOids.contains(importItemDataBean.getItemOID())) {
-                                        ItemBean item = new ItemDAO<String, ArrayList>(ds).findByOid(importItemDataBean.getItemOID()).get(0);
+                                        ItemBean item = getItemDao(ds).findByOid(importItemDataBean.getItemOID()).get(0);
                                         String igOid = itemGroupDataBean.getItemGroupOID();
                                         String igOrd = itemGroupDataBean.getItemGroupRepeatKey();
                                         Integer igOrdinal = igOrd != null && !igOrd.isEmpty() ? Integer.valueOf(igOrd) : 1;
@@ -186,11 +192,53 @@ public class ImportDataRuleRunnerContainer {
             if(itemGroupOid.endsWith("_UNGROUPED") || itemGroupOid.contains("_UNGROUPED_")) isRepeatForSure = false;
             else {
                 ItemGroupMetadataBean itemGroupMetadataBean =
-                    (ItemGroupMetadataBean)new ItemGroupMetadataDAO<String, ArrayList>(ds).findByItemAndCrfVersion(itemId, crfVersionId);
+                    (ItemGroupMetadataBean)getItemGroupMetadataDao(ds).findByItemAndCrfVersion(itemId, crfVersionId);
                 isRepeatForSure = itemGroupMetadataBean.isRepeatingGroup();
             }
         }
         return isRepeatForSure;
+    }
+
+    private StudySubjectDAO<String, ArrayList> getStudySubjectDao(DataSource ds) {
+        if (studySubjectDao == null) {
+            studySubjectDao = new StudySubjectDAO<String, ArrayList>(ds);
+        }
+        return studySubjectDao;
+    }
+
+    private StudyEventDefinitionDAO<String, ArrayList> getStudyEventDefinitionDao(DataSource ds) {
+        if (studyEventDefinitionDao == null) {
+            studyEventDefinitionDao = new StudyEventDefinitionDAO<String, ArrayList>(ds);
+        }
+        return studyEventDefinitionDao;
+    }
+
+    private CRFVersionDAO<String, ArrayList> getCrfVersionDao(DataSource ds) {
+        if (crfVersionDao == null) {
+            crfVersionDao = new CRFVersionDAO<String, ArrayList>(ds);
+        }
+        return crfVersionDao;
+    }
+
+    private StudyEventDAO getStudyEventDao(DataSource ds) {
+        if (studyEventDao == null) {
+            studyEventDao = new StudyEventDAO(ds);
+        }
+        return studyEventDao;
+    }
+
+    private ItemDAO<String, ArrayList> getItemDao(DataSource ds) {
+        if (itemDao == null) {
+            itemDao = new ItemDAO<String, ArrayList>(ds);
+        }
+        return itemDao;
+    }
+
+    private ItemGroupMetadataDAO<String, ArrayList> getItemGroupMetadataDao(DataSource ds) {
+        if (itemGroupMetadataDao == null) {
+            itemGroupMetadataDao = new ItemGroupMetadataDAO<String, ArrayList>(ds);
+        }
+        return itemGroupMetadataDao;
     }
 
 

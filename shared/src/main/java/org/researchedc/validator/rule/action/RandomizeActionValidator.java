@@ -119,23 +119,38 @@ public class RandomizeActionValidator implements Validator {
 
 
     public ItemDAO getItemDAO() {
-        return this.itemDAO != null ? itemDAO : new ItemDAO(dataSource);
+        if (itemDAO == null) {
+            itemDAO = new ItemDAO(dataSource);
+        }
+        return itemDAO;
     }
 
     public StudyEventDefinitionDAO getStudyEventDefinitionDAO() {
-        return this.studyEventDefinitionDAO != null ? studyEventDefinitionDAO : new StudyEventDefinitionDAO(dataSource);
+        if (studyEventDefinitionDAO == null) {
+            studyEventDefinitionDAO = new StudyEventDefinitionDAO(dataSource);
+        }
+        return studyEventDefinitionDAO;
     }
 
     public CRFDAO getCrfDAO() {
-        return this.crfDAO != null ? crfDAO : new CRFDAO(dataSource);
+        if (crfDAO == null) {
+            crfDAO = new CRFDAO(dataSource);
+        }
+        return crfDAO;
     }
 
     public EventDefinitionCRFDAO getEventDefinitionCRFDAO() {
-        return this.eventDefinitionCRFDAO != null ? eventDefinitionCRFDAO : new EventDefinitionCRFDAO(dataSource);
+        if (eventDefinitionCRFDAO == null) {
+            eventDefinitionCRFDAO = new EventDefinitionCRFDAO(dataSource);
+        }
+        return eventDefinitionCRFDAO;
     }
 
     public ItemFormMetadataDAO getItemFormMetadataDAO() {
-        return this.itemFormMetadataDAO != null ? itemFormMetadataDAO : new ItemFormMetadataDAO(dataSource);
+        if (itemFormMetadataDAO == null) {
+            itemFormMetadataDAO = new ItemFormMetadataDAO(dataSource);
+        }
+        return itemFormMetadataDAO;
     }
 
     public EventDefinitionCRFBean getEventDefinitionCRFBean() {

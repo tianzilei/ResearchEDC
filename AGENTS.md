@@ -213,3 +213,4 @@ python -m pytest app/tests/ -v
 - [frontend/AGENTS.md](./frontend/AGENTS.md) — React 19 SPA (TypeScript, Vite, Ant Design)
 - [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) — Python FastAPI microservice
 - [LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md) — Remaining legacy refactoring roadmap
+- [Clinical Workflow Hardening Plan](./.sisyphus/plans/clinical-workflow-hardening-plan.md) — Randomization setup, questionnaire import/mobile/fingerprint/temp links, e-signature, MinIO, security, import/export, and backups

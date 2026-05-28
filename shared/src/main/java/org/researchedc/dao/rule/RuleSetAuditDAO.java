@@ -60,11 +60,17 @@ public class RuleSetAuditDAO extends EntityDAO {
     }
 
     private RuleSetDAO getRuleSetDao() {
-        return this.ruleSetDao != null ? this.ruleSetDao : new RuleSetDAO(ds);
+        if (ruleSetDao == null) {
+            ruleSetDao = new RuleSetDAO(ds);
+        }
+        return ruleSetDao;
     }
 
     private UserAccountDAO getUserAccountDao() {
-        return this.userAccountDao != null ? this.userAccountDao : new UserAccountDAO(ds);
+        if (userAccountDao == null) {
+            userAccountDao = new UserAccountDAO(ds);
+        }
+        return userAccountDao;
     }
 
     @Override

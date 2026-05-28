@@ -68,39 +68,66 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
     }
 
     private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
-        return this.studyEventDefinitionDAO != null ? this.studyEventDefinitionDAO : new StudyEventDefinitionDAO(ds);
+        if (studyEventDefinitionDAO == null) {
+            studyEventDefinitionDAO = new StudyEventDefinitionDAO(ds);
+        }
+        return studyEventDefinitionDAO;
     }
 
     private CRFDAO getCrfDao() {
-        return this.crfDao != null ? this.crfDao : new CRFDAO(ds);
+        if (crfDao == null) {
+            crfDao = new CRFDAO(ds);
+        }
+        return crfDao;
     }
 
     private CRFVersionDAO getCrfVersionDao() {
-        return this.crfVersionDao != null ? this.crfVersionDao : new CRFVersionDAO(ds);
+        if (crfVersionDao == null) {
+            crfVersionDao = new CRFVersionDAO(ds);
+        }
+        return crfVersionDao;
     }
 
     private EventCRFDAO getEventCrfDao() {
-        return this.eventCrfDao != null ? this.eventCrfDao : new EventCRFDAO(ds);
+        if (eventCrfDao == null) {
+            eventCrfDao = new EventCRFDAO(ds);
+        }
+        return eventCrfDao;
     }
 
     private RuleDAO getRuleDao() {
-        return this.ruleDao != null ? this.ruleDao : new RuleDAO(ds);
+        if (ruleDao == null) {
+            ruleDao = new RuleDAO(ds);
+        }
+        return ruleDao;
     }
 
     private RuleSetAuditDAO getRuleSetAuditDao() {
-        return this.ruleSetAuditDao != null ? this.ruleSetAuditDao : new RuleSetAuditDAO(ds);
+        if (ruleSetAuditDao == null) {
+            ruleSetAuditDao = new RuleSetAuditDAO(ds);
+        }
+        return ruleSetAuditDao;
     }
 
     private ExpressionDAO getExpressionDao() {
-        return this.expressionDao != null ? this.expressionDao : new ExpressionDAO(ds);
+        if (expressionDao == null) {
+            expressionDao = new ExpressionDAO(ds);
+        }
+        return expressionDao;
     }
 
     private ExpressionService getExpressionService() {
-        return this.expressionService != null ? this.expressionService : new ExpressionService(ds);
+        if (expressionService == null) {
+            expressionService = new ExpressionService(ds);
+        }
+        return expressionService;
     }
 
     private RuleSetRuleDAO getRuleSetRuleDao() {
-        return this.ruleSetRuleDao != null ? this.ruleSetRuleDao : new RuleSetRuleDAO(ds);
+        if (ruleSetRuleDao == null) {
+            ruleSetRuleDao = new RuleSetRuleDAO(ds);
+        }
+        return ruleSetRuleDao;
     }
 
     public RuleSetDAO(DataSource ds, DAODigester digester) {

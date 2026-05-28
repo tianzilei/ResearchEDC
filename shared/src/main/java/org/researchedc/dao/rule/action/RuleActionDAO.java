@@ -62,27 +62,45 @@ public class RuleActionDAO extends AuditableEntityDAO {
     }
 
     private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
-        return this.studyEventDefinitionDao != null ? this.studyEventDefinitionDao : new StudyEventDefinitionDAO(ds);
+        if (studyEventDefinitionDao == null) {
+            studyEventDefinitionDao = new StudyEventDefinitionDAO(ds);
+        }
+        return studyEventDefinitionDao;
     }
 
     private RuleSetDAO getRuleSetDao() {
-        return this.ruleSetDao != null ? this.ruleSetDao : new RuleSetDAO(ds);
+        if (ruleSetDao == null) {
+            ruleSetDao = new RuleSetDAO(ds);
+        }
+        return ruleSetDao;
     }
 
     private RuleDAO getRuleDao() {
-        return this.ruleDao != null ? this.ruleDao : new RuleDAO(ds);
+        if (ruleDao == null) {
+            ruleDao = new RuleDAO(ds);
+        }
+        return ruleDao;
     }
 
     private EventCRFDAO getEventCrfDao() {
-        return this.eventCrfDao != null ? this.eventCrfDao : new EventCRFDAO(ds);
+        if (eventCrfDao == null) {
+            eventCrfDao = new EventCRFDAO(ds);
+        }
+        return eventCrfDao;
     }
 
     private CRFVersionDAO getCrfVersionDao() {
-        return this.crfVersionDao != null ? this.crfVersionDao : new CRFVersionDAO(ds);
+        if (crfVersionDao == null) {
+            crfVersionDao = new CRFVersionDAO(ds);
+        }
+        return crfVersionDao;
     }
 
     private ItemDataDAO getItemDataDao() {
-        return this.itemDataDao != null ? this.itemDataDao : new ItemDataDAO(ds);
+        if (itemDataDao == null) {
+            itemDataDao = new ItemDataDAO(ds);
+        }
+        return itemDataDao;
     }
 
     public RuleActionDAO(DataSource ds, DAODigester digester) {

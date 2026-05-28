@@ -96,6 +96,10 @@ import org.researchedc.logic.odmExport.MetadataUnit;
 
 public class OdmExtractDAO extends DatasetDAO {
 
+    private CRFDAO<String, ArrayList> crfDao;
+    private SectionDAO sectionDao;
+    private StudyDAO studyDao;
+    private StudyParameterValueDAO studyParameterValueDao;
 	
 
     public OdmExtractDAO(DataSource ds) {
@@ -883,9 +887,8 @@ public class OdmExtractDAO extends DatasetDAO {
 	}
 
 	public FormDefBean fetchFormDetails(CRFVersionBean crfVBean,FormDefBean formDef){
-    
-    	CRFDAO<String, ArrayList> crfDao = new CRFDAO(this.ds);
-    	CRFBean crfBean   = (CRFBean) crfDao.findByPK(crfVBean.getCrfId());  	
+
+		CRFBean crfBean   = (CRFBean) getCrfDao().findByPK(crfVBean.getCrfId());
     	formDef.setOid(crfVBean.getOid());
     	formDef.setName(crfBean.getName() + " - " +crfVBean.getName());
     	
@@ -1542,8 +1545,7 @@ public class OdmExtractDAO extends DatasetDAO {
         variables.put(Integer.valueOf(1), Integer.valueOf(crfVId));
         ArrayList<SectionDetails>sectionBeans = new ArrayList<SectionDetails>();
         
-        SectionDAO secdao = new SectionDAO(this.ds);
-        ArrayList sections = secdao.findAllByCRFVersionId (crfVId);
+        ArrayList sections = getSectionDao().findAllByCRFVersionId (crfVId);
     	Iterator iter = sections.iterator();
     	 while(iter.hasNext()){
     		 SectionDetails sectionDetails = new SectionDetails();
@@ -2878,7 +2880,7 @@ private void fetchItemGroupMetaData(MetaDataVersionBean metadata,String cvIds, S
         HashMap<String, Integer> igpos = new HashMap<String, Integer>();
         String igprev = "";
         String oidPos = "";
-        StudyBean parentStudy = study.getParentStudyId() > 0 ? (StudyBean) new StudyDAO(this.ds).findByPK(study.getParentStudyId()) : study;
+        StudyBean parentStudy = study.getParentStudyId() > 0 ? (StudyBean) getStudyDao().findByPK(study.getParentStudyId()) : study;
         setStudyParemeterConfig(parentStudy);
         HashSet<Integer> sgcIdSet = new HashSet<Integer>();
         HashMap<String, String> subOidPoses = new HashMap<String, String>();
@@ -3148,8 +3150,36 @@ private void fetchItemGroupMetaData(MetaDataVersionBean metadata,String cvIds, S
     }
 
     protected void setStudyParemeterConfig(StudyBean study) {
-        StudyParameterValueBean param = new StudyParameterValueDAO(this.ds).findByHandleAndStudy(study.getId(), "collectDob");
+        StudyParameterValueBean param = getStudyParameterValueDao().findByHandleAndStudy(study.getId(), "collectDob");
         study.getStudyParameterConfig().setCollectDob(param.getValue());
+    }
+
+    private CRFDAO<String, ArrayList> getCrfDao() {
+        if (crfDao == null) {
+            crfDao = new CRFDAO<String, ArrayList>(this.ds);
+        }
+        return crfDao;
+    }
+
+    private SectionDAO getSectionDao() {
+        if (sectionDao == null) {
+            sectionDao = new SectionDAO(this.ds);
+        }
+        return sectionDao;
+    }
+
+    private StudyDAO getStudyDao() {
+        if (studyDao == null) {
+            studyDao = new StudyDAO(this.ds);
+        }
+        return studyDao;
+    }
+
+    private StudyParameterValueDAO getStudyParameterValueDao() {
+        if (studyParameterValueDao == null) {
+            studyParameterValueDao = new StudyParameterValueDAO(this.ds);
+        }
+        return studyParameterValueDao;
     }
 
     protected HashMap<String,Integer> getItemGroupOIDPos(MetaDataVersionBean metadata){

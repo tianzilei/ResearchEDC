@@ -53,6 +53,8 @@ public class StudyEventDAO extends AuditableEntityDAO implements IStudyEventDAO,
 	
 	private Observer observer;
 	// private DAODigester digester;
+    private CRFDAO crfDao;
+    private CRFVersionDAO crfVersionDao;
 
 	    private void setQueryNames() {
         findByPKAndStudyName = "findByPKAndStudy";
@@ -974,8 +976,6 @@ public class StudyEventDAO extends AuditableEntityDAO implements IStudyEventDAO,
         variables.put(Integer.valueOf(1), Integer.valueOf(seb.getStudyEventDefinitionId()));
         ArrayList alist = this.select(digester.getQuery("findCRFsByStudyEvent"), variables);
         Iterator it = alist.iterator();
-        CRFDAO cdao = new CRFDAO(this.ds);
-        CRFVersionDAO cvdao = new CRFVersionDAO(this.ds);
         while (it.hasNext()) {
             HashMap answers = (HashMap) it.next();
             logger.warn("***First CRF ID: " + answers.get("crf_id"));
@@ -988,8 +988,8 @@ public class StudyEventDAO extends AuditableEntityDAO implements IStudyEventDAO,
             // if there is no version correlating, add it;
             // else, add the crf with a fresh arraylist + one version.
             // how long could this take to run???
-            CRFBean cbean = (CRFBean) cdao.findByPK(((Integer) answers.get("crf_id")).intValue());
-            CRFVersionBean cvb = (CRFVersionBean) cvdao.findByPK(((Integer) answers.get("crf_version_id")).intValue());
+            CRFBean cbean = (CRFBean) getCrfDao().findByPK(((Integer) answers.get("crf_id")).intValue());
+            CRFVersionBean cvb = (CRFVersionBean) getCrfVersionDao().findByPK(((Integer) answers.get("crf_version_id")).intValue());
             Set se = crfs.entrySet();
             boolean found = false;
             boolean versionFound = false;
@@ -1289,6 +1289,20 @@ public class StudyEventDAO extends AuditableEntityDAO implements IStudyEventDAO,
         } else {
             return false;
         }
+    }
+
+    private CRFDAO getCrfDao() {
+        if (crfDao == null) {
+            crfDao = new CRFDAO(this.ds);
+        }
+        return crfDao;
+    }
+
+    private CRFVersionDAO getCrfVersionDao() {
+        if (crfVersionDao == null) {
+            crfVersionDao = new CRFVersionDAO(this.ds);
+        }
+        return crfVersionDao;
     }
 
 }

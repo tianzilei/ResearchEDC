@@ -42,6 +42,7 @@ import org.researchedc.dao.spi.IStudySubjectDAO;
 public class StudySubjectDAO<K extends String,V extends ArrayList> extends AuditableEntityDAO implements IStudySubjectDAO {
 
     // private DAODigester digester;
+    private SubjectGroupMapDAO subjectGroupMapDao;
 
     public void setQueryNames() {
         findAllByStudyName = "findAllByStudy";
@@ -597,13 +598,12 @@ public class StudySubjectDAO<K extends String,V extends ArrayList> extends Audit
             sb.setId(getLatestPK());
         }
 
-        SubjectGroupMapDAO sgmdao = new SubjectGroupMapDAO(ds);
         ArrayList groupMaps = sb.getStudyGroupMaps();
         for (int i = 0; i < groupMaps.size(); i++) {
             SubjectGroupMapBean sgmb = (SubjectGroupMapBean) groupMaps.get(i);
-            sgmb = (SubjectGroupMapBean) sgmdao.create(sgmb);
-            if (sgmdao.isQuerySuccessful()) {
-                sgmb.setId(sgmdao.getCurrentPK());
+            sgmb = (SubjectGroupMapBean) getSubjectGroupMapDao().create(sgmb);
+            if (getSubjectGroupMapDao().isQuerySuccessful()) {
+                sgmb.setId(getSubjectGroupMapDao().getCurrentPK());
             }
         }
 
@@ -1346,4 +1346,11 @@ public class StudySubjectDAO<K extends String,V extends ArrayList> extends Audit
         return results;
 
     }*/
+
+    private SubjectGroupMapDAO getSubjectGroupMapDao() {
+        if (subjectGroupMapDao == null) {
+            subjectGroupMapDao = new SubjectGroupMapDAO(ds);
+        }
+        return subjectGroupMapDao;
+    }
 }

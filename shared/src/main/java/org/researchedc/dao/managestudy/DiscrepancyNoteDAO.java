@@ -47,6 +47,7 @@ public class DiscrepancyNoteDAO extends AuditableEntityDAO implements IDiscrepan
     // if true, we fetch the mapping along with the bean
     // only applies to functions which return a single bean
     private boolean fetchMapping = false;
+    private UserAccountDAO userAccountDao;
 
     /**
      * @return Returns the fetchMapping.
@@ -152,8 +153,7 @@ public class DiscrepancyNoteDAO extends AuditableEntityDAO implements IDiscrepan
         eb.setStudyId(selectInt(hm, "study_id"));
         eb.setAssignedUserId(selectInt(hm, "assigned_user_id"));
         if (eb.getAssignedUserId() > 0) {
-            UserAccountDAO userAccountDAO = new UserAccountDAO(ds);
-            UserAccountBean assignedUser = (UserAccountBean) userAccountDAO.findByPK(eb.getAssignedUserId());
+            UserAccountBean assignedUser = (UserAccountBean) getUserAccountDao().findByPK(eb.getAssignedUserId());
             eb.setAssignedUser(assignedUser);
         }
         eb.setAge(selectInt(hm, "age"));
@@ -2138,5 +2138,12 @@ public class DiscrepancyNoteDAO extends AuditableEntityDAO implements IDiscrepan
         } else {
             return null;
         }
+    }
+
+    private UserAccountDAO getUserAccountDao() {
+        if (userAccountDao == null) {
+            userAccountDao = new UserAccountDAO(ds);
+        }
+        return userAccountDao;
     }
 }

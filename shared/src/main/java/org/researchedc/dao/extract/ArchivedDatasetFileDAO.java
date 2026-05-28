@@ -32,6 +32,7 @@ import javax.sql.DataSource;
  */
 public class ArchivedDatasetFileDAO extends AuditableEntityDAO {
     private DAODigester digester;
+    private UserAccountDAO userAccountDao;
 
     public ArchivedDatasetFileDAO(DataSource ds) {
         super(ds);
@@ -114,10 +115,16 @@ public class ArchivedDatasetFileDAO extends AuditableEntityDAO {
         fb.setRunTime(((Integer) hm.get("run_time")).doubleValue());
         fb.setFileSize(((Integer) hm.get("file_size")).intValue());
         fb.setOwnerId(((Integer) hm.get("owner_id")).intValue());
-        UserAccountDAO uaDAO = new UserAccountDAO(this.ds);
-        UserAccountBean owner = (UserAccountBean) uaDAO.findByPK(fb.getOwnerId());
+        UserAccountBean owner = (UserAccountBean) getUserAccountDao().findByPK(fb.getOwnerId());
         fb.setOwner(owner);
         return fb;
+    }
+
+    private UserAccountDAO getUserAccountDao() {
+        if (userAccountDao == null) {
+            userAccountDao = new UserAccountDAO(this.ds);
+        }
+        return userAccountDao;
     }
 
     public void deleteArchiveDataset(ArchivedDatasetFileBean adfBean){

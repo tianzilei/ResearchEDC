@@ -34,6 +34,7 @@ public class InstantOnChangeService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     DataSource dataSource;
+    private ItemFormMetadataDAO itemFormMetadataDao;
 
     public InstantOnChangeService(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -202,7 +203,10 @@ public class InstantOnChangeService {
 
 
     public ItemFormMetadataDAO getItemFormMetadataDAO() {
-        return new ItemFormMetadataDAO(dataSource);
+        if (itemFormMetadataDao == null) {
+            itemFormMetadataDao = new ItemFormMetadataDAO(dataSource);
+        }
+        return itemFormMetadataDao;
     }
 
     public DataSource getDataSource() {

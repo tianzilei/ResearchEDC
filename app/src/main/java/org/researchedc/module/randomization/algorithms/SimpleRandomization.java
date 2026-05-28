@@ -32,7 +32,13 @@ public class SimpleRandomization implements RandomizationAlgorithmStrategy {
             String stratumPath,
             Map<Long, Long> currentCounts) {
 
+        if (arms.isEmpty()) {
+            throw new IllegalStateException("No arms configured for scheme " + scheme.getId());
+        }
         int totalRatio = arms.stream().mapToInt(RandomizationArm::getRatio).sum();
+        if (totalRatio <= 0) {
+            throw new IllegalStateException("Total arm ratio must be positive for scheme " + scheme.getId());
+        }
         int roll = random.nextInt(totalRatio);
         int cumulative = 0;
 

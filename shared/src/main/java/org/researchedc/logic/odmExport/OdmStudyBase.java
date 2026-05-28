@@ -28,6 +28,7 @@ import javax.sql.DataSource;
 public class OdmStudyBase {
     private StudyBean study;
     private List<StudyEventDefinitionBean> sedBeansInStudy;
+    private StudyEventDefinitionDAO studyEventDefinitionDao;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -47,7 +48,7 @@ public class OdmStudyBase {
         }
         this.study = study;
         int parentStudyId = this.study.getParentStudyId() > 0 ? this.study.getParentStudyId() : this.study.getId();
-        this.sedBeansInStudy = new StudyEventDefinitionDAO(ds).findAllActiveByParentStudyId(parentStudyId);
+        this.sedBeansInStudy = getStudyEventDefinitionDao(ds).findAllActiveByParentStudyId(parentStudyId);
     }
 
     public OdmStudyBase setOdmStudyBean(DataSource ds, StudyBean study) {
@@ -57,7 +58,7 @@ public class OdmStudyBase {
         } else {
             this.study = study;
             int parentStudyId = this.study.getParentStudyId() > 0 ? this.study.getParentStudyId() : this.study.getId();
-            this.sedBeansInStudy = new StudyEventDefinitionDAO(ds).findAllActiveByParentStudyId(parentStudyId);
+            this.sedBeansInStudy = getStudyEventDefinitionDao(ds).findAllActiveByParentStudyId(parentStudyId);
         }
         return studyBase;
     }
@@ -94,5 +95,12 @@ public class OdmStudyBase {
 
     public List<StudyEventDefinitionBean> getSedBeansInStudy() {
         return this.sedBeansInStudy;
+    }
+
+    private StudyEventDefinitionDAO getStudyEventDefinitionDao(DataSource ds) {
+        if (studyEventDefinitionDao == null) {
+            studyEventDefinitionDao = new StudyEventDefinitionDAO(ds);
+        }
+        return studyEventDefinitionDao;
     }
 }

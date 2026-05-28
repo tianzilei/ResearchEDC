@@ -94,6 +94,18 @@ class SimpleRandomizationTest {
         assertEquals("Only Arm", result.getName());
     }
 
+    @Test
+    void assign_withoutArms_throwsException() {
+        assertThrows(IllegalStateException.class, () -> algorithm.assign(scheme, List.of(), "", Map.of()));
+    }
+
+    @Test
+    void assign_withoutPositiveRatio_throwsException() {
+        RandomizationArm arm = createArm(1L, "Control", 0, 1);
+
+        assertThrows(IllegalStateException.class, () -> algorithm.assign(scheme, List.of(arm), "", Map.of()));
+    }
+
     private static RandomizationArm createArm(Long id, String name, int ratio, int order) {
         RandomizationArm arm = new RandomizationArm();
         arm.setId(id);

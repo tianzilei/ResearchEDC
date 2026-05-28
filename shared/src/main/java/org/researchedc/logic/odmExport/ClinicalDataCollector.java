@@ -33,6 +33,7 @@ import org.researchedc.job.JobTerminationMonitor;
 
 public class ClinicalDataCollector extends OdmDataCollector {
     private LinkedHashMap<String, OdmClinicalDataBean> odmClinicalDataMap;
+    private StudySubjectDAO studySubjectDao;
 
 
     /**
@@ -58,11 +59,17 @@ public class ClinicalDataCollector extends OdmDataCollector {
             OdmStudyBase u = it.next();
             ClinicalDataUnit cdata = new ClinicalDataUnit(this.ds, this.dataset, this.getOdmbean(), u.getStudy(), this.getCategory());
             cdata.setCategory(this.getCategory());
-            StudySubjectDAO ssdao = new StudySubjectDAO(this.ds);
-            cdata.setStudySubjectIds(ssdao.findStudySubjectIdsByStudyIds(u.getStudy().getId()+""));
+            cdata.setStudySubjectIds(getStudySubjectDao().findStudySubjectIdsByStudyIds(u.getStudy().getId()+""));
             cdata.collectOdmClinicalData();
             odmClinicalDataMap.put(u.getStudy().getOid(), cdata.getOdmClinicalData());
         }
+    }
+
+    private StudySubjectDAO getStudySubjectDao() {
+        if (studySubjectDao == null) {
+            studySubjectDao = new StudySubjectDAO(this.ds);
+        }
+        return studySubjectDao;
     }
 
     public LinkedHashMap<String, OdmClinicalDataBean> getOdmClinicalDataMap() {

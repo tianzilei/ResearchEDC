@@ -16,7 +16,6 @@ import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.odmbeans.ODMBean;
 import org.researchedc.bean.odmbeans.OdmAdminDataBean;
-import org.researchedc.dao.extract.OdmExtractDAO;
 
 /**
  * A class for ODM AdminData of one study.
@@ -49,7 +48,6 @@ public class AdminDataUnit extends OdmUnit {
         }
         odmAdminData.setStudyOID(studyOID);
 
-        OdmExtractDAO oedao = new OdmExtractDAO(this.ds);
         if (this.getCategory() == 1 && study.isSite(study.getParentStudyId())) {
             String mvoid = "";
             if (this.dataset != null && this.dataset.getId() > 0) {
@@ -68,7 +66,7 @@ public class AdminDataUnit extends OdmUnit {
                 odmAdminData.setMetaDataVersionOID("v1.0.0");
             }
         }
-        oedao.getAdminData(study, this.dataset, odmAdminData, this.odmBean.getODMVersion());
+        getSharedOdmExtractDao().getAdminData(study, this.dataset, odmAdminData, this.odmBean.getODMVersion());
     }
 
     public OdmAdminDataBean getOdmAdminData() {

@@ -17,7 +17,6 @@ import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.odmbeans.ODMBean;
 import org.researchedc.bean.odmbeans.OdmClinicalDataBean;
-import org.researchedc.dao.extract.OdmExtractDAO;
 
 /**
  * A class for one ODM ClinicalData Element.
@@ -57,7 +56,6 @@ public class ClinicalDataUnit extends OdmUnit {
         }
         odmClinicalData.setStudyOID(studyOID);
 
-        OdmExtractDAO oedao = new OdmExtractDAO(this.ds);
         if (this.getCategory() == 1 && study.isSite(study.getParentStudyId())) {
             String mvoid = "";
             if (this.dataset != null) {
@@ -76,7 +74,7 @@ public class ClinicalDataUnit extends OdmUnit {
                 odmClinicalData.setMetaDataVersionOID("v1.0.0");
             }
         }
-        oedao.getClinicalData(study, this.dataset, odmClinicalData, this.odmBean.getODMVersion(), studySubjectIds, this.odmBean.getOdmType());
+        getSharedOdmExtractDao().getClinicalData(study, this.dataset, odmClinicalData, this.odmBean.getODMVersion(), studySubjectIds, this.odmBean.getOdmType());
     }
 
     public OdmClinicalDataBean getOdmClinicalData() {

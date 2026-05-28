@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.odmbeans.ODMBean;
+import org.researchedc.dao.extract.OdmExtractDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ public class OdmUnit {
     private String parentOdmStudyOid; // ODM Study element OID
     // 0: one Study Element; 1: one parent study and its sites
     private int category;
+    private OdmExtractDAO odmExtractDao;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -143,5 +145,12 @@ public class OdmUnit {
 
     public void setCategory(int category) {
         this.category = category;
+    }
+
+    protected OdmExtractDAO getSharedOdmExtractDao() {
+        if (odmExtractDao == null) {
+            odmExtractDao = new OdmExtractDAO(this.ds);
+        }
+        return odmExtractDao;
     }
 }

@@ -38,6 +38,9 @@ import javax.sql.DataSource;
  */
 public class AuditEventDAO extends AuditableEntityDAO implements IAuditEventDAO {
     // private DAODigester digester;
+    private StudyDAO studyDao;
+    private SubjectDAO subjectDao;
+    private UserAccountDAO userAccountDao;
 
     public AuditEventDAO(DataSource ds) {
         super(ds);
@@ -135,23 +138,41 @@ public class AuditEventDAO extends AuditableEntityDAO implements IAuditEventDAO 
 
     public AuditEventBean setStudyAndSubjectInfo(AuditEventBean aeb) {
         if (aeb.getStudyId() > 0) {
-            StudyDAO sdao = new StudyDAO(this.ds);
-            StudyBean sbean = (StudyBean) sdao.findByPK(aeb.getStudyId());
+            StudyBean sbean = (StudyBean) getStudyDao().findByPK(aeb.getStudyId());
             aeb.setStudyName(sbean.getName());
         }
         if (aeb.getSubjectId() > 0) {
             SubjectBean subbean = new SubjectBean();
-            SubjectDAO subdao = new SubjectDAO(this.ds);
-            subbean = (SubjectBean) subdao.findByPK(aeb.getSubjectId());
+            subbean = (SubjectBean) getSubjectDao().findByPK(aeb.getSubjectId());
             aeb.setSubjectName(subbean.getName());
         }
         if (aeb.getUserId() > 0) {
             UserAccountBean updater = new UserAccountBean();
-            UserAccountDAO uadao = new UserAccountDAO(this.ds);
-            updater = (UserAccountBean) uadao.findByPK(aeb.getUserId());
+            updater = (UserAccountBean) getUserAccountDao().findByPK(aeb.getUserId());
             aeb.setUpdater(updater);
         }
         return aeb;
+    }
+
+    private StudyDAO getStudyDao() {
+        if (studyDao == null) {
+            studyDao = new StudyDAO(this.ds);
+        }
+        return studyDao;
+    }
+
+    private SubjectDAO getSubjectDao() {
+        if (subjectDao == null) {
+            subjectDao = new SubjectDAO(this.ds);
+        }
+        return subjectDao;
+    }
+
+    private UserAccountDAO getUserAccountDao() {
+        if (userAccountDao == null) {
+            userAccountDao = new UserAccountDAO(this.ds);
+        }
+        return userAccountDao;
     }
 
     /**
