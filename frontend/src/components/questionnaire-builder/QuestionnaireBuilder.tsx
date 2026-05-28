@@ -12,16 +12,6 @@ import {
   Empty,
   Dropdown,
 } from "antd";
-import {
-  PlusOutlined,
-  DeleteOutlined,
-  EyeOutlined,
-  ImportOutlined,
-  ExportOutlined,
-  ArrowUpOutlined,
-  ArrowDownOutlined,
-  FileAddOutlined,
-} from "@ant-design/icons";
 import { Model } from "survey-core";
 import { Survey } from "survey-react-ui";
 import "survey-core/survey-core.min.css";
@@ -332,7 +322,9 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                 <Text strong style={{ fontSize: 13 }}>
                   {page.title || `${t("builder.pageDefaultTitle")} ${pi + 1}`}
                 </Text>
-                <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => deletePage(pi)} />
+                <Button type="text" size="small" danger onClick={() => deletePage(pi)}>
+                  {t("common.delete")}
+                </Button>
               </div>
               {selectedPageIdx === pi && (
                 <div style={{ paddingLeft: 16, marginTop: 4 }}>
@@ -364,14 +356,20 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                         </Text>
                       </Space>
                       <Space size={2}>
-                        <Button type="text" size="small" icon={<ArrowUpOutlined />} onClick={() => moveQuestion(qi, -1)} />
-                        <Button type="text" size="small" icon={<ArrowDownOutlined />} onClick={() => moveQuestion(qi, 1)} />
-                        <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => deleteQuestion(qi)} />
+                        <Button type="text" size="small" onClick={() => moveQuestion(qi, -1)}>
+                          {t("common.up")}
+                        </Button>
+                        <Button type="text" size="small" onClick={() => moveQuestion(qi, 1)}>
+                          {t("common.down")}
+                        </Button>
+                        <Button type="text" size="small" danger onClick={() => deleteQuestion(qi)}>
+                          {t("common.delete")}
+                        </Button>
                       </Space>
                     </div>
                   ))}
                   <Dropdown menu={{ items: questionTypeActions }} trigger={["click"]}>
-                    <Button size="small" type="dashed" icon={<PlusOutlined />} style={{ width: "100%", marginTop: 8 }}>
+                    <Button size="small" type="dashed" style={{ width: "100%", marginTop: 8 }}>
                       {t("builder.addQuestion")}
                     </Button>
                   </Dropdown>
@@ -379,7 +377,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
               )}
             </div>
           ))}
-          <Button size="small" icon={<FileAddOutlined />} onClick={addPage} block>
+          <Button size="small" onClick={addPage} block>
             {t("builder.addPage")}
           </Button>
         </Space>
@@ -446,18 +444,18 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                       type="text"
                       size="small"
                       danger
-                      icon={<DeleteOutlined />}
                       onClick={() => {
                         const c = selectedQ.choices.filter((_, i) => i !== ci);
                         updateQuestion(selectedQIdx!, { choices: c });
                       }}
-                    />
+                    >
+                      {t("common.delete")}
+                    </Button>
                   </Space>
                 ))}
                 <Button
                   size="small"
                   type="dashed"
-                  icon={<PlusOutlined />}
                   onClick={() => {
                     const c = [...selectedQ.choices, { value: String(selectedQ.choices.length + 1), text: `${t("builder.option")} ${selectedQ.choices.length + 1}` }];
                     updateQuestion(selectedQIdx!, { choices: c });
@@ -500,13 +498,13 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
 
       <div style={{ padding: 12, borderTop: "1px solid var(--border-light)", display: "flex", justifyContent: "space-between" }}>
         <Space>
-          <Button icon={<EyeOutlined />} onClick={() => setShowPreview(!showPreview)}>
+          <Button onClick={() => setShowPreview(!showPreview)}>
             {showPreview ? t("builder.hidePreview") : t("builder.showPreview")}
           </Button>
-          <Button icon={<ImportOutlined />} onClick={() => setImportModalOpen(true)}>
+          <Button onClick={() => setImportModalOpen(true)}>
             {t("builder.importJson")}
           </Button>
-          <Button icon={<ExportOutlined />} onClick={handleExport}>
+          <Button onClick={handleExport}>
             {t("builder.exportJson")}
           </Button>
         </Space>

@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Table, Tag, Typography, Space, Button, Empty } from "antd";
+import { Card, Table, Typography, Space, Button, Empty } from "antd";
 
 import { useTranslation } from "react-i18next";
 import { useAuditLogs } from "@/hooks/useRandomization";
@@ -7,17 +7,6 @@ import { SkeletonPage } from "@/components/SkeletonCard";
 import type {} from "@/types/randomization";
 
 const { Title } = Typography;
-
-const actionColors: Record<string, string> = {
-  SCHEME_CREATED: "green",
-  SCHEME_ACTIVATED: "blue",
-  SCHEME_PAUSED: "orange",
-  SCHEME_CLOSED: "red",
-  SUBJECT_ASSIGNED: "purple",
-  UNBLINDING_REQUESTED: "volcano",
-  UNBLINDING_APPROVED: "lime",
-  UNBLINDING_REJECTED: "red",
-};
 
 export default function AuditViewer() {
   const { t } = useTranslation();
@@ -35,7 +24,7 @@ export default function AuditViewer() {
     },
     {
       title: t("audit.column.action"), dataIndex: "action", key: "action",
-      render: (a: string) => <Tag color={actionColors[a] ?? "default"}>{a}</Tag>,
+      render: (a: string) => <span className="status status-default">{a}</span>,
     },
     { title: t("audit.column.entity"), dataIndex: "entityType", key: "entityType" },
     { title: t("audit.column.entityId"), dataIndex: "entityId", key: "entityId" },

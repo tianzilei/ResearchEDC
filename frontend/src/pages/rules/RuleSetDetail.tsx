@@ -114,13 +114,13 @@ export default function RuleSetDetail() {
       width: 100,
       render: (enabled: boolean | null) =>
         enabled ? (
-          <Tag color="success">
+          <span className="status status-success">
             Active
-          </Tag>
+          </span>
         ) : (
-          <Tag color="default">
+          <span className="status status-default">
             Inactive
-          </Tag>
+          </span>
         ),
     },
     {
@@ -263,7 +263,7 @@ export default function RuleSetDetail() {
               </Descriptions.Item>
             )}
             <Descriptions.Item label="Rules Count">
-              <Tag color="blue">{ruleSet.ruleNames?.length ?? 0}</Tag>
+              <Tag>{ruleSet.ruleNames?.length ?? 0}</Tag>
             </Descriptions.Item>
           </Descriptions>
         </Card>
@@ -297,7 +297,6 @@ export default function RuleSetDetail() {
             type="info"
             message="No rules configured"
             description="This rule set does not have any rules associated with it."
-            showIcon
           />
         )}
       </Card>

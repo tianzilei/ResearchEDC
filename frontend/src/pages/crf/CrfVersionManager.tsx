@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import {
   Card,
   Table,
-  Tag,
   Button,
   Typography,
   Modal,
@@ -32,9 +31,9 @@ const STATUS_LOCKED = 2;
 
 const statusTag = (statusId: number) => {
   if (statusId === STATUS_LOCKED) {
-    return <Tag color="orange">Locked</Tag>;
+    return <span className="status status-warning">Locked</span>;
   }
-  return <Tag color="success">Available</Tag>;
+  return <span className="status status-success">Available</span>;
 };
 
 export default function CrfVersionManager() {

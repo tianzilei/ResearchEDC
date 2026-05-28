@@ -21,12 +21,6 @@ export default function RandomizationDashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [form] = Form.useForm();
 
-  const algorithmColors: Record<string, string> = {
-    SIMPLE: "green",
-    BLOCK: "blue",
-    STRATIFIED_BLOCK: "purple",
-  };
-
   const statusClasses: Record<string, string> = {
     DRAFT: "status-default",
     ACTIVE: "status-success",
@@ -69,7 +63,6 @@ export default function RandomizationDashboard() {
         message={t("randomization.noStudy")}
         description={t("randomization.noStudyDescription")}
         type="info"
-        showIcon
       />
     );
   }
@@ -83,7 +76,7 @@ export default function RandomizationDashboard() {
       ),
     },
     { title: t("randomization.column.algorithm"), dataIndex: "algorithm", key: "algorithm",
-      render: (alg: string) => <Tag color={algorithmColors[alg]}>{alg}</Tag>,
+      render: (alg: string) => <Tag>{alg}</Tag>,
     },
     { title: t("randomization.column.status"), dataIndex: "status", key: "status",
       render: (s: string) => <span className={`status ${statusClasses[s] ?? "status-default"}`}>{s}</span>,

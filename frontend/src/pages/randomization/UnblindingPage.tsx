@@ -61,21 +61,21 @@ export default function UnblindingPage() {
 
   if (isLoading) return <SkeletonPage />;
 
-  const statusColors: Record<string, string> = {
-    PENDING: "warning", APPROVED: "success", REJECTED: "error",
+  const statusClasses: Record<string, string> = {
+    PENDING: "status-warning", APPROVED: "status-success", REJECTED: "status-danger",
   };
 
   const columns = [
     { title: t("unblinding.column.id"), dataIndex: "id", key: "id" },
     { title: t("unblinding.column.assignment"), dataIndex: "assignmentId", key: "assignmentId" },
     { title: t("unblinding.column.arm"), dataIndex: "armName", key: "armName",
-      render: (name: string) => name ? <Tag color="blue">{name}</Tag> : "-",
+      render: (name: string) => name ? <Tag>{name}</Tag> : "-",
     },
     { title: t("unblinding.column.reason"), dataIndex: "reason", key: "reason",
       render: (r: string) => r?.substring(0, 50) ?? "-",
     },
     { title: t("unblinding.column.status"), dataIndex: "status", key: "status",
-      render: (s: string) => <Tag color={statusColors[s]}>{s}</Tag>,
+      render: (s: string) => <span className={`status ${statusClasses[s] ?? "status-default"}`}>{s}</span>,
     },
     { title: t("unblinding.column.requested"), dataIndex: "requestedDate", key: "requestedDate",
       render: (d: string) => d ? new Date(d).toLocaleString() : "-",

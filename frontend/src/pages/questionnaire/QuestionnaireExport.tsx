@@ -36,11 +36,11 @@ interface ExportJob {
   finished_at: string | null;
 }
 
-const statusColors: Record<string, string> = {
-  pending: "default",
-  running: "processing",
-  completed: "success",
-  failed: "error",
+const statusClasses: Record<string, string> = {
+  pending: "status-default",
+  running: "status-info",
+  completed: "status-success",
+  failed: "status-danger",
 };
 
 const FORMAT_OPTIONS = [
@@ -98,13 +98,13 @@ export default function QuestionnaireExport() {
       title: t("qexport.column.layout"),
       dataIndex: "export_type",
       key: "export_type",
-      render: (t: string) => <Tag color="blue">{t}</Tag>,
+      render: (t: string) => <Tag>{t}</Tag>,
     },
     {
       title: t("qexport.column.status"),
       dataIndex: "status",
       key: "status",
-      render: (s: string) => <Tag color={statusColors[s]}>{s}</Tag>,
+      render: (s: string) => <span className={`status ${statusClasses[s] ?? "status-default"}`}>{s}</span>,
     },
     {
       title: t("qexport.column.requested"),
@@ -125,7 +125,7 @@ export default function QuestionnaireExport() {
       render: (_: unknown, r: ExportJob) => (
         <Space>
             {r.status === "completed" && r.file_path && (
-            <Button size="small" type="link">
+            <Button size="small">
               {t("qexport.action.download")}
             </Button>
           )}

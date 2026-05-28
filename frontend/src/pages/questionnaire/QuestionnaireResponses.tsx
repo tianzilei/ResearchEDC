@@ -264,7 +264,6 @@ export default function QuestionnaireResponses() {
                 <Alert
                   message={t("response.lockedAlert")}
                   type="warning"
-                  showIcon
                   style={{ marginTop: 16 }}
                 />
                 <TextArea

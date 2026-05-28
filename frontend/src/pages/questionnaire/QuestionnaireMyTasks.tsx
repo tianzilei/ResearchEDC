@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Card, List, Tag, Typography, Space, Button, Empty, Alert, Progress, message } from "antd";
+import { Card, List, Typography, Space, Button, Empty, Alert, Progress, message } from "antd";
 
 import { useNavigate } from "react-router-dom";
 import { useAppQuery } from "@/hooks/useQuery";
@@ -26,14 +26,14 @@ export default function QuestionnaireMyTasks() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const statusConfig: Record<string, { color: string; label: string }> = {
-    pending: { color: "default", label: t("tasks.pending") },
-    in_progress: { color: "processing", label: "In Progress" },
-    submitted: { color: "success", label: t("tasks.completed") },
-    reviewed: { color: "cyan", label: "Reviewed" },
-    locked: { color: "purple", label: "Finalized" },
-    expired: { color: "warning", label: "Expired" },
-    withdrawn: { color: "error", label: "Withdrawn" },
+  const statusConfig: Record<string, { className: string; label: string }> = {
+    pending: { className: "status-default", label: t("tasks.pending") },
+    in_progress: { className: "status-info", label: t("tasks.inProgress") },
+    submitted: { className: "status-success", label: t("tasks.completed") },
+    reviewed: { className: "status-info", label: t("tasks.reviewed") },
+    locked: { className: "status-default", label: t("tasks.finalized") },
+    expired: { className: "status-warning", label: t("tasks.expired") },
+    withdrawn: { className: "status-danger", label: t("tasks.withdrawn") },
   };
   const subjectId = user?.username;
 
@@ -48,7 +48,7 @@ export default function QuestionnaireMyTasks() {
 
   if (isLoading) return <SkeletonPage />;
   if (!subjectId) {
-    return <Alert message={t("tasks.loginRequired")} type="info" showIcon />;
+    return <Alert message={t("tasks.loginRequired")} type="info" />;
   }
 
   const pendingTasks = (assignments ?? []).filter(
@@ -124,9 +124,9 @@ export default function QuestionnaireMyTasks() {
                   title={
                     <Space>
                       <Text>Questionnaire</Text>
-                      <Tag color={statusConfig[item.status]?.color}>
+                      <span className={`status ${statusConfig[item.status]?.className ?? "status-default"}`}>
                         {statusConfig[item.status]?.label ?? item.status}
-                      </Tag>
+                      </span>
                     </Space>
                   }
                   description={
@@ -163,9 +163,9 @@ export default function QuestionnaireMyTasks() {
                   title={
                     <Space>
                       <Text>Questionnaire</Text>
-                      <Tag color={statusConfig[item.status]?.color}>
+                      <span className={`status ${statusConfig[item.status]?.className ?? "status-default"}`}>
                         {statusConfig[item.status]?.label ?? item.status}
-                      </Tag>
+                      </span>
                     </Space>
                   }
                   description={
@@ -193,9 +193,9 @@ export default function QuestionnaireMyTasks() {
                   title={
                     <Space>
                       <Text>Questionnaire</Text>
-                      <Tag color={statusConfig[item.status]?.color}>
+                      <span className={`status ${statusConfig[item.status]?.className ?? "status-default"}`}>
                         {statusConfig[item.status]?.label ?? item.status}
-                      </Tag>
+                      </span>
                     </Space>
                   }
                 />

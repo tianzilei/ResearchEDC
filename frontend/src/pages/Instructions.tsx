@@ -57,7 +57,7 @@ export default function Instructions() {
             <Space direction="vertical">
               {Object.entries(INSTRUCTIONS).map(([key, val]) => (
                 <Link key={key} to={`/app/instructions/${key}`}>
-                  <Button type="link">{val.title}</Button>
+                  <Button>{val.title}</Button>
                 </Link>
               ))}
             </Space>

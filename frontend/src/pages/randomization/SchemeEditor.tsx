@@ -6,12 +6,8 @@ import { SkeletonPage } from "@/components/SkeletonCard";
 
 const { Title } = Typography;
 
-const algorithmColors: Record<string, string> = {
-  SIMPLE: "green", BLOCK: "blue", STRATIFIED_BLOCK: "purple",
-};
-
-const statusColors: Record<string, string> = {
-  DRAFT: "default", ACTIVE: "success", PAUSED: "warning", CLOSED: "error",
+const statusClasses: Record<string, string> = {
+  DRAFT: "status-default", ACTIVE: "status-success", PAUSED: "status-warning", CLOSED: "status-danger",
 };
 
 export default function SchemeEditor() {
@@ -25,7 +21,7 @@ export default function SchemeEditor() {
 
   if (isLoading) return <SkeletonPage />;
   if (!scheme) {
-    return <Alert message={t("scheme.notFound")} type="error" showIcon />;
+    return <Alert message={t("scheme.notFound")} type="error" />;
   }
 
   const handleActivate = () => {
@@ -99,10 +95,10 @@ export default function SchemeEditor() {
 
         <Descriptions column={2} bordered size="small">
           <Descriptions.Item label={t("scheme.algorithm")}>
-            <Tag color={algorithmColors[scheme.algorithm]}>{scheme.algorithm}</Tag>
+            <Tag>{scheme.algorithm}</Tag>
           </Descriptions.Item>
           <Descriptions.Item label={t("scheme.status")}>
-            <Tag color={statusColors[scheme.status ?? "DRAFT"]}>{scheme.status}</Tag>
+            <span className={`status ${statusClasses[scheme.status ?? "DRAFT"] ?? "status-default"}`}>{scheme.status}</span>
           </Descriptions.Item>
           <Descriptions.Item label={t("scheme.minBlockSize")}>{scheme.minBlockSize ?? "-"}</Descriptions.Item>
           <Descriptions.Item label={t("scheme.maxBlockSize")}>{scheme.maxBlockSize ?? "-"}</Descriptions.Item>

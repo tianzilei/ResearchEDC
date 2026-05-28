@@ -127,8 +127,8 @@ export default function AppLayout() {
           <button
             onClick={toggleTheme}
             style={{
-              background: "transparent",
-              border: "none",
+              background: "var(--header-bg)",
+              border: "1px solid var(--border)",
               cursor: "pointer",
               color: "var(--header-text)",
               fontSize: 13,
@@ -166,8 +166,8 @@ export default function AppLayout() {
           >
             <button
               style={{
-                background: "transparent",
-                border: "none",
+                background: "var(--header-bg)",
+                border: "1px solid var(--border)",
                 cursor: "pointer",
                 color: "var(--header-text)",
                 fontSize: 13,

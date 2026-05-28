@@ -73,7 +73,7 @@ export default function RulesListPage() {
         <span>
           {record.ruleNames.length > 0
             ? record.ruleNames.map((name) => (
-                <Tag key={name} color="blue" style={{ marginBottom: 2 }}>
+                <Tag key={name} style={{ marginBottom: 2 }}>
                   {name}
                 </Tag>
               ))
@@ -123,7 +123,6 @@ export default function RulesListPage() {
       {!dataSource.length ? (
         <Card style={{ borderRadius: 6 }}>
           <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
             description="No rule sets defined for this study"
           />
         </Card>
@@ -159,7 +158,7 @@ export default function RulesListPage() {
                       </Text>
                       <div style={{ marginTop: 4 }}>
                         {record.ruleNames.map((name, i) => (
-                          <Tag key={i} color="blue" style={{ marginBottom: 4 }}>
+                          <Tag key={i} style={{ marginBottom: 4 }}>
                             {name}
                           </Tag>
                         ))}
@@ -171,9 +170,9 @@ export default function RulesListPage() {
               expandIcon: ({ expanded, onExpand, record }) => (
                 <span
                   onClick={(e) => onExpand(record, e)}
-                  style={{ cursor: "pointer", color: "var(--accent)", display: "inline-block", transform: expanded ? "rotate(90deg)" : "none", transition: "transform 0.2s" }}
+                  style={{ cursor: "pointer", color: "var(--accent)", display: "inline-block", width: 16 }}
                 >
-                  ▶
+                  {expanded ? "v" : ">"}
                 </span>
               ),
             }}

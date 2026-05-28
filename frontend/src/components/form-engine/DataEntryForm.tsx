@@ -72,13 +72,13 @@ export function DataEntryForm({
   return (
     <div>
       {statusConfig.status === "LOCKED" && (
-        <Alert message={t("form.lockedAlert")} type="warning" showIcon style={{ marginBottom: 16 }} />
+        <Alert message={t("form.lockedAlert")} type="warning" style={{ marginBottom: 16 }} />
       )}
       {statusConfig.status === "FROZEN" && (
-        <Alert message={t("form.frozenAlert")} type="info" showIcon style={{ marginBottom: 16 }} />
+        <Alert message={t("form.frozenAlert")} type="info" style={{ marginBottom: 16 }} />
       )}
       {statusConfig.status === "SIGNED" && (
-        <Alert message={t("form.signedAlert")} type="success" showIcon style={{ marginBottom: 16 }} />
+        <Alert message={t("form.signedAlert")} type="success" style={{ marginBottom: 16 }} />
       )}
 
       <Form

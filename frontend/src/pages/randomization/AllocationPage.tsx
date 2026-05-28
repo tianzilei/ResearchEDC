@@ -20,7 +20,7 @@ export default function AllocationPage() {
   const [stratumValues, setStratumValues] = useState<Record<string, string>>({});
 
   if (schemeLoading) return <SkeletonPage />;
-  if (!scheme) return <Alert message={t("scheme.notFound")} type="error" showIcon />;
+  if (!scheme) return <Alert message={t("scheme.notFound")} type="error" />;
 
   if (scheme.status !== "ACTIVE") {
     return (
@@ -32,7 +32,6 @@ export default function AllocationPage() {
           message={t("allocation.notActive")}
           description={t("allocation.notActiveDescription")}
           type="warning"
-          showIcon
         />
       </div>
     );
@@ -54,7 +53,7 @@ export default function AllocationPage() {
         content: (
           <div>
             <p>{t("allocation.assignedTo")} <strong>#{subjectId}</strong>:</p>
-            <Tag color="blue" style={{ padding: "4px 12px" }}>{result.armName}</Tag>
+            <Tag style={{ padding: "4px 12px" }}>{result.armName}</Tag>
           </div>
         ),
       });
@@ -65,20 +64,20 @@ export default function AllocationPage() {
     }
   };
 
-  const statusColors: Record<string, string> = {
-    ACTIVE: "success", UNBLINDED: "warning", REVOKED: "error",
+  const statusClasses: Record<string, string> = {
+    ACTIVE: "status-success", UNBLINDED: "status-warning", REVOKED: "status-danger",
   };
 
   const columns = [
     { title: t("allocation.column.subjectId"), dataIndex: "studySubjectId", key: "studySubjectId" },
     { title: t("allocation.column.arm"), dataIndex: "armName", key: "armName",
-      render: (name: string) => <Tag color="blue">{name}</Tag>,
+      render: (name: string) => <Tag>{name}</Tag>,
     },
     { title: t("allocation.column.stratum"), dataIndex: "stratumPath", key: "stratumPath",
       render: (p: string) => p || "-",
     },
     { title: t("allocation.column.status"), dataIndex: "status", key: "status",
-      render: (s: string) => <Tag color={statusColors[s]}>{s}</Tag>,
+      render: (s: string) => <span className={`status ${statusClasses[s] ?? "status-default"}`}>{s}</span>,
     },
     { title: t("allocation.column.assignedDate"), dataIndex: "assignedDate", key: "assignedDate",
       render: (d: string) => d ? new Date(d).toLocaleString() : "-",

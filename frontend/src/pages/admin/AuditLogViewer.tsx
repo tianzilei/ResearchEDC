@@ -19,12 +19,6 @@ interface AuditLogEntry {
   sourceModule: string | null;
 }
 
-const EVENT_COLORS: Record<string, string> = {
-  CREATE: "green", UPDATE: "blue", DELETE: "red",
-  LOCK: "orange", UNLOCK: "purple", EXPORT: "cyan",
-  SIGN: "gold", VIEW: "default", SYSTEM: "geekblue",
-};
-
 export default function AuditLogViewer() {
   const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +44,7 @@ export default function AuditLogViewer() {
     { title: "ID", dataIndex: "id", key: "id", width: 60 },
     {
       title: "类型", dataIndex: "eventType", key: "type", width: 90,
-      render: (v: string) => <Tag color={EVENT_COLORS[v] ?? "default"}>{v}</Tag>,
+      render: (v: string) => <span className="status status-default">{v}</span>,
     },
     { title: "实体", key: "entity", render: (_: any, r: AuditLogEntry) =>
       `${r.entityType ?? "-"}#${r.entityId ?? ""}` },

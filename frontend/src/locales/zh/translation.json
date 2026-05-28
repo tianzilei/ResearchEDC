@@ -5,6 +5,9 @@
 
   "common.user": "用户",
   "common.backHome": "返回首页",
+  "common.delete": "删除",
+  "common.up": "上移",
+  "common.down": "下移",
 
   "time.justNow": "刚刚",
   "time.minutesAgo": "{{count}} 分钟前",
@@ -411,7 +414,12 @@
   "qexport.created": "导出任务已创建",
 
   "tasks.pending": "待完成",
+  "tasks.inProgress": "进行中",
   "tasks.completed": "已完成",
+  "tasks.reviewed": "已审核",
+  "tasks.finalized": "已定稿",
+  "tasks.expired": "已过期",
+  "tasks.withdrawn": "已撤回",
   "tasks.toComplete": "待填写",
   "tasks.expiredWithdrawn": "已过期 / 已撤回",
   "tasks.fill": "填写",

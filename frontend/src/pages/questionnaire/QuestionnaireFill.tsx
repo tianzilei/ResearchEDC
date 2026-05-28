@@ -111,7 +111,6 @@ export default function QuestionnaireFill() {
           message={t("fill.error")}
           description={error}
           type="error"
-          showIcon
         />
       </div>
     );
@@ -150,9 +149,9 @@ export default function QuestionnaireFill() {
         <div
           style={{
             background: "var(--panel)",
-            borderRadius: 8,
+            border: "1px solid var(--border)",
+            borderRadius: 6,
             padding: 24,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
           }}
         >
           <Survey model={survey} />

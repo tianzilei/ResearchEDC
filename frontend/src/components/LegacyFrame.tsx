@@ -80,7 +80,6 @@ export default function LegacyFrame() {
                 </Text>
               </div>
             }
-            showIcon
             style={{
               borderRadius: "var(--radius-md)",
               border: "none",
@@ -131,8 +130,7 @@ export default function LegacyFrame() {
           border: "none",
           borderRadius: "var(--radius-lg)",
           background: "var(--panel)",
-          opacity: isLoading ? 0 : 1,
-          transition: "opacity var(--transition-base, 0.25s) ease",
+          visibility: isLoading ? "hidden" : "visible",
         }}
         sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
       />

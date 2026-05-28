@@ -33,7 +33,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   return (
     <ThemeContext.Provider value={{ mode, toggleTheme }}>
-      <ConfigProvider theme={getTheme(mode)}>
+      <ConfigProvider theme={getTheme(mode)} wave={{ disabled: true }}>
         {children}
       </ConfigProvider>
     </ThemeContext.Provider>

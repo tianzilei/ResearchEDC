@@ -5,6 +5,9 @@
 
   "common.user": "User",
   "common.backHome": "Back Home",
+  "common.delete": "Delete",
+  "common.up": "Up",
+  "common.down": "Down",
 
   "time.justNow": "Just now",
   "time.minutesAgo": "{{count}} minute ago",
@@ -411,7 +414,12 @@
   "qexport.created": "Export job created",
 
   "tasks.pending": "Pending",
+  "tasks.inProgress": "In Progress",
   "tasks.completed": "Completed",
+  "tasks.reviewed": "Reviewed",
+  "tasks.finalized": "Finalized",
+  "tasks.expired": "Expired",
+  "tasks.withdrawn": "Withdrawn",
   "tasks.toComplete": "To Complete",
   "tasks.expiredWithdrawn": "Expired / Withdrawn",
   "tasks.fill": "Fill",

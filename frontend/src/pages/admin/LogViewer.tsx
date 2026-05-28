@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  Card, Typography, Table, Tag, Space, Button, Breadcrumb, Empty, Result,
+  Card, Typography, Table, Space, Button, Breadcrumb, Empty, Result,
 } from "antd";
 import { Link } from "react-router-dom";
 
@@ -70,10 +70,7 @@ export default function LogViewer() {
               { title: "日志器", dataIndex: "name", key: "name", ellipsis: true },
               {
                 title: "级别", dataIndex: "level", key: "level",
-                render: (level: string) => {
-                  const color = level === "ERROR" ? "red" : level === "WARN" ? "orange" : level === "DEBUG" ? "blue" : "default";
-                  return <Tag color={color}>{level}</Tag>;
-                },
+                render: (level: string) => <span className="status status-default">{level}</span>,
               },
             ]}
             rowKey="name"

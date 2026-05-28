@@ -78,7 +78,6 @@ export default function DiscrepancyNotes({ eventCrfId, studyId, entityId }: Disc
       {!notes || notes.length === 0 ? (
         <Card style={{ borderRadius: 6, background: "var(--panel-muted)" }}>
           <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
             description="No discrepancy notes for this CRF"
           />
         </Card>
@@ -92,7 +91,6 @@ export default function DiscrepancyNotes({ eventCrfId, studyId, entityId }: Disc
                   ? [
                       <Button
                         key="resolve"
-                        type="link"
                         size="small"
                         onClick={() => handleResolve(note.discrepancyNoteId)}
                         loading={resolveNote.isPending}
@@ -107,9 +105,9 @@ export default function DiscrepancyNotes({ eventCrfId, studyId, entityId }: Disc
                 title={
                   <Space>
                     <Text>{note.description}</Text>
-                    <Tag color={note.resolutionStatus === "Resolved" ? "green" : "orange"}>
+                    <span className={`status ${note.resolutionStatus === "Resolved" ? "status-success" : "status-warning"}`}>
                       {note.resolutionStatus ?? "New"}
-                    </Tag>
+                    </span>
                     <Tag>{note.type ?? "Note"}</Tag>
                   </Space>
                 }

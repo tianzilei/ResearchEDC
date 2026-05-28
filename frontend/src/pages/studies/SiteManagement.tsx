@@ -4,7 +4,6 @@ import {
   Breadcrumb,
   Card,
   Table,
-  Tag,
   Button,
   Space,
   Typography,
@@ -69,13 +68,13 @@ export default function SiteManagement() {
     return <div style={{ display: "flex", justifyContent: "center", padding: 80 }}><Spin size="large" /></div>;
   }
 
-  const statusColor = (s: string) => {
+  const statusClass = (s: string) => {
     switch (s?.toLowerCase()) {
-      case "available": return "green";
-      case "pending": return "orange";
-      case "frozen": return "blue";
-      case "locked": return "red";
-      default: return "default";
+      case "available": return "status-success";
+      case "pending": return "status-warning";
+      case "frozen": return "status-info";
+      case "locked": return "status-danger";
+      default: return "status-default";
     }
   };
 
@@ -92,7 +91,7 @@ export default function SiteManagement() {
       render: (_: any, record: any) => [record.facilityCity, record.facilityState, record.facilityCountry].filter(Boolean).join(", ") || "-",
     },
     { title: "状态", dataIndex: "status", key: "status",
-      render: (s: string) => <Tag color={statusColor(s)}>{s}</Tag>,
+      render: (s: string) => <span className={`status ${statusClass(s)}`}>{s}</span>,
     },
   ];
 

@@ -106,15 +106,29 @@ For forms:
 
 ## Visual Style
 
-The current design system is `Mono-Performance`:
+The design system is `Mono-Performance`. It is intentionally plain, high-contrast, and text-first. New UI should look like a precise clinical operations tool, not a marketing site or illustration-led product.
 
-- System font stack only
-- Neutral grayscale base
-- No decorative gradients, bokeh, background art, or ornamental imagery
-- Small radii: 2px, 4px, 6px
-- Compact page headings: 18-24px
-- Dense spacing: 8, 12, 16, 20, 24px
-- Minimal motion; reduced-motion support is already in `global.css`
+Core rules:
+
+- Use the system font stack only.
+- Prefer neutral monochrome surfaces: white, black, and grayscale tokens.
+- Use color only for semantic states: success, warning, danger, info, focus, and links.
+- Do not use transparency for panels, cards, overlays, borders, text, or backgrounds. Use solid theme tokens instead of `opacity`, `rgba()`, `hsla()`, `transparent`, or backdrop effects.
+- Do not use decorative gradients, bokeh, background art, glass effects, shadows-as-decoration, ornamental imagery, or hero-style artwork.
+- Do not introduce icons, illustrations, photos, SVG artwork, emoji, or image-based affordances in new product UI. Use clear text labels and layout hierarchy instead.
+- Use small radii only: 2px, 4px, 6px. Cards and controls should not exceed 8px.
+- Use compact page headings: 18-24px.
+- Use dense spacing: 8, 12, 16, 20, 24px.
+- Prioritize readability and contrast over visual softness. Text, borders, and controls must remain legible in both daylight and night modes.
+- Minimize animation. Prefer instant state changes; only use short functional transitions when they clarify interaction. Respect reduced-motion behavior in `global.css`.
+
+Theme requirements:
+
+- Every new surface must work in both daylight and night modes.
+- Never hard-code a color that only works in one theme.
+- Use solid CSS variables for backgrounds, panels, text, borders, and semantic states.
+- Test contrast manually when adding new foreground/background combinations. Normal body text should target WCAG AA contrast or better.
+- Avoid relying on subtle border-only distinctions in night mode; use stronger border tokens or clear text state.
 
 Use CSS variables from `global.css`:
 
@@ -134,6 +148,24 @@ Available classes: `status-success`, `status-warning`, `status-danger`, `status-
 
 Avoid hard-coded colors in new code. If a color is needed, add a theme token or CSS variable first. Hard-coded colors still exist in older pages and should be removed opportunistically.
 
+Avoid these CSS patterns in new code:
+
+```css
+opacity: 0.72;
+background: rgba(...);
+background: linear-gradient(...);
+backdrop-filter: blur(...);
+box-shadow: 0 20px 60px ...;
+```
+
+Use solid variables instead:
+
+```css
+background: var(--panel);
+border: 1px solid var(--border);
+color: var(--text);
+```
+
 ## Ant Design Usage
 
 Use Ant Design components for core UI:
@@ -148,18 +180,30 @@ Use Ant Design components for core UI:
 
 Prefer `styles={{ body: { ... } }}` over deprecated `bodyStyle`.
 
-Use `@ant-design/icons` for icon buttons. Do not introduce hand-written SVG icons for common actions.
+Prefer text buttons with concise labels. Do not add icon buttons, `@ant-design/icons`, hand-written SVG icons, or image-based controls in new UI unless an existing component contract absolutely requires them. When touching older icon-based controls, consider replacing them with readable text labels if the change is local and low-risk.
+
+Avoid Ant Design styling that creates a translucent or decorative look:
+
+- Do not use transparent card backgrounds.
+- Do not use ghost buttons on complex backgrounds.
+- Do not use gradient buttons or image covers.
+- Keep component borders and focus states visible in both themes.
 
 ## Internationalization
 
-The app uses `react-i18next` with `en` and `zh`.
+The app uses `react-i18next` with two supported languages:
+
+- English: `en`
+- Chinese: `zh`
 
 For new user-facing text, prefer translation keys in:
 
 - `src/locales/en/translation.json`
 - `src/locales/zh/translation.json`
 
-Some legacy pages still use inline Chinese/English text. New pages should avoid adding more untranslated strings unless matching a local transitional page.
+All new stable UI text must have both English and Chinese translations. This includes page titles, button labels, table columns, empty states, validation messages, toast messages, modal titles, and status text.
+
+Some legacy pages still use inline Chinese/English text. New pages should avoid adding more untranslated strings unless matching a local transitional page. When editing nearby text, migrate it to translation keys if the scope is small.
 
 ## Forms And CRF Data Entry
 

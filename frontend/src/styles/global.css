@@ -50,10 +50,10 @@
   --header-text: #ecece5;
   --sider-bg: #ffffff;
   --sider-border: #d8d8d0;
-  --menu-hover: rgba(0, 0, 0, 0.04);
-  --menu-selected: rgba(0, 0, 0, 0.08);
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --menu-hover: #f0f0eb;
+  --menu-selected: #e5e5de;
+  --shadow-sm: none;
+  --shadow-md: none;
   --radius-sm: 2px;
   --radius-md: 4px;
   --radius-lg: 6px;
@@ -89,10 +89,10 @@
   --header-text: #ecece5;
   --sider-bg: #181816;
   --sider-border: #383832;
-  --menu-hover: rgba(255, 255, 255, 0.06);
-  --menu-selected: rgba(255, 255, 255, 0.10);
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --menu-hover: #22221f;
+  --menu-selected: #2a2a26;
+  --shadow-sm: none;
+  --shadow-md: none;
 }
 
 /* ── Reset ── */
@@ -150,7 +150,7 @@ code, pre {
   font-size: 12px;
   font-weight: 500;
   line-height: 1.6;
-  border: 1px solid transparent;
+  border: 1px solid var(--border);
 }
 
 .status-success {
@@ -246,7 +246,7 @@ code, pre {
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -272,15 +272,16 @@ code, pre {
   outline-offset: 2px;
 }
 
-/* ── Reduced Motion ── */
+/* ── Motion ── */
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+*, *::before, *::after {
+  animation-duration: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0s !important;
+}
+
+html {
+  scroll-behavior: auto;
 }
 
 /* ── Legacy compatibility classes (removed decorative effects) ── */
@@ -329,6 +330,20 @@ code, pre {
 [data-theme="night"] .ant-statistic-content {
   color: var(--text);
 }
+.anticon,
+.ant-empty-image,
+.ant-alert-icon,
+.ant-result-icon {
+  display: none !important;
+}
+.ant-empty-normal {
+  margin-block: 16px;
+}
+.ant-tag {
+  color: var(--text-secondary);
+  background: var(--panel-muted);
+  border-color: var(--border);
+}
 [data-theme="night"] .ant-alert-warning {
   background: var(--warning-bg);
   border-color: var(--warning);
@@ -348,7 +363,7 @@ code, pre {
 }
 [data-theme="night"] .ant-skeleton-content .ant-skeleton-title,
 [data-theme="night"] .ant-skeleton-content .ant-skeleton-paragraph > li {
-  background: rgba(255,255,255,0.08);
+  background: var(--border-strong);
 }
 
 /* ── Header: StudySwitcher, language select, user dropdown (fixed light color on dark header) ── */
@@ -377,60 +392,55 @@ code, pre {
 }
 
 [data-theme="night"] .header-user-dropdown {
-  background: #222220;
-  border: 1px solid #383832;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
   border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: none;
 }
 [data-theme="night"] .header-user-dropdown .ant-dropdown-menu {
-  background: transparent !important;
+  background: var(--bg-secondary) !important;
   box-shadow: none !important;
 }
 [data-theme="night"] .header-user-dropdown .ant-dropdown-menu-item {
-  color: #b8b8ae;
+  color: var(--text-secondary);
 }
 [data-theme="night"] .header-user-dropdown .ant-dropdown-menu-item:hover {
-  background: rgba(255,255,255,0.06);
-  color: #ecece5;
+  background: var(--menu-hover);
+  color: var(--text);
 }
 [data-theme="night"] .header-user-dropdown .ant-dropdown-menu-item-disabled {
-  color: #7a7a72 !important;
+  color: var(--text-muted) !important;
 }
 
 /* ── Night mode Login / Form overrides ── */
 [data-theme="night"] .ant-input,
 [data-theme="night"] .ant-input-password {
-  background: #11110f;
-  color: #ecece5;
-  border-color: #383832;
+  background: var(--bg);
+  color: var(--text);
+  border-color: var(--border);
 }
 [data-theme="night"] .ant-input::placeholder {
-  color: #7a7a72;
+  color: var(--text-muted);
 }
 [data-theme="night"] .ant-input-affix-wrapper {
-  background: #11110f;
-  border-color: #383832;
+  background: var(--bg);
+  border-color: var(--border);
 }
 [data-theme="night"] .ant-input-affix-wrapper .ant-input {
-  background: transparent;
+  background: var(--bg);
 }
 [data-theme="night"] .ant-form-item .ant-form-item-label > label {
-  color: #b8b8ae;
+  color: var(--text-secondary);
 }
 [data-theme="night"] .ant-btn-primary {
-  background: #ecece5;
-  color: #11110f;
-  border-color: #ecece5;
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
 }
 [data-theme="night"] .ant-btn-primary:hover {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
 }
 
-/* ── Loading shimmer (minimal) ── */
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
+/* Loading animations are intentionally disabled by the Mono-Performance style. */

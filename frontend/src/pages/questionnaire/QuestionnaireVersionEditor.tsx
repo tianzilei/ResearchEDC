@@ -143,10 +143,10 @@ export default function QuestionnaireVersionEditor() {
     setPreviewOpen(true);
   };
 
-  const statusColor: Record<string, string> = {
-    draft: "default",
-    published: "success",
-    retired: "warning",
+  const statusClass: Record<string, string> = {
+    draft: "status-default",
+    published: "status-success",
+    retired: "status-warning",
   };
 
   const columns = [
@@ -161,7 +161,7 @@ export default function QuestionnaireVersionEditor() {
       title: t("version.column.status"),
       dataIndex: "status",
       key: "status",
-      render: (s: string) => <Tag color={statusColor[s]}>{s}</Tag>,
+      render: (s: string) => <span className={`status ${statusClass[s] ?? "status-default"}`}>{s}</span>,
     },
     {
       title: t("version.column.published"),

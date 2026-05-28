@@ -40,7 +40,7 @@ export default function CrfPreview() {
   });
 
   if (isLoading) return <SkeletonPage />;
-  if (!version) return <Alert message={t("crf.versionNotFound")} type="error" showIcon />;
+  if (!version) return <Alert message={t("crf.versionNotFound")} type="error" />;
 
   const sectionColumns = [
     { title: t("crf.column.order"), dataIndex: "ordinal", key: "ordinal", width: 60 },

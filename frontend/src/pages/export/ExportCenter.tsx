@@ -61,7 +61,7 @@ export default function ExportCenter() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["exports", studyId] }),
   });
 
-  if (!currentStudy) return <Alert message={t("export.selectStudy")} type="info" showIcon />;
+  if (!currentStudy) return <Alert message={t("export.selectStudy")} type="info" />;
   if (isLoading) return <SkeletonPage />;
 
   const columns = [
@@ -85,7 +85,7 @@ export default function ExportCenter() {
       render: (_: any, r: ExportJob) => (
         <Space>
           {r.status === "COMPLETED" && r.filePath && (
-            <Button size="small" type="link">{t("export.action.download")}</Button>
+            <Button size="small">{t("export.action.download")}</Button>
           )}
           {(r.status === "PENDING" || r.status === "RUNNING") && (
             <Button size="small" onClick={() => cancelJob.mutate(r.id)}>{t("export.action.cancel")}</Button>

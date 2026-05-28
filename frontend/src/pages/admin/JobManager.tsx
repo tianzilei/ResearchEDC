@@ -80,13 +80,13 @@ export default function JobManager() {
     );
   }
 
-  const statusColor = (s: string) => {
+  const statusClass = (s: string) => {
     switch (s?.toLowerCase()) {
-      case "completed": return "green";
-      case "running": case "in_progress": return "blue";
-      case "failed": return "red";
-      case "cancelled": return "default";
-      default: return "orange";
+      case "completed": return "status-success";
+      case "running": case "in_progress": return "status-info";
+      case "failed": return "status-danger";
+      case "cancelled": return "status-default";
+      default: return "status-warning";
     }
   };
 
@@ -105,7 +105,7 @@ export default function JobManager() {
     },
     {
       title: "状态", dataIndex: "status", key: "status",
-      render: (s: string) => <Tag color={statusColor(s)}>{s}</Tag>,
+      render: (s: string) => <span className={`status ${statusClass(s)}`}>{s}</span>,
     },
     {
       title: "创建时间", dataIndex: "dateCreated", key: "created",

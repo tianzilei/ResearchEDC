@@ -723,7 +723,6 @@ export default function StudyWizard() {
                   width: `${((current + 1) / STEPS.length) * 100}%`,
                   background: "var(--accent)",
                   borderRadius: 1,
-                  transition: "width 0.12s ease",
                 }}
               />
             </div>

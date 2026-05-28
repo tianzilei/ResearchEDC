@@ -73,7 +73,7 @@ export default function EventDefinitionsPage() {
     {
       title: "状态", dataIndex: "status", key: "status",
       render: (s: string) => (
-        <Tag color={s === "available" ? "green" : "default"}>{s}</Tag>
+        <span className={`status ${s === "available" ? "status-success" : "status-default"}`}>{s}</span>
       ),
     },
   ];

@@ -6,7 +6,6 @@ import {
   Tabs,
   Typography,
   Space,
-  Tag,
   Button,
   Spin,
   Result,
@@ -34,13 +33,13 @@ const STATUS_MAP: Record<number, FormRecordStatus> = {
   6: "SIGNED",
 };
 
-const STATUS_COLORS: Record<string, string> = {
-  INITIAL: "default",
-  DRAFT: "processing",
-  SUBMITTED: "success",
-  LOCKED: "warning",
-  FROZEN: "default",
-  SIGNED: "success",
+const STATUS_CLASSES: Record<string, string> = {
+  INITIAL: "status-default",
+  DRAFT: "status-info",
+  SUBMITTED: "status-success",
+  LOCKED: "status-warning",
+  FROZEN: "status-default",
+  SIGNED: "status-success",
 };
 
 function itemToFormConfig(item: ItemDTO): FormItemConfig {
@@ -273,7 +272,7 @@ export default function DataEntryPage() {
                 {sections.length} section{sections.length !== 1 ? "s" : ""}
               </Text>
             </div>
-            <Tag color={STATUS_COLORS[recordStatus]}>{recordStatus}</Tag>
+            <span className={`status ${STATUS_CLASSES[recordStatus]}`}>{recordStatus}</span>
           </Space>
           <Space>
             {indicator && (
