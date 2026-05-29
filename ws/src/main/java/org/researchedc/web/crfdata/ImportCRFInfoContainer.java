@@ -20,12 +20,12 @@ import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.bean.submit.crfdata.StudyEventDataBean;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.bean.submit.crfdata.UpsertOnBean;
-import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
@@ -39,17 +39,17 @@ public class ImportCRFInfoContainer {
     private List<ImportCRFInfo> importCRFList;
 
     @Autowired
-    private EventCRFDAO eventCrfDAO;
+    private EventCRFDao eventCrfDAO;
     @Autowired
     private IStudySubjectDAO studySubjectDAO;
     @Autowired
-    private StudyEventDefinitionDAO studyEventDefinitionDAO;
+    private IStudyEventDefinitionDAO studyEventDefinitionDAO;
     @Autowired
     private IStudyDAO studyDAO;
     @Autowired
-    private StudyEventDAO studyEventDAO;
+    private IStudyEventDAO studyEventDAO;
     @Autowired
-    private CRFVersionDAO crfVersionDAO;
+    private ICrfVersionDAO crfVersionDAO;
 
     /*
      * Purpose: Iterates over ODM to populate 2 objects: 1. importCRFList: A List of EventCRFs and information on how to

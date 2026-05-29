@@ -49,13 +49,13 @@ import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.Validator;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
@@ -78,19 +78,19 @@ public class ImportCRFDataService {
 
     public static ResourceBundle respage;
     @Autowired
-    private EventCRFDAO eventCrfDAO;
+    private EventCRFDao eventCrfDAO;
     @Autowired
     private IStudySubjectDAO studySubjectDAO;
     @Autowired
-    private StudyEventDefinitionDAO studyEventDefinitionDAO;
+    private IStudyEventDefinitionDAO studyEventDefinitionDAO;
     @Autowired
     private IStudyDAO studyDAO;
     @Autowired
-    private StudyEventDAO studyEventDAO;
+    private IStudyEventDAO studyEventDAO;
     @Autowired
-    private CRFVersionDAO crfVersionDAO;
+    private ICrfVersionDAO crfVersionDAO;
     @Autowired
-    private EventDefinitionCRFDAO eventDefinitionCRFDAO;
+    private EventDefinitionCRFDao eventDefinitionCRFDAO;
     @Autowired
     private ItemGroupDAO itemGroupDAO;
     @Autowired
@@ -318,7 +318,7 @@ public class ImportCRFDataService {
         HashMap<String, String> hardValidator = new HashMap<String, String>();
 
         StudyBean studyBean = studyDAO.findByOid(odmContainer.getCrfDataPostImportContainer().getStudyOID());
-        StudyEventDefinitionDAO sedDao = studyEventDefinitionDAO;
+        IStudyEventDefinitionDAO sedDao = studyEventDefinitionDAO;
         HashMap<String, ItemDataBean> blankCheck = new HashMap<String, ItemDataBean>();
         String hardValidatorErrorMsgs = "";
 
@@ -355,7 +355,7 @@ public class ImportCRFDataService {
                     Map<String,Integer> groupMaxOrdinals = new HashMap<String,Integer>();
 
                     displayItemBeanWrapper = null;
-                    EventCRFDAO eventCRFDAO = eventCrfDAO;
+                    EventCRFDao eventCRFDAO = eventCrfDAO;
                     ArrayList<CRFVersionBean> crfVersionBeans = crfVersionDAO.findAllByOid(formDataBean.getFormOID());
                     ArrayList<ImportItemGroupDataBean> itemGroupDataBeans = formDataBean.getItemGroupData();
                     if ((crfVersionBeans == null) || (crfVersionBeans.size() == 0)) {
