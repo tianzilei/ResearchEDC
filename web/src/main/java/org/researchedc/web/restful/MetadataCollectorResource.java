@@ -25,7 +25,6 @@ import org.researchedc.logic.odmExport.AdminDataCollector;
 import org.researchedc.logic.odmExport.MetaDataCollector;
 import org.researchedc.dao.spi.IRuleDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * R

@@ -1,10 +1,12 @@
 package org.researchedc.dao.spi;
 
 import org.researchedc.bean.core.EntityBean;
+import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.ResolutionStatus;
 import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventBean;
+import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.dao.managestudy.ListNotesFilter;
 import org.researchedc.dao.managestudy.ListNotesSort;
 
@@ -47,15 +49,31 @@ public interface IDiscrepancyNoteDAO {
     ArrayList findAllStudyEventByStudiesAndSubjectId(StudyBean currentStudy, StudyBean subjectStudy, int studySubjectId);
     ArrayList findAllEventCRFByStudy(StudyBean study);
     ArrayList findAllEventCRFByStudyAndParent(StudyBean study, DiscrepancyNoteBean parent);
+    ArrayList findAllItemDataByStudy(StudyBean study);
+    ArrayList findAllItemDataByStudyAndParent(StudyBean study, DiscrepancyNoteBean parent);
+    ArrayList<DiscrepancyNoteBean> findItemDataDNotesFromEventCRF(EventCRFBean eventCRFBean);
+    ArrayList<DiscrepancyNoteBean> findEventCRFDNotesFromEventCRF(EventCRFBean eventCRFBean);
+    ArrayList<DiscrepancyNoteBean> findParentItemDataDNotesFromEventCRF(EventCRFBean eventCRFBean);
     HashMap<ResolutionStatus, Integer> countByEntityTypeAndStudyEventWithConstraints(String entityType, StudyEventBean studyEvent, StringBuffer constraints, boolean isSite);
     Object getEntityFromHashMap(HashMap hm);
     EntityBean create(EntityBean eb);
     void createMapping(DiscrepancyNoteBean eb);
     EntityBean update(EntityBean eb);
     EntityBean updateAssignedUser(EntityBean eb);
+    EntityBean updateAssignedUserToNull(EntityBean eb);
     EntityBean updateDnMapActivation(EntityBean eb);
+    boolean isQuerySuccessful();
+    ArrayList findAllByParent(DiscrepancyNoteBean parent);
+    AuditableEntityBean findEntity(DiscrepancyNoteBean note);
+    int findNumExistingNotesForItem(int itemDataId);
+    int findNumOfActiveExistingNotesForItemData(int itemDataId);
     ArrayList findExistingNotesForItemData(int itemDataId);
+    ArrayList findExistingNotesForToolTip(int itemDataId);
     ArrayList<DiscrepancyNoteBean> findParentNotesOnlyByItemData(int itemDataId);
+    ArrayList<DiscrepancyNoteBean> findAllTopNotesByEventCRF(int eventCRFId);
+    ArrayList<DiscrepancyNoteBean> findOnlyParentEventCRFDNotesFromEventCRF(EventCRFBean eventCRFBean);
+    ArrayList<DiscrepancyNoteBean> findEventCRFDNotesToolTips(EventCRFBean eventCRFBean);
+    int getResolutionStatusIdForSubjectDNFlag(int subjectId, String column);
     boolean isFetchMapping();
     void setFetchMapping(boolean fetchMapping);
 }

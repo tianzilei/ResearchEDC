@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.DataEntryStage;
@@ -152,7 +152,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
         boolean isParentStudy = study.getParentStudyId() < 1;
 
         // Get any disc notes for this study event
-        DiscrepancyNoteDAO discrepancyNoteDAO = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO discrepancyNoteDAO = this.discrepancyNoteDao;
         ArrayList<DiscrepancyNoteBean> allNotesforSubjectAndEvent = new ArrayList<DiscrepancyNoteBean>();
 
         /*

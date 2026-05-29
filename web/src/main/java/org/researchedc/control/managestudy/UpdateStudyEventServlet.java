@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.researchedc.dao.rule.RuleSetDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.Role;
@@ -496,7 +496,7 @@ public static final String EVENT_ID = "event_id";
 
                 // save discrepancy notes into DB
                 FormDiscrepancyNotes fdn = (FormDiscrepancyNotes) session.getAttribute(AddNewSubjectServlet.FORM_DISCREPANCY_NOTES_NAME);
-                DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+                IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
 
                 AddNewSubjectServlet.saveFieldNotes(INPUT_LOCATION, fdn, dndao, studyEvent.getId(), "studyEvent", currentStudy);
                 AddNewSubjectServlet.saveFieldNotes(INPUT_STARTDATE_PREFIX, fdn, dndao, studyEvent.getId(), "studyEvent", currentStudy);
@@ -543,7 +543,7 @@ public static final String EVENT_ID = "event_id";
 
                 // save discrepancy notes into DB
                 FormDiscrepancyNotes fdn = (FormDiscrepancyNotes) session.getAttribute(AddNewSubjectServlet.FORM_DISCREPANCY_NOTES_NAME);
-                DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+                IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
 
                 AddNewSubjectServlet.saveFieldNotes(INPUT_LOCATION, fdn, dndao, studyEvent.getId(), "studyEvent", currentStudy);
                 AddNewSubjectServlet.saveFieldNotes(INPUT_STARTDATE_PREFIX, fdn, dndao, studyEvent.getId(), "studyEvent", currentStudy);
@@ -588,7 +588,7 @@ public static final String EVENT_ID = "event_id";
         } else {
             logger.debug("no action, go to update page");
 
-            DiscrepancyNoteDAO discrepancyNoteDAO = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+            IDiscrepancyNoteDAO discrepancyNoteDAO = this.discrepancyNoteDao;
             StudySubjectBean studySubjectBean = (StudySubjectBean) ssdao.findByPK(studyEvent.getStudySubjectId());
             int studyId = studySubjectBean.getStudyId();
             boolean subjectStudyIsCurrentStudy = studyId == currentStudy.getId();

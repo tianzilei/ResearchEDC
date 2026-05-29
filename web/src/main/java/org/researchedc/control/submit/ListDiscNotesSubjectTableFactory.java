@@ -12,7 +12,6 @@ import java.util.Set;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.dao.managestudy.StudyGroupDAO;

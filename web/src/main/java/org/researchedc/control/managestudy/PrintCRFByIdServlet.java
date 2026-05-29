@@ -17,7 +17,6 @@ import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Builds on top of PrintCRFServlet

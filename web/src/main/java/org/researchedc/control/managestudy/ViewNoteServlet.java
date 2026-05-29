@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.login.UserAccountBean;
@@ -99,7 +99,7 @@ public static final String NOTE_ID = "id";
         Locale locale = LocaleResolver.getLocale(request);
         DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
 
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
         dndao.setFetchMapping(true);
         int noteId = fp.getInt(NOTE_ID, true);
 

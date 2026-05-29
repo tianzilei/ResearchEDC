@@ -25,7 +25,6 @@ import org.researchedc.view.form.ViewPersistanceHandler;
 
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * This class handles the responsibility for generating a List of

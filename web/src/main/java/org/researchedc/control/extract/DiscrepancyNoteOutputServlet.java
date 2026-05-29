@@ -1,5 +1,5 @@
 package org.researchedc.control.extract;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -284,7 +284,7 @@ public class DiscrepancyNoteOutputServlet extends SecureController {
         resword = ResourceBundleProvider.getWordsBundle(l);
         resformat = ResourceBundleProvider.getFormatBundle(l);
         SimpleDateFormat sdf = new SimpleDateFormat(resformat.getString("date_format_string"), ResourceBundleProvider.getLocale());
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
         IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
         IStudyEventDAO sedao = this.studyEventDao;
         CRFVersionDAO cvdao = this.crfVersionDao;

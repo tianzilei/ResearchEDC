@@ -10,7 +10,7 @@ package org.researchedc.service.managestudy;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,13 +20,13 @@ public class DiscrepancyNoteService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     DataSource ds;
-    private DiscrepancyNoteDAO discrepancyNoteDao;
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
 
     public DiscrepancyNoteService(DataSource ds) {
         this.ds = ds;
     }
 
-    public DiscrepancyNoteService(DiscrepancyNoteDAO discrepancyNoteDao) {
+    public DiscrepancyNoteService(IDiscrepancyNoteDAO discrepancyNoteDao) {
         this.discrepancyNoteDao = discrepancyNoteDao;
     }
 
@@ -58,7 +58,7 @@ public class DiscrepancyNoteService {
 
     }
 
-    private DiscrepancyNoteDAO getDiscrepancyNoteDao() {
+    private IDiscrepancyNoteDAO getDiscrepancyNoteDao() {
         return discrepancyNoteDao;
     }
 

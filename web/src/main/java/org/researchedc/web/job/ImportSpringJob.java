@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 
 import javax.sql.DataSource;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.admin.TriggerBean;
 import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.DiscrepancyNoteType;
@@ -100,7 +100,7 @@ public class ImportSpringJob extends QuartzJobBean {
     @Autowired
     protected IStudySubjectDAO studySubjectDao;
     @Autowired
-    protected DiscrepancyNoteDAO discrepancyNoteDao;
+    protected IDiscrepancyNoteDAO discrepancyNoteDao;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -766,7 +766,7 @@ public class ImportSpringJob extends QuartzJobBean {
     }
 
     public static DiscrepancyNoteBean createDiscrepancyNote(ItemBean itemBean, String message, EventCRFBean eventCrfBean, DisplayItemBean displayItemBean,
-            Integer parentId, UserAccountBean uab, DataSource ds, StudyBean study, IStudySubjectDAO ssdao, DiscrepancyNoteDAO dndao) {
+            Integer parentId, UserAccountBean uab, DataSource ds, StudyBean study, IStudySubjectDAO ssdao, IDiscrepancyNoteDAO dndao) {
         // DisplayItemBean displayItemBean) {
         DiscrepancyNoteBean note = new DiscrepancyNoteBean();
         note.setDescription(message);

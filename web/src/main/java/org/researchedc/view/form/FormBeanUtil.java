@@ -45,7 +45,6 @@ import java.util.TreeMap;
 import jakarta.servlet.ServletContext;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * This class builds DisplayFormGroupBeans and DisplayItemBeans in preparation

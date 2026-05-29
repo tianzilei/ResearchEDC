@@ -10,7 +10,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.bean.admin.AuditEventBean;
@@ -189,7 +189,7 @@ public class SignStudySubjectServlet extends SecureController {
         IStudyEventDAO sedao = studyEventDao;
         EventCRFDao ecdao = eventCrfDao;
         EventDefinitionCRFDao edcdao = eventDefinitionCrfDao;
-        DiscrepancyNoteDAO discDao = (DiscrepancyNoteDAO) discrepancyNoteDao;
+        IDiscrepancyNoteDAO discDao = discrepancyNoteDao;
         ArrayList studyEvents = sedao.findAllByStudySubject(studySub);
         for (int l = 0; l < studyEvents.size(); l++) {
             try {

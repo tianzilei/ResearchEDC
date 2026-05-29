@@ -30,7 +30,6 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /*
  * Helper methods will be placed in this class - DRY

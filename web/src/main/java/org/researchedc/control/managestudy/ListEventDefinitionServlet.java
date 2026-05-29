@@ -46,7 +46,6 @@ import java.util.Locale;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Processes user reuqest to generate study event definition list

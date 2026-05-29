@@ -28,7 +28,6 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class LockCRFVersionServlet extends SecureController {
     

@@ -6,7 +6,7 @@
  */
 package org.researchedc.control.submit;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.ResolutionStatus;
@@ -99,7 +99,7 @@ public class CreateOneDiscrepancyNoteServlet extends SecureController {
     @Override
     protected void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
 
         int eventCRFId = fp.getInt(CreateDiscrepancyNoteServlet.EVENT_CRF_ID);
         request.setAttribute(CreateDiscrepancyNoteServlet.EVENT_CRF_ID, Integer.valueOf(eventCRFId));

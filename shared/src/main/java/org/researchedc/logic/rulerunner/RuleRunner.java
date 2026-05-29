@@ -11,12 +11,12 @@ import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -64,7 +64,7 @@ public class RuleRunner {
     private StudyEventDefinitionDAO studyEventDefinitionDao;
     private IStudyParameterValueDAO studyParameterValueDao;
     private IUserAccountDAO userAccountDao;
-    private DiscrepancyNoteDAO discrepancyNoteDao;
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
     private ItemFormMetadataDAO itemFormMetadataDao;
     private SectionDAO sectionDao;
     private JavaMailSenderImpl mailSender;
@@ -258,7 +258,7 @@ public class RuleRunner {
         return userAccountDao;
     }
 
-    DiscrepancyNoteDAO getDiscrepancyNoteDao() {
+    IDiscrepancyNoteDAO getDiscrepancyNoteDao() {
         return discrepancyNoteDao;
     }
 
@@ -266,7 +266,7 @@ public class RuleRunner {
             StudyEventDAO studyEventDao, ItemDataDAO itemDataDao, EventCRFDAO eventCrfDao, CRFVersionDAO crfVersionDao,
             IStudySubjectDAO studySubjectDao, ItemFormMetadataDAO itemFormMetadataDao, SectionDAO sectionDao, IStudyDAO studyDao,
             StudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
-            DiscrepancyNoteDAO discrepancyNoteDao, ExpressionService expressionService) {
+            IDiscrepancyNoteDAO discrepancyNoteDao, ExpressionService expressionService) {
         this.ruleSetDao = ruleSetDao;
         this.crfDao = crfDao;
         this.ruleSetRuleDao = ruleSetRuleDao;

@@ -17,7 +17,6 @@ import org.researchedc.view.Page;
 
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Processes request to change CRF ordinals in a study event definition

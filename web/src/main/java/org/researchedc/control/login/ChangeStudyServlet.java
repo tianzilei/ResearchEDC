@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.login;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
@@ -68,7 +68,7 @@ public class ChangeStudyServlet extends SecureController {
     @Autowired
     protected EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
-    protected DiscrepancyNoteDAO discrepancyNoteDao;
+    protected IDiscrepancyNoteDAO discrepancyNoteDao;
     @Autowired
     protected IUserAccountDAO userAccountDao;
 
@@ -422,7 +422,7 @@ public class ChangeStudyServlet extends SecureController {
         return studyGroupDao;
     }
 
-    public DiscrepancyNoteDAO getDiscrepancyNoteDAO() {
+    public IDiscrepancyNoteDAO getDiscrepancyNoteDAO() {
         return discrepancyNoteDao;
     }
 

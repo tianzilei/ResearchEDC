@@ -12,7 +12,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
@@ -34,7 +33,7 @@ import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
@@ -70,7 +69,7 @@ public class MainMenuServlet extends SecureController {
     private EventCRFDao eventCRFDAO;
     private EventDefinitionCRFDao eventDefintionCRFDAO;
     private StudyGroupDAO studyGroupDAO;
-    private DiscrepancyNoteDAO discrepancyNoteDAO;
+    private IDiscrepancyNoteDAO discrepancyNoteDAO;
     private StudyParameterValueDAO studyParameterValueDAO;
 
     // < ResourceBundle respage;
@@ -132,12 +131,12 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
             if(lastPwdChangeDate != null){
 
 	        	Calendar cal = Calendar.getInstance();
-	            
+
 	            // compute difference between current date and lastPwdChangeDate
 	            long difference = Math.abs(cal.getTime().getTime() - lastPwdChangeDate.getTime());
 	            long days = difference / (1000 * 60 * 60 * 24);
 	            session.setAttribute("passwordExpired", "no");
-	
+
 	            if (!ub.isLdapUser() && pwdExpireDay > 0 && days >= pwdExpireDay) {// password expired, need to be changed
 			System.out.println("here");
 			studies = (ArrayList) sdao.findAllByUser(ub.getName());
@@ -156,7 +155,7 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
 	                }
 	                forwardPage(Page.RESET_PASSWORD);
 	                // YW >>
-	            } 
+	            }
             }
 //            else {
 
@@ -180,7 +179,7 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
                 Integer assignedDiscrepancies = getDiscrepancyNoteDAO().getViewNotesCountWithFilter(" AND dn.assigned_user_id ="
                   + ub.getId() + " AND (dn.resolution_status_id=1 OR dn.resolution_status_id=2 OR dn.resolution_status_id=3)", currentStudy);
                 //Yufang code added by Jamuna, to optimize the query on MainMenu
-                
+
                 request.setAttribute("assignedDiscrepancies", assignedDiscrepancies == null ? 0 : assignedDiscrepancies);
 
                 int parentStudyId = currentStudy.getParentStudyId()>0?currentStudy.getParentStudyId():currentStudy.getId();
@@ -226,7 +225,7 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
             session.setAttribute("userBean1", ub);
 //            addPageMessage(respage.getString("welcome") + " " + ub.getFirstName() + " " + ub.getLastName() + ". " + respage.getString("password_set"));
 //                + "<a href=\"UpdateProfile\">" + respage.getString("user_profile") + " </a>");
-            
+
             if (pwdChangeRequired == 1) {
             } else {
                 forwardPage(Page.MENU);
@@ -307,7 +306,7 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
         request.setAttribute("findSubjectsHtml", findSubjectsHtml);
     }
 
-    
+
     public StudyParameterValueDAO getStudyParameterValueDAO() {
      studyParameterValueDAO = this.studyParameterValueDAO == null ? this.studyParameterValueDao : studyParameterValueDAO;
 		return studyParameterValueDAO;
@@ -367,8 +366,8 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
         return studyGroupDAO;
     }
 
-    public DiscrepancyNoteDAO getDiscrepancyNoteDAO() {
-        discrepancyNoteDAO = discrepancyNoteDAO == null ? (DiscrepancyNoteDAO) this.discrepancyNoteDao : discrepancyNoteDAO;
+    public IDiscrepancyNoteDAO getDiscrepancyNoteDAO() {
+        discrepancyNoteDAO = discrepancyNoteDAO == null ? this.discrepancyNoteDao : discrepancyNoteDAO;
         return discrepancyNoteDAO;
     }
 

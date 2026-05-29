@@ -35,7 +35,6 @@ import java.net.URL;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Processes request to add new CRFs info study event definition

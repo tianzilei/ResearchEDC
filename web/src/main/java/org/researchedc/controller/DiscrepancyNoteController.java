@@ -19,7 +19,7 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.dao.hibernate.AuthoritiesDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
@@ -112,7 +112,7 @@ public class DiscrepancyNoteController {
 		IStudySubjectDAO ssdao = this.studySubjectDao;
 		IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
 		IStudyEventDAO sedao = this.studyEventDao;
-		DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+		IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
 
 		UserAccountBean assignedUserBean = (UserAccountBean) udao.findByUserName(assignedUser);
 		UserAccountBean ownerBean = (UserAccountBean)request.getSession().getAttribute("userBean");

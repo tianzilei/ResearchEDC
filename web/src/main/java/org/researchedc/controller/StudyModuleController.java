@@ -57,7 +57,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author: sshamim Date: Jan 22, 2009 Time: 6:52:16 PM Manages the Study creation process

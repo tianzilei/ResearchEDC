@@ -23,7 +23,6 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class RestODMFilter implements ContainerRequestFilter {
 

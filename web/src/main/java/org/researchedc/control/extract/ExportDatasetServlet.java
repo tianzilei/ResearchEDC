@@ -51,7 +51,6 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Take a dataset and show it in different formats,<BR/> Detect whether or not

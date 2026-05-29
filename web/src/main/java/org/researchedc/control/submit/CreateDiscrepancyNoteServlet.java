@@ -17,7 +17,7 @@ import java.util.Locale;
 
 import jakarta.servlet.http.HttpSession;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.NumericComparisonOperator;
@@ -177,7 +177,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
     @Override
     protected void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
         List<DiscrepancyNoteType> types = DiscrepancyNoteType.list;
 
         request.setAttribute(DIS_TYPES, types);

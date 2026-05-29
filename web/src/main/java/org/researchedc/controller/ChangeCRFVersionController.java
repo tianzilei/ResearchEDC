@@ -57,7 +57,6 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.SubjectEventStatus;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 
 /**

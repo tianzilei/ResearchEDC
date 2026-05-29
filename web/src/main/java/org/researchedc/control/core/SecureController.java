@@ -120,7 +120,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * This class enhances the Controller in several ways.
