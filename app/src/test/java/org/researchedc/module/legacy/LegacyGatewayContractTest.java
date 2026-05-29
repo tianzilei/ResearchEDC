@@ -534,7 +534,7 @@ class LegacyGatewayContractTest {
 
         @Test
         void createCrf_returns200() throws Exception {
-            when(crfService.createCrf(eq("New CRF"), eq("desc"), eq(1)))
+            when(crfService.createCrf(eq("New CRF"), eq("desc"), anyInt()))
                     .thenReturn(createCrfEntity(1, "New CRF"));
 
             CreateCrfRequest req = new CreateCrfRequest();
@@ -593,7 +593,7 @@ class LegacyGatewayContractTest {
 
         @Test
         void createVersion_returns200() throws Exception {
-            when(crfService.createVersion(eq(1), eq("v2.0"), any(), any(), eq(1)))
+            when(crfService.createVersion(eq(1), eq("v2.0"), any(), any(), anyInt()))
                     .thenReturn(createCrfVersionEntity(1, 1, "v2.0"));
 
             var request = new java.util.HashMap<String, String>();
