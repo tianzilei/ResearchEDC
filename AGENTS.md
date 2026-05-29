@@ -2,6 +2,7 @@
 
 **Derived from:** OpenClinica v3.x  
 **Generated:** 2026-05-25  
+**Updated:** 2026-05-30  
 **Branch:** master
 
 ## OVERVIEW
@@ -10,9 +11,10 @@ ResearchEDC is an independently maintained research electronic data capture (EDC
 
 New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. Legacy code consolidated into `shared/` module, with `web/` (484 files + 419 JSP) and `ws/` (75 files) being incrementally strangulated into Modulith modules.
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 31/31 ✅ | Bare Deploy ✅ | E2E API ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: LegacyDaoConfig 归零** ✅ | **legacy-core → shared 合并** ✅ | **Java module tests 150+** ✅
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 235/235** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: LegacyDaoConfig 归零** ✅ | **legacy-core → shared 合并** ✅
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
+✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
 
 ## STRUCTURE
 
@@ -74,12 +76,15 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | **Dashboard module** | `app/.../module/dashboard/` | 引导 (用户/研究/站点上下文 + 模块列表), 待办, 状态, 最近活动 |
 | **CRF module** | `app/.../module/crf/` | CRF 列表/版本/预览, LegacyCrfAdapter |
 | **Notification module** | `app/.../module/notification/` | 事件驱动, ApplicationEvent 模式 |
-| **Legacy Gateway** | `app/.../module/legacy/` | `/api/legacy/*` DAO REST 封装 |
+| **Legacy Gateway** | `app/.../module/legacy/` | `/api/legacy/*` DAO REST 封装 + 导入上传端点 |
 | **Audit module** | `app/.../module/audit/` | 独立 audit_log 表, 事件驱动, REST API |
 | **Study module** | `app/.../module/study/` | 桥接 study 表, REST API |
 | **Subject module** | `app/.../module/subject/` | 桥接 subject/study_subject, REST API |
 | **Event module** | `app/.../module/event/` | 桥接 study_event/event_crf, REST API |
 | **Data Capture module** | `app/.../module/datacapture/` | 桥接 item_data/response_set, REST API |
+| **Legacy Servlet Registration** | `app/.../config/LegacyServletConfig.java` | 15 个导入/导出/数据集 Servlet |
+| **Security config** | `app/.../config/SecurityConfig.java` | DaoAuthenticationProvider + form login |
+| **Encoding config** | `app/.../config/CoreResourcesConfig.java` | MessageSource UTF-8 + ODM FreeMarker UTF-8 |
 | **Identity module** | `app/.../module/identity/` | 桥接 user_account/study_user_role, REST API |
 | **Rule module** | `app/.../module/rule/` | 规则集/规则/表达式 JPA 实体 (gateway only) |
 | **Dataset module** | `app/.../module/dataset/` | 数据集 JPA 实体 (gateway only) |
@@ -150,13 +155,19 @@ Tests live in `app/src/test` (20 files), `web/src/test` (2 files):
 
 | Tier | Base Class | DB Needed | Use Case |
 |------|-----------|-----------|----------|
-| **Modulith Unit** | JUnit 5 + Mockito | ❌ | Module service tests (20 files, ~150 tests) |
+| **Modulith Unit** | JUnit 5 + Mockito | ❌ | Module service tests (20 files, 235 tests) |
 | **Servlet Unit** | `junit.framework.TestCase` + Mockito | ❌ | Servlet authorization logic (3 tests) |
 | **Modulith Verification** | JUnit 5 + `ApplicationModules` | ❌ | Module boundary verification (1 test) |
 
 **Test run prerequisites:**
 - `JAVA_HOME` must point to JDK 21
 - PostgreSQL must be running on localhost:5432 for `mvn test` (DAO/Service integration tests)
+
+### E2E Testing
+- **Playwright MCP**: Browser automation for SPA login/dashboard/navigation verification
+- **API Testing**: 11 Modulith REST endpoint families verified via curl
+- **Chinese Encoding**: Full-stack UTF-8 verified — API input/output, DB storage, SPA rendering, pg_dump
+- **Import/Export**: REST API (`/api/v1/exports`), file upload (`/api/legacy/import/upload`), PostgreSQL dump verified
 
 ## ANTI-PATTERNS (THIS PROJECT)
 

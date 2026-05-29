@@ -6,6 +6,64 @@
 
 ---
 
+## 2026-05-30 — 导入/导出优化与中文编码修复
+
+- **模块:** `app`, `frontend`, `web`
+- **提交:** `55f32d3`, `d3ec91b`, `852a1c1`
+- **原因:** 系统化修复中文/符号支持、导入/导出功能路由连接。
+
+### 变更内容
+
+1. **中文编码修复 (55f32d3):**
+   - `CoreResourcesConfig.java`: `ResourceBundleMessageSource` 添加 `setDefaultEncoding("UTF-8")`，修复 8 个 `*_zh.properties` 文件被当 ISO-8859-1 读取。
+   - `ODMMetadataRestResource.java:265`: FreeMarker 默认编码从 `ISO-8859-1` 改为 `UTF-8`。
+
+2. **Legacy Servlet 注册 (d3ec91b):**
+   - `LegacyServletConfig.java`: 注册 15 个导入/导出/数据集 Servlet（ImportCRFData、ImportRule、ExportDataset、CreateJobExport 等），原仅在独立 web.xml 中存在。
+   - 新增 `ImportUploadController.java`: 提供 `POST /api/legacy/import/upload` 端点，支持 React ImportManager 拖拽上传。
+
+3. **前端路径修复 (852a1c1):**
+   - `ImportManager.tsx`: 修复 Legacy 页面路径从 `/legacy/ImportCRFData` 到 `/ImportCRFData`，匹配 Servlet URL 映射。
+
+### 测试验证
+
+- **API**: 导入上传（含中文文件名）、导出创建/列表/取消/重试全部通过
+- **数据库**: pg_dump 全量/自定义/schema/data-only 四种格式验证通过，中文数据完整
+- **SPA**: Playwright 验证 Login → Dashboard E2E，中文界面 25+ 个标签渲染正确
+- **编码**: Java 235/235, Frontend 25/25, Questionnaire 39/39 全部通过
+
+### 已知问题
+- Legacy Servlet 运行时返回 500：重复 `DatasetDao` Bean(`extractDatasetDao` vs `odmExtractDAO`)
+- `ImportSubject` Servlet 类不存在
+
+---
+
+## 2026-05-29 — SecurityConfig 修复与测试修复
+
+- **模块:** `app`, `frontend`
+- **提交:** `0ca54ac4`, `ad20cc31`, `20b71e41`
+- **原因:** 修复登录认证失败、SPA 路由 404 和 3 个已有测试错误。
+
+### 变更内容
+
+1. **SecurityConfig 修复 (0ca54ac4):**
+   - `SecurityConfig.java`: 添加显式 `DaoAuthenticationProvider` Bean，因为 `SecurityAutoConfiguration` 被排除导致默认 Provider 未创建。
+   - 注入 `ResearchEdcUserDetailsService` + `DelegatingPasswordEncoder`，恢复 admin/password 登录。
+
+2. **测试修复 (ad20cc31):**
+   - `LegacyGatewayContractTest.java`: `eq(1)` → `anyInt()`，修复 Mockito `PotentialStubbingProblem`（mock `CurrentUserUtils` 默认返回 0）。
+   - `RandomizationServiceTest.java`: 在 `activateScheme` 前添加 arm，修复 "At least one arm is required" 校验。
+
+3. **前端路由修复 (20b71e41):**
+   - `frontend/src/router/index.tsx`: 添加 `/app/login` 路由，匹配 Spring Boot `WebMvcConfig` 的 `/login` → `/app/login` 重定向。
+
+### 测试验证
+- 235/235 Java 模块测试通过
+- admin/password SPA 登录 → Dashboard 验证通过
+- 11 个 API 端点返回 200
+
+---
+
 ## 2026-05-29 — Legacy DAO SPI consumer refactor
 
 - **模块:** `app`, `shared`, `web`, `ws`
