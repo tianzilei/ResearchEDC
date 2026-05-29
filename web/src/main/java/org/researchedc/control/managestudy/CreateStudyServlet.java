@@ -36,7 +36,6 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Processes request to create a new study

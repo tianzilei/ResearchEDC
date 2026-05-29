@@ -19,7 +19,6 @@ import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu

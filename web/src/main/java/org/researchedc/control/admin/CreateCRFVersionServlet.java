@@ -54,7 +54,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Create a new CRF verison by uploading excel file

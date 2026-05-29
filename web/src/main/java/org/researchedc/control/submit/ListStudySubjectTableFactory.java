@@ -68,7 +68,6 @@ import org.jmesa.view.html.HtmlBuilder;
 import org.jmesa.view.html.editor.DroplistFilterEditor;
 import org.springframework.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class ListStudySubjectTableFactory extends AbstractTableFactory {
 

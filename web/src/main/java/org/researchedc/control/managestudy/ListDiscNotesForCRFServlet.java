@@ -4,7 +4,7 @@ package org.researchedc.control.managestudy;
  *
  */
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.dao.managestudy.StudyGroupDAO;
@@ -262,9 +262,9 @@ public static final String DISCREPANCY_NOTE_TYPE = "discrepancyNoteType";
         return (StudyGroupDAO) studyGroupDAO;
     }
 
-    public DiscrepancyNoteDAO getDiscrepancyNoteDAO() {
+    public IDiscrepancyNoteDAO getDiscrepancyNoteDAO() {
         discrepancyNoteDAO = this.discrepancyNoteDAO == null ? this.discrepancyNoteDao : discrepancyNoteDAO;
-        return (DiscrepancyNoteDAO) discrepancyNoteDAO;
+        return discrepancyNoteDAO;
     }
 
 }

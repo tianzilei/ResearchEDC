@@ -89,7 +89,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 @Path("/openrosa")
 @Component

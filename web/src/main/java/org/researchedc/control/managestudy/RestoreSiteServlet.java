@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Restores a removed site and all its data, including users. roles, study

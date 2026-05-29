@@ -43,7 +43,6 @@ import org.quartz.TriggerKey;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class UpdateJobExportServlet extends SecureController {
 

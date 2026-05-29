@@ -31,7 +31,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Processes request to assign a user to a study

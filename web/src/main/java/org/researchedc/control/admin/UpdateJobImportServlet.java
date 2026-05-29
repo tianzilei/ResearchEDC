@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class UpdateJobImportServlet extends SecureController {
     @Autowired

@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.admin;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.ResolutionStatus;
 import org.researchedc.bean.core.Status;
@@ -87,7 +87,7 @@ public class DeleteEventCRFServlet extends SecureController {
 
 	public static String EVENT_CRF_ID = "ecId";
 	@Autowired
-	private DiscrepancyNoteDAO dnDao;
+	private IDiscrepancyNoteDAO dnDao;
 	RuleActionRunLogDao ruleActionRunLogDao;
 	DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
 	DynamicsItemGroupMetadataDao dynamicsItemGroupMetadataDao;
@@ -287,7 +287,7 @@ public class DeleteEventCRFServlet extends SecureController {
 	}
 
 	public void setDnDao(IDiscrepancyNoteDAO dnDao) {
-		this.dnDao = (DiscrepancyNoteDAO) dnDao;
+		this.dnDao = dnDao;
 	}
 	
 	

@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class UpdateStudyServletNew extends SecureController {
     public static final String INPUT_START_DATE = "startDate";

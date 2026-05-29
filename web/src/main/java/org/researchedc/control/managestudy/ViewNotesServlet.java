@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.ResolutionStatus;
 import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
@@ -135,7 +135,7 @@ public static final String PRINT = "print";
         String viewForOne = fp.getString("viewForOne");
         boolean isForOneSubjectsNotes = "y".equalsIgnoreCase(viewForOne);
 
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
         IStudyDAO studyDAO = this.studyDao;
         dndao.setFetchMapping(true);
 

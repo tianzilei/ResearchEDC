@@ -49,7 +49,6 @@ import jakarta.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 
 /**

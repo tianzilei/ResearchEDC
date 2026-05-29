@@ -12,7 +12,8 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.core.SessionManager;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.rule.RuleDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.slf4j.Logger;
@@ -28,10 +29,10 @@ public class RuleExecutionBusinessObject {
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     protected StudyBean currentStudy;
     protected UserAccountBean ub;
-    private DiscrepancyNoteDAO discrepancyNoteDao;
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
     private EventCRFDAO eventCrfDao;
     private RuleDAO ruleDao;
-    private Function<DataSource, DiscrepancyNoteDAO> discrepancyNoteDaoFactory = DiscrepancyNoteDAO::new;
+    private Function<DataSource, IDiscrepancyNoteDAO> discrepancyNoteDaoFactory = LegacyDaoFactory::discrepancyNoteDao;
     private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
     private Function<DataSource, RuleDAO> ruleDaoFactory = RuleDAO::new;
 
@@ -109,7 +110,7 @@ public class RuleExecutionBusinessObject {
         return ruleSet != null ? getRuleDao().findByRuleSet(ruleSet) : new ArrayList<RuleBean>();
     }
 
-    private DiscrepancyNoteDAO getDiscrepancyNoteDao() {
+    private IDiscrepancyNoteDAO getDiscrepancyNoteDao() {
         if (discrepancyNoteDao == null) {
             discrepancyNoteDao = discrepancyNoteDaoFactory.apply(sm.getDataSource());
         }

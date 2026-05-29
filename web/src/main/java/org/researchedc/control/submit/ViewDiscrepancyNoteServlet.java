@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.ResolutionStatus;
@@ -215,7 +215,7 @@ public class ViewDiscrepancyNoteServlet extends SecureController {
 
         request.setAttribute("y", ypos);
 
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
         int entityId = fp.getInt(ENTITY_ID, true);
         String name = fp.getString(ENTITY_TYPE, true);
 

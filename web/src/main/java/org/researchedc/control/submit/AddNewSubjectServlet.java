@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
@@ -770,7 +770,7 @@ public class AddNewSubjectServlet extends SecureController {
 
                 // save discrepancy notes into DB
                 FormDiscrepancyNotes fdn = (FormDiscrepancyNotes) session.getAttribute(FORM_DISCREPANCY_NOTES_NAME);
-                DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+                IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
 
                 String[] subjectFields = { INPUT_DOB, INPUT_YOB, INPUT_GENDER };
                 for (String element : subjectFields) {

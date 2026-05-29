@@ -24,7 +24,6 @@ import org.researchedc.control.managestudy.ViewNotesServlet;
 import org.researchedc.control.submit.AddNewSubjectServlet;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -36,14 +35,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 public class UpdateSubjectServlet extends SecureController {
-    
+
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	// Changes
+        *
+        */
+        private static final long serialVersionUID = 1L;
+        // Changes
     SimpleDateFormat yformat = new SimpleDateFormat("yyyy");
-	
+
     public static final String INPUT_UNIQUE_IDENTIFIER = "uniqueIdentifier";// global
     public static final String DATE_DOB = "localBirthDate";
     public static final String DATE_DOB_TO_SAVE = "localBirthDateToSave";
@@ -68,7 +67,7 @@ public class UpdateSubjectServlet extends SecureController {
         FormProcessor fp = new FormProcessor(request);
         FormDiscrepancyNotes discNotes = new FormDiscrepancyNotes();
 
-        
+
         String fromResolvingNotes = fp.getString("fromResolvingNotes",true);
         if (StringUtils.isBlank(fromResolvingNotes)) {
             session.removeAttribute(ViewNotesServlet.WIN_LOCATION);
@@ -94,32 +93,32 @@ public class UpdateSubjectServlet extends SecureController {
                 return;
             }
             SubjectBean subject = (SubjectBean) sdao.findByPK(subjectId);
-             
+
             if (action.equals("show") || action.equals("confirm") ){
-	            request.setAttribute("studySubId", Integer.valueOf(studySubId));
-	            request.setAttribute("id", Integer.valueOf(subjectId));
+        request.setAttribute("studySubId", Integer.valueOf(studySubId));
+        request.setAttribute("id", Integer.valueOf(subjectId));
  	            request.setAttribute(AddNewSubjectServlet.FORM_DISCREPANCY_NOTES_NAME, discNotes);
-	        }
+        }
             if ("show".equalsIgnoreCase(action)) {
-            	
-            	 request.setAttribute("localBirthDate", "");//no DOB collected
+
+                request.setAttribute("localBirthDate", "");//no DOB collected
             	if (!currentStudy.getStudyParameterConfig().getCollectDob().equals("3") &&
             			subject.getDateOfBirth() != null ){
             		setLocalDOB( subject);
             	}
-               
+
                 discNotes = new FormDiscrepancyNotes();
-               
+
                 request.setAttribute("genderDNFlag","icon_noNote");
                 request.setAttribute("birthDNFlag","icon_noNote");
                 request.setAttribute("subjectToUpdate",subject);
                 setDNFlag( subjectId);
-                
+
                 forwardPage(Page.UPDATE_SUBJECT);
             } else if ("confirm".equalsIgnoreCase(action)) {
-               
+
                 confirm(subject,subjectId);
-                
+
             } else {
             	String gender = fp.getString("gender");
             	subject.setGender(gender.charAt(0));
@@ -134,29 +133,29 @@ public class UpdateSubjectServlet extends SecureController {
                     {
                 	String d_date = fp.getString(DATE_DOB_TO_SAVE);
                 	if ( !(d_date == null || d_date.trim().length()==0)){
-	                	Date date_new = yformat.parse(fp.getString(DATE_DOB_TO_SAVE));
-		                subject.setDateOfBirth(date_new);
+        Date date_new = yformat.parse(fp.getString(DATE_DOB_TO_SAVE));
+        subject.setDateOfBirth(date_new);
                 	}
                     }
                 	if ( currentStudy.getStudyParameterConfig().getCollectDob().equals("1"))
                     {
                 		Date date_new = local_df.parse(fp.getString(DATE_DOB_TO_SAVE));
-		                subject.setDateOfBirth(date_new);
+        subject.setDateOfBirth(date_new);
                     }
                     }
-                
-                
+
+
                 sdao.update(subject);
 
                 // save discrepancy notes into DB
-                DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
-            	
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
+
                 FormDiscrepancyNotes fdn = (FormDiscrepancyNotes) session.getAttribute(AddNewSubjectServlet.FORM_DISCREPANCY_NOTES_NAME);
                 AddNewSubjectServlet.saveFieldNotes("gender", fdn, dndao, subject.getId(), "subject", currentStudy);
                 AddNewSubjectServlet.saveFieldNotes(DATE_DOB, fdn, dndao, subject.getId(), "subject", currentStudy);
 
                 addPageMessage(respage.getString("subject_updated_succcesfully"));
-                
+
                 if (studySubId > 0) {
                     request.setAttribute("id", Integer.valueOf(studySubId).toString());
                     forwardPage(Page.VIEW_STUDY_SUBJECT_SERVLET);
@@ -188,13 +187,13 @@ public class UpdateSubjectServlet extends SecureController {
         	v.addValidation("uniqueIdentifier", Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 255);
         	v.alwaysExecuteLastValidation("uniqueIdentifier");
      	}
-        
+
         String personId = fp.getString(INPUT_UNIQUE_IDENTIFIER);
         if (personId.contains("<") || personId.contains(">")) {
             v.addValidation("uniqueIdentifier", Validator.DOES_NOT_CONTAIN_HTML_LESSTHAN_GREATERTHAN_ELEMENTS);
         }
 
-        
+
         if ( currentStudy.getStudyParameterConfig().getCollectDob().equals("1")){
         	if (!StringUtil.isBlank(fp.getString(DATE_DOB))) {
                 v.addValidation(DATE_DOB, Validator.IS_A_DATE);
@@ -204,20 +203,20 @@ public class UpdateSubjectServlet extends SecureController {
         		Validator.addError(errors, DATE_DOB, resexception.getString("field_not_blank"));
         	}
         	if ( fp.getDate(DATE_DOB) != null){
-	        	subject.setDateOfBirth(fp.getDate(DATE_DOB));
-	        	String  converted_date = local_df.format(subject.getDateOfBirth());
-	        	request.setAttribute(DATE_DOB_TO_SAVE, converted_date);	
+        subject.setDateOfBirth(fp.getDate(DATE_DOB));
+        String  converted_date = local_df.format(subject.getDateOfBirth());
+        request.setAttribute(DATE_DOB_TO_SAVE, converted_date);
         	}
-        	
+
         }
-        
+
         else if ( currentStudy.getStudyParameterConfig().getCollectDob().equals("2")){
         	if (!StringUtils.isBlank(fp.getString(DATE_DOB))) {
-               
+
                 // if DOB was not updated (and originally entered as a full day, post it as is
                 String submitted_date = fp.getString(DATE_DOB);
-                
-                
+
+
                 boolean isTheSameDate = false;
                 try{
                 	Date fakeDOB = yformat.parse(submitted_date);
@@ -235,44 +234,44 @@ public class UpdateSubjectServlet extends SecureController {
                 	//about what type of logging should be here: enjoy
                 	//https://dev.openclinica.com/crucible/cru/OC-117
                 }
-                
+
                 if ( !isTheSameDate){
-                	  
+
                 	  v.addValidation(DATE_DOB, Validator.IS_AN_INTEGER);
                       v.alwaysExecuteLastValidation(DATE_DOB);
                       v.addValidation(DATE_DOB, Validator.COMPARES_TO_STATIC_VALUE, NumericComparisonOperator.GREATER_THAN_OR_EQUAL_TO, 1000);
 
-	                // get today's year
-	                Date today = new Date();
-	                Calendar c = Calendar.getInstance();
-	                c.setTime(today);
-	                int currentYear = c.get(Calendar.YEAR);
-	                v.addValidation(DATE_DOB, Validator.COMPARES_TO_STATIC_VALUE, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, currentYear);
-	                int yob = fp.getInt(DATE_DOB);
-	                Date fakeDate = new Date(yob);
-	                String dobString = yformat.format(fakeDate);
-	                try {
-	                	
-	                    Date fakeDOB = yformat.parse(dobString);
-	                    if (yob != 0){subject.setDateOfBirth(fakeDOB);}
-	                    request.setAttribute(DATE_DOB_TO_SAVE, yob);	
-	                } catch (ParseException pe) {
-	                    logger.debug("Parse exception happened.");
-	                  //I am putting on Pradnya's request the link to code review with a long discussion
-	                	//about what type of logging should be here: enjoy
-	                	//https://dev.openclinica.com/crucible/cru/OC-117
-	                    Validator.addError(errors, DATE_DOB, resexception.getString("please_enter_a_valid_year_birth"));
-	                }
+        // get today's year
+        Date today = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(today);
+        int currentYear = c.get(Calendar.YEAR);
+        v.addValidation(DATE_DOB, Validator.COMPARES_TO_STATIC_VALUE, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, currentYear);
+        int yob = fp.getInt(DATE_DOB);
+        Date fakeDate = new Date(yob);
+        String dobString = yformat.format(fakeDate);
+        try {
+
+        Date fakeDOB = yformat.parse(dobString);
+        if (yob != 0){subject.setDateOfBirth(fakeDOB);}
+        request.setAttribute(DATE_DOB_TO_SAVE, yob);
+        } catch (ParseException pe) {
+        logger.debug("Parse exception happened.");
+        //I am putting on Pradnya's request the link to code review with a long discussion
+        //about what type of logging should be here: enjoy
+        //https://dev.openclinica.com/crucible/cru/OC-117
+        Validator.addError(errors, DATE_DOB, resexception.getString("please_enter_a_valid_year_birth"));
+        }
                 }
-                request.setAttribute(DATE_DOB, fp.getString(DATE_DOB));	
-                
+                request.setAttribute(DATE_DOB, fp.getString(DATE_DOB));
+
             }
         	else{
         		Validator.addError(errors, DATE_DOB, resexception.getString("field_not_blank"));
         	}
         }
-       
-         
+
+
 
         errors = v.validate();
 
@@ -280,36 +279,36 @@ public class UpdateSubjectServlet extends SecureController {
         if (currentStudy.getStudyParameterConfig().getSubjectPersonIdRequired().equals("required")
     			|| currentStudy.getStudyParameterConfig().getSubjectPersonIdRequired().equals("optional")){
 
-	        String uniqueIdentifier = fp.getString("uniqueIdentifier");
-	        if (currentStudy.getStudyParameterConfig().getSubjectPersonIdRequired().equals("required") &&
-	        		!(subject.getUniqueIdentifier() == null || subject.getUniqueIdentifier().isEmpty() ) &&
-	        		(uniqueIdentifier == null || uniqueIdentifier.isEmpty())) {
-	        	Validator.addError(errors, "uniqueIdentifier", resexception.getString("field_not_blank"));
-                
+        String uniqueIdentifier = fp.getString("uniqueIdentifier");
+        if (currentStudy.getStudyParameterConfig().getSubjectPersonIdRequired().equals("required") &&
+        !(subject.getUniqueIdentifier() == null || subject.getUniqueIdentifier().isEmpty() ) &&
+        (uniqueIdentifier == null || uniqueIdentifier.isEmpty())) {
+        Validator.addError(errors, "uniqueIdentifier", resexception.getString("field_not_blank"));
+
             }
-	         if (uniqueIdentifier != null && !uniqueIdentifier.isEmpty()) {
-	        	
-	        	 
-	        	if ( uniqueIdentifier.length() > 255){
-	        		  String descr =  resexception.getString("input_provided_is_not") +  NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO.getDescription() + " 255 " 
-	        	                 + resword.getString("characters_long") + ".";
-	        		Validator.addError(errors, "uniqueIdentifier", descr);
-	        		
-	        	}
-	            ISubjectDAO sdao = this.subjectDao;
-	            SubjectBean sub1 = (SubjectBean) sdao.findAnotherByIdentifier(uniqueIdentifier, subject.getId());
-	            if (sub1.getId() > 0) {
-	            	  Validator.addError(errors, "uniqueIdentifier", resexception.getString("person_ID_used_by_another_choose_unique"));
-	            }
-	            SubjectBean subjectWithSameId = sdao.findByUniqueIdentifier(uniqueIdentifier);
-	            if (subjectWithSameId.isActive() && subjectWithSameId.getId() != subject.getId()) {
-	            	 Validator.addError(errors, "uniqueIdentifier", resexception.getString("another_assigned_this_ID_choose_unique"));
-	                
-	            }
-	        }
-	         subject.setUniqueIdentifier(uniqueIdentifier);
+        if (uniqueIdentifier != null && !uniqueIdentifier.isEmpty()) {
+
+
+        if ( uniqueIdentifier.length() > 255){
+        String descr =  resexception.getString("input_provided_is_not") +  NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO.getDescription() + " 255 "
+        + resword.getString("characters_long") + ".";
+        Validator.addError(errors, "uniqueIdentifier", descr);
+
         }
-       
+        ISubjectDAO sdao = this.subjectDao;
+        SubjectBean sub1 = (SubjectBean) sdao.findAnotherByIdentifier(uniqueIdentifier, subject.getId());
+        if (sub1.getId() > 0) {
+        Validator.addError(errors, "uniqueIdentifier", resexception.getString("person_ID_used_by_another_choose_unique"));
+        }
+        SubjectBean subjectWithSameId = sdao.findByUniqueIdentifier(uniqueIdentifier);
+        if (subjectWithSameId.isActive() && subjectWithSameId.getId() != subject.getId()) {
+        Validator.addError(errors, "uniqueIdentifier", resexception.getString("another_assigned_this_ID_choose_unique"));
+
+        }
+        }
+        subject.setUniqueIdentifier(uniqueIdentifier);
+        }
+
 
         if (!StringUtil.isBlank(fp.getString("gender"))) {
         	subject.setGender(fp.getString("gender").charAt(0));
@@ -319,8 +318,8 @@ public class UpdateSubjectServlet extends SecureController {
         	}
         	subject.setGender(' ');
         }
-        
-        
+
+
         request.setAttribute("subjectToUpdate",subject);
         if (errors.isEmpty()) {
             forwardPage(Page.UPDATE_SUBJECT_CONFIRM);
@@ -329,23 +328,23 @@ public class UpdateSubjectServlet extends SecureController {
         	//about what type of logging should be here: enjoy
         	//https://dev.openclinica.com/crucible/cru/OC-117
             logger.error("update subject validation errors");
-            
+
             setInputMessages(errors);
             setDNFlag( subjectId);
             setLocalDOB( subject);
             if ( currentStudy.getStudyParameterConfig().getCollectDob().equals("2"))
             request.setAttribute("localBirthDate", "");
-            
+
             forwardPage(Page.UPDATE_SUBJECT);
         }
     }
-    
+
     private void setDNFlag(int subjectId){
-    	DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
-    	
-    	 request.setAttribute("genderDNFlag","icon_noNote");
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
+
+        request.setAttribute("genderDNFlag","icon_noNote");
          request.setAttribute("birthDNFlag","icon_noNote");
-        
+
     	int flagRStatusId = dndao.getResolutionStatusIdForSubjectDNFlag(subjectId, "gender");
         if(flagRStatusId > 0) {
         	request.setAttribute("genderDNFlag",AbstractTableFactory.getDNFlagIconName(flagRStatusId));
@@ -355,7 +354,7 @@ public class UpdateSubjectServlet extends SecureController {
         	request.setAttribute("birthDNFlag",AbstractTableFactory.getDNFlagIconName(flagRStatusId));
         }
     }
-    
+
 //    private void setLocalDOB(SubjectBean subject){
 //    	Date birthDate = subject.getDateOfBirth();
 //        try {
@@ -364,12 +363,12 @@ public class UpdateSubjectServlet extends SecureController {
 //        } catch (NullPointerException e) {
 //        	logger.debug("update subject: cannot convert date " + birthDate);
 //        }
-//    }    
+//    }
 
     private void setLocalDOB(SubjectBean subject){
-    	       
+
     	Date birthDate = subject.getDateOfBirth();
-        
+
     	try {
             if ( currentStudy.getStudyParameterConfig().getCollectDob().equals("1"))
             {

@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.ResolutionStatus;
 import org.researchedc.bean.core.Role;
@@ -166,7 +166,7 @@ public class RemoveEventCRFServlet extends SecureController {
                         item.setUpdater(ub);
                         item.setUpdatedDate(new Date());
                         iddao.update(item);
-                        DiscrepancyNoteDAO dnDao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+                        IDiscrepancyNoteDAO dnDao = this.discrepancyNoteDao;
                         List dnNotesOfRemovedItem = dnDao.findExistingNotesForItemData(item.getId());
                         if (!dnNotesOfRemovedItem.isEmpty()) {
                             DiscrepancyNoteBean itemParentNote = null;

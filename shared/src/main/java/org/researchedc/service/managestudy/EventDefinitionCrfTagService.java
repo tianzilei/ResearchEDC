@@ -16,7 +16,6 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.dao.hibernate.EventDefinitionCrfTagDao;
 import org.researchedc.dao.hibernate.UserAccountDao;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.domain.datamap.EventDefinitionCrfTag;
 import org.researchedc.domain.user.UserAccount;
 import org.slf4j.Logger;

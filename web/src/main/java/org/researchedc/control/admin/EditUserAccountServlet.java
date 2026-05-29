@@ -27,7 +27,6 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InconsistentStateException;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.SQLInitServlet;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author ssachs

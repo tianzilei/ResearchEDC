@@ -1,9 +1,9 @@
 package org.researchedc.domain.rule.action;
 
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -22,7 +22,7 @@ public class ActionProcessorFacade {
             DynamicsMetadataService itemMetadataService, RuleSetBean ruleSet, RuleActionRunLogDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule,
             IStudyDAO studyDao, IStudySubjectDAO studySubjectDao, StudyEventDAO studyEventDao,
             StudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
-            DiscrepancyNoteDAO discrepancyNoteDao)
+            IDiscrepancyNoteDAO discrepancyNoteDao)
             throws OpenClinicaSystemException {
         switch (actionType) {
         case FILE_DISCREPANCY_NOTE:

@@ -18,7 +18,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.researchedc.dao.core.AuditableEntityDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.bean.admin.AuditEventBean;
@@ -204,7 +204,7 @@ public class ViewStudySubjectServlet extends SecureController {
             boolean isParentStudy = study.getParentStudyId() < 1;
 
             // Get any disc notes for this subject : studySubId
-            DiscrepancyNoteDAO discrepancyNoteDAO = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+            IDiscrepancyNoteDAO discrepancyNoteDAO = this.discrepancyNoteDao;
             List<DiscrepancyNoteBean> allNotesforSubject = new ArrayList<DiscrepancyNoteBean>();
 
             // These methods return only parent disc notes

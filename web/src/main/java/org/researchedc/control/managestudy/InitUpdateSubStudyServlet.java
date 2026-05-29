@@ -41,7 +41,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu

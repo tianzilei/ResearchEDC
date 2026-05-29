@@ -4,7 +4,7 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.logic.rulerunner.ExecutionMode;
 import org.researchedc.logic.rulerunner.RuleRunner.RuleRunnerMode;
@@ -18,7 +18,7 @@ public class DiscrepancyNoteActionProcessor implements ActionProcessor {
     DiscrepancyNoteService discrepancyNoteService;
     RuleActionRunLogDao ruleActionRunLogDao;
     RuleSetRuleBean ruleSetRule;
-    DiscrepancyNoteDAO discrepancyNoteDao;
+    IDiscrepancyNoteDAO discrepancyNoteDao;
 
     public DiscrepancyNoteActionProcessor(DataSource ds, RuleActionRunLogDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule) {
         this.ds = ds;
@@ -27,7 +27,7 @@ public class DiscrepancyNoteActionProcessor implements ActionProcessor {
     }
 
     public DiscrepancyNoteActionProcessor(DataSource ds, RuleActionRunLogDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule,
-            DiscrepancyNoteDAO discrepancyNoteDao) {
+            IDiscrepancyNoteDAO discrepancyNoteDao) {
         this(ds, ruleActionRunLogDao, ruleSetRule);
         this.discrepancyNoteDao = discrepancyNoteDao;
     }

@@ -41,7 +41,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author Krikor Krumlian 10/26/2006

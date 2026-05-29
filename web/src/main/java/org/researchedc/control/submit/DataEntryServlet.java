@@ -32,7 +32,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.researchedc.dao.core.AuditableEntityDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.admin.AuditBean;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.AuditableEntityBean;
@@ -381,12 +381,12 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
         logMe("Enterting DataEntry Get the status/number of item discrepancy notes"+System.currentTimeMillis());
         // Get the status/number of item discrepancy notes
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
         ArrayList<DiscrepancyNoteBean> allNotes = new ArrayList<DiscrepancyNoteBean>();
         List<DiscrepancyNoteBean> eventCrfNotes = new ArrayList<DiscrepancyNoteBean>();
         List<DiscrepancyNoteThread> noteThreads = new ArrayList<DiscrepancyNoteThread>();
         // BWP: this try block is not necessary try {
-        dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        dndao = this.discrepancyNoteDao;
         allNotes = dndao.findAllTopNotesByEventCRF(ecb.getId());
         eventCrfNotes = dndao.findOnlyParentEventCRFDNotesFromEventCRF(ecb);
         if (!eventCrfNotes.isEmpty()) {
@@ -1560,7 +1560,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
                 // save discrepancy notes into DB
                 FormDiscrepancyNotes fdn = (FormDiscrepancyNotes) session.getAttribute(AddNewSubjectServlet.FORM_DISCREPANCY_NOTES_NAME);
-                dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+                dndao = this.discrepancyNoteDao;
 
                 AddNewSubjectServlet.saveFieldNotes(INPUT_INTERVIEWER, fdn, dndao, ecb.getId(), "EventCRF", currentStudy);
                 AddNewSubjectServlet.saveFieldNotes(INPUT_INTERVIEW_DATE, fdn, dndao, ecb.getId(), "EventCRF", currentStudy);
@@ -3148,7 +3148,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
 //                idb.setStatus(Status.DELETED);
 //                idb = (ItemDataBean) iddao.updateValueForRemoved(idb);
 //
-//                DiscrepancyNoteDAO dnDao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+//                IDiscrepancyNoteDAO dnDao = this.discrepancyNoteDao;
 //                List dnNotesOfRemovedItem = dnDao.findExistingNotesForItemData(idb.getId());
 //                if (!dnNotesOfRemovedItem.isEmpty()) {
 //                    DiscrepancyNoteBean itemParentNote = null;
@@ -3653,7 +3653,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
      */
 
     protected DisplaySectionBean populateNotesWithDBNoteCounts(FormDiscrepancyNotes discNotes, DisplaySectionBean section, HttpServletRequest request) {
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
        // ArrayList items = section.getItems();
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
         ArrayList<DiscrepancyNoteBean> ecNotes = dndao.findEventCRFDNotesFromEventCRF(ecb);
@@ -3787,7 +3787,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
    long t = System.currentTimeMillis();
 
         logMe("Method:setToolTipEventNotes"+t);
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
         ArrayList<DiscrepancyNoteBean> ecNotes = dndao.findEventCRFDNotesToolTips(ecb);
         ArrayList<DiscrepancyNoteBean> nameNotes = new ArrayList();
@@ -3832,7 +3832,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         int resolutionStatus;
         int totNew = 0,totRes = 0,totClosed = 0,totUpdated =0,totNA = 0;
         boolean hasOtherThread = false;
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
          ArrayList<DiscrepancyNoteBean> existingNotes = dndao.findExistingNotesForToolTip(itemDataId);
          dib.setDiscrepancyNotes(existingNotes);
 
@@ -4056,7 +4056,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
     protected boolean isEachRequiredFieldFillout(HttpServletRequest request) {
         HttpSession session = request.getSession();
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
         // need to update this method to accomodate dynamics, tbh
         ItemDataDAO iddao = this.itemDataDao;
         ItemDAO idao = this.itemDao;
@@ -5462,7 +5462,7 @@ String tempKey = idb.getItemId()+","+idb.getOrdinal();
         int resolutionStatus = 0;
         boolean hasOtherThread = false;
         int parentNotesNum = 0;
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
         ArrayList existingNotes = dndao.findExistingNotesForItemData(itemDataId);
         for (Object obj : existingNotes) {
             DiscrepancyNoteBean note = (DiscrepancyNoteBean) obj;

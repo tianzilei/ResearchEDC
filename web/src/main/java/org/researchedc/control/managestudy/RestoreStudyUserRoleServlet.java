@@ -22,7 +22,6 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author jxu

@@ -17,7 +17,6 @@ import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  *This class has been created from the existing SecureController to implement the

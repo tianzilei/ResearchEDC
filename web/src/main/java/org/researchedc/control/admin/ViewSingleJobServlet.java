@@ -27,7 +27,6 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class ViewSingleJobServlet extends SecureController {
 

@@ -21,7 +21,6 @@ import org.researchedc.web.InconsistentStateException;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class ViewUserAccountServlet extends SecureController {
     @Autowired

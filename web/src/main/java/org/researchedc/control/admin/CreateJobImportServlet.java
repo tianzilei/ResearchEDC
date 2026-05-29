@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Create Job Import Servlet, by Tom Hickerson, 2009

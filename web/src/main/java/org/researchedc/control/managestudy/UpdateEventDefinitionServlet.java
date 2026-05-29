@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.*;
@@ -390,7 +390,7 @@ EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
                         item.setUpdater(ub);
                         item.setUpdatedDate(new Date());
                         iddao.update(item);
-                        DiscrepancyNoteDAO dnDao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+                        IDiscrepancyNoteDAO dnDao = this.discrepancyNoteDao;
                         List dnNotesOfRemovedItem = dnDao.findExistingNotesForItemData(item.getId());
                         if (!dnNotesOfRemovedItem.isEmpty()) {
                             DiscrepancyNoteBean itemParentNote = null;

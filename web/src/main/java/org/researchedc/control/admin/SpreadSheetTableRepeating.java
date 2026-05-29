@@ -60,7 +60,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * <P>

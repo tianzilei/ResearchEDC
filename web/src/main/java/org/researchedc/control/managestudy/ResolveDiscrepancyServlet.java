@@ -17,7 +17,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.ResolutionStatus;
@@ -204,7 +204,7 @@ private static final String INPUT_NOTE_ID = "noteId";
 
         IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
 
-        DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+        IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
         dndao.setFetchMapping(true);
 
         // check that the note exists

@@ -34,7 +34,7 @@ import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
@@ -247,9 +247,9 @@ public class VerifyImportedCRFDataServlet extends SecureController {
                             for (int iter = 0; iter < messageList.size(); iter++) {
                                 String message = (String) messageList.get(iter);
                                 DiscrepancyNoteBean parentDn = ImportSpringJob.createDiscrepancyNote(ibean, message, eventCrfBean, displayItemBean, null, ub,
-                                        sm.getDataSource(), currentStudy, this.studySubjectDao, (DiscrepancyNoteDAO) this.discrepancyNoteDao);
+                                        sm.getDataSource(), currentStudy, this.studySubjectDao, this.discrepancyNoteDao);
                                 ImportSpringJob.createDiscrepancyNote(ibean, message, eventCrfBean, displayItemBean, parentDn.getId(), ub, sm.getDataSource(),
-                                        currentStudy, this.studySubjectDao, (DiscrepancyNoteDAO) this.discrepancyNoteDao);
+                                        currentStudy, this.studySubjectDao, this.discrepancyNoteDao);
                                 // System.out.println("*** created disc note with message: "
                                 // + message);
                                 // displayItemBean);

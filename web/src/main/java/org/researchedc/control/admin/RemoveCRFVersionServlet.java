@@ -32,7 +32,6 @@ import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Removes a crf version

@@ -26,7 +26,6 @@ import org.researchedc.web.bean.EntityBeanTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 // import javax.servlet.*;
 // import java.io.*;

@@ -6,7 +6,7 @@
  * copyright 2003-2005 Akaza Research
  */
 package org.researchedc.control.managestudy;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
@@ -272,7 +272,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
 
             }
             // Get the status/number of item discrepancy notes
-            DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+            IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
             ArrayList<DiscrepancyNoteBean> allNotes = new ArrayList<DiscrepancyNoteBean>();
             List<DiscrepancyNoteBean> eventCrfNotes = new ArrayList<DiscrepancyNoteBean>();
             List<DiscrepancyNoteThread> noteThreads = new ArrayList<DiscrepancyNoteThread>();
@@ -519,7 +519,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
             LOGGER.info("33333how many group rows:" + dsb.getDisplayItemGroups().size());
 
             // let's save notes for the blank items
-            DiscrepancyNoteDAO dndao = (DiscrepancyNoteDAO) this.discrepancyNoteDao;
+            IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
             discNotes = (FormDiscrepancyNotes) session.getAttribute(AddNewSubjectServlet.FORM_DISCREPANCY_NOTES_NAME);
 
             for (int i = 0; i < dsb.getDisplayItemGroups().size(); i++) {

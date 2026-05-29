@@ -21,7 +21,6 @@ import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.SQLInitServlet;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 // allows both deletion and restoration of a study user role
 

@@ -54,7 +54,6 @@ import org.researchedc.web.SQLInitServlet;
 import org.researchedc.web.bean.EntityBeanTable;
 import org.researchedc.web.bean.FilterRow;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Creates a dataset by building a query based on study events, CRFs and items

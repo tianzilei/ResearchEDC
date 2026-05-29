@@ -6,11 +6,13 @@ import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.submit.SubjectDAO;
 
 public final class LegacyDaoFactory {
@@ -36,5 +38,9 @@ public final class LegacyDaoFactory {
 
     public static ICrfDAO crfDao(DataSource dataSource) {
         return new CRFDAO(dataSource);
+    }
+
+    public static IDiscrepancyNoteDAO discrepancyNoteDao(DataSource dataSource) {
+        return new DiscrepancyNoteDAO(dataSource);
     }
 }

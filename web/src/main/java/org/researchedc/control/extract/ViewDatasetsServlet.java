@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * ViewDatasetsServlet.java, the view datasets function accessed from the

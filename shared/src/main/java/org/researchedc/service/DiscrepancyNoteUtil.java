@@ -23,9 +23,10 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.DisplayEventCRFBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.dao.LegacyDaoFactory;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 
@@ -38,12 +39,12 @@ public class DiscrepancyNoteUtil {
     private DataSource daoDataSource;
     private IStudySubjectDAO studySubjectDao;
     private EventCRFDAO eventCrfDao;
-    private DiscrepancyNoteDAO discrepancyNoteDao;
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
     private IStudyDAO studyDao;
     private EventDefinitionCRFDAO eventDefinitionCrfDao;
     private Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
     private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
-    private Function<DataSource, DiscrepancyNoteDAO> discrepancyNoteDaoFactory = DiscrepancyNoteDAO::new;
+    private Function<DataSource, IDiscrepancyNoteDAO> discrepancyNoteDaoFactory = LegacyDaoFactory::discrepancyNoteDao;
     private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
     private Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory = EventDefinitionCRFDAO::new;
 
@@ -457,7 +458,7 @@ public class DiscrepancyNoteUtil {
 
         boolean filterforDiscNoteType = discNoteType >= 1 && discNoteType <= 4;
 
-        DiscrepancyNoteDAO discrepancyNoteDAO = getDiscrepancyNoteDao(dataSource);
+        IDiscrepancyNoteDAO discrepancyNoteDAO = getDiscrepancyNoteDao(dataSource);
         // what is the purpose of this data member?
         discrepancyNoteDAO.setFetchMapping(true);
 
@@ -518,7 +519,7 @@ public class DiscrepancyNoteUtil {
 
         boolean filterforDiscNoteType = discNoteType >= 1 && discNoteType <= 4;
 
-        DiscrepancyNoteDAO discrepancyNoteDAO = getDiscrepancyNoteDao(dataSource);
+        IDiscrepancyNoteDAO discrepancyNoteDAO = getDiscrepancyNoteDao(dataSource);
         // what is the purpose of this data member?
         discrepancyNoteDAO.setFetchMapping(true);
 
@@ -581,7 +582,7 @@ public class DiscrepancyNoteUtil {
 
         boolean filterforDiscNoteType = discNoteType >= 1 && discNoteType <= 4;
 
-        DiscrepancyNoteDAO discrepancyNoteDAO = getDiscrepancyNoteDao(dataSource);
+        IDiscrepancyNoteDAO discrepancyNoteDAO = getDiscrepancyNoteDao(dataSource);
         // what is the purpose of this data member?
         discrepancyNoteDAO.setFetchMapping(true);
         int parentStudyId = currentStudy.getParentStudyId();
@@ -678,7 +679,7 @@ public class DiscrepancyNoteUtil {
 
         boolean filterforDiscNoteType = discNoteType >= 1 && discNoteType <= 4;
 
-        DiscrepancyNoteDAO discrepancyNoteDAO = getDiscrepancyNoteDao(dataSource);
+        IDiscrepancyNoteDAO discrepancyNoteDAO = getDiscrepancyNoteDao(dataSource);
         // what is the purpose of this data member?
         discrepancyNoteDAO.setFetchMapping(true);
         // method finds only parents
@@ -723,7 +724,7 @@ public class DiscrepancyNoteUtil {
         List<DiscrepancyNoteBean> childDiscBeans = new ArrayList<DiscrepancyNoteBean>();
         List<DiscrepancyNoteBean> eventCRFChildDiscBeans = new ArrayList<DiscrepancyNoteBean>();
 
-        DiscrepancyNoteDAO discrepancyNoteDAO = getDiscrepancyNoteDao(dataSource);
+        IDiscrepancyNoteDAO discrepancyNoteDAO = getDiscrepancyNoteDao(dataSource);
         DiscrepancyNoteThread tempDNThread = null;
         int resolutionStatusId = 0;
 
@@ -961,7 +962,7 @@ public class DiscrepancyNoteUtil {
      */
     public Map generateDiscNoteSummaryRefactored(DataSource ds, StudyBean currentStudy, Set<Integer> resolutionStatusIds, int discNoteType) {
 
-        DiscrepancyNoteDAO discrepancyNoteDAO = getDiscrepancyNoteDao(ds);
+        IDiscrepancyNoteDAO discrepancyNoteDAO = getDiscrepancyNoteDao(ds);
         boolean filterDiscNotes = checkResolutionStatus(resolutionStatusIds);
         boolean filterforDiscNoteType = discNoteType >= 1 && discNoteType <= 4;
         //if (allDiscBeans == null || allDiscBeans.isEmpty())
@@ -1570,7 +1571,7 @@ public class DiscrepancyNoteUtil {
         return eventCrfDao;
     }
 
-    private DiscrepancyNoteDAO getDiscrepancyNoteDao(DataSource dataSource) {
+    private IDiscrepancyNoteDAO getDiscrepancyNoteDao(DataSource dataSource) {
         prepareDaoCache(dataSource);
         if (discrepancyNoteDao == null) {
             discrepancyNoteDao = discrepancyNoteDaoFactory.apply(dataSource);

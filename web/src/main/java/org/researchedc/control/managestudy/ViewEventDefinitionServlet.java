@@ -40,7 +40,6 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * View the details of a study event definition

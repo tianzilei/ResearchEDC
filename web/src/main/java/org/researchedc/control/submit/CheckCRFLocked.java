@@ -6,7 +6,6 @@ import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.web.util.HtmlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Created by IntelliJ IDEA.

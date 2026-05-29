@@ -42,12 +42,12 @@ import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -144,7 +144,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     @Autowired
     private IUserAccountDAO userAccountDao;
     @Autowired
-    private DiscrepancyNoteDAO discrepancyNoteDao;
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
     private DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
     @Autowired
     private ExpressionService expressionService;

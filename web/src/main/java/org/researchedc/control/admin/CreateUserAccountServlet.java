@@ -40,7 +40,6 @@ import org.researchedc.service.user.LdapUserService;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.SQLInitServlet;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * Servlet for creating a user account.

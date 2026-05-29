@@ -26,7 +26,6 @@ import java.util.Locale;
 
 import jakarta.servlet.ServletOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * @author ywang (Dec., 2008)
