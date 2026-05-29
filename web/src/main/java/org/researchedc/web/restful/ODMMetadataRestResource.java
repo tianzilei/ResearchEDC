@@ -262,7 +262,7 @@ public void setMetadataCollectorResource(
     // - Use beans wrapper (recommmended for most applications)
     cfg.setObjectWrapper(ObjectWrapper.BEANS_WRAPPER);
     // - Set the default charset of the template files
-    cfg.setDefaultEncoding("ISO-8859-1");
+    cfg.setDefaultEncoding("UTF-8");
     // - Set the charset of the output. This is actually just a hint, that
     //   templates may require for URL encoding and for generating META element
     //   that uses http-equiv="Content-type".
