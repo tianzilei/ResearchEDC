@@ -93,6 +93,7 @@ public class CoreResourcesConfig {
             "org.researchedc.i18n.workflow",
             "org.researchedc.i18n.ws_messages"
         );
+        ms.setDefaultEncoding("UTF-8");
         return ms;
     }
 
