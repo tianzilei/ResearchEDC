@@ -3,7 +3,7 @@ package org.researchedc.ws.validator;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class StudyEventDefinitionRequestValidator implements Validator {
     DataSource dataSource;
     @Autowired
     private IStudyDAO studyDAO;
-    private UserAccountDAO userAccountDAO;
+    private IUserAccountDAO userAccountDAO;
     BaseVSValidatorImplementation helper;
 
     public StudyEventDefinitionRequestValidator(DataSource dataSource) {

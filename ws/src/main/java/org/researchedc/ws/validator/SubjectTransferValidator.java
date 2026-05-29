@@ -14,7 +14,7 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.managestudy.SubjectTransferBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.SubjectBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -39,7 +39,7 @@ public class SubjectTransferValidator implements Validator {
     @Autowired
     private IStudyParameterValueDAO studyParameterValueDAO;
     @Autowired
-    private UserAccountDAO userAccountDAO;
+    private IUserAccountDAO userAccountDAO;
     BaseVSValidatorImplementation helper;
 
     public SubjectTransferValidator(DataSource dataSource) {

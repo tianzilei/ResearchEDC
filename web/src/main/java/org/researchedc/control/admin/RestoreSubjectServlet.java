@@ -18,12 +18,10 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
-import org.researchedc.dao.submit.SubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -42,7 +40,7 @@ import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 public class RestoreSubjectServlet extends SecureController {
 
     @Autowired
-    private SubjectDAO subjectDao;
+    private ISubjectDAO subjectDao;
     /**
      *
      */

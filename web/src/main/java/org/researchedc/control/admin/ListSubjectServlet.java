@@ -8,11 +8,9 @@
 package org.researchedc.control.admin;
 
 import org.researchedc.control.core.SecureController;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.SubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -29,9 +27,9 @@ import java.util.Locale;
  */
 public class ListSubjectServlet extends SecureController {
     @Autowired
-    private SubjectDAO subjectDao;
+    private ISubjectDAO subjectDao;
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     Locale locale;
 
     /**

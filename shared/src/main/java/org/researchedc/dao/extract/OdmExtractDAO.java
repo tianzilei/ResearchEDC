@@ -78,7 +78,8 @@ import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
-import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.SectionDAO;
@@ -99,11 +100,11 @@ public class OdmExtractDAO extends DatasetDAO {
 
     private CRFDAO<String, ArrayList> crfDao;
     private SectionDAO sectionDao;
-    private StudyDAO studyDao;
+    private IStudyDAO studyDao;
     private StudyParameterValueDAO studyParameterValueDao;
     private Function<DataSource, CRFDAO<String, ArrayList>> crfDaoFactory = CRFDAO::new;
     private Function<DataSource, SectionDAO> sectionDaoFactory = SectionDAO::new;
-    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
+    private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
     private Function<DataSource, StudyParameterValueDAO> studyParameterValueDaoFactory = StudyParameterValueDAO::new;
 	
 
@@ -2096,7 +2097,7 @@ private void fetchItemGroupMetaData(MetaDataVersionBean metadata,String cvIds, S
         // studyIds += study.getId();
         // } else {
         // ArrayList<Integer> ids = (ArrayList<Integer>) (new
-        // StudyDAO(this.ds)).findAllSiteIdsByStudy(study);
+        // IStudyDAO.findAllSiteIdsByStudy(study);
         // for (int i = 0; i < ids.size() - 1; ++i) {
         // studyIds += ids.get(i) + ",";
         // }
@@ -3173,7 +3174,7 @@ private void fetchItemGroupMetaData(MetaDataVersionBean metadata,String cvIds, S
         return sectionDao;
     }
 
-    private StudyDAO getStudyDao() {
+    private IStudyDAO getStudyDao() {
         if (studyDao == null) {
             studyDao = studyDaoFactory.apply(this.ds);
         }

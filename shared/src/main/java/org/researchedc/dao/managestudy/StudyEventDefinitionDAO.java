@@ -31,11 +31,13 @@ import org.researchedc.dao.core.TypeNames;
  * @author thickerson
  * @author jsampson
  */
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 
 public class StudyEventDefinitionDAO<K extends String,V extends ArrayList> extends AuditableEntityDAO implements IStudyEventDefinitionDAO {
-    private StudyDAO studyDao;
-    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
+    private IStudyDAO studyDao;
+    private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
 
     private void setQueryNames() {
         findAllByStudyName = "findAllByStudy";
@@ -486,7 +488,7 @@ public class StudyEventDefinitionDAO<K extends String,V extends ArrayList> exten
         return result;
     }
 
-    private StudyDAO getStudyDao() {
+    private IStudyDAO getStudyDao() {
         if (studyDao == null) {
             studyDao = studyDaoFactory.apply(this.getDs());
         }

@@ -1,7 +1,7 @@
 package org.researchedc.controller.helper;
 
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -30,7 +30,7 @@ public class SetUpUserInterceptor implements HandlerInterceptor {
     private DataSource dataSource;
 
     @Autowired
-    private UserAccountDAO userAccountDAO;
+    private IUserAccountDAO userAccountDAO;
     @Autowired
     private IStudyDAO studyDao;
     @Autowired

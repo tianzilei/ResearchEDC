@@ -8,7 +8,7 @@
 package org.researchedc.ws;
 
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.service.subject.SubjectServiceInterface;
@@ -52,7 +52,7 @@ public class CrfEndpoint {
     private final SubjectServiceInterface subjectService;
     private final DataSource dataSource;
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     private final ObjectFactory objectFactory;
 
     /**

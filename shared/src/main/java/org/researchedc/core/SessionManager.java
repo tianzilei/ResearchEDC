@@ -20,12 +20,11 @@ import javax.sql.DataSource;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-
-;
 
 /**
  * Utility which handles connection and login, as prompted by OpenClinica
@@ -53,8 +52,8 @@ public class SessionManager {
     final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private String dbName;
-    private UserAccountDAO uDAO = null;
-    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
+    private IUserAccountDAO uDAO = null;
+    private Function<DataSource, IUserAccountDAO> userAccountDaoFactory = LegacyDaoFactory::userAccountDao;
 
     //TODO: this is a hack needs to be refactord
     private static DataSource staticDataSource;
@@ -157,7 +156,7 @@ public class SessionManager {
         return staticDataSource;
     }
 
-    private UserAccountDAO getUserAccountDao() {
+    private IUserAccountDAO getUserAccountDao() {
         if (uDAO == null) {
             uDAO = userAccountDaoFactory.apply(ds);
         }

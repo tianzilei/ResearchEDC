@@ -51,7 +51,6 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.hibernate.EventCrfDao;
@@ -107,7 +106,7 @@ public class BatchCRFMigrationController implements Runnable {
     @Autowired
     private IStudyEventDAO legacyStudyEventDao;
     @Autowired
-    private StudySubjectDAO legacyStudySubjectDao;
+    private IStudySubjectDAO legacyStudySubjectDao;
     @Autowired
     private CRFVersionDAO legacyCrfVersionDao;
 
@@ -555,7 +554,7 @@ public class BatchCRFMigrationController implements Runnable {
     }
 
     @SuppressWarnings("rawtypes")
-    private StudySubjectDAO ssdao() {
+    private IStudySubjectDAO ssdao() {
         return this.legacyStudySubjectDao;
     }
 

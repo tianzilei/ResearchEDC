@@ -730,7 +730,7 @@ public abstract class EntityDAO<K extends String, V extends ArrayList> implement
      * This method executes a "findByPK-style" query. Such a query has two characteristics:
      * <ol>
      * <li>The columns SELECTed by the SQL are all of the columns in the table relevant to the DAO, and only those
-     * columns. (e.g., in StudyDAO, the columns
+     * columns. (e.g., in study DAO, the columns
      * SELECTed are all of the columns in the study table, and only those columns.)
      * <li>It returns at most one EntityBean.
      * <ul>

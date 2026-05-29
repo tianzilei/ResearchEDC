@@ -8,7 +8,7 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.odmbeans.ODMBean;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class StudyEndpoint {
     @Autowired
     private IStudyDAO studyDao;
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     private final MessageSource messages;
     private final CoreResources coreResources;
     private final RuleSetRuleDao ruleSetRuleDao;

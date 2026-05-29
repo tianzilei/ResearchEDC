@@ -28,15 +28,17 @@ import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.submit.EventCRFBean;
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
-import org.researchedc.dao.submit.SubjectDAO;
 
 /**
  * @author jxu
@@ -48,13 +50,13 @@ public class DiscrepancyNoteDAO extends AuditableEntityDAO implements IDiscrepan
     // if true, we fetch the mapping along with the bean
     // only applies to functions which return a single bean
     private boolean fetchMapping = false;
-    private UserAccountDAO userAccountDao;
-    private static final Function<DataSource, SubjectDAO> SUBJECT_DAO_FACTORY = SubjectDAO::new;
-    private static final Function<DataSource, StudySubjectDAO> STUDY_SUBJECT_DAO_FACTORY = StudySubjectDAO::new;
+    private IUserAccountDAO userAccountDao;
+    private static final Function<DataSource, ISubjectDAO> SUBJECT_DAO_FACTORY = LegacyDaoFactory::subjectDao;
+    private static final Function<DataSource, IStudySubjectDAO> STUDY_SUBJECT_DAO_FACTORY = LegacyDaoFactory::studySubjectDao;
     private static final Function<DataSource, EventCRFDAO> EVENT_CRF_DAO_FACTORY = EventCRFDAO::new;
     private static final Function<DataSource, StudyEventDAO> STUDY_EVENT_DAO_FACTORY = StudyEventDAO::new;
     private static final Function<DataSource, ItemDataDAO> ITEM_DATA_DAO_FACTORY = ItemDataDAO::new;
-    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
+    private Function<DataSource, IUserAccountDAO> userAccountDaoFactory = LegacyDaoFactory::userAccountDao;
 
     /**
      * @return Returns the fetchMapping.
@@ -1873,20 +1875,29 @@ public class DiscrepancyNoteDAO extends AuditableEntityDAO implements IDiscrepan
     }
 
     public AuditableEntityBean findEntity(DiscrepancyNoteBean note) {
-        AuditableEntityDAO aedao = getAEDAO(note, ds);
+        Object entityDao = getEntityDao(note, ds);
 
         try {
-            if (aedao != null) {
-                AuditableEntityBean aeb = (AuditableEntityBean) aedao.findByPK(note.getEntityId());
-                return aeb;
-            }
+            return findAuditableEntity(entityDao, note.getEntityId());
         } catch (Exception e) {
         }
 
         return null;
     }
 
-    public static AuditableEntityDAO getAEDAO(DiscrepancyNoteBean note, DataSource ds) {
+    private static AuditableEntityBean findAuditableEntity(Object entityDao, int entityId) throws Exception {
+        EntityBean entity = null;
+        if (entityDao instanceof ISubjectDAO subjectDao) {
+            entity = subjectDao.findByPK(entityId);
+        } else if (entityDao instanceof IStudySubjectDAO studySubjectDao) {
+            entity = studySubjectDao.findByPK(entityId);
+        } else if (entityDao instanceof AuditableEntityDAO auditableEntityDao) {
+            entity = auditableEntityDao.findByPK(entityId);
+        }
+        return entity instanceof AuditableEntityBean auditableEntity ? auditableEntity : null;
+    }
+
+    private static Object getEntityDao(DiscrepancyNoteBean note, DataSource ds) {
         String entityType = note.getEntityType();
         if ("subject".equalsIgnoreCase(entityType)) {
             return SUBJECT_DAO_FACTORY.apply(ds);
@@ -2147,7 +2158,7 @@ public class DiscrepancyNoteDAO extends AuditableEntityDAO implements IDiscrepan
         }
     }
 
-    private UserAccountDAO getUserAccountDao() {
+    private IUserAccountDAO getUserAccountDao() {
         if (userAccountDao == null) {
             userAccountDao = userAccountDaoFactory.apply(ds);
         }

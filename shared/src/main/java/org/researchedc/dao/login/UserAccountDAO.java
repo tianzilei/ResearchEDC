@@ -30,7 +30,8 @@ import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
-import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 
@@ -51,8 +52,8 @@ import org.researchedc.i18n.util.ResourceBundleProvider;
 public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDAO {
     // private DataSource ds;
     // private DAODigester digester;
-    private StudyDAO studyDao;
-    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
+    private IStudyDAO studyDao;
+    private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
 
     @Override
     protected void setDigesterName() {
@@ -649,7 +650,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
      *
      * @param userName
      * @param allStudies
-     *            The result of calling StudyDAO.findAll();
+     *            The result of calling IStudyDAO.findAll();
      */
     public ArrayList findStudyByUser(String userName, ArrayList allStudies) {
         this.unsetTypeExpected();
@@ -823,7 +824,7 @@ public class UserAccountDAO extends AuditableEntityDAO implements IUserAccountDA
         return answer;
     }
 
-    private StudyDAO getStudyDao() {
+    private IStudyDAO getStudyDao() {
         if (studyDao == null) {
             studyDao = studyDaoFactory.apply(ds);
         }

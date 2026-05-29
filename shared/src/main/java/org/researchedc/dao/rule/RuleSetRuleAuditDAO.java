@@ -18,7 +18,8 @@ import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.dao.core.EntityDAO;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.exception.OpenClinicaException;
 
 import java.util.ArrayList;
@@ -34,10 +35,10 @@ public class RuleSetRuleAuditDAO extends EntityDAO {
 
     RuleSetDAO ruleSetDao;
     RuleSetRuleDAO ruleSetRuleDao;
-    UserAccountDAO userAccountDao;
+    IUserAccountDAO userAccountDao;
     private Function<DataSource, RuleSetDAO> ruleSetDaoFactory = RuleSetDAO::new;
     private Function<DataSource, RuleSetRuleDAO> ruleSetRuleDaoFactory = RuleSetRuleDAO::new;
-    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
+    private Function<DataSource, IUserAccountDAO> userAccountDaoFactory = LegacyDaoFactory::userAccountDao;
 
     public RuleSetRuleAuditDAO(DataSource ds) {
         super(ds);
@@ -79,7 +80,7 @@ public class RuleSetRuleAuditDAO extends EntityDAO {
         return ruleSetRuleDao;
     }
 
-    private UserAccountDAO getUserAccountDao() {
+    private IUserAccountDAO getUserAccountDao() {
         if (userAccountDao == null) {
             userAccountDao = userAccountDaoFactory.apply(ds);
         }

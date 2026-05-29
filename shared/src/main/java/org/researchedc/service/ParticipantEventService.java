@@ -128,7 +128,7 @@ public class ParticipantEventService {
     }
 
     /**
-     * @return the StudyDAO
+     * @return the study DAO
      */
     private IStudyDAO getStudyDAO() {
         return studyDAO;

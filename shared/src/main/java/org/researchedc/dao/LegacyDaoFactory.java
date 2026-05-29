@@ -4,7 +4,9 @@ import javax.sql.DataSource;
 
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
+import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.submit.SubjectDAO;
@@ -24,5 +26,9 @@ public final class LegacyDaoFactory {
 
     public static ISubjectDAO subjectDao(DataSource dataSource) {
         return new SubjectDAO(dataSource);
+    }
+
+    public static IUserAccountDAO userAccountDao(DataSource dataSource) {
+        return new UserAccountDAO(dataSource);
     }
 }

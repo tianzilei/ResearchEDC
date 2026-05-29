@@ -12,7 +12,6 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.odmbeans.UserBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;

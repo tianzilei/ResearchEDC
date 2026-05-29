@@ -20,7 +20,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.exception.OpenClinicaSystemException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +63,7 @@ public class EventEndpoint {
     private final MessageSource messages;
     private final DataSource dataSource;
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     Locale locale;
 
     private TransactionTemplate transactionTemplate;

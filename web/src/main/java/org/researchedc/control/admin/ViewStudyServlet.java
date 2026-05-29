@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
@@ -44,7 +43,7 @@ import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
  */
 public class ViewStudyServlet extends SecureController {
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     @Autowired
     private EventDefinitionCRFDAO eventDefinitionCrfDao;
 

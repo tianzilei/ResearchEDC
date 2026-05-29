@@ -21,7 +21,6 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.dao.hibernate.ConfigurationDao;
 import org.researchedc.dao.hibernate.PasswordRequirementsDao;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.ResourceBundleProvider;

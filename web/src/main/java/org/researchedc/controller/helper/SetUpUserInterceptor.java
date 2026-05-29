@@ -1,7 +1,6 @@
 package org.researchedc.controller.helper;
 
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.dao.service.StudyParameterValueDAO;

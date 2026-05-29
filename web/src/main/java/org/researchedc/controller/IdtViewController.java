@@ -22,7 +22,6 @@ import org.researchedc.dao.hibernate.IdtViewDao;
 import org.researchedc.dao.hibernate.ItemDataFlagDao;
 import org.researchedc.dao.hibernate.ItemDataFlagWorkflowDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;

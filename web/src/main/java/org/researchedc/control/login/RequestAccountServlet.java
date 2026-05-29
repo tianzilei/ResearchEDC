@@ -18,7 +18,6 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.core.EmailEngine;
 import org.researchedc.core.SessionManager;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;

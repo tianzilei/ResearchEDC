@@ -47,7 +47,7 @@ import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
 import org.researchedc.dao.extract.DatasetDAO;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.exception.OpenClinicaSystemException;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -96,7 +96,7 @@ public class XsltTransformJob extends QuartzJobBean {
     private GenerateExtractFileService generateFileService;
     private OdmFileCreation odmFileCreation;
     private IStudyDAO studyDao;
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     private ArchivedDatasetFileDAO archivedDatasetFileDao;
     private AuditEventDAO auditEventDAO;
     private DatasetDAO datasetDao;
@@ -168,24 +168,24 @@ public class XsltTransformJob extends QuartzJobBean {
             deleteOld = epBean.getDeleteOld();
             /**
              *  exportFileName example:EXCEL_ggg_2020-12-14-131854158.xls
-             *  Temporally change the value of exportFileName, postProcExportName in epBean with current time stamp 
-             *             
+             *  Temporally change the value of exportFileName, postProcExportName in epBean with current time stamp
+             *
              */
-            
+
             String filedescription = epBean.getFiledescription();
             if(deleteOld ) {
             	 String[] exportFileName = epBean.getExportFileName();
             	 String simpleDatePattern = "yyyy-MM-dd-HHmmssSSS";
             	 SimpleDateFormat sdfDir = new SimpleDateFormat(simpleDatePattern);
             	 String latestTimestr = sdfDir.format(new java.util.Date());
-            	 String fileType = "";            	 
-            	 
+            String fileType = "";
+
             	 /**
             	  *  FOR SAS:
                   *  extract.12.exportname=SAS_MAP.xml,SAS_DATA.xml,SAS_FORMAT.sas
                   *  no time stamp to replace in those file name
             	  */
-            	 if(filedescription.indexOf("SAS Data") > -1) {            		 
+            if(filedescription.indexOf("SAS Data") > -1) {
             		 ;//skip
             	 }else {
             		 int i =0;
@@ -194,14 +194,14 @@ public class XsltTransformJob extends QuartzJobBean {
                 		 exportFileName[i] = exportFileName[i].substring(0, exportFileName[i].lastIndexOf("_")) + "_" + latestTimestr+ "." + fileType;;
                 		 i++;
                 	 }
-                	 
+
             		 epBean.setExportFileName(exportFileName);
-            		 
+
             		 dataMap.put(POST_FILE_NAME,exportFileName[0]);
-            	 }            	            	            	             	
-            	
             }
-            
+
+            }
+
             long sysTimeBegin = System.currentTimeMillis();
             userBean = (UserAccountBean) userAccountDao.findByPK(userAccountId);
 
@@ -616,7 +616,7 @@ public class XsltTransformJob extends QuartzJobBean {
             mailSender = ctx.getBean(OpenClinicaMailSender.class);
             auditEventDAO = ctx.getBean(AuditEventDAO.class);
             datasetDao = ctx.getBean(DatasetDAO.class);
-            userAccountDao = ctx.getBean(UserAccountDAO.class);
+            userAccountDao = ctx.getBean(IUserAccountDAO.class);
             studyDao = ctx.getBean(IStudyDAO.class);
             archivedDatasetFileDao = ctx.getBean(ArchivedDatasetFileDAO.class);
             generateFileService = ctx.getBean(GenerateExtractFileService.class);

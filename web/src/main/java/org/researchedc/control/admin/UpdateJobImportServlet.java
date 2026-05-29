@@ -5,7 +5,6 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -36,7 +35,7 @@ import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 public class UpdateJobImportServlet extends SecureController {
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
 
     private static String SCHEDULER = "schedulerFactoryBean";
     private static String TRIGGER_IMPORT_GROUP = "importTrigger";

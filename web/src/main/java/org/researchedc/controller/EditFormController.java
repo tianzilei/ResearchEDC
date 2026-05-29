@@ -32,7 +32,6 @@ import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.hibernate.StudySubjectDao;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.domain.datamap.CrfVersion;
 import org.researchedc.domain.datamap.EventCrf;

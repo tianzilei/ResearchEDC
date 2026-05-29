@@ -11,7 +11,6 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.view.Page;

@@ -13,7 +13,6 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.dao.hibernate.RuleSetAuditDao;
 import org.researchedc.dao.hibernate.RuleSetRuleAuditDao;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.rule.RuleSetAuditBean;
 import org.researchedc.domain.rule.RuleSetBean;

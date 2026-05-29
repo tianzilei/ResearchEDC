@@ -19,7 +19,6 @@ import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.domain.datamap.Study;
 import org.researchedc.logic.odmExport.AdminDataCollector;

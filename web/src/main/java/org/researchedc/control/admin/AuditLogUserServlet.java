@@ -12,7 +12,6 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.spi.IAuditEventDAO;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -37,7 +36,7 @@ public class AuditLogUserServlet extends SecureController {
     @Autowired
     private AuditEventDAO auditEventDao;
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
 
     Locale locale;
     // < ResourceBundleresword,resexception;

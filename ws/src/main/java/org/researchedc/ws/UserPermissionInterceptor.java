@@ -1,7 +1,7 @@
 package org.researchedc.ws;
 
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class UserPermissionInterceptor implements EndpointInterceptor {
 
     private final DataSource dataSource;
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
 
     public UserPermissionInterceptor(DataSource dataSource) {
         this.dataSource = dataSource;

@@ -41,6 +41,7 @@ import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.EntityDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.I18nFormatUtil;
@@ -584,9 +585,20 @@ public class Validator {
      * use for: ENTITY_EXISTS
      */
     public void addValidation(String fieldName, int type, EntityDAO edao) {
-        // for entity exists validation
+        addEntityExistsValidation(fieldName, type, edao);
+    }
+
+    public void addValidation(String fieldName, int type, IStudyDAO studyDao) {
+        addEntityExistsValidation(fieldName, type, studyDao);
+    }
+
+    public void addValidation(String fieldName, int type, IUserAccountDAO userAccountDao) {
+        addEntityExistsValidation(fieldName, type, userAccountDao);
+    }
+
+    private void addEntityExistsValidation(String fieldName, int type, Object dao) {
         Validation v = new Validation(type);
-        v.addArgument(edao);
+        v.addArgument(dao);
 
         addValidation(fieldName, v);
     }
@@ -958,9 +970,9 @@ public class Validator {
             }
             break;
         case ENTITY_EXISTS:
-            EntityDAO edao = (EntityDAO) v.getArg(0);
+            Object entityDao = v.getArg(0);
 
-            if (!entityExists(fieldName, edao)) {
+            if (!entityExists(fieldName, entityDao)) {
                 addError(fieldName, v);
             }
             break;
@@ -1607,7 +1619,7 @@ public class Validator {
         return false;
     }
 
-    protected boolean entityExists(String fieldName, EntityDAO edao) {
+    protected boolean entityExists(String fieldName, Object dao) {
         String fieldValue = getFieldValue(fieldName);
 
         if (fieldValue == null) {
@@ -1616,7 +1628,7 @@ public class Validator {
 
         try {
             int id = Integer.parseInt(fieldValue);
-            EntityBean e = edao.findByPK(id);
+            EntityBean e = findEntityByPK(dao, id);
 
             if (!e.isActive()) {
                 return false;
@@ -1626,6 +1638,16 @@ public class Validator {
         }
 
         return true;
+    }
+
+    private EntityBean findEntityByPK(Object dao, int id) throws Exception {
+        if (dao instanceof EntityDAO entityDao) {
+            return entityDao.findByPK(id);
+        }
+        if (dao instanceof IStudyDAO studyDao) {
+            return studyDao.findByPK(id);
+        }
+        throw new IllegalArgumentException("Unsupported ENTITY_EXISTS DAO type: " + dao.getClass().getName());
     }
 
     protected boolean entityExistsInStudy(String fieldName, AuditableEntityDAO dao, StudyBean study) {

@@ -16,7 +16,8 @@ import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.dao.core.EntityDAO;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.exception.OpenClinicaException;
 
 import java.sql.Types;
@@ -31,8 +32,8 @@ import javax.sql.DataSource;
 
 public class SubjectTransferDAO extends EntityDAO {
 
-    UserAccountDAO userAccountDao;
-    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
+    IUserAccountDAO userAccountDao;
+    private Function<DataSource, IUserAccountDAO> userAccountDaoFactory = LegacyDaoFactory::userAccountDao;
 
     public SubjectTransferDAO(DataSource ds) {
         super(ds);
@@ -61,7 +62,7 @@ public class SubjectTransferDAO extends EntityDAO {
         return answer;
     }
 
-    private UserAccountDAO getUserAccountDao() {
+    private IUserAccountDAO getUserAccountDao() {
         if (userAccountDao == null) {
             userAccountDao = userAccountDaoFactory.apply(ds);
         }

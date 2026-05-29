@@ -5,17 +5,17 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.springframework.validation.Errors;
 
 public class BaseVSValidatorImplementation implements BaseWSValidatorInterface{
 
-	
-	
+
+
 	public StudyBean verifyStudy( IStudyDAO dao, String study_id, Status[] included_status,
 			 Errors errors){
-		
+
 		StudyBean study = dao.findByUniqueIdentifier(study_id);
         if (study == null) {
             errors.reject("studyEventTransferValidator.study_does_not_exist", new Object[] { study_id },
@@ -36,12 +36,12 @@ public class BaseVSValidatorImplementation implements BaseWSValidatorInterface{
         	return null;
         }
         return study;
-      
+
 	}
-	
+
 	public StudyBean verifyStudyByOID( IStudyDAO dao, String study_id, Status[] included_status,
 			 Errors errors){
-		
+
 		StudyBean study = dao.findByOid(study_id);
        if (study == null) {
            errors.reject("studyEventTransferValidator.study_does_not_exist", new Object[] { study_id },
@@ -62,15 +62,15 @@ public class BaseVSValidatorImplementation implements BaseWSValidatorInterface{
        	return null;
        }
        return study;
-     
+
 	}
-	
+
 	public StudyBean verifySite( IStudyDAO dao, String study_id, String site_id, Status[] included_status,
 			 Errors errors){
-		
+
 		 if ( site_id == null) return null;
 		 StudyBean site = dao.findSiteByUniqueIdentifier(study_id, site_id);
-         // verification 
+         // verification
          // go from here : study should be available or in design - verify
          if ( site == null){
      	            errors.reject("subjectTransferValidator.site_does_not_exist", new Object[] { site_id },
@@ -91,13 +91,13 @@ public class BaseVSValidatorImplementation implements BaseWSValidatorInterface{
          	return null;
          }
          return site;
-         
+
 	}
 	public StudyBean verifyStudySubject(String study_id, String subjectId, int max_length, Errors errors){
 		//verify that subjectId is not null
-		
+
 		//verify that subjectid<max_length if max_length>0
-		
+
 		//verify that subject id belongs to study
 		return null;
 	}
@@ -107,7 +107,7 @@ public class BaseVSValidatorImplementation implements BaseWSValidatorInterface{
 		// check for site role & user permission if ok -> return yes,
 		//if no-> check for study permissions & role
 		StudyUserRoleBean role = null;
-		
+
 		if ( site_id > -1){
 			role = user.getRoleByStudy( site_id);
 	        if (role.getId() != 0){
@@ -124,33 +124,33 @@ public class BaseVSValidatorImplementation implements BaseWSValidatorInterface{
         }
 	  errors.reject("studyEventTransferValidator.insufficient_permissions", "You do not have sufficient privileges to proceed with this operation.");
       return false;
-        
+
 	}
 	public boolean verifyRole(UserAccountBean user, int study_id, int site_id,  Errors errors) {
 		// TODO Auto-generated method stub
 		// check for site role & user permission if ok -> return yes,
 		//if no-> check for study permissions & role
 		StudyUserRoleBean role = null;
-		
+
 		if ( site_id > -1){
 			role = user.getRoleByStudy( site_id);
 	        if (role.getId() != 0){
 	        		return true;
 	        	}
-	        
+
 		}
-		
+
         role = user.getRoleByStudy( study_id);
         if (role.getId() != 0){
         	return true;
         }
 	  errors.reject("studyEventTransferValidator.insufficient_permissions", "You do not have sufficient privileges to proceed with this operation.");
       return false;
-        
+
 	}
-	
-	
-	public boolean verifyUser(UserAccountBean user, UserAccountDAO userAccountDao,int study_id, int site_id,  Errors errors) {
+
+
+	public boolean verifyUser(UserAccountBean user, IUserAccountDAO userAccountDao,int study_id, int site_id,  Errors errors) {
 		// TODO Auto-generated method stub
 		// check for site role & user permission if ok -> return yes,
 		//if no-> check for study permissions & role
@@ -162,7 +162,7 @@ public class BaseVSValidatorImplementation implements BaseWSValidatorInterface{
 		                   "You do not have sufficient privileges to proceed with this operation.");
 		           return false;
 		       }
-	        
+
 		}
 		  siteSur = userAccountDao.findRoleByUserNameAndStudyId(user.getName(), study_id);
 	       if (siteSur.getStatus() != Status.AVAILABLE) {
@@ -171,9 +171,9 @@ public class BaseVSValidatorImplementation implements BaseWSValidatorInterface{
 	           return false;
 	       }
 	    return true;
-        
+
 	}
-	
-	   
-	
+
+
+
 }

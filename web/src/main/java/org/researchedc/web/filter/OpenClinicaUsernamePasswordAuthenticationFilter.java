@@ -31,7 +31,6 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.core.CRFLocker;
 import org.researchedc.dao.hibernate.AuditUserLoginDao;
 import org.researchedc.dao.hibernate.ConfigurationDao;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
 import org.researchedc.domain.technicaladmin.LoginStatus;

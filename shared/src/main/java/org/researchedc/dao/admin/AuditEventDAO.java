@@ -17,10 +17,11 @@ import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IAuditEventDAO;
-import org.researchedc.dao.submit.SubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,12 +40,12 @@ import javax.sql.DataSource;
  */
 public class AuditEventDAO extends AuditableEntityDAO implements IAuditEventDAO {
     // private DAODigester digester;
-    private StudyDAO studyDao;
-    private SubjectDAO subjectDao;
-    private UserAccountDAO userAccountDao;
-    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
-    private Function<DataSource, SubjectDAO> subjectDaoFactory = SubjectDAO::new;
-    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
+    private IStudyDAO studyDao;
+    private ISubjectDAO subjectDao;
+    private IUserAccountDAO userAccountDao;
+    private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
+    private Function<DataSource, ISubjectDAO> subjectDaoFactory = LegacyDaoFactory::subjectDao;
+    private Function<DataSource, IUserAccountDAO> userAccountDaoFactory = LegacyDaoFactory::userAccountDao;
 
     public AuditEventDAO(DataSource ds) {
         super(ds);
@@ -158,21 +159,21 @@ public class AuditEventDAO extends AuditableEntityDAO implements IAuditEventDAO 
         return aeb;
     }
 
-    private StudyDAO getStudyDao() {
+    private IStudyDAO getStudyDao() {
         if (studyDao == null) {
             studyDao = studyDaoFactory.apply(this.ds);
         }
         return studyDao;
     }
 
-    private SubjectDAO getSubjectDao() {
+    private ISubjectDAO getSubjectDao() {
         if (subjectDao == null) {
             subjectDao = subjectDaoFactory.apply(this.ds);
         }
         return subjectDao;
     }
 
-    private UserAccountDAO getUserAccountDao() {
+    private IUserAccountDAO getUserAccountDao() {
         if (userAccountDao == null) {
             userAccountDao = userAccountDaoFactory.apply(this.ds);
         }

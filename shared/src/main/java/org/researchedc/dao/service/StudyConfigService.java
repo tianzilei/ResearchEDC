@@ -12,7 +12,8 @@ import org.researchedc.bean.service.StudyParameter;
 import org.researchedc.bean.service.StudyParameterConfig;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.managestudy.StudyDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +28,9 @@ import org.springframework.stereotype.Service;
 public class StudyConfigService {
 
     private DataSource ds;
-    private StudyDAO studyDao;
+    private IStudyDAO studyDao;
     private StudyParameterValueDAO studyParameterValueDao;
-    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
+    private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
     private Function<DataSource, StudyParameterValueDAO> studyParameterValueDaoFactory = StudyParameterValueDAO::new;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -270,7 +271,7 @@ public class StudyConfigService {
 
     }
 
-    private StudyDAO getStudyDao() {
+    private IStudyDAO getStudyDao() {
         if (studyDao == null) {
             studyDao = studyDaoFactory.apply(ds);
         }

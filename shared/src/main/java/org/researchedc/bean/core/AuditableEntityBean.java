@@ -9,7 +9,8 @@ package org.researchedc.bean.core;
 
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.core.SessionManager;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IUserAccountDAO;
 
 import java.util.Date;
 import java.util.function.Function;
@@ -52,8 +53,8 @@ public class AuditableEntityBean extends EntityBean {
     protected Status oldStatus;
 
     // used to retrieve the owner and updater when needed
-    protected UserAccountDAO udao;
-    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
+    protected IUserAccountDAO udao;
+    private Function<DataSource, IUserAccountDAO> userAccountDaoFactory = LegacyDaoFactory::userAccountDao;
 
     public AuditableEntityBean() {
         createdDate = new Date(0);
@@ -75,7 +76,7 @@ public class AuditableEntityBean extends EntityBean {
         }
 
         try {
-            UserAccountDAO userAccountDao = getUserAccountDao();
+            IUserAccountDAO userAccountDao = getUserAccountDao();
             if (owner == null || owner.getId() != ownerId) {
                 owner = (UserAccountBean) userAccountDao.findByPK(ownerId);
             }
@@ -128,7 +129,7 @@ public class AuditableEntityBean extends EntityBean {
         }
 
         try {
-            UserAccountDAO userAccountDao = getUserAccountDao();
+            IUserAccountDAO userAccountDao = getUserAccountDao();
             if (updater == null || updater.getId() != updaterId) {
                 updater = (UserAccountBean) userAccountDao.findByPK(updaterId);
             }
@@ -150,7 +151,7 @@ public class AuditableEntityBean extends EntityBean {
         return updater;
     }
 
-    private UserAccountDAO getUserAccountDao() {
+    private IUserAccountDAO getUserAccountDao() {
         if (udao == null) {
             udao = userAccountDaoFactory.apply(SessionManager.getStaticDataSource());
         }

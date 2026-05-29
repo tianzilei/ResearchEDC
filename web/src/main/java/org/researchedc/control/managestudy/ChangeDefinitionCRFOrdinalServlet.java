@@ -12,7 +12,6 @@ import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 

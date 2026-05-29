@@ -13,9 +13,7 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.view.Page;
@@ -30,7 +28,7 @@ public class ViewUserAccountServlet extends SecureController {
     IStudyDAO studyDao;
 
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     public static final String PATH = "ViewUserAccount";
     public static final String ARG_USER_ID = "userId";
 

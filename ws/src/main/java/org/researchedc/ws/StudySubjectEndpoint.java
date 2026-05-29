@@ -16,7 +16,7 @@ import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.managestudy.SubjectTransferBean;
 import org.researchedc.bean.submit.SubjectBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -90,7 +90,7 @@ public class StudySubjectEndpoint {
     @Autowired
     private IStudyDAO studyDao;
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     @Autowired
     private ISubjectDAO subjectDao;
     @Autowired

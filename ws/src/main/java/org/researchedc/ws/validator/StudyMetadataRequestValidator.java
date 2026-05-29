@@ -2,7 +2,7 @@ package org.researchedc.ws.validator;
 
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class StudyMetadataRequestValidator implements Validator {
     DataSource dataSource;
     @Autowired
     private IStudyDAO studyDAO;
-    private UserAccountDAO userAccountDAO;
+    private IUserAccountDAO userAccountDAO;
     BaseVSValidatorImplementation helper;
 
     public StudyMetadataRequestValidator(DataSource dataSource) {

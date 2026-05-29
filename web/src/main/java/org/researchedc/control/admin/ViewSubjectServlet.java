@@ -11,7 +11,6 @@ import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.SubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -29,7 +28,7 @@ import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
  */
 public class ViewSubjectServlet extends SecureController {
     @Autowired
-    private SubjectDAO subjectDao;
+    private ISubjectDAO subjectDao;
     /**
      *
      */

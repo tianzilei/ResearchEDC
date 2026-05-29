@@ -1,7 +1,6 @@
 package org.researchedc.config;
 
 import java.io.IOException;
-import javax.sql.DataSource;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +9,6 @@ import jakarta.servlet.http.HttpSession;
 
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +36,8 @@ public class OidcSessionBridgeSuccessHandler implements AuthenticationSuccessHan
         if (authentication.getPrincipal() instanceof OidcUser oidcUser) {
             String username = oidcUser.getPreferredUsername();
             if (username != null) {
-                DataSource ds = resolveDataSource(request);
-                if (ds != null) {
-                    IUserAccountDAO dao = new UserAccountDAO(ds);
+                IUserAccountDAO dao = resolveUserAccountDao(request);
+                if (dao != null) {
                     UserAccountBean ub = (UserAccountBean) dao.findByUserName(username);
                     if (ub == null || ub.getId() <= 0) {
                         // JIT provisioning: create local user from OIDC claims
@@ -82,11 +79,11 @@ public class OidcSessionBridgeSuccessHandler implements AuthenticationSuccessHan
         }
     }
 
-    private DataSource resolveDataSource(HttpServletRequest request) {
+    private IUserAccountDAO resolveUserAccountDao(HttpServletRequest request) {
         WebApplicationContext ctx = WebApplicationContextUtils
                 .getRequiredWebApplicationContext(request.getServletContext());
         if (ctx != null) {
-            return ctx.getBean(DataSource.class);
+            return ctx.getBean(IUserAccountDAO.class);
         }
         return null;
     }

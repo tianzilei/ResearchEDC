@@ -10,7 +10,6 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.spi.IAuditEventDAO;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -37,7 +36,7 @@ public class ViewSingleJobServlet extends SecureController {
     @Autowired
     private DatasetDAO datasetDao;
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
 
     // DRY consolidate from other servlet?
     private static String TRIGGER_GROUP = "DEFAULT";

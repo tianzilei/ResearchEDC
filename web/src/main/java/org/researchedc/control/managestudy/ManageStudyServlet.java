@@ -9,13 +9,10 @@ package org.researchedc.control.managestudy;
 
 import org.researchedc.bean.core.Role;
 import org.researchedc.control.core.SecureController;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;

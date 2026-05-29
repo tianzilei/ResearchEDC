@@ -40,22 +40,14 @@ import org.researchedc.controller.helper.table.SDVToolbar;
 import org.researchedc.controller.helper.table.SubjectSDVContainer;
 import org.researchedc.dao.EventCRFSDVFilter;
 import org.researchedc.dao.EventCRFSDVSort;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.SubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.domain.SourceDataVerification;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -80,7 +72,6 @@ import org.jmesa.view.html.editor.HtmlCellEditor;
 import org.jmesa.web.WebContext;
 import org.springframework.validation.BindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 
 /**
  * A utility class that implements the details of the Source Data Verification (SDV) Jmesa tables.

@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.view.Page;

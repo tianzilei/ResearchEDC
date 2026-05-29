@@ -8,7 +8,6 @@ import javax.sql.DataSource;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.core.CRFLocker;
 import org.researchedc.dao.hibernate.AuditUserLoginDao;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
 import org.researchedc.domain.technicaladmin.LoginStatus;

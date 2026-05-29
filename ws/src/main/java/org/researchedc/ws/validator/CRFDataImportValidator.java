@@ -5,7 +5,7 @@ import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.ws.bean.BaseStudyDefinitionBean;
 
@@ -21,7 +21,7 @@ public class CRFDataImportValidator implements Validator {
     @Autowired
     private IStudyDAO studyDAO;
     @Autowired
-    private UserAccountDAO userAccountDAO;
+    private IUserAccountDAO userAccountDAO;
     BaseVSValidatorImplementation helper;
 
     public CRFDataImportValidator(DataSource dataSource) {
@@ -33,27 +33,27 @@ public class CRFDataImportValidator implements Validator {
     public boolean supports(Class clazz) {
        // return CRFDataImportBean.class.equals(clazz);
     	return BaseStudyDefinitionBean.class.equals(clazz);
-    	
+
     }
 
     public void validate(Object obj, Errors e) {
     	//CRFDataImportBean crfDataImportBean = (CRFDataImportBean) obj;
     	BaseStudyDefinitionBean crfDataImportBean = (BaseStudyDefinitionBean) obj;
-    	
+
         if (crfDataImportBean.getStudyUniqueId() == null ) {
         	 e.reject("studyEventDefinitionRequestValidator.study_does_not_exist");
              return;
         }
         Status[] included_status= new Status[]{Status.AVAILABLE ,  Status.PENDING};
         StudyBean study = helper.verifyStudyByOID( studyDAO, crfDataImportBean.getStudyUniqueId(), included_status, e);
-        if (study == null) return; 
+        if (study == null) return;
         boolean isRoleVerified = helper.verifyRole(crfDataImportBean.getUser(), study.getId(), -1, Role.MONITOR, e);
         if ( !isRoleVerified ) return;
 //        StudyBean study = getStudyDAO().findByOid(crfDataImportBean.getStudyUniqueId());
 //        if (study == null) {
 //        	  e.reject("subjectTransferValidator.study_does_not_exist", new Object[] { crfDataImportBean.getStudyUniqueId() }, "Study identifier you specified "
 //                      + crfDataImportBean.getStudyUniqueId() + " does not correspond to a valid study.");
-//              return;  
+//              return;
 //        }
 //      //validate study status
 //        if ( !( study.getStatus().isAvailable() ||  study.getStatus().isPending() )) {
@@ -68,7 +68,7 @@ public class CRFDataImportValidator implements Validator {
 //             "You do not have sufficient privileges to proceed with this operation.");
 //        	 return;
 //        }
-//      
+//
         crfDataImportBean.setStudy(study);
 
     }

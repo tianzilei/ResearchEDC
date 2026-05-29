@@ -20,9 +20,8 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.SecurityManager;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IUserAccountDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InconsistentStateException;
@@ -38,7 +37,7 @@ import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 public class EditUserAccountServlet extends SecureController {
 
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     public static final String INPUT_FIRST_NAME = "firstName";
 
     public static final String INPUT_LAST_NAME = "lastName";

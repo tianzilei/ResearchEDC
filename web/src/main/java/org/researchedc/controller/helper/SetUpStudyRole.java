@@ -1,6 +1,5 @@
 package org.researchedc.controller.helper;
 
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.service.StudyConfigService;

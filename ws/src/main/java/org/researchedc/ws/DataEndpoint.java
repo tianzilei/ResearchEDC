@@ -28,7 +28,7 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +74,7 @@ public class DataEndpoint {
     private final CoreResources coreResources;
     private final Locale locale;
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     private final DataImportService dataImportService = new DataImportService();
 
     private RuleSetServiceInterface ruleSetService;
@@ -92,7 +92,7 @@ public class DataEndpoint {
 
     /**
      * if NAMESPACE_URI_V1:importDataRequest execute this method
-     * 
+     *
      * @return
      * @throws Exception
      */
@@ -279,7 +279,7 @@ public class DataEndpoint {
 
     /**
      * Helper Method to get the user account
-     * 
+     *
      * @return UserAccountBean
      */
     private UserAccountBean getUserAccount() {
@@ -295,7 +295,7 @@ public class DataEndpoint {
 
     /**
      * Create Error Response
-     * 
+     *
      * @param confirmation
      * @return
      * @throws Exception
@@ -333,7 +333,7 @@ public class DataEndpoint {
 
     /**
      * Create Response
-     * 
+     *
      * @param confirmation
      * @return
      * @throws Exception

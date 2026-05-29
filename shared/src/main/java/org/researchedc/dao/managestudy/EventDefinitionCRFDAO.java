@@ -40,12 +40,14 @@ import org.apache.commons.lang3.StringUtils;
  * @author jxu
  * 
  */
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.IStudyDAO;
 
 public class EventDefinitionCRFDAO extends AuditableEntityDAO implements EventDefinitionCRFDao {
     // private DAODigester digester;
-    private StudyDAO studyDao;
-    private Function<DataSource, StudyDAO> studyDaoFactory = StudyDAO::new;
+    private IStudyDAO studyDao;
+    private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
 
     private void setQueryNames() {
         getCurrentPKName = "getCurrentPK";
@@ -1045,7 +1047,7 @@ public class EventDefinitionCRFDAO extends AuditableEntityDAO implements EventDe
 
     }
 
-    private StudyDAO getStudyDao() {
+    private IStudyDAO getStudyDao() {
         if (studyDao == null) {
             studyDao = studyDaoFactory.apply(this.ds);
         }

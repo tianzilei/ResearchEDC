@@ -13,7 +13,6 @@ import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.view.Page;
@@ -24,7 +23,7 @@ import org.researchedc.web.InsufficientPermissionException;
 public class DeleteStudyUserRoleServlet extends SecureController {
 
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     public static final String PATH = "DeleteStudyUserRole";
     public static final String ARG_USERNAME = "userName";
     public static final String ARG_STUDYID = "studyId";

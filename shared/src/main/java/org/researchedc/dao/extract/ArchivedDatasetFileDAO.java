@@ -14,7 +14,8 @@ import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IUserAccountDAO;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,8 +34,8 @@ import javax.sql.DataSource;
  */
 public class ArchivedDatasetFileDAO extends AuditableEntityDAO {
     private DAODigester digester;
-    private UserAccountDAO userAccountDao;
-    private Function<DataSource, UserAccountDAO> userAccountDaoFactory = UserAccountDAO::new;
+    private IUserAccountDAO userAccountDao;
+    private Function<DataSource, IUserAccountDAO> userAccountDaoFactory = LegacyDaoFactory::userAccountDao;
 
     public ArchivedDatasetFileDAO(DataSource ds) {
         super(ds);
@@ -122,7 +123,7 @@ public class ArchivedDatasetFileDAO extends AuditableEntityDAO {
         return fb;
     }
 
-    private UserAccountDAO getUserAccountDao() {
+    private IUserAccountDAO getUserAccountDao() {
         if (userAccountDao == null) {
             userAccountDao = userAccountDaoFactory.apply(this.ds);
         }

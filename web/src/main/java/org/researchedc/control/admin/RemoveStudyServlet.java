@@ -26,17 +26,14 @@ import org.researchedc.bean.submit.SubjectGroupMapBean;
 import org.researchedc.control.core.SecureController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
@@ -74,7 +71,7 @@ public class RemoveStudyServlet extends SecureController {
     ItemDataDAO itemDataDao;
 
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
     @Autowired
     private SubjectGroupMapDAO subjectGroupMapDao;
     @Autowired

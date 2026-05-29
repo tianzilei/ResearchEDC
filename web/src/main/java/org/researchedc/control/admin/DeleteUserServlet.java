@@ -15,9 +15,8 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.SecurityManager;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IUserAccountDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -29,7 +28,7 @@ import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 public class DeleteUserServlet extends SecureController {
 
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
 
     private static final long serialVersionUID = 298106781476442393L;
 

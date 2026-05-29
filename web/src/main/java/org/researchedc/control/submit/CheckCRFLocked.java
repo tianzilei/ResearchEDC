@@ -2,7 +2,6 @@ package org.researchedc.control.submit;
 
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.control.core.SecureController;
-import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.web.util.HtmlUtils;

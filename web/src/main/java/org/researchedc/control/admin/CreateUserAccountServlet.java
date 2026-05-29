@@ -30,11 +30,9 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.dao.hibernate.AuthoritiesDao;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.domain.user.AuthoritiesBean;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.domain.user.LdapUser;
@@ -52,7 +50,7 @@ import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 public class CreateUserAccountServlet extends SecureController {
 
     @Autowired
-    private UserAccountDAO userAccountDao;
+    private IUserAccountDAO userAccountDao;
 
     // < ResourceBundle restext;
     Locale locale;
@@ -198,7 +196,7 @@ public class CreateUserAccountServlet extends SecureController {
             setPresetValues(presetValues);
             forwardPage(Page.CREATE_ACCOUNT);
         } else {
-            UserAccountDAO udao = this.userAccountDao;
+            IUserAccountDAO udao = this.userAccountDao;
             Validator v = new Validator(request);
 
             // username must not be blank,
@@ -222,7 +220,7 @@ public class CreateUserAccountServlet extends SecureController {
             v.addValidation(INPUT_INSTITUTION, Validator.NO_BLANKS);
             v.addValidation(INPUT_INSTITUTION, Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 255);
 
-            v.addValidation(INPUT_STUDY, Validator.ENTITY_EXISTS, (StudyDAO) sdao);
+            v.addValidation(INPUT_STUDY, Validator.ENTITY_EXISTS, sdao);
             v.addValidation(INPUT_ROLE, Validator.IS_VALID_TERM, TermType.ROLE);
 
             HashMap errors = v.validate();
@@ -396,7 +394,7 @@ public class CreateUserAccountServlet extends SecureController {
     }
 
 	public Boolean isApiKeyExist(String uuid) {
-		UserAccountDAO udao = this.userAccountDao;
+		IUserAccountDAO udao = this.userAccountDao;
 		UserAccountBean uBean = (UserAccountBean) udao.findByApiKey(uuid);
 		if (uBean == null || !uBean.isActive()) {
 			return false;
