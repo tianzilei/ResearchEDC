@@ -114,6 +114,7 @@ const router = createBrowserRouter([
     ],
   },
   { path: "/login", element: <Login /> },
+  { path: "/app/login", element: <Login /> },
   { path: "/q/fill/:token", element: <QuestionnaireFill /> },
   { path: "/error", element: <ErrorPage status={500} /> },
   { path: "/", element: <MainMenu /> },
