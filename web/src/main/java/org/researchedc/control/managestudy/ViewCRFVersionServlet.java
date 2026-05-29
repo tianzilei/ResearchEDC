@@ -18,7 +18,7 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
@@ -40,7 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ViewCRFVersionServlet extends SecureController {
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private ItemFormMetadataDAO itemFormMetadataDao;
 
@@ -64,7 +64,7 @@ public class ViewCRFVersionServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         ItemDAO idao = this.itemDao;
         ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
         FormProcessor fp = new FormProcessor(request);

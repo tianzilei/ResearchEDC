@@ -24,8 +24,8 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -56,7 +56,7 @@ public class PrintEventCRFServlet extends DataEntryServlet {
     protected IStudyEventDefinitionDAO studyEventDefinitionDao;
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
@@ -108,7 +108,7 @@ Locale locale;
             EventDefinitionCRFDao edao = this.eventDefinitionCrfDao;
             ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllByDefinition(defId);
 
-            CRFVersionDAO cvdao = this.crfVersionDao;
+            ICrfVersionDAO cvdao = this.crfVersionDao;
             ICrfDAO cdao = this.crfDao;
             ArrayList defaultVersions = new ArrayList();
 
@@ -146,7 +146,7 @@ Locale locale;
             // EventDefinitionCRFDao findByStudyEventIdAndCRFVersionId(int
             // studyEventId, int crfVersionId)
             SectionDAO sdao = this.sectionDao;
-            CRFVersionDAO crfVersionDAO = this.crfVersionDao;
+            ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
             ICrfDAO crfDao = this.crfDao;
             ArrayList printCrfBeans = new ArrayList();
 
