@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
 
 import javax.sql.DataSource;
 
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.ResolutionStatus;
@@ -65,7 +65,7 @@ public class DataImportService {
     @Autowired
     private IStudySubjectDAO studySubjectDao;
     @Autowired
-    private DiscrepancyNoteDAO discrepancyNoteDao;
+    private IDiscrepancyNoteDAO discrepancyNoteDao;
 
     public ResourceBundle getRespage() {
         return respage;
