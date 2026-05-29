@@ -40,10 +40,9 @@ import org.researchedc.core.EmailEngine;
 import org.researchedc.core.OpenClinicaMailSender;
 import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -100,13 +99,13 @@ public class BatchCRFMigrationController implements Runnable {
     protected AuditDAO auditDao;
 
     @Autowired
-    private EventCRFDAO legacyEventCrfDao;
+    private EventCRFDao legacyEventCrfDao;
     @Autowired
     private IStudyEventDAO legacyStudyEventDao;
     @Autowired
     private IStudySubjectDAO legacyStudySubjectDao;
     @Autowired
-    private CRFVersionDAO legacyCrfVersionDao;
+    private ICrfVersionDAO legacyCrfVersionDao;
 
     @Autowired
     private DataSource dataSource;
@@ -543,7 +542,7 @@ public class BatchCRFMigrationController implements Runnable {
     }
 
     @SuppressWarnings("rawtypes")
-    private EventCRFDAO ecdao() {
+    private EventCRFDao ecdao() {
         return this.legacyEventCrfDao;
     }
 
@@ -570,7 +569,7 @@ public class BatchCRFMigrationController implements Runnable {
     }
 
     @SuppressWarnings("rawtypes")
-    private CRFVersionDAO cvdao() {
+    private ICrfVersionDAO cvdao() {
         return this.legacyCrfVersionDao;
     }
 
