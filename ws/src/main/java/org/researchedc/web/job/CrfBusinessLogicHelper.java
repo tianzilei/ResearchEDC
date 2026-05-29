@@ -14,7 +14,7 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
@@ -50,7 +50,7 @@ public class CrfBusinessLogicHelper {
     @Autowired
     private StudyEventDefinitionDAO studyEventDefinitionDao;
     @Autowired
-    private CRFDAO crfDao;
+    private ICrfDAO crfDao;
 
     // public CrfBusinessLogicHelper(SessionManager sm) {
     // this.sm = sm;

@@ -6,7 +6,7 @@ import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
@@ -55,7 +55,7 @@ public class StudyEventDefinitionEndpoint {
     @Autowired
     private IUserAccountDAO userAccountDao;
     @Autowired
-    private CRFDAO crfDao;
+    private ICrfDAO crfDao;
     @Autowired
     private CRFVersionDAO crfVersionDao;
     @Autowired

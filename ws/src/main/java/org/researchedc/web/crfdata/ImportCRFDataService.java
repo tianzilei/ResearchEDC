@@ -48,7 +48,7 @@ import org.researchedc.bean.submit.crfdata.UpsertOnBean;
 import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.Validator;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
@@ -98,7 +98,7 @@ public class ImportCRFDataService {
     @Autowired
     private ItemFormMetadataDAO itemFormMetadataDAO;
     @Autowired
-    private CRFDAO crfDAO;
+    private ICrfDAO crfDAO;
     @Autowired
     private ItemDataDAO itemDataDaoField;
 
