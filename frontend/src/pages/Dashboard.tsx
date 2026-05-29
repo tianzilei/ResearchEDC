@@ -56,16 +56,7 @@ function ModuleCard({ mod }: { mod: ModuleInfo }) {
         >
           {mod.description}
         </div>
-        <div
-          style={{
-            color: "var(--text-muted)",
-            fontSize: 11,
-            marginTop: 6,
-            fontFamily: "var(--font-mono)",
-          }}
-        >
-          {mod.path}
-        </div>
+
       </Card>
     </Col>
   );
