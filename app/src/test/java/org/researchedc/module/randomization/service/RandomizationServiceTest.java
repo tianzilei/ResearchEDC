@@ -94,6 +94,7 @@ class RandomizationServiceTest {
     @Test
     void activateScheme_changesStatusAndLogsAudit() {
         RandomizationScheme scheme = createScheme(1L, "Scheme", SchemeStatus.DRAFT);
+        scheme.setArms(List.of(createArm(1L, "Active", 1, 1)));
         when(schemeRepository.findById(1L)).thenReturn(Optional.of(scheme));
         when(schemeRepository.save(any())).thenReturn(scheme);
 
