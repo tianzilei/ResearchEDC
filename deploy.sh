@@ -369,6 +369,7 @@ cmd_build() {
     cd "${PROJECT_DIR}"
 
     log_info "Copying frontend to app resources..."
+    rm -rf app/src/main/resources/static
     mkdir -p app/src/main/resources/static
     cp -r frontend/dist/* app/src/main/resources/static/
 
