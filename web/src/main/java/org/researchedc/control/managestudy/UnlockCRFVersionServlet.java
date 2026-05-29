@@ -16,9 +16,8 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ import org.researchedc.dao.spi.ICrfDAO;
 public class UnlockCRFVersionServlet extends SecureController {
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
 
 /**
     *
@@ -64,7 +63,7 @@ public class UnlockCRFVersionServlet extends SecureController {
            return;
        }
        
-       CRFVersionDAO cvdao = this.crfVersionDao;
+       ICrfVersionDAO cvdao = this.crfVersionDao;
         ICrfDAO cdao = this.crfDao;
        
        CRFVersionBean version = (CRFVersionBean)cvdao.findByPK(crfVersionId);

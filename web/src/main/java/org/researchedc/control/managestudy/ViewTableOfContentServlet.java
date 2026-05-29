@@ -18,7 +18,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.TableOfContentsServlet;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -67,7 +67,7 @@ public class ViewTableOfContentServlet extends SecureController {
         return getDisplayBean(crfVersionId, this.sectionDao, this.crfVersionDao, this.crfDao);
     }
 
-    public static DisplayTableOfContentsBean getDisplayBean(int crfVersionId, SectionDAO sectionDao, CRFVersionDAO crfVersionDao, ICrfDAO crfDao) {
+    public static DisplayTableOfContentsBean getDisplayBean(int crfVersionId, SectionDAO sectionDao, ICrfVersionDAO crfVersionDao, ICrfDAO crfDao) {
         DisplayTableOfContentsBean answer = new DisplayTableOfContentsBean();
 
         ArrayList sections = getSections(crfVersionId, sectionDao);
