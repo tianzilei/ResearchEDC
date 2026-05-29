@@ -26,7 +26,7 @@ import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -57,7 +57,7 @@ public class ListEventDefinitionServlet extends SecureController {
 
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
@@ -112,7 +112,7 @@ Locale locale;
         IUserAccountDAO sdao = this.userAccountDao;
         EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
         ICrfDAO crfDao = this.crfDao;
-        CRFVersionDAO crfVersionDao = this.crfVersionDao;
+        ICrfVersionDAO crfVersionDao = this.crfVersionDao;
         ArrayList seds = edao.findAllByStudy(currentStudy);
 
         // request.setAttribute("seds", seds);
