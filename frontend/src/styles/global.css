@@ -380,15 +380,23 @@ html {
 }
 
 .header-lang-select {
-  min-width: 100px !important;
-  width: 100px !important;
+  padding: 0 !important;
 }
-.header-lang-select .ant-select-selector,
+.header-lang-select .ant-select-selector {
+  color: var(--header-text) !important;
+  padding: 0 12px !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
 .header-lang-select .ant-select-selection-item {
   color: var(--header-text) !important;
+  line-height: 52px !important;
+  text-align: center !important;
 }
 .header-lang-select .ant-select-arrow {
   color: var(--header-text) !important;
+  right: 8px;
 }
 
 [data-theme="night"] .header-user-dropdown {

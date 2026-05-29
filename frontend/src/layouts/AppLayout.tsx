@@ -109,33 +109,39 @@ export default function AppLayout() {
           justifyContent: "space-between",
           padding: "0 20px",
           height: 52,
-          lineHeight: "52px",
+          lineHeight: "normal",
           background: "var(--header-bg)",
           position: "relative",
           zIndex: 10,
           borderBottom: "1px solid var(--border)",
+          overflow: "hidden",
         }}
       >
         <Space size="middle">
-          <div style={{ fontWeight: 600, fontSize: 14, color: "var(--header-text)", letterSpacing: "0.02em" }}>
+          <div style={{ fontWeight: 600, fontSize: 13, color: "var(--header-text)", letterSpacing: "0.02em" }}>
             ResearchEDC
           </div>
           <div style={{ borderLeft: "1px solid var(--border)", height: 20, width: 1 }} />
           <StudySwitcher />
         </Space>
-        <Space size="small">
+        <div style={{ display: "flex", alignItems: "stretch", gap: 0 }}>
           <button
             onClick={toggleTheme}
             style={{
               background: "var(--header-bg)",
-              border: "1px solid var(--border)",
+              border: "none",
               cursor: "pointer",
               color: "var(--header-text)",
               fontSize: 13,
-              height: 32,
-              padding: "0 10px",
-              lineHeight: "32px",
+              height: 52,
+              minWidth: 88,
+              padding: "0 12px",
+              lineHeight: "52px",
               fontFamily: "inherit",
+              textAlign: "center",
+              boxSizing: "border-box",
+              margin: 0,
+              flexShrink: 0,
             }}
           >
             {mode === "daylight" ? t("layout.themeNight") : t("layout.themeDay")}
@@ -146,10 +152,12 @@ export default function AppLayout() {
             variant="borderless"
             className="header-lang-select"
             style={{
-              minWidth: 100,
-              width: 100,
               color: "var(--header-text)",
               fontSize: 13,
+              height: 52,
+              minWidth: 88,
+              textAlign: "center",
+              flexShrink: 0,
             }}
             popupMatchSelectWidth={false}
             options={SUPPORTED_LANGUAGES.map((l) => ({
@@ -167,19 +175,25 @@ export default function AppLayout() {
             <button
               style={{
                 background: "var(--header-bg)",
-                border: "1px solid var(--border)",
+                border: "none",
                 cursor: "pointer",
                 color: "var(--header-text)",
                 fontSize: 13,
                 height: 52,
-                padding: "0 8px",
+                minWidth: 88,
+                padding: "0 12px",
+                lineHeight: "52px",
                 fontFamily: "inherit",
+                textAlign: "center",
+                boxSizing: "border-box",
+                margin: 0,
+                flexShrink: 0,
               }}
             >
               {user?.firstName ?? user?.username ?? t("common.user")}
             </button>
           </Dropdown>
-        </Space>
+        </div>
       </Header>
       <Layout>
         <Sider
