@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -129,6 +130,34 @@ public class DashboardService {
             dbStatus = "error";
         }
         return new StatusResponse(dbStatus, "normal", null);
+    }
+
+    public Map<String, Object> getHealth() {
+        Map<String, Object> health = new LinkedHashMap<>();
+
+        boolean dbUp = false;
+        try (Connection conn = dataSource.getConnection()) {
+            dbUp = conn.isValid(2);
+        } catch (SQLException ignored) {
+        }
+
+        boolean diskOk = new java.io.File(".").getUsableSpace() > 10 * 1024 * 1024;
+
+        boolean allUp = dbUp && diskOk;
+        health.put("status", allUp ? "UP" : "DOWN");
+
+        Map<String, Object> components = new LinkedHashMap<>();
+
+        Map<String, Object> dbComponent = new LinkedHashMap<>();
+        dbComponent.put("status", dbUp ? "UP" : "DOWN");
+        components.put("db", dbComponent);
+
+        Map<String, Object> diskComponent = new LinkedHashMap<>();
+        diskComponent.put("status", diskOk ? "UP" : "DOWN");
+        components.put("diskSpace", diskComponent);
+
+        health.put("components", components);
+        return health;
     }
 
     public List<RecentActivityItem> getRecent() {

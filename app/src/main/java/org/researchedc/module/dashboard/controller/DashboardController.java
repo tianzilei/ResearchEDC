@@ -1,6 +1,7 @@
 package org.researchedc.module.dashboard.controller;
 
 import java.util.List;
+import java.util.Map;
 import org.researchedc.module.dashboard.dto.BootstrapResponse;
 import org.researchedc.module.dashboard.dto.RecentActivityItem;
 import org.researchedc.module.dashboard.dto.StatusResponse;
@@ -39,5 +40,10 @@ public class DashboardController {
     @GetMapping("/recent")
     public ResponseEntity<List<RecentActivityItem>> getRecent() {
         return ResponseEntity.ok(dashboardService.getRecent());
+    }
+
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, Object>> getHealth() {
+        return ResponseEntity.ok(dashboardService.getHealth());
     }
 }
