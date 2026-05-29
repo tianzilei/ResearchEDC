@@ -26,8 +26,76 @@ public class LegacyServletConfig {
             };
             jakarta.servlet.ServletRegistration.Dynamic tr = servletContext.addServlet("testServlet", testServlet);
             if (tr != null) tr.addMapping("/test");
-            // MainMenu removed - handled via WebMvcConfig redirect
-            log.info("testServlet registered");
+
+            // ── Import servlets ─────────────────────────────────
+            registerServlet(servletContext, "ImportCRFData",
+                    "org.researchedc.control.submit.ImportCRFDataServlet",
+                    "/ImportCRFData");
+            registerServlet(servletContext, "VerifyImportedCRFData",
+                    "org.researchedc.control.submit.VerifyImportedCRFDataServlet",
+                    "/VerifyImportedCRFData");
+            registerServlet(servletContext, "ImportRule",
+                    "org.researchedc.control.submit.ImportRuleServlet",
+                    "/ImportRule");
+            registerServlet(servletContext, "VerifyImportedRule",
+                    "org.researchedc.control.submit.VerifyImportedRuleServlet",
+                    "/VerifyImportedRule");
+            registerServlet(servletContext, "ImportCRFInfo",
+                    "org.researchedc.control.submit.ImportCRFInfo",
+                    "/ImportCRFInfo");
+
+            // ── Export servlets ─────────────────────────────────
+            registerServlet(servletContext, "ExportDataset",
+                    "org.researchedc.control.extract.ExportDatasetServlet",
+                    "/ExportDataset");
+            registerServlet(servletContext, "CreateJobExport",
+                    "org.researchedc.control.admin.CreateJobExportServlet",
+                    "/CreateJobExport");
+            registerServlet(servletContext, "CreateJobImport",
+                    "org.researchedc.control.admin.CreateJobImportServlet",
+                    "/CreateJobImport");
+            registerServlet(servletContext, "ViewImportJob",
+                    "org.researchedc.control.admin.ViewImportJobServlet",
+                    "/ViewImportJob");
+            registerServlet(servletContext, "ViewJob",
+                    "org.researchedc.control.admin.ViewJobServlet",
+                    "/ViewJob");
+            registerServlet(servletContext, "ShowFile",
+                    "org.researchedc.control.extract.ShowFileServlet",
+                    "/ShowFile");
+            registerServlet(servletContext, "ChooseDownloadFormat",
+                    "org.researchedc.control.extract.ChooseDownloadFormat",
+                    "/ChooseDownloadFormat");
+
+            // ── Dataset export servlets ─────────────────────────
+            registerServlet(servletContext, "ExtractDatasetsMain",
+                    "org.researchedc.control.extract.ExtractDatasetsMainServlet",
+                    "/ExtractDatasetsMain");
+            registerServlet(servletContext, "CreateDataset",
+                    "org.researchedc.control.extract.CreateDatasetServlet",
+                    "/CreateDataset");
+            registerServlet(servletContext, "ViewDatasets",
+                    "org.researchedc.control.extract.ViewDatasetsServlet",
+                    "/ViewDatasets");
+
+            log.info("Legacy import/export servlets registered");
         };
+    }
+
+    private void registerServlet(jakarta.servlet.ServletContext ctx,
+                                  String name, String className, String... mappings) {
+        try {
+            Class<?> clazz = Class.forName(className);
+            jakarta.servlet.ServletRegistration.Dynamic reg =
+                    ctx.addServlet(name, (Class<? extends jakarta.servlet.Servlet>) clazz);
+            if (reg != null) {
+                reg.addMapping(mappings);
+                log.debug("Registered servlet: {} -> {}", name, String.join(", ", mappings));
+            }
+        } catch (ClassNotFoundException e) {
+            log.warn("Servlet class not found, skipping: {} ({})", name, className);
+        } catch (Exception e) {
+            log.error("Failed to register servlet {}: {}", name, e.getMessage());
+        }
     }
 }
