@@ -6,12 +6,12 @@ import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.submit.CRFVersionBean;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -57,11 +57,11 @@ public class StudyEventDefinitionEndpoint {
     @Autowired
     private ICrfDAO crfDao;
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
-    private StudyEventDefinitionDAO studyEventDefinitionDao;
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
     @Autowired
-    private EventDefinitionCRFDAO eventDefinitionCRFDao;
+    private EventDefinitionCRFDao eventDefinitionCRFDao;
 
     public StudyEventDefinitionEndpoint(DataSource dataSource, MessageSource messages) {
         this.dataSource = dataSource;
