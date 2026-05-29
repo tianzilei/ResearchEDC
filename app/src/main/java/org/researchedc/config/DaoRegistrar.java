@@ -19,7 +19,8 @@ public class DaoRegistrar implements BeanDefinitionRegistryPostProcessor {
     private static final String[] SKIP_CLASSES = {
         "AbstractDomainDao", "EntityDAO", "AuditableEntityDAO",
         "DatabaseChangeLogDao", "QueryDAO",
-        "CoreResources"
+        "CoreResources",
+        "ItemFormMetadataDAO", "DatasetDAO", "ArchivedDatasetFileDAO"
     };
 
     @Override
