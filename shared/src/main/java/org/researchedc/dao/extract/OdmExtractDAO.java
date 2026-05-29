@@ -74,11 +74,11 @@ import org.researchedc.bean.submit.crfdata.ImportItemDataBean;
 import org.researchedc.bean.submit.crfdata.ImportItemGroupDataBean;
 import org.researchedc.bean.submit.crfdata.SubjectGroupDataBean;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
 import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
@@ -98,11 +98,11 @@ import org.researchedc.logic.odmExport.MetadataUnit;
 
 public class OdmExtractDAO extends DatasetDAO {
 
-    private CRFDAO<String, ArrayList> crfDao;
+    private ICrfDAO crfDao;
     private SectionDAO sectionDao;
     private IStudyDAO studyDao;
     private StudyParameterValueDAO studyParameterValueDao;
-    private Function<DataSource, CRFDAO<String, ArrayList>> crfDaoFactory = CRFDAO::new;
+    private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
     private Function<DataSource, SectionDAO> sectionDaoFactory = SectionDAO::new;
     private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
     private Function<DataSource, StudyParameterValueDAO> studyParameterValueDaoFactory = StudyParameterValueDAO::new;
@@ -3160,7 +3160,7 @@ private void fetchItemGroupMetaData(MetaDataVersionBean metadata,String cvIds, S
         study.getStudyParameterConfig().setCollectDob(param.getValue());
     }
 
-    private CRFDAO<String, ArrayList> getCrfDao() {
+    private ICrfDAO getCrfDao() {
         if (crfDao == null) {
             crfDao = crfDaoFactory.apply(this.ds);
         }

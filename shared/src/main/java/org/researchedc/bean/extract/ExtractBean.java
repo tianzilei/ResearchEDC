@@ -37,11 +37,12 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.dao.managestudy.StudyGroupDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
@@ -79,7 +80,7 @@ public class ExtractBean {
 
     private StudyBean parentStudy;
     private StudyEventDefinitionDAO studyEventDefinitionDao;
-    private CRFDAO crfDao;
+    private ICrfDAO crfDao;
     private CRFVersionDAO crfVersionDao;
     private ItemDAO itemDao;
     private ItemFormMetadataDAO itemFormMetadataDao;
@@ -87,7 +88,7 @@ public class ExtractBean {
     private StudyGroupClassDAO studyGroupClassDao;
     private StudyEventDAO studyEventDao;
     private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
-    private Function<DataSource, CRFDAO> crfDaoFactory = CRFDAO::new;
+    private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
     private Function<DataSource, CRFVersionDAO> crfVersionDaoFactory = CRFVersionDAO::new;
     private Function<DataSource, ItemDAO> itemDaoFactory = ItemDAO::new;
     private Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory = ItemFormMetadataDAO::new;
@@ -815,7 +816,7 @@ public class ExtractBean {
      */
     public void getMetadata() {
         StudyEventDefinitionDAO seddao = getStudyEventDefinitionDao();
-        CRFDAO cdao = getCrfDao();
+        ICrfDAO cdao = getCrfDao();
         CRFVersionDAO cvdao = getCrfVersionDao();
         ItemDAO idao = getItemDao();
         ItemFormMetadataDAO ifmDAO = getItemFormMetadataDao();
@@ -2970,7 +2971,7 @@ public class ExtractBean {
         return studyEventDefinitionDao;
     }
 
-    private CRFDAO getCrfDao() {
+    private ICrfDAO getCrfDao() {
         if (crfDao == null) {
             crfDao = crfDaoFactory.apply(ds);
         }

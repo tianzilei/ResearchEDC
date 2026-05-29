@@ -37,7 +37,7 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.ItemGroupMetadataBean;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
@@ -97,7 +97,7 @@ public class ExpressionService {
     private ItemGroupMetadataDAO itemGroupMetadataDao;
     private EventCRFDAO eventCRFDao;
     private ItemGroupDAO itemGroupDao;
-    private CRFDAO crfDao;
+    private ICrfDAO crfDao;
     private CRFVersionDAO crfVersionDao;
     private ItemDataDAO itemDataDao;
     private StudyEventDAO studyEventDao;
@@ -106,7 +106,7 @@ public class ExpressionService {
     private Function<DataSource, ItemDAO> itemDaoFactory;
     private Function<DataSource, ItemDataDAO> itemDataDaoFactory;
     private Function<DataSource, CRFVersionDAO> crfVersionDaoFactory;
-    private Function<DataSource, CRFDAO> crfDaoFactory;
+    private Function<DataSource, ICrfDAO> crfDaoFactory;
     private Function<DataSource, ItemGroupDAO> itemGroupDaoFactory;
     private Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory;
     private Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory;
@@ -131,7 +131,7 @@ public class ExpressionService {
     @Autowired
     public ExpressionService(DataSource ds) {
         init(ds, null, ItemDAO::new, ItemDataDAO::new, CRFVersionDAO::new,
-                CRFDAO::new, ItemGroupDAO::new, ItemGroupMetadataDAO::new,
+                LegacyDaoFactory::crfDao, ItemGroupDAO::new, ItemGroupMetadataDAO::new,
                 EventDefinitionCRFDAO::new, StudyEventDefinitionDAO::new,
                 StudyEventDAO::new, LegacyDaoFactory::studySubjectDao, EventCRFDAO::new,
                 ItemFormMetadataDAO::new);
@@ -139,7 +139,7 @@ public class ExpressionService {
 
     public ExpressionService(ExpressionObjectWrapper expressionWrapper) {
         init(expressionWrapper.getDs(), expressionWrapper, ItemDAO::new, ItemDataDAO::new,
-                CRFVersionDAO::new, CRFDAO::new, ItemGroupDAO::new,
+                CRFVersionDAO::new, LegacyDaoFactory::crfDao, ItemGroupDAO::new,
                 ItemGroupMetadataDAO::new, EventDefinitionCRFDAO::new,
                 StudyEventDefinitionDAO::new, StudyEventDAO::new, LegacyDaoFactory::studySubjectDao,
                 EventCRFDAO::new, ItemFormMetadataDAO::new);
@@ -149,7 +149,7 @@ public class ExpressionService {
             Function<DataSource, ItemDAO> itemDaoFactory,
             Function<DataSource, ItemDataDAO> itemDataDaoFactory,
             Function<DataSource, CRFVersionDAO> crfVersionDaoFactory,
-            Function<DataSource, CRFDAO> crfDaoFactory,
+            Function<DataSource, ICrfDAO> crfDaoFactory,
             Function<DataSource, ItemGroupDAO> itemGroupDaoFactory,
             Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory,
             Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory,
@@ -1523,7 +1523,7 @@ public class ExpressionService {
         return crfVersionDao;
     }
 
-    private CRFDAO getCrfDao() {
+    private ICrfDAO getCrfDao() {
         if (crfDao == null) {
             crfDao = crfDaoFactory.apply(ds);
         }

@@ -8,7 +8,8 @@ import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ResponseOptionBean;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.submit.ItemDAO;
@@ -45,7 +46,7 @@ public class RandomizeActionValidator implements Validator {
     ItemFormMetadataDAO itemFormMetadataDAO;
     EventDefinitionCRFDAO eventDefinitionCRFDAO;
     StudyEventDefinitionDAO studyEventDefinitionDAO;
-    CRFDAO crfDAO;
+    ICrfDAO crfDAO;
     DataSource dataSource;
     EventDefinitionCRFBean eventDefinitionCRFBean;
     ExpressionService expressionService;
@@ -53,7 +54,7 @@ public class RandomizeActionValidator implements Validator {
     ResourceBundle respage;
     private final Function<DataSource, ItemDAO> itemDaoFactory;
     private final Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
-    private final Function<DataSource, CRFDAO> crfDaoFactory;
+    private final Function<DataSource, ICrfDAO> crfDaoFactory;
     private final Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory;
     private final Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
 
@@ -62,7 +63,7 @@ public class RandomizeActionValidator implements Validator {
         this.dataSource = dataSource;
         this.itemDaoFactory = ItemDAO::new;
         this.studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
-        this.crfDaoFactory = CRFDAO::new;
+        this.crfDaoFactory = LegacyDaoFactory::crfDao;
         this.eventDefinitionCrfDaoFactory = EventDefinitionCRFDAO::new;
         this.itemFormMetadataDaoFactory = ItemFormMetadataDAO::new;
     }
@@ -143,7 +144,7 @@ public class RandomizeActionValidator implements Validator {
         return studyEventDefinitionDAO;
     }
 
-    public CRFDAO getCrfDAO() {
+    public ICrfDAO getCrfDAO() {
         if (crfDAO == null) {
             crfDAO = crfDaoFactory.apply(dataSource);
         }

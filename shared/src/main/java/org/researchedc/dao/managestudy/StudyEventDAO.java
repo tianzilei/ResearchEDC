@@ -29,11 +29,12 @@ import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.patterns.ocobserver.Listener;
 import org.researchedc.patterns.ocobserver.Observer;
@@ -54,9 +55,9 @@ public class StudyEventDAO extends AuditableEntityDAO implements IStudyEventDAO,
 	
 	private Observer observer;
     // private DAODigester digester;
-    private CRFDAO crfDao;
+    private ICrfDAO crfDao;
     private CRFVersionDAO crfVersionDao;
-    private Function<DataSource, CRFDAO> crfDaoFactory = CRFDAO::new;
+    private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
     private Function<DataSource, CRFVersionDAO> crfVersionDaoFactory = CRFVersionDAO::new;
 
 	    private void setQueryNames() {
@@ -1294,7 +1295,7 @@ public class StudyEventDAO extends AuditableEntityDAO implements IStudyEventDAO,
         }
     }
 
-    private CRFDAO getCrfDao() {
+    private ICrfDAO getCrfDao() {
         if (crfDao == null) {
             crfDao = crfDaoFactory.apply(this.ds);
         }

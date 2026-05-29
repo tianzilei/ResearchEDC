@@ -22,7 +22,6 @@ import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.core.CoreSecureController;
 import org.researchedc.control.form.Validator;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;

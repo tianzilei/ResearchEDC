@@ -15,7 +15,7 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.core.SessionManager;
 import org.researchedc.dao.LegacyDaoFactory;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -52,7 +52,7 @@ public class ImportDataHelper {
     private StudyEventDefinitionDAO studyEventDefinitionDao;
     private CRFVersionDAO crfVersionDao;
     private StudyEventDAO studyEventDao;
-    private CRFDAO crfDao;
+    private ICrfDAO crfDao;
     private ISubjectDAO subjectDao;
     private final Function<DataSource, EventCRFDAO> eventCrfDaoFactory;
     private final Function<DataSource, IStudyDAO> studyDaoFactory;
@@ -60,12 +60,12 @@ public class ImportDataHelper {
     private final Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
     private final Function<DataSource, CRFVersionDAO> crfVersionDaoFactory;
     private final Function<DataSource, StudyEventDAO> studyEventDaoFactory;
-    private final Function<DataSource, CRFDAO> crfDaoFactory;
+    private final Function<DataSource, ICrfDAO> crfDaoFactory;
     private final Function<DataSource, ISubjectDAO> subjectDaoFactory;
 
     public ImportDataHelper() {
         this(EventCRFDAO::new, LegacyDaoFactory::studyDao, LegacyDaoFactory::studySubjectDao,
-                StudyEventDefinitionDAO::new, CRFVersionDAO::new, StudyEventDAO::new, CRFDAO::new,
+                StudyEventDefinitionDAO::new, CRFVersionDAO::new, StudyEventDAO::new, LegacyDaoFactory::crfDao,
                 LegacyDaoFactory::subjectDao);
     }
 
@@ -75,7 +75,7 @@ public class ImportDataHelper {
             Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory,
             Function<DataSource, CRFVersionDAO> crfVersionDaoFactory,
             Function<DataSource, StudyEventDAO> studyEventDaoFactory,
-            Function<DataSource, CRFDAO> crfDaoFactory,
+            Function<DataSource, ICrfDAO> crfDaoFactory,
             Function<DataSource, ISubjectDAO> subjectDaoFactory) {
         this.eventCrfDaoFactory = eventCrfDaoFactory;
         this.studyDaoFactory = studyDaoFactory;
@@ -319,7 +319,7 @@ public class ImportDataHelper {
         return studyEventDao;
     }
 
-    private CRFDAO getCrfDao() {
+    private ICrfDAO getCrfDao() {
         if (crfDao == null) {
             crfDao = crfDaoFactory.apply(sm.getDataSource());
         }

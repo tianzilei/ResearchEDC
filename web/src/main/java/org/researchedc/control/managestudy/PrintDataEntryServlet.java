@@ -30,7 +30,6 @@ import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.DataEntryServlet;
 import org.researchedc.control.submit.SubmitDataServlet;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;

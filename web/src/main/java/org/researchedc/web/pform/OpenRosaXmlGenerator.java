@@ -24,7 +24,6 @@ import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.managestudy.CRFVersionMetadataUtil;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.RuleActionPropertyDao;
