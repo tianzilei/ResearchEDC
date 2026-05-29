@@ -12,7 +12,6 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;

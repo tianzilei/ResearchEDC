@@ -31,7 +31,7 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
 import org.researchedc.dao.hibernate.RuleDao;
@@ -117,7 +117,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     @Autowired
     private IStudySubjectDAO studySubjecdao;
     @Autowired
-    private CRFDAO crfDao;
+    private ICrfDAO crfDao;
     @Autowired
     private CRFVersionDAO crfVersionDao;
 
@@ -1037,7 +1037,7 @@ public class RuleSetService implements RuleSetServiceInterface {
         this.ruleDao = ruleDao;
     }
 
-    private CRFDAO getCrfDao() {
+    private ICrfDAO getCrfDao() {
         return crfDao;
     }
 

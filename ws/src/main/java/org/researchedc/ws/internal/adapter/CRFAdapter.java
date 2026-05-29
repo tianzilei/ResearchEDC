@@ -4,15 +4,15 @@ import java.util.ArrayList;
 
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class CRFAdapter {
 
-    private final CRFDAO delegate;
+    private final ICrfDAO delegate;
 
-    public CRFAdapter(CRFDAO delegate) {
+    public CRFAdapter(ICrfDAO delegate) {
         this.delegate = delegate;
     }
 
@@ -29,7 +29,7 @@ public class CRFAdapter {
         return (ArrayList<CRFBean>) delegate.findAllActiveByDefinition(sed);
     }
 
-    public CRFDAO getDelegate() {
+    public ICrfDAO getDelegate() {
         return delegate;
     }
 }

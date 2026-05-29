@@ -19,12 +19,13 @@ import org.researchedc.bean.rule.RuleSetBean;
 import org.researchedc.bean.rule.expression.Context;
 import org.researchedc.bean.rule.expression.ExpressionBean;
 import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.service.rule.expression.ExpressionService;
@@ -52,13 +53,13 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
     private StudyEventDefinitionDAO studyEventDefinitionDAO;
     private RuleDAO ruleDao;
     private ExpressionDAO expressionDao;
-    private CRFDAO crfDao;
+    private ICrfDAO crfDao;
     private CRFVersionDAO crfVersionDao;
     private ExpressionService expressionService;
     private RuleSetRuleDAO ruleSetRuleDao;
     private RuleSetAuditDAO ruleSetAuditDao;
     private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
-    private Function<DataSource, CRFDAO> crfDaoFactory = CRFDAO::new;
+    private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
     private Function<DataSource, CRFVersionDAO> crfVersionDaoFactory = CRFVersionDAO::new;
     private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
     private Function<DataSource, RuleDAO> ruleDaoFactory = RuleDAO::new;
@@ -83,7 +84,7 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
         return studyEventDefinitionDAO;
     }
 
-    private CRFDAO getCrfDao() {
+    private ICrfDAO getCrfDao() {
         if (crfDao == null) {
             crfDao = crfDaoFactory.apply(ds);
         }

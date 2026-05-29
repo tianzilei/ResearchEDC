@@ -34,7 +34,7 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.DisplayEventCRFBean;
 import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
@@ -62,7 +62,7 @@ public class StudySubjectServiceImpl implements StudySubjectService {
     @Autowired
     private EventCRFDAO eventCrfDao;
     @Autowired
-    private CRFDAO crfDao;
+    private ICrfDAO crfDao;
     @Autowired
     private CRFVersionDAO crfVersionDao;
 

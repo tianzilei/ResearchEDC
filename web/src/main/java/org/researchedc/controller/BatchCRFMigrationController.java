@@ -40,7 +40,6 @@ import org.researchedc.core.EmailEngine;
 import org.researchedc.core.OpenClinicaMailSender;
 import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.submit.CRFVersionDAO;

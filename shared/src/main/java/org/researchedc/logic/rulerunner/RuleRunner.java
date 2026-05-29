@@ -9,7 +9,7 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.SectionBean;
-import org.researchedc.dao.admin.CRFDAO;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
@@ -53,7 +53,7 @@ public class RuleRunner {
     private RuleSetDAO ruleSetDao;
     private RuleSetRuleDAO ruleSetRuleDao;
     private RuleActionDAO ruleActionDao;
-    private CRFDAO crfDao;
+    private ICrfDAO crfDao;
     private CRFVersionDAO crfVersionDao;
     private StudyEventDAO studyEventDao;
     private ItemDataDAO itemDataDao;
@@ -202,7 +202,7 @@ public class RuleRunner {
         return ruleSetDao;
     }
 
-    CRFDAO getCrfDao() {
+    ICrfDAO getCrfDao() {
         return crfDao;
     }
 
@@ -262,7 +262,7 @@ public class RuleRunner {
         return discrepancyNoteDao;
     }
 
-    public void setDaoCollaborators(RuleSetDAO ruleSetDao, CRFDAO crfDao, RuleSetRuleDAO ruleSetRuleDao, RuleActionDAO ruleActionDao,
+    public void setDaoCollaborators(RuleSetDAO ruleSetDao, ICrfDAO crfDao, RuleSetRuleDAO ruleSetRuleDao, RuleActionDAO ruleActionDao,
             StudyEventDAO studyEventDao, ItemDataDAO itemDataDao, EventCRFDAO eventCrfDao, CRFVersionDAO crfVersionDao,
             IStudySubjectDAO studySubjectDao, ItemFormMetadataDAO itemFormMetadataDao, SectionDAO sectionDao, IStudyDAO studyDao,
             StudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,

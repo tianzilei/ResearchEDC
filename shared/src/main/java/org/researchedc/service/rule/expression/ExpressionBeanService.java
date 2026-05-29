@@ -21,7 +21,6 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.dao.LegacyDaoFactory;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.spi.IStudySubjectDAO;

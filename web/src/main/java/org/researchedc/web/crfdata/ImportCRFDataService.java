@@ -49,7 +49,6 @@ import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.Validator;
 import org.researchedc.control.submit.ImportCRFInfoContainer;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;

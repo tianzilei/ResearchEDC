@@ -16,7 +16,6 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
@@ -67,7 +66,7 @@ public class UnlockCRFVersionServlet extends SecureController {
        }
        
        CRFVersionDAO cvdao = this.crfVersionDao;
-        CRFDAO cdao = (CRFDAO) this.crfDao;
+        ICrfDAO cdao = this.crfDao;
        
        CRFVersionBean version = (CRFVersionBean)cvdao.findByPK(crfVersionId);
        CRFBean crf = (CRFBean)cdao.findByPK(version.getCrfId());
