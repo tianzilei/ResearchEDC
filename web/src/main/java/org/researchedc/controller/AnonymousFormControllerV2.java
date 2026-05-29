@@ -14,14 +14,12 @@ import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
@@ -59,7 +57,7 @@ public class AnonymousFormControllerV2 {
     protected IStudyDAO studyDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
 
     @Autowired
     @Qualifier("dataSource")
@@ -119,7 +117,7 @@ public class AnonymousFormControllerV2 {
             if (edcBeans.size() != 0) {
                 EventDefinitionCRFBean edcBean = edcBeans.get(0);
                 ICrfDAO crfdao = this.crfDao;
-                CRFVersionDAO cvdao = this.crfVersionDao;
+                ICrfVersionDAO cvdao = this.crfVersionDao;
                 IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
 
                 CRFVersionBean crfVersionBean = (CRFVersionBean) cvdao.findByPK(edcBean.getDefaultVersionId());

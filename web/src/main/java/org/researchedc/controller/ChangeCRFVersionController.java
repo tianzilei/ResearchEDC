@@ -13,16 +13,12 @@ import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
@@ -94,7 +90,7 @@ public class ChangeCRFVersionController {
     protected AuditDAO auditDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
     @Autowired
     @Qualifier("dataSource")
     private DataSource dataSource;
@@ -173,7 +169,7 @@ public class ChangeCRFVersionController {
         
         ICrfDAO cdao = this.crfDao;
         CRFBean crfBean = (CRFBean)cdao.findByPK(crfId);
-        CRFVersionDAO crfVersionDao = this.crfVersionDao;
+        ICrfVersionDAO crfVersionDao = this.crfVersionDao;
         ArrayList<CRFVersionBean> versions = (ArrayList<CRFVersionBean>) crfVersionDao.findAllActiveByCRF(crfId);
         IStudyEventDefinitionDAO sfed = this.studyEventDefinitionDao;
     	StudyEventDefinitionBean sedb =   sfed.findByEventDefinitionCRFId(eventDefinitionCRFId);
