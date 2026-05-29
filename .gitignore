@@ -197,3 +197,4 @@ lib/
 target-old*/
 *.bak/
 org/springframework/
+.playwright-mcp/
