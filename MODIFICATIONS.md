@@ -6,6 +6,43 @@
 
 ---
 
+## 2026-05-29 — Legacy DAO SPI consumer refactor
+
+- **模块:** `app`, `shared`, `web`, `ws`
+- **提交:** `10f0f6ea2` (`Refactor legacy DAO consumers to SPI`)
+- **原因:** 继续 Phase C legacy refactor，将高频 legacy DAO 消费端从具体 DAO 类型收窄到 SPI 接口，降低后续模块化替换和 DAO 删除风险。
+
+### 变更内容
+
+1. **DAO 注册与构造边界:**
+   - 新增 `app/src/main/java/org/researchedc/config/DaoRegistrar.java`，集中扫描并注册 legacy DAO bean。
+   - `shared/src/main/java/org/researchedc/dao/LegacyDaoFactory.java` 继续作为少量手工构造的 containment boundary，并新增/保留 `IStudyDAO`、`IStudySubjectDAO`、`ISubjectDAO`、`IUserAccountDAO` 返回类型。
+
+2. **SPI 消费端收敛:**
+   - `StudyDAO`、`StudySubjectDAO`、`SubjectDAO`、`UserAccountDAO` 的 shared/web/ws/app 消费端改为 `IStudyDAO`、`IStudySubjectDAO`、`ISubjectDAO`、`IUserAccountDAO`。
+   - `OidcSessionBridgeSuccessHandler`、legacy controller/filter/job/validator 等路径通过 SPI 访问 user account 数据。
+   - `Validator` 相关 username/entity 校验支持 SPI user-account DAO，减少对具体 `UserAccountDAO` 的依赖。
+
+3. **当前边界状态:**
+   - `StudyDAO` / `StudySubjectDAO` / `SubjectDAO` / `UserAccountDAO` 具体类型引用已降为边界点：DAO 实现类、`LegacyDaoFactory`，以及 `ws/internal/adapter/UserAccountAdapter`。
+   - DAO `.java` 文件仍不能删除；它们仍是当前 SPI 实现或 adapter delegate，其他 DAO family 也仍有具体类型依赖。
+
+4. **后续未提交 CRF slice:**
+   - `ws/src/main/java/org/researchedc/web/job/CrfBusinessLogicHelper.java`
+   - `ws/src/main/java/org/researchedc/web/crfdata/ImportCRFDataService.java`
+   - `ws/src/main/java/org/researchedc/ws/StudyEventDefinitionEndpoint.java`
+   - 上述 3 个 WS 文件已从具体 `CRFDAO` 字段/import 改为 `ICrfDAO`；`CRFDAO` 在 shared rule/import/export 与 web servlet/controller 中仍有较大具体引用面。
+
+### 验证
+
+| 检查 | 状态 |
+|------|------|
+| `git diff --check` | ✅ |
+| `mvn -pl app -am compile -DskipTests` | ✅ |
+| `mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` | ✅ committed slice |
+
+---
+
 ## 2026-05-27 — 部署方式收敛为 Bare Deploy
 
 - **模块:** deploy, scripts, docs, CI

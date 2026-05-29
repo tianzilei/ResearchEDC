@@ -202,20 +202,21 @@ python -m pytest app/tests/ -v
 - **Version:** 0.1
 - **legacy-core → shared:** `legacy-core/` was removed on 2026-05-23. All code consolidated into `shared/` module with `@Repository`/`@Service` annotations and package rename to `org.researchedc`.
 - **Frontend TypeScript:** ✅ `pnpm typecheck` — 0 errors (strict mode).
-- **DAO constructor baseline:** `DaoProvider` bridge has been removed. Direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) is now 0 matches across `shared/`, `web/`, and `ws/` as of 2026-05-28; remaining legacy removal work is module extraction and concrete DAO type dependency replacement.
+- **DAO constructor baseline:** `DaoProvider` bridge has been removed. Direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) is now 0 matches across `shared/`, `web/`, and `ws/` as of 2026-05-29; remaining legacy removal work is module extraction and concrete DAO type dependency replacement.
 
-### Paused Legacy DAO Refactor Handoff (2026-05-28)
+### Legacy DAO Refactor Handoff (2026-05-29)
 
-- **Pause point:** committed `0be81d278` (`Refactor legacy DAO dependencies to SPI`), then user requested to pause the refactor and persist the state here.
-- **Verified gates at pause:** `mvn -pl app -am compile -DskipTests` ✅, `mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` ✅, `git diff --check` ✅.
-- **Completed in latest slice:** WS layer concrete `StudyDAO` / `StudySubjectDAO` / `SubjectDAO` references are 0; shared/web/ws/app concrete type matches for this DAO family dropped to 269; new `shared/src/main/java/org/researchedc/dao/LegacyDaoFactory.java` centralizes default SPI-returning construction for `IStudyDAO`, `IStudySubjectDAO`, and `ISubjectDAO`; `IStudySubjectDAO` was extended with `findStudySubjectIdsByStudyIds`.
-- **Current measured state:** `rg -n "\b(StudyDAO|StudySubjectDAO|SubjectDAO)\b" shared/src/main/java web/src/main/java ws/src/main/java app/src/main/java -g '*.java' | wc -l` returns `269`.
-- **Remaining `::new` hotspots:** `shared/.../dao/admin/AuditEventDAO.java`, `shared/.../dao/login/UserAccountDAO.java`, `shared/.../dao/extract/OdmExtractDAO.java`, `shared/.../dao/service/StudyConfigService.java`, `shared/.../dao/managestudy/{DiscrepancyNoteDAO,EventDefinitionCRFDAO,StudyEventDefinitionDAO}.java`. These are DAO implementation internals; inspect carefully before converting because some may legitimately remain as containment points until module extraction.
-- **Next low-risk resume targets:** web consumer classes with local concrete imports/fields such as `web/src/main/java/org/researchedc/web/table/sdv/SDVUtil.java`, `web/src/main/java/org/researchedc/controller/{OdmController,BatchCRFMigrationController}.java`, and `web/src/main/java/org/researchedc/control/**` servlets. Prefer widening fields/constructor parameters to `IStudyDAO`, `IStudySubjectDAO`, or `ISubjectDAO` when the SPI already exposes the needed method.
+- **Latest committed slice:** `10f0f6ea2` (`Refactor legacy DAO consumers to SPI`) widens the high-volume `StudyDAO` / `StudySubjectDAO` / `SubjectDAO` / `UserAccountDAO` consumers to SPI interfaces and adds `app/src/main/java/org/researchedc/config/DaoRegistrar.java` for central DAO registration.
+- **Verified gates for committed slice:** `git diff --check` ✅, `mvn -pl app -am compile -DskipTests` ✅, `mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` ✅.
+- **Current measured state:** concrete references for `StudyDAO` / `StudySubjectDAO` / `SubjectDAO` / `UserAccountDAO` are boundary-only: DAO implementation classes, `shared/src/main/java/org/researchedc/dao/LegacyDaoFactory.java`, and `ws/src/main/java/org/researchedc/ws/internal/adapter/UserAccountAdapter.java`.
+- **Uncommitted follow-up slice:** three WS CRF files have been widened from concrete `CRFDAO` fields/imports to `ICrfDAO`: `ws/.../CrfBusinessLogicHelper.java`, `ws/.../ImportCRFDataService.java`, and `ws/.../StudyEventDefinitionEndpoint.java`. `mvn -pl app -am compile -DskipTests` and `git diff --check` passed before this documentation refresh.
+- **Remaining CRFDAO surface:** `CRFDAO` still has broad concrete references in shared rule/import/export logic and web controllers/servlets. Continue one workflow at a time; prefer SPI widening only when `ICrfDAO` exposes every invoked method.
+- **Remaining `::new` hotspots:** DAO implementation internals still use local factories such as `CRFDAO::new`, `RuleSetDAO` collaborators, ODM/import/export helpers, and other concrete DAO containment points. Inspect carefully before converting because some should remain until module extraction.
+- **Next low-risk resume targets:** web consumer classes with local concrete `CRFDAO` imports/fields such as `web/src/main/java/org/researchedc/controller/{OdmController,BatchCRFMigrationController}.java`, `web/src/main/java/org/researchedc/web/table/sdv/SubjectIdSDVFactory.java`, and focused `web/src/main/java/org/researchedc/control/**` servlets where `ICrfDAO` already covers the calls.
 - **Resume commands:**
   - `git status --short`
-  - `rg -n "\b(StudyDAO|StudySubjectDAO|SubjectDAO)\b" shared/src/main/java web/src/main/java ws/src/main/java app/src/main/java -g '*.java' | wc -l`
-  - `rg -n "\b(StudyDAO|StudySubjectDAO|SubjectDAO)\b" shared/src/main/java web/src/main/java ws/src/main/java app/src/main/java -g '*.java' | cut -d: -f1 | sort | uniq -c | sort -nr | head -80`
+  - `rg -n "\b(StudyDAO|StudySubjectDAO|SubjectDAO|UserAccountDAO)\b" shared/src/main/java web/src/main/java ws/src/main/java app/src/main/java -g '*.java'`
+  - `rg -n "\bCRFDAO\b" shared/src/main/java web/src/main/java ws/src/main/java app/src/main/java -g '*.java' | head -120`
   - `mvn -pl app -am compile -DskipTests`
   - `mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
 - **Refactor rule of thumb:** do not modify released migrations, do not bypass `SecureController`, do not add new legacy code to `shared/` unless it is a temporary containment helper, and do not change concrete DAO implementation internals without verifying the SPI covers every invoked method.
