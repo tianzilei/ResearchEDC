@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 
 public class HelperObject {
 

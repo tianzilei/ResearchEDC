@@ -24,7 +24,7 @@ import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.SourceDataVerification;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;
@@ -48,7 +48,7 @@ import org.researchedc.dao.spi.IStudyParameterValueDAO;
 public class ViewSiteServlet extends SecureController {
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
 
@@ -121,7 +121,7 @@ EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
         ArrayList<StudyEventDefinitionBean> seds = new ArrayList<StudyEventDefinitionBean>();
         IStudyEventDefinitionDAO sedDao = this.studyEventDefinitionDao;
         EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         ICrfDAO cdao = this.crfDao;
         seds = sedDao.findAllByStudy(siteToView);
         int start = 0;
