@@ -25,7 +25,7 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.DataEntryServlet;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -55,7 +55,7 @@ public class PrintCRFServlet extends DataEntryServlet {
 
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private ItemGroupDAO itemGroupDao;
     @Autowired
@@ -108,7 +108,7 @@ Locale locale;
         // EventDefinitionCRFDao findByStudyEventIdAndCRFVersionId(int
         // studyEventId, int crfVersionId)
         SectionDAO sdao = this.sectionDao;
-        CRFVersionDAO crfVersionDAO = this.crfVersionDao;
+        ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
         ICrfDAO crfDao = this.crfDao;
 
         ArrayList <SectionBean> allSectionBeans = new ArrayList<SectionBean>();
