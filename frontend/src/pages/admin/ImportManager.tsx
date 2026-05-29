@@ -22,10 +22,10 @@ export default function ImportManager() {
         message.success("File uploaded for import");
         setUploadOpen(false);
       } else {
-        window.open("/legacy/ImportCRFData", "_blank");
+        window.open("/ImportCRFData", "_blank");
       }
     } catch {
-      window.open("/legacy/ImportCRFData", "_blank");
+      window.open("/ImportCRFData", "_blank");
     }
     return false;
   };
@@ -67,7 +67,7 @@ export default function ImportManager() {
         <Space direction="vertical" style={{ width: "100%" }} size={12}>
           {importTypes.map((item) => (
             <Card key={item.type} size="small" hoverable
-              onClick={() => window.open(`/legacy/${item.jsp}`, "_blank")}>
+              onClick={() => window.open(`/${item.jsp}`, "_blank")}>
               <Space>
                 <div>
                   <Text strong>{item.type}</Text>
@@ -82,7 +82,7 @@ export default function ImportManager() {
 
       <Card title="导入历史">
         <Empty description="通过旧版页面导入。历史记录可通过 LegacyFrame 查看。">
-          <Button type="primary" onClick={() => window.open("/legacy/ViewImportJobs", "_blank")}>
+          <Button type="primary" onClick={() => window.open("/ViewImportJob", "_blank")}>
             查看导入任务
           </Button>
         </Empty>
@@ -102,7 +102,7 @@ export default function ImportManager() {
           </Upload.Dragger>
           <Text type="secondary" style={{ textAlign: "center", display: "block", marginTop: 8 }}>
             复杂导入请使用
-            <a onClick={() => { setUploadOpen(false); window.open("/legacy/ImportCRFData", "_blank"); }}
+            <a onClick={() => { setUploadOpen(false); window.open("/ImportCRFData", "_blank"); }}
               style={{ marginLeft: 4 }}>
               旧版导入页面
             </a>
