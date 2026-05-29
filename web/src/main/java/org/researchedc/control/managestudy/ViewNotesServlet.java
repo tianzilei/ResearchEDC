@@ -33,9 +33,9 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
@@ -61,7 +61,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ViewNotesServlet extends SecureController {
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private IDiscrepancyNoteDAO discrepancyNoteDao;
     @Autowired
@@ -178,7 +178,7 @@ public static final String PRINT = "print";
         ISubjectDAO sdao = this.subjectDao;
 
         IUserAccountDAO uadao = this.userAccountDao;
-        CRFVersionDAO crfVersionDao = this.crfVersionDao;
+        ICrfVersionDAO crfVersionDao = this.crfVersionDao;
         ICrfDAO crfDao = this.crfDao;
         IStudyEventDAO studyEventDao = this.studyEventDao;
         IStudyEventDefinitionDAO studyEventDefinitionDao = this.studyEventDefinitionDao;

@@ -33,9 +33,9 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ISubjectDAO;
@@ -61,7 +61,7 @@ public class ViewStudySubjectAuditLogServlet extends SecureController {
     @Autowired
     private AuditDao auditDao;
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
@@ -112,7 +112,7 @@ public class ViewStudySubjectAuditLogServlet extends SecureController {
         EventCRFDao ecdao = this.eventCrfDao;
         IStudyDAO studydao = this.studyDao;
         ICrfDAO cdao = this.crfDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
 
         ArrayList studySubjectAudits = new ArrayList();
         ArrayList eventCRFAudits = new ArrayList();

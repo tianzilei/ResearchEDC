@@ -58,7 +58,6 @@ import org.jmesa.view.editor.DateCellEditor;
 import org.jmesa.view.html.HtmlBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ListNotesTableFactory extends AbstractTableFactory {
