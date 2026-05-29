@@ -16,8 +16,8 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;
 import org.researchedc.view.Page;
 
@@ -59,7 +59,7 @@ public class ViewEventDefinitionReadOnlyServlet extends ViewEventDefinitionServl
         EventDefinitionCRFDao edao = this.eventDefinitionCrfDao;
         ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllByDefinition(this.currentStudy, sed.getId());
 
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         ICrfDAO cdao = this.crfDao;
 
         for (int i = 0; i < eventDefinitionCRFs.size(); i++) {
