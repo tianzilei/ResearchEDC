@@ -12,8 +12,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.CRFVersionBean;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class ViewSectionDataEntryByIdServlet extends ViewSectionDataEntryServlet
 
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
 
 private static final long serialVersionUID = 1L;
 
@@ -52,7 +52,7 @@ private static final long serialVersionUID = 1L;
         IStudyDAO studyDao = this.studyDao;
        
         StudyBean  currentStudy = (StudyBean) studyDao.findByPK(1);
-        CRFVersionDAO crfVersionDao = this.crfVersionDao;
+        ICrfVersionDAO crfVersionDao = this.crfVersionDao;
         if (request.getParameter("id") == null) {
             forwardPage(Page.LOGIN, request, response);
         }
