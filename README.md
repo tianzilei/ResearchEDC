@@ -1,7 +1,7 @@
 # ResearchEDC
 
 - Version: 0.1
-- Last updated: 2026-05-29
+- Last updated: 2026-05-30
 - License: GNU LGPL
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x.
@@ -71,9 +71,13 @@ Current baseline from project notes:
 |-------|--------|
 | Backend compile | Passing |
 | Modulith verification | Passing |
+| Java module tests | 235/235 passing |
 | Frontend typecheck | 0 errors |
 | Frontend tests | 25/25 passing |
-| Questionnaire service tests | 31/31 passing |
+| Questionnaire service tests | 39/39 passing |
+| Chinese encoding | Full-stack UTF-8 verified |
+| Import/Export | REST API + pg_dump verified |
+| SPA E2E | Login → Dashboard verified |
 
 ## Documentation
 
