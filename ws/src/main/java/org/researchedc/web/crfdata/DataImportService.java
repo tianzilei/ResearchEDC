@@ -28,8 +28,8 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.dao.core.CoreResources;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.exception.OpenClinicaException;
@@ -59,7 +59,7 @@ public class DataImportService {
     @Autowired
     private ItemDataDAO itemDataDao;
     @Autowired
-    private EventCRFDAO eventCrfDao;
+    private EventCRFDao eventCrfDao;
     @Autowired
     private ItemDAO itemDao;
     @Autowired

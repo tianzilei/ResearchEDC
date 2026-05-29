@@ -16,9 +16,9 @@ import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.managestudy.SubjectTransferBean;
 import org.researchedc.bean.submit.SubjectBean;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
@@ -96,9 +96,9 @@ public class StudySubjectEndpoint {
     @Autowired
     private IStudySubjectDAO studySubjectDao;
     @Autowired
-    private StudyEventDAO studyEventDao;
+    private IStudyEventDAO studyEventDao;
     @Autowired
-    private StudyEventDefinitionDAO studyEventDefinitionDao;
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
     @Autowired
     private SubjectTransferValidator subjectTransferValidator;
     private final Locale locale;
