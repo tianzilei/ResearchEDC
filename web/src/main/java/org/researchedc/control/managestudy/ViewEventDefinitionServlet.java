@@ -27,9 +27,9 @@ import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.hibernate.EventDefinitionCrfTagDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.datamap.CrfBean;
@@ -50,7 +50,7 @@ import org.researchedc.dao.spi.IStudyParameterValueDAO;
 public class ViewEventDefinitionServlet extends SecureController {
    
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
     @Autowired
     protected EventDefinitionCRFDao eventDefinitionCrfDao;
 
@@ -100,7 +100,7 @@ EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
             EventDefinitionCRFDao edao = this.eventDefinitionCrfDao;
             ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllByDefinition(this.currentStudy, defId);
 
-            CRFVersionDAO cvdao = this.crfVersionDao;
+            ICrfVersionDAO cvdao = this.crfVersionDao;
             ICrfDAO cdao = this.crfDao;
 
             for (int i = 0; i < eventDefinitionCRFs.size(); i++) {
