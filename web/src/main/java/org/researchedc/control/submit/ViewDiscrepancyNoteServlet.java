@@ -44,6 +44,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
@@ -51,7 +52,6 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
@@ -74,7 +74,7 @@ public class ViewDiscrepancyNoteServlet extends SecureController {
     protected AuditDAO auditDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
 
     Locale locale;
     // < ResourceBundleresexception,respage;
@@ -274,7 +274,7 @@ public class ViewDiscrepancyNoteServlet extends SecureController {
                 se.setName(sedb.getName());
                 request.setAttribute("studyEvent", se);
 
-                CRFVersionDAO cvdao = this.crfVersionDao;
+                ICrfVersionDAO cvdao = this.crfVersionDao;
                 CRFVersionBean cv = (CRFVersionBean) cvdao.findByPK(ec.getCRFVersionId());
 
                 ICrfDAO cdao = this.crfDao;
@@ -692,7 +692,7 @@ public class ViewDiscrepancyNoteServlet extends SecureController {
         studyEventBean.setName(sedb.getName());
         request.setAttribute("studyEvent", studyEventBean);
 
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         CRFVersionBean cv = (CRFVersionBean) cvdao.findByPK(eventCRFBean.getCRFVersionId());
 
         ICrfDAO cdao = this.crfDao;
