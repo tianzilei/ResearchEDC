@@ -241,16 +241,18 @@ cmd_setup() {
 
     mkdir -p "${DATA_DIR}" "${LOG_DIR}" "${PID_DIR}" "${CONFIG_DIR}"
 
+    local uv_was_installed=true
     if ! command -v uv &>/dev/null; then
+        uv_was_installed=false
         log_info "Installing uv..."
         curl -LsSf https://astral.sh/uv/install.sh | sh
         export PATH="$HOME/.local/bin:$PATH"
         log_ok "uv installed"
     else
-        log_ok "uv already installed — skipping Python and venv setup"
+        log_ok "uv already installed — skipping setup"
     fi
 
-    if ! command -v uv &>/dev/null; then
+    if [ "${uv_was_installed}" = "false" ]; then
         if ! command -v python3 &>/dev/null; then
             log_warn "python3 not found, installing via uv..."
             uv python install 3.12
