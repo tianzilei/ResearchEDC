@@ -36,8 +36,8 @@ import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.hibernate.MeasurementUnitDao;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
@@ -104,7 +104,7 @@ public class SpreadSheetTableClassic implements SpreadSheetTable {
     @Autowired
     private ItemDAO itemDao;
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private ItemGroupDAO itemGroupDaoField;
 
@@ -165,7 +165,7 @@ public class SpreadSheetTableClassic implements SpreadSheetTable {
 
         IItemDataDAO iddao = this.itemDataDao;
         ItemDAO idao = this.itemDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         ItemGroupDAO itemGroupDao = this.itemGroupDaoField;
 
         int validSheetNum = 0;
