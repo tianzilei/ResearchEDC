@@ -7,6 +7,7 @@ import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.PreparedStatementFactory;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.exception.OpenClinicaException;
 
 import java.sql.Connection;
@@ -25,7 +26,7 @@ import javax.sql.DataSource;
 /**
  * Created by IntelliJ IDEA. User: bruceperry Date: May 8, 2007
  */
-public class ItemGroupDAO<K extends String,V extends ArrayList> extends AuditableEntityDAO {
+public class ItemGroupDAO<K extends String,V extends ArrayList> extends AuditableEntityDAO implements IItemGroupDAO {
 
     public ItemGroupDAO(DataSource ds) {
         super(ds);
