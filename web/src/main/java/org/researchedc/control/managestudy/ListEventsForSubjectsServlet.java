@@ -21,11 +21,11 @@ import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ISubjectDAO;
@@ -46,7 +46,7 @@ public class ListEventsForSubjectsServlet extends SecureController {
 
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
@@ -202,10 +202,10 @@ public class ListEventsForSubjectsServlet extends SecureController {
         return crfDAO;
     }
 
-    public CRFVersionDAO getCRFVersionDAO(){
-    	CRFVersionDAO	crfVersionDAO =this.crfVersionDao;
-    	return crfVersionDAO;
-    	}
+    public ICrfVersionDAO getCRFVersionDAO() {
+        ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
+        return crfVersionDAO;
+    }
     public StudyGroupDAO getStudyGroupDAO() {
         studyGroupDAO = this.studyGroupDAO == null ? this.studyGroupDao : studyGroupDAO;
         return (StudyGroupDAO) studyGroupDAO;
