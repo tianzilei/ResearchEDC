@@ -87,6 +87,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
@@ -97,7 +98,6 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
@@ -154,7 +154,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
     protected AuditDAO auditDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
 
     @Autowired
     protected ItemFormMetadataDAO itemFormMetadataDao;
@@ -555,7 +555,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         StudyEventDefinitionBean studyEventDefinition = (StudyEventDefinitionBean) seddao.findByPK(edcBean.getStudyEventDefinitionId());
 
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         CRFVersionBean crfVersionBean = (CRFVersionBean) cvdao.findByPK(ecb.getCRFVersionId());
 
         Phase phase2 = Phase.INITIAL_DATA_ENTRY;
@@ -2373,7 +2373,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
             throw new InconsistentStateException(Page.LIST_STUDY_SUBJECTS_SERVLET, resexception.getString("begin_data_entry_without_event_but_study"));
         }
 
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         EntityBean eb = cvdao.findByPK(crfVersionId);
 
         if (eb.getId() <= 0) {
@@ -3308,7 +3308,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
         section.setSection(sb);
 
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         CRFVersionBean cvb = (CRFVersionBean) cvdao.findByPK(ecb.getCRFVersionId());
         section.setCrfVersion(cvb);
 
@@ -3395,7 +3395,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
             section.setSection(sb);
 
-            CRFVersionDAO cvdao = this.crfVersionDao;
+            ICrfVersionDAO cvdao = this.crfVersionDao;
             CRFVersionBean cvb = (CRFVersionBean) cvdao.findByPK(ecb.getCRFVersionId());
             section.setCrfVersion(cvb);
 
@@ -4019,7 +4019,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         ArrayList allCRFs = ecdao.findAllByStudyEventAndStatus(seb,Status.UNAVAILABLE);
         StudyBean study = (StudyBean) session.getAttribute("study");
         ArrayList allEDCs = (ArrayList) edcdao.findAllActiveByEventDefinitionId(study, seb.getStudyEventDefinitionId());
-        CRFVersionDAO crfversionDao=  this.crfVersionDao;
+        ICrfVersionDAO crfversionDao=  this.crfVersionDao;
         boolean eventCompleted = true;
         boolean allRequired = true;
         //JN Adding another flag

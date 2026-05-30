@@ -34,6 +34,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.managestudy.ViewStudySubjectServlet;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
@@ -43,7 +44,6 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -63,7 +63,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
     protected RuleSetDAO ruleSetDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
 
     Locale locale;
     // < ResourceBundleresexception,respage;
@@ -319,7 +319,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
             startedButIncompleted.put(Integer.valueOf(edcrf.getCrfId()), new EventCRFBean());
         }
 
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         ItemDataDAO iddao = this.itemDataDao;
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecrf = (EventCRFBean) eventCRFs.get(i);
@@ -382,7 +382,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
 
     private void populateUncompletedCRFsWithCRFAndVersions(ArrayList uncompletedEventDefinitionCRFs) {
         ICrfDAO cdao = this.crfDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
 
         int size = uncompletedEventDefinitionCRFs.size();
         for (int i = 0; i < size; i++) {
@@ -473,7 +473,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
         }
 
         ICrfDAO cdao = this.crfDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         ItemDataDAO iddao = this.itemDataDao;
 
         for (i = 0; i < eventCRFs.size(); i++) {
@@ -563,7 +563,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
      *         event, ordered by the EventDefinitionCRF ordinal property, and
      *         with flags already set.
      */
-    public static ArrayList getDisplayEventCRFs(StudyEventBean studyEvent, EventCRFDao ecdao, EventDefinitionCRFDao edcdao, CRFVersionDAO crfvdao,
+    public static ArrayList getDisplayEventCRFs(StudyEventBean studyEvent, EventCRFDao ecdao, EventDefinitionCRFDao edcdao, ICrfVersionDAO crfvdao,
             UserAccountBean user, StudyUserRoleBean surb) {
         ArrayList answer = new ArrayList();
         HashMap indexByCRFId = new HashMap();

@@ -26,6 +26,7 @@ import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.EventCrfDao;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -35,7 +36,6 @@ import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -86,7 +86,7 @@ public class OdmController {
     protected IStudyDAO studyDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
     @Autowired
     protected EventCRFDAO legacyEventCrfDao;
     @Autowired
@@ -264,7 +264,7 @@ public class OdmController {
             return null;
         }
 
-        CRFVersionDAO versionDAO = this.crfVersionDao;
+        ICrfVersionDAO versionDAO = this.crfVersionDao;
         IStudyDAO studyDAO = this.studyDao;
         IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
         EventCRFDAO eventCRFDAO = this.legacyEventCrfDao;

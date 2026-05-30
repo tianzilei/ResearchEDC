@@ -22,11 +22,11 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.MeasurementUnitDao;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
@@ -63,7 +63,7 @@ import java.util.Set;
 public class CreateCRFVersionServlet extends SecureController {
 
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private ItemFormMetadataDAO itemFormMetadataDao;
 
@@ -97,7 +97,7 @@ public class CreateCRFVersionServlet extends SecureController {
         panel.setStudyInfoShown(true);
 
         ICrfDAO cdao = this.crfDao;
-        CRFVersionDAO vdao = this.crfVersionDao;
+        ICrfVersionDAO vdao = this.crfVersionDao;
         EventDefinitionCRFDao edao = this.eventDefinitionCrfDao;
 
         FormProcessor fp = new FormProcessor(request);
@@ -282,7 +282,7 @@ public class CreateCRFVersionServlet extends SecureController {
                     // YW << for add a link to "View CRF Version Data Entry".
                     // For this purpose, CRFVersion id is needed.
                     // So the latest CRFVersion Id of A CRF Id is it.
-                    CRFVersionDAO cvdao = this.crfVersionDao;
+                    ICrfVersionDAO cvdao = this.crfVersionDao;
                     ArrayList crfvbeans = new ArrayList();
 
                     logger.debug("CRF-ID [" + version.getCrfId() + "]");
@@ -571,7 +571,7 @@ public class CreateCRFVersionServlet extends SecureController {
      * @return
      */
     private boolean canDeleteVersion(int previousVersionId) {
-        CRFVersionDAO cdao = this.crfVersionDao;
+        ICrfVersionDAO cdao = this.crfVersionDao;
         ArrayList items = null;
         ArrayList itemsHaveData = new ArrayList();
         // boolean isItemUsedByOtherVersion =

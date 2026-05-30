@@ -31,6 +31,7 @@ import org.researchedc.control.submit.AddNewSubjectServlet;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -39,7 +40,6 @@ import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -420,7 +420,7 @@ public abstract class ListStudySubjectServlet extends SecureController {
 
     public static DisplayStudyEventBean getDisplayStudyEventsForStudySubject(StudySubjectBean studySub, StudyEventBean event, DataSource ds,
             UserAccountBean ub, StudyUserRoleBean currentRole, StudyBean study, IStudyEventDefinitionDAO seddao, IStudyEventDAO sedao, EventCRFDao ecdao,
-            EventDefinitionCRFDao edcdao, ICrfDAO cdao, CRFVersionDAO cvdao, ItemDataDAO iddao) {
+            EventDefinitionCRFDao edcdao, ICrfDAO cdao, ICrfVersionDAO cvdao, ItemDataDAO iddao) {
 
         StudyEventDefinitionBean sed = (StudyEventDefinitionBean) seddao.findByPK(event.getStudyEventDefinitionId());
         event.setStudyEventDefinition(sed);
