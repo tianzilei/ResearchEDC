@@ -28,8 +28,8 @@ import org.researchedc.control.form.spreadsheet.SheetValidationType;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.core.util.CrfTemplateColumnNameEnum;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.hibernate.MeasurementUnitDao;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
@@ -113,7 +113,7 @@ public class SpreadSheetTableRepeating implements SpreadSheetTable {
     @Autowired
     private ItemDAO itemDao;
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private ItemGroupDAO itemGroupDao;
     @Autowired
@@ -188,7 +188,7 @@ public class SpreadSheetTableRepeating implements SpreadSheetTable {
         ICrfDAO cdao = this.crfDao;
         CRFBean crf = (CRFBean) cdao.findByPK(crfId);
         ItemDAO idao = this.itemDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         ItemGroupDAO itemGroupDao = this.itemGroupDao;
         SheetValidationContainer sheetContainer = new SheetValidationContainer();
         HashMap<String, String> allItems = (HashMap<String, String>)sheetContainer.getAllItems();
