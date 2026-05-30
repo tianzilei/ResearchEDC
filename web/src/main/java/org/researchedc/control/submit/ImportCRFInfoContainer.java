@@ -21,12 +21,12 @@ import org.researchedc.bean.submit.crfdata.StudyEventDataBean;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.bean.submit.crfdata.UpsertOnBean;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.slf4j.Logger;
@@ -51,7 +51,7 @@ public class ImportCRFInfoContainer {
     protected IStudyDAO studyDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     // (Subject) (Event) (Form)
@@ -103,7 +103,7 @@ public class ImportCRFInfoContainer {
                 Map<String, String> formMap = new HashMap<String, String>();
                 for (FormDataBean formDataBean : formDataBeans) {
 
-                    CRFVersionDAO crfVersionDAO = this.crfVersionDao;
+                    ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
                     ArrayList<CRFVersionBean> crfVersionBeans = crfVersionDAO.findAllByOid(formDataBean.getFormOID());
                     for (CRFVersionBean crfVersionBean : crfVersionBeans) {
 
