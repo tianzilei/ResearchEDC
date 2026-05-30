@@ -15,7 +15,7 @@ import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
@@ -33,7 +33,7 @@ import org.researchedc.web.InsufficientPermissionException;
 public class BatchCRFMigrationServlet extends SecureController {
 
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
 
     private static String CRF_ID = "crfId";
     private static String CRF = "crf";
@@ -76,7 +76,7 @@ public class BatchCRFMigrationServlet extends SecureController {
             forwardPage(Page.CRF_LIST);
         } else {
             ICrfDAO cdao = this.crfDao;
-            CRFVersionDAO vdao = this.crfVersionDao;
+            ICrfVersionDAO vdao = this.crfVersionDao;
             CRFBean crf = (CRFBean) cdao.findByPK(crfId);
             request.setAttribute("crfName", crf.getName());
             ArrayList<CRFVersionBean> versions = (ArrayList<CRFVersionBean>) vdao.findAllByCRF(crfId);
