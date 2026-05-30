@@ -4,7 +4,6 @@ import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
@@ -39,6 +38,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.core.util.Pair;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.managestudy.ListNotesFilter;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
@@ -75,7 +75,7 @@ public class DiscrepancyNoteOutputServlet extends SecureController {
     protected ItemGroupDAO itemGroupDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
     // These are the headers that must appear in the HTTP response, when sending a
     // file back to the user
     public static String CONTENT_DISPOSITION_HEADER = "Content-Disposition";
@@ -287,7 +287,7 @@ public class DiscrepancyNoteOutputServlet extends SecureController {
         IDiscrepancyNoteDAO dndao = this.discrepancyNoteDao;
         IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
         IStudyEventDAO sedao = this.studyEventDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         ICrfDAO cdao = this.crfDao;
         IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         EventCRFDao ecdao = this.eventCrfDao;

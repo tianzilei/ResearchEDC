@@ -16,7 +16,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
@@ -46,7 +46,7 @@ public class ViewItemDetailServlet extends SecureController {
     protected ItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
 
     Locale locale;
     // < ResourceBundle respage;
@@ -79,7 +79,7 @@ public class ViewItemDetailServlet extends SecureController {
         ItemDAO idao = this.itemDao;
         ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
         ItemGroupMetadataDAO igmdao = this.itemGroupMetadataDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         ICrfDAO cdao = this.crfDao;
         SectionDAO sectionDao = this.sectionDao;
 
