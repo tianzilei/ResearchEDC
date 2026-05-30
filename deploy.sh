@@ -398,7 +398,7 @@ cmd_build() {
         && cp -r shared/src/main/resources/properties/* app/target/classes/properties/
 
     log_ok "Build complete"
-    ls -lh app/target/OpenClinica*.war 2>/dev/null || log_warn "No WAR in app/target"
+    ls -lh app/target/ResearchEDC*.war 2>/dev/null || log_warn "No WAR in app/target"
 }
 
 cmd_start() {
