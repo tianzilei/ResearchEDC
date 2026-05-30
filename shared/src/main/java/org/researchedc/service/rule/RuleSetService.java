@@ -47,12 +47,12 @@ import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -119,7 +119,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     @Autowired
     private ICrfDAO crfDao;
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
 
     @Autowired
     private RuleSetDAO legacyRuleSetDao;
@@ -1087,7 +1087,7 @@ public class RuleSetService implements RuleSetServiceInterface {
         return itemDataDao;
     }
 
-    private CRFVersionDAO getCrfVersionDao() {
+    private ICrfVersionDAO getCrfVersionDao() {
         return crfVersionDao;
     }
 
