@@ -46,7 +46,7 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.domain.SourceDataVerification;
@@ -103,7 +103,7 @@ public class SDVUtil {
     protected IStudyDAO studyDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
 
     private final static String VIEW_ICON_FORSUBJECT_PREFIX = "<a onmouseup=\"javascript:setImage('bt_View1','images/bt_View.gif');\" onmousedown=\"javascript:setImage('bt_View1','images/bt_View_d.gif');\" href=\"ViewStudySubject?id=";
     private final static String VIEW_ICON_FORSUBJECT_SUFFIX = "\"><img hspace=\"6\" border=\"0\" align=\"left\" title=\"View\" alt=\"View\" src=\"../images/bt_View.gif\" name=\"bt_View1\"/></a>";
@@ -1195,7 +1195,7 @@ public class SDVUtil {
     }
 
     public String getCRFName(int crfVersionId) {
-        CRFVersionDAO cRFVersionDAO = this.crfVersionDao;
+        ICrfVersionDAO cRFVersionDAO = this.crfVersionDao;
         ICrfDAO cRFDAO = this.crfDao;
 
         CRFVersionBean versionBean = (CRFVersionBean) cRFVersionDAO.findByPK(crfVersionId);
@@ -1210,7 +1210,7 @@ public class SDVUtil {
 
     public String getCRFVersionName(int crfVersionId) {
 
-        CRFVersionDAO cRFVersionDAO = this.crfVersionDao;
+        ICrfVersionDAO cRFVersionDAO = this.crfVersionDao;
         CRFVersionBean versionBean = (CRFVersionBean) cRFVersionDAO.findByPK(crfVersionId);
         if (versionBean != null) {
             return versionBean.getName();

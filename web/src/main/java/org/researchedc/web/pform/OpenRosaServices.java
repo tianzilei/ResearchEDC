@@ -62,10 +62,10 @@ import org.researchedc.dao.hibernate.RuleActionPropertyDao;
 import org.researchedc.dao.hibernate.SCDItemMetadataDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.domain.datamap.CrfVersionMedia;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
 import org.researchedc.web.pform.formlist.XForm;
@@ -110,7 +110,7 @@ public class OpenRosaServices {
     protected IStudySubjectDAO studySubjectDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
 
     public static final String INPUT_USER_SOURCE = "userSource";
     public static final String INPUT_FIRST_NAME = "Participant";
@@ -186,7 +186,7 @@ public class OpenRosaServices {
         ICrfDAO cdao = this.crfDao;
         Collection<CRFBean> crfs = cdao.findAll();
 
-        CRFVersionDAO cVersionDao = this.crfVersionDao;
+        ICrfVersionDAO cVersionDao = this.crfVersionDao;
         Collection<CRFVersionBean> crfVersions = cVersionDao.findAll();
 
         CrfVersionMediaDao mediaDao = (CrfVersionMediaDao) SpringServletAccess.getApplicationContext(context).getBean("crfVersionMediaDao");
@@ -269,7 +269,7 @@ public class OpenRosaServices {
         if (!mayProceedPreview(studyOID))
             return null;
 
-        CRFVersionDAO cVersionDao = this.crfVersionDao;
+        ICrfVersionDAO cVersionDao = this.crfVersionDao;
         CrfVersionMediaDao mediaDao = (CrfVersionMediaDao) SpringServletAccess.getApplicationContext(context).getBean("crfVersionMediaDao");
 
         CRFVersionBean crfVersion = cVersionDao.findByOid(crfOID);
@@ -345,7 +345,7 @@ public class OpenRosaServices {
         }
 
         try {
-            CRFVersionDAO versionDAO = this.crfVersionDao;
+            ICrfVersionDAO versionDAO = this.crfVersionDao;
             CRFVersionBean crfVersion = versionDAO.findByOid(formId);
 
             if (crfVersion.getXform() != null && !crfVersion.getXform().equals("")){
@@ -503,7 +503,7 @@ public class OpenRosaServices {
             // Need to retrieve crf's for next event
             IStudyEventDAO eventDAO = this.studyEventDao;
             StudyEventBean nextEvent = (StudyEventBean) eventDAO.getNextScheduledEvent(ssoid);
-            CRFVersionDAO versionDAO = this.crfVersionDao;
+            ICrfVersionDAO versionDAO = this.crfVersionDao;
             ArrayList<CRFVersionBean> crfs = versionDAO.findDefCRFVersionsByStudyEvent(nextEvent.getStudyEventDefinitionId());
             PFormCache cache = PFormCache.getInstance(context);
             for (CRFVersionBean crfVersion : crfs) {

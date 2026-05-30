@@ -58,7 +58,7 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
@@ -104,7 +104,7 @@ public class ImportCRFDataService {
     protected ItemGroupDAO itemGroupDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -164,7 +164,7 @@ public class ImportCRFDataService {
                 }
                 for (FormDataBean formDataBean : formDataBeans) {
 
-                    CRFVersionDAO crfVersionDAO = this.crfVersionDao;
+                    ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
 
                     ArrayList<CRFVersionBean> crfVersionBeans = crfVersionDAO.findAllByOid(formDataBean.getFormOID());
                     for (CRFVersionBean crfVersionBean : crfVersionBeans) {
@@ -289,7 +289,7 @@ public class ImportCRFDataService {
                 }
                 for (FormDataBean formDataBean : formDataBeans) {
 
-                    CRFVersionDAO crfVersionDAO = this.crfVersionDao;
+                    ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
 
                     ArrayList<CRFVersionBean> crfVersionBeans = crfVersionDAO.findAllByOid(formDataBean.getFormOID());
                     for (CRFVersionBean crfVersionBean : crfVersionBeans) {
@@ -359,7 +359,7 @@ public class ImportCRFDataService {
 
                 for (FormDataBean formDataBean : formDataBeans) {
 
-                    CRFVersionDAO crfVersionDAO = this.crfVersionDao;
+                    ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
 
                     ArrayList<CRFVersionBean> crfVersionBeans = crfVersionDAO.findAllByOid(formDataBean.getFormOID());
                     for (CRFVersionBean crfVersionBean : crfVersionBeans) {
@@ -465,7 +465,7 @@ public class ImportCRFDataService {
                 for (FormDataBean formDataBean : formDataBeans) {
                     Map<String,Integer> groupMaxOrdinals = new HashMap<String,Integer>();
                     displayItemBeanWrapper = null;
-                    CRFVersionDAO crfVersionDAO = this.crfVersionDao;
+                    ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
                     EventCRFDao eventCRFDAO = this.eventCrfDao;
                     ArrayList<CRFVersionBean> crfVersionBeans = crfVersionDAO.findAllByOid(formDataBean.getFormOID());
                     ArrayList<ImportItemGroupDataBean> itemGroupDataBeans = formDataBean.getItemGroupData();
@@ -1035,7 +1035,7 @@ public class ImportCRFDataService {
 
             IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
             IStudyEventDefinitionDAO studyEventDefinitionDAO = this.studyEventDefinitionDao;
-            CRFVersionDAO crfVersionDAO = this.crfVersionDao;
+            ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
             ItemGroupDAO itemGroupDAO = this.itemGroupDao;
             ItemDAO itemDAO = this.itemDao;
 
