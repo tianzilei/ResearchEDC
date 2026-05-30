@@ -44,6 +44,7 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.core.EmailEngine;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
@@ -51,7 +52,6 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
@@ -78,7 +78,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
     protected SectionDAO sectionDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
 
     Locale locale;
     // < ResourceBundleresexception,respage;
@@ -1119,7 +1119,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
     }
 
     private CRFBean getCrf(int eventCRFId) {
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         ICrfDAO cdao = this.crfDao;
         CRFVersionBean cv = (CRFVersionBean) cvdao.findByPK(getEventCrf(eventCRFId).getCRFVersionId());
         CRFBean c = (CRFBean) cdao.findByPK(cv.getCrfId());
