@@ -16,7 +16,7 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -36,7 +36,7 @@ import java.util.Date;
 public class RestoreCRFVersionServlet extends SecureController {
 
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private SectionDAO sectionDao;
     /**
@@ -60,7 +60,7 @@ public class RestoreCRFVersionServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
 
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         FormProcessor fp = new FormProcessor(request);
         // checks which module the requests are from
         String module = fp.getString(MODULE);

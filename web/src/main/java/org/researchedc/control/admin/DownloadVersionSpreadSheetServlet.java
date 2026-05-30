@@ -13,7 +13,7 @@ import org.researchedc.control.core.SecureController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.SQLInitServlet;
@@ -33,7 +33,7 @@ import jakarta.servlet.ServletOutputStream;
  */
 public class DownloadVersionSpreadSheetServlet extends SecureController {
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     public static String CRF_ID = "crfId";
 
     public static String CRF_VERSION_NAME = "crfVersionName";
@@ -74,7 +74,7 @@ public class DownloadVersionSpreadSheetServlet extends SecureController {
         String crfIdString = fp.getString(CRF_ID);
         int crfVersionId = fp.getInt(CRF_VERSION_ID);
 
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
 
         CRFVersionBean version = (CRFVersionBean) cvdao.findByPK(crfVersionId);
 
