@@ -23,13 +23,13 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.core.CoreSecureController;
 import org.researchedc.control.form.Validator;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
@@ -53,7 +53,7 @@ public class UrlRewriteServlet extends CoreSecureController {
     protected ItemGroupDAO itemGroupDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
 
@@ -237,7 +237,7 @@ public class UrlRewriteServlet extends CoreSecureController {
                     IStudySubjectDAO ssubdao = this.studySubjectDao;
                     IStudyEventDefinitionDAO sedefdao = this.studyEventDefinitionDao;
                     ICrfDAO crfdao = this.crfDao;
-                    CRFVersionDAO crfvdao = this.crfVersionDao;
+                    ICrfVersionDAO crfvdao = this.crfVersionDao;
                     ItemDAO idao = this.itemDao;
                     ItemGroupDAO igdao = this.itemGroupDao;
                     IStudyEventDAO sedao = this.studyEventDao;
