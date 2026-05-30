@@ -22,8 +22,8 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -59,7 +59,7 @@ public class CreateFiltersTwoServlet extends SecureController {
     protected FilterDAO filterDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
 
     @Autowired
     protected ItemFormMetadataDAO itemFormMetadataDao;
@@ -132,7 +132,7 @@ public class CreateFiltersTwoServlet extends SecureController {
             HashMap errors = new HashMap();
             int crfId = fp.getInt("crfId");
             if (crfId > 0) {
-                CRFVersionDAO cvDAO = this.crfVersionDao;
+                ICrfVersionDAO cvDAO = this.crfVersionDao;
                 ICrfDAO cDAO = this.crfDao;
                 SectionDAO secDAO = this.sectionDao;
                 Collection sections = secDAO.findByVersionId(crfId);
