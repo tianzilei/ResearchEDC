@@ -23,12 +23,11 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.DisplayEventCRFBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.dao.LegacyDaoFactory;
-import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
-import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 
 /**
  * DiscrepancyNoteUtil is a convenience class for managing discrepancy notes,
@@ -38,12 +37,12 @@ import org.researchedc.dao.submit.EventCRFDAO;
 public class DiscrepancyNoteUtil {
     private DataSource daoDataSource;
     private IStudySubjectDAO studySubjectDao;
-    private EventCRFDAO eventCrfDao;
+    private EventCRFDao eventCrfDao;
     private IDiscrepancyNoteDAO discrepancyNoteDao;
     private IStudyDAO studyDao;
     private EventDefinitionCRFDAO eventDefinitionCrfDao;
     private Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
-    private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
+    private Function<DataSource, EventCRFDao> eventCrfDaoFactory = LegacyDaoFactory::eventCrfDao;
     private Function<DataSource, IDiscrepancyNoteDAO> discrepancyNoteDaoFactory = LegacyDaoFactory::discrepancyNoteDao;
     private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
     private Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory = EventDefinitionCRFDAO::new;
@@ -462,7 +461,6 @@ public class DiscrepancyNoteUtil {
         // what is the purpose of this data member?
         discrepancyNoteDAO.setFetchMapping(true);
 
-        EventCRFDAO ecdao = getEventCrfDao(dataSource);
         ArrayList itemDataNotes = discrepancyNoteDAO.findAllItemDataByStudy(currentStudy);
 
         ArrayList subjectNotes = discrepancyNoteDAO.findAllSubjectByStudy(currentStudy);
@@ -523,7 +521,6 @@ public class DiscrepancyNoteUtil {
         // what is the purpose of this data member?
         discrepancyNoteDAO.setFetchMapping(true);
 
-        EventCRFDAO ecdao = getEventCrfDao(dataSource);
         ArrayList itemDataNotes = discrepancyNoteDAO.findAllItemDataByStudy(currentStudy);
 
         ArrayList subjectNotes = discrepancyNoteDAO.findAllSubjectByStudy(currentStudy);
@@ -1563,7 +1560,7 @@ public class DiscrepancyNoteUtil {
         return studySubjectDao;
     }
 
-    private EventCRFDAO getEventCrfDao(DataSource dataSource) {
+    private EventCRFDao getEventCrfDao(DataSource dataSource) {
         prepareDaoCache(dataSource);
         if (eventCrfDao == null) {
             eventCrfDao = eventCrfDaoFactory.apply(dataSource);
