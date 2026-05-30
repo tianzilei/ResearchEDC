@@ -12,7 +12,9 @@ import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
+import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.SubjectDAO;
 
 public final class LegacyDaoFactory {
@@ -38,6 +40,10 @@ public final class LegacyDaoFactory {
 
     public static ICrfDAO crfDao(DataSource dataSource) {
         return new CRFDAO(dataSource);
+    }
+
+    public static ICrfVersionDAO crfVersionDao(DataSource dataSource) {
+        return new CRFVersionDAO(dataSource);
     }
 
     public static IDiscrepancyNoteDAO discrepancyNoteDao(DataSource dataSource) {
