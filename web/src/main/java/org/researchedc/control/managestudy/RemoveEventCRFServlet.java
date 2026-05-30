@@ -27,7 +27,7 @@ import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.*;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -50,7 +50,7 @@ import org.researchedc.dao.spi.IItemDataDAO;
 public class RemoveEventCRFServlet extends SecureController {
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private IDiscrepancyNoteDAO discrepancyNoteDao;
     @Autowired
@@ -100,7 +100,7 @@ public class RemoveEventCRFServlet extends SecureController {
 
             // construct info needed on view event crf page
             ICrfDAO cdao = this.crfDao;
-            CRFVersionDAO cvdao = this.crfVersionDao;
+            ICrfVersionDAO cvdao = this.crfVersionDao;
 
             int crfVersionId = eventCRF.getCRFVersionId();
             CRFBean cb = cdao.findByVersionId(crfVersionId);
