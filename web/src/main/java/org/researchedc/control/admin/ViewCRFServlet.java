@@ -19,8 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.util.ItemGroupCrvVersionUtil;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
@@ -58,7 +58,7 @@ public class ViewCRFServlet extends SecureController {
     private RuleSetServiceInterface ruleSetService;
 
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
 
     /**
      *
@@ -105,7 +105,7 @@ public class ViewCRFServlet extends SecureController {
             forwardPage(Page.CRF_LIST);
         } else {
             ICrfDAO cdao = this.crfDao;
-            CRFVersionDAO vdao = this.crfVersionDao;
+            ICrfVersionDAO vdao = this.crfVersionDao;
             CRFBean crf = (CRFBean) cdao.findByPK(crfId);
             request.setAttribute("crfName", crf.getName());
             ArrayList<CRFVersionBean> versions = (ArrayList<CRFVersionBean>) vdao.findAllByCRF(crfId);

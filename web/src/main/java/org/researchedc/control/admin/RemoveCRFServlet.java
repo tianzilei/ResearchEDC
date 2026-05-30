@@ -21,13 +21,13 @@ import org.researchedc.control.core.SecureController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -57,7 +57,7 @@ public class RemoveCRFServlet extends SecureController {
     ItemDataDAO itemDataDao;
 
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
@@ -83,7 +83,7 @@ public class RemoveCRFServlet extends SecureController {
     public void processRequest() throws Exception {
 
         ICrfDAO cdao = this.crfDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         FormProcessor fp = new FormProcessor(request);
 
         // checks which module the requests are from
