@@ -24,10 +24,10 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.domain.SourceDataVerification;
 import org.researchedc.service.pmanage.Authorization;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
@@ -52,7 +52,7 @@ import org.researchedc.dao.spi.IStudyParameterValueDAO;
 public class UpdateSubStudyServlet extends SecureController {
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
 
@@ -321,7 +321,7 @@ public static final String INPUT_START_DATE = "startDate";
         
         ArrayList<EventDefinitionCRFBean> defCrfs = new ArrayList<EventDefinitionCRFBean>();
         IStudyEventDefinitionDAO sedDao = this.studyEventDefinitionDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
 
         StudyBean parentStudyBean;
         if (site.getParentStudyId()==0){
