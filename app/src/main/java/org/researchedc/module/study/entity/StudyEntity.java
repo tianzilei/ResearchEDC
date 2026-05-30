@@ -1,6 +1,8 @@
 package org.researchedc.module.study.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 
 @Entity(name = "ModuleStudy")
@@ -181,6 +183,7 @@ public class StudyEntity {
     @Column
     private Integer version;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "feature_flags", columnDefinition = "JSONB")
     private String featureFlags;
 

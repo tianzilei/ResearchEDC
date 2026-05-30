@@ -106,7 +106,8 @@ public class SubjectService {
         entity.setLabel(request.getLabel());
         entity.setSecondaryLabel(request.getSecondaryLabel());
         entity.setEnrollmentDate(request.getEnrollmentDate());
-        entity.setOcOid(request.getOcOid());
+        entity.setOcOid(request.getOcOid() != null ? request.getOcOid()
+                : "SS_" + request.getSubjectId() + "_" + request.getStudyId());
         entity.setDateCreated(LocalDateTime.now());
         entity.setOwnerId(ownerId);
 
