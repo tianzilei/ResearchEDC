@@ -48,9 +48,9 @@ import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
@@ -114,7 +114,7 @@ public abstract class CoreSecureController extends HttpServlet {
     @Autowired
     protected ICrfDAO crfDao;
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
     @Autowired
     protected SectionDAO sectionDao;
     @Autowired
