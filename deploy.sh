@@ -434,47 +434,91 @@ cmd_start() {
     generate_datainfo app/src/main/resources
     generate_questionnaire_env
 
-    log_info "Building frontend..."
-    cd "${PROJECT_DIR}/frontend"
-    pnpm install --frozen-lockfile || pnpm install
-    pnpm build
-    cd "${PROJECT_DIR}"
+    # ---- Check WAR exists ----
+    if [ ! -f app/target/ResearchEDC.war ]; then
+        log_error "app/target/ResearchEDC.war not found — run 'bash deploy.sh build' first"
+        return 1
+    fi
 
-    log_info "Starting App on port ${APP_PORT}..."
+    # ---- Build frontend only if stale ----
+    if [ ! -f frontend/dist/index.html ] || [ frontend/src -nt frontend/dist/index.html ]; then
+        log_info "Building frontend..."
+        cd "${PROJECT_DIR}/frontend"
+        pnpm install --frozen-lockfile || pnpm install
+        pnpm build
+        cd "${PROJECT_DIR}"
+    else
+        log_ok "Frontend already built — skipping"
+    fi
 
-    # Kill any existing app on the port
-    lsof -ti:"${APP_PORT}" 2>/dev/null | xargs kill 2>/dev/null || true
-    sleep 1
+    # ---- Resolve port (handle root-owned conflicts) ----
+    local port="${APP_PORT}"
+    while lsof -ti:"${port}" &>/dev/null; do
+        if [ "${port}" -eq "${APP_PORT}" ]; then
+            log_warn "Port ${port} occupied (likely root-owned) — trying next port"
+        fi
+        port=$((port + 1))
+        if [ $((port - APP_PORT)) -gt 10 ]; then
+            log_error "No free ports in range ${APP_PORT}-${port}"
+            return 1
+        fi
+    done
+    if [ "${port}" -ne "${APP_PORT}" ]; then
+        log_warn "Using port ${port} instead of ${APP_PORT}"
+    fi
+
+    log_info "Starting App on port ${port}..."
 
     # Start in a tmux session for persistence
     if command -v tmux &>/dev/null; then
         tmux kill-session -t researchedc 2>/dev/null || true
         tmux new-session -d -s researchedc -c "${PROJECT_DIR}"
-        tmux send-keys -t researchedc "export RESEARCHEDC_DB_PORT=${DB_PORT}" Enter
-        tmux send-keys -t researchedc "java -jar app/target/ResearchEDC.war --server.port=${APP_PORT} 2>&1 | tee ${LOG_DIR}/app.log" Enter
-        log_ok "App started in tmux session 'researchedc'"
+        tmux send-keys -t researchedc "RESEARCHEDC_DB_PORT=${DB_PORT} java -jar app/target/ResearchEDC.war --server.port=${port} 2>&1 | tee ${LOG_DIR}/app.log" Enter
+        log_ok "App starting in tmux session 'researchedc'"
     else
         # Fallback: nohup
         cd "${PROJECT_DIR}"
         RESEARCHEDC_DB_PORT="${DB_PORT}" \
         nohup java -jar app/target/ResearchEDC.war \
-            --server.port="${APP_PORT}" \
+            --server.port="${port}" \
             > "${LOG_DIR}/app.log" 2>&1 &
         echo $! > "${PID_DIR}/app.pid"
         log_ok "App started (PID $(cat "${PID_DIR}/app.pid"))"
     fi
 
-    log_info "Starting Questionnaire Service on port ${Q_PORT}..."
-    cd "${PROJECT_DIR}/questionnaire-service/apps/api"
-    source .venv/bin/activate
-    PYTHONPATH="$PWD" alembic upgrade head 2>/dev/null || log_warn "Alembic migration skipped"
-    nohup .venv/bin/python -m uvicorn app.main:app \
-        --host 127.0.0.1 --port "${Q_PORT}" --log-level info \
-        > "${LOG_DIR}/questionnaire.log" 2>&1 &
-    echo $! > "${PID_DIR}/questionnaire.pid"
-    deactivate
-    cd "${PROJECT_DIR}"
-    log_ok "Questionnaire started (PID $(cat "${PID_DIR}/questionnaire.pid"))"
+    # ---- Health check with retry ----
+    log_info "Waiting for App to be ready..."
+    local retries=0
+    local max_retries=30
+    while [ "${retries}" -lt "${max_retries}" ]; do
+        if curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${port}/" 2>/dev/null | grep -qE "^(200|302|401|403)$"; then
+            log_ok "App ready on http://localhost:${port}"
+            break
+        fi
+        sleep 2
+        retries=$((retries + 1))
+    done
+    if [ "${retries}" -ge "${max_retries}" ]; then
+        log_error "App failed to start within $((max_retries * 2))s — check ${LOG_DIR}/app.log"
+        return 1
+    fi
+
+    # ---- Questionnaire Service ----
+    if [ -f "${PROJECT_DIR}/questionnaire-service/apps/api/.venv/bin/activate" ]; then
+        log_info "Starting Questionnaire Service on port ${Q_PORT}..."
+        cd "${PROJECT_DIR}/questionnaire-service/apps/api"
+        source .venv/bin/activate
+        PYTHONPATH="$PWD" alembic upgrade head 2>/dev/null || log_warn "Alembic migration skipped"
+        nohup .venv/bin/python -m uvicorn app.main:app \
+            --host 127.0.0.1 --port "${Q_PORT}" --log-level info \
+            > "${LOG_DIR}/questionnaire.log" 2>&1 &
+        echo $! > "${PID_DIR}/questionnaire.pid"
+        deactivate
+        cd "${PROJECT_DIR}"
+        log_ok "Questionnaire started (PID $(cat "${PID_DIR}/questionnaire.pid"))"
+    else
+        log_warn "Questionnaire venv not found — run 'bash deploy.sh setup' first"
+    fi
 
     if command -v caddy &>/dev/null; then
         log_info "Starting Caddy on port ${CADDY_PORT}..."
