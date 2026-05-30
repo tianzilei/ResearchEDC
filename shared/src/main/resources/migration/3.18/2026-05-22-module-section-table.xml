@@ -39,7 +39,7 @@
         <addPrimaryKey columnNames="section_id" constraintName="pk_module_section" tableName="module_section"/>
     </changeSet>
 
-    <changeSet author="research-edc" id="2026-05-22-module-section-copy-4">
+    <changeSet author="research-edc" id="2026-05-22-module-section-copy-4" failOnError="false">
         <comment>Copy existing data from legacy section table to module_section</comment>
         <sql>
             INSERT INTO module_section (
@@ -55,7 +55,7 @@
         </sql>
     </changeSet>
 
-    <changeSet author="research-edc" id="2026-05-22-module-section-seq-val-5">
+    <changeSet author="research-edc" id="2026-05-22-module-section-seq-val-5" failOnError="false">
         <comment>Set sequence to max existing section_id</comment>
         <sql>
             SELECT setval('module_section_id_seq', COALESCE((SELECT MAX(section_id) FROM section), 1))
