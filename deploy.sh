@@ -26,6 +26,9 @@ DB_USER="${RESEARCHEDC_DB_USER:-researchedc}"
 DB_PASS="${RESEARCHEDC_DB_PASS:-researchedc}"
 Q_DB="researchedc_questionnaire"
 
+ADMIN_USER="${RESEARCHEDC_ADMIN_USER:-admin}"
+ADMIN_PASS="${RESEARCHEDC_ADMIN_PASS:-admin}"
+
 APP_PORT="${RESEARCHEDC_APP_PORT:-8080}"
 Q_PORT="${QUESTIONNAIRE_PORT:-8000}"
 CADDY_PORT="${RESEARCHEDC_CADDY_PORT:-80}"
@@ -361,24 +364,24 @@ cmd_init_db() {
         update 2>&1 | grep -v "^##\|^$" || true
     log_ok "Migrations applied"
 
-    # ---- Create admin/admin account ----
+    # ---- Create admin account ----
     log_info "Creating admin account..."
     local bcrypt_hash
     bcrypt_hash=$(python3 -c "
 import bcrypt
-h = bcrypt.hashpw(b'admin', bcrypt.gensalt(rounds=10)).decode()
+h = bcrypt.hashpw(b'${ADMIN_PASS}', bcrypt.gensalt(rounds=10)).decode()
 print('{bcrypt}' + h)
 " 2>/dev/null)
 
     if [ -n "${bcrypt_hash}" ]; then
         PGPASSWORD="${DB_PASS}" psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}" -c "
 INSERT INTO user_account (user_name, passwd, first_name, last_name, email, status_id, owner_id, date_created, enabled, account_non_locked)
-SELECT 'admin', '${bcrypt_hash}', '管理', '员', 'admin@example.com', 1, 1, CURRENT_DATE, true, true
-WHERE NOT EXISTS (SELECT 1 FROM user_account WHERE user_name = 'admin');
+SELECT '${ADMIN_USER}', '${bcrypt_hash}', '管理', '员', '${ADMIN_USER}@example.com', 1, 1, CURRENT_DATE, true, true
+WHERE NOT EXISTS (SELECT 1 FROM user_account WHERE user_name = '${ADMIN_USER}');
 INSERT INTO study_user_role (user_name, role_name, study_id, status_id, owner_id, date_created)
-SELECT 'admin', 'Study_Director', 1, 1, 1, CURRENT_DATE
-WHERE NOT EXISTS (SELECT 1 FROM study_user_role WHERE user_name = 'admin' AND role_name = 'Study_Director');
-" 2>/dev/null && log_ok "Admin account created (admin / admin)" || log_warn "Failed to create admin account"
+SELECT '${ADMIN_USER}', 'Study_Director', 1, 1, 1, CURRENT_DATE
+WHERE NOT EXISTS (SELECT 1 FROM study_user_role WHERE user_name = '${ADMIN_USER}' AND role_name = 'Study_Director');
+" 2>/dev/null && log_ok "Admin account created (${ADMIN_USER} / ${ADMIN_PASS})" || log_warn "Failed to create admin account"
     else
         log_error "bcrypt hash generation failed — admin account not created"
     fi
