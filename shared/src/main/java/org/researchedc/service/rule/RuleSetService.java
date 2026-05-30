@@ -49,13 +49,13 @@ import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.Status;
@@ -134,7 +134,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     @Autowired
     private ItemDAO itemDao;
     @Autowired
-    private ItemDataDAO itemDataDao;
+    private IItemDataDAO itemDataDao;
     @Autowired
     private ItemFormMetadataDAO itemFormMetadataDao;
     @Autowired
@@ -1083,7 +1083,7 @@ public class RuleSetService implements RuleSetServiceInterface {
         return studyDao;
     }
 
-    private ItemDataDAO getItemDataDao() {
+    private IItemDataDAO getItemDataDao() {
         return itemDataDao;
     }
 
