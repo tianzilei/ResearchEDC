@@ -17,10 +17,12 @@ import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.submit.ItemGroupDAO;
 import org.researchedc.dao.submit.SubjectDAO;
 
 public final class LegacyDaoFactory {
@@ -66,5 +68,9 @@ public final class LegacyDaoFactory {
 
     public static IItemDAO itemDao(DataSource dataSource) {
         return new ItemDAO(dataSource);
+    }
+
+    public static IItemGroupDAO itemGroupDao(DataSource dataSource) {
+        return new ItemGroupDAO(dataSource);
     }
 }
