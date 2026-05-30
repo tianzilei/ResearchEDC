@@ -33,6 +33,7 @@ import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.PreparedStatementFactory;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.core.util.ItemGroupCrvVersionUtil;
 /**
@@ -40,7 +41,7 @@ import org.researchedc.core.util.ItemGroupCrvVersionUtil;
  * 
  * 
  */
-public class ItemDAO<K extends String,V extends ArrayList> extends AuditableEntityDAO {
+public class ItemDAO<K extends String,V extends ArrayList> extends AuditableEntityDAO implements IItemDAO {
     // private DAODigester digester;
 
     public ItemDAO(DataSource ds) {
