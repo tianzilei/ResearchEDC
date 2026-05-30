@@ -13,7 +13,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet author="research-edc" id="2026-05-25-module-user-account-passwd-copy-2">
+    <changeSet author="research-edc" id="2026-05-25-module-user-account-passwd-copy-2" failOnError="false">
         <comment>Copy existing password hashes from legacy user_account table</comment>
         <sql splitStatements="false"><![CDATA[
             UPDATE module_user_account m

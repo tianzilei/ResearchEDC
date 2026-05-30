@@ -29,11 +29,11 @@
         <addPrimaryKey columnNames="rule_id" constraintName="pk_module_rule" tableName="module_rule"/>
     </changeSet>
 
-    <changeSet author="research-edc" id="2026-05-23-module-rule-copy-4">
+    <changeSet author="research-edc" id="2026-05-23-module-rule-copy-4" failOnError="false">
         <sql>INSERT INTO module_rule (rule_id, oc_oid, name, description, enabled, rule_expression_id, status_id, owner_id, date_created, date_updated, update_id, "version") SELECT rule_id, oc_oid, name, description, enabled, rule_expression_id, status_id, owner_id, date_created, date_updated, update_id, "version" FROM rule</sql>
     </changeSet>
 
-    <changeSet author="research-edc" id="2026-05-23-module-rule-seq-val-5">
+    <changeSet author="research-edc" id="2026-05-23-module-rule-seq-val-5" failOnError="false">
         <sql>SELECT setval('module_rule_id_seq', COALESCE((SELECT MAX(rule_id) FROM rule), 1))</sql>
     </changeSet>
 </databaseChangeLog>
