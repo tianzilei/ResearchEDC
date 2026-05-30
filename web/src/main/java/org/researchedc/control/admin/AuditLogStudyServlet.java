@@ -25,7 +25,6 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ISubjectDAO;
@@ -53,9 +52,6 @@ public class AuditLogStudyServlet extends SecureController {
 
     @Autowired
     private AuditDAO auditDao;
-    @Autowired
-    private CRFVersionDAO crfVersionDao;
-
     // <ResourceBundle resword,resexception,respage;
 
     public static String getLink(int userId) {
@@ -95,8 +91,6 @@ public class AuditLogStudyServlet extends SecureController {
         EventCRFDao ecdao = this.eventCrfDao;
         IStudyDAO studydao = this.studyDao;
         ICrfDAO cdao = this.crfDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
-
         HashMap eventCRFAuditsHashMap = new HashMap();
         HashMap eventsHashMap = new HashMap();
         HashMap studySubjectAuditsHashMap = new HashMap();
