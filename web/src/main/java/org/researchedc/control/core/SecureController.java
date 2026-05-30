@@ -78,6 +78,7 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
@@ -87,7 +88,6 @@ import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.submit.ItemGroupDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.datamap.EventDefinitionCrf;
 import org.researchedc.domain.datamap.EventDefinitionCrfTag;
@@ -208,7 +208,7 @@ public abstract class SecureController extends HttpServlet {
     @Autowired
     protected ICrfDAO crfDao;
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
     @Autowired
     protected SectionDAO sectionDao;
     @Autowired
