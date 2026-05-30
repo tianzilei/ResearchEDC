@@ -13,8 +13,8 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -38,7 +38,7 @@ import java.util.Locale;
  */
 public class ListCRFServlet extends SecureController {
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     Locale locale;
 
     // < ResourceBundle resexception,respage,resword,restext,resworkflow;
@@ -111,7 +111,7 @@ public class ListCRFServlet extends SecureController {
         logger.debug("found directory: " + dir);
 
         ICrfDAO cdao = this.crfDao;
-        CRFVersionDAO vdao = this.crfVersionDao;
+        ICrfVersionDAO vdao = this.crfVersionDao;
         ArrayList crfs = (ArrayList) cdao.findAll();
         for (int i = 0; i < crfs.size(); i++) {
             CRFBean eb = (CRFBean) crfs.get(i);
