@@ -15,8 +15,10 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.SubjectDAO;
 
 public final class LegacyDaoFactory {
@@ -54,5 +56,9 @@ public final class LegacyDaoFactory {
 
     public static EventCRFDao eventCrfDao(DataSource dataSource) {
         return new EventCRFDAO(dataSource);
+    }
+
+    public static IItemDataDAO itemDataDao(DataSource dataSource) {
+        return new ItemDataDAO(dataSource);
     }
 }
