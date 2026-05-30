@@ -45,13 +45,13 @@ import org.researchedc.control.submit.TableOfContentsServlet;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemGroupDAO;
@@ -91,7 +91,7 @@ public class ViewSectionDataEntryRESTUrlServlet extends ViewSectionDataEntryServ
 
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private IDiscrepancyNoteDAO discrepancyNoteDao;
     @Autowired
@@ -154,7 +154,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
         int crfId = fp.getInt("crfId");
         // BWP>> ... try to get crfId from crfVersionId
         if (crfId == 0 && crfVersionId > 0) {
-            CRFVersionDAO crfVDao = this.crfVersionDao;
+            ICrfVersionDAO crfVDao = this.crfVersionDao;
             CRFVersionBean crvVBean = (CRFVersionBean) crfVDao.findByPK(crfVersionId);
             if (crvVBean != null) {
                 crfId = crvVBean.getCrfId();

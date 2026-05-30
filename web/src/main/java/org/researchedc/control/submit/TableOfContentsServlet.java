@@ -34,6 +34,7 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.control.managestudy.ViewStudySubjectServlet;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -42,7 +43,6 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemGroupDAO;
@@ -77,7 +77,7 @@ public class TableOfContentsServlet extends SecureController {
     protected SectionDAO sectionDao;
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     public static final String BEAN_DISPLAY = "toc";
 
@@ -230,7 +230,7 @@ public class TableOfContentsServlet extends SecureController {
             throw new InconsistentStateException(Page.LIST_STUDY_SUBJECTS_SERVLET, resexception.getString("trying_to_begin_DE2"));
         }
 
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         EntityBean eb = cvdao.findByPK(crfVersionId);
 
         if (!eb.isActive()) {
@@ -641,7 +641,7 @@ public class TableOfContentsServlet extends SecureController {
     }
 
     public static DisplayTableOfContentsBean getDisplayBean(EventCRFBean ecb, DataSource ds, StudyBean currentStudy, IStudySubjectDAO ssdao,
-            IStudyEventDAO sedao, SectionDAO sdao, ItemGroupDAO igdao, IStudyEventDefinitionDAO seddao, CRFVersionDAO cvdao, ICrfDAO cdao, IStudyDAO studyDao,
+            IStudyEventDAO sedao, SectionDAO sdao, ItemGroupDAO igdao, IStudyEventDefinitionDAO seddao, ICrfVersionDAO cvdao, ICrfDAO cdao, IStudyDAO studyDao,
             EventDefinitionCRFDao edcdao) {
         DisplayTableOfContentsBean answer = new DisplayTableOfContentsBean();
 

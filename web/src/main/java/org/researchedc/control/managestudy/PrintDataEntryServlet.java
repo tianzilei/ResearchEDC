@@ -31,13 +31,13 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.DataEntryServlet;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemGroupDAO;
@@ -84,7 +84,7 @@ public class PrintDataEntryServlet extends DataEntryServlet {
 
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private ItemGroupDAO itemGroupDao;
     @Autowired
@@ -221,7 +221,7 @@ Locale locale;
             handler.setEventCRFId(eventCRFId);
             List<DisplaySectionBean> displaySectionBeans = handler.getDisplaySectionBeans();
 
-            CRFVersionDAO crfVersionDAO = this.crfVersionDao;
+            ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
             ICrfDAO crfDao = this.crfDao;
 
             request.setAttribute("listOfDisplaySectionBeans", displaySectionBeans);
