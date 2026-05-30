@@ -50,6 +50,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
@@ -59,7 +60,6 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -85,7 +85,7 @@ public class ViewStudySubjectServlet extends SecureController {
     @Autowired
     private IAuditEventDAO auditEventDao;
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private IDiscrepancyNoteDAO discrepancyNoteDao;
     @Autowired
@@ -383,7 +383,7 @@ public class ViewStudySubjectServlet extends SecureController {
      * @return The list of DisplayEventCRFBeans for this study event.
      */
     public static ArrayList getDisplayEventCRFs(DataSource ds, ArrayList eventCRFs, ArrayList eventDefinitionCRFs, UserAccountBean ub,
-            StudyUserRoleBean currentRole, SubjectEventStatus status, StudyBean study, IStudyEventDAO sedao, ICrfDAO cdao, CRFVersionDAO cvdao,
+            StudyUserRoleBean currentRole, SubjectEventStatus status, StudyBean study, IStudyEventDAO sedao, ICrfDAO cdao, ICrfVersionDAO cvdao,
             ItemDataDAO iddao, EventDefinitionCRFDao edcdao) {
         ArrayList answer = new ArrayList();
 
@@ -470,7 +470,7 @@ public class ViewStudySubjectServlet extends SecureController {
      * @return The list of event definitions for which no event CRF exists.
      */
     public static ArrayList getUncompletedCRFs(DataSource ds, ArrayList eventDefinitionCRFs, ArrayList eventCRFs, SubjectEventStatus status,
-            CRFVersionDAO cvdao, ItemDataDAO iddao) {
+            ICrfVersionDAO cvdao, ItemDataDAO iddao) {
         int i;
         HashMap completed = new HashMap();
         HashMap startedButIncompleted = new HashMap();
@@ -552,7 +552,7 @@ public class ViewStudySubjectServlet extends SecureController {
         return answer;
     }
 
-    public static void populateUncompletedCRFsWithCRFAndVersions(DataSource ds, ArrayList uncompletedEventDefinitionCRFs, ICrfDAO cdao, CRFVersionDAO cvdao) {
+    public static void populateUncompletedCRFsWithCRFAndVersions(DataSource ds, ArrayList uncompletedEventDefinitionCRFs, ICrfDAO cdao, ICrfVersionDAO cvdao) {
         int size = uncompletedEventDefinitionCRFs.size();
         for (int i = 0; i < size; i++) {
             DisplayEventDefinitionCRFBean dedcrf = (DisplayEventDefinitionCRFBean) uncompletedEventDefinitionCRFs.get(i);

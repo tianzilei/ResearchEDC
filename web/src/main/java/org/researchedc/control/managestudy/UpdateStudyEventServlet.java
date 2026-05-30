@@ -46,6 +46,7 @@ import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.hibernate.RuleSetDao;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
@@ -56,7 +57,6 @@ import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
@@ -77,7 +77,7 @@ import org.researchedc.dao.spi.IItemDataDAO;
 public class UpdateStudyEventServlet extends SecureController {
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private IDiscrepancyNoteDAO discrepancyNoteDao;
     @Autowired
@@ -727,7 +727,7 @@ public static final String EVENT_ID = "event_id";
             startedButIncompleted.put(Integer.valueOf(edcrf.getCrfId()), new EventCRFBean());
         }
 
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         IItemDataDAO iddao = this.itemDataDao;
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecrf = (EventCRFBean) eventCRFs.get(i);
@@ -757,7 +757,7 @@ public static final String EVENT_ID = "event_id";
 
     private void populateUncompletedCRFsWithCRFAndVersions(ArrayList uncompletedEventDefinitionCRFs) {
         ICrfDAO cdao = this.crfDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
 
         int size = uncompletedEventDefinitionCRFs.size();
         for (int i = 0; i < size; i++) {
