@@ -43,7 +43,7 @@ import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -81,7 +81,7 @@ public class ExtractBean {
     private StudyBean parentStudy;
     private StudyEventDefinitionDAO studyEventDefinitionDao;
     private ICrfDAO crfDao;
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     private ItemDAO itemDao;
     private ItemFormMetadataDAO itemFormMetadataDao;
     private StudyGroupDAO studyGroupDao;
@@ -89,7 +89,7 @@ public class ExtractBean {
     private StudyEventDAO studyEventDao;
     private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
     private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
-    private Function<DataSource, CRFVersionDAO> crfVersionDaoFactory = CRFVersionDAO::new;
+    private Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory = LegacyDaoFactory::crfVersionDao;
     private Function<DataSource, ItemDAO> itemDaoFactory = ItemDAO::new;
     private Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory = ItemFormMetadataDAO::new;
     private Function<DataSource, StudyGroupDAO> studyGroupDaoFactory = StudyGroupDAO::new;
@@ -817,7 +817,7 @@ public class ExtractBean {
     public void getMetadata() {
         StudyEventDefinitionDAO seddao = getStudyEventDefinitionDao();
         ICrfDAO cdao = getCrfDao();
-        CRFVersionDAO cvdao = getCrfVersionDao();
+        ICrfVersionDAO cvdao = getCrfVersionDao();
         ItemDAO idao = getItemDao();
         ItemFormMetadataDAO ifmDAO = getItemFormMetadataDao();
         StudyGroupDAO studygroupDAO = getStudyGroupDao();
@@ -2978,7 +2978,7 @@ public class ExtractBean {
         return crfDao;
     }
 
-    private CRFVersionDAO getCrfVersionDao() {
+    private ICrfVersionDAO getCrfVersionDao() {
         if (crfVersionDao == null) {
             crfVersionDao = crfVersionDaoFactory.apply(ds);
         }

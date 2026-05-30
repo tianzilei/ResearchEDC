@@ -16,12 +16,12 @@ import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.core.SessionManager;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +50,7 @@ public class ImportDataHelper {
     private IStudyDAO studyDao;
     private IStudySubjectDAO studySubjectDao;
     private StudyEventDefinitionDAO studyEventDefinitionDao;
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     private StudyEventDAO studyEventDao;
     private ICrfDAO crfDao;
     private ISubjectDAO subjectDao;
@@ -58,14 +58,14 @@ public class ImportDataHelper {
     private final Function<DataSource, IStudyDAO> studyDaoFactory;
     private final Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory;
     private final Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
-    private final Function<DataSource, CRFVersionDAO> crfVersionDaoFactory;
+    private final Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory;
     private final Function<DataSource, StudyEventDAO> studyEventDaoFactory;
     private final Function<DataSource, ICrfDAO> crfDaoFactory;
     private final Function<DataSource, ISubjectDAO> subjectDaoFactory;
 
     public ImportDataHelper() {
         this(EventCRFDAO::new, LegacyDaoFactory::studyDao, LegacyDaoFactory::studySubjectDao,
-                StudyEventDefinitionDAO::new, CRFVersionDAO::new, StudyEventDAO::new, LegacyDaoFactory::crfDao,
+                StudyEventDefinitionDAO::new, LegacyDaoFactory::crfVersionDao, StudyEventDAO::new, LegacyDaoFactory::crfDao,
                 LegacyDaoFactory::subjectDao);
     }
 
@@ -73,7 +73,7 @@ public class ImportDataHelper {
             Function<DataSource, IStudyDAO> studyDaoFactory,
             Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory,
             Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory,
-            Function<DataSource, CRFVersionDAO> crfVersionDaoFactory,
+            Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory,
             Function<DataSource, StudyEventDAO> studyEventDaoFactory,
             Function<DataSource, ICrfDAO> crfDaoFactory,
             Function<DataSource, ISubjectDAO> subjectDaoFactory) {
@@ -305,7 +305,7 @@ public class ImportDataHelper {
         return studyEventDefinitionDao;
     }
 
-    private CRFVersionDAO getCrfVersionDao() {
+    private ICrfVersionDAO getCrfVersionDao() {
         if (crfVersionDao == null) {
             crfVersionDao = crfVersionDaoFactory.apply(sm.getDataSource());
         }

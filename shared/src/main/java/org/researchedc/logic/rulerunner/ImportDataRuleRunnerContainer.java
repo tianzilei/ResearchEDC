@@ -15,8 +15,8 @@ import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.domain.rule.RuleSetBean;
@@ -55,13 +55,13 @@ public class ImportDataRuleRunnerContainer {
     private Boolean shouldRunRules;
     private IStudySubjectDAO studySubjectDao;
     private StudyEventDefinitionDAO<String, ArrayList> studyEventDefinitionDao;
-    private CRFVersionDAO<String, ArrayList> crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     private StudyEventDAO studyEventDao;
     private ItemDAO<String, ArrayList> itemDao;
     private ItemGroupMetadataDAO<String, ArrayList> itemGroupMetadataDao;
     private final Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
     private final Function<DataSource, StudyEventDefinitionDAO<String, ArrayList>> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
-    private final Function<DataSource, CRFVersionDAO<String, ArrayList>> crfVersionDaoFactory = CRFVersionDAO::new;
+    private final Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory = LegacyDaoFactory::crfVersionDao;
     private final Function<DataSource, StudyEventDAO> studyEventDaoFactory = StudyEventDAO::new;
     private final Function<DataSource, ItemDAO<String, ArrayList>> itemDaoFactory = ItemDAO::new;
     private final Function<DataSource, ItemGroupMetadataDAO<String, ArrayList>> itemGroupMetadataDaoFactory = ItemGroupMetadataDAO::new;
@@ -221,7 +221,7 @@ public class ImportDataRuleRunnerContainer {
         return studyEventDefinitionDao;
     }
 
-    private CRFVersionDAO<String, ArrayList> getCrfVersionDao(DataSource ds) {
+    private ICrfVersionDAO getCrfVersionDao(DataSource ds) {
         if (crfVersionDao == null) {
             crfVersionDao = crfVersionDaoFactory.apply(ds);
         }
