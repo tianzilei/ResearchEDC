@@ -34,12 +34,12 @@ import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.EventDefinitionCrfTagDao;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.domain.SourceDataVerification;
 import org.researchedc.domain.datamap.EventDefinitionCrfTag;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;
@@ -59,7 +59,7 @@ import org.researchedc.dao.spi.IStudyParameterValueDAO;
 public class InitUpdateEventDefinitionServlet extends SecureController {
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
 
@@ -138,7 +138,7 @@ EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
             EventDefinitionCRFDao edao = this.eventDefinitionCrfDao;
             ArrayList eventDefinitionCRFs = (ArrayList) edao.findAllParentsByDefinition(defId);
 
-            CRFVersionDAO cvdao = this.crfVersionDao;
+            ICrfVersionDAO cvdao = this.crfVersionDao;
             ICrfDAO cdao = this.crfDao;
             ArrayList newEventDefinitionCRFs = new ArrayList();
             for (int i = 0; i < eventDefinitionCRFs.size(); i++) {
