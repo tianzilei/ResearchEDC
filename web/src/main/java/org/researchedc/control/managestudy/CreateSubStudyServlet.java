@@ -27,10 +27,10 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.domain.SourceDataVerification;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;
 import org.researchedc.service.pmanage.Authorization;
@@ -61,7 +61,7 @@ import org.researchedc.dao.spi.IStudyParameterValueDAO;
 public class CreateSubStudyServlet extends SecureController {
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
 
@@ -494,7 +494,7 @@ EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
             IStudyEventDefinitionDAO sedDao = this.studyEventDefinitionDao;
             seds = sedDao.findAllByStudy(parentStudy);
         }
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         HashMap<String, Boolean> changes = new HashMap<String, Boolean>();
         for (StudyEventDefinitionBean sed : seds) {
             String participateFormStatus = spvdao.findByHandleAndStudy(sed.getStudyId(), "participantPortal").getValue();
@@ -726,7 +726,7 @@ EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
         IStudyParameterValueDAO spvdao = this.studyParameterValueDao;    
 
         ArrayList<StudyEventDefinitionBean> seds = new ArrayList<StudyEventDefinitionBean>();
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         seds = (ArrayList<StudyEventDefinitionBean>) session.getAttribute("definitions");
         HashMap<String, Boolean> changes = (HashMap<String, Boolean>) session.getAttribute("changed");
         for (StudyEventDefinitionBean sed : seds) {
@@ -765,7 +765,7 @@ EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
         ArrayList<StudyEventDefinitionBean> seds = new ArrayList<StudyEventDefinitionBean>();
         IStudyEventDefinitionDAO sedDao = this.studyEventDefinitionDao;
         EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         ICrfDAO cdao = this.crfDao;
         StudyBean parentStudy = (StudyBean) this.studyDao.findByPK(site.getParentStudyId());
         seds = sedDao.findAllByStudy(parentStudy);
