@@ -140,6 +140,10 @@ public class StudyService {
     private void applyCreateRequest(StudyEntity entity, CreateStudyRequest r) {
         entity.setName(r.getName());
         entity.setUniqueIdentifier(r.getUniqueIdentifier());
+        // Auto-generate ocOid from uniqueIdentifier if not explicitly provided
+        entity.setOcOid("S_" + (r.getUniqueIdentifier() != null ? r.getUniqueIdentifier().replaceAll("[^A-Za-z0-9]", "").toUpperCase() : "STUDY"));
+        // Legacy study table requires non-null feature_flags (default '{}'::jsonb)
+        entity.setFeatureFlags("{}");
         entity.setSecondaryIdentifier(r.getSecondaryIdentifier());
         entity.setSummary(r.getSummary());
         entity.setDatePlannedStart(r.getDatePlannedStart());
