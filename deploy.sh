@@ -375,12 +375,12 @@ print('{bcrypt}' + h)
 
     if [ -n "${bcrypt_hash}" ]; then
         PGPASSWORD="${DB_PASS}" psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}" -c "
-INSERT INTO user_account (user_name, passwd, first_name, last_name, email, status_id, owner_id, date_created, enabled, account_non_locked)
-SELECT '${ADMIN_USER}', '${bcrypt_hash}', '管理', '员', '${ADMIN_USER}@example.com', 1, 1, CURRENT_DATE, true, true
-WHERE NOT EXISTS (SELECT 1 FROM user_account WHERE user_name = '${ADMIN_USER}');
-INSERT INTO study_user_role (user_name, role_name, study_id, status_id, owner_id, date_created)
-SELECT '${ADMIN_USER}', 'Study_Director', 1, 1, 1, CURRENT_DATE
-WHERE NOT EXISTS (SELECT 1 FROM study_user_role WHERE user_name = '${ADMIN_USER}' AND role_name = 'Study_Director');
+INSERT INTO module_user_account (user_id, user_name, passwd, first_name, last_name, email, status_id, owner_id, date_created, enabled, account_non_locked)
+SELECT nextval('module_user_account_id_seq'), '${ADMIN_USER}', '${bcrypt_hash}', '管理', '员', '${ADMIN_USER}@example.com', 1, 1, CURRENT_DATE, true, true
+WHERE NOT EXISTS (SELECT 1 FROM module_user_account WHERE user_name = '${ADMIN_USER}');
+INSERT INTO module_study_user_role (role_name, study_id, user_name, status_id, owner_id)
+SELECT 'Study_Director', 1, '${ADMIN_USER}', 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM module_study_user_role WHERE user_name = '${ADMIN_USER}' AND role_name = 'Study_Director');
 " 2>/dev/null && log_ok "Admin account created (${ADMIN_USER} / ${ADMIN_PASS})" || log_warn "Failed to create admin account"
     else
         log_error "bcrypt hash generation failed — admin account not created"
