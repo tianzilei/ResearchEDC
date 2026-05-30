@@ -319,16 +319,23 @@ cmd_init_db() {
     log_info "Applying Liquibase migrations..."
     cd "${PROJECT_DIR}"
 
+    # When invoked via sudo, Maven runs as root and can't find locally
+    # installed artifacts (e.g. openclinica-odm).  Run Maven as the
+    # invoking user instead.
+    local mvnsudo=""
+    if [ -n "${SUDO_USER:-}" ]; then
+        mvnsudo="sudo -u ${SUDO_USER}"
+    fi
+
     # Clean stale Maven resolver cache for local-only odm artifact.
-    # The openclinica-odm jar is locally installed (not in Maven Central),
-    # but dependency resolution writes .lastUpdated failure markers that
-    # block subsequent builds. Remove them and mark as local-only.
-    local odm_cache_dir="$HOME/.m2/repository/org/akaza/openclinica/odm/openclinica-odm/2.2"
+    local user_home
+    user_home=$(eval echo ~"${SUDO_USER:-$USER}")
+    local odm_cache_dir="${user_home}/.m2/repository/org/akaza/openclinica/odm/openclinica-odm/2.2"
     rm -f "${odm_cache_dir}"/*.lastUpdated
     echo "openclinica-odm-2.2.jar>=" > "${odm_cache_dir}"/_remote.repositories
     echo "openclinica-odm-2.2.pom>=" >> "${odm_cache_dir}"/_remote.repositories
 
-    mvn compile -pl shared -DskipTests -q 2>/dev/null || {
+    ${mvnsudo} mvn compile -pl shared -DskipTests -q 2>/dev/null || {
         log_warn "Maven compile failed — cannot run Liquibase"
         return
     }
