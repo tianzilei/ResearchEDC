@@ -41,13 +41,13 @@ import org.researchedc.core.SecurityManager;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
@@ -66,7 +66,7 @@ import org.researchedc.dao.spi.IStudyParameterValueDAO;
 public class SignStudySubjectServlet extends SecureController {
 
     @Autowired
-    protected CRFVersionDAO crfVersionDao;
+    protected ICrfVersionDAO crfVersionDao;
     
     @Autowired
     private IAuditEventDAO auditEventDao;
@@ -419,7 +419,7 @@ public class SignStudySubjectServlet extends SecureController {
          */
         IStudyEventDAO sedao = studyEventDao;
         ICrfDAO cdao = crfDao;
-        CRFVersionDAO cvdao = crfVersionDao;
+        ICrfVersionDAO cvdao = crfVersionDao;
         ItemDataDAO iddao = itemDataDao;
         EventDefinitionCRFDao edcdao = eventDefinitionCrfDao;
 
@@ -520,7 +520,7 @@ public class SignStudySubjectServlet extends SecureController {
             startedButIncompleted.put(Integer.valueOf(edcrf.getCrfId()), new EventCRFBean());
         }
 
-        CRFVersionDAO cvdao = crfVersionDao;
+        ICrfVersionDAO cvdao = crfVersionDao;
         ItemDataDAO iddao = itemDataDao;
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecrf = (EventCRFBean) eventCRFs.get(i);
@@ -577,7 +577,7 @@ public class SignStudySubjectServlet extends SecureController {
 
     public void populateUncompletedCRFsWithCRFAndVersions(DataSource ds, ArrayList uncompletedEventDefinitionCRFs) {
         ICrfDAO cdao = crfDao;
-        CRFVersionDAO cvdao = crfVersionDao;
+        ICrfVersionDAO cvdao = crfVersionDao;
 
         int size = uncompletedEventDefinitionCRFs.size();
         for (int i = 0; i < size; i++) {
