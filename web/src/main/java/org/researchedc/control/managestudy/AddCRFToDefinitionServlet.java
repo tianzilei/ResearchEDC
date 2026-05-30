@@ -20,8 +20,8 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.domain.SourceDataVerification;
 import org.researchedc.service.pmanage.Authorization;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
@@ -45,7 +45,7 @@ public class AddCRFToDefinitionServlet extends SecureController {
 
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
 
 /**
      * Checks whether the user has the correct privilege
@@ -171,7 +171,7 @@ public class AddCRFToDefinitionServlet extends SecureController {
     private void addCRF() throws Exception {
 
         FormProcessor fp = new FormProcessor(request);
-        CRFVersionDAO vdao = this.crfVersionDao;
+        ICrfVersionDAO vdao = this.crfVersionDao;
         ArrayList crfArray = new ArrayList();
         Map tmpCRFIdMap = (HashMap) session.getAttribute("tmpCRFIdMap");
         if (tmpCRFIdMap == null) {
@@ -350,4 +350,3 @@ public class AddCRFToDefinitionServlet extends SecureController {
 //        }
 //        forwardPage(Page.UPDATE_EVENT_DEFINITION1);
 //    }
-

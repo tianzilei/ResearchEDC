@@ -25,10 +25,10 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.domain.SourceDataVerification;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;
 import org.researchedc.service.pmanage.Authorization;
@@ -60,7 +60,7 @@ import org.researchedc.dao.spi.IStudyParameterValueDAO;
 public class DefineStudyEventServlet extends SecureController {
     
     @Autowired
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
 
@@ -106,7 +106,7 @@ EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
         if (crfsWithVersion == null) {
             crfsWithVersion = new ArrayList();
             ICrfDAO cdao = this.crfDao;
-            CRFVersionDAO cvdao = this.crfVersionDao;
+            ICrfVersionDAO cvdao = this.crfVersionDao;
             ArrayList crfs = (ArrayList) cdao.findAllByStatus(Status.AVAILABLE);
 
             for (int i = 0; i < crfs.size(); i++) {
@@ -221,7 +221,7 @@ EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
             logger.debug("no errors in the first section");
             // logger.debug("actionName*******" + fp.getString("actionName"));
             //debugger.debug("pageNum*******" + fp.getString("pageNum"));
-            CRFVersionDAO vdao = this.crfVersionDao;
+            ICrfVersionDAO vdao = this.crfVersionDao;
             ArrayList crfArray = new ArrayList();
             /*
              * The tmpCRFIdMap will hold all the selected CRFs in the session
@@ -294,7 +294,7 @@ EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
 
         
         ArrayList eventDefinitionCRFs = new ArrayList();
-        CRFVersionDAO cvdao = this.crfVersionDao;
+        ICrfVersionDAO cvdao = this.crfVersionDao;
         for (int i = 0; i < sed.getCrfs().size(); i++) {
             EventDefinitionCRFBean edcBean = new EventDefinitionCRFBean();
             int crfId = fp.getInt("crfId" + i);
@@ -475,7 +475,7 @@ EventDefinitionCrfTagService eventDefinitionCrfTagService = null;
 
     private void confirmDefinition2() throws Exception {
         FormProcessor fp = new FormProcessor(request);
-        CRFVersionDAO vdao = this.crfVersionDao;
+        ICrfVersionDAO vdao = this.crfVersionDao;
         ArrayList crfArray = new ArrayList();
         Map tmpCRFIdMap = (HashMap) session.getAttribute("tmpCRFIdMap");
         // trying to avoid NPE not sure why we would get it there ((tmpCRFIdMap.containsKey(id))), tbh
