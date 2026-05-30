@@ -18,12 +18,12 @@ import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.rule.RuleBulkExecuteContainer;
@@ -56,7 +56,7 @@ public class RuleRunner {
     private ICrfDAO crfDao;
     private ICrfVersionDAO crfVersionDao;
     private StudyEventDAO studyEventDao;
-    private ItemDataDAO itemDataDao;
+    private IItemDataDAO itemDataDao;
     private ExpressionService expressionService;
     private EventCRFDAO eventCrfDao;
     private IStudySubjectDAO studySubjectDao;
@@ -218,7 +218,7 @@ public class RuleRunner {
         return studyEventDao;
     }
 
-    ItemDataDAO getItemDataDao() {
+    IItemDataDAO getItemDataDao() {
         return itemDataDao;
     }
 
@@ -263,7 +263,7 @@ public class RuleRunner {
     }
 
     public void setDaoCollaborators(RuleSetDAO ruleSetDao, ICrfDAO crfDao, RuleSetRuleDAO ruleSetRuleDao, RuleActionDAO ruleActionDao,
-            StudyEventDAO studyEventDao, ItemDataDAO itemDataDao, EventCRFDAO eventCrfDao, ICrfVersionDAO crfVersionDao,
+            StudyEventDAO studyEventDao, IItemDataDAO itemDataDao, EventCRFDAO eventCrfDao, ICrfVersionDAO crfVersionDao,
             IStudySubjectDAO studySubjectDao, ItemFormMetadataDAO itemFormMetadataDao, SectionDAO sectionDao, IStudyDAO studyDao,
             StudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
             IDiscrepancyNoteDAO discrepancyNoteDao, ExpressionService expressionService) {
