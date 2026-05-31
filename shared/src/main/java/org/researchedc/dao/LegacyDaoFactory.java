@@ -4,6 +4,8 @@ import javax.sql.DataSource;
 
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.managestudy.StudyGroupClassDAO;
+import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.admin.CRFDAO;
@@ -24,6 +26,8 @@ import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.spi.IRuleDAO;
 import org.researchedc.dao.spi.IRuleSetDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
@@ -90,5 +94,13 @@ public final class LegacyDaoFactory {
 
     public static IRuleSetDAO ruleSetDao(DataSource dataSource) {
         return new RuleSetDAO(dataSource);
+    }
+
+    public static StudyGroupClassDao studyGroupClassDao(DataSource dataSource) {
+        return new StudyGroupClassDAO(dataSource);
+    }
+
+    public static StudyGroupDao studyGroupDao(DataSource dataSource) {
+        return new StudyGroupDAO(dataSource);
     }
 }
