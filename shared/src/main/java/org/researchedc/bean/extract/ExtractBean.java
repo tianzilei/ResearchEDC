@@ -40,10 +40,10 @@ import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -84,16 +84,16 @@ public class ExtractBean {
     private ICrfVersionDAO crfVersionDao;
     private ItemDAO itemDao;
     private ItemFormMetadataDAO itemFormMetadataDao;
-    private StudyGroupDAO studyGroupDao;
-    private StudyGroupClassDAO studyGroupClassDao;
+    private StudyGroupDao studyGroupDao;
+    private StudyGroupClassDao studyGroupClassDao;
     private StudyEventDAO studyEventDao;
     private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
     private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
     private Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory = LegacyDaoFactory::crfVersionDao;
     private Function<DataSource, ItemDAO> itemDaoFactory = ItemDAO::new;
     private Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory = ItemFormMetadataDAO::new;
-    private Function<DataSource, StudyGroupDAO> studyGroupDaoFactory = StudyGroupDAO::new;
-    private Function<DataSource, StudyGroupClassDAO> studyGroupClassDaoFactory = StudyGroupClassDAO::new;
+    private Function<DataSource, StudyGroupDao> studyGroupDaoFactory = LegacyDaoFactory::studyGroupDao;
+    private Function<DataSource, StudyGroupClassDao> studyGroupClassDaoFactory = LegacyDaoFactory::studyGroupClassDao;
     private Function<DataSource, StudyEventDAO> studyEventDaoFactory = StudyEventDAO::new;
 
     private StudyBean study;
@@ -820,8 +820,8 @@ public class ExtractBean {
         ICrfVersionDAO cvdao = getCrfVersionDao();
         ItemDAO idao = getItemDao();
         ItemFormMetadataDAO ifmDAO = getItemFormMetadataDao();
-        StudyGroupDAO studygroupDAO = getStudyGroupDao();
-        StudyGroupClassDAO studygroupclassDAO = getStudyGroupClassDao();
+        StudyGroupDao studygroupDAO = getStudyGroupDao();
+        StudyGroupClassDao studygroupclassDAO = getStudyGroupClassDao();
         studyGroupClasses = new ArrayList();
         studyGroupMap = new HashMap();
         studyGroupMaps = new HashMap<Integer, ArrayList>();
@@ -2999,14 +2999,14 @@ public class ExtractBean {
         return itemFormMetadataDao;
     }
 
-    private StudyGroupDAO getStudyGroupDao() {
+    private StudyGroupDao getStudyGroupDao() {
         if (studyGroupDao == null) {
             studyGroupDao = studyGroupDaoFactory.apply(ds);
         }
         return studyGroupDao;
     }
 
-    private StudyGroupClassDAO getStudyGroupClassDao() {
+    private StudyGroupClassDao getStudyGroupClassDao() {
         if (studyGroupClassDao == null) {
             studyGroupClassDao = studyGroupClassDaoFactory.apply(ds);
         }
