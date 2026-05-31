@@ -7,7 +7,6 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.extract.FilterDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -20,6 +19,7 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
+import org.researchedc.dao.spi.FilterDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
@@ -56,7 +56,7 @@ public class CreateFiltersTwoServlet extends SecureController {
     protected SectionDAO sectionDao;
 
     @Autowired
-    protected FilterDAO filterDao;
+    protected FilterDao filterDao;
 
     @Autowired
     protected ICrfVersionDAO crfVersionDao;
@@ -100,7 +100,7 @@ public class CreateFiltersTwoServlet extends SecureController {
             if (events.isEmpty()) {
                 addPageMessage(respage.getString("no_CRF_assigned_pick_another"));
                 FormProcessor fp = new FormProcessor(request);
-                FilterDAO fdao = this.filterDao;
+                FilterDao fdao = this.filterDao;
                 EntityBeanTable table = fp.getEntityBeanTable();
 
                 ArrayList filters = (ArrayList) fdao.findAll();
@@ -267,7 +267,7 @@ public class CreateFiltersTwoServlet extends SecureController {
             session.setAttribute("questions", questions);
             // TODO where does the connector come into play?
             // session.setAttribute("filterobjects",filterobjects);
-            FilterDAO fDAO = this.filterDao;
+            FilterDao fDAO = this.filterDao;
             String newSQL = (String) session.getAttribute("newSQL");
             ArrayList newExp = (ArrayList) session.getAttribute("newExp");
             // human readable explanation

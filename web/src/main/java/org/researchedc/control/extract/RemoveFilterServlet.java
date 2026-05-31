@@ -7,12 +7,12 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.extract.FilterDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.FilterBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
+import org.researchedc.dao.spi.FilterDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -40,7 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RemoveFilterServlet extends SecureController {
 
     @Autowired
-    protected FilterDAO filterDao;
+    protected FilterDao filterDao;
 
     Locale locale;
     // < ResourceBundleresmessage,restext,resword,resexception;
@@ -56,7 +56,7 @@ public class RemoveFilterServlet extends SecureController {
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
         int filterId = fp.getInt("filterId");
-        FilterDAO fDAO = this.filterDao;
+        FilterDao fDAO = this.filterDao;
         FilterBean filter = (FilterBean) fDAO.findByPK(filterId);
 
         String action = request.getParameter("action");
@@ -107,7 +107,7 @@ public class RemoveFilterServlet extends SecureController {
 
     private EntityBeanTable getFilterTable() {
         FormProcessor fp = new FormProcessor(request);
-        FilterDAO fdao = this.filterDao;
+        FilterDao fdao = this.filterDao;
         EntityBeanTable table = fp.getEntityBeanTable();
 
         ArrayList filters = (ArrayList) fdao.findAll();

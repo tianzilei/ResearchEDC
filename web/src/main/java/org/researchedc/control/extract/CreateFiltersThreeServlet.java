@@ -7,7 +7,6 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.extract.FilterDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.TermType;
@@ -16,6 +15,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
+import org.researchedc.dao.spi.FilterDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -41,7 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CreateFiltersThreeServlet extends SecureController {
 
     @Autowired
-    protected FilterDAO filterDao;
+    protected FilterDao filterDao;
 
     Locale locale;
 
@@ -87,7 +87,7 @@ public class CreateFiltersThreeServlet extends SecureController {
                 fb.setOwner(ub);
                 // fb.setOwnerId(ub.getId());
                 logger.info("found owner id: " + fb.getOwner().getId());
-                FilterDAO fDAO = this.filterDao;
+                FilterDao fDAO = this.filterDao;
                 FilterBean fbFinal = (FilterBean) fDAO.create(fb);
                 addPageMessage(restext.getString("the_filter_named") +
                 // fp.getString("fName")+
@@ -101,7 +101,7 @@ public class CreateFiltersThreeServlet extends SecureController {
                     forwardPage(Page.CREATE_DATASET_4);
                 } else {
                     session.removeAttribute("newFilter");
-                    FilterDAO fdao = this.filterDao;
+                    FilterDao fdao = this.filterDao;
                     EntityBeanTable table = fp.getEntityBeanTable();
 
                     ArrayList filters = (ArrayList) fdao.findAll();
