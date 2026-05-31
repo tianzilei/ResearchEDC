@@ -14,8 +14,6 @@ import java.util.Locale;
 
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.control.admin.EventStatusStatisticsTableFactory;
@@ -39,6 +37,8 @@ import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -63,12 +63,12 @@ public class MainMenuServlet extends SecureController {
 	private ISubjectDAO subjectDAO;
     private IStudySubjectDAO studySubjectDAO;
     private IStudyEventDAO studyEventDAO;
-    private StudyGroupClassDAO studyGroupClassDAO;
+    private StudyGroupClassDao studyGroupClassDAO;
     private SubjectGroupMapDAO subjectGroupMapDAO;
     private IStudyDAO studyDAO;
     private EventCRFDao eventCRFDAO;
     private EventDefinitionCRFDao eventDefintionCRFDAO;
-    private StudyGroupDAO studyGroupDAO;
+    private StudyGroupDao studyGroupDAO;
     private IDiscrepancyNoteDAO discrepancyNoteDAO;
     private StudyParameterValueDAO studyParameterValueDAO;
 
@@ -331,7 +331,7 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
         return studySubjectDAO;
     }
 
-    public StudyGroupClassDAO getStudyGroupClassDAO() {
+    public StudyGroupClassDao getStudyGroupClassDAO() {
         studyGroupClassDAO = this.studyGroupClassDAO == null ? this.studyGroupClassDao : studyGroupClassDAO;
         return studyGroupClassDAO;
     }
@@ -361,7 +361,7 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
         return eventDefintionCRFDAO;
     }
 
-    public StudyGroupDAO getStudyGroupDAO() {
+    public StudyGroupDao getStudyGroupDAO() {
         studyGroupDAO = this.studyGroupDAO == null ? this.studyGroupDao : studyGroupDAO;
         return studyGroupDAO;
     }
