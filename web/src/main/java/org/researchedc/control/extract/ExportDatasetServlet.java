@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.extract.ArchivedDatasetFileBean;
 import org.researchedc.bean.extract.CommaReportBean;
@@ -36,6 +35,7 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IRuleDAO;
 import org.researchedc.service.extract.GenerateExtractFileService;
@@ -68,7 +68,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ExportDatasetServlet extends SecureController {
 
     @Autowired
-    protected DatasetDAO datasetDao;
+    protected DatasetDao datasetDao;
 
     public static String getLink(int dsId) {
         return "ExportDataset?datasetId=" + dsId;
@@ -93,7 +93,7 @@ public class ExportDatasetServlet extends SecureController {
 
     @Override
     public void processRequest() throws Exception {
-        DatasetDAO dsdao = this.datasetDao;
+        DatasetDao dsdao = this.datasetDao;
         ArchivedDatasetFileDAO asdfdao = this.archivedDatasetFileDao;
         FormProcessor fp = new FormProcessor(request);
 
