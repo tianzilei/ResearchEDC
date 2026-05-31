@@ -7,11 +7,11 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.extract.FilterDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
+import org.researchedc.dao.spi.FilterDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -38,7 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CreateFiltersOneServlet extends SecureController {
 
     @Autowired
-    protected FilterDAO filterDao;
+    protected FilterDao filterDao;
 
     Locale locale;
 
@@ -57,7 +57,7 @@ public class CreateFiltersOneServlet extends SecureController {
             // note that this is now set up to accept the
             // tabling classes created in View.
             FormProcessor fp = new FormProcessor(request);
-            FilterDAO fdao = this.filterDao;
+            FilterDao fdao = this.filterDao;
             EntityBeanTable table = fp.getEntityBeanTable();
 
             ArrayList filters = new ArrayList();

@@ -7,7 +7,6 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.extract.FilterDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.FilterBean;
@@ -15,6 +14,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
+import org.researchedc.dao.spi.FilterDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.bean.EntityBeanTable;
@@ -43,7 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ApplyFilterServlet extends SecureController {
 
     @Autowired
-    protected FilterDAO filterDao;
+    protected FilterDao filterDao;
 
     public static final String BEAN_YEARS = "years";
     public static final String BEAN_MONTHS = "months";
@@ -75,7 +75,7 @@ public class ApplyFilterServlet extends SecureController {
             HashMap errors = new HashMap();
             if (fp.getString("submit").equalsIgnoreCase(resword.getString("apply_filter"))) {
                 if (fp.getInt("filterId") > 0) {
-                    FilterDAO fdao = this.filterDao;
+                    FilterDao fdao = this.filterDao;
                     FilterBean fb = (FilterBean) fdao.findByPK(fp.getInt("filterId"));
                     session.setAttribute("newFilter", fb);
 
@@ -121,7 +121,7 @@ public class ApplyFilterServlet extends SecureController {
         } else if ("details".equalsIgnoreCase(action)) {
             FormProcessor fp = new FormProcessor(request);
             int filterId = fp.getInt("filterId");
-            FilterDAO fDAO = this.filterDao;
+            FilterDao fDAO = this.filterDao;
             FilterBean showFilter = (FilterBean) fDAO.findByPK(filterId);
             request.setAttribute(BEAN_FILTER, showFilter);
             forwardPage(Page.VIEW_FILTER_DETAILS);
@@ -188,7 +188,7 @@ public class ApplyFilterServlet extends SecureController {
 
     private EntityBeanTable getFilterTable() {
         FormProcessor fp = new FormProcessor(request);
-        FilterDAO fdao = this.filterDao;
+        FilterDao fdao = this.filterDao;
         EntityBeanTable table = fp.getEntityBeanTable();
 
         ArrayList filters = new ArrayList();
