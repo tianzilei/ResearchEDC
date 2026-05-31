@@ -1,6 +1,6 @@
 package org.researchedc.control.admin;
 
-import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.bean.admin.AuditEventBean;
 import org.researchedc.bean.admin.TriggerBean;
 import org.researchedc.bean.extract.DatasetBean;
@@ -33,7 +33,7 @@ public class ViewSingleJobServlet extends SecureController {
     @Autowired
     private AuditEventDAO auditEventDao;
     @Autowired
-    private DatasetDAO datasetDao;
+    private DatasetDao datasetDao;
     @Autowired
     private IUserAccountDAO userAccountDao;
 
@@ -132,7 +132,7 @@ public class ViewSingleJobServlet extends SecureController {
                     int dsId = dataMap.getInt(ExampleSpringJob.DATASET_ID);
                     triggerBean.setExportFormat(exportFormat);
                     triggerBean.setPeriodToRun(periodToRun);
-                    DatasetDAO datasetDAO = this.datasetDao;
+                    DatasetDao datasetDAO = this.datasetDao;
                     DatasetBean dataset = (DatasetBean) datasetDAO.findByPK(dsId);
                     triggerBean.setDataset(dataset);
                 }

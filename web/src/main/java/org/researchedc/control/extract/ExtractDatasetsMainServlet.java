@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.bean.core.Role;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ExtractDatasetsMainServlet extends SecureController {
 
     @Autowired
-    protected DatasetDAO datasetDao;
+    protected DatasetDao datasetDao;
 
     public static final String PATH = "ExtractDatasetsMain";
     public static final String ARG_USER_ID = "userId";
@@ -46,7 +46,7 @@ public class ExtractDatasetsMainServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
-        DatasetDAO dsdao = this.datasetDao;
+        DatasetDao dsdao = this.datasetDao;
         EntityBeanTable table = fp.getEntityBeanTable();
 
         ArrayList datasets = (ArrayList) dsdao.findTopFive(currentStudy);

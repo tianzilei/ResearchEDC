@@ -5,7 +5,7 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.extract.ArchivedDatasetFileBean;
 import org.researchedc.bean.extract.DatasetBean;
@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ShowFileServlet extends SecureController {
 
     @Autowired
-    protected DatasetDAO datasetDao;
+    protected DatasetDao datasetDao;
 
     Locale locale;
 
@@ -49,7 +49,7 @@ public class ShowFileServlet extends SecureController {
         FormProcessor fp = new FormProcessor(request);
         int fileId = fp.getInt("fileId");
         int dsId = fp.getInt("datasetId");
-        DatasetDAO dsdao = this.datasetDao;
+        DatasetDao dsdao = this.datasetDao;
         DatasetBean db = (DatasetBean) dsdao.findByPK(dsId);
 
         ArchivedDatasetFileDAO asdfdao = this.archivedDatasetFileDao;
