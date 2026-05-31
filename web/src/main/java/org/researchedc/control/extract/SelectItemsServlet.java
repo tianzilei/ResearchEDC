@@ -7,8 +7,6 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.extract.DatasetBean;
@@ -23,6 +21,8 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -80,11 +80,11 @@ public class SelectItemsServlet extends SecureController {
         ArrayList sgclasses = (ArrayList) session.getAttribute("allSelectedGroups");
         if (sgclasses == null || sgclasses.size() == 0) {
             IStudyDAO studydao = this.studyDao;
-            StudyGroupClassDAO sgclassdao = this.studyGroupClassDao;
+            StudyGroupClassDao sgclassdao = this.studyGroupClassDao;
             StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
             sgclasses = sgclassdao.findAllActiveByStudy(theStudy);
 
-            StudyGroupDAO sgdao = this.studyGroupDao;
+            StudyGroupDao sgdao = this.studyGroupDao;
 
             for (int i = 0; i < sgclasses.size(); i++) {
                 StudyGroupClassBean sgclass = (StudyGroupClassBean) sgclasses.get(i);

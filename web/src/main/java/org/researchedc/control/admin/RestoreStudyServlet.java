@@ -8,8 +8,6 @@
 package org.researchedc.control.admin;
 
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.DatasetBean;
@@ -36,6 +34,8 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -62,9 +62,9 @@ public class RestoreStudyServlet extends SecureController {
     @Autowired
     IStudyEventDAO studyEventDao;
     @Autowired
-    StudyGroupClassDAO studyGroupClassDao;
+    StudyGroupClassDao studyGroupClassDao;
     @Autowired
-    StudyGroupDAO studyGroupDao;
+    StudyGroupDao studyGroupDao;
     @Autowired
     EventCRFDao eventCrfDao;
     @Autowired
@@ -195,8 +195,8 @@ public class RestoreStudyServlet extends SecureController {
                 }
 
                 // restore all study_group
-                StudyGroupDAO sgdao = this.studyGroupDao;
-                StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
+                StudyGroupDao sgdao = this.studyGroupDao;
+                StudyGroupClassDao sgcdao = this.studyGroupClassDao;
                 SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
                 ArrayList groups = sgcdao.findAllByStudy(study);
                 for (int i = 0; i < groups.size(); i++) {

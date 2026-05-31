@@ -7,7 +7,6 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.DatasetBean;
@@ -21,6 +20,7 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.DatasetDao;
+import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -170,7 +170,7 @@ public class EditDatasetServlet extends SecureController {
         session.setAttribute("newDataset", db);
         session.setAttribute("allItems", db.getItemDefCrf().clone());
         session.setAttribute("allSelectedItems", db.getItemDefCrf().clone());
-        StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
+        StudyGroupClassDao sgcdao = this.studyGroupClassDao;
         IStudyDAO studydao = this.studyDao;
         StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
         ArrayList<StudyGroupClassBean> allSelectedGroups = sgcdao.findAllActiveByStudy(theStudy);

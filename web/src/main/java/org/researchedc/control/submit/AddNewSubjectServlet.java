@@ -19,8 +19,6 @@ import java.util.List;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.ResolutionStatus;
@@ -52,6 +50,8 @@ import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.service.rule.RuleSetService;
@@ -142,7 +142,7 @@ public class AddNewSubjectServlet extends SecureController {
 
         IStudySubjectDAO ssd = this.studySubjectDao;
         IStudyDAO stdao = this.studyDao;
-        StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
+        StudyGroupClassDao sgcdao = this.studyGroupClassDao;
         ArrayList classes = new ArrayList();
         panel.setStudyInfoShown(false);
         FormProcessor fp = new FormProcessor(request);
@@ -937,7 +937,7 @@ public class AddNewSubjectServlet extends SecureController {
     }
 
     protected void setUpBeans(ArrayList classes) throws Exception {
-        StudyGroupDAO sgdao = this.studyGroupDao;
+        StudyGroupDao sgdao = this.studyGroupDao;
         // addEntityList(BEAN_GROUPS, sgdao.findAllByStudy(currentStudy),
         // "A group must be available in order to add new subjects to this
         // study;
