@@ -46,7 +46,7 @@ import org.researchedc.core.util.XMLFileFilter;
 import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
-import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.exception.OpenClinicaSystemException;
@@ -99,7 +99,7 @@ public class XsltTransformJob extends QuartzJobBean {
     private IUserAccountDAO userAccountDao;
     private ArchivedDatasetFileDAO archivedDatasetFileDao;
     private AuditEventDAO auditEventDAO;
-    private DatasetDAO datasetDao;
+    private DatasetDao datasetDao;
 
     private final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
@@ -615,7 +615,7 @@ public class XsltTransformJob extends QuartzJobBean {
 
             mailSender = ctx.getBean(OpenClinicaMailSender.class);
             auditEventDAO = ctx.getBean(AuditEventDAO.class);
-            datasetDao = ctx.getBean(DatasetDAO.class);
+            datasetDao = ctx.getBean(DatasetDao.class);
             userAccountDao = ctx.getBean(IUserAccountDAO.class);
             studyDao = ctx.getBean(IStudyDAO.class);
             archivedDatasetFileDao = ctx.getBean(ArchivedDatasetFileDAO.class);
