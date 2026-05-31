@@ -11,7 +11,6 @@ import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.extract.ExtractPropertyBean;
 import org.researchedc.bean.login.UserAccountBean;
@@ -22,6 +21,7 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.CoreResources;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.extract.ExtractUtils;
@@ -49,7 +49,7 @@ public class CreateJobExportServlet extends SecureController {
     IStudyDAO studyDao;
 
     @Autowired
-    private DatasetDAO datasetDao;
+    private DatasetDao datasetDao;
     public static final String PERIOD = "periodToRun";
     public static final String FORMAT_ID = "formatId";
     public static final String DATASET_ID = "dsId";
@@ -105,7 +105,7 @@ public class CreateJobExportServlet extends SecureController {
         // }
         // // possible error with dates? yep
         // }
-        DatasetDAO dsdao = this.datasetDao;
+        DatasetDao dsdao = this.datasetDao;
         Collection dsList = dsdao.findAllOrderByStudyIdAndName();
         // TODO will have to dress this up to allow for sites then datasets
         request.setAttribute("datasets", dsList);
@@ -165,7 +165,7 @@ public class CreateJobExportServlet extends SecureController {
                 logger.info("found no validation errors, continuing");
 
                 IStudyDAO studyDAO = this.studyDao;
-                DatasetDAO datasetDao = this.datasetDao;
+                DatasetDao datasetDao = this.datasetDao;
 
                 UserAccountBean userBean = (UserAccountBean) request.getSession().getAttribute("userBean");
                 CoreResources cr =  new CoreResources();

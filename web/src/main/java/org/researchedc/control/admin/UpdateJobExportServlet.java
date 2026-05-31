@@ -11,7 +11,7 @@ import java.util.Set;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.bean.extract.DatasetBean;
@@ -47,7 +47,7 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 public class UpdateJobExportServlet extends SecureController {
 
     @Autowired
-    private DatasetDAO datasetDao;
+    private DatasetDao datasetDao;
 
     private static String SCHEDULER = "schedulerFactoryBean";
 
@@ -89,7 +89,7 @@ public class UpdateJobExportServlet extends SecureController {
     private void setUpServlet(Trigger trigger) {
         FormProcessor fp2 = new FormProcessor(request);
 
-        DatasetDAO dsdao = this.datasetDao;
+        DatasetDao dsdao = this.datasetDao;
         Collection dsList = dsdao.findAllOrderByStudyIdAndName();
         // TODO will have to dress this up to allow for sites then datasets
         request.setAttribute("datasets", dsList);
@@ -160,7 +160,7 @@ public class UpdateJobExportServlet extends SecureController {
                 // change trigger, update in database
                 IStudyDAO studyDAO = this.studyDao;
                 StudyBean study = (StudyBean) studyDAO.findByPK(sm.getUserBean().getActiveStudyId());
-                DatasetDAO datasetDao = this.datasetDao;
+                DatasetDao datasetDao = this.datasetDao;
                 CoreResources cr =  new CoreResources();
                 UserAccountBean userBean = (UserAccountBean) request.getSession().getAttribute("userBean");
 
