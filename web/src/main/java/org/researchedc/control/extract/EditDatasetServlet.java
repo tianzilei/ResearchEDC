@@ -7,7 +7,6 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -40,7 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EditDatasetServlet extends SecureController {
 
     @Autowired
-    protected DatasetDAO datasetDao;
+    protected DatasetDao datasetDao;
 
     public static String getLink(int dsId) {
         return "EditDataset?dsId=" + dsId;
@@ -166,7 +165,7 @@ public class EditDatasetServlet extends SecureController {
      */
     // @author ywang (Feb, 2008)
     public DatasetBean initializeAttributes(int datasetId) {
-        DatasetDAO dsdao = this.datasetDao;
+        DatasetDao dsdao = this.datasetDao;
         DatasetBean db = dsdao.initialDatasetData(datasetId);
         session.setAttribute("newDataset", db);
         session.setAttribute("allItems", db.getItemDefCrf().clone());

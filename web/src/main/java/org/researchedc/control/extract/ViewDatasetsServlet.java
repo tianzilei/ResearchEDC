@@ -7,7 +7,6 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.extract.DatasetBean;
@@ -18,6 +17,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -50,7 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ViewDatasetsServlet extends SecureController {
 
     @Autowired
-    protected DatasetDAO datasetDao;
+    protected DatasetDao datasetDao;
 
     Locale locale;
 
@@ -62,7 +62,7 @@ public class ViewDatasetsServlet extends SecureController {
 
     @Override
     public void processRequest() throws Exception {
-        DatasetDAO dsdao = this.datasetDao;
+        DatasetDao dsdao = this.datasetDao;
         String action = request.getParameter("action");
         resetPanel();
         request.setAttribute(STUDY_INFO_PANEL, panel);
@@ -216,7 +216,7 @@ public class ViewDatasetsServlet extends SecureController {
      */
     // @author ywang (Feb, 2008)
     public DatasetBean initializeAttributes(int datasetId) {
-        DatasetDAO dsdao = this.datasetDao;
+        DatasetDao dsdao = this.datasetDao;
         DatasetBean db = dsdao.initialDatasetData(datasetId);
         session.setAttribute("newDataset", db);
         session.setAttribute("allItems", db.getItemDefCrf().clone());

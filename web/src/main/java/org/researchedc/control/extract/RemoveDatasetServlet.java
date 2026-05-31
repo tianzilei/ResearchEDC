@@ -7,13 +7,13 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RemoveDatasetServlet extends SecureController {
 
     @Autowired
-    protected DatasetDAO datasetDao;
+    protected DatasetDao datasetDao;
 
     Locale locale;
 
@@ -49,7 +49,7 @@ public class RemoveDatasetServlet extends SecureController {
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
         int dsId = fp.getInt("dsId");
-        DatasetDAO dsDAO = this.datasetDao;
+        DatasetDao dsDAO = this.datasetDao;
         DatasetBean dataset = (DatasetBean) dsDAO.findByPK(dsId);
 
         IStudyDAO sdao = this.studyDao;
@@ -111,7 +111,7 @@ public class RemoveDatasetServlet extends SecureController {
         FormProcessor fp = new FormProcessor(request);
 
         EntityBeanTable table = fp.getEntityBeanTable();
-        DatasetDAO dsdao = this.datasetDao;
+        DatasetDao dsdao = this.datasetDao;
         ArrayList datasets = new ArrayList();
         // if (ub.isSysAdmin()) {
         // datasets =
