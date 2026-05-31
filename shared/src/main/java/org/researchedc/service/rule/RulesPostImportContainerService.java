@@ -17,11 +17,11 @@ import org.researchedc.bean.managestudy.StudyGroupClassBean;
 import org.researchedc.bean.oid.GenericOidGenerator;
 import org.researchedc.bean.oid.OidGenerator;
 import org.researchedc.bean.rule.action.EmailActionBean;
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.hibernate.RuleDao;
 import org.researchedc.dao.hibernate.RuleSetDao;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.rule.AuditableBeanWrapper;
 import org.researchedc.domain.rule.RuleBean;
@@ -94,9 +94,9 @@ public class RulesPostImportContainerService {
     private InsertActionValidator insertActionValidator;
     private EventActionValidator eventActionValidator;
     private RandomizeActionValidator randomizeActionValidator;
-    private StudyGroupClassDAO studyGroupClassDao;
+    private StudyGroupClassDao studyGroupClassDao;
     private StudyEventDefinitionDAO studyEventDefinitionDao;
-    private final Function<DataSource, StudyGroupClassDAO> studyGroupClassDaoFactory;
+    private final Function<DataSource, StudyGroupClassDao> studyGroupClassDaoFactory;
     private final Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
     ResourceBundle respage;
 
@@ -104,14 +104,14 @@ public class RulesPostImportContainerService {
         oidGenerator = new GenericOidGenerator();
         this.ds = ds;
         this.currentStudy = currentStudy;
-        this.studyGroupClassDaoFactory = StudyGroupClassDAO::new;
+        this.studyGroupClassDaoFactory = LegacyDaoFactory::studyGroupClassDao;
         this.studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
     }
 
     public RulesPostImportContainerService(DataSource ds) {
         oidGenerator = new GenericOidGenerator();
         this.ds = ds;
-        this.studyGroupClassDaoFactory = StudyGroupClassDAO::new;
+        this.studyGroupClassDaoFactory = LegacyDaoFactory::studyGroupClassDao;
         this.studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
     }
 
@@ -941,7 +941,7 @@ public class RulesPostImportContainerService {
         return expressionService;
     }
 
-    private StudyGroupClassDAO getStudyGroupClassDao() {
+    private StudyGroupClassDao getStudyGroupClassDao() {
         if (studyGroupClassDao == null) {
             studyGroupClassDao = studyGroupClassDaoFactory.apply(ds);
         }

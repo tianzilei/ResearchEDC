@@ -18,12 +18,12 @@ import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.hibernate.DynamicsItemGroupMetadataDao;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -75,8 +75,8 @@ public class RandomizeService extends RandomizationRegistrar {
     private ExpressionService expressionService;
     private IStudySubjectDAO studySubjectDAO;
     private ISubjectDAO subjectDAO;
-    private StudyGroupClassDAO studyGroupClassDAO;
-    private StudyGroupDAO studyGroupDAO;
+    private StudyGroupClassDao studyGroupClassDAO;
+    private StudyGroupDao studyGroupDAO;
     private IUserAccountDAO userAccountDAO;
     HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
     public static final int RANDOMIZATION_READ_TIMEOUT = 10000;
@@ -90,7 +90,7 @@ public class RandomizeService extends RandomizationRegistrar {
 
     @Autowired
     public RandomizeService(DataSource ds, ExpressionService expressionService, IStudySubjectDAO studySubjectDAO, IStudyDAO studyDAO,
-            IUserAccountDAO userAccountDAO, ISubjectDAO subjectDAO, StudyGroupClassDAO studyGroupClassDAO, StudyGroupDAO studyGroupDAO,
+            IUserAccountDAO userAccountDAO, ISubjectDAO subjectDAO, StudyGroupClassDao studyGroupClassDAO, StudyGroupDao studyGroupDAO,
             ItemDataDAO itemDataDAO) {
         this.ds = ds;
         this.expressionService = expressionService;
@@ -183,8 +183,8 @@ public class RandomizeService extends RandomizationRegistrar {
         String value = "";
         IStudySubjectDAO ssdao = getStudySubjectDAO();
         ISubjectDAO subdao = getSubjectDAO();
-        StudyGroupClassDAO sgcdao = getStudyGroupClassDAO();
-        StudyGroupDAO sgdao = getStudyGroupDAO();
+        StudyGroupClassDao sgcdao = getStudyGroupClassDAO();
+        StudyGroupDao sgdao = getStudyGroupDAO();
         StudySubjectBean ssBean = (StudySubjectBean) ssdao.findByPK(eventCrfBean.getStudySubjectId());
         SubjectBean subjectBean = (SubjectBean) subdao.findByPK(ssBean.getSubjectId());
 
@@ -359,11 +359,11 @@ public class RandomizeService extends RandomizationRegistrar {
         return subjectDAO;
     }
 
-    public StudyGroupClassDAO getStudyGroupClassDAO() {
+    public StudyGroupClassDao getStudyGroupClassDAO() {
         return studyGroupClassDAO;
     }
 
-    public StudyGroupDAO getStudyGroupDAO() {
+    public StudyGroupDao getStudyGroupDAO() {
         return studyGroupDAO;
     }
 
