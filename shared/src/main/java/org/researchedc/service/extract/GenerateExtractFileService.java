@@ -33,7 +33,7 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
-import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
@@ -52,13 +52,13 @@ public class GenerateExtractFileService {
     private static File files[]=null;
     private static List<File> oldFiles = new LinkedList<File>();
     private final RuleSetRuleDao ruleSetRuleDao;
-    private final DatasetDAO datasetDao;
+    private final DatasetDao datasetDao;
     private final ItemFormMetadataDAO itemFormMetadataDao;
     private final ArchivedDatasetFileDAO archivedDatasetFileDao;
     private final OdmFileCreation odmFileCreation;
 
     public GenerateExtractFileService(DataSource ds, HttpServletRequest request, CoreResources coreResources,
-            RuleSetRuleDao ruleSetRuleDao, DatasetDAO datasetDao, ItemFormMetadataDAO itemFormMetadataDao,
+            RuleSetRuleDao ruleSetRuleDao, DatasetDao datasetDao, ItemFormMetadataDAO itemFormMetadataDao,
             ArchivedDatasetFileDAO archivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         this.ds = ds;
         this.request = request;
@@ -71,7 +71,7 @@ public class GenerateExtractFileService {
     }
 
     public GenerateExtractFileService(DataSource ds, CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao,
-            DatasetDAO datasetDao, ItemFormMetadataDAO itemFormMetadataDao,
+            DatasetDao datasetDao, ItemFormMetadataDAO itemFormMetadataDao,
             ArchivedDatasetFileDAO archivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         this(ds, null, coreResources, ruleSetRuleDao, datasetDao, itemFormMetadataDao,
                 archivedDatasetFileDao, odmFileCreation);
@@ -661,7 +661,7 @@ public class GenerateExtractFileService {
        // }
     }
 
-    private DatasetDAO getDatasetDao() {
+    private DatasetDao getDatasetDao() {
         return datasetDao;
     }
 

@@ -8,6 +8,7 @@ import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.hibernate.RuleDao;
 import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.service.crfdata.InstantOnChangeService;
@@ -69,7 +70,7 @@ public class WebBeansConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public OdmFileCreation odmFileCreation(DataSource dataSource, CoreResources coreResources,
-            RuleSetRuleDao ruleSetRuleDao, DatasetDAO extractDatasetDao,
+            RuleSetRuleDao ruleSetRuleDao, DatasetDao extractDatasetDao,
             ArchivedDatasetFileDAO extractArchivedDatasetFileDao) {
         return new OdmFileCreation(dataSource, coreResources, ruleSetRuleDao,
                 extractDatasetDao, extractArchivedDatasetFileDao);
@@ -78,7 +79,7 @@ public class WebBeansConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public GenerateExtractFileService generateExtractFileService(DataSource dataSource,
-            CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao, DatasetDAO extractDatasetDao,
+            CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao, DatasetDao extractDatasetDao,
             ItemFormMetadataDAO extractItemFormMetadataDao,
             ArchivedDatasetFileDAO extractArchivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         return new GenerateExtractFileService(dataSource, coreResources, ruleSetRuleDao,
