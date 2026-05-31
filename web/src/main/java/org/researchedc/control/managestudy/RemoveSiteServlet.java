@@ -7,7 +7,6 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.Role;
@@ -23,6 +22,7 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.SubjectGroupMapBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.core.form.StringUtil;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
@@ -52,7 +52,7 @@ public class RemoveSiteServlet extends SecureController {
 
     
     @Autowired
-    private DatasetDAO datasetDao;
+    private DatasetDao datasetDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
@@ -235,7 +235,7 @@ public class RemoveSiteServlet extends SecureController {
                     }
                 }// for subjects
 
-                DatasetDAO datadao = this.datasetDao;
+                DatasetDao datadao = this.datasetDao;
                 ArrayList dataset = datadao.findAllByStudyId(study.getId());
                 for (int i = 0; i < dataset.size(); i++) {
                     DatasetBean data = (DatasetBean) dataset.get(i);

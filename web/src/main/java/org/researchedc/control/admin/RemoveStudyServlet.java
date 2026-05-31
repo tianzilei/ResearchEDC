@@ -7,7 +7,6 @@
  */
 package org.researchedc.control.admin;
 
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.dao.managestudy.StudyGroupDAO;
@@ -26,6 +25,7 @@ import org.researchedc.bean.submit.SubjectGroupMapBean;
 import org.researchedc.control.core.SecureController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
@@ -76,7 +76,7 @@ public class RemoveStudyServlet extends SecureController {
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
-    private DatasetDAO datasetDao;
+    private DatasetDao datasetDao;
     /**
      *
      */
@@ -294,7 +294,7 @@ public class RemoveStudyServlet extends SecureController {
                     }
                 }// for definitions
 
-                DatasetDAO datadao = this.datasetDao;
+                DatasetDao datadao = this.datasetDao;
                 ArrayList dataset = datadao.findAllByStudyId(study.getId());
                 for (int i = 0; i < dataset.size(); i++) {
                     DatasetBean data = (DatasetBean) dataset.get(i);
