@@ -38,6 +38,59 @@
 
 ---
 
+## 2026-05-31 — Legacy DAO SPI Widening 加速 (11/19 家族完成)
+
+- **模块:** `shared`, `web`, `ws`
+- **提交:** `460fab3f2`–`f9d7d5d65` (11 次 SPI widening commits + CRFVersion 系列 ~20 次)
+- **原因:** 持续 Phase C legacy refactor，将剩余 DAO 家族从具体类型收窄至 SPI 接口。
+
+### 变更内容
+
+1. **CRFDAO → ICrfDAO (460fab3f2, 01efa4b05):**
+   - `CRFDAO` 在 shared/web/ws 的消费者改为 `ICrfDAO`
+   - `LegacyDaoFactory` 新增 `crfDao()` factory，返回 `ICrfDAO`
+   - WS 层 CRF import DAO 消费者同步收敛
+
+2. **CRFVersionDAO → ICrfVersionDAO (9da44e612–1e337b75b, ~20 commits):**
+   - shared/web/ws 全面收敛，涵盖 CRF admin、data entry、extract、import、spreadsheet、discrepancy note、study event、URL/render、form、submit 等所有消费端
+   - `LegacyDaoFactory` 新增 `crfVersionDao()` factory
+
+3. **DiscrepancyNoteDAO → IDiscrepancyNoteDAO (0e47f8872, ec1b9b0d9):**
+   - 差异备注 DAO 消费端全面 SPI 收敛
+
+4. **EventCRFDAO → EventCRFDao (315d3cdf4):**
+   - Event CRF DAO 消费端改名收敛
+
+5. **ItemDAO → IItemDAO (8b90a2601):**
+   - `ExpressionService` 消费者从 `ItemDAO` → `IItemDAO`
+
+6. **ItemDataDAO → IItemDataDAO (1b409b230, 962726f2d):**
+   - `ExpressionService` + `RuleRunner` 消费者从 `ItemDataDAO` → `IItemDataDAO`
+
+7. **ItemGroupDAO → IItemGroupDAO (f9d7d5d65):**
+   - `ExpressionService` 消费者从 `ItemGroupDAO` → `IItemGroupDAO`
+   - `LegacyDaoFactory` 新增 `itemGroupDao()` factory
+   - Deploy 验证: `mvn clean package -DskipTests` ✅, login→dashboard→rules→CRF API ✅, 0 日志错误
+
+### 当前状态
+
+| 指标 | 数值 |
+|------|------|
+| DAO 家族 SPI 已收敛 | **11 / 19** (58%) |
+| 已收敛家族 | StudyDAO, StudySubjectDAO, SubjectDAO, UserAccountDAO, CRFDAO, CRFVersionDAO, DiscrepancyNoteDAO, EventCRFDAO, ItemDAO, ItemDataDAO, ItemGroupDAO |
+| 剩余具体 DAO 家族 (8) | StudyEventDAO, StudyEventDefinitionDAO, RuleSetDAO, RuleDAO, DatasetDAO, FilterDAO, StudyGroupClassDAO, StudyGroupDAO |
+
+### 验证
+
+| 检查 | 状态 |
+|------|------|
+| `mvn -pl app -am compile -DskipTests` | ✅ |
+| `ModulithVerificationTest` | ✅ |
+| Bare deploy + SPA E2E | ✅ login→dashboard→rules→CRF APIs |
+| App log errors (refactor-related) | 0 |
+
+---
+
 ## 2026-05-29 — SecurityConfig 修复与测试修复
 
 - **模块:** `app`, `frontend`

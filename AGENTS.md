@@ -215,22 +215,24 @@ python -m pytest app/tests/ -v
 - **Frontend TypeScript:** ✅ `pnpm typecheck` — 0 errors (strict mode).
 - **DAO constructor baseline:** `DaoProvider` bridge has been removed. Direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) is now 0 matches across `shared/`, `web/`, and `ws/` as of 2026-05-29; remaining legacy removal work is module extraction and concrete DAO type dependency replacement.
 
-### Legacy DAO Refactor Handoff (2026-05-29)
+### Legacy DAO Refactor Handoff (2026-05-31)
 
-- **Latest committed slice:** `10f0f6ea2` (`Refactor legacy DAO consumers to SPI`) widens the high-volume `StudyDAO` / `StudySubjectDAO` / `SubjectDAO` / `UserAccountDAO` consumers to SPI interfaces and adds `app/src/main/java/org/researchedc/config/DaoRegistrar.java` for central DAO registration.
-- **Verified gates for committed slice:** `git diff --check` ✅, `mvn -pl app -am compile -DskipTests` ✅, `mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` ✅.
-- **Current measured state:** concrete references for `StudyDAO` / `StudySubjectDAO` / `SubjectDAO` / `UserAccountDAO` are boundary-only: DAO implementation classes, `shared/src/main/java/org/researchedc/dao/LegacyDaoFactory.java`, and `ws/src/main/java/org/researchedc/ws/internal/adapter/UserAccountAdapter.java`.
-- **Uncommitted follow-up slice:** three WS CRF files have been widened from concrete `CRFDAO` fields/imports to `ICrfDAO`: `ws/.../CrfBusinessLogicHelper.java`, `ws/.../ImportCRFDataService.java`, and `ws/.../StudyEventDefinitionEndpoint.java`. `mvn -pl app -am compile -DskipTests` and `git diff --check` passed before this documentation refresh.
-- **Remaining CRFDAO surface:** `CRFDAO` still has broad concrete references in shared rule/import/export logic and web controllers/servlets. Continue one workflow at a time; prefer SPI widening only when `ICrfDAO` exposes every invoked method.
-- **Remaining `::new` hotspots:** DAO implementation internals still use local factories such as `CRFDAO::new`, `RuleSetDAO` collaborators, ODM/import/export helpers, and other concrete DAO containment points. Inspect carefully before converting because some should remain until module extraction.
-- **Next low-risk resume targets:** web consumer classes with local concrete `CRFDAO` imports/fields such as `web/src/main/java/org/researchedc/controller/{OdmController,BatchCRFMigrationController}.java`, `web/src/main/java/org/researchedc/web/table/sdv/SubjectIdSDVFactory.java`, and focused `web/src/main/java/org/researchedc/control/**` servlets where `ICrfDAO` already covers the calls.
-- **Resume commands:**
+- **Latest committed slice:** `f9d7d5d65` (`Refactor expression item group DAO to SPI`) widens `ItemGroupDAO` consumers in `ExpressionService` to `IItemGroupDAO`, adds `itemGroupDao()` factory to `LegacyDaoFactory`, and has `ItemGroupDAO` implement the SPI. Verified: `mvn -pl app -am compile -DskipTests` ✅, `ModulithVerificationTest` ✅, deployed SPA login → dashboard → rules → CRF APIs ✅, 0 log errors.
+- **DAO families SPI-widened (11 of 19):**
+  - ✅ **StudyDAO / StudySubjectDAO / SubjectDAO / UserAccountDAO** — boundary-only; concrete refs limited to implementation classes, `LegacyDaoFactory`, and `UserAccountAdapter`
+  - ✅ **CRFDAO → ICrfDAO** — committed (`460fab3f2`, `01efa4b05`); remaining concrete refs in shared rule/import/export logic and web controllers/servlets
+  - ✅ **CRFVersionDAO → ICrfVersionDAO** — ~20 commits across shared/web/ws (`9da44e612`–`1e337b75b`); broadest widening to date
+  - ✅ **DiscrepancyNoteDAO → IDiscrepancyNoteDAO** — committed (`0e47f8872`, `ec1b9b0d9`)
+  - ✅ **EventCRFDAO → EventCRFDao** — committed (`315d3cdf4`)
+  - ✅ **ItemDAO → IItemDAO** — committed (`8b90a2601`); `ExpressionService` consumer widened
+  - ✅ **ItemDataDAO → IItemDataDAO** — committed (`1b409b230`, `962726f2d`); `ExpressionService` + `RuleRunner` consumers widened
+  - ✅ **ItemGroupDAO → IItemGroupDAO** — committed (`f9d7d5d65`); `ExpressionService` consumer widened, `LegacyDaoFactory::itemGroupDao` added
+- **Remaining concrete DAO families (8):** `StudyEventDAO`, `StudyEventDefinitionDAO`, `RuleSetDAO`, `RuleDAO`, `DatasetDAO`, `FilterDAO`, `StudyGroupClassDAO`, `StudyGroupDAO` — each still has concrete references in shared services/web/ws. SPI widening pending per-family.
+- **Gauntlet commands:**
   - `git status --short`
-  - `rg -n "\b(StudyDAO|StudySubjectDAO|SubjectDAO|UserAccountDAO)\b" shared/src/main/java web/src/main/java ws/src/main/java app/src/main/java -g '*.java'`
-  - `rg -n "\bCRFDAO\b" shared/src/main/java web/src/main/java ws/src/main/java app/src/main/java -g '*.java' | head -120`
-  - `mvn -pl app -am compile -DskipTests`
-  - `mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
-- **Refactor rule of thumb:** do not modify released migrations, do not bypass `SecureController`, do not add new legacy code to `shared/` unless it is a temporary containment helper, and do not change concrete DAO implementation internals without verifying the SPI covers every invoked method.
+  - `rg -n "\b(StudyEventDAO|StudyEventDefinitionDAO|RuleSetDAO|RuleDAO|DatasetDAO|FilterDAO|StudyGroupClassDAO|StudyGroupDAO)\b" shared/src/main/java web/src/main/java ws/src/main/java -g '*.java' | cut -d: -f1 | sort -u`
+  - `mvn -pl app -am compile -DskipTests && mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+- **Refactor rule of thumb:** do not modify released migrations, do not bypass `SecureController`, do not add new legacy code to `shared/`, and verify the SPI covers every invoked method before widening.
 
 ## SUBMODULE REFERENCES
 
