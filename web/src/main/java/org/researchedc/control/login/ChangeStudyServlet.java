@@ -39,8 +39,8 @@ import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -394,7 +394,7 @@ public class ChangeStudyServlet extends SecureController {
         return studySubjectDao;
     }
 
-    public StudyGroupClassDAO getStudyGroupClassDAO() {
+    public StudyGroupClassDao getStudyGroupClassDAO() {
         return studyGroupClassDao;
     }
 
@@ -418,7 +418,7 @@ public class ChangeStudyServlet extends SecureController {
         return eventDefinitionCrfDao;
     }
 
-    public StudyGroupDAO getStudyGroupDAO() {
+    public StudyGroupDao getStudyGroupDAO() {
         return studyGroupDao;
     }
 

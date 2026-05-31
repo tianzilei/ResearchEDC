@@ -26,8 +26,6 @@ import jakarta.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
 import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.ArchivedDatasetFileBean;
@@ -58,6 +56,8 @@ import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.exception.OpenClinicaException;
@@ -108,9 +108,9 @@ public abstract class CoreSecureController extends HttpServlet {
     @Autowired
     protected IStudyEventDefinitionDAO studyEventDefinitionDao;
     @Autowired
-    protected StudyGroupClassDAO studyGroupClassDao;
+    protected StudyGroupClassDao studyGroupClassDao;
     @Autowired
-    protected StudyGroupDAO studyGroupDao;
+    protected StudyGroupDao studyGroupDao;
     @Autowired
     protected ICrfDAO crfDao;
     @Autowired
@@ -928,8 +928,8 @@ public abstract class CoreSecureController extends HttpServlet {
 
     public ArrayList getStudyGroupClassesByCurrentStudy(HttpServletRequest request) {
         IStudyDAO studyDAO = studyDao;
-        StudyGroupClassDAO studyGroupClassDAO = studyGroupClassDao;
-        StudyGroupDAO studyGroupDAO = studyGroupDao;
+        StudyGroupClassDao studyGroupClassDAO = studyGroupClassDao;
+        StudyGroupDao studyGroupDAO = studyGroupDao;
         StudyBean currentStudy = (StudyBean) request.getSession().getAttribute("study");
         int parentStudyId = currentStudy.getParentStudyId();
         ArrayList studyGroupClasses = new ArrayList();
