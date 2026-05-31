@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DatasetItemStatus;
 import org.researchedc.bean.core.NumericComparisonOperator;
@@ -135,7 +134,7 @@ public class CreateDatasetServlet extends SecureController {
 
     public ArrayList setUpStudyGroups() {
         IStudyDAO studydao = this.studyDao;
-        StudyGroupClassDAO sgclassdao = this.studyGroupClassDao;
+        StudyGroupClassDao sgclassdao = this.studyGroupClassDao;
         StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
         ArrayList sgclasses = sgclassdao.findAllActiveByStudy(theStudy);
         // StudyGroupClassBean sgclass = (StudyGroupClassBean)sgclasses.get(0);

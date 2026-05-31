@@ -7,7 +7,6 @@
  */
 package org.researchedc.control.extract;
 
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.extract.DatasetBean;
@@ -19,6 +18,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -76,7 +76,7 @@ public class EditSelectedServlet extends SecureController {
         ArrayList sgclasses = (ArrayList) session.getAttribute("allSelectedGroups");
         if (sgclasses == null || sgclasses.size() == 0) {
             IStudyDAO studydao = this.studyDao;
-            StudyGroupClassDAO sgclassdao = this.studyGroupClassDao;
+            StudyGroupClassDao sgclassdao = this.studyGroupClassDao;
             StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
             sgclasses = sgclassdao.findAllActiveByStudy(theStudy);
         }
@@ -154,7 +154,7 @@ public class EditSelectedServlet extends SecureController {
             //
             ArrayList newsgclasses = new ArrayList();
             IStudyDAO studydao = this.studyDao;
-            StudyGroupClassDAO sgclassdao = this.studyGroupClassDao;
+            StudyGroupClassDao sgclassdao = this.studyGroupClassDao;
             StudyBean theStudy = (StudyBean) studydao.findByPK(sm.getUserBean().getActiveStudyId());
             sgclasses = sgclassdao.findAllActiveByStudy(theStudy);
             for (int i = 0; i < sgclasses.size(); i++) {

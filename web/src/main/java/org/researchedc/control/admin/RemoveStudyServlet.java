@@ -8,8 +8,6 @@
 package org.researchedc.control.admin;
 
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.login.StudyUserRoleBean;
@@ -35,6 +33,8 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -61,9 +61,9 @@ public class RemoveStudyServlet extends SecureController {
     @Autowired
     IStudyEventDAO studyEventDao;
     @Autowired
-    StudyGroupClassDAO studyGroupClassDao;
+    StudyGroupClassDao studyGroupClassDao;
     @Autowired
-    StudyGroupDAO studyGroupDao;
+    StudyGroupDao studyGroupDao;
     @Autowired
     EventCRFDao eventCrfDao;
     @Autowired
@@ -194,8 +194,8 @@ public class RemoveStudyServlet extends SecureController {
                 // remove all study_group_class
                 // changed by jxu on 08-31-06, to fix the problem of no study_id
                 // in study_group table
-                StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
-                StudyGroupDAO sgdao = this.studyGroupDao;
+                StudyGroupClassDao sgcdao = this.studyGroupClassDao;
+                StudyGroupDao sgdao = this.studyGroupDao;
                 SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
 
                 // YW 09-27-2007, enable status updating for StudyGroupClassBean
