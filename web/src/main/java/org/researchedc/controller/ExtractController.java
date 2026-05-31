@@ -15,8 +15,6 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.spi.DatasetDao;
-import org.researchedc.dao.spi.DatasetDao;
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.extract.ExtractUtils;
@@ -49,7 +47,7 @@ public class ExtractController {
     @Qualifier("dataSource")
     private BasicDataSource dataSource;
 
-    private DatasetDAO datasetDao;
+    private DatasetDao datasetDao;
 
     @Autowired
     private Scheduler scheduler;

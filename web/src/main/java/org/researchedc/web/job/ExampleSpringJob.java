@@ -21,7 +21,7 @@ import org.researchedc.core.OpenClinicaMailSender;
 import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.extract.DatasetDAO;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IRuleDAO;
@@ -53,7 +53,7 @@ public class ExampleSpringJob extends QuartzJobBean {
     protected AuditEventDAO auditEventDao;
 
     @Autowired
-    protected DatasetDAO datasetDao;
+    protected DatasetDao datasetDao;
 
     // example code here
     private String message;
@@ -166,7 +166,7 @@ public class ExampleSpringJob extends QuartzJobBean {
             HashMap fileName = new HashMap<String, Integer>();
             if (dsId > 0) {
                 // trying to not throw an error if there's no dataset id
-                DatasetDAO dsdao = this.datasetDao;
+                DatasetDao dsdao = this.datasetDao;
                 DatasetBean datasetBean = (DatasetBean) dsdao.findByPK(dsId);
                 IStudyDAO studyDao = this.studyDao;
                 IUserAccountDAO userAccountDAO = this.userAccountDao;
