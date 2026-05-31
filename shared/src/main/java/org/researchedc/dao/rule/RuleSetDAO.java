@@ -24,9 +24,9 @@ import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.service.rule.expression.ExpressionService;
 
@@ -50,17 +50,17 @@ import javax.sql.DataSource;
 public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
     private EventCRFDAO eventCrfDao;
-    private StudyEventDefinitionDAO studyEventDefinitionDAO;
+    private IStudyEventDefinitionDAO studyEventDefinitionDAO;
     private RuleDAO ruleDao;
     private ExpressionDAO expressionDao;
     private ICrfDAO crfDao;
-    private CRFVersionDAO crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
     private ExpressionService expressionService;
     private RuleSetRuleDAO ruleSetRuleDao;
     private RuleSetAuditDAO ruleSetAuditDao;
-    private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
+    private Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
     private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
-    private Function<DataSource, CRFVersionDAO> crfVersionDaoFactory = CRFVersionDAO::new;
+    private Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory = LegacyDaoFactory::crfVersionDao;
     private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
     private Function<DataSource, RuleDAO> ruleDaoFactory = RuleDAO::new;
     private Function<DataSource, RuleSetAuditDAO> ruleSetAuditDaoFactory = RuleSetAuditDAO::new;
@@ -77,7 +77,7 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
         setQueryNames();
     }
 
-    private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+    private IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
         if (studyEventDefinitionDAO == null) {
             studyEventDefinitionDAO = studyEventDefinitionDaoFactory.apply(ds);
         }
@@ -91,7 +91,7 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
         return crfDao;
     }
 
-    private CRFVersionDAO getCrfVersionDao() {
+    private ICrfVersionDAO getCrfVersionDao() {
         if (crfVersionDao == null) {
             crfVersionDao = crfVersionDaoFactory.apply(ds);
         }
