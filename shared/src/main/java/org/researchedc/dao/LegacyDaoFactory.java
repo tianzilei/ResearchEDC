@@ -7,6 +7,8 @@ import org.researchedc.dao.managestudy.StudySubjectDAO;
 import org.researchedc.dao.login.UserAccountDAO;
 import org.researchedc.dao.admin.CRFDAO;
 import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
+import org.researchedc.dao.rule.RuleDAO;
+import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -18,6 +20,8 @@ import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
+import org.researchedc.dao.spi.IRuleDAO;
+import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.submit.CRFVersionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
@@ -72,5 +76,13 @@ public final class LegacyDaoFactory {
 
     public static IItemGroupDAO itemGroupDao(DataSource dataSource) {
         return new ItemGroupDAO(dataSource);
+    }
+
+    public static IRuleDAO ruleDao(DataSource dataSource) {
+        return new RuleDAO(dataSource);
+    }
+
+    public static IRuleSetDAO ruleSetDao(DataSource dataSource) {
+        return new RuleSetDAO(dataSource);
     }
 }

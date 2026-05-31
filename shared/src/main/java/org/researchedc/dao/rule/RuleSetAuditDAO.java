@@ -17,6 +17,7 @@ import org.researchedc.dao.core.EntityDAO;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
 import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.exception.OpenClinicaException;
 
@@ -31,9 +32,9 @@ import javax.sql.DataSource;
 
 public class RuleSetAuditDAO extends EntityDAO {
 
-    RuleSetDAO ruleSetDao;
+    IRuleSetDAO ruleSetDao;
     IUserAccountDAO userAccountDao;
-    private Function<DataSource, RuleSetDAO> ruleSetDaoFactory = RuleSetDAO::new;
+    private Function<DataSource, IRuleSetDAO> ruleSetDaoFactory = LegacyDaoFactory::ruleSetDao;
     private Function<DataSource, IUserAccountDAO> userAccountDaoFactory = LegacyDaoFactory::userAccountDao;
 
     public RuleSetAuditDAO(DataSource ds) {
@@ -63,7 +64,7 @@ public class RuleSetAuditDAO extends EntityDAO {
         return answer;
     }
 
-    private RuleSetDAO getRuleSetDao() {
+    private IRuleSetDAO getRuleSetDao() {
         if (ruleSetDao == null) {
             ruleSetDao = ruleSetDaoFactory.apply(ds);
         }

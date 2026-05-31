@@ -19,6 +19,9 @@ import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IRuleDAO;
+import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.exception.OpenClinicaException;
 
 import java.util.ArrayList;
@@ -39,11 +42,11 @@ import javax.sql.DataSource;
  */
 public class RuleSetRuleDAO extends AuditableEntityDAO {
 
-    private RuleDAO ruleDao;
-    private RuleSetDAO ruleSetDao;
+    private IRuleDAO ruleDao;
+    private IRuleSetDAO ruleSetDao;
     private RuleSetRuleAuditDAO ruleSetRuleAuditDao;
-    private Function<DataSource, RuleDAO> ruleDaoFactory = RuleDAO::new;
-    private Function<DataSource, RuleSetDAO> ruleSetDaoFactory = RuleSetDAO::new;
+    private Function<DataSource, IRuleDAO> ruleDaoFactory = LegacyDaoFactory::ruleDao;
+    private Function<DataSource, IRuleSetDAO> ruleSetDaoFactory = LegacyDaoFactory::ruleSetDao;
     private Function<DataSource, RuleSetRuleAuditDAO> ruleSetRuleAuditDaoFactory = RuleSetRuleAuditDAO::new;
 
     private void setQueryNames() {
@@ -56,14 +59,14 @@ public class RuleSetRuleDAO extends AuditableEntityDAO {
         setQueryNames();
     }
 
-    private RuleDAO getRuleDao() {
+    private IRuleDAO getRuleDao() {
         if (ruleDao == null) {
             ruleDao = ruleDaoFactory.apply(ds);
         }
         return ruleDao;
     }
 
-    private RuleSetDAO getRuleSetDao() {
+    private IRuleSetDAO getRuleSetDao() {
         if (ruleSetDao == null) {
             ruleSetDao = ruleSetDaoFactory.apply(ds);
         }
