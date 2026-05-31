@@ -7,8 +7,6 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.GroupClassType;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.Role;
@@ -19,6 +17,8 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -157,7 +157,7 @@ public class CreateSubjectGroupClassServlet extends SecureController {
     private void submitGroup() throws OpenClinicaException, IOException {
         StudyGroupClassBean group = (StudyGroupClassBean) session.getAttribute("group");
         ArrayList studyGroups = (ArrayList) session.getAttribute("studyGroups");
-        StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
+        StudyGroupClassDao sgcdao = this.studyGroupClassDao;
         group.setStudyId(currentStudy.getId());
         group.setOwner(ub);
         group.setStatus(Status.AVAILABLE);
@@ -166,7 +166,7 @@ public class CreateSubjectGroupClassServlet extends SecureController {
         if (!group.isActive()) {
             addPageMessage(respage.getString("the_subject_group_class_not_created_database"));
         } else {
-            StudyGroupDAO sgdao = this.studyGroupDao;
+            StudyGroupDao sgdao = this.studyGroupDao;
             for (int i = 0; i < studyGroups.size(); i++) {
                 StudyGroupBean sg = (StudyGroupBean) studyGroups.get(i);
                 sg.setStudyGroupClassId(group.getId());

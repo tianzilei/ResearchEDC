@@ -8,8 +8,6 @@
 package org.researchedc.control.managestudy;
 
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.GroupClassType;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.managestudy.StudyGroupBean;
@@ -18,6 +16,8 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -59,8 +59,8 @@ public class ViewSubjectGroupClassServlet extends SecureController {
             addPageMessage(respage.getString("please_choose_a_subject_group_class_to_view"));
             forwardPage(Page.SUBJECT_GROUP_CLASS_LIST_SERVLET);
         } else {
-            StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
-            StudyGroupDAO sgdao = this.studyGroupDao;
+            StudyGroupClassDao sgcdao = this.studyGroupClassDao;
+            StudyGroupDao sgdao = this.studyGroupDao;
             SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
             IStudyDAO studyDao = this.studyDao;
 
