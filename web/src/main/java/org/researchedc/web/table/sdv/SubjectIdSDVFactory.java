@@ -30,8 +30,8 @@ import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.domain.SourceDataVerification;
@@ -62,7 +62,7 @@ public class SubjectIdSDVFactory extends AbstractTableFactory {
     protected ICrfDAO crfDao;
 
     @Autowired
-    protected StudyGroupDAO studyGroupDao;
+    protected StudyGroupDao studyGroupDao;
 
     @Autowired
     protected EventDefinitionCRFDao eventDefinitionCrfDao;
@@ -277,7 +277,7 @@ public class SubjectIdSDVFactory extends AbstractTableFactory {
         EventCRFDao eventCRFDAO = this.eventCrfDao;
         IStudyDAO studyDAO = this.studyDao;
         IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
-        StudyGroupDAO studyGroupDAO = this.studyGroupDao;
+        StudyGroupDao studyGroupDAO = this.studyGroupDao;
 
         row.setStudySubjectId(studySubjectBean.getLabel());
         row.setPersonId(studySubjectBean.getUniqueIdentifier());
