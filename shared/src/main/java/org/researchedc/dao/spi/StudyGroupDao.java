@@ -1,6 +1,7 @@
 package org.researchedc.dao.spi;
 
 import org.researchedc.bean.core.EntityBean;
+import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyGroupBean;
 import org.researchedc.bean.managestudy.StudyGroupClassBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
@@ -16,6 +17,7 @@ public interface StudyGroupDao {
     Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase);
     Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase);
     Collection findAllByPermission(Object objCurrentUser, int intActionType);
+    ArrayList findAllByStudy(StudyBean study);
     ArrayList findAllByGroupClass(StudyGroupClassBean group);
     ArrayList getGroupByStudySubject(int studySubjectId, int studyId, int parentStudyId);
     StudyGroupBean findByNameAndGroupClassID(String name, int studyGroupClassId);
