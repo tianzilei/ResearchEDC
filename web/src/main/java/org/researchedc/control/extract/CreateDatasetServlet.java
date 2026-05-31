@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import org.researchedc.dao.extract.FilterDAO;
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DatasetItemStatus;
@@ -37,6 +35,8 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
+import org.researchedc.dao.spi.DatasetDao;
+import org.researchedc.dao.spi.FilterDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
@@ -65,10 +65,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CreateDatasetServlet extends SecureController {
 
     @Autowired
-    protected FilterDAO filterDao;
+    protected FilterDao filterDao;
 
     @Autowired
-    protected DatasetDAO datasetDao;
+    protected DatasetDao datasetDao;
     public static final String BEAN_YEARS = "years";
 
     public static final String BEAN_MONTHS = "months";
@@ -384,7 +384,7 @@ public class CreateDatasetServlet extends SecureController {
                     if (((DatasetBean) session.getAttribute("newDataset")).getId() <= 0) {
                         // YW >>
                         // logger.info("dsName" + fp.getString("dsName"));
-                        DatasetDAO dsdao = this.datasetDao;
+                        DatasetDao dsdao = this.datasetDao;
                         DatasetBean dsBean = (DatasetBean) dsdao.findByNameAndStudy(fp.getString("dsName").trim(), currentStudy);
                         if (dsBean.getId() > 0) {
                             Validator.addError(errors, "dsName", restext.getString("dataset_name_used_by_another_choose_unique"));
@@ -471,7 +471,7 @@ public class CreateDatasetServlet extends SecureController {
                     // session.removeAttribute("newFilter");
                     forwardPage(Page.CREATE_DATASET_4);
                 } else {
-                    DatasetDAO ddao = this.datasetDao;
+                    DatasetDao ddao = this.datasetDao;
                     DatasetBean dsb = (DatasetBean) session.getAttribute("newDataset");
                     dsb.setStudyId(this.currentStudy.getId());
 
@@ -752,7 +752,7 @@ public class CreateDatasetServlet extends SecureController {
 
     private EntityBeanTable getFilterTable() {
         FormProcessor fp = new FormProcessor(request);
-        FilterDAO fdao = this.filterDao;
+        FilterDao fdao = this.filterDao;
         EntityBeanTable table = fp.getEntityBeanTable();
 
         ArrayList filters = (ArrayList) fdao.findAll();
