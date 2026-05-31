@@ -20,18 +20,11 @@ import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.rule.RuleDAO;
-import org.researchedc.dao.rule.RuleSetDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -45,19 +38,6 @@ import javax.sql.DataSource;
  */
 public class RuleActionDAO extends AuditableEntityDAO {
 
-    private EventCRFDAO eventCrfDao;
-    private RuleSetDAO ruleSetDao;
-    private RuleDAO ruleDao;
-    private ItemDataDAO itemDataDao;
-    private StudyEventDefinitionDAO studyEventDefinitionDao;
-    private CRFVersionDAO crfVersionDao;
-    private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
-    private Function<DataSource, RuleSetDAO> ruleSetDaoFactory = RuleSetDAO::new;
-    private Function<DataSource, RuleDAO> ruleDaoFactory = RuleDAO::new;
-    private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
-    private Function<DataSource, CRFVersionDAO> crfVersionDaoFactory = CRFVersionDAO::new;
-    private Function<DataSource, ItemDataDAO> itemDataDaoFactory = ItemDataDAO::new;
-
     private void setQueryNames() {
         this.findByPKAndStudyName = "findByPKAndStudy";
         this.getCurrentPKName = "getCurrentPK";
@@ -66,48 +46,6 @@ public class RuleActionDAO extends AuditableEntityDAO {
     public RuleActionDAO(DataSource ds) {
         super(ds);
         setQueryNames();
-    }
-
-    private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
-        if (studyEventDefinitionDao == null) {
-            studyEventDefinitionDao = studyEventDefinitionDaoFactory.apply(ds);
-        }
-        return studyEventDefinitionDao;
-    }
-
-    private RuleSetDAO getRuleSetDao() {
-        if (ruleSetDao == null) {
-            ruleSetDao = ruleSetDaoFactory.apply(ds);
-        }
-        return ruleSetDao;
-    }
-
-    private RuleDAO getRuleDao() {
-        if (ruleDao == null) {
-            ruleDao = ruleDaoFactory.apply(ds);
-        }
-        return ruleDao;
-    }
-
-    private EventCRFDAO getEventCrfDao() {
-        if (eventCrfDao == null) {
-            eventCrfDao = eventCrfDaoFactory.apply(ds);
-        }
-        return eventCrfDao;
-    }
-
-    private CRFVersionDAO getCrfVersionDao() {
-        if (crfVersionDao == null) {
-            crfVersionDao = crfVersionDaoFactory.apply(ds);
-        }
-        return crfVersionDao;
-    }
-
-    private ItemDataDAO getItemDataDao() {
-        if (itemDataDao == null) {
-            itemDataDao = itemDataDaoFactory.apply(ds);
-        }
-        return itemDataDao;
     }
 
     public RuleActionDAO(DataSource ds, DAODigester digester) {
