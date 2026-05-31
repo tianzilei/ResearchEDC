@@ -27,7 +27,6 @@ import org.researchedc.dao.core.TypeNames;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.service.rule.expression.ExpressionService;
 
 import java.sql.Types;
@@ -49,9 +48,7 @@ import javax.sql.DataSource;
  */
 public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
 
-    private EventCRFDAO eventCrfDao;
     private IStudyEventDefinitionDAO studyEventDefinitionDAO;
-    private RuleDAO ruleDao;
     private ExpressionDAO expressionDao;
     private ICrfDAO crfDao;
     private ICrfVersionDAO crfVersionDao;
@@ -61,8 +58,6 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
     private Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
     private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
     private Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory = LegacyDaoFactory::crfVersionDao;
-    private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
-    private Function<DataSource, RuleDAO> ruleDaoFactory = RuleDAO::new;
     private Function<DataSource, RuleSetAuditDAO> ruleSetAuditDaoFactory = RuleSetAuditDAO::new;
     private Function<DataSource, ExpressionDAO> expressionDaoFactory = ExpressionDAO::new;
     private Function<DataSource, RuleSetRuleDAO> ruleSetRuleDaoFactory = RuleSetRuleDAO::new;
@@ -96,20 +91,6 @@ public class RuleSetDAO extends AuditableEntityDAO implements IRuleSetDAO {
             crfVersionDao = crfVersionDaoFactory.apply(ds);
         }
         return crfVersionDao;
-    }
-
-    private EventCRFDAO getEventCrfDao() {
-        if (eventCrfDao == null) {
-            eventCrfDao = eventCrfDaoFactory.apply(ds);
-        }
-        return eventCrfDao;
-    }
-
-    private RuleDAO getRuleDao() {
-        if (ruleDao == null) {
-            ruleDao = ruleDaoFactory.apply(ds);
-        }
-        return ruleDao;
     }
 
     private RuleSetAuditDAO getRuleSetAuditDao() {
