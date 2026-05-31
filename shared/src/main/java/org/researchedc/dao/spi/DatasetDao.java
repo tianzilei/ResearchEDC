@@ -28,5 +28,10 @@ public interface DatasetDao {
     EntityBean updateGroupMap(DatasetBean db);
     ExtractBean getDatasetData(ExtractBean eb, int currentstudyid, int parentstudyid);
     String parseSQLDataset(String sql, boolean issed, boolean hasfilterzero);
+    String genDatabaseDateConstraint(ExtractBean eb);
+    String getECStatusConstraint(int datasetItemStatusId);
+    String getItemDataStatusConstraint(int datasetItemStatusId);
+    ArrayList selectStudySubjects(int studyid, int parentid, String sedin, String it_in, String dateConstraint, String ecStatusConstraint,
+            String itStatusConstraint);
     Object getEntityFromHashMap(HashMap hm);
 }
