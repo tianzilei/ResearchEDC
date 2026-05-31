@@ -17,8 +17,6 @@ import jakarta.servlet.http.HttpSession;
 
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.SubjectEventStatus;

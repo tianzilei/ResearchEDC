@@ -15,8 +15,6 @@ import java.util.Iterator;
 
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -35,6 +33,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -102,8 +101,8 @@ public class UpdateStudySubjectServlet extends SecureController {
 
             StudySubjectBean sub = (StudySubjectBean) subdao.findByPK(studySubId);
 
-            StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
-            StudyGroupDAO sgdao = this.studyGroupDao;
+            StudyGroupClassDao sgcdao = this.studyGroupClassDao;
+            StudyGroupDao sgdao = this.studyGroupDao;
             SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
             ArrayList groupMaps = (ArrayList) sgmdao.findAllByStudySubject(studySubId);
 
