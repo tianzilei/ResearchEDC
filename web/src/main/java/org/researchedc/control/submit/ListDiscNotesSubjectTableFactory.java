@@ -13,8 +13,6 @@ import java.util.Set;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.ResolutionStatus;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;

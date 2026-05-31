@@ -8,8 +8,6 @@
 package org.researchedc.control.managestudy;
 
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.submit.ListDiscNotesSubjectTableFactory;
@@ -25,6 +23,8 @@ import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.DiscrepancyNoteUtil;
@@ -147,8 +147,8 @@ public static final String RESOLUTION_STATUS = "resolutionStatus";
         IStudyEventDAO sedao = this.studyEventDao;
         IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
-        StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
-        StudyGroupDAO sgdao = this.studyGroupDao;
+        StudyGroupClassDao sgcdao = this.studyGroupClassDao;
+        StudyGroupDao sgdao = this.studyGroupDao;
         IStudySubjectDAO ssdao = this.studySubjectDao;
         EventCRFDao edao = this.eventCrfDao;
         EventDefinitionCRFDao eddao = this.eventDefinitionCrfDao;

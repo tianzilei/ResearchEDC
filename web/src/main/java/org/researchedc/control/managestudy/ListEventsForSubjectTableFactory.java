@@ -1,8 +1,6 @@
 package org.researchedc.control.managestudy;
 
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.Role;

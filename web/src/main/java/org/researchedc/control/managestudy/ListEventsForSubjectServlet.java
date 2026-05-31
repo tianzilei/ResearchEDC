@@ -8,7 +8,6 @@
 package org.researchedc.control.managestudy;
 
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.managestudy.DisplayStudyEventBean;
 import org.researchedc.bean.managestudy.DisplayStudySubjectBean;
@@ -34,6 +33,7 @@ import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.crfdata.HideCRFManager;
 import org.researchedc.view.Page;
@@ -127,7 +127,7 @@ Locale locale;
         IStudyEventDAO sedao = this.studyEventDao;
 
         SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
-        StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
+        StudyGroupClassDao sgcdao = this.studyGroupClassDao;
 
         EventCRFDao ecdao = this.eventCrfDao;
         EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
