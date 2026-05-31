@@ -7,14 +7,14 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyGroupClassBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.StudyGroupClassDao;
+import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -71,7 +71,7 @@ public class ListSubjectGroupClassServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
-        StudyGroupClassDAO sgcdao = this.studyGroupClassDao;
+        StudyGroupClassDao sgcdao = this.studyGroupClassDao;
         // YW <<
         IStudyDAO stdao = this.studyDao;
         int parentStudyId = currentStudy.getParentStudyId();
@@ -85,7 +85,7 @@ public class ListSubjectGroupClassServlet extends SecureController {
         // YW >>
         String isReadOnly = request.getParameter("read");
 
-        StudyGroupDAO sgdao = this.studyGroupDao;
+        StudyGroupDao sgdao = this.studyGroupDao;
         for (int i = 0; i < groups.size(); i++) {
             StudyGroupClassBean group = (StudyGroupClassBean) groups.get(i);
             ArrayList studyGroups = sgdao.findAllByGroupClass(group);
