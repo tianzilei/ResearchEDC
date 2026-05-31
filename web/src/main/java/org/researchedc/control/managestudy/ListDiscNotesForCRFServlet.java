@@ -6,8 +6,6 @@ package org.researchedc.control.managestudy;
 
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
@@ -222,9 +220,9 @@ public static final String DISCREPANCY_NOTE_TYPE = "discrepancyNoteType";
         return studySubjectDAO;
     }
 
-    public StudyGroupClassDAO getStudyGroupClassDAO() {
+    public StudyGroupClassDao getStudyGroupClassDAO() {
         studyGroupClassDAO = this.studyGroupClassDAO == null ? this.studyGroupClassDao : studyGroupClassDAO;
-        return (StudyGroupClassDAO) studyGroupClassDAO;
+        return studyGroupClassDAO;
     }
 
     public SubjectGroupMapDAO getSubjectGroupMapDAO() {
@@ -257,9 +255,9 @@ public static final String DISCREPANCY_NOTE_TYPE = "discrepancyNoteType";
         return crfDAO;
     }
 
-    public StudyGroupDAO getStudyGroupDAO() {
+    public StudyGroupDao getStudyGroupDAO() {
         studyGroupDAO = this.studyGroupDAO == null ? this.studyGroupDao : studyGroupDAO;
-        return (StudyGroupDAO) studyGroupDAO;
+        return studyGroupDAO;
     }
 
     public IDiscrepancyNoteDAO getDiscrepancyNoteDAO() {

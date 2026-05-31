@@ -13,8 +13,6 @@ import java.util.Locale;
 
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormDiscrepancyNotes;
