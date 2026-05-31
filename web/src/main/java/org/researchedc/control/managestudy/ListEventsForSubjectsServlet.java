@@ -8,8 +8,6 @@
 package org.researchedc.control.managestudy;
 
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormDiscrepancyNotes;
@@ -167,9 +165,9 @@ public class ListEventsForSubjectsServlet extends SecureController {
         return studySubjectDAO;
     }
 
-    public StudyGroupClassDAO getStudyGroupClassDAO() {
+    public StudyGroupClassDao getStudyGroupClassDAO() {
         studyGroupClassDAO = this.studyGroupClassDAO == null ? this.studyGroupClassDao : studyGroupClassDAO;
-        return (StudyGroupClassDAO) studyGroupClassDAO;
+        return studyGroupClassDAO;
     }
 
     public SubjectGroupMapDAO getSubjectGroupMapDAO() {
@@ -206,9 +204,9 @@ public class ListEventsForSubjectsServlet extends SecureController {
         ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
         return crfVersionDAO;
     }
-    public StudyGroupDAO getStudyGroupDAO() {
+    public StudyGroupDao getStudyGroupDAO() {
         studyGroupDAO = this.studyGroupDAO == null ? this.studyGroupDao : studyGroupDAO;
-        return (StudyGroupDAO) studyGroupDAO;
+        return studyGroupDAO;
     }
 
 }
