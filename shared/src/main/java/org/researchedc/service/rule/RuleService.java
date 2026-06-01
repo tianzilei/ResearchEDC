@@ -11,7 +11,7 @@ import org.researchedc.bean.oid.GenericOidGenerator;
 import org.researchedc.bean.oid.OidGenerator;
 import org.researchedc.bean.rule.RuleBean;
 import org.researchedc.bean.rule.RuleSetBean;
-import org.researchedc.dao.rule.RuleDAO;
+import org.researchedc.dao.spi.IRuleDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class RuleService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     DataSource ds;
-    private RuleDAO ruleDao;
+    private IRuleDAO ruleDao;
     private OidGenerator oidGenerator;
 
     public RuleService(DataSource ds) {
@@ -33,7 +33,7 @@ public class RuleService {
     }
 
     @Autowired
-    public RuleService(DataSource ds, RuleDAO ruleDao) {
+    public RuleService(DataSource ds, IRuleDAO ruleDao) {
         this(ds);
         this.ruleDao = ruleDao;
     }
@@ -55,7 +55,7 @@ public class RuleService {
         return (RuleBean) getRuleDao().update(ruleBean);
     }
 
-    private RuleDAO getRuleDao() {
+    private IRuleDAO getRuleDao() {
         return ruleDao;
     }
 

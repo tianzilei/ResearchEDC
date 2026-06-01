@@ -26,7 +26,7 @@ import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.rule.RuleDAO;
+import org.researchedc.dao.spi.IRuleDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.domain.managestudy.StudyModuleStatus;
@@ -95,7 +95,7 @@ public class StudyModuleController {
     private StudyGroupClassDao studyGroupClassDao;
     private IStudyDAO studyDao;
     private IUserAccountDAO userDao;
-    private RuleDAO ruleDao;
+    private IRuleDAO ruleDao;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     public static final String REG_MESSAGE = "regMessages";
     public static ResourceBundle respage;
