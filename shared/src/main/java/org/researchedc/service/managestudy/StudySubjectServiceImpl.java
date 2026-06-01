@@ -39,7 +39,7 @@ import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,7 +54,7 @@ public class StudySubjectServiceImpl implements StudySubjectService {
     @Autowired
     private StudyEventDAO studyEventDao;
     @Autowired
-    private StudyEventDefinitionDAO studyEventDefinitionDao;
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
     @Autowired
     private IStudyDAO studyDao;
     @Autowired
