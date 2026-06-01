@@ -43,6 +43,7 @@ public interface EventDefinitionCRFDao {
     EventDefinitionCRFBean findByStudyEventDefinitionIdAndCRFId(StudyBean study, int studyEventDefinitionId, int crfId);
     EventDefinitionCRFBean findForStudyByStudyEventDefinitionIdAndCRFId(int studyEventDefinitionId, int crfId);
     EventDefinitionCRFBean findForStudyByStudyEventIdAndCRFVersionId(int studyEventId, int crfVersionId);
+    ArrayList findAllDefIdandStudyId(Integer studyEventDefnId, Integer studyId);
     Set<String> findHiddenCrfIdsBySite(StudyBean study);
     Set<String> findHiddenCrfNamesBySite(StudyBean study);
     Map<Integer, SortedSet<EventDefinitionCRFBean>> buildEventDefinitionCRFListByStudyEventDefinition(Integer studySubjectId, Integer siteId, Integer parentStudyId);
