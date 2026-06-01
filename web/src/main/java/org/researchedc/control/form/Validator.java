@@ -42,6 +42,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.EntityDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.I18nFormatUtil;
@@ -572,7 +573,14 @@ public class Validator {
      * use for: ENTITY_EXISTS_IN_STUDY
      */
     public void addValidation(String fieldName, int type, AuditableEntityDAO dao, StudyBean study) {
-        // for entity exists validation
+        addEntityExistsInStudyValidation(fieldName, type, dao, study);
+    }
+
+    public void addValidation(String fieldName, int type, IStudyEventDefinitionDAO dao, StudyBean study) {
+        addEntityExistsInStudyValidation(fieldName, type, dao, study);
+    }
+
+    private void addEntityExistsInStudyValidation(String fieldName, int type, Object dao, StudyBean study) {
         Validation v = new Validation(type);
         v.addArgument(dao);
         v.addArgument(study);
@@ -976,7 +984,7 @@ public class Validator {
             }
             break;
         case ENTITY_EXISTS_IN_STUDY:
-            AuditableEntityDAO dao = (AuditableEntityDAO) v.getArg(0);
+            Object dao = v.getArg(0);
             StudyBean study = (StudyBean) v.getArg(1);
 
             if (!entityExistsInStudy(fieldName, dao, study)) {
@@ -1649,7 +1657,7 @@ public class Validator {
         throw new IllegalArgumentException("Unsupported ENTITY_EXISTS DAO type: " + dao.getClass().getName());
     }
 
-    protected boolean entityExistsInStudy(String fieldName, AuditableEntityDAO dao, StudyBean study) {
+    protected boolean entityExistsInStudy(String fieldName, Object dao, StudyBean study) {
 
         String fieldValue = getFieldValue(fieldName);
 
@@ -1659,7 +1667,7 @@ public class Validator {
 
         try {
             int id = Integer.parseInt(fieldValue);
-            AuditableEntityBean e = dao.findByPKAndStudy(id, study);
+            AuditableEntityBean e = findEntityByPKAndStudy(dao, id, study);
 
             if (!e.isActive()) {
                 return false;
@@ -1669,6 +1677,16 @@ public class Validator {
         }
 
         return true;
+    }
+
+    private AuditableEntityBean findEntityByPKAndStudy(Object dao, int id, StudyBean study) {
+        if (dao instanceof AuditableEntityDAO auditableEntityDao) {
+            return auditableEntityDao.findByPKAndStudy(id, study);
+        }
+        if (dao instanceof IStudyEventDefinitionDAO studyEventDefinitionDao) {
+            return studyEventDefinitionDao.findByPKAndStudy(id, study);
+        }
+        throw new IllegalArgumentException("Unsupported ENTITY_EXISTS_IN_STUDY DAO type: " + dao.getClass().getName());
     }
 
     protected boolean usernameUnique(String fieldName, IUserAccountDAO udao) {

@@ -10,7 +10,6 @@ package org.researchedc.control.login;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
