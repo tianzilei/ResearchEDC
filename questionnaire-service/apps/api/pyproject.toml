@@ -23,6 +23,7 @@ dependencies = [
     "passlib[bcrypt]>=1.7.4",
     "python-multipart>=0.0.9",
     "tenacity>=9.0.0",
+    "minio>=7.0.0",
 ]
 
 [project.optional-dependencies]

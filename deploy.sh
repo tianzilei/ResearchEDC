@@ -20,7 +20,7 @@ load_env() {
 load_env
 
 DB_HOST="${RESEARCHEDC_DB_HOST:-localhost}"
-DB_PORT="${RESEARCHEDC_DB_PORT:-5433}"
+DB_PORT="${RESEARCHEDC_DB_PORT:-5432}"
 DB_NAME="${RESEARCHEDC_DB_NAME:-researchedc}"
 DB_USER="${RESEARCHEDC_DB_USER:-researchedc}"
 DB_PASS="${RESEARCHEDC_DB_PASS:-researchedc}"
@@ -32,6 +32,11 @@ ADMIN_PASS="${RESEARCHEDC_ADMIN_PASS:-admin}"
 APP_PORT="${RESEARCHEDC_APP_PORT:-8080}"
 Q_PORT="${QUESTIONNAIRE_PORT:-8000}"
 CADDY_PORT="${RESEARCHEDC_CADDY_PORT:-80}"
+MINIO_PORT="${RESEARCHEDC_MINIO_PORT:-9000}"
+MINIO_CONSOLE_PORT="${RESEARCHEDC_MINIO_CONSOLE_PORT:-9001}"
+MINIO_ROOT_USER="${RESEARCHEDC_MINIO_ROOT_USER:-minio}"
+MINIO_ROOT_PASS="${RESEARCHEDC_MINIO_ROOT_PASS:-minio-password}"
+MINIO_BUCKET="${RESEARCHEDC_MINIO_BUCKET:-questionnaire-exports}"
 
 DATA_DIR="${PROJECT_DIR}/data"
 LOG_DIR="${PROJECT_DIR}/logs"
@@ -130,6 +135,11 @@ CORS_ORIGINS=["http://localhost:${APP_PORT}"]
 HOST=127.0.0.1
 PORT=${Q_PORT}
 LOG_LEVEL=info
+MINIO_ENDPOINT=localhost:${MINIO_PORT}
+MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+MINIO_SECRET_KEY=${MINIO_ROOT_PASS}
+MINIO_BUCKET=${MINIO_BUCKET}
+MINIO_SECURE=false
 QENV
 }
 
@@ -149,6 +159,86 @@ install_tomcat() {
             && chmod +x "${TOMCAT_DIR}/bin/"*.sh \
             && log_ok "Tomcat installed" \
         || { log_error "Failed to install Tomcat"; return 1; }
+}
+
+MINIO_CONTAINER="researchedc-minio"
+PG_CONTAINER="researchedc-pg"
+PG_VOLUME="researchedc-pgdata"
+
+ensure_minio() {
+    if docker ps --filter "name=${MINIO_CONTAINER}" --format '{{.Names}}' 2>/dev/null | grep -q "${MINIO_CONTAINER}"; then
+        return 0
+    fi
+    if ! command -v docker &>/dev/null; then
+        log_warn "Docker not available — MinIO will not be started"
+        return 1
+    fi
+    return 0
+}
+
+start_minio() {
+    ensure_minio || return 1
+    if docker ps --filter "name=${MINIO_CONTAINER}" --format '{{.Names}}' 2>/dev/null | grep -q "${MINIO_CONTAINER}"; then
+        log_ok "MinIO already running"
+        return 0
+    fi
+    docker rm -f "${MINIO_CONTAINER}" 2>/dev/null || true
+    local minio_data="${DATA_DIR}/minio"
+    mkdir -p "${minio_data}"
+    log_info "Starting MinIO on ports ${MINIO_PORT} (API) / ${MINIO_CONSOLE_PORT} (Console)..."
+    docker run -d \
+        --name "${MINIO_CONTAINER}" \
+        --restart unless-stopped \
+        -p "${MINIO_PORT}:9000" \
+        -p "${MINIO_CONSOLE_PORT}:9001" \
+        -e MINIO_ROOT_USER="${MINIO_ROOT_USER}" \
+        -e MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASS}" \
+        -v "${minio_data}:/data" \
+        minio/minio server /data --console-address ":9001" \
+        > /dev/null 2>&1
+    echo "${MINIO_CONTAINER}" > "${PID_DIR}/minio.pid"
+    log_ok "MinIO container started"
+
+    sleep 2
+    docker exec "${MINIO_CONTAINER}" mc alias set local http://localhost:9000 "${MINIO_ROOT_USER}" "${MINIO_ROOT_PASS}" 2>/dev/null || true
+    docker exec "${MINIO_CONTAINER}" mc mb "local/${MINIO_BUCKET}" --ignore-existing 2>/dev/null || true
+}
+
+start_postgres() {
+    if ! command -v docker &>/dev/null; then
+        log_error "Docker required for PostgreSQL"
+        return 1
+    fi
+    if docker ps --filter "name=${PG_CONTAINER}" --format '{{.Names}}' 2>/dev/null | grep -q "${PG_CONTAINER}"; then
+        log_ok "PostgreSQL already running"
+        return 0
+    fi
+    docker rm -f "${PG_CONTAINER}" 2>/dev/null || true
+    docker volume create "${PG_VOLUME}" 2>/dev/null || true
+    log_info "Starting PostgreSQL on port ${DB_PORT}..."
+    docker run -d \
+        --name "${PG_CONTAINER}" \
+        --restart unless-stopped \
+        -p "${DB_PORT}:5432" \
+        -e POSTGRES_DB="${DB_NAME}" \
+        -e POSTGRES_USER="${DB_USER}" \
+        -e POSTGRES_PASSWORD="${DB_PASS}" \
+        -v "${PG_VOLUME}:/var/lib/postgresql/data" \
+        postgres:17-alpine > /dev/null 2>&1
+    echo "${PG_CONTAINER}" > "${PID_DIR}/postgres.pid"
+    log_ok "PostgreSQL container started"
+
+    log_info "Waiting for PostgreSQL..."
+    local pg_retries=0
+    while [ "${pg_retries}" -lt 15 ]; do
+        if PGPASSWORD="${DB_PASS}" pg_isready -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}" 2>/dev/null; then
+            log_ok "PostgreSQL ready"
+            break
+        fi
+        sleep 2
+        pg_retries=$((pg_retries + 1))
+    done
+    [ "${pg_retries}" -ge 15 ] && log_warn "PostgreSQL may not be ready — check logs"
 }
 
 generate_caddyfile() {
@@ -283,78 +373,25 @@ UVCONF
 }
 
 cmd_init_db() {
-    log_info "Initializing PostgreSQL..."
+    log_info "Initializing PostgreSQL (Docker)..."
+    start_postgres || { log_error "Cannot start PostgreSQL"; return 1; }
 
-    pg_isready -h "${DB_HOST}" -p "${DB_PORT}" &>/dev/null || {
-        log_error "PostgreSQL not running on ${DB_HOST}:${DB_PORT}"
-        log_info "Start: sudo systemctl start postgresql"
-        exit 1
-    }
+    # Create questionnaire database if needed
+    PGPASSWORD="${DB_PASS}" psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d postgres \
+        -c "CREATE DATABASE ${Q_DB} OWNER ${DB_USER};" 2>/dev/null && log_ok "Database '${Q_DB}' created" || log_ok "Database '${Q_DB}' already exists"
 
-    # ---- Database reset (prompts for sudo if needed) ----
-    log_info "Requesting sudo access for PostgreSQL admin operations..."
-    if sudo -v 2>/dev/null; then
-        sudo -u postgres psql -tc "SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'" | grep -q 1 \
-            || sudo -u postgres psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASS}';"
-
-        # Drop existing databases and recreate fresh
-        for db in "${DB_NAME}" "${Q_DB}"; do
-            log_info "Dropping database '${db}' if exists..."
-            sudo -u postgres psql -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='${db}' AND pid <> pg_backend_pid();" 2>/dev/null || true
-            sudo -u postgres psql -c "DROP DATABASE IF EXISTS \"${db}\";"
-            sudo -u postgres psql -c "CREATE DATABASE \"${db}\" OWNER ${DB_USER};"
-            sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE \"${db}\" TO ${DB_USER};"
-        done
-        log_ok "Databases recreated from scratch"
-    else
-        log_warn "sudo password prompt failed — skipping database drop/recreate"
-        log_info "  Ensure databases '${DB_NAME}' and '${Q_DB}' exist manually if needed."
-        log_info "  To enable full reset: grant this user passwordless sudo, or run:"
-        log_info "    sudo -u postgres psql -c \"DROP DATABASE IF EXISTS ${DB_NAME}; CREATE DATABASE ${DB_NAME} OWNER ${DB_USER};\""
-    fi
-
-    # ---- Generate datainfo.properties for Liquibase (shared module + app) ----
+    # Generate datainfo.properties for Liquibase
     mkdir -p shared/src/main/resources app/src/main/resources
     generate_datainfo shared/src/main/resources
     generate_datainfo app/src/main/resources
 
-    # ---- Run Liquibase migrations (directly via liquibase-core to avoid Maven plugin classpath issues) ----
     log_info "Applying Liquibase migrations..."
     cd "${PROJECT_DIR}"
+    mvn compile -pl shared -DskipTests -q 2>/dev/null || { log_warn "Maven compile failed — cannot run Liquibase"; return 1; }
 
-    # When invoked via sudo, Maven runs as root and can't find locally
-    # installed artifacts (e.g. openclinica-odm).  Run Maven as the
-    # invoking user instead.
-    local mvnsudo=""
-    if [ -n "${SUDO_USER:-}" ]; then
-        mvnsudo="sudo -u ${SUDO_USER}"
-    fi
-
-    # Clean stale Maven resolver cache for local-only odm artifact.
-    local user_home
-    user_home=$(eval echo ~"${SUDO_USER:-$USER}")
-    local odm_cache_dir="${user_home}/.m2/repository/org/akaza/openclinica/odm/openclinica-odm/2.2"
-    rm -f "${odm_cache_dir}"/*.lastUpdated
-    echo "openclinica-odm-2.2.jar>=" > "${odm_cache_dir}"/_remote.repositories
-    echo "openclinica-odm-2.2.pom>=" >> "${odm_cache_dir}"/_remote.repositories
-
-    ${mvnsudo} mvn compile -pl shared -DskipTests -q 2>/dev/null || {
-        log_warn "Maven compile failed — cannot run Liquibase"
-        return
-    }
     local lb_classpath
     lb_classpath=$(mvn dependency:build-classpath -pl shared -DincludeScope=runtime -q -Dmdep.outputFile=/dev/stdout 2>/dev/null):shared/target/classes
-    # Drop all existing objects first (fresh schema from scratch)
-    java -cp "${lb_classpath}" liquibase.integration.commandline.Main \
-        --changeLogFile=migration/master.xml \
-        --url="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}" \
-        --username="${DB_USER}" \
-        --password="${DB_PASS}" \
-        --classpath=shared/target/classes \
-        dropAll 2>&1 | grep -v "^##\|^$" || true
-    # Apply all migrations
-    # Note: data-copy changesets (module-*-copy-*) may fail on fresh databases
-    # because they assume an existing legacy schema. These are safe to skip.
+
     java -cp "${lb_classpath}" liquibase.integration.commandline.Main \
         --changeLogFile=migration/master.xml \
         --url="jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}" \
@@ -364,7 +401,7 @@ cmd_init_db() {
         update 2>&1 | grep -v "^##\|^$" || true
     log_ok "Migrations applied"
 
-    # ---- Create admin account ----
+    # Create admin account
     log_info "Creating admin account..."
     local bcrypt_hash
     bcrypt_hash=$(python3 -c "
@@ -433,6 +470,9 @@ cmd_start() {
     local java_home="${JAVA_HOME:-$(dirname "$(dirname "$(readlink -f "$(which java)")")")}"
     generate_datainfo app/src/main/resources
     generate_questionnaire_env
+
+    # ---- PostgreSQL ----
+    start_postgres || log_error "PostgreSQL required — cannot start"
 
     # ---- Check WAR exists ----
     if [ ! -f app/target/ResearchEDC.war ]; then
@@ -503,12 +543,16 @@ cmd_start() {
         return 1
     fi
 
+    # ---- MinIO ----
+    start_minio || log_warn "MinIO not started — exports will use local storage fallback"
+
     # ---- Questionnaire Service ----
     if [ -f "${PROJECT_DIR}/questionnaire-service/apps/api/.venv/bin/activate" ]; then
         log_info "Starting Questionnaire Service on port ${Q_PORT}..."
         cd "${PROJECT_DIR}/questionnaire-service/apps/api"
         source .venv/bin/activate
         PYTHONPATH="$PWD" alembic upgrade head 2>/dev/null || log_warn "Alembic migration skipped"
+        PYTHONPATH="${PWD}:${HOME}/.local/lib/python3.12/site-packages" \
         nohup .venv/bin/python -m uvicorn app.main:app \
             --host 127.0.0.1 --port "${Q_PORT}" --log-level info \
             > "${LOG_DIR}/questionnaire.log" 2>&1 &
@@ -547,6 +591,8 @@ cmd_stop() {
     stop_pid "${PID_DIR}/caddy.pid" "Caddy" && stopped=1
     stop_pid "${PID_DIR}/app.pid" "App" && stopped=1
     stop_pid "${PID_DIR}/questionnaire.pid" "Questionnaire" && stopped=1
+    docker stop "${MINIO_CONTAINER}" 2>/dev/null && rm -f "${PID_DIR}/minio.pid" && stopped=1 || true
+    docker stop "${PG_CONTAINER}" 2>/dev/null && rm -f "${PID_DIR}/postgres.pid" && stopped=1 || true
 
     if [ -x "${TOMCAT_DIR}/bin/catalina.sh" ] && [ -f "${PID_DIR}/app.pid" ]; then
         CATALINA_HOME="${TOMCAT_DIR}" "${TOMCAT_DIR}/bin/catalina.sh" stop 2>/dev/null || true
@@ -581,6 +627,13 @@ cmd_status() {
         fi
         printf "  %-20s %-10s %s\n" "${name}" "${st}" "${pid}"
     done
+
+    local minio_st="stopped" minio_pid="-"
+    if docker ps --filter "name=${MINIO_CONTAINER}" --format '{{.ID}}' 2>/dev/null | grep -q .; then
+        minio_st="running"
+        minio_pid="$(docker inspect -f '{{.State.Pid}}' "${MINIO_CONTAINER}" 2>/dev/null || echo 'docker')"
+    fi
+    printf "  %-20s %-10s %s\n" "MinIO" "${minio_st}" "${minio_pid}"
 
     pg_isready -h "${DB_HOST}" -p "${DB_PORT}" &>/dev/null \
         && printf "  %-20s %-10s\n" "PostgreSQL" "running" \
@@ -620,7 +673,7 @@ Usage: bash deploy.sh <command>
 
 Commands:
   setup    Install prerequisites, uv, Python venv
-  init-db  Create PostgreSQL user + databases (needs sudo)
+  init-db  Create questionnaire DB + run Liquibase migrations
   build    Build frontend + backend
   start    Start all services
   stop     Stop all services
@@ -632,6 +685,8 @@ Commands:
 Ports:
   App:              ${APP_PORT}
   Questionnaire:    ${Q_PORT}
+  MinIO API:        ${MINIO_PORT}
+  MinIO Console:    ${MINIO_CONSOLE_PORT}
   Caddy (external): ${CADDY_PORT}
   PostgreSQL:       ${DB_PORT}
 EOF

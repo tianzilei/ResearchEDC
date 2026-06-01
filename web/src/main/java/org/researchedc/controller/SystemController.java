@@ -24,24 +24,21 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 import javax.naming.Context;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 import org.researchedc.bean.extract.ExtractPropertyBean;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
-import org.researchedc.core.EmailEngine;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.exception.OpenClinicaSystemException;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.pmanage.Authorization;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
@@ -54,9 +51,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ldap.core.ContextSource;
-import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.ldap.SpringSecurityLdapTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,8 +75,6 @@ public class SystemController {
     @Autowired
     @Qualifier("dataSource")
     private BasicDataSource dataSource;
-    @Autowired
-    private JavaMailSenderImpl mailSender;
 
     @Autowired
     private ContextSource contextSource;
@@ -187,17 +179,6 @@ public class SystemController {
         databaseConfiguration.put("dbType", CoreResources.getField("dbType"));
         databaseConfiguration.put("db", CoreResources.getField("db"));
 
-        HashMap<String, String> emailSystem = new HashMap<>();
-        emailSystem.put("mailHost", CoreResources.getField("mailHost"));
-        emailSystem.put("mailPort", CoreResources.getField("mailPort"));
-        emailSystem.put("mailProtocol", CoreResources.getField("mailProtocol"));
-        emailSystem.put("mailSmtpAuth", CoreResources.getField("mailSmtpAuth"));
-        emailSystem.put("mailSmtpStarttls.enable", CoreResources.getField("mailSmtpStarttls.enable"));
-        emailSystem.put("mailSmtpsAuth", CoreResources.getField("mailSmtpsAuth"));
-        emailSystem.put("mailSmtpsStarttls.enable", CoreResources.getField("mailSmtpsStarttls.enable"));
-        emailSystem.put("mailSmtpConnectionTimeout", CoreResources.getField("mailSmtpConnectionTimeout"));
-        emailSystem.put("mailErrorMsg", CoreResources.getField("mailErrorMsg"));
-
         HashMap<String, String> loggingConfiguration = new HashMap<>();
         loggingConfiguration.put("log.dir", CoreResources.getField("log.dir"));
         loggingConfiguration.put("logLocation", CoreResources.getField("logLocation"));
@@ -256,7 +237,6 @@ public class SystemController {
         datainfo.put("attachedFileLocation", CoreResources.getField("attachedFileLocation"));
         datainfo.put("userAccountNotification", CoreResources.getField("userAccountNotification"));
         datainfo.put("adminEmail", CoreResources.getField("adminEmail"));
-        datainfo.put("mail protocol", emailSystem);
         datainfo.put("sysURL", CoreResources.getField("sysURL"));
         datainfo.put("maxInactiveInterval", CoreResources.getField("maxInactiveInterval"));
         datainfo.put("logging configuration", loggingConfiguration);
@@ -416,52 +396,6 @@ public class SystemController {
      *                    "Designer URL": "designer Url"
      *                    }
      *                    }
-     *                    }, {
-     *                    "Messaging": {
-     *                    "enabled": "True",
-     *                    "status": "ACTIVE",
-     *                    "metadata": {
-     *                    "mail.host": "your host",
-     *                    "mail.protocol": "smtp"
-     *                    }
-     *                    }
-     *                    }, {
-     *                    "Datamart": {
-     *                    "enabled": "False",
-     *                    "status": "ACTIVE",
-     *                    "metadata": {
-     *                    "Role Properties": {
-     *                    "Login": "True",
-     *                    "CreateRole": "False",
-     *                    "RoleName": "datamart",
-     *                    "Inherit": "True",
-     *                    "CreateDb": "False",
-     *                    "SuperUser": "False"
-     *                    },
-     *                    "db1.dataBase": "postgres",
-     *                    "db1.url": "jdbc:postgresql url",
-     *                    "db1.username": "datamart"
-     *                    }
-     *                    }
-     *                    }, {
-     *                    "Web Service": {
-     *                    "enabled": "True",
-     *                    "status": "INACTIVE",
-     *                    "metadata": {
-     *                    "WebService URL": "web service url",
-     *                    "Http Status Code": "404"
-     *                    }
-     *                    }
-     *                    }, {
-     *                    "Ldap": {
-     *                    "enabled": "True",
-     *                    "status": "ACTIVE",
-     *                    "metadata": {
-     *                    "ldap.host": "ldap server url"
-     *                    }
-     *                    }
-     *                    }],
-     *                    "Study Oid": "S_BL101"
      *                    }]
      */
 
@@ -473,7 +407,6 @@ public class SystemController {
 
         HttpSession session = request.getSession();
         session.removeAttribute("ruledesigner");
-        session.removeAttribute("messaging");
         session.removeAttribute("datamart");
         session.removeAttribute("webservice");
         session.removeAttribute("ldap");
@@ -490,9 +423,6 @@ public class SystemController {
 
             HashMap<String, Object> mapRuleDesignerModule = getRuleDesignerModuleInSession(studyBean, session);
             listOfModules.add(mapRuleDesignerModule);
-
-            HashMap<String, Object> mapMessagingModule = getMessagingModuleInSession(studyBean, session);
-            listOfModules.add(mapMessagingModule);
 
             HashMap<String, Object> mapDatamartModule = getDatamartModuleInSession(studyBean, session);
             listOfModules.add(mapDatamartModule);
@@ -772,52 +702,6 @@ public class SystemController {
 
             HashMap<String, Object> mapStudy = new HashMap<>();
             mapStudy.put("Module", mapRuleDesignerModule);
-            mapStudy.put("Study Oid", studyBean.getOid());
-            studyListMap.add(mapStudy);
-        }
-
-        return new ResponseEntity<ArrayList<HashMap<String, Object>>>(studyListMap, org.springframework.http.HttpStatus.OK);
-
-    }
-
-    /**
-     * @api {get} /pages/auth/api/v1/system/modules/messaging Retrieve Email Module Info
-     * @apiName getEmailModule
-     * @apiPermission Authenticate using api-key. admin
-     * @apiVersion 3.8.0
-     * @apiGroup System
-     * @apiDescription Retrieves Email Module Status Info Per Study
-     * @apiSuccessExample {json} Success-Response: HTTP/1.1 200 OK
-     *                    [{
-     *                    "Study Oid": "S_BL101",
-     *                    "Module": {
-     *                    "Messaging": {
-     *                    "enabled": "True",
-     *                    "status": "ACTIVE",
-     *                    "metadata": {
-     *                    "mail.host": "your host",
-     *                    "mail.protocol": "smtp"
-     *                    }
-     *                    }
-     *                    }
-     *                    }
-     *                    ]
-     */
-
-    @RequestMapping(value = "/modules/messaging", method = RequestMethod.GET)
-    public ResponseEntity<ArrayList<HashMap<String, Object>>> getMessagingModule(HttpServletRequest request) throws Exception {
-        ResourceBundleProvider.updateLocale(Locale.of("en_US"));
-
-        HttpSession session = request.getSession();
-        session.removeAttribute("messaging");
-
-        ArrayList<HashMap<String, Object>> studyListMap = new ArrayList();
-
-        ArrayList<StudyBean> studyList = getStudyList();
-        for (StudyBean studyBean : studyList) {
-            HashMap<String, Object> mapMessagingModule = getMessagingModuleInSession(studyBean, session);
-            HashMap<String, Object> mapStudy = new HashMap<>();
-            mapStudy.put("Module", mapMessagingModule);
             mapStudy.put("Study Oid", studyBean.getOid());
             studyListMap.add(mapStudy);
         }
@@ -1125,26 +1009,6 @@ public class SystemController {
 
     }
 
-    public String sendEmail(JavaMailSenderImpl mailSender, String emailSubject, String message) throws OpenClinicaSystemException {
-
-        logger.info("Sending email...");
-        try {
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
-            helper.setFrom(EmailEngine.getAdminEmail());
-            helper.setTo("oc123@openclinica.com");
-            helper.setSubject(emailSubject);
-            helper.setText(message);
-
-            mailSender.send(mimeMessage);
-            return "ACTIVE";
-        } catch (MailException me) {
-            return "INACTIVE";
-        } catch (MessagingException me) {
-            return "INACTIVE";
-        }
-    }
-
     public HashMap<String, String> getDbRoleProperties(Connection conn, HashMap<String, String> mapRole, String username, Boolean withoutRoleName)
             throws SQLException {
         mapRole = getDbRoleProperties(conn, mapRole, username);
@@ -1320,28 +1184,6 @@ public class SystemController {
         return mapModule;
     }
 
-    public HashMap<String, Object> getMessagingModule(StudyBean studyBean) {
-
-        String result = sendEmail(mailSender, "This is the Subject Of a Rest Call for Health Check", "This is the Body Of a Rest Call for Health Check");
-        String mailProtocol = CoreResources.getField("mailProtocol");
-        String mailPort = CoreResources.getField("mailPort");
-        String mailHost = CoreResources.getField("mailHost");
-
-        HashMap<String, String> mapMetadata = new HashMap<>();
-        mapMetadata.put("mail.host", mailHost);
-        mapMetadata.put("mail.protocol", mailProtocol);
-
-        HashMap<String, Object> mapMessaging = new HashMap<>();
-        mapMessaging.put("enabled", (!mailProtocol.equals("") && !mailPort.equals("") && !mailHost.equals("")) ? "True" : "False");
-        mapMessaging.put("status", result);
-        mapMessaging.put("metadata", mapMetadata);
-
-        HashMap<String, Object> mapModule = new HashMap<>();
-        mapModule.put("Messaging", mapMessaging);
-
-        return mapModule;
-    }
-
     public HashMap<String, Object> getDatamartModule(StudyBean studyBean) {
 
         HashMap<String, String> datamartRole = new HashMap<>();
@@ -1469,16 +1311,6 @@ public class SystemController {
         if (mapModule == null) {
             mapModule = getRuleDesignerModule(studyBean);
             session.setAttribute("ruledesigner", mapModule);
-        }
-        return mapModule;
-    }
-
-    public HashMap<String, Object> getMessagingModuleInSession(StudyBean studyBean, HttpSession session) {
-
-        HashMap<String, Object> mapModule = (HashMap<String, Object>) session.getAttribute("messaging");
-        if (mapModule == null) {
-            mapModule = getMessagingModule(studyBean);
-            session.setAttribute("messaging", mapModule);
         }
         return mapModule;
     }

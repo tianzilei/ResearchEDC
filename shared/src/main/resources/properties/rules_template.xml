@@ -9,12 +9,6 @@
                 <Message></Message>
 			</DiscrepancyNoteAction>
 			
-			<EmailAction IfExpressionEvaluates="true">
-				<Run AdministrativeDataEntry="true" InitialDataEntry="true" DoubleDataEntry="true" ImportDataEntry="false" Batch="true" />
-                <Message></Message>
-                <To></To>
-			</EmailAction>
-			
 			<InsertAction IfExpressionEvaluates="true">
 				<Run AdministrativeDataEntry="true" InitialDataEntry="true" DoubleDataEntry="true" ImportDataEntry="false" Batch="true"/>
 				<DestinationProperty OID="" Value="">
@@ -22,12 +16,6 @@
 				</DestinationProperty>
 			</InsertAction>			
 
-			<NotificationAction IfExpressionEvaluates="true">
-                <To></To>
-                <Subject></Subject>
-                <Message></Message>
-			</NotificationAction>
-			
 			<ShowAction IfExpressionEvaluates="true">
 				<Run AdministrativeDataEntry="true" InitialDataEntry="true" DoubleDataEntry="true" ImportDataEntry="false" Batch="false" />
                 <Message></Message>

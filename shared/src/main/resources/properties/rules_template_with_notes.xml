@@ -43,22 +43,6 @@
 					in the detailed notes of the resulting Discrepancy Note. -->
 				<Message></Message>
 			</DiscrepancyNoteAction>
-			<!-- EmailAction sends an email automatically when the RuleDef expression evaluates 
-				to the result that you indicate here. You can specify that the EmailAction should occur 
-				based on the Expression evaluating to either "true" or "false".  -->
-			<EmailAction IfExpressionEvaluates="true">
-			<!-- Run defines when the Rule Action should be executed. Specify this
-				by indicating "true" or "false" for each given condition. -->
-				<Run AdministrativeDataEntry="true" InitialDataEntry="true"	DoubleDataEntry="true" ImportDataEntry="false" Batch="true" />
-				<!-- Message is the error message that the data entry person will see if the 
-					EmailAction is activated. This is also the message that gets pre-populated 
-					in the email that gets sent. -->
-				<Message></Message>
-				<!-- The To tag allows you to specify an email account to receive the email when 
-					the EmailAction is activated. To specify more than one email use comma separated values. 
-					For example: usera@example.com,userb@example.com. -->
-				<To></To>
-			</EmailAction>
 			<!-- InsertAction is used to insert a value into another item in the same 
 				CRF or into another CRF in the same event definition. It can be a single provided value
 				or the value of another field. Specify whether the action should occur based on the 
@@ -112,24 +96,6 @@
 				</DestinationProperty>
 			</RandomizeAction>
 
-			<!-- The NotificationAction is used to send an SMS and/or email notification to a Study Participant, 
-				or an email notification to any specified email address. You can specify that the 
-				NotificationAction should occur based on the Expression evaluating to either "true" or "false".-->
-			<NotificationAction IfExpressionEvaluates="true">
-				<!-- The To tag allows you to specify an email account or Participant to which the 
-					notification will be sent. ${participant} can be used to send the notification to all
-					contact means provided when the Participant was Connected to OpenClinica (email and/or SMS).
-					You can specify more than one contact by using comma separated values. 
-					For example: ${participant},user1@example.com,user2@example.com -->
-				<To></To>
-				<!-- Subject populates the Subject line of the email if an email is generated as part 
-					of the NotificationAction. If only an SMS is generated, then this is optional/ignored. -->
-				<Subject></Subject>
-				<!-- Message is the body/content of the notification that will be delivered in the SMS and/or Email.
-					The following parameters can be used in the message: ${participant.firstname}, ${participant.loginurl}, 
-					${participate.url}, ${study.name}, ${participant.accessCode}, ${event.name}.-->
-				<Message></Message>
-			</NotificationAction>
 			<!-- ShowAction displays an Item or Group automatically when the referenced 
 				RuleDef Expression evaluates to the value you specify. The Item or Group to be 
 				shown must be part of the same CRF as the Target. Specify whether the action should 
