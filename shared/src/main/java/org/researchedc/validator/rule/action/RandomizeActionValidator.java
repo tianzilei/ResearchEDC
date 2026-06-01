@@ -11,7 +11,7 @@ import org.researchedc.bean.submit.ResponseOptionBean;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.domain.rule.AuditableBeanWrapper;
@@ -45,7 +45,7 @@ public class RandomizeActionValidator implements Validator {
     ItemDAO itemDAO;
     ItemFormMetadataDAO itemFormMetadataDAO;
     EventDefinitionCRFDAO eventDefinitionCRFDAO;
-    StudyEventDefinitionDAO studyEventDefinitionDAO;
+    IStudyEventDefinitionDAO studyEventDefinitionDAO;
     ICrfDAO crfDAO;
     DataSource dataSource;
     EventDefinitionCRFBean eventDefinitionCRFBean;
@@ -53,7 +53,7 @@ public class RandomizeActionValidator implements Validator {
     RuleSetBean ruleSetBean;
     ResourceBundle respage;
     private final Function<DataSource, ItemDAO> itemDaoFactory;
-    private final Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
+    private final Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
     private final Function<DataSource, ICrfDAO> crfDaoFactory;
     private final Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory;
     private final Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
@@ -62,7 +62,7 @@ public class RandomizeActionValidator implements Validator {
     public RandomizeActionValidator(DataSource dataSource) {
         this.dataSource = dataSource;
         this.itemDaoFactory = ItemDAO::new;
-        this.studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
+        this.studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
         this.crfDaoFactory = LegacyDaoFactory::crfDao;
         this.eventDefinitionCrfDaoFactory = EventDefinitionCRFDAO::new;
         this.itemFormMetadataDaoFactory = ItemFormMetadataDAO::new;
@@ -137,7 +137,7 @@ public class RandomizeActionValidator implements Validator {
         return itemDAO;
     }
 
-    public StudyEventDefinitionDAO getStudyEventDefinitionDAO() {
+    public IStudyEventDefinitionDAO getStudyEventDefinitionDAO() {
         if (studyEventDefinitionDAO == null) {
             studyEventDefinitionDAO = studyEventDefinitionDaoFactory.apply(dataSource);
         }
