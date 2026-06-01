@@ -2,7 +2,7 @@
 
 **Derived from:** OpenClinica v3.x  
 **Generated:** 2026-05-25  
-**Updated:** 2026-05-30  
+**Updated:** 2026-06-02  
 **Branch:** master
 
 ## OVERVIEW
@@ -11,7 +11,7 @@ ResearchEDC is an independently maintained research electronic data capture (EDC
 
 New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. Legacy code consolidated into `shared/` module, with `web/` (484 files + 419 JSP) and `ws/` (75 files) being incrementally strangulated into Modulith modules.
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 235/235** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: LegacyDaoConfig 归零** ✅ | **legacy-core → shared 合并** ✅
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 235/235** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 19/19** ✅ | **legacy-core → shared 合并** ✅
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 ✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
@@ -213,21 +213,29 @@ python -m pytest app/tests/ -v
 - **Version:** 0.1
 - **legacy-core → shared:** `legacy-core/` was removed on 2026-05-23. All code consolidated into `shared/` module with `@Repository`/`@Service` annotations and package rename to `org.researchedc`.
 - **Frontend TypeScript:** ✅ `pnpm typecheck` — 0 errors (strict mode).
-- **DAO constructor baseline:** `DaoProvider` bridge has been removed. Direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) is now 0 matches across `shared/`, `web/`, and `ws/` as of 2026-05-29; remaining legacy removal work is module extraction and concrete DAO type dependency replacement.
+- **DAO constructor baseline:** `DaoProvider` bridge has been removed. Direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) is now 0 matches across `shared/`, `web/`, and `ws/`. All 19 DAO families are SPI-widened; deletion is gated on module-owned replacement implementations (Phase B).
 
-### Legacy DAO Refactor Handoff (2026-05-31)
+### Legacy DAO Refactor Handoff (2026-06-02)
 
-- **Latest committed slice:** `f9d7d5d65` (`Refactor expression item group DAO to SPI`) widens `ItemGroupDAO` consumers in `ExpressionService` to `IItemGroupDAO`, adds `itemGroupDao()` factory to `LegacyDaoFactory`, and has `ItemGroupDAO` implement the SPI. Verified: `mvn -pl app -am compile -DskipTests` ✅, `ModulithVerificationTest` ✅, deployed SPA login → dashboard → rules → CRF APIs ✅, 0 log errors.
-- **DAO families SPI-widened (11 of 19):**
+- **Status:** Phase C SPI widening **COMPLETE** — all 19 DAO families are SPI-widened. All consumer references in web/ (45+ files), shared/ (15+ files), and ws/ (0 files) now use SPI interfaces. Remaining concrete type names are limited to DAO implementation classes themselves, `LegacyDaoFactory`, `DaoRegistrar` bean name strings, `OdmExtractDAO extends DatasetDAO` inheritance, and commented-out code in 3 extract servlets — all harmless.
+- **DAO families SPI-widened (19 of 19):**
   - ✅ **StudyDAO / StudySubjectDAO / SubjectDAO / UserAccountDAO** — boundary-only; concrete refs limited to implementation classes, `LegacyDaoFactory`, and `UserAccountAdapter`
-  - ✅ **CRFDAO → ICrfDAO** — committed (`460fab3f2`, `01efa4b05`); remaining concrete refs in shared rule/import/export logic and web controllers/servlets
-  - ✅ **CRFVersionDAO → ICrfVersionDAO** — ~20 commits across shared/web/ws (`9da44e612`–`1e337b75b`); broadest widening to date
-  - ✅ **DiscrepancyNoteDAO → IDiscrepancyNoteDAO** — committed (`0e47f8872`, `ec1b9b0d9`)
-  - ✅ **EventCRFDAO → EventCRFDao** — committed (`315d3cdf4`)
-  - ✅ **ItemDAO → IItemDAO** — committed (`8b90a2601`); `ExpressionService` consumer widened
-  - ✅ **ItemDataDAO → IItemDataDAO** — committed (`1b409b230`, `962726f2d`); `ExpressionService` + `RuleRunner` consumers widened
-  - ✅ **ItemGroupDAO → IItemGroupDAO** — committed (`f9d7d5d65`); `ExpressionService` consumer widened, `LegacyDaoFactory::itemGroupDao` added
-- **Remaining concrete DAO families (8):** `StudyEventDAO`, `StudyEventDefinitionDAO`, `RuleSetDAO`, `RuleDAO`, `DatasetDAO`, `FilterDAO`, `StudyGroupClassDAO`, `StudyGroupDAO` — each still has concrete references in shared services/web/ws. SPI widening pending per-family.
+  - ✅ **CRFDAO → ICrfDAO** — `460fab3f2`, `01efa4b05`
+  - ✅ **CRFVersionDAO → ICrfVersionDAO** — ~20 commits (`9da44e612`–`1e337b75b`)
+  - ✅ **DiscrepancyNoteDAO → IDiscrepancyNoteDAO** — `0e47f8872`, `ec1b9b0d9`
+  - ✅ **EventCRFDAO → EventCRFDao** — `315d3cdf4`
+  - ✅ **ItemDAO → IItemDAO** — `8b90a2601`
+  - ✅ **ItemDataDAO → IItemDataDAO** — `1b409b230`, `962726f2d`
+  - ✅ **ItemGroupDAO → IItemGroupDAO** — `f9d7d5d65`
+  - ✅ **StudyEventDAO → IStudyEventDAO** — ~10 commits (`6896446c1`–`df4a832e5`); 45 web/ + 15 shared/ consumer files all SPI-typed
+  - ✅ **StudyEventDefinitionDAO → IStudyEventDefinitionDAO** — ~10 commits (`868a4f6fa`–`968391b3b`); 40+ web/ + 15+ shared/ consumer files all SPI-typed
+  - ✅ **RuleSetDAO → IRuleSetDAO** — `cf22f06d2`, `579cbfab0`; 4 web/ + 4 shared/ consumers all SPI-typed
+  - ✅ **RuleDAO → IRuleDAO** — `62595dd32`; 1 web/ + 3 shared/ consumers all SPI-typed
+  - ✅ **DatasetDAO → DatasetDao** — `d374b275c`; web/ has commented code only, shared/ uses SPI
+  - ✅ **FilterDAO → FilterDao** — web/ has commented code only, all consumers use SPI
+  - ✅ **StudyGroupClassDAO → StudyGroupClassDao** — 4 shared/ consumers all SPI-typed
+  - ✅ **StudyGroupDAO → StudyGroupDao** — 3 shared/ consumers all SPI-typed
+- **Remaining work:** DAO `.java` file deletion is blocked by the need for module-owned/repository-backed replacements (Phase B schema ownership). The consuming code is ready — deletion is gated on providing new SPI implementations.
 - **Gauntlet commands:**
   - `git status --short`
   - `rg -n "\b(StudyEventDAO|StudyEventDefinitionDAO|RuleSetDAO|RuleDAO|DatasetDAO|FilterDAO|StudyGroupClassDAO|StudyGroupDAO)\b" shared/src/main/java web/src/main/java ws/src/main/java -g '*.java' | cut -d: -f1 | sort -u`

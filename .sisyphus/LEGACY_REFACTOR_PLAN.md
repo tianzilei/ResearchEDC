@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-05-31 (Phase C accelerated: 11 of 19 DAO families SPI-widened. The remaining 8 families — `StudyEventDAO`, `StudyEventDefinitionDAO`, `RuleSetDAO`, `RuleDAO`, `DatasetDAO`, `FilterDAO`, `StudyGroupClassDAO`, `StudyGroupDAO` — still have concrete references in shared services/web/ws and await per-family SPI widening.)
+> **Last updated:** 2026-06-02 (Phase C SPI widening complete: **19 of 19 DAO families** SPI-widened. All consumer references in web/ and shared/ now use SPI interfaces. Remaining concrete type names are limited to DAO implementation classes themselves, `LegacyDaoFactory`, and commented-out code — all harmless.)
 > **Scope:** All remaining legacy code in `shared/`, `web/`, `ws/`
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -126,9 +126,9 @@ Modules communicate via:
 
 ## Phase C: Legacy Code Deletion (DAO .java files remain — blocked by remaining concrete DAO dependencies and module extraction)
 
-> **Status (2026-05-31):** Phase C DAO SPI widening has accelerated significantly. 11 of 19 DAO families are now SPI-widened. `DaoProvider.getDao()` and direct `new XxxDAO(...)` / `new StudyConfigService(...)` call sites remain 0. The DAO `.java` files in `shared/` still cannot be deleted because they are the current SPI implementations, and 8 remaining DAO families (`StudyEventDAO`, `StudyEventDefinitionDAO`, `RuleSetDAO`, `RuleDAO`, `DatasetDAO`, `FilterDAO`, `StudyGroupClassDAO`, `StudyGroupDAO`) still have concrete consumer dependencies awaiting SPI widening.
+> **Status (2026-06-02):** Phase C DAO SPI widening is **COMPLETE**. All 19 DAO families are SPI-widened. `DaoProvider.getDao()` and direct `new XxxDAO(...)` / `new StudyConfigService(...)` call sites remain 0. The DAO `.java` files in `shared/` still cannot be deleted because they are the current SPI implementations. All consumer references in web/ (45+ files), shared/ (15+ files), and ws/ (0 files) now use SPI interfaces. Remaining concrete type names are limited to DAO implementation classes, `LegacyDaoFactory`, `DaoRegistrar` bean name strings, and commented-out code — all harmless.
 >
-> **Completed SPI Widening — 11 families:**
+> **Completed SPI Widening — 19 families:**
 > - ✅ `StudyDAO` → `IStudyDAO` — boundary-only; concrete refs limited to impl, `LegacyDaoFactory`
 > - ✅ `StudySubjectDAO` → `IStudySubjectDAO` — boundary-only
 > - ✅ `SubjectDAO` → `ISubjectDAO` — boundary-only
@@ -140,16 +140,20 @@ Modules communicate via:
 > - ✅ `ItemDAO` → `IItemDAO` — `8b90a2601`; `ExpressionService` consumer widened
 > - ✅ `ItemDataDAO` → `IItemDataDAO` — `1b409b230`, `962726f2d`; `ExpressionService` + `RuleRunner` consumers widened
 > - ✅ `ItemGroupDAO` → `IItemGroupDAO` — `f9d7d5d65`; `ExpressionService` consumer widened
+> - ✅ `StudyEventDAO` → `IStudyEventDAO` — ~10 commits (`6896446c1`–`df4a832e5`); 45 web/+ 15 shared/ consumer files all SPI-typed
+> - ✅ `StudyEventDefinitionDAO` → `IStudyEventDefinitionDAO` — ~10 commits (`868a4f6fa`–`968391b3b`); 40+ web/+ 15+ shared/ consumer files all SPI-typed
+> - ✅ `RuleSetDAO` → `IRuleSetDAO` — `cf22f06d2`, `579cbfab0`; 4 web/ + 4 shared/ consumers all SPI-typed
+> - ✅ `RuleDAO` → `IRuleDAO` — `62595dd32`; 1 web/ + 3 shared/ consumers all SPI-typed
+> - ✅ `DatasetDAO` → `DatasetDao` — `d374b275c`; web/ has commented code only, shared/ uses SPI
+> - ✅ `FilterDAO` → `FilterDao` — web/ has commented code only, all consumers use SPI
+> - ✅ `StudyGroupClassDAO` → `StudyGroupClassDao` — 4 shared/ consumers all SPI-typed
+> - ✅ `StudyGroupDAO` → `StudyGroupDao` — 3 shared/ consumers all SPI-typed
 >
-> **Remaining 8 families:**
-> - `StudyEventDAO` — concrete refs in shared services/web/ws
-> - `StudyEventDefinitionDAO` — concrete refs in `ExpressionService`, web controllers, shared services
-> - `RuleSetDAO` — concrete refs in rule internals, web controllers
-> - `RuleDAO` — concrete refs in rule internals
-> - `DatasetDAO` — concrete refs in extract/web controllers
-> - `FilterDAO` — concrete refs in extract/web controllers
-> - `StudyGroupClassDAO` — concrete refs in manage study controllers
-> - `StudyGroupDAO` — concrete refs in manage study controllers
+> **Completed in 2026-06-02 (remaining 8 DAO families SPI-widened):**
+> - ~20 commits (`868a4f6fa`–`968391b3b`) widened `StudyEventDAO`, `StudyEventDefinitionDAO`, `RuleSetDAO`, `RuleDAO`, `DatasetDAO`, `FilterDAO`, `StudyGroupClassDAO`, and `StudyGroupDAO` consumers across shared/web/ws from concrete types to SPI interfaces.
+> - All 45+ web/ consumer files, 15+ shared/ consumer files, and 0 ws/ consumer files now use SPI-typed fields exclusively.
+> - Remaining concrete type names (DAO impl classes, `LegacyDaoFactory`, `DaoRegistrar` string literal, `OdmExtractDAO extends DatasetDAO`, commented-out code in 3 extract servlets) are harmless — none represent active concrete consumer dependencies.
+> - Verified: `mvn -pl app -am compile -DskipTests` ✅, `ModulithVerificationTest` ✅, clean working tree.
 >
 > **Completed in Sequence 18-19 (2026-05-23):**
 > - **DaoProvider** (`legacy-core/.../dao/spi/DaoProvider.java`): static Spring context bridge for legacy servlets/SOAP endpoints
@@ -193,7 +197,7 @@ Modules communicate via:
 
 ### C1: DAO Files Still Present (Blocked by remaining concrete consumers)
 
-The following DAO `.java` files still exist in `shared/`. As of 2026-05-31, **0 `DaoProvider.getDao()` call sites** and **0 direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches** remain across app/web/ws/shared. **11 of 19 DAO families** have been SPI-widened; the 8 remaining families still have concrete consumer dependencies that must be widened before DAO `.java` file deletion can be assessed.
+The following DAO `.java` files still exist in `shared/`. As of 2026-06-02, **0 `DaoProvider.getDao()` call sites** and **0 direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches** remain across app/web/ws/shared. **All 19 DAO families** are SPI-widened. All DAO `.java` files must remain because they are the current SPI implementations; deletion is blocked by the need for module-owned replacements and workflow strangulation.
 
 | DAO File | SPI Status | Can delete? |
 |----------|-----------|-------------|
@@ -201,21 +205,21 @@ The following DAO `.java` files still exist in `shared/`. As of 2026-05-31, **0 
 | `StudySubjectDAO.java` | ✅ `IStudySubjectDAO` — boundary-only | ❌ Still the SPI implementation |
 | `SubjectDAO.java` | ✅ `ISubjectDAO` — boundary-only | ❌ Still the SPI implementation |
 | `UserAccountDAO.java` | ✅ `IUserAccountDAO` — boundary-only (except WS adapter) | ❌ Still the SPI implementation and adapter delegate |
-| `CRFDAO.java` | ✅ `ICrfDAO` — consumers widened | ❌ Remaining concrete refs in shared/web |
+| `CRFDAO.java` | ✅ `ICrfDAO` — consumers widened | ❌ Still the SPI implementation |
 | `CRFVersionDAO.java` | ✅ `ICrfVersionDAO` — consumers widened (~20 commits) | ❌ Still the SPI implementation |
 | `DiscrepancyNoteDAO.java` | ✅ `IDiscrepancyNoteDAO` — consumers widened | ❌ Still the SPI implementation |
 | `EventCRFDAO.java` | ✅ `EventCRFDao` — consumers widened | ❌ Still the SPI implementation |
-| `ItemDAO.java` | ✅ `IItemDAO` — `ExpressionService` consumer widened | ❌ Remaining concrete refs in shared/web |
-| `ItemDataDAO.java` | ✅ `IItemDataDAO` — `ExpressionService` + `RuleRunner` widened | ❌ Remaining concrete refs in shared/web |
-| `ItemGroupDAO.java` | ✅ `IItemGroupDAO` — `ExpressionService` consumer widened | ❌ Remaining concrete refs in shared/web |
-| `StudyEventDAO.java` | 🔶 Concrete — still used by legacy consumers | ❌ Needs SPI widening |
-| `StudyEventDefinitionDAO.java` | 🔶 Concrete — still used by legacy consumers | ❌ Needs SPI widening |
-| `RuleSetDAO.java` | 🔶 Concrete — still used by legacy rule internals | ❌ Needs SPI widening |
-| `RuleDAO.java` | 🔶 Concrete — still used by legacy rule internals | ❌ Needs SPI widening |
-| `DatasetDAO.java` | 🔶 Concrete — still used by legacy consumers | ❌ Needs SPI widening |
-| `FilterDAO.java` | 🔶 Concrete — still used by legacy consumers | ❌ Needs SPI widening |
-| `StudyGroupClassDAO.java` | 🔶 Concrete — still used by legacy consumers | ❌ Needs SPI widening |
-| `StudyGroupDAO.java` | 🔶 Concrete — still used by legacy consumers | ❌ Needs SPI widening |
+| `ItemDAO.java` | ✅ `IItemDAO` — consumers widened | ❌ Still the SPI implementation |
+| `ItemDataDAO.java` | ✅ `IItemDataDAO` — consumers widened | ❌ Still the SPI implementation |
+| `ItemGroupDAO.java` | ✅ `IItemGroupDAO` — consumers widened | ❌ Still the SPI implementation |
+| `StudyEventDAO.java` | ✅ `IStudyEventDAO` — consumers widened (~10 commits) | ❌ Still the SPI implementation |
+| `StudyEventDefinitionDAO.java` | ✅ `IStudyEventDefinitionDAO` — consumers widened (~10 commits) | ❌ Still the SPI implementation |
+| `RuleSetDAO.java` | ✅ `IRuleSetDAO` — consumers widened | ❌ Still the SPI implementation |
+| `RuleDAO.java` | ✅ `IRuleDAO` — consumers widened | ❌ Still the SPI implementation |
+| `DatasetDAO.java` | ✅ `DatasetDao` — consumers widened | ❌ Still the SPI implementation |
+| `FilterDAO.java` | ✅ `FilterDao` — consumers widened | ❌ Still the SPI implementation |
+| `StudyGroupClassDAO.java` | ✅ `StudyGroupClassDao` — consumers widened | ❌ Still the SPI implementation |
+| `StudyGroupDAO.java` | ✅ `StudyGroupDao` — consumers widened | ❌ Still the SPI implementation |
 
 ### C2: Bean Deletion Order (Deferred until web/ servlets migrated)
 
@@ -394,7 +398,7 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 |-------|-------------|-----------------|--------------|
 | A1-A5 | Write operations | ✅ COMPLETE | None |
 | B1-B3 | Schema ownership | ✅ Documentation complete. Wave 0 (schema mismatches) done | Phase A complete |
-| C1-C4 | Legacy code deletion | 🔶 In progress (11/19 DAO families SPI-widened) | **28 SPI Impl wrappers deleted, 22 hardcoded userId=1 fixed, 7 module tests added, `DaoProvider.getDao()` references reduced to 0, direct legacy constructor matches reduced to 0. 11 of 19 DAO families SPI-widened; 8 families remaining.** |
+| C1-C4 | Legacy code deletion | 🔶 In progress (19/19 DAO families SPI-widened — consumer widening complete; DAO file deletion blocked by module-owned replacement need) | **28 SPI Impl wrappers deleted, 22 hardcoded userId=1 fixed, 7 module tests added, `DaoProvider.getDao()` references reduced to 0, direct legacy constructor matches reduced to 0. All 19 DAO families SPI-widened; deletion gated on schema ownership migration (Phase B).** |
 | D1-D2 | Config migration | ✅ Complete | 11 XML → Java Config, dead XML stubs cleanup (2026-05-23) |
 | E1-E2 | Auth unification | ✅ Complete | Dual SecurityFilterChain (JWT API + OIDC web) |
 | F1-F2 | SOAP adapters | ✅ Infrastructure built | 3 adapters created; study/study-subject adapters are SPI-backed, UserAccountAdapter remains a concrete containment wrapper, and no `DaoProvider.getDao()` calls remain |

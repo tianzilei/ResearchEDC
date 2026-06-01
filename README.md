@@ -1,7 +1,7 @@
 # ResearchEDC
 
 - Version: 0.1
-- Last updated: 2026-05-30
+- Last updated: 2026-06-02
 - License: GNU LGPL
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x.
@@ -44,13 +44,8 @@ Current high-level status:
 - React SPA covers major workflows and keeps remaining JSP pages reachable through the legacy frame path.
 - Questionnaire service has its own API, data model, scoring engine, and tests.
 - `DaoProvider` has been removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` construction is at 0 active matches across the legacy Java surfaces.
-- The `StudyDAO` / `StudySubjectDAO` / `SubjectDAO` / `UserAccountDAO` consumer family has been widened to SPI interfaces and is now limited to implementation/factory/adapter boundaries.
-- Remaining legacy deletion work is mainly replacing concrete DAO families such as `CRFDAO`, extracting DAO-heavy web/ws workflows, and providing module-owned or repository-backed implementations before deleting legacy DAO classes.
-
-Latest documented refactor slice:
-
-- Commit `10f0f6ea2` refactored high-volume legacy DAO consumers to SPI interfaces.
-- A follow-up WS CRF slice is in progress, widening selected SOAP/import helpers from `CRFDAO` to `ICrfDAO`.
+- All 19 legacy DAO families have been SPI-widened; consumers use SPI interfaces exclusively. Remaining concrete type references are limited to DAO implementation classes, `LegacyDaoFactory`, and harmless commented-out code.
+- Remaining legacy deletion work is providing module-owned/repository-backed SPI implementations (Phase B schema ownership) before legacy DAO `.java` files can be deleted.
 
 For detailed handoff notes, see [AGENTS.md](./AGENTS.md) and [.sisyphus/LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md).
 
