@@ -14,7 +14,7 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.core.SessionManager;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.rule.RuleDAO;
+import org.researchedc.dao.spi.IRuleDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +31,10 @@ public class RuleExecutionBusinessObject {
     protected UserAccountBean ub;
     private IDiscrepancyNoteDAO discrepancyNoteDao;
     private EventCRFDAO eventCrfDao;
-    private RuleDAO ruleDao;
+    private IRuleDAO ruleDao;
     private Function<DataSource, IDiscrepancyNoteDAO> discrepancyNoteDaoFactory = LegacyDaoFactory::discrepancyNoteDao;
     private Function<DataSource, EventCRFDAO> eventCrfDaoFactory = EventCRFDAO::new;
-    private Function<DataSource, RuleDAO> ruleDaoFactory = RuleDAO::new;
+    private Function<DataSource, IRuleDAO> ruleDaoFactory = LegacyDaoFactory::ruleDao;
 
     public RuleExecutionBusinessObject(SessionManager sm, StudyBean currentStudy, UserAccountBean ub) {
         this.sm = sm;
@@ -124,7 +124,7 @@ public class RuleExecutionBusinessObject {
         return eventCrfDao;
     }
 
-    private RuleDAO getRuleDao() {
+    private IRuleDAO getRuleDao() {
         if (ruleDao == null) {
             ruleDao = ruleDaoFactory.apply(sm.getDataSource());
         }
