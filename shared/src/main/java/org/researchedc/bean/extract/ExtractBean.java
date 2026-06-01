@@ -39,9 +39,9 @@ import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.submit.ItemDAO;
@@ -79,7 +79,7 @@ public class ExtractBean {
     private String showUniqueId = "1";
 
     private StudyBean parentStudy;
-    private StudyEventDefinitionDAO studyEventDefinitionDao;
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
     private ICrfDAO crfDao;
     private ICrfVersionDAO crfVersionDao;
     private ItemDAO itemDao;
@@ -87,7 +87,7 @@ public class ExtractBean {
     private StudyGroupDao studyGroupDao;
     private StudyGroupClassDao studyGroupClassDao;
     private StudyEventDAO studyEventDao;
-    private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
+    private Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
     private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
     private Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory = LegacyDaoFactory::crfVersionDao;
     private Function<DataSource, ItemDAO> itemDaoFactory = ItemDAO::new;
@@ -815,7 +815,7 @@ public class ExtractBean {
      * called after DatasetDAO.getDatasetData();
      */
     public void getMetadata() {
-        StudyEventDefinitionDAO seddao = getStudyEventDefinitionDao();
+        IStudyEventDefinitionDAO seddao = getStudyEventDefinitionDao();
         ICrfDAO cdao = getCrfDao();
         ICrfVersionDAO cvdao = getCrfVersionDao();
         ItemDAO idao = getItemDao();
@@ -2964,7 +2964,7 @@ public class ExtractBean {
         aBASE_ITEMDATAID = abase_itemdataid;
     }
 
-    private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+    private IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
         if (studyEventDefinitionDao == null) {
             studyEventDefinitionDao = studyEventDefinitionDaoFactory.apply(ds);
         }
