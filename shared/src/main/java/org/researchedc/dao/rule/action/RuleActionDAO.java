@@ -153,10 +153,6 @@ public class RuleActionDAO extends AuditableEntityDAO {
         case FILE_DISCREPANCY_NOTE:
             ruleAction = new DiscrepancyNoteActionBean();
             ((DiscrepancyNoteActionBean) ruleAction).setMessage(((String) hm.get("message")));
-        case EMAIL:
-            ruleAction = new EmailActionBean();
-            ((EmailActionBean) ruleAction).setMessage(((String) hm.get("message")));
-            ((EmailActionBean) ruleAction).setTo(((String) hm.get("email_to")));
         }
 
         this.setEntityAuditInformation(ruleAction, hm);

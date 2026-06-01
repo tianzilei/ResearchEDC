@@ -165,7 +165,7 @@ public class DataEntryRuleRunner extends RuleRunner {
                 ruleActionContainer.getRuleAction().setCuratedMessage(
                         curateMessage(ruleActionContainer.getRuleAction(), ruleActionContainer.getRuleAction().getRuleSetRule()));
                 ActionProcessor ap =
-                    ActionProcessorFacade.getActionProcessor(ruleActionContainer.getRuleAction().getActionType(), ds, getMailSender(), dynamicsMetadataService,
+                    ActionProcessorFacade.getActionProcessor(ruleActionContainer.getRuleAction().getActionType(), ds, dynamicsMetadataService,
                             ruleActionContainer.getRuleSetBean(), getRuleActionRunLogDao(), ruleActionContainer.getRuleAction().getRuleSetRule(),
                             getStudyDao(), getStudySubjectDao(), getStudyEventDao(), getStudyEventDefinitionDao(), getStudyParameterValueDao(),
                             getUserAccountDao(), getDiscrepancyNoteDao());

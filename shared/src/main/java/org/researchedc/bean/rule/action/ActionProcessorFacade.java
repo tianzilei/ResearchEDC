@@ -10,8 +10,6 @@ public class ActionProcessorFacade {
         switch (actionType) {
         case FILE_DISCREPANCY_NOTE:
             return new DiscrepancyNoteActionProcessor(ds);
-        case EMAIL:
-            return new EmailActionProcessor(ds);
         default:
             throw new OpenClinicaSystemException("actionType", "Unrecognized action type!");
         }

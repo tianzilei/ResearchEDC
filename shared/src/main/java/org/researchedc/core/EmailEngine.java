@@ -1,5 +1,4 @@
 package org.researchedc.core;
-
 public class EmailEngine {
     public EmailEngine() {}
     public EmailEngine(String smtpHost) {}

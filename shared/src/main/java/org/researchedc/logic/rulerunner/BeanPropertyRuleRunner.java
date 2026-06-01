@@ -14,8 +14,6 @@ import org.researchedc.domain.rule.RuleBean;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.domain.rule.action.EventActionBean;
-import org.researchedc.domain.rule.action.NotificationActionBean;
-import org.researchedc.domain.rule.action.NotificationActionProcessor;
 import org.researchedc.domain.rule.action.RuleActionBean;
 import org.researchedc.domain.rule.expression.ExpressionBean;
 import org.researchedc.domain.rule.expression.ExpressionBeanObjectWrapper;
@@ -34,7 +32,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  *
  */
 public class BeanPropertyRuleRunner extends RuleRunner{
-	NotificationActionProcessor notificationActionProcessor;
 
 	public BeanPropertyRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, JavaMailSenderImpl mailSender) {
 		super(ds, contextPath, contextPath, mailSender);
@@ -87,11 +84,6 @@ public class BeanPropertyRuleRunner extends RuleRunner{
 	                            // ActionProcessor ap =ActionProcessorFacade.getActionProcessor(ruleActionBean.getActionType(), ds, null, null,ruleSet, null, ruleActionBean.getRuleSetRule());
 	                        	if (ruleActionBean instanceof EventActionBean){
 	                        		beanPropertyService.runAction(ruleActionBean,eow,userId,changeDetails.getRunningInTransaction());
-	                        	}else if (ruleActionBean instanceof NotificationActionBean){
-                                    notificationActionProcessor =
-                                            new NotificationActionProcessor(ds, mailSender, ruleSetRule, getStudySubjectDao(), getUserAccountDao(),
-                                                    getStudyParameterValueDao(), getStudyDao(), getStudyEventDao(), getStudyEventDefinitionDao());
-                                    notificationActionProcessor.runNotificationAction(ruleActionBean,ruleSet,studySubjectBeanId,eventOrdinal);
 	                        	}                	
 	                        }
 	                    }catch (OpenClinicaSystemException osa) {
