@@ -23,11 +23,9 @@ import jakarta.persistence.Transient;
 
 import org.researchedc.domain.AbstractAuditableMutableDomainObject;
 import org.researchedc.domain.rule.action.DiscrepancyNoteActionBean;
-import org.researchedc.domain.rule.action.EmailActionBean;
 import org.researchedc.domain.rule.action.EventActionBean;
 import org.researchedc.domain.rule.action.HideActionBean;
 import org.researchedc.domain.rule.action.InsertActionBean;
-import org.researchedc.domain.rule.action.NotificationActionBean;
 import org.researchedc.domain.rule.action.RandomizeActionBean;
 import org.researchedc.domain.rule.action.RuleActionBean;
 import org.researchedc.domain.rule.action.RuleActionRunBean.Phase;
@@ -53,8 +51,6 @@ public class RuleSetRuleBean extends AbstractAuditableMutableDomainObject implem
     List<RuleActionBean> actions;
     private List<DiscrepancyNoteActionBean> lazyDiscrepancyNoteActions = LazyList.lazyList(new ArrayList<DiscrepancyNoteActionBean>(),
             FactoryUtils.instantiateFactory(DiscrepancyNoteActionBean.class));
-    private List<EmailActionBean> lazyEmailActions = LazyList
-            .lazyList(new ArrayList<EmailActionBean>(), FactoryUtils.instantiateFactory(EmailActionBean.class));
     private List<ShowActionBean> lazyShowActions = LazyList.lazyList(new ArrayList<ShowActionBean>(), FactoryUtils.instantiateFactory(ShowActionBean.class));
     private List<HideActionBean> lazyHideActions = LazyList.lazyList(new ArrayList<HideActionBean>(), FactoryUtils.instantiateFactory(HideActionBean.class));
     private List<InsertActionBean> lazyInsertActions = LazyList.lazyList(new ArrayList<InsertActionBean>(),
@@ -64,8 +60,6 @@ public class RuleSetRuleBean extends AbstractAuditableMutableDomainObject implem
 
     private List<EventActionBean> lazyEventActions =  LazyList.lazyList(new ArrayList<EventActionBean>(),
             FactoryUtils.instantiateFactory(EventActionBean.class));
-    private List<NotificationActionBean> lazyNotificationActions = LazyList
-            .lazyList(new ArrayList<NotificationActionBean>(), FactoryUtils.instantiateFactory(NotificationActionBean.class));
 
     
     // Transient
@@ -80,8 +74,6 @@ public class RuleSetRuleBean extends AbstractAuditableMutableDomainObject implem
     public void formToModel() {
         actions = new ArrayList<RuleActionBean>();
         actions.addAll(lazyDiscrepancyNoteActions);
-        actions.addAll(lazyEmailActions);
-        actions.addAll(lazyNotificationActions);
         actions.addAll(lazyShowActions);
         actions.addAll(lazyHideActions);
         actions.addAll(lazyEventActions);
@@ -247,22 +239,6 @@ public class RuleSetRuleBean extends AbstractAuditableMutableDomainObject implem
         this.lazyDiscrepancyNoteActions = lazyDiscrepancyNoteActions;
     }
 
-    @Transient
-    public List<EmailActionBean> getLazyEmailActions() {
-        return lazyEmailActions;
-    }
-
-    public void setLazyEmailActions(List<EmailActionBean> lazyEmailActions) {
-        this.lazyEmailActions = lazyEmailActions;
-    }
-    @Transient
-    public List<NotificationActionBean> getLazyNotificationActions() {
-        return lazyNotificationActions;
-    }
-
-    public void setLazyNotificationActions(List<NotificationActionBean> lazyNotificationActions) {
-        this.lazyNotificationActions = lazyNotificationActions;
-    }
 
     @Transient
     public List<ShowActionBean> getLazyShowActions() {

@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public enum ActionType {
 
-    FILE_DISCREPANCY_NOTE(1), EMAIL(2) , NOTIFICATION(3);
+    FILE_DISCREPANCY_NOTE(1);
 
     private int code;
 

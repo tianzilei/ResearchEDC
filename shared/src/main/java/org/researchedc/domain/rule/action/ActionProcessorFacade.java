@@ -12,13 +12,12 @@ import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.exception.OpenClinicaSystemException;
 import org.researchedc.service.crfdata.DynamicsMetadataService;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import javax.sql.DataSource;
 
 public class ActionProcessorFacade {
 
-    public static ActionProcessor getActionProcessor(ActionType actionType, DataSource ds, JavaMailSenderImpl mailSender,
+    public static ActionProcessor getActionProcessor(ActionType actionType, DataSource ds,
             DynamicsMetadataService itemMetadataService, RuleSetBean ruleSet, RuleActionRunLogDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule,
             IStudyDAO studyDao, IStudySubjectDAO studySubjectDao, StudyEventDAO studyEventDao,
             StudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
@@ -27,11 +26,6 @@ public class ActionProcessorFacade {
         switch (actionType) {
         case FILE_DISCREPANCY_NOTE:
             return new DiscrepancyNoteActionProcessor(ds, ruleActionRunLogDao, ruleSetRule, discrepancyNoteDao);
-        case EMAIL:
-            return new EmailActionProcessor(ds, mailSender, ruleActionRunLogDao, ruleSetRule);
-        case NOTIFICATION:
-            return new NotificationActionProcessor(ds, mailSender, ruleSetRule, studySubjectDao, userAccountDao, studyParameterValueDao, studyDao, studyEventDao,
-                    studyEventDefinitionDao);
         case SHOW:
             return new ShowActionProcessor(ds, itemMetadataService, ruleSet);
         case HIDE:

@@ -10,12 +10,10 @@ public class RuleActionComparator implements Comparator<RuleActionBean> {
     public RuleActionComparator() {
 
         order.put(ActionType.FILE_DISCREPANCY_NOTE, "1");
-        order.put(ActionType.EMAIL, "2");
         order.put(ActionType.SHOW, "3");
         order.put(ActionType.HIDE, "4");
         order.put(ActionType.INSERT, "5");
         order.put(ActionType.EVENT, "6");
-        order.put(ActionType.NOTIFICATION, "7");
         order.put(ActionType.RANDOMIZE, "8");
     }
 

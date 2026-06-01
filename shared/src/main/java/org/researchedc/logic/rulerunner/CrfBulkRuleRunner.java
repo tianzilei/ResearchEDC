@@ -145,7 +145,7 @@ public class CrfBulkRuleRunner extends RuleRunner {
                                 ruleAction.setCuratedMessage(curateMessage(ruleAction, ruleSetRule));
                                 // getDiscrepancyNoteService().saveFieldNotes(ruleAction.getSummary(), itemDataBeanId, "ItemData", currentStudy, ub);
                                 ActionProcessor ap =
-                                    ActionProcessorFacade.getActionProcessor(ruleAction.getActionType(), ds, getMailSender(), dynamicsMetadataService, ruleSet,
+                                    ActionProcessorFacade.getActionProcessor(ruleAction.getActionType(), ds, dynamicsMetadataService, ruleSet,
                                             getRuleActionRunLogDao(), ruleSetRule, getStudyDao(), getStudySubjectDao(), getStudyEventDao(),
                                             getStudyEventDefinitionDao(), getStudyParameterValueDao(), getUserAccountDao(), getDiscrepancyNoteDao());
                                 RuleActionBean rab =
@@ -248,7 +248,7 @@ public class CrfBulkRuleRunner extends RuleRunner {
                 ruleActionContainer.getRuleAction().setCuratedMessage(
                         curateMessage(ruleActionContainer.getRuleAction(), ruleActionContainer.getRuleAction().getRuleSetRule()));
                 ActionProcessor ap =
-                    ActionProcessorFacade.getActionProcessor(ruleActionContainer.getRuleAction().getActionType(), ds, getMailSender(), dynamicsMetadataService,
+                    ActionProcessorFacade.getActionProcessor(ruleActionContainer.getRuleAction().getActionType(), ds, dynamicsMetadataService,
                             ruleActionContainer.getRuleSetBean(), getRuleActionRunLogDao(), ruleActionContainer.getRuleAction().getRuleSetRule(),
                             getStudyDao(), getStudySubjectDao(), getStudyEventDao(), getStudyEventDefinitionDao(), getStudyParameterValueDao(),
                             getUserAccountDao(), getDiscrepancyNoteDao());

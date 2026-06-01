@@ -16,7 +16,6 @@ import org.researchedc.bean.managestudy.StudyGroupBean;
 import org.researchedc.bean.managestudy.StudyGroupClassBean;
 import org.researchedc.bean.oid.GenericOidGenerator;
 import org.researchedc.bean.oid.OidGenerator;
-import org.researchedc.bean.rule.action.EmailActionBean;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.hibernate.RuleDao;
 import org.researchedc.dao.hibernate.RuleSetDao;
@@ -35,7 +34,6 @@ import org.researchedc.domain.rule.action.RuleActionRunBean;
 import org.researchedc.domain.rule.action.StratificationFactorBean;
 import org.researchedc.domain.rule.action.HideActionBean;
 import org.researchedc.domain.rule.action.InsertActionBean;
-import org.researchedc.domain.rule.action.NotificationActionBean;
 import org.researchedc.domain.rule.action.PropertyBean;
 import org.researchedc.domain.rule.action.RandomizeActionBean;
 import org.researchedc.domain.rule.action.RuleActionBean;
@@ -374,18 +372,8 @@ public class RulesPostImportContainerService {
            if (ruleActionBean.getActionType().getCode() !=6 && !ruleActionRun.getInitialDataEntry() && !ruleActionRun.getAdministrativeDataEntry() && !ruleActionRun.getBatch() && !ruleActionRun.getDoubleDataEntry() && !ruleActionRun.getImportDataEntry())
                ruleSetBeanWrapper.error(createError("OCRERR_0050"));
 
-           String message ="";
-         String emailSubject="";
-		if (ruleActionBean instanceof org.researchedc.domain.rule.action.NotificationActionBean){
-			 message = ((NotificationActionBean) ruleActionBean).getMessage();
-			 emailSubject = ((NotificationActionBean) ruleActionBean).getSubject();
-			if (emailSubject.length() > 330)
-			ruleSetBeanWrapper.error(createError("OCRERR_0048"));
-			if (message.length() > 2040)
-			ruleSetBeanWrapper.error(createError("OCRERR_0049"));
-		}
 
-		if (ruleActionBean instanceof org.researchedc.domain.rule.action.EmailActionBean)
+        if (ruleActionBean instanceof org.researchedc.domain.rule.action.EmailActionBean)
 			isUploadedRuleSupportedForEventAction(ruleSetBeanWrapper);
 
 		if (ruleActionBean instanceof DiscrepancyNoteActionBean)

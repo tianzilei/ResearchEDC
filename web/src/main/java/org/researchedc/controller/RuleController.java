@@ -204,15 +204,6 @@ public class RuleController {
                     ruleSetRuleBean.addAction(action);
                 }
 
-                for (NotificationActionType notificationActionType : rrt.getNotificationAction()) {
-                    NotificationActionBean action = new NotificationActionBean();
-                    action.setExpressionEvaluatesTo(Boolean.valueOf(notificationActionType.getIfExpressionEvaluates()));
-                    action.setTo(notificationActionType.getTo());
-                    action.setSubject(notificationActionType.getSubject());
-                    action.setMessage(notificationActionType.getMessage());
-                    ruleSetRuleBean.addAction(action);
-                }
-
                 ruleSetBean.addRuleSetRule(ruleSetRuleBean);
             }
             rpic.addRuleSet(ruleSetBean);
