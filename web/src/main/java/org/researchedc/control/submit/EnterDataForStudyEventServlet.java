@@ -42,7 +42,6 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -57,9 +56,6 @@ import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
  * @author ssachs
  */
 public class EnterDataForStudyEventServlet extends SecureController {
-
-    @Autowired
-    protected RuleSetDAO ruleSetDao;
 
     @Autowired
     protected ICrfVersionDAO crfVersionDao;
@@ -183,8 +179,6 @@ public class EnterDataForStudyEventServlet extends SecureController {
         EventCRFDao ecdao = this.eventCrfDao;
         ArrayList<EventCRFBean> eventCRFs = ecdao.findAllByStudyEvent(seb);
         ArrayList<Boolean> doRuleSetsExist = new ArrayList<Boolean>();
-        RuleSetDAO ruleSetDao = this.ruleSetDao;
-
         for (EventCRFBean eventCrfBean : eventCRFs) {
             // Boolean result = ruleSetDao.findByEventCrf(eventCrfBean) != null
             // ? Boolean.TRUE : Boolean.FALSE;

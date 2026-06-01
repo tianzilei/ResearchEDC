@@ -11,12 +11,12 @@ import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
-import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
@@ -50,7 +50,7 @@ import javax.sql.DataSource;
 public class RuleRunner {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-    private RuleSetDAO ruleSetDao;
+    private IRuleSetDAO ruleSetDao;
     private RuleSetRuleDAO ruleSetRuleDao;
     private RuleActionDAO ruleActionDao;
     private ICrfDAO crfDao;
@@ -198,7 +198,7 @@ public class RuleRunner {
         return expressionService;
     }
 
-    RuleSetDAO getRuleSetDao() {
+    IRuleSetDAO getRuleSetDao() {
         return ruleSetDao;
     }
 
@@ -262,7 +262,7 @@ public class RuleRunner {
         return discrepancyNoteDao;
     }
 
-    public void setDaoCollaborators(RuleSetDAO ruleSetDao, ICrfDAO crfDao, RuleSetRuleDAO ruleSetRuleDao, RuleActionDAO ruleActionDao,
+    public void setDaoCollaborators(IRuleSetDAO ruleSetDao, ICrfDAO crfDao, RuleSetRuleDAO ruleSetRuleDao, RuleActionDAO ruleActionDao,
             IStudyEventDAO studyEventDao, IItemDataDAO itemDataDao, EventCRFDAO eventCrfDao, ICrfVersionDAO crfVersionDao,
             IStudySubjectDAO studySubjectDao, ItemFormMetadataDAO itemFormMetadataDao, SectionDAO sectionDao, IStudyDAO studyDao,
             IStudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
