@@ -8,12 +8,13 @@ import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.domain.datamap.StudyEvent;
+import org.researchedc.patterns.ocobserver.Listener;
 import org.researchedc.patterns.ocobserver.StudyEventContainer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-public interface IStudyEventDAO {
+public interface IStudyEventDAO extends Listener {
     EntityBean findByPK(int ID);
     EntityBean findByPKCached(int ID);
     EntityBean create(EntityBean eb);

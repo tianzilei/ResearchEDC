@@ -38,9 +38,9 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.dao.LegacyDaoFactory;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.StudyGroupDao;
@@ -86,7 +86,7 @@ public class ExtractBean {
     private ItemFormMetadataDAO itemFormMetadataDao;
     private StudyGroupDao studyGroupDao;
     private StudyGroupClassDao studyGroupClassDao;
-    private StudyEventDAO studyEventDao;
+    private IStudyEventDAO studyEventDao;
     private Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
     private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
     private Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory = LegacyDaoFactory::crfVersionDao;
@@ -94,7 +94,7 @@ public class ExtractBean {
     private Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory = ItemFormMetadataDAO::new;
     private Function<DataSource, StudyGroupDao> studyGroupDaoFactory = LegacyDaoFactory::studyGroupDao;
     private Function<DataSource, StudyGroupClassDao> studyGroupClassDaoFactory = LegacyDaoFactory::studyGroupClassDao;
-    private Function<DataSource, StudyEventDAO> studyEventDaoFactory = StudyEventDAO::new;
+    private Function<DataSource, IStudyEventDAO> studyEventDaoFactory = LegacyDaoFactory::studyEventDao;
 
     private StudyBean study;
 
@@ -3013,7 +3013,7 @@ public class ExtractBean {
         return studyGroupClassDao;
     }
 
-    private StudyEventDAO getStudyEventDao() {
+    private IStudyEventDAO getStudyEventDao() {
         if (studyEventDao == null) {
             studyEventDao = studyEventDaoFactory.apply(ds);
         }
