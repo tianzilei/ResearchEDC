@@ -40,7 +40,7 @@ import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
@@ -92,7 +92,7 @@ public class ExpressionService {
 
     private IItemDAO itemDao;
     private IStudyEventDefinitionDAO studyEventDefinitionDao;
-    private EventDefinitionCRFDAO eventDefinitionCRFDao;
+    private EventDefinitionCRFDao eventDefinitionCRFDao;
     private DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
     private ItemGroupMetadataDAO itemGroupMetadataDao;
     private EventCRFDAO eventCRFDao;
@@ -109,7 +109,7 @@ public class ExpressionService {
     private Function<DataSource, ICrfDAO> crfDaoFactory;
     private Function<DataSource, IItemGroupDAO> itemGroupDaoFactory;
     private Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory;
-    private Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory;
+    private Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory;
     private Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
     private Function<DataSource, IStudyEventDAO> studyEventDaoFactory;
     private Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory;
@@ -132,7 +132,7 @@ public class ExpressionService {
     public ExpressionService(DataSource ds) {
         init(ds, null, LegacyDaoFactory::itemDao, LegacyDaoFactory::itemDataDao, LegacyDaoFactory::crfVersionDao,
                 LegacyDaoFactory::crfDao, LegacyDaoFactory::itemGroupDao, ItemGroupMetadataDAO::new,
-                EventDefinitionCRFDAO::new, LegacyDaoFactory::studyEventDefinitionDao,
+                LegacyDaoFactory::eventDefinitionCrfDao, LegacyDaoFactory::studyEventDefinitionDao,
                 LegacyDaoFactory::studyEventDao, LegacyDaoFactory::studySubjectDao, EventCRFDAO::new,
                 ItemFormMetadataDAO::new);
     }
@@ -140,7 +140,7 @@ public class ExpressionService {
     public ExpressionService(ExpressionObjectWrapper expressionWrapper) {
         init(expressionWrapper.getDs(), expressionWrapper, LegacyDaoFactory::itemDao, LegacyDaoFactory::itemDataDao,
                 LegacyDaoFactory::crfVersionDao, LegacyDaoFactory::crfDao, LegacyDaoFactory::itemGroupDao,
-                ItemGroupMetadataDAO::new, EventDefinitionCRFDAO::new,
+                ItemGroupMetadataDAO::new, LegacyDaoFactory::eventDefinitionCrfDao,
                 LegacyDaoFactory::studyEventDefinitionDao, LegacyDaoFactory::studyEventDao, LegacyDaoFactory::studySubjectDao,
                 EventCRFDAO::new, ItemFormMetadataDAO::new);
     }
@@ -152,7 +152,7 @@ public class ExpressionService {
             Function<DataSource, ICrfDAO> crfDaoFactory,
             Function<DataSource, IItemGroupDAO> itemGroupDaoFactory,
             Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory,
-            Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory,
+            Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory,
             Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory,
             Function<DataSource, IStudyEventDAO> studyEventDaoFactory,
             Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory,
@@ -1544,7 +1544,7 @@ public class ExpressionService {
         return itemGroupMetadataDao;
     }
 
-    private EventDefinitionCRFDAO getEventDefinitionCRFDao() {
+    private EventDefinitionCRFDao getEventDefinitionCRFDao() {
         if (eventDefinitionCRFDao == null) {
             eventDefinitionCRFDao = eventDefinitionCrfDaoFactory.apply(ds);
         }
