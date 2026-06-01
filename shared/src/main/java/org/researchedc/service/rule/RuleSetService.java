@@ -43,7 +43,6 @@ import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
 import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
@@ -51,6 +50,7 @@ import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
@@ -113,7 +113,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     @Autowired
     private IStudyDAO studyDao;
     @Autowired
-    private StudyEventDefinitionDAO studyEventDefinitionDao;
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
     @Autowired
     private IStudySubjectDAO studySubjecdao;
     @Autowired
@@ -1074,7 +1074,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     }
     //JN:No reason to use global variables, they could cause potential concurrency issues.
 
-    public StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+    public IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
         return studyEventDefinitionDao;
     }
 
