@@ -43,7 +43,6 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.AddNewSubjectServlet;
 import org.researchedc.control.submit.TableOfContentsServlet;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;

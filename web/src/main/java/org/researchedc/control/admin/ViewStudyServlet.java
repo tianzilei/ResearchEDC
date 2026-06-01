@@ -16,7 +16,6 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
@@ -43,7 +42,7 @@ public class ViewStudyServlet extends SecureController {
     @Autowired
     private IUserAccountDAO userAccountDao;
     @Autowired
-    private EventDefinitionCRFDAO eventDefinitionCrfDao;
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
 
     /**
      * Checks whether the user has the correct privilege

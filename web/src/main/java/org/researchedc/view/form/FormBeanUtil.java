@@ -18,7 +18,6 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.CoreSecureController;
 import org.researchedc.core.SessionManager;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
