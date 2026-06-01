@@ -16,7 +16,6 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.hibernate.DynamicsItemGroupMetadataDao;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -71,7 +70,6 @@ public class RandomizeService extends RandomizationRegistrar {
     private ItemFormMetadataDAO itemFormMetadataDAO;
     private ItemGroupMetadataDAO itemGroupMetadataDAO;
     private IStudyEventDAO studyEventDAO;
-    private EventDefinitionCRFDAO eventDefinitionCRFDAO;
     private ExpressionService expressionService;
     private IStudySubjectDAO studySubjectDAO;
     private ISubjectDAO subjectDAO;
