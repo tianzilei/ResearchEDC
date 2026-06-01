@@ -4,15 +4,15 @@ import java.util.ArrayList;
 
 import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class StudyEventAdapter {
 
-    private final StudyEventDAO delegate;
+    private final IStudyEventDAO delegate;
 
-    public StudyEventAdapter(StudyEventDAO delegate) {
+    public StudyEventAdapter(IStudyEventDAO delegate) {
         this.delegate = delegate;
     }
 
@@ -33,7 +33,7 @@ public class StudyEventAdapter {
         return (StudyEventBean) delegate.update(bean, inTransaction);
     }
 
-    public StudyEventDAO getDelegate() {
+    public IStudyEventDAO getDelegate() {
         return delegate;
     }
 }
