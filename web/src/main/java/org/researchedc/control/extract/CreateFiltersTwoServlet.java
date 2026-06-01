@@ -21,7 +21,6 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.FilterDao;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;

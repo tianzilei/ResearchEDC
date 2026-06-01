@@ -61,7 +61,6 @@ import org.researchedc.dao.hibernate.CrfVersionMediaDao;
 import org.researchedc.dao.hibernate.RuleActionPropertyDao;
 import org.researchedc.dao.hibernate.SCDItemMetadataDao;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;

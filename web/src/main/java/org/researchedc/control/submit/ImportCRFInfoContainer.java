@@ -22,7 +22,6 @@ import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.bean.submit.crfdata.UpsertOnBean;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;

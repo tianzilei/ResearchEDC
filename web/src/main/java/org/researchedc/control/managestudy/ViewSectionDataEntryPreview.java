@@ -42,7 +42,6 @@ import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.DataEntryServlet;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
