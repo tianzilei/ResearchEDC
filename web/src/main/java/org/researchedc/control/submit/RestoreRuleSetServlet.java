@@ -7,11 +7,9 @@
  */
 package org.researchedc.control.submit;
 
-import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
-import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.service.rule.RuleSetServiceInterface;
@@ -27,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RestoreRuleSetServlet extends SecureController {
 
     @Autowired
-    RuleSetDAO ruleSetDao;
+    IRuleSetDAO ruleSetDao;
     RuleSetServiceInterface ruleSetService;
 
     private static String RULESET_ID = "ruleSetId";
@@ -72,7 +70,7 @@ public class RestoreRuleSetServlet extends SecureController {
         }
     }
 
-    private RuleSetDAO getRuleSetDao() {
+    private IRuleSetDAO getRuleSetDao() {
         ruleSetDao = this.ruleSetDao != null ? ruleSetDao : this.ruleSetDao;
         return ruleSetDao;
     }

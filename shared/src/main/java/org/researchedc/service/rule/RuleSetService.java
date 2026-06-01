@@ -42,12 +42,12 @@ import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
-import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
@@ -122,7 +122,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     private ICrfVersionDAO crfVersionDao;
 
     @Autowired
-    private RuleSetDAO legacyRuleSetDao;
+    private IRuleSetDAO legacyRuleSetDao;
     @Autowired
     private RuleSetRuleDAO legacyRuleSetRuleDao;
     @Autowired
@@ -1041,7 +1041,7 @@ public class RuleSetService implements RuleSetServiceInterface {
         return crfDao;
     }
 
-    private RuleSetDAO getLegacyRuleSetDao() {
+    private IRuleSetDAO getLegacyRuleSetDao() {
         return legacyRuleSetDao;
     }
 

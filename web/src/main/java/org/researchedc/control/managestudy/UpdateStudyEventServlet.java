@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DataEntryStage;
@@ -80,9 +79,6 @@ public class UpdateStudyEventServlet extends SecureController {
     private IDiscrepancyNoteDAO discrepancyNoteDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
-    @Autowired
-    private RuleSetDAO ruleSetDao;
-
 public static final String EVENT_ID = "event_id";
 
     public static final String STUDY_SUBJECT_ID = "ss_id";
@@ -424,7 +420,6 @@ public static final String EVENT_ID = "event_id";
                 ecdao = this.eventCrfDao;
                 eventCRFs = ecdao.findAllByStudyEvent(studyEvent);
                 ArrayList<Boolean> doRuleSetsExist = new ArrayList<Boolean>();
-                RuleSetDAO ruleSetDao = this.ruleSetDao;
 
                 StudyBean study = (StudyBean) sdao.findByPK(ssb.getStudyId());
                 ArrayList eventDefinitionCRFs = (ArrayList) edcdao.findAllActiveByEventDefinitionId(study, studyEvent.getStudyEventDefinitionId());
@@ -562,7 +557,6 @@ public static final String EVENT_ID = "event_id";
                 EventCRFDao ecdao = this.eventCrfDao;
                 ArrayList<EventCRFBean> eventCRFs = ecdao.findAllByStudyEvent(studyEvent);
                 ArrayList<Boolean> doRuleSetsExist = new ArrayList<Boolean>();
-                RuleSetDAO ruleSetDao = this.ruleSetDao;
 
                 StudyBean study = (StudyBean) sdao.findByPK(ssb.getStudyId());
                 ArrayList eventDefinitionCRFs = (ArrayList) edcdao.findAllActiveByEventDefinitionId(study, studyEvent.getStudyEventDefinitionId());
