@@ -11,7 +11,8 @@ package org.researchedc.logic.odmExport;
 
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +30,8 @@ import javax.sql.DataSource;
 public class OdmStudyBase {
     private StudyBean study;
     private List<StudyEventDefinitionBean> sedBeansInStudy;
-    private StudyEventDefinitionDAO studyEventDefinitionDao;
-    private Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
+    private Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -99,7 +100,7 @@ public class OdmStudyBase {
         return this.sedBeansInStudy;
     }
 
-    private StudyEventDefinitionDAO getStudyEventDefinitionDao(DataSource ds) {
+    private IStudyEventDefinitionDAO getStudyEventDefinitionDao(DataSource ds) {
         if (studyEventDefinitionDao == null) {
             studyEventDefinitionDao = studyEventDefinitionDaoFactory.apply(ds);
         }

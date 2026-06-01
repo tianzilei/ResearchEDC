@@ -19,7 +19,7 @@ import org.researchedc.bean.oid.OidGenerator;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.hibernate.RuleDao;
 import org.researchedc.dao.hibernate.RuleSetDao;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.rule.AuditableBeanWrapper;
@@ -93,9 +93,9 @@ public class RulesPostImportContainerService {
     private EventActionValidator eventActionValidator;
     private RandomizeActionValidator randomizeActionValidator;
     private StudyGroupClassDao studyGroupClassDao;
-    private StudyEventDefinitionDAO studyEventDefinitionDao;
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
     private final Function<DataSource, StudyGroupClassDao> studyGroupClassDaoFactory;
-    private final Function<DataSource, StudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
+    private final Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
     ResourceBundle respage;
 
     public RulesPostImportContainerService(DataSource ds, StudyBean currentStudy) {
@@ -103,14 +103,14 @@ public class RulesPostImportContainerService {
         this.ds = ds;
         this.currentStudy = currentStudy;
         this.studyGroupClassDaoFactory = LegacyDaoFactory::studyGroupClassDao;
-        this.studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
+        this.studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
     }
 
     public RulesPostImportContainerService(DataSource ds) {
         oidGenerator = new GenericOidGenerator();
         this.ds = ds;
         this.studyGroupClassDaoFactory = LegacyDaoFactory::studyGroupClassDao;
-        this.studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
+        this.studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
     }
 
     public RulesPostImportContainer validateRuleSetRuleDefs(RulesPostImportContainer importContainer, RuleSetRuleBean ruleSetRuleForm) {
@@ -936,7 +936,7 @@ public class RulesPostImportContainerService {
         return studyGroupClassDao;
     }
 
-    private StudyEventDefinitionDAO getStudyEventDefinitionDao() {
+    private IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
         if (studyEventDefinitionDao == null) {
             studyEventDefinitionDao = studyEventDefinitionDaoFactory.apply(ds);
         }
