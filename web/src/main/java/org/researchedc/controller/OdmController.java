@@ -31,8 +31,8 @@ import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.EventCrfDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
@@ -91,7 +91,7 @@ public class OdmController {
     @Autowired
     protected IStudyDAO legacyStudyDao;
     @Autowired
-    protected StudyEventDAO legacyStudyEventDao;
+    protected IStudyEventDAO legacyStudyEventDao;
     @Autowired
     protected EventDefinitionCRFDAO eventDefinitionCrfDao;
 

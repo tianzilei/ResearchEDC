@@ -20,7 +20,6 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.core.EmailEngine;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;

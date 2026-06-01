@@ -36,7 +36,6 @@ import org.researchedc.control.submit.CreateDiscrepancyNoteServlet;
 import org.researchedc.control.submit.DataEntryServlet;
 import org.researchedc.control.submit.EnterDataForStudyEventServlet;
 import org.researchedc.control.submit.TableOfContentsServlet;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
