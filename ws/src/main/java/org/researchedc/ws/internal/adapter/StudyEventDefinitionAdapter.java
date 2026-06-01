@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class StudyEventDefinitionAdapter {
 
-    private final StudyEventDefinitionDAO delegate;
+    private final IStudyEventDefinitionDAO delegate;
 
-    public StudyEventDefinitionAdapter(StudyEventDefinitionDAO delegate) {
+    public StudyEventDefinitionAdapter(IStudyEventDefinitionDAO delegate) {
         this.delegate = delegate;
     }
 
@@ -29,7 +29,7 @@ public class StudyEventDefinitionAdapter {
         return (List<StudyEventDefinitionBean>) delegate.findAllByStudy(study);
     }
 
-    public StudyEventDefinitionDAO getDelegate() {
+    public IStudyEventDefinitionDAO getDelegate() {
         return delegate;
     }
 }
