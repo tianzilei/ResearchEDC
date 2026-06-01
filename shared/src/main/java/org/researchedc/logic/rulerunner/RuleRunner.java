@@ -11,7 +11,6 @@ import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
@@ -19,6 +18,7 @@ import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -55,7 +55,7 @@ public class RuleRunner {
     private RuleActionDAO ruleActionDao;
     private ICrfDAO crfDao;
     private ICrfVersionDAO crfVersionDao;
-    private StudyEventDAO studyEventDao;
+    private IStudyEventDAO studyEventDao;
     private IItemDataDAO itemDataDao;
     private ExpressionService expressionService;
     private EventCRFDAO eventCrfDao;
@@ -214,7 +214,7 @@ public class RuleRunner {
         return ruleActionDao;
     }
 
-    StudyEventDAO getStudyEventDao() {
+    IStudyEventDAO getStudyEventDao() {
         return studyEventDao;
     }
 
@@ -263,7 +263,7 @@ public class RuleRunner {
     }
 
     public void setDaoCollaborators(RuleSetDAO ruleSetDao, ICrfDAO crfDao, RuleSetRuleDAO ruleSetRuleDao, RuleActionDAO ruleActionDao,
-            StudyEventDAO studyEventDao, IItemDataDAO itemDataDao, EventCRFDAO eventCrfDao, ICrfVersionDAO crfVersionDao,
+            IStudyEventDAO studyEventDao, IItemDataDAO itemDataDao, EventCRFDAO eventCrfDao, ICrfVersionDAO crfVersionDao,
             IStudySubjectDAO studySubjectDao, ItemFormMetadataDAO itemFormMetadataDao, SectionDAO sectionDao, IStudyDAO studyDao,
             IStudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
             IDiscrepancyNoteDAO discrepancyNoteDao, ExpressionService expressionService) {

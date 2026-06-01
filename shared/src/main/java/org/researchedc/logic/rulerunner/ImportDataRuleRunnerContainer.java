@@ -13,8 +13,8 @@ import org.researchedc.bean.submit.crfdata.ImportItemGroupDataBean;
 import org.researchedc.bean.submit.crfdata.StudyEventDataBean;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.dao.LegacyDaoFactory;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.ItemDAO;
@@ -56,13 +56,13 @@ public class ImportDataRuleRunnerContainer {
     private IStudySubjectDAO studySubjectDao;
     private IStudyEventDefinitionDAO studyEventDefinitionDao;
     private ICrfVersionDAO crfVersionDao;
-    private StudyEventDAO studyEventDao;
+    private IStudyEventDAO studyEventDao;
     private ItemDAO<String, ArrayList> itemDao;
     private ItemGroupMetadataDAO<String, ArrayList> itemGroupMetadataDao;
     private final Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
     private final Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
     private final Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory = LegacyDaoFactory::crfVersionDao;
-    private final Function<DataSource, StudyEventDAO> studyEventDaoFactory = StudyEventDAO::new;
+    private final Function<DataSource, IStudyEventDAO> studyEventDaoFactory = LegacyDaoFactory::studyEventDao;
     private final Function<DataSource, ItemDAO<String, ArrayList>> itemDaoFactory = ItemDAO::new;
     private final Function<DataSource, ItemGroupMetadataDAO<String, ArrayList>> itemGroupMetadataDaoFactory = ItemGroupMetadataDAO::new;
 
@@ -228,7 +228,7 @@ public class ImportDataRuleRunnerContainer {
         return crfVersionDao;
     }
 
-    private StudyEventDAO getStudyEventDao(DataSource ds) {
+    private IStudyEventDAO getStudyEventDao(DataSource ds) {
         if (studyEventDao == null) {
             studyEventDao = studyEventDaoFactory.apply(ds);
         }
