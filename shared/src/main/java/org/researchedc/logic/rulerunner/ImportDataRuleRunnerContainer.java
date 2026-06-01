@@ -14,8 +14,8 @@ import org.researchedc.bean.submit.crfdata.StudyEventDataBean;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
@@ -54,13 +54,13 @@ public class ImportDataRuleRunnerContainer {
     private String studySubjectOid;
     private Boolean shouldRunRules;
     private IStudySubjectDAO studySubjectDao;
-    private StudyEventDefinitionDAO<String, ArrayList> studyEventDefinitionDao;
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
     private ICrfVersionDAO crfVersionDao;
     private StudyEventDAO studyEventDao;
     private ItemDAO<String, ArrayList> itemDao;
     private ItemGroupMetadataDAO<String, ArrayList> itemGroupMetadataDao;
     private final Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
-    private final Function<DataSource, StudyEventDefinitionDAO<String, ArrayList>> studyEventDefinitionDaoFactory = StudyEventDefinitionDAO::new;
+    private final Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
     private final Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory = LegacyDaoFactory::crfVersionDao;
     private final Function<DataSource, StudyEventDAO> studyEventDaoFactory = StudyEventDAO::new;
     private final Function<DataSource, ItemDAO<String, ArrayList>> itemDaoFactory = ItemDAO::new;
@@ -214,7 +214,7 @@ public class ImportDataRuleRunnerContainer {
         return studySubjectDao;
     }
 
-    private StudyEventDefinitionDAO<String, ArrayList> getStudyEventDefinitionDao(DataSource ds) {
+    private IStudyEventDefinitionDAO getStudyEventDefinitionDao(DataSource ds) {
         if (studyEventDefinitionDao == null) {
             studyEventDefinitionDao = studyEventDefinitionDaoFactory.apply(ds);
         }

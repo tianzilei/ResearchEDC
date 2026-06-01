@@ -2,9 +2,9 @@ package org.researchedc.domain.rule.action;
 
 import org.researchedc.dao.hibernate.RuleActionRunLogDao;
 import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
@@ -20,7 +20,7 @@ public class ActionProcessorFacade {
     public static ActionProcessor getActionProcessor(ActionType actionType, DataSource ds,
             DynamicsMetadataService itemMetadataService, RuleSetBean ruleSet, RuleActionRunLogDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule,
             IStudyDAO studyDao, IStudySubjectDAO studySubjectDao, StudyEventDAO studyEventDao,
-            StudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
+            IStudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
             IDiscrepancyNoteDAO discrepancyNoteDao)
             throws OpenClinicaSystemException {
         switch (actionType) {
