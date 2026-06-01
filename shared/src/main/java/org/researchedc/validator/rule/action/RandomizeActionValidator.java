@@ -9,8 +9,8 @@ import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ResponseOptionBean;
 import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.submit.ItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
@@ -44,7 +44,7 @@ public class RandomizeActionValidator implements Validator {
 
     ItemDAO itemDAO;
     ItemFormMetadataDAO itemFormMetadataDAO;
-    EventDefinitionCRFDAO eventDefinitionCRFDAO;
+    EventDefinitionCRFDao eventDefinitionCRFDAO;
     IStudyEventDefinitionDAO studyEventDefinitionDAO;
     ICrfDAO crfDAO;
     DataSource dataSource;
@@ -55,7 +55,7 @@ public class RandomizeActionValidator implements Validator {
     private final Function<DataSource, ItemDAO> itemDaoFactory;
     private final Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
     private final Function<DataSource, ICrfDAO> crfDaoFactory;
-    private final Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory;
+    private final Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory;
     private final Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
 
 
@@ -64,7 +64,7 @@ public class RandomizeActionValidator implements Validator {
         this.itemDaoFactory = ItemDAO::new;
         this.studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
         this.crfDaoFactory = LegacyDaoFactory::crfDao;
-        this.eventDefinitionCrfDaoFactory = EventDefinitionCRFDAO::new;
+        this.eventDefinitionCrfDaoFactory = LegacyDaoFactory::eventDefinitionCrfDao;
         this.itemFormMetadataDaoFactory = ItemFormMetadataDAO::new;
     }
 
@@ -151,7 +151,7 @@ public class RandomizeActionValidator implements Validator {
         return crfDAO;
     }
 
-    public EventDefinitionCRFDAO getEventDefinitionCRFDAO() {
+    public EventDefinitionCRFDao getEventDefinitionCRFDAO() {
         if (eventDefinitionCRFDAO == null) {
             eventDefinitionCRFDAO = eventDefinitionCrfDaoFactory.apply(dataSource);
         }
