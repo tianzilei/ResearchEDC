@@ -2,9 +2,9 @@ package org.researchedc.config;
 
 import javax.sql.DataSource;
 
+import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
-import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.hibernate.RuleDao;
 import org.researchedc.dao.hibernate.RuleSetDao;
@@ -51,8 +51,8 @@ public class WebBeansConfig {
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public DatasetDAO extractDatasetDao(DataSource dataSource) {
-        return new DatasetDAO(dataSource);
+    public DatasetDao extractDatasetDao(DataSource dataSource) {
+        return LegacyDaoFactory.datasetDao(dataSource);
     }
 
     @Bean

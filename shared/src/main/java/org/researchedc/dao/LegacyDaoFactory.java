@@ -2,6 +2,7 @@ package org.researchedc.dao;
 
 import javax.sql.DataSource;
 
+import org.researchedc.dao.extract.DatasetDAO;
 import org.researchedc.dao.managestudy.StudyDAO;
 import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
@@ -23,6 +24,7 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
@@ -100,6 +102,10 @@ public final class LegacyDaoFactory {
 
     public static IRuleSetDAO ruleSetDao(DataSource dataSource) {
         return new RuleSetDAO(dataSource);
+    }
+
+    public static DatasetDao datasetDao(DataSource dataSource) {
+        return new DatasetDAO(dataSource);
     }
 
     public static StudyGroupClassDao studyGroupClassDao(DataSource dataSource) {
