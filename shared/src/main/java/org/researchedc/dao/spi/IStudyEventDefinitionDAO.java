@@ -1,6 +1,7 @@
 package org.researchedc.dao.spi;
 
 import org.researchedc.bean.admin.CRFBean;
+import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 public interface IStudyEventDefinitionDAO {
     EntityBean findByPK(int ID);
+    AuditableEntityBean findByPKAndStudy(int id, StudyBean study);
     EntityBean create(EntityBean eb);
     EntityBean update(EntityBean eb);
     Collection findAll();

@@ -24,7 +24,6 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.hibernate.RuleSetDao;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.domain.rule.RuleSetBean;
@@ -131,7 +130,7 @@ public class CreateNewStudyEventServlet extends SecureController {
         // ArrayList subjects = sdao.findAllActiveByStudyOrderByLabel(currentStudy);
 
         // TODO: make this sensitive to permissions
-        StudyEventDefinitionDAO seddao = (StudyEventDefinitionDAO) this.studyEventDefinitionDao;
+        IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
 
         StudyBean studyWithEventDefinitions = currentStudy;
         if (currentStudy.getParentStudyId() > 0) {
