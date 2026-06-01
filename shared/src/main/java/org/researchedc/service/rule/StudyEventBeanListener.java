@@ -7,7 +7,7 @@ import javax.sql.DataSource;
 
 import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.dao.hibernate.RuleSetDao;
-import org.researchedc.dao.managestudy.StudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.expression.ExpressionBean;
 import org.researchedc.patterns.ocobserver.Listener;
@@ -24,7 +24,7 @@ import org.springframework.context.ApplicationContextAware;
 public class StudyEventBeanListener implements Observer,ApplicationContextAware {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass().getName());
-	private StudyEventDAO studyEventDao;
+	private IStudyEventDAO studyEventDao;
 	private DataSource dataSource;
 
 	private static ApplicationContext cntxt;
@@ -44,7 +44,7 @@ public class StudyEventBeanListener implements Observer,ApplicationContextAware 
 		return ruleSetService;
 	}
 	
-	public StudyEventBeanListener(StudyEventDAO seDAO){
+	public StudyEventBeanListener(IStudyEventDAO seDAO){
 		this.studyEventDao = seDAO;
 		studyEventDao.setObserver(this);
 	}

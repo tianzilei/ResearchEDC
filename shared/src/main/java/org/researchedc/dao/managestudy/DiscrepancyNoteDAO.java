@@ -36,6 +36,7 @@ import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDataDAO;
@@ -54,7 +55,7 @@ public class DiscrepancyNoteDAO extends AuditableEntityDAO implements IDiscrepan
     private static final Function<DataSource, ISubjectDAO> SUBJECT_DAO_FACTORY = LegacyDaoFactory::subjectDao;
     private static final Function<DataSource, IStudySubjectDAO> STUDY_SUBJECT_DAO_FACTORY = LegacyDaoFactory::studySubjectDao;
     private static final Function<DataSource, EventCRFDAO> EVENT_CRF_DAO_FACTORY = EventCRFDAO::new;
-    private static final Function<DataSource, StudyEventDAO> STUDY_EVENT_DAO_FACTORY = StudyEventDAO::new;
+    private static final Function<DataSource, IStudyEventDAO> STUDY_EVENT_DAO_FACTORY = LegacyDaoFactory::studyEventDao;
     private static final Function<DataSource, ItemDataDAO> ITEM_DATA_DAO_FACTORY = ItemDataDAO::new;
     private Function<DataSource, IUserAccountDAO> userAccountDaoFactory = LegacyDaoFactory::userAccountDao;
 
@@ -1891,6 +1892,8 @@ public class DiscrepancyNoteDAO extends AuditableEntityDAO implements IDiscrepan
             entity = subjectDao.findByPK(entityId);
         } else if (entityDao instanceof IStudySubjectDAO studySubjectDao) {
             entity = studySubjectDao.findByPK(entityId);
+        } else if (entityDao instanceof IStudyEventDAO studyEventDao) {
+            entity = studyEventDao.findByPK(entityId);
         } else if (entityDao instanceof AuditableEntityDAO auditableEntityDao) {
             entity = auditableEntityDao.findByPK(entityId);
         }

@@ -42,7 +42,6 @@ import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
-import org.researchedc.dao.managestudy.StudyEventDAO;
 import org.researchedc.dao.rule.RuleSetDAO;
 import org.researchedc.dao.rule.RuleSetRuleDAO;
 import org.researchedc.dao.rule.action.RuleActionDAO;
@@ -50,6 +49,7 @@ import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -128,7 +128,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     @Autowired
     private RuleActionDAO ruleActionDao;
     @Autowired
-    private StudyEventDAO studyEventDao;
+    private IStudyEventDAO studyEventDao;
     @Autowired
     private EventCRFDAO eventCrfDao;
     @Autowired
@@ -1053,7 +1053,7 @@ public class RuleSetService implements RuleSetServiceInterface {
         return ruleActionDao;
     }
 
-    private StudyEventDAO getStudyEventDao() {
+    private IStudyEventDAO getStudyEventDao() {
         return studyEventDao;
     }
 
