@@ -34,7 +34,7 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.hibernate.DynamicsItemGroupMetadataDao;
 import org.researchedc.dao.LegacyDaoFactory;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.submit.ItemDAO;
@@ -88,14 +88,14 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
     private final Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
     private final Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory;
     private final Function<DataSource, IStudyEventDAO> studyEventDaoFactory;
-    private final Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory;
+    private final Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory;
     private ExpressionService expressionService;
     private RandomizeService randomizeService;
     
     public DynamicsMetadataService(DataSource ds) {
         this(ds, EventCRFDAO::new, ItemDataDAO::new, ItemDAO::new, ItemGroupDAO::new,
                 SectionDAO::new, ItemFormMetadataDAO::new, ItemGroupMetadataDAO::new,
-                LegacyDaoFactory::studyEventDao, EventDefinitionCRFDAO::new);
+                LegacyDaoFactory::studyEventDao, LegacyDaoFactory::eventDefinitionCrfDao);
     }
 
     public DynamicsMetadataService(DataSource ds, Function<DataSource, EventCRFDAO> eventCrfDaoFactory,
@@ -106,7 +106,7 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
             Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory,
             Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory,
             Function<DataSource, IStudyEventDAO> studyEventDaoFactory,
-            Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory) {
+            Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory) {
         this.ds = ds;
         this.eventCrfDaoFactory = eventCrfDaoFactory;
         this.itemDataDaoFactory = itemDataDaoFactory;
@@ -1094,7 +1094,7 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
         return studyEventDaoFactory.apply(ds);
     }
 
-    public EventDefinitionCRFDAO getEventDefinitionCRfDAO() {
+    public EventDefinitionCRFDao getEventDefinitionCRfDAO() {
         return eventDefinitionCrfDaoFactory.apply(ds);
     }
 

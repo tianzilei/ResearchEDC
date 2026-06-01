@@ -7,7 +7,8 @@ import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.submit.DisplayEventCRFBean;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,8 @@ import javax.sql.DataSource;
  */
 public class HideCRFManager {
     private DataSource eventDefinitionCrfDataSource;
-    private EventDefinitionCRFDAO eventDefinitionCrfDao;
-    private Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory = EventDefinitionCRFDAO::new;
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
+    private Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory = LegacyDaoFactory::eventDefinitionCrfDao;
 
     public static org.researchedc.service.crfdata.HideCRFManager createHideCRFManager() {
         return new org.researchedc.service.crfdata.HideCRFManager();
@@ -185,7 +186,7 @@ public class HideCRFManager {
         return newBeans;
     }
 
-    private EventDefinitionCRFDAO getEventDefinitionCrfDao(DataSource dataSource) {
+    private EventDefinitionCRFDao getEventDefinitionCrfDao(DataSource dataSource) {
         if (eventDefinitionCrfDataSource != dataSource) {
             eventDefinitionCrfDataSource = dataSource;
             eventDefinitionCrfDao = null;

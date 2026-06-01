@@ -23,7 +23,7 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.DisplayEventCRFBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.dao.LegacyDaoFactory;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -40,12 +40,12 @@ public class DiscrepancyNoteUtil {
     private EventCRFDao eventCrfDao;
     private IDiscrepancyNoteDAO discrepancyNoteDao;
     private IStudyDAO studyDao;
-    private EventDefinitionCRFDAO eventDefinitionCrfDao;
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
     private Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
     private Function<DataSource, EventCRFDao> eventCrfDaoFactory = LegacyDaoFactory::eventCrfDao;
     private Function<DataSource, IDiscrepancyNoteDAO> discrepancyNoteDaoFactory = LegacyDaoFactory::discrepancyNoteDao;
     private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
-    private Function<DataSource, EventDefinitionCRFDAO> eventDefinitionCrfDaoFactory = EventDefinitionCRFDAO::new;
+    private Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory = LegacyDaoFactory::eventDefinitionCrfDao;
 
     // TODO: initialize these static members from the database.
     public static final Map<String, Integer> TYPES = new HashMap<String, Integer>();
@@ -1584,7 +1584,7 @@ public class DiscrepancyNoteUtil {
         return studyDao;
     }
 
-    private EventDefinitionCRFDAO getEventDefinitionCrfDao(DataSource dataSource) {
+    private EventDefinitionCRFDao getEventDefinitionCrfDao(DataSource dataSource) {
         prepareDaoCache(dataSource);
         if (eventDefinitionCrfDao == null) {
             eventDefinitionCrfDao = eventDefinitionCrfDaoFactory.apply(dataSource);
