@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 echo "=== Questionnaire: Install deps ==="
-cd questionnaire-service
-python -m pip install --upgrade pip
-pip install -r requirements.txt -q
+cd questionnaire-service/apps/api
+rm -rf .venv
+uv sync --extra dev
 echo "=== Questionnaire: Run tests ==="
-python -m pytest app/tests/ -v
+.venv/bin/python -m pytest app/tests/ -v
 echo "=== Questionnaire: OK ==="
