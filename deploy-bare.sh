@@ -2,7 +2,7 @@
 # =============================================================================
 # ResearchEDC — Bare Host Deployment
 #
-# Usage: bash deploy.sh <command>
+# Usage: bash deploy-bare.sh <command>
 # Commands: setup, init-db, build, start, stop, restart, status, logs, clean
 # =============================================================================
 set -euo pipefail
@@ -24,19 +24,23 @@ DB_PORT="${RESEARCHEDC_DB_PORT:-5432}"
 DB_NAME="${RESEARCHEDC_DB_NAME:-researchedc}"
 DB_USER="${RESEARCHEDC_DB_USER:-researchedc}"
 DB_PASS="${RESEARCHEDC_DB_PASS:-researchedc}"
-Q_DB="researchedc_questionnaire"
+Q_DB="${RESEARCHEDC_Q_DB:-researchedc_questionnaire}"
 
 ADMIN_USER="${RESEARCHEDC_ADMIN_USER:-admin}"
 ADMIN_PASS="${RESEARCHEDC_ADMIN_PASS:-admin}"
 
 APP_PORT="${RESEARCHEDC_APP_PORT:-8080}"
-Q_PORT="${QUESTIONNAIRE_PORT:-8000}"
+Q_PORT="${RESEARCHEDC_Q_PORT:-${QUESTIONNAIRE_PORT:-8000}}"
 CADDY_PORT="${RESEARCHEDC_CADDY_PORT:-80}"
 MINIO_PORT="${RESEARCHEDC_MINIO_PORT:-9000}"
 MINIO_CONSOLE_PORT="${RESEARCHEDC_MINIO_CONSOLE_PORT:-9001}"
 MINIO_ROOT_USER="${RESEARCHEDC_MINIO_ROOT_USER:-minio}"
 MINIO_ROOT_PASS="${RESEARCHEDC_MINIO_ROOT_PASS:-minio-password}"
 MINIO_BUCKET="${RESEARCHEDC_MINIO_BUCKET:-questionnaire-exports}"
+
+TOMCAT_VERSION="${RESEARCHEDC_TOMCAT_VERSION:-10.1.55}"
+TOMCAT_DIR="${PROJECT_DIR}/.tomcat"
+TOMCAT_URL="https://dlcdn.apache.org/tomcat/tomcat-10/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
 
 DATA_DIR="${PROJECT_DIR}/data"
 LOG_DIR="${PROJECT_DIR}/logs"
@@ -142,10 +146,6 @@ MINIO_BUCKET=${MINIO_BUCKET}
 MINIO_SECURE=false
 QENV
 }
-
-TOMCAT_DIR="${PROJECT_DIR}/.tomcat"
-TOMCAT_VERSION="10.1.55"
-TOMCAT_URL="https://dlcdn.apache.org/tomcat/tomcat-10/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz"
 
 install_tomcat() {
     if [ -x "${TOMCAT_DIR}/bin/catalina.sh" ]; then
@@ -476,7 +476,7 @@ cmd_start() {
 
     # ---- Check WAR exists ----
     if [ ! -f app/target/ResearchEDC.war ]; then
-        log_error "app/target/ResearchEDC.war not found — run 'bash deploy.sh build' first"
+        log_error "app/target/ResearchEDC.war not found — run 'bash deploy-bare.sh build' first"
         return 1
     fi
 
@@ -510,20 +510,27 @@ cmd_start() {
     log_info "Starting App on port ${port}..."
 
     # Start in a tmux session for persistence
+    local app_pid
     if command -v tmux &>/dev/null; then
         tmux kill-session -t researchedc 2>/dev/null || true
         tmux new-session -d -s researchedc -c "${PROJECT_DIR}"
-        tmux send-keys -t researchedc "RESEARCHEDC_DB_PORT=${DB_PORT} java -jar app/target/ResearchEDC.war --server.port=${port} 2>&1 | tee ${LOG_DIR}/app.log" Enter
-        log_ok "App starting in tmux session 'researchedc'"
+        tmux send-keys -t researchedc "RESEARCHEDC_DB_PORT=${DB_PORT} java -jar app/target/ResearchEDC.war --server.port=${port} > ${LOG_DIR}/app.log 2>&1 & echo \$! > ${PID_DIR}/app.pid; wait" Enter
+        sleep 1
+        if [ -f "${PID_DIR}/app.pid" ]; then
+            app_pid=$(cat "${PID_DIR}/app.pid")
+            log_ok "App starting in tmux session (PID ${app_pid})"
+        else
+            log_ok "App starting in tmux session 'researchedc'"
+        fi
     else
-        # Fallback: nohup
         cd "${PROJECT_DIR}"
         RESEARCHEDC_DB_PORT="${DB_PORT}" \
         nohup java -jar app/target/ResearchEDC.war \
             --server.port="${port}" \
             > "${LOG_DIR}/app.log" 2>&1 &
-        echo $! > "${PID_DIR}/app.pid"
-        log_ok "App started (PID $(cat "${PID_DIR}/app.pid"))"
+        app_pid=$!
+        echo "${app_pid}" > "${PID_DIR}/app.pid"
+        log_ok "App started (PID ${app_pid})"
     fi
 
     # ---- Health check with retry ----
@@ -561,7 +568,7 @@ cmd_start() {
         cd "${PROJECT_DIR}"
         log_ok "Questionnaire started (PID $(cat "${PID_DIR}/questionnaire.pid"))"
     else
-        log_warn "Questionnaire venv not found — run 'bash deploy.sh setup' first"
+        log_warn "Questionnaire venv not found — run 'bash deploy-bare.sh setup' first"
     fi
 
     if command -v caddy &>/dev/null; then
@@ -618,15 +625,40 @@ cmd_status() {
     printf "  %-20s %-10s %s\n" "SERVICE" "STATUS" "PID"
     printf "  %-20s %-10s %s\n" "───────" "──────" "───"
 
-    for pair in "Caddy:${PID_DIR}/caddy.pid" "App:${PID_DIR}/app.pid" "Questionnaire:${PID_DIR}/questionnaire.pid"; do
-        local name="${pair%%:*}" pidfile="${pair##*:}"
-        local pid="-" st="stopped"
-        if [ -f "${pidfile}" ]; then
-            pid=$(cat "${pidfile}")
-            kill -0 "${pid}" 2>/dev/null && st="running" || rm -f "${pidfile}"
-        fi
-        printf "  %-20s %-10s %s\n" "${name}" "${st}" "${pid}"
-    done
+    # Caddy
+    local pid="-" st="stopped"
+    if [ -f "${PID_DIR}/caddy.pid" ]; then
+        pid=$(cat "${PID_DIR}/caddy.pid")
+        kill -0 "${pid}" 2>/dev/null && st="running" || rm -f "${PID_DIR}/caddy.pid"
+    fi
+    printf "  %-20s %-10s %s\n" "Caddy" "${st}" "${pid}"
+
+    # App (PID file + port-based fallback)
+    local app_pid="-" app_st="stopped"
+    if [ -f "${PID_DIR}/app.pid" ]; then
+        app_pid=$(cat "${PID_DIR}/app.pid")
+        kill -0 "${app_pid}" 2>/dev/null && app_st="running" || rm -f "${PID_DIR}/app.pid"
+    fi
+    if [ "${app_st}" = "stopped" ]; then
+        # Check port range (port may have been auto-incremented)
+        for p in $(seq "${APP_PORT}" $((APP_PORT + 10))); do
+            app_pid=$(lsof -ti :"${p}" 2>/dev/null || true)
+            if [ -n "${app_pid}" ]; then
+                app_st="running"
+                break
+            fi
+        done
+    fi
+    [ "${app_st}" = "stopped" ] && app_pid="-"
+    printf "  %-20s %-10s %s\n" "App" "${app_st}" "${app_pid}"
+
+    # Questionnaire
+    pid="-" st="stopped"
+    if [ -f "${PID_DIR}/questionnaire.pid" ]; then
+        pid=$(cat "${PID_DIR}/questionnaire.pid")
+        kill -0 "${pid}" 2>/dev/null && st="running" || rm -f "${PID_DIR}/questionnaire.pid"
+    fi
+    printf "  %-20s %-10s %s\n" "Questionnaire" "${st}" "${pid}"
 
     local minio_st="stopped" minio_pid="-"
     if docker ps --filter "name=${MINIO_CONTAINER}" --format '{{.ID}}' 2>/dev/null | grep -q .; then
@@ -669,7 +701,7 @@ case "${1:-help}" in
         cat << EOF
 ResearchEDC Bare Host Deployment
 
-Usage: bash deploy.sh <command>
+Usage: bash deploy-bare.sh <command>
 
 Commands:
   setup    Install prerequisites, uv, Python venv
@@ -689,6 +721,8 @@ Ports:
   MinIO Console:    ${MINIO_CONSOLE_PORT}
   Caddy (external): ${CADDY_PORT}
   PostgreSQL:       ${DB_PORT}
+
+For Docker deployment: bash deploy-docker.sh
 EOF
         ;;
 esac
