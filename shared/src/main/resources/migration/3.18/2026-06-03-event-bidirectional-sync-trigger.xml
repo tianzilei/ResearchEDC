@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="research-edc" id="2026-06-03-study-event-definition-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between study_event_definition and module_study_event_definition</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_study_event_def_to_study_event_def()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO study_event_definition (
+                        study_event_definition_id, study_id, name, description,
+                        repeating, type, category, oc_oid, ordinal,
+                        date_created, date_updated, owner_id, update_id, status_id
+                    )
+                    VALUES (
+                        NEW.study_event_definition_id, NEW.study_id, NEW.name, NEW.description,
+                        NEW.repeating, NEW.type, NEW.category, NEW.oc_oid, NEW.ordinal,
+                        NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id, NEW.status_id
+                    )
+                    ON CONFLICT (study_event_definition_id) DO UPDATE SET
+                        study_id = EXCLUDED.study_id,
+                        name = EXCLUDED.name,
+                        description = EXCLUDED.description,
+                        repeating = EXCLUDED.repeating,
+                        type = EXCLUDED.type,
+                        category = EXCLUDED.category,
+                        oc_oid = EXCLUDED.oc_oid,
+                        ordinal = EXCLUDED.ordinal,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id,
+                        status_id = EXCLUDED.status_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE study_event_definition SET
+                        study_id = NEW.study_id,
+                        name = NEW.name,
+                        description = NEW.description,
+                        repeating = NEW.repeating,
+                        type = NEW.type,
+                        category = NEW.category,
+                        oc_oid = NEW.oc_oid,
+                        ordinal = NEW.ordinal,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        status_id = NEW.status_id
+                    WHERE study_event_definition_id = OLD.study_event_definition_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM study_event_definition WHERE study_event_definition_id = OLD.study_event_definition_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_study_event_def_to_module_study_event_def()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_study_event_definition (
+                        study_event_definition_id, study_id, name, description,
+                        repeating, type, category, oc_oid, ordinal,
+                        date_created, date_updated, owner_id, update_id, status_id
+                    )
+                    VALUES (
+                        NEW.study_event_definition_id, NEW.study_id, NEW.name, NEW.description,
+                        NEW.repeating, NEW.type, NEW.category, NEW.oc_oid, NEW.ordinal,
+                        NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id, NEW.status_id
+                    )
+                    ON CONFLICT (study_event_definition_id) DO UPDATE SET
+                        study_id = EXCLUDED.study_id,
+                        name = EXCLUDED.name,
+                        description = EXCLUDED.description,
+                        repeating = EXCLUDED.repeating,
+                        type = EXCLUDED.type,
+                        category = EXCLUDED.category,
+                        oc_oid = EXCLUDED.oc_oid,
+                        ordinal = EXCLUDED.ordinal,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id,
+                        status_id = EXCLUDED.status_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_study_event_definition SET
+                        study_id = NEW.study_id,
+                        name = NEW.name,
+                        description = NEW.description,
+                        repeating = NEW.repeating,
+                        type = NEW.type,
+                        category = NEW.category,
+                        oc_oid = NEW.oc_oid,
+                        ordinal = NEW.ordinal,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        status_id = NEW.status_id
+                    WHERE study_event_definition_id = OLD.study_event_definition_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_study_event_definition WHERE study_event_definition_id = OLD.study_event_definition_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_study_event_def ON module_study_event_definition;
+            CREATE TRIGGER trg_sync_module_study_event_def
+            AFTER INSERT OR UPDATE OR DELETE ON module_study_event_definition
+            FOR EACH ROW EXECUTE FUNCTION sync_module_study_event_def_to_study_event_def();
+
+            DROP TRIGGER IF EXISTS trg_sync_study_event_def_to_module ON study_event_definition;
+            CREATE TRIGGER trg_sync_study_event_def_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON study_event_definition
+            FOR EACH ROW EXECUTE FUNCTION sync_study_event_def_to_module_study_event_def();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_study_event_def_to_module ON study_event_definition;
+            DROP FUNCTION IF EXISTS sync_study_event_def_to_module_study_event_def();
+        </rollback>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-03-study-event-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between study_event and module_study_event</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_study_event_to_study_event()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO study_event (
+                        study_event_id, study_subject_id, study_event_definition_id,
+                        status_id, subject_event_status_id, location, sample_ordinal,
+                        date_start, date_end, start_time_flag, end_time_flag,
+                        date_created, date_updated, owner_id, update_id, sed_ordinal
+                    )
+                    VALUES (
+                        NEW.study_event_id, NEW.study_subject_id, NEW.study_event_definition_id,
+                        NEW.status_id, NEW.subject_event_status_id, NEW.location, NEW.sample_ordinal,
+                        NEW.date_start, NEW.date_end, NEW.start_time_flag, NEW.end_time_flag,
+                        NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id, NEW.sed_ordinal
+                    )
+                    ON CONFLICT (study_event_id) DO UPDATE SET
+                        study_subject_id = EXCLUDED.study_subject_id,
+                        study_event_definition_id = EXCLUDED.study_event_definition_id,
+                        status_id = EXCLUDED.status_id,
+                        subject_event_status_id = EXCLUDED.subject_event_status_id,
+                        location = EXCLUDED.location,
+                        sample_ordinal = EXCLUDED.sample_ordinal,
+                        date_start = EXCLUDED.date_start,
+                        date_end = EXCLUDED.date_end,
+                        start_time_flag = EXCLUDED.start_time_flag,
+                        end_time_flag = EXCLUDED.end_time_flag,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id,
+                        sed_ordinal = EXCLUDED.sed_ordinal;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE study_event SET
+                        study_subject_id = NEW.study_subject_id,
+                        study_event_definition_id = NEW.study_event_definition_id,
+                        status_id = NEW.status_id,
+                        subject_event_status_id = NEW.subject_event_status_id,
+                        location = NEW.location,
+                        sample_ordinal = NEW.sample_ordinal,
+                        date_start = NEW.date_start,
+                        date_end = NEW.date_end,
+                        start_time_flag = NEW.start_time_flag,
+                        end_time_flag = NEW.end_time_flag,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        sed_ordinal = NEW.sed_ordinal
+                    WHERE study_event_id = OLD.study_event_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM study_event WHERE study_event_id = OLD.study_event_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_study_event_to_module_study_event()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_study_event (
+                        study_event_id, study_subject_id, study_event_definition_id,
+                        status_id, subject_event_status_id, location, sample_ordinal,
+                        date_start, date_end, start_time_flag, end_time_flag,
+                        date_created, date_updated, owner_id, update_id, sed_ordinal
+                    )
+                    VALUES (
+                        NEW.study_event_id, NEW.study_subject_id, NEW.study_event_definition_id,
+                        NEW.status_id, NEW.subject_event_status_id, NEW.location, NEW.sample_ordinal,
+                        NEW.date_start, NEW.date_end, NEW.start_time_flag, NEW.end_time_flag,
+                        NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id, NEW.sed_ordinal
+                    )
+                    ON CONFLICT (study_event_id) DO UPDATE SET
+                        study_subject_id = EXCLUDED.study_subject_id,
+                        study_event_definition_id = EXCLUDED.study_event_definition_id,
+                        status_id = EXCLUDED.status_id,
+                        subject_event_status_id = EXCLUDED.subject_event_status_id,
+                        location = EXCLUDED.location,
+                        sample_ordinal = EXCLUDED.sample_ordinal,
+                        date_start = EXCLUDED.date_start,
+                        date_end = EXCLUDED.date_end,
+                        start_time_flag = EXCLUDED.start_time_flag,
+                        end_time_flag = EXCLUDED.end_time_flag,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id,
+                        sed_ordinal = EXCLUDED.sed_ordinal;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_study_event SET
+                        study_subject_id = NEW.study_subject_id,
+                        study_event_definition_id = NEW.study_event_definition_id,
+                        status_id = NEW.status_id,
+                        subject_event_status_id = NEW.subject_event_status_id,
+                        location = NEW.location,
+                        sample_ordinal = NEW.sample_ordinal,
+                        date_start = NEW.date_start,
+                        date_end = NEW.date_end,
+                        start_time_flag = NEW.start_time_flag,
+                        end_time_flag = NEW.end_time_flag,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        sed_ordinal = NEW.sed_ordinal
+                    WHERE study_event_id = OLD.study_event_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_study_event WHERE study_event_id = OLD.study_event_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_study_event ON module_study_event;
+            CREATE TRIGGER trg_sync_module_study_event
+            AFTER INSERT OR UPDATE OR DELETE ON module_study_event
+            FOR EACH ROW EXECUTE FUNCTION sync_module_study_event_to_study_event();
+
+            DROP TRIGGER IF EXISTS trg_sync_study_event_to_module ON study_event;
+            CREATE TRIGGER trg_sync_study_event_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON study_event
+            FOR EACH ROW EXECUTE FUNCTION sync_study_event_to_module_study_event();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_study_event_to_module ON study_event;
+            DROP FUNCTION IF EXISTS sync_study_event_to_module_study_event();
+        </rollback>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-03-event-crf-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between event_crf and module_event_crf</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_event_crf_to_event_crf()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO event_crf (
+                        event_crf_id, study_event_id, study_subject_id, crf_version_id,
+                        status_id, date_interviewed, interviewer_name, annotations,
+                        date_completed, validator_id, date_validate, date_validate_completed,
+                        validator_annotations, date_created, date_updated, owner_id, update_id,
+                        electronic_signature_status, sdv_status, old_status_id, sdv_update_id
+                    )
+                    VALUES (
+                        NEW.event_crf_id, NEW.study_event_id, NEW.study_subject_id, NEW.crf_version_id,
+                        NEW.status_id, NEW.date_interviewed, NEW.interviewer_name, NEW.annotations,
+                        NEW.date_completed, NEW.validator_id, NEW.date_validate, NEW.date_validate_completed,
+                        NEW.validator_annotations, NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id,
+                        NEW.electronic_signature_status, NEW.sdv_status, NEW.old_status_id, NEW.sdv_update_id
+                    )
+                    ON CONFLICT (event_crf_id) DO UPDATE SET
+                        study_event_id = EXCLUDED.study_event_id,
+                        study_subject_id = EXCLUDED.study_subject_id,
+                        crf_version_id = EXCLUDED.crf_version_id,
+                        status_id = EXCLUDED.status_id,
+                        date_interviewed = EXCLUDED.date_interviewed,
+                        interviewer_name = EXCLUDED.interviewer_name,
+                        annotations = EXCLUDED.annotations,
+                        date_completed = EXCLUDED.date_completed,
+                        validator_id = EXCLUDED.validator_id,
+                        date_validate = EXCLUDED.date_validate,
+                        date_validate_completed = EXCLUDED.date_validate_completed,
+                        validator_annotations = EXCLUDED.validator_annotations,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id,
+                        electronic_signature_status = EXCLUDED.electronic_signature_status,
+                        sdv_status = EXCLUDED.sdv_status,
+                        old_status_id = EXCLUDED.old_status_id,
+                        sdv_update_id = EXCLUDED.sdv_update_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE event_crf SET
+                        study_event_id = NEW.study_event_id,
+                        study_subject_id = NEW.study_subject_id,
+                        crf_version_id = NEW.crf_version_id,
+                        status_id = NEW.status_id,
+                        date_interviewed = NEW.date_interviewed,
+                        interviewer_name = NEW.interviewer_name,
+                        annotations = NEW.annotations,
+                        date_completed = NEW.date_completed,
+                        validator_id = NEW.validator_id,
+                        date_validate = NEW.date_validate,
+                        date_validate_completed = NEW.date_validate_completed,
+                        validator_annotations = NEW.validator_annotations,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        electronic_signature_status = NEW.electronic_signature_status,
+                        sdv_status = NEW.sdv_status,
+                        old_status_id = NEW.old_status_id,
+                        sdv_update_id = NEW.sdv_update_id
+                    WHERE event_crf_id = OLD.event_crf_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM event_crf WHERE event_crf_id = OLD.event_crf_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_event_crf_to_module_event_crf()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_event_crf (
+                        event_crf_id, study_event_id, study_subject_id, crf_version_id,
+                        status_id, date_interviewed, interviewer_name, annotations,
+                        date_completed, validator_id, date_validate, date_validate_completed,
+                        validator_annotations, date_created, date_updated, owner_id, update_id,
+                        electronic_signature_status, sdv_status, old_status_id, sdv_update_id
+                    )
+                    VALUES (
+                        NEW.event_crf_id, NEW.study_event_id, NEW.study_subject_id, NEW.crf_version_id,
+                        NEW.status_id, NEW.date_interviewed, NEW.interviewer_name, NEW.annotations,
+                        NEW.date_completed, NEW.validator_id, NEW.date_validate, NEW.date_validate_completed,
+                        NEW.validator_annotations, NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id,
+                        NEW.electronic_signature_status, NEW.sdv_status, NEW.old_status_id, NEW.sdv_update_id
+                    )
+                    ON CONFLICT (event_crf_id) DO UPDATE SET
+                        study_event_id = EXCLUDED.study_event_id,
+                        study_subject_id = EXCLUDED.study_subject_id,
+                        crf_version_id = EXCLUDED.crf_version_id,
+                        status_id = EXCLUDED.status_id,
+                        date_interviewed = EXCLUDED.date_interviewed,
+                        interviewer_name = EXCLUDED.interviewer_name,
+                        annotations = EXCLUDED.annotations,
+                        date_completed = EXCLUDED.date_completed,
+                        validator_id = EXCLUDED.validator_id,
+                        date_validate = EXCLUDED.date_validate,
+                        date_validate_completed = EXCLUDED.date_validate_completed,
+                        validator_annotations = EXCLUDED.validator_annotations,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id,
+                        electronic_signature_status = EXCLUDED.electronic_signature_status,
+                        sdv_status = EXCLUDED.sdv_status,
+                        old_status_id = EXCLUDED.old_status_id,
+                        sdv_update_id = EXCLUDED.sdv_update_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_event_crf SET
+                        study_event_id = NEW.study_event_id,
+                        study_subject_id = NEW.study_subject_id,
+                        crf_version_id = NEW.crf_version_id,
+                        status_id = NEW.status_id,
+                        date_interviewed = NEW.date_interviewed,
+                        interviewer_name = NEW.interviewer_name,
+                        annotations = NEW.annotations,
+                        date_completed = NEW.date_completed,
+                        validator_id = NEW.validator_id,
+                        date_validate = NEW.date_validate,
+                        date_validate_completed = NEW.date_validate_completed,
+                        validator_annotations = NEW.validator_annotations,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        electronic_signature_status = NEW.electronic_signature_status,
+                        sdv_status = NEW.sdv_status,
+                        old_status_id = NEW.old_status_id,
+                        sdv_update_id = NEW.sdv_update_id
+                    WHERE event_crf_id = OLD.event_crf_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_event_crf WHERE event_crf_id = OLD.event_crf_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_event_crf ON module_event_crf;
+            CREATE TRIGGER trg_sync_module_event_crf
+            AFTER INSERT OR UPDATE OR DELETE ON module_event_crf
+            FOR EACH ROW EXECUTE FUNCTION sync_module_event_crf_to_event_crf();
+
+            DROP TRIGGER IF EXISTS trg_sync_event_crf_to_module ON event_crf;
+            CREATE TRIGGER trg_sync_event_crf_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON event_crf
+            FOR EACH ROW EXECUTE FUNCTION sync_event_crf_to_module_event_crf();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_event_crf_to_module ON event_crf;
+            DROP FUNCTION IF EXISTS sync_event_crf_to_module_event_crf();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-02 (Phase C SPI widening complete: **19 of 19 DAO families** SPI-widened. All consumer references in web/ and shared/ now use SPI interfaces. Remaining concrete type names are limited to DAO implementation classes themselves, `LegacyDaoFactory`, and commented-out code — all harmless.)
+> **Last updated:** 2026-06-03 (Phase B schema ownership **IN PROGRESS**: 10 bidirectional sync triggers written, 5 entities remapped to module-owned tables, 2 new adapters. Phase C SPI widening **complete**: 19/19 DAO families SPI-widened.)
 > **Scope:** All remaining legacy code in `shared/`, `web/`, `ws/`
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -21,7 +21,7 @@
 | 5 | `datacapture` | Bridge to `item_data`/`response_set` | `/api/v1/data-capture` |
 | — | `identity` | Bridge to `user_account`/`study_user_role` | `/api/v1/identity` |
 
-### Remaining legacy code (~1,274 files)
+### Remaining legacy code (~1,274 files; Phase B adds 10 migration files + 4 adapter files)
 
 ```
 shared/   ~770 files →  bean/  dao/  domain/  service/  logic/  job/  exception/  validator/  i18n/  patterns/  core/  log/
@@ -66,9 +66,55 @@ All new modules are now **write-capable** — they can create, update, and delet
 
 ---
 
-## Phase B: Schema Ownership (Documented ✅ — Ready for Implementation)
+## Phase B: Schema Ownership (🔶 IN PROGRESS — ~40% complete)
 
-Currently modules bridge to the **same tables** that legacy code uses. Full strangulation requires module-owned tables. The table ownership declarations below are derived from the actual JPA entities in each module.
+Currently modules bridge to the **same tables** that legacy code uses. Full strangulation requires module-owned tables. Phase B is actively implementing **Option B: New tables with bidirectional sync triggers** for all 10 domains.
+
+### B0: Active Work (2026-06-03)
+
+**10 bidirectional sync trigger migration files created (3,494 lines total):**
+
+Each domain has two PostgreSQL trigger functions (`sync_module_X_to_X` + `sync_X_to_module_X`) with `pg_trigger_depth() > 1` recursion guard, ensuring legacy and module-owned tables stay in sync during the transition.
+
+| Migration File | Lines | Tables |
+|---|---|---|
+| `2026-06-03-study-bidirectional-sync-trigger.xml` | 367 | `study` ↔ `module_study` |
+| `2026-06-03-subject-bidirectional-sync-trigger.xml` | 248 | `subject`/`study_subject` ↔ `module_subject`/`module_study_subject` |
+| `2026-06-03-event-bidirectional-sync-trigger.xml` | 453 | `study_event`/`study_event_definition`/`event_crf` ↔ `module_*` |
+| `2026-06-03-datacapture-bidirectional-sync-trigger.xml` | 337 | `item_data`/`response_set`/`item_group` ↔ `module_*` |
+| `2026-06-03-crf-bidirectional-sync-trigger.xml` | 631 | `crf`/`crf_version`/`item`/`section` ↔ `module_*` |
+| `2026-06-03-identity-bidirectional-sync-trigger.xml` | 255 | `user_account`/`study_user_role` ↔ `module_user_account`/`module_role` |
+| `2026-06-03-rule-bidirectional-sync-trigger.xml` | 478 | `rule_set`/`rule`/`rule_set_rule`/`rule_action` ↔ `module_*` |
+| `2026-06-03-dataset-filter-bidirectional-sync-trigger.xml` | 376 | `dataset`/`filter` ↔ `module_dataset`/`module_filter` |
+| `2026-06-03-discrepancy-note-bidirectional-sync-trigger.xml` | 139 | `discrepancy_note` ↔ `module_discrepancy_note` |
+| `2026-06-03-subjectgroup-bidirectional-sync-trigger.xml` | 210 | `study_group_class`/`study_group` ↔ `module_study_group_class`/`module_study_group` |
+
+**5 JPA entities remapped to module-owned tables:**
+
+| Module | Entity | Old Table | New Table |
+|--------|--------|-----------|-----------|
+| filter | `FilterEntity` | `filter` | `module_filter` |
+| dataset | `DatasetEntity` | `dataset` | `module_dataset` |
+| identity | `UserAccountEntity` | `user_account` | `module_user_account` |
+| identity | `RoleEntity` | `study_user_role` | `module_role` |
+| subjectgroup | `StudyGroupClassEntity` | `study_group_class` | `module_study_group_class` |
+
+**New adapter code:**
+- `filter/internal/adapter/FilterDaoAdapter.java` — replaces direct `FilterDAO` calls
+- `subjectgroup/internal/adapter/StudyGroupClassDaoAdapter.java` — replaces direct `StudyGroupClassDAO` calls
+- Unit tests for both adapters
+
+**DaoRegistrar exclusion updated:** `FilterDAO`, `StudyGroupClassDAO` added to exclusion list.
+
+**StudyGroupClassRepository enhanced:** 4 new native SQL queries joining `module_study_group_class` with `module_study` (`findByStudyOrChildStudy`, `findByStudyOrChildStudyAndStatus`).
+
+**Remaining Phase B work:**
+- Remap remaining 5 module entities (study, subject, event, datacapture, crf/rule/discrepancynote) to module-owned tables
+- Run trigger migration scripts against actual database for verification
+- Create adapter code for remaining modules
+- Write tests for trigger correctness (INSERT/UPDATE/DELETE round-trip)
+
+The table ownership declarations below are derived from the actual JPA entities in each module.
 
 ### B1: Table Ownership Declarations
 
@@ -397,8 +443,8 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 | Phase | Description | Estimated Effort | Dependencies |
 |-------|-------------|-----------------|--------------|
 | A1-A5 | Write operations | ✅ COMPLETE | None |
-| B1-B3 | Schema ownership | ✅ Documentation complete. Wave 0 (schema mismatches) done | Phase A complete |
-| C1-C4 | Legacy code deletion | 🔶 In progress (19/19 DAO families SPI-widened — consumer widening complete; DAO file deletion blocked by module-owned replacement need) | **28 SPI Impl wrappers deleted, 22 hardcoded userId=1 fixed, 7 module tests added, `DaoProvider.getDao()` references reduced to 0, direct legacy constructor matches reduced to 0. All 19 DAO families SPI-widened; deletion gated on schema ownership migration (Phase B).** |
+| B1-B3 | Schema ownership | 🔶 IN PROGRESS (~40%). 10 trigger migrations written (3,494 lines), 5 entities remapped, 2 adapters. | Phase A complete |
+| C1-C4 | Legacy code deletion | 🔶 In progress (19/19 DAO families SPI-widened — consumer widening complete; DAO file deletion blocked by module-owned replacement need) | **0 direct legacy constructor matches, 0 `DaoProvider.getDao()` calls. All 19 DAO families SPI-widened; 5 entities remapped to module-owned tables with dual-sync triggers (Phase B). Deletion gated on full schema ownership migration.** |
 | D1-D2 | Config migration | ✅ Complete | 11 XML → Java Config, dead XML stubs cleanup (2026-05-23) |
 | E1-E2 | Auth unification | ✅ Complete | Dual SecurityFilterChain (JWT API + OIDC web) |
 | F1-F2 | SOAP adapters | ✅ Infrastructure built | 3 adapters created; study/study-subject adapters are SPI-backed, UserAccountAdapter remains a concrete containment wrapper, and no `DaoProvider.getDao()` calls remain |
@@ -407,7 +453,7 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 | **S1** | **Contract tests** | **✅ COMPLETE** | **41 MockMvc tests for 8 legacy-gateway controllers** |
 | **S2** | **Service tests** | **✅ COMPLETE** | **47 new tests + 25 frontend + 31 questionnaire** |
 
-**Total Java tests: 150 (0 failures)**  
+**Total Java tests: 150 → 161 (0 failures) — 11 new tests for Phase B adapters**  
 **Module test coverage: 10 modules with baseline tests**  
 **DAO instantiation coverage: direct legacy DAO and `StudyConfigService` construction is 0 active; next metric is concrete DAO type references by family.**
 

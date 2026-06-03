@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: keep legacy and module discrepancy-note fork tables synchronized in both write directions. -->
+
+    <changeSet author="research-edc" id="2026-06-03-discrepancy-note-module-sync-depth-guard" dbms="postgresql">
+        <comment>Add recursion guard to existing module-to-legacy discrepancy-note sync function</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_discrepancy_note_to_discrepancy_note()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    IF (TG_OP = 'DELETE') THEN
+                        RETURN OLD;
+                    END IF;
+                    RETURN NEW;
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO discrepancy_note (
+                        discrepancy_note_id, description, discrepancy_note_type_id,
+                        resolution_status_id, detailed_notes, date_created, owner_id,
+                        parent_dn_id, entity_type, entity_id, study_id, assigned_user_id
+                    )
+                    VALUES (
+                        NEW.discrepancy_note_id, NEW.description, NEW.discrepancy_note_type_id,
+                        NEW.resolution_status_id, NEW.detailed_notes, NEW.date_created, NEW.owner_id,
+                        NEW.parent_dn_id, NEW.entity_type, NEW.entity_id, NEW.study_id, NEW.assigned_user_id
+                    )
+                    ON CONFLICT (discrepancy_note_id) DO UPDATE SET
+                        description = EXCLUDED.description,
+                        discrepancy_note_type_id = EXCLUDED.discrepancy_note_type_id,
+                        resolution_status_id = EXCLUDED.resolution_status_id,
+                        detailed_notes = EXCLUDED.detailed_notes,
+                        date_created = EXCLUDED.date_created,
+                        owner_id = EXCLUDED.owner_id,
+                        parent_dn_id = EXCLUDED.parent_dn_id,
+                        entity_type = EXCLUDED.entity_type,
+                        entity_id = EXCLUDED.entity_id,
+                        study_id = EXCLUDED.study_id,
+                        assigned_user_id = EXCLUDED.assigned_user_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE discrepancy_note SET
+                        description = NEW.description,
+                        discrepancy_note_type_id = NEW.discrepancy_note_type_id,
+                        resolution_status_id = NEW.resolution_status_id,
+                        detailed_notes = NEW.detailed_notes,
+                        date_created = NEW.date_created,
+                        owner_id = NEW.owner_id,
+                        parent_dn_id = NEW.parent_dn_id,
+                        entity_type = NEW.entity_type,
+                        entity_id = NEW.entity_id,
+                        study_id = NEW.study_id,
+                        assigned_user_id = NEW.assigned_user_id
+                    WHERE discrepancy_note_id = OLD.discrepancy_note_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM discrepancy_note WHERE discrepancy_note_id = OLD.discrepancy_note_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+        ]]></sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-03-discrepancy-note-legacy-to-module-sync" dbms="postgresql">
+        <comment>Create legacy-to-module discrepancy-note sync function and trigger</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_discrepancy_note_to_module_discrepancy_note()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    IF (TG_OP = 'DELETE') THEN
+                        RETURN OLD;
+                    END IF;
+                    RETURN NEW;
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_discrepancy_note (
+                        discrepancy_note_id, description, discrepancy_note_type_id,
+                        resolution_status_id, detailed_notes, date_created, owner_id,
+                        parent_dn_id, entity_type, entity_id, study_id, assigned_user_id
+                    )
+                    VALUES (
+                        NEW.discrepancy_note_id, NEW.description, NEW.discrepancy_note_type_id,
+                        NEW.resolution_status_id, NEW.detailed_notes, NEW.date_created, NEW.owner_id,
+                        NEW.parent_dn_id, NEW.entity_type, NEW.entity_id, NEW.study_id, NEW.assigned_user_id
+                    )
+                    ON CONFLICT (discrepancy_note_id) DO UPDATE SET
+                        description = EXCLUDED.description,
+                        discrepancy_note_type_id = EXCLUDED.discrepancy_note_type_id,
+                        resolution_status_id = EXCLUDED.resolution_status_id,
+                        detailed_notes = EXCLUDED.detailed_notes,
+                        date_created = EXCLUDED.date_created,
+                        owner_id = EXCLUDED.owner_id,
+                        parent_dn_id = EXCLUDED.parent_dn_id,
+                        entity_type = EXCLUDED.entity_type,
+                        entity_id = EXCLUDED.entity_id,
+                        study_id = EXCLUDED.study_id,
+                        assigned_user_id = EXCLUDED.assigned_user_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_discrepancy_note SET
+                        description = NEW.description,
+                        discrepancy_note_type_id = NEW.discrepancy_note_type_id,
+                        resolution_status_id = NEW.resolution_status_id,
+                        detailed_notes = NEW.detailed_notes,
+                        date_created = NEW.date_created,
+                        owner_id = NEW.owner_id,
+                        parent_dn_id = NEW.parent_dn_id,
+                        entity_type = NEW.entity_type,
+                        entity_id = NEW.entity_id,
+                        study_id = NEW.study_id,
+                        assigned_user_id = NEW.assigned_user_id
+                    WHERE discrepancy_note_id = OLD.discrepancy_note_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_discrepancy_note WHERE discrepancy_note_id = OLD.discrepancy_note_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_discrepancy_note_to_module ON discrepancy_note;
+            CREATE TRIGGER trg_sync_discrepancy_note_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON discrepancy_note
+            FOR EACH ROW EXECUTE FUNCTION sync_discrepancy_note_to_module_discrepancy_note();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_discrepancy_note_to_module ON discrepancy_note;
+            DROP FUNCTION IF EXISTS sync_discrepancy_note_to_module_discrepancy_note();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

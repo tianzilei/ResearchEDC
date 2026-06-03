@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="research-edc" id="2026-06-03-subject-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between subject and module_subject</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_subject_to_subject()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO subject (
+                        subject_id, unique_identifier, date_of_birth, gender,
+                        dob_collected, date_created, date_updated,
+                        owner_id, update_id, status_id
+                    )
+                    VALUES (
+                        NEW.subject_id, NEW.unique_identifier, NEW.date_of_birth, NEW.gender,
+                        NEW.dob_collected, NEW.date_created, NEW.date_updated,
+                        NEW.owner_id, NEW.update_id, NEW.status_id
+                    )
+                    ON CONFLICT (subject_id) DO UPDATE SET
+                        unique_identifier = EXCLUDED.unique_identifier,
+                        date_of_birth = EXCLUDED.date_of_birth,
+                        gender = EXCLUDED.gender,
+                        dob_collected = EXCLUDED.dob_collected,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id,
+                        status_id = EXCLUDED.status_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE subject SET
+                        unique_identifier = NEW.unique_identifier,
+                        date_of_birth = NEW.date_of_birth,
+                        gender = NEW.gender,
+                        dob_collected = NEW.dob_collected,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        status_id = NEW.status_id
+                    WHERE subject_id = OLD.subject_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM subject WHERE subject_id = OLD.subject_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_subject_to_module_subject()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_subject (
+                        subject_id, unique_identifier, date_of_birth, gender,
+                        dob_collected, date_created, date_updated,
+                        owner_id, update_id, status_id
+                    )
+                    VALUES (
+                        NEW.subject_id, NEW.unique_identifier, NEW.date_of_birth, NEW.gender,
+                        NEW.dob_collected, NEW.date_created, NEW.date_updated,
+                        NEW.owner_id, NEW.update_id, NEW.status_id
+                    )
+                    ON CONFLICT (subject_id) DO UPDATE SET
+                        unique_identifier = EXCLUDED.unique_identifier,
+                        date_of_birth = EXCLUDED.date_of_birth,
+                        gender = EXCLUDED.gender,
+                        dob_collected = EXCLUDED.dob_collected,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id,
+                        status_id = EXCLUDED.status_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_subject SET
+                        unique_identifier = NEW.unique_identifier,
+                        date_of_birth = NEW.date_of_birth,
+                        gender = NEW.gender,
+                        dob_collected = NEW.dob_collected,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        status_id = NEW.status_id
+                    WHERE subject_id = OLD.subject_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_subject WHERE subject_id = OLD.subject_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_subject ON module_subject;
+            CREATE TRIGGER trg_sync_module_subject
+            AFTER INSERT OR UPDATE OR DELETE ON module_subject
+            FOR EACH ROW EXECUTE FUNCTION sync_module_subject_to_subject();
+
+            DROP TRIGGER IF EXISTS trg_sync_subject_to_module ON subject;
+            CREATE TRIGGER trg_sync_subject_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON subject
+            FOR EACH ROW EXECUTE FUNCTION sync_subject_to_module_subject();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_subject_to_module ON subject;
+            DROP FUNCTION IF EXISTS sync_subject_to_module_subject();
+        </rollback>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-03-study-subject-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between study_subject and module_study_subject</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_study_subject_to_study_subject()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO study_subject (
+                        study_subject_id, study_id, subject_id, label,
+                        secondary_label, enrollment_date, oc_oid,
+                        date_created, date_updated, owner_id, update_id, status_id
+                    )
+                    VALUES (
+                        NEW.study_subject_id, NEW.study_id, NEW.subject_id, NEW.label,
+                        NEW.secondary_label, NEW.enrollment_date, NEW.oc_oid,
+                        NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id, NEW.status_id
+                    )
+                    ON CONFLICT (study_subject_id) DO UPDATE SET
+                        study_id = EXCLUDED.study_id,
+                        subject_id = EXCLUDED.subject_id,
+                        label = EXCLUDED.label,
+                        secondary_label = EXCLUDED.secondary_label,
+                        enrollment_date = EXCLUDED.enrollment_date,
+                        oc_oid = EXCLUDED.oc_oid,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id,
+                        status_id = EXCLUDED.status_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE study_subject SET
+                        study_id = NEW.study_id,
+                        subject_id = NEW.subject_id,
+                        label = NEW.label,
+                        secondary_label = NEW.secondary_label,
+                        enrollment_date = NEW.enrollment_date,
+                        oc_oid = NEW.oc_oid,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        status_id = NEW.status_id
+                    WHERE study_subject_id = OLD.study_subject_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM study_subject WHERE study_subject_id = OLD.study_subject_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_study_subject_to_module_study_subject()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_study_subject (
+                        study_subject_id, study_id, subject_id, label,
+                        secondary_label, enrollment_date, oc_oid,
+                        date_created, date_updated, owner_id, update_id, status_id
+                    )
+                    VALUES (
+                        NEW.study_subject_id, NEW.study_id, NEW.subject_id, NEW.label,
+                        NEW.secondary_label, NEW.enrollment_date, NEW.oc_oid,
+                        NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id, NEW.status_id
+                    )
+                    ON CONFLICT (study_subject_id) DO UPDATE SET
+                        study_id = EXCLUDED.study_id,
+                        subject_id = EXCLUDED.subject_id,
+                        label = EXCLUDED.label,
+                        secondary_label = EXCLUDED.secondary_label,
+                        enrollment_date = EXCLUDED.enrollment_date,
+                        oc_oid = EXCLUDED.oc_oid,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id,
+                        status_id = EXCLUDED.status_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_study_subject SET
+                        study_id = NEW.study_id,
+                        subject_id = NEW.subject_id,
+                        label = NEW.label,
+                        secondary_label = NEW.secondary_label,
+                        enrollment_date = NEW.enrollment_date,
+                        oc_oid = NEW.oc_oid,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id,
+                        status_id = NEW.status_id
+                    WHERE study_subject_id = OLD.study_subject_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_study_subject WHERE study_subject_id = OLD.study_subject_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_study_subject ON module_study_subject;
+            CREATE TRIGGER trg_sync_module_study_subject
+            AFTER INSERT OR UPDATE OR DELETE ON module_study_subject
+            FOR EACH ROW EXECUTE FUNCTION sync_module_study_subject_to_study_subject();
+
+            DROP TRIGGER IF EXISTS trg_sync_study_subject_to_module ON study_subject;
+            CREATE TRIGGER trg_sync_study_subject_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON study_subject
+            FOR EACH ROW EXECUTE FUNCTION sync_study_subject_to_module_study_subject();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_study_subject_to_module ON study_subject;
+            DROP FUNCTION IF EXISTS sync_study_subject_to_module_study_subject();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="research-edc" id="2026-06-03-item-data-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between item_data and module_item_data</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_item_data_to_item_data()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO item_data (
+                        item_data_id, item_id, event_crf_id, value,
+                        ordinal, status_id, deleted, date_created,
+                        date_updated, owner_id, update_id
+                    )
+                    VALUES (
+                        NEW.item_data_id, NEW.item_id, NEW.event_crf_id, NEW.value,
+                        NEW.ordinal, NEW.status_id, NEW.deleted, NEW.date_created,
+                        NEW.date_updated, NEW.owner_id, NEW.update_id
+                    )
+                    ON CONFLICT (item_data_id) DO UPDATE SET
+                        item_id = EXCLUDED.item_id,
+                        event_crf_id = EXCLUDED.event_crf_id,
+                        value = EXCLUDED.value,
+                        ordinal = EXCLUDED.ordinal,
+                        status_id = EXCLUDED.status_id,
+                        deleted = EXCLUDED.deleted,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE item_data SET
+                        item_id = NEW.item_id,
+                        event_crf_id = NEW.event_crf_id,
+                        value = NEW.value,
+                        ordinal = NEW.ordinal,
+                        status_id = NEW.status_id,
+                        deleted = NEW.deleted,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id
+                    WHERE item_data_id = OLD.item_data_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM item_data WHERE item_data_id = OLD.item_data_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_item_data_to_module_item_data()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_item_data (
+                        item_data_id, item_id, event_crf_id, value,
+                        ordinal, status_id, deleted, date_created,
+                        date_updated, owner_id, update_id
+                    )
+                    VALUES (
+                        NEW.item_data_id, NEW.item_id, NEW.event_crf_id, NEW.value,
+                        NEW.ordinal, NEW.status_id, NEW.deleted, NEW.date_created,
+                        NEW.date_updated, NEW.owner_id, NEW.update_id
+                    )
+                    ON CONFLICT (item_data_id) DO UPDATE SET
+                        item_id = EXCLUDED.item_id,
+                        event_crf_id = EXCLUDED.event_crf_id,
+                        value = EXCLUDED.value,
+                        ordinal = EXCLUDED.ordinal,
+                        status_id = EXCLUDED.status_id,
+                        deleted = EXCLUDED.deleted,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_item_data SET
+                        item_id = NEW.item_id,
+                        event_crf_id = NEW.event_crf_id,
+                        value = NEW.value,
+                        ordinal = NEW.ordinal,
+                        status_id = NEW.status_id,
+                        deleted = NEW.deleted,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id
+                    WHERE item_data_id = OLD.item_data_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_item_data WHERE item_data_id = OLD.item_data_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_item_data ON module_item_data;
+            CREATE TRIGGER trg_sync_module_item_data
+            AFTER INSERT OR UPDATE OR DELETE ON module_item_data
+            FOR EACH ROW EXECUTE FUNCTION sync_module_item_data_to_item_data();
+
+            DROP TRIGGER IF EXISTS trg_sync_item_data_to_module ON item_data;
+            CREATE TRIGGER trg_sync_item_data_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON item_data
+            FOR EACH ROW EXECUTE FUNCTION sync_item_data_to_module_item_data();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_item_data_to_module ON item_data;
+            DROP FUNCTION IF EXISTS sync_item_data_to_module_item_data();
+        </rollback>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-03-item-group-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between item_group and module_item_group</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_item_group_to_item_group()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO item_group (
+                        item_group_id, crf_id, name, oc_oid,
+                        status_id, date_created, date_updated,
+                        owner_id, update_id
+                    )
+                    VALUES (
+                        NEW.item_group_id, NEW.crf_id, NEW.name, NEW.oc_oid,
+                        NEW.status_id, NEW.date_created, NEW.date_updated,
+                        NEW.owner_id, NEW.update_id
+                    )
+                    ON CONFLICT (item_group_id) DO UPDATE SET
+                        crf_id = EXCLUDED.crf_id,
+                        name = EXCLUDED.name,
+                        oc_oid = EXCLUDED.oc_oid,
+                        status_id = EXCLUDED.status_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE item_group SET
+                        crf_id = NEW.crf_id,
+                        name = NEW.name,
+                        oc_oid = NEW.oc_oid,
+                        status_id = NEW.status_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id
+                    WHERE item_group_id = OLD.item_group_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM item_group WHERE item_group_id = OLD.item_group_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_item_group_to_module_item_group()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_item_group (
+                        item_group_id, crf_id, name, oc_oid,
+                        status_id, date_created, date_updated,
+                        owner_id, update_id
+                    )
+                    VALUES (
+                        NEW.item_group_id, NEW.crf_id, NEW.name, NEW.oc_oid,
+                        NEW.status_id, NEW.date_created, NEW.date_updated,
+                        NEW.owner_id, NEW.update_id
+                    )
+                    ON CONFLICT (item_group_id) DO UPDATE SET
+                        crf_id = EXCLUDED.crf_id,
+                        name = EXCLUDED.name,
+                        oc_oid = EXCLUDED.oc_oid,
+                        status_id = EXCLUDED.status_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_item_group SET
+                        crf_id = NEW.crf_id,
+                        name = NEW.name,
+                        oc_oid = NEW.oc_oid,
+                        status_id = NEW.status_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id
+                    WHERE item_group_id = OLD.item_group_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_item_group WHERE item_group_id = OLD.item_group_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_item_group ON module_item_group;
+            CREATE TRIGGER trg_sync_module_item_group
+            AFTER INSERT OR UPDATE OR DELETE ON module_item_group
+            FOR EACH ROW EXECUTE FUNCTION sync_module_item_group_to_item_group();
+
+            DROP TRIGGER IF EXISTS trg_sync_item_group_to_module ON item_group;
+            CREATE TRIGGER trg_sync_item_group_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON item_group
+            FOR EACH ROW EXECUTE FUNCTION sync_item_group_to_module_item_group();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_item_group_to_module ON item_group;
+            DROP FUNCTION IF EXISTS sync_item_group_to_module_item_group();
+        </rollback>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-03-response-set-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between response_set and module_response_set</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_response_set_to_response_set()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO response_set (
+                        response_set_id, response_type_id, label,
+                        options_text, options_values, version_id
+                    )
+                    VALUES (
+                        NEW.response_set_id, NEW.response_type_id, NEW.label,
+                        NEW.options_text, NEW.options_values, NEW.version_id
+                    )
+                    ON CONFLICT (response_set_id) DO UPDATE SET
+                        response_type_id = EXCLUDED.response_type_id,
+                        label = EXCLUDED.label,
+                        options_text = EXCLUDED.options_text,
+                        options_values = EXCLUDED.options_values,
+                        version_id = EXCLUDED.version_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE response_set SET
+                        response_type_id = NEW.response_type_id,
+                        label = NEW.label,
+                        options_text = NEW.options_text,
+                        options_values = NEW.options_values,
+                        version_id = NEW.version_id
+                    WHERE response_set_id = OLD.response_set_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM response_set WHERE response_set_id = OLD.response_set_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_response_set_to_module_response_set()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_response_set (
+                        response_set_id, response_type_id, label,
+                        options_text, options_values, version_id
+                    )
+                    VALUES (
+                        NEW.response_set_id, NEW.response_type_id, NEW.label,
+                        NEW.options_text, NEW.options_values, NEW.version_id
+                    )
+                    ON CONFLICT (response_set_id) DO UPDATE SET
+                        response_type_id = EXCLUDED.response_type_id,
+                        label = EXCLUDED.label,
+                        options_text = EXCLUDED.options_text,
+                        options_values = EXCLUDED.options_values,
+                        version_id = EXCLUDED.version_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_response_set SET
+                        response_type_id = NEW.response_type_id,
+                        label = NEW.label,
+                        options_text = NEW.options_text,
+                        options_values = NEW.options_values,
+                        version_id = NEW.version_id
+                    WHERE response_set_id = OLD.response_set_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_response_set WHERE response_set_id = OLD.response_set_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_response_set ON module_response_set;
+            CREATE TRIGGER trg_sync_module_response_set
+            AFTER INSERT OR UPDATE OR DELETE ON module_response_set
+            FOR EACH ROW EXECUTE FUNCTION sync_module_response_set_to_response_set();
+
+            DROP TRIGGER IF EXISTS trg_sync_response_set_to_module ON response_set;
+            CREATE TRIGGER trg_sync_response_set_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON response_set
+            FOR EACH ROW EXECUTE FUNCTION sync_response_set_to_module_response_set();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_response_set_to_module ON response_set;
+            DROP FUNCTION IF EXISTS sync_response_set_to_module_response_set();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

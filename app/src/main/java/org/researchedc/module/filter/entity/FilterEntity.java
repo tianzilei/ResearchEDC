@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "ModuleFilter")
-@Table(name = "filter")
+@Table(name = "module_filter")
 public class FilterEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "filter_seq")
-    @SequenceGenerator(name = "filter_seq", sequenceName = "filter_filter_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "module_filter_seq")
+    @SequenceGenerator(name = "module_filter_seq", sequenceName = "module_filter_id_seq", allocationSize = 1)
     @Column(name = "filter_id")
     private Integer filterId;
 
