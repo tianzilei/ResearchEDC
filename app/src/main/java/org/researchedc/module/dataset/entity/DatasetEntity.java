@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity(name = "ModuleDataset")
-@Table(name = "dataset")
+@Table(name = "module_dataset")
 public class DatasetEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "dataset_seq")
-    @SequenceGenerator(name = "dataset_seq", sequenceName = "dataset_dataset_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "module_dataset_seq")
+    @SequenceGenerator(name = "module_dataset_seq", sequenceName = "module_dataset_id_seq", allocationSize = 1)
     @Column(name = "dataset_id")
     private Integer datasetId;
 

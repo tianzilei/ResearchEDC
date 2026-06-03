@@ -2,7 +2,7 @@
 
 **Derived from:** OpenClinica v3.x  
 **Generated:** 2026-05-25  
-**Updated:** 2026-06-02  
+**Updated:** 2026-06-03  
 **Branch:** master
 
 ## OVERVIEW
@@ -11,7 +11,7 @@ ResearchEDC is an independently maintained research electronic data capture (EDC
 
 New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. Legacy code consolidated into `shared/` module, with `web/` (484 files + 419 JSP) and `ws/` (75 files) being incrementally strangulated into Modulith modules.
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 235/235** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 19/19** ✅ | **legacy-core → shared 合并** ✅
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 247/247** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 19/19** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership 🔶 IN PROGRESS (10 triggers, 5 entities remapped)**
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 ✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
@@ -241,6 +241,17 @@ python -m pytest app/tests/ -v
   - `rg -n "\b(StudyEventDAO|StudyEventDefinitionDAO|RuleSetDAO|RuleDAO|DatasetDAO|FilterDAO|StudyGroupClassDAO|StudyGroupDAO)\b" shared/src/main/java web/src/main/java ws/src/main/java -g '*.java' | cut -d: -f1 | sort -u`
   - `mvn -pl app -am compile -DskipTests && mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
 - **Refactor rule of thumb:** do not modify released migrations, do not bypass `SecureController`, do not add new legacy code to `shared/`, and verify the SPI covers every invoked method before widening.
+
+### Phase B Schema Ownership Handoff (2026-06-03)
+
+- **Status:** Phase B schema ownership is **IN PROGRESS** (~40% complete). Working tree has uncommitted changes implementing Option B (new module-owned tables with bidirectional sync triggers).
+- **10 bidirectional sync trigger migration files** created (3,494 lines total): study, subject, event, datacapture, crf, identity, rule, dataset-filter, discrepancy-note, subjectgroup. Each has two PostgreSQL trigger functions with `pg_trigger_depth() > 1` recursion guard. Registered in `release.xml`.
+- **5 JPA entities remapped** to module-owned tables: `FilterEntity` (`module_filter`), `DatasetEntity` (`module_dataset`), `UserAccountEntity` (`module_user_account`), `RoleEntity` (`module_role`), `StudyGroupClassEntity` (`module_study_group_class`). Sequences renamed to match (e.g., `module_filter_id_seq`).
+- **New adapter code:** `FilterDaoAdapter.java` + `StudyGroupClassDaoAdapter.java` with unit tests.
+- **DaoRegistrar exclusion updated:** `FilterDAO`, `StudyGroupClassDAO` added.
+- **StudyGroupClassRepository** enhanced with 4 native SQL queries (`findByStudyOrChildStudy`, `findByStudyOrChildStudyAndStatus`).
+- **Remaining Phase B work:** remap remaining 5 module entities (study, subject, event, datacapture, crf/rule/discrepancynote), run trigger migrations against actual DB for verification, create remaining adapter code.
+- **Build verification:** `mvn clean compile` ✅ | `mvn test -pl app -am` 247/247 ✅ | `ModulithVerificationTest` ✅
 
 ## SUBMODULE REFERENCES
 

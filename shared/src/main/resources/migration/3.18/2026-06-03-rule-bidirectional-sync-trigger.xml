@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="research-edc" id="2026-06-03-rule-expression-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between rule_expression and module_rule_expression</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_rule_expression_to_rule_expression()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO rule_expression (
+                        rule_expression_id, value, context, status_id, owner_id,
+                        date_created, date_updated, update_id, "version"
+                    )
+                    VALUES (
+                        NEW.rule_expression_id, NEW.value, NEW.context, NEW.status_id, NEW.owner_id,
+                        NEW.date_created, NEW.date_updated, NEW.update_id, NEW."version"
+                    )
+                    ON CONFLICT (rule_expression_id) DO UPDATE SET
+                        value = EXCLUDED.value,
+                        context = EXCLUDED.context,
+                        status_id = EXCLUDED.status_id,
+                        owner_id = EXCLUDED.owner_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        update_id = EXCLUDED.update_id,
+                        "version" = EXCLUDED."version";
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE rule_expression SET
+                        value = NEW.value,
+                        context = NEW.context,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        "version" = NEW."version"
+                    WHERE rule_expression_id = OLD.rule_expression_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM rule_expression WHERE rule_expression_id = OLD.rule_expression_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_rule_expression_to_module_rule_expression()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_rule_expression (
+                        rule_expression_id, value, context, status_id, owner_id,
+                        date_created, date_updated, update_id, "version"
+                    )
+                    VALUES (
+                        NEW.rule_expression_id, NEW.value, NEW.context, NEW.status_id, NEW.owner_id,
+                        NEW.date_created, NEW.date_updated, NEW.update_id, NEW."version"
+                    )
+                    ON CONFLICT (rule_expression_id) DO UPDATE SET
+                        value = EXCLUDED.value,
+                        context = EXCLUDED.context,
+                        status_id = EXCLUDED.status_id,
+                        owner_id = EXCLUDED.owner_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        update_id = EXCLUDED.update_id,
+                        "version" = EXCLUDED."version";
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_rule_expression SET
+                        value = NEW.value,
+                        context = NEW.context,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        "version" = NEW."version"
+                    WHERE rule_expression_id = OLD.rule_expression_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_rule_expression WHERE rule_expression_id = OLD.rule_expression_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_rule_expression ON module_rule_expression;
+            CREATE TRIGGER trg_sync_module_rule_expression
+            AFTER INSERT OR UPDATE OR DELETE ON module_rule_expression
+            FOR EACH ROW EXECUTE FUNCTION sync_module_rule_expression_to_rule_expression();
+
+            DROP TRIGGER IF EXISTS trg_sync_rule_expression_to_module ON rule_expression;
+            CREATE TRIGGER trg_sync_rule_expression_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON rule_expression
+            FOR EACH ROW EXECUTE FUNCTION sync_rule_expression_to_module_rule_expression();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_rule_expression_to_module ON rule_expression;
+            DROP FUNCTION IF EXISTS sync_rule_expression_to_module_rule_expression();
+        </rollback>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-03-rule-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between rule and module_rule</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_rule_to_rule()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO rule (
+                        rule_id, oc_oid, name, description, enabled, rule_expression_id,
+                        status_id, owner_id, date_created, date_updated, update_id, "version"
+                    )
+                    VALUES (
+                        NEW.rule_id, NEW.oc_oid, NEW.name, NEW.description, NEW.enabled, NEW.rule_expression_id,
+                        NEW.status_id, NEW.owner_id, NEW.date_created, NEW.date_updated, NEW.update_id, NEW."version"
+                    )
+                    ON CONFLICT (rule_id) DO UPDATE SET
+                        oc_oid = EXCLUDED.oc_oid,
+                        name = EXCLUDED.name,
+                        description = EXCLUDED.description,
+                        enabled = EXCLUDED.enabled,
+                        rule_expression_id = EXCLUDED.rule_expression_id,
+                        status_id = EXCLUDED.status_id,
+                        owner_id = EXCLUDED.owner_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        update_id = EXCLUDED.update_id,
+                        "version" = EXCLUDED."version";
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE rule SET
+                        oc_oid = NEW.oc_oid,
+                        name = NEW.name,
+                        description = NEW.description,
+                        enabled = NEW.enabled,
+                        rule_expression_id = NEW.rule_expression_id,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        "version" = NEW."version"
+                    WHERE rule_id = OLD.rule_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM rule WHERE rule_id = OLD.rule_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_rule_to_module_rule()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_rule (
+                        rule_id, oc_oid, name, description, enabled, rule_expression_id,
+                        status_id, owner_id, date_created, date_updated, update_id, "version"
+                    )
+                    VALUES (
+                        NEW.rule_id, NEW.oc_oid, NEW.name, NEW.description, NEW.enabled, NEW.rule_expression_id,
+                        NEW.status_id, NEW.owner_id, NEW.date_created, NEW.date_updated, NEW.update_id, NEW."version"
+                    )
+                    ON CONFLICT (rule_id) DO UPDATE SET
+                        oc_oid = EXCLUDED.oc_oid,
+                        name = EXCLUDED.name,
+                        description = EXCLUDED.description,
+                        enabled = EXCLUDED.enabled,
+                        rule_expression_id = EXCLUDED.rule_expression_id,
+                        status_id = EXCLUDED.status_id,
+                        owner_id = EXCLUDED.owner_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        update_id = EXCLUDED.update_id,
+                        "version" = EXCLUDED."version";
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_rule SET
+                        oc_oid = NEW.oc_oid,
+                        name = NEW.name,
+                        description = NEW.description,
+                        enabled = NEW.enabled,
+                        rule_expression_id = NEW.rule_expression_id,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        "version" = NEW."version"
+                    WHERE rule_id = OLD.rule_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_rule WHERE rule_id = OLD.rule_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_rule ON module_rule;
+            CREATE TRIGGER trg_sync_module_rule
+            AFTER INSERT OR UPDATE OR DELETE ON module_rule
+            FOR EACH ROW EXECUTE FUNCTION sync_module_rule_to_rule();
+
+            DROP TRIGGER IF EXISTS trg_sync_rule_to_module ON rule;
+            CREATE TRIGGER trg_sync_rule_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON rule
+            FOR EACH ROW EXECUTE FUNCTION sync_rule_to_module_rule();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_rule_to_module ON rule;
+            DROP FUNCTION IF EXISTS sync_rule_to_module_rule();
+        </rollback>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-03-rule-set-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between rule_set and module_rule_set</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_rule_set_to_rule_set()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO rule_set (
+                        rule_set_id, rule_expression_id, study_event_definition_id, crf_id, crf_version_id,
+                        study_id, run_schedule, run_time, status_id, owner_id, date_created, date_updated,
+                        update_id, "version"
+                    )
+                    VALUES (
+                        NEW.rule_set_id, NEW.rule_expression_id, NEW.study_event_definition_id, NEW.crf_id,
+                        NEW.crf_version_id, NEW.study_id, NEW.run_schedule, NEW.run_time, NEW.status_id,
+                        NEW.owner_id, NEW.date_created, NEW.date_updated, NEW.update_id, NEW."version"
+                    )
+                    ON CONFLICT (rule_set_id) DO UPDATE SET
+                        rule_expression_id = EXCLUDED.rule_expression_id,
+                        study_event_definition_id = EXCLUDED.study_event_definition_id,
+                        crf_id = EXCLUDED.crf_id,
+                        crf_version_id = EXCLUDED.crf_version_id,
+                        study_id = EXCLUDED.study_id,
+                        run_schedule = EXCLUDED.run_schedule,
+                        run_time = EXCLUDED.run_time,
+                        status_id = EXCLUDED.status_id,
+                        owner_id = EXCLUDED.owner_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        update_id = EXCLUDED.update_id,
+                        "version" = EXCLUDED."version";
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE rule_set SET
+                        rule_expression_id = NEW.rule_expression_id,
+                        study_event_definition_id = NEW.study_event_definition_id,
+                        crf_id = NEW.crf_id,
+                        crf_version_id = NEW.crf_version_id,
+                        study_id = NEW.study_id,
+                        run_schedule = NEW.run_schedule,
+                        run_time = NEW.run_time,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        "version" = NEW."version"
+                    WHERE rule_set_id = OLD.rule_set_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM rule_set WHERE rule_set_id = OLD.rule_set_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_rule_set_to_module_rule_set()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_rule_set (
+                        rule_set_id, rule_expression_id, study_event_definition_id, crf_id, crf_version_id,
+                        study_id, run_schedule, run_time, status_id, owner_id, date_created, date_updated,
+                        update_id, "version"
+                    )
+                    VALUES (
+                        NEW.rule_set_id, NEW.rule_expression_id, NEW.study_event_definition_id, NEW.crf_id,
+                        NEW.crf_version_id, NEW.study_id, NEW.run_schedule, NEW.run_time, NEW.status_id,
+                        NEW.owner_id, NEW.date_created, NEW.date_updated, NEW.update_id, NEW."version"
+                    )
+                    ON CONFLICT (rule_set_id) DO UPDATE SET
+                        rule_expression_id = EXCLUDED.rule_expression_id,
+                        study_event_definition_id = EXCLUDED.study_event_definition_id,
+                        crf_id = EXCLUDED.crf_id,
+                        crf_version_id = EXCLUDED.crf_version_id,
+                        study_id = EXCLUDED.study_id,
+                        run_schedule = EXCLUDED.run_schedule,
+                        run_time = EXCLUDED.run_time,
+                        status_id = EXCLUDED.status_id,
+                        owner_id = EXCLUDED.owner_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        update_id = EXCLUDED.update_id,
+                        "version" = EXCLUDED."version";
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_rule_set SET
+                        rule_expression_id = NEW.rule_expression_id,
+                        study_event_definition_id = NEW.study_event_definition_id,
+                        crf_id = NEW.crf_id,
+                        crf_version_id = NEW.crf_version_id,
+                        study_id = NEW.study_id,
+                        run_schedule = NEW.run_schedule,
+                        run_time = NEW.run_time,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        "version" = NEW."version"
+                    WHERE rule_set_id = OLD.rule_set_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_rule_set WHERE rule_set_id = OLD.rule_set_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_rule_set ON module_rule_set;
+            CREATE TRIGGER trg_sync_module_rule_set
+            AFTER INSERT OR UPDATE OR DELETE ON module_rule_set
+            FOR EACH ROW EXECUTE FUNCTION sync_module_rule_set_to_rule_set();
+
+            DROP TRIGGER IF EXISTS trg_sync_rule_set_to_module ON rule_set;
+            CREATE TRIGGER trg_sync_rule_set_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON rule_set
+            FOR EACH ROW EXECUTE FUNCTION sync_rule_set_to_module_rule_set();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_rule_set_to_module ON rule_set;
+            DROP FUNCTION IF EXISTS sync_rule_set_to_module_rule_set();
+        </rollback>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-03-rule-set-rule-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between rule_set_rule and module_rule_set_rule</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_rule_set_rule_to_rule_set_rule()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO rule_set_rule (
+                        rule_set_rule_id, rule_set_id, rule_id, status_id, owner_id,
+                        date_created, date_updated, update_id, "version"
+                    )
+                    VALUES (
+                        NEW.rule_set_rule_id, NEW.rule_set_id, NEW.rule_id, NEW.status_id, NEW.owner_id,
+                        NEW.date_created, NEW.date_updated, NEW.update_id, NEW."version"
+                    )
+                    ON CONFLICT (rule_set_rule_id) DO UPDATE SET
+                        rule_set_id = EXCLUDED.rule_set_id,
+                        rule_id = EXCLUDED.rule_id,
+                        status_id = EXCLUDED.status_id,
+                        owner_id = EXCLUDED.owner_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        update_id = EXCLUDED.update_id,
+                        "version" = EXCLUDED."version";
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE rule_set_rule SET
+                        rule_set_id = NEW.rule_set_id,
+                        rule_id = NEW.rule_id,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        "version" = NEW."version"
+                    WHERE rule_set_rule_id = OLD.rule_set_rule_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM rule_set_rule WHERE rule_set_rule_id = OLD.rule_set_rule_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_rule_set_rule_to_module_rule_set_rule()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_rule_set_rule (
+                        rule_set_rule_id, rule_set_id, rule_id, status_id, owner_id,
+                        date_created, date_updated, update_id, "version"
+                    )
+                    VALUES (
+                        NEW.rule_set_rule_id, NEW.rule_set_id, NEW.rule_id, NEW.status_id, NEW.owner_id,
+                        NEW.date_created, NEW.date_updated, NEW.update_id, NEW."version"
+                    )
+                    ON CONFLICT (rule_set_rule_id) DO UPDATE SET
+                        rule_set_id = EXCLUDED.rule_set_id,
+                        rule_id = EXCLUDED.rule_id,
+                        status_id = EXCLUDED.status_id,
+                        owner_id = EXCLUDED.owner_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        update_id = EXCLUDED.update_id,
+                        "version" = EXCLUDED."version";
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_rule_set_rule SET
+                        rule_set_id = NEW.rule_set_id,
+                        rule_id = NEW.rule_id,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        "version" = NEW."version"
+                    WHERE rule_set_rule_id = OLD.rule_set_rule_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_rule_set_rule WHERE rule_set_rule_id = OLD.rule_set_rule_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_rule_set_rule ON module_rule_set_rule;
+            CREATE TRIGGER trg_sync_module_rule_set_rule
+            AFTER INSERT OR UPDATE OR DELETE ON module_rule_set_rule
+            FOR EACH ROW EXECUTE FUNCTION sync_module_rule_set_rule_to_rule_set_rule();
+
+            DROP TRIGGER IF EXISTS trg_sync_rule_set_rule_to_module ON rule_set_rule;
+            CREATE TRIGGER trg_sync_rule_set_rule_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON rule_set_rule
+            FOR EACH ROW EXECUTE FUNCTION sync_rule_set_rule_to_module_rule_set_rule();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_rule_set_rule_to_module ON rule_set_rule;
+            DROP FUNCTION IF EXISTS sync_rule_set_rule_to_module_rule_set_rule();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

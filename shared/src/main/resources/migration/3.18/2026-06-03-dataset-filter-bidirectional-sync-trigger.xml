@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="research-edc" id="2026-06-03-dataset-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between dataset and module_dataset</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_dataset_to_module_dataset()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    IF (TG_OP = 'DELETE') THEN RETURN OLD; END IF;
+                    RETURN NEW;
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_dataset (
+                        dataset_id, study_id, status_id, name, description, sql_statement,
+                        num_runs, date_start, date_end, date_created, date_updated, date_last_run,
+                        owner_id, approver_id, update_id,
+                        show_event_location, show_event_start, show_event_end,
+                        show_subject_dob, show_subject_gender, show_event_status, show_subject_status,
+                        show_subject_unique_id, show_subject_age_at_event,
+                        show_crf_status, show_crf_version, show_crf_int_name, show_crf_int_date,
+                        show_group_info, show_disc_info,
+                        odm_meta_data_version_name, odm_meta_data_version_oid, odm_prior_study_oid,
+                        odm_prior_meta_data_version_oid,
+                        show_secondary_id, dataset_item_status_id
+                    )
+                    VALUES (
+                        NEW.dataset_id, NEW.study_id, NEW.status_id, NEW.name, NEW.description, NEW.sql_statement,
+                        NEW.num_runs, NEW.date_start, NEW.date_end, NEW.date_created, NEW.date_updated, NEW.date_last_run,
+                        NEW.owner_id, NEW.approver_id, NEW.update_id,
+                        NEW.show_event_location, NEW.show_event_start, NEW.show_event_end,
+                        NEW.show_subject_dob, NEW.show_subject_gender, NEW.show_event_status, NEW.show_subject_status,
+                        NEW.show_subject_unique_id, NEW.show_subject_age_at_event,
+                        NEW.show_crf_status, NEW.show_crf_version, NEW.show_crf_int_name, NEW.show_crf_int_date,
+                        NEW.show_group_info, NEW.show_disc_info,
+                        NEW.odm_metadataversion_name, NEW.odm_metadataversion_oid, NEW.odm_prior_study_oid,
+                        NEW.odm_prior_metadataversion_oid,
+                        NEW.show_secondary_id, NEW.dataset_item_status_id
+                    )
+                    ON CONFLICT (dataset_id) DO UPDATE SET
+                        study_id = EXCLUDED.study_id,
+                        status_id = EXCLUDED.status_id,
+                        name = EXCLUDED.name,
+                        description = EXCLUDED.description,
+                        sql_statement = EXCLUDED.sql_statement,
+                        num_runs = EXCLUDED.num_runs,
+                        date_start = EXCLUDED.date_start,
+                        date_end = EXCLUDED.date_end,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        date_last_run = EXCLUDED.date_last_run,
+                        owner_id = EXCLUDED.owner_id,
+                        approver_id = EXCLUDED.approver_id,
+                        update_id = EXCLUDED.update_id,
+                        show_event_location = EXCLUDED.show_event_location,
+                        show_event_start = EXCLUDED.show_event_start,
+                        show_event_end = EXCLUDED.show_event_end,
+                        show_subject_dob = EXCLUDED.show_subject_dob,
+                        show_subject_gender = EXCLUDED.show_subject_gender,
+                        show_event_status = EXCLUDED.show_event_status,
+                        show_subject_status = EXCLUDED.show_subject_status,
+                        show_subject_unique_id = EXCLUDED.show_subject_unique_id,
+                        show_subject_age_at_event = EXCLUDED.show_subject_age_at_event,
+                        show_crf_status = EXCLUDED.show_crf_status,
+                        show_crf_version = EXCLUDED.show_crf_version,
+                        show_crf_int_name = EXCLUDED.show_crf_int_name,
+                        show_crf_int_date = EXCLUDED.show_crf_int_date,
+                        show_group_info = EXCLUDED.show_group_info,
+                        show_disc_info = EXCLUDED.show_disc_info,
+                        odm_meta_data_version_name = EXCLUDED.odm_meta_data_version_name,
+                        odm_meta_data_version_oid = EXCLUDED.odm_meta_data_version_oid,
+                        odm_prior_study_oid = EXCLUDED.odm_prior_study_oid,
+                        odm_prior_meta_data_version_oid = EXCLUDED.odm_prior_meta_data_version_oid,
+                        show_secondary_id = EXCLUDED.show_secondary_id,
+                        dataset_item_status_id = EXCLUDED.dataset_item_status_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_dataset SET
+                        study_id = NEW.study_id,
+                        status_id = NEW.status_id,
+                        name = NEW.name,
+                        description = NEW.description,
+                        sql_statement = NEW.sql_statement,
+                        num_runs = NEW.num_runs,
+                        date_start = NEW.date_start,
+                        date_end = NEW.date_end,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        date_last_run = NEW.date_last_run,
+                        owner_id = NEW.owner_id,
+                        approver_id = NEW.approver_id,
+                        update_id = NEW.update_id,
+                        show_event_location = NEW.show_event_location,
+                        show_event_start = NEW.show_event_start,
+                        show_event_end = NEW.show_event_end,
+                        show_subject_dob = NEW.show_subject_dob,
+                        show_subject_gender = NEW.show_subject_gender,
+                        show_event_status = NEW.show_event_status,
+                        show_subject_status = NEW.show_subject_status,
+                        show_subject_unique_id = NEW.show_subject_unique_id,
+                        show_subject_age_at_event = NEW.show_subject_age_at_event,
+                        show_crf_status = NEW.show_crf_status,
+                        show_crf_version = NEW.show_crf_version,
+                        show_crf_int_name = NEW.show_crf_int_name,
+                        show_crf_int_date = NEW.show_crf_int_date,
+                        show_group_info = NEW.show_group_info,
+                        show_disc_info = NEW.show_disc_info,
+                        odm_meta_data_version_name = NEW.odm_metadataversion_name,
+                        odm_meta_data_version_oid = NEW.odm_metadataversion_oid,
+                        odm_prior_study_oid = NEW.odm_prior_study_oid,
+                        odm_prior_meta_data_version_oid = NEW.odm_prior_metadataversion_oid,
+                        show_secondary_id = NEW.show_secondary_id,
+                        dataset_item_status_id = NEW.dataset_item_status_id
+                    WHERE dataset_id = OLD.dataset_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_dataset WHERE dataset_id = OLD.dataset_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_dataset_to_module ON dataset;
+            CREATE TRIGGER trg_sync_dataset_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON dataset
+            FOR EACH ROW EXECUTE FUNCTION sync_dataset_to_module_dataset();
+
+            CREATE OR REPLACE FUNCTION sync_module_dataset_to_dataset()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    IF (TG_OP = 'DELETE') THEN RETURN OLD; END IF;
+                    RETURN NEW;
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO dataset (
+                        dataset_id, study_id, status_id, name, description, sql_statement,
+                        num_runs, date_start, date_end, date_created, date_updated, date_last_run,
+                        owner_id, approver_id, update_id,
+                        show_event_location, show_event_start, show_event_end,
+                        show_subject_dob, show_subject_gender, show_event_status, show_subject_status,
+                        show_subject_unique_id, show_subject_age_at_event,
+                        show_crf_status, show_crf_version, show_crf_int_name, show_crf_int_date,
+                        show_group_info, show_disc_info,
+                        odm_metadataversion_name, odm_metadataversion_oid, odm_prior_study_oid,
+                        odm_prior_metadataversion_oid,
+                        show_secondary_id, dataset_item_status_id
+                    )
+                    VALUES (
+                        NEW.dataset_id, NEW.study_id, NEW.status_id, NEW.name, NEW.description, NEW.sql_statement,
+                        NEW.num_runs, NEW.date_start, NEW.date_end, NEW.date_created, NEW.date_updated, NEW.date_last_run,
+                        NEW.owner_id, NEW.approver_id, NEW.update_id,
+                        NEW.show_event_location, NEW.show_event_start, NEW.show_event_end,
+                        NEW.show_subject_dob, NEW.show_subject_gender, NEW.show_event_status, NEW.show_subject_status,
+                        NEW.show_subject_unique_id, NEW.show_subject_age_at_event,
+                        NEW.show_crf_status, NEW.show_crf_version, NEW.show_crf_int_name, NEW.show_crf_int_date,
+                        NEW.show_group_info, NEW.show_disc_info,
+                        NEW.odm_meta_data_version_name, NEW.odm_meta_data_version_oid, NEW.odm_prior_study_oid,
+                        NEW.odm_prior_meta_data_version_oid,
+                        NEW.show_secondary_id, NEW.dataset_item_status_id
+                    )
+                    ON CONFLICT (dataset_id) DO UPDATE SET
+                        study_id = EXCLUDED.study_id,
+                        status_id = EXCLUDED.status_id,
+                        name = EXCLUDED.name,
+                        description = EXCLUDED.description,
+                        sql_statement = EXCLUDED.sql_statement,
+                        num_runs = EXCLUDED.num_runs,
+                        date_start = EXCLUDED.date_start,
+                        date_end = EXCLUDED.date_end,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        date_last_run = EXCLUDED.date_last_run,
+                        owner_id = EXCLUDED.owner_id,
+                        approver_id = EXCLUDED.approver_id,
+                        update_id = EXCLUDED.update_id,
+                        show_event_location = EXCLUDED.show_event_location,
+                        show_event_start = EXCLUDED.show_event_start,
+                        show_event_end = EXCLUDED.show_event_end,
+                        show_subject_dob = EXCLUDED.show_subject_dob,
+                        show_subject_gender = EXCLUDED.show_subject_gender,
+                        show_event_status = EXCLUDED.show_event_status,
+                        show_subject_status = EXCLUDED.show_subject_status,
+                        show_subject_unique_id = EXCLUDED.show_subject_unique_id,
+                        show_subject_age_at_event = EXCLUDED.show_subject_age_at_event,
+                        show_crf_status = EXCLUDED.show_crf_status,
+                        show_crf_version = EXCLUDED.show_crf_version,
+                        show_crf_int_name = EXCLUDED.show_crf_int_name,
+                        show_crf_int_date = EXCLUDED.show_crf_int_date,
+                        show_group_info = EXCLUDED.show_group_info,
+                        show_disc_info = EXCLUDED.show_disc_info,
+                        odm_metadataversion_name = EXCLUDED.odm_metadataversion_name,
+                        odm_metadataversion_oid = EXCLUDED.odm_metadataversion_oid,
+                        odm_prior_study_oid = EXCLUDED.odm_prior_study_oid,
+                        odm_prior_metadataversion_oid = EXCLUDED.odm_prior_metadataversion_oid,
+                        show_secondary_id = EXCLUDED.show_secondary_id,
+                        dataset_item_status_id = EXCLUDED.dataset_item_status_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE dataset SET
+                        study_id = NEW.study_id,
+                        status_id = NEW.status_id,
+                        name = NEW.name,
+                        description = NEW.description,
+                        sql_statement = NEW.sql_statement,
+                        num_runs = NEW.num_runs,
+                        date_start = NEW.date_start,
+                        date_end = NEW.date_end,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        date_last_run = NEW.date_last_run,
+                        owner_id = NEW.owner_id,
+                        approver_id = NEW.approver_id,
+                        update_id = NEW.update_id,
+                        show_event_location = NEW.show_event_location,
+                        show_event_start = NEW.show_event_start,
+                        show_event_end = NEW.show_event_end,
+                        show_subject_dob = NEW.show_subject_dob,
+                        show_subject_gender = NEW.show_subject_gender,
+                        show_event_status = NEW.show_event_status,
+                        show_subject_status = NEW.show_subject_status,
+                        show_subject_unique_id = NEW.show_subject_unique_id,
+                        show_subject_age_at_event = NEW.show_subject_age_at_event,
+                        show_crf_status = NEW.show_crf_status,
+                        show_crf_version = NEW.show_crf_version,
+                        show_crf_int_name = NEW.show_crf_int_name,
+                        show_crf_int_date = NEW.show_crf_int_date,
+                        show_group_info = NEW.show_group_info,
+                        show_disc_info = NEW.show_disc_info,
+                        odm_metadataversion_name = NEW.odm_meta_data_version_name,
+                        odm_metadataversion_oid = NEW.odm_meta_data_version_oid,
+                        odm_prior_study_oid = NEW.odm_prior_study_oid,
+                        odm_prior_metadataversion_oid = NEW.odm_prior_meta_data_version_oid,
+                        show_secondary_id = NEW.show_secondary_id,
+                        dataset_item_status_id = NEW.dataset_item_status_id
+                    WHERE dataset_id = OLD.dataset_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM dataset WHERE dataset_id = OLD.dataset_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_dataset_to_dataset ON module_dataset;
+            CREATE TRIGGER trg_sync_module_dataset_to_dataset
+            AFTER INSERT OR UPDATE OR DELETE ON module_dataset
+            FOR EACH ROW EXECUTE FUNCTION sync_module_dataset_to_dataset();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_module_dataset_to_dataset ON module_dataset;
+            DROP FUNCTION IF EXISTS sync_module_dataset_to_dataset();
+            DROP TRIGGER IF EXISTS trg_sync_dataset_to_module ON dataset;
+            DROP FUNCTION IF EXISTS sync_dataset_to_module_dataset();
+        </rollback>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-03-filter-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between filter and module_filter</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_filter_to_module_filter()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    IF (TG_OP = 'DELETE') THEN RETURN OLD; END IF;
+                    RETURN NEW;
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_filter (
+                        filter_id, name, description, sql_statement,
+                        status_id, date_created, date_updated, owner_id, update_id
+                    )
+                    VALUES (
+                        NEW.filter_id, NEW.name, NEW.description, NEW.sql_statement,
+                        NEW.status_id, NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id
+                    )
+                    ON CONFLICT (filter_id) DO UPDATE SET
+                        name = EXCLUDED.name,
+                        description = EXCLUDED.description,
+                        sql_statement = EXCLUDED.sql_statement,
+                        status_id = EXCLUDED.status_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_filter SET
+                        name = NEW.name,
+                        description = NEW.description,
+                        sql_statement = NEW.sql_statement,
+                        status_id = NEW.status_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id
+                    WHERE filter_id = OLD.filter_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_filter WHERE filter_id = OLD.filter_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_filter_to_module ON filter;
+            CREATE TRIGGER trg_sync_filter_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON filter
+            FOR EACH ROW EXECUTE FUNCTION sync_filter_to_module_filter();
+
+            CREATE OR REPLACE FUNCTION sync_module_filter_to_filter()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    IF (TG_OP = 'DELETE') THEN RETURN OLD; END IF;
+                    RETURN NEW;
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO filter (
+                        filter_id, name, description, sql_statement,
+                        status_id, date_created, date_updated, owner_id, update_id
+                    )
+                    VALUES (
+                        NEW.filter_id, NEW.name, NEW.description, NEW.sql_statement,
+                        NEW.status_id, NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id
+                    )
+                    ON CONFLICT (filter_id) DO UPDATE SET
+                        name = EXCLUDED.name,
+                        description = EXCLUDED.description,
+                        sql_statement = EXCLUDED.sql_statement,
+                        status_id = EXCLUDED.status_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE filter SET
+                        name = NEW.name,
+                        description = NEW.description,
+                        sql_statement = NEW.sql_statement,
+                        status_id = NEW.status_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id
+                    WHERE filter_id = OLD.filter_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM filter WHERE filter_id = OLD.filter_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_filter_to_filter ON module_filter;
+            CREATE TRIGGER trg_sync_module_filter_to_filter
+            AFTER INSERT OR UPDATE OR DELETE ON module_filter
+            FOR EACH ROW EXECUTE FUNCTION sync_module_filter_to_filter();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_module_filter_to_filter ON module_filter;
+            DROP FUNCTION IF EXISTS sync_module_filter_to_filter();
+            DROP TRIGGER IF EXISTS trg_sync_filter_to_module ON filter;
+            DROP FUNCTION IF EXISTS sync_filter_to_module_filter();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

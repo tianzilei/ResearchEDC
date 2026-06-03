@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: keep legacy and module subject-group fork tables synchronized in both write directions. -->
+
+    <changeSet author="research-edc" id="2026-06-03-subjectgroup-module-sync-depth-guards" dbms="postgresql">
+        <comment>Add recursion guards to existing module-to-legacy subject-group sync functions</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_study_group_class_to_study_group_class()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    IF (TG_OP = 'DELETE') THEN
+                        RETURN OLD;
+                    END IF;
+                    RETURN NEW;
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO study_group_class (
+                        study_group_class_id, name, study_id, owner_id,
+                        date_created, date_updated, update_id,
+                        group_class_type_id, status_id, subject_assignment
+                    )
+                    VALUES (
+                        NEW.study_group_class_id, NEW.name, NEW.study_id, NEW.owner_id,
+                        NEW.date_created, NEW.date_updated, NEW.update_id,
+                        NEW.group_class_type_id, NEW.status_id, NEW.subject_assignment
+                    )
+                    ON CONFLICT (study_group_class_id) DO UPDATE SET
+                        name = EXCLUDED.name,
+                        study_id = EXCLUDED.study_id,
+                        owner_id = EXCLUDED.owner_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        update_id = EXCLUDED.update_id,
+                        group_class_type_id = EXCLUDED.group_class_type_id,
+                        status_id = EXCLUDED.status_id,
+                        subject_assignment = EXCLUDED.subject_assignment;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE study_group_class SET
+                        name = NEW.name,
+                        study_id = NEW.study_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        group_class_type_id = NEW.group_class_type_id,
+                        status_id = NEW.status_id,
+                        subject_assignment = NEW.subject_assignment
+                    WHERE study_group_class_id = OLD.study_group_class_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM study_group_class WHERE study_group_class_id = OLD.study_group_class_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_module_study_group_to_study_group()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    IF (TG_OP = 'DELETE') THEN
+                        RETURN OLD;
+                    END IF;
+                    RETURN NEW;
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO study_group (
+                        study_group_id, name, description, study_group_class_id
+                    )
+                    VALUES (
+                        NEW.study_group_id, NEW.name, NEW.description, NEW.study_group_class_id
+                    )
+                    ON CONFLICT (study_group_id) DO UPDATE SET
+                        name = EXCLUDED.name,
+                        description = EXCLUDED.description,
+                        study_group_class_id = EXCLUDED.study_group_class_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE study_group SET
+                        name = NEW.name,
+                        description = NEW.description,
+                        study_group_class_id = NEW.study_group_class_id
+                    WHERE study_group_id = OLD.study_group_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM study_group WHERE study_group_id = OLD.study_group_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+        ]]></sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-03-subjectgroup-legacy-to-module-sync" dbms="postgresql">
+        <comment>Create legacy-to-module subject-group sync functions and triggers</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_study_group_class_to_module_study_group_class()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    IF (TG_OP = 'DELETE') THEN
+                        RETURN OLD;
+                    END IF;
+                    RETURN NEW;
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_study_group_class (
+                        study_group_class_id, name, study_id, owner_id,
+                        date_created, date_updated, update_id,
+                        group_class_type_id, status_id, subject_assignment
+                    )
+                    VALUES (
+                        NEW.study_group_class_id, NEW.name, NEW.study_id, NEW.owner_id,
+                        NEW.date_created, NEW.date_updated, NEW.update_id,
+                        NEW.group_class_type_id, NEW.status_id, NEW.subject_assignment
+                    )
+                    ON CONFLICT (study_group_class_id) DO UPDATE SET
+                        name = EXCLUDED.name,
+                        study_id = EXCLUDED.study_id,
+                        owner_id = EXCLUDED.owner_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        update_id = EXCLUDED.update_id,
+                        group_class_type_id = EXCLUDED.group_class_type_id,
+                        status_id = EXCLUDED.status_id,
+                        subject_assignment = EXCLUDED.subject_assignment;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_study_group_class SET
+                        name = NEW.name,
+                        study_id = NEW.study_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        group_class_type_id = NEW.group_class_type_id,
+                        status_id = NEW.status_id,
+                        subject_assignment = NEW.subject_assignment
+                    WHERE study_group_class_id = OLD.study_group_class_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_study_group_class WHERE study_group_class_id = OLD.study_group_class_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_study_group_class_to_module ON study_group_class;
+            CREATE TRIGGER trg_sync_study_group_class_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON study_group_class
+            FOR EACH ROW EXECUTE FUNCTION sync_study_group_class_to_module_study_group_class();
+
+            CREATE OR REPLACE FUNCTION sync_study_group_to_module_study_group()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    IF (TG_OP = 'DELETE') THEN
+                        RETURN OLD;
+                    END IF;
+                    RETURN NEW;
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_study_group (
+                        study_group_id, name, description, study_group_class_id
+                    )
+                    VALUES (
+                        NEW.study_group_id, NEW.name, NEW.description, NEW.study_group_class_id
+                    )
+                    ON CONFLICT (study_group_id) DO UPDATE SET
+                        name = EXCLUDED.name,
+                        description = EXCLUDED.description,
+                        study_group_class_id = EXCLUDED.study_group_class_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_study_group SET
+                        name = NEW.name,
+                        description = NEW.description,
+                        study_group_class_id = NEW.study_group_class_id
+                    WHERE study_group_id = OLD.study_group_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_study_group WHERE study_group_id = OLD.study_group_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_study_group_to_module ON study_group;
+            CREATE TRIGGER trg_sync_study_group_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON study_group
+            FOR EACH ROW EXECUTE FUNCTION sync_study_group_to_module_study_group();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_study_group_to_module ON study_group;
+            DROP FUNCTION IF EXISTS sync_study_group_to_module_study_group();
+            DROP TRIGGER IF EXISTS trg_sync_study_group_class_to_module ON study_group_class;
+            DROP FUNCTION IF EXISTS sync_study_group_class_to_module_study_group_class();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

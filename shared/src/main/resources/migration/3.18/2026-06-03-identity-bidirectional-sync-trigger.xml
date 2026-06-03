@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: keep legacy identity tables and module-owned identity tables synchronized in both directions. -->
+
+    <changeSet author="research-edc" id="2026-06-03-identity-bidirectional-sync-postgresql" dbms="postgresql">
+        <comment>Create bidirectional sync triggers for user_account and study_user_role module fork tables</comment>
+        <sql splitStatements="false"><![CDATA[
+            DROP TRIGGER IF EXISTS trg_sync_module_study_user_role ON module_study_user_role;
+
+            DELETE FROM module_study_user_role;
+
+            INSERT INTO module_study_user_role (
+                study_user_role_id, role_name, study_id, user_name, status_id, owner_id
+            )
+            SELECT
+                study_user_role_id, role_name, study_id, user_name, status_id, owner_id
+            FROM study_user_role;
+
+            SELECT setval(
+                'module_study_user_role_id_seq',
+                COALESCE((SELECT MAX(study_user_role_id) FROM module_study_user_role), 1)
+            );
+
+            CREATE OR REPLACE FUNCTION sync_module_user_account_to_user_account()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO user_account (
+                        user_id, user_name, first_name, last_name, email, phone,
+                        institutional_affiliation, user_type_id, status_id, active_study,
+                        enabled, account_non_locked, passwd, date_created, date_updated, owner_id, update_id
+                    )
+                    VALUES (
+                        NEW.user_id, NEW.user_name, NEW.first_name, NEW.last_name, NEW.email, NEW.phone,
+                        NEW.institutional_affiliation, NEW.user_type_id, NEW.status_id, NEW.active_study_id,
+                        NEW.enabled, NEW.account_non_locked, NEW.passwd, NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id
+                    )
+                    ON CONFLICT (user_id) DO UPDATE SET
+                        user_name = EXCLUDED.user_name,
+                        first_name = EXCLUDED.first_name,
+                        last_name = EXCLUDED.last_name,
+                        email = EXCLUDED.email,
+                        phone = EXCLUDED.phone,
+                        institutional_affiliation = EXCLUDED.institutional_affiliation,
+                        user_type_id = EXCLUDED.user_type_id,
+                        status_id = EXCLUDED.status_id,
+                        active_study = EXCLUDED.active_study,
+                        enabled = EXCLUDED.enabled,
+                        account_non_locked = EXCLUDED.account_non_locked,
+                        passwd = EXCLUDED.passwd,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE user_account SET
+                        user_name = NEW.user_name,
+                        first_name = NEW.first_name,
+                        last_name = NEW.last_name,
+                        email = NEW.email,
+                        phone = NEW.phone,
+                        institutional_affiliation = NEW.institutional_affiliation,
+                        user_type_id = NEW.user_type_id,
+                        status_id = NEW.status_id,
+                        active_study = NEW.active_study_id,
+                        enabled = NEW.enabled,
+                        account_non_locked = NEW.account_non_locked,
+                        passwd = NEW.passwd,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id
+                    WHERE user_id = OLD.user_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM user_account WHERE user_id = OLD.user_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_user_account_to_module_user_account()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_user_account (
+                        user_id, user_name, first_name, last_name, email, phone,
+                        institutional_affiliation, user_type_id, status_id, active_study_id,
+                        enabled, account_non_locked, passwd, date_created, date_updated, owner_id, update_id
+                    )
+                    VALUES (
+                        NEW.user_id, NEW.user_name, NEW.first_name, NEW.last_name, NEW.email, NEW.phone,
+                        NEW.institutional_affiliation, NEW.user_type_id, NEW.status_id, NEW.active_study,
+                        NEW.enabled, NEW.account_non_locked, NEW.passwd, NEW.date_created, NEW.date_updated, NEW.owner_id, NEW.update_id
+                    )
+                    ON CONFLICT (user_id) DO UPDATE SET
+                        user_name = EXCLUDED.user_name,
+                        first_name = EXCLUDED.first_name,
+                        last_name = EXCLUDED.last_name,
+                        email = EXCLUDED.email,
+                        phone = EXCLUDED.phone,
+                        institutional_affiliation = EXCLUDED.institutional_affiliation,
+                        user_type_id = EXCLUDED.user_type_id,
+                        status_id = EXCLUDED.status_id,
+                        active_study_id = EXCLUDED.active_study_id,
+                        enabled = EXCLUDED.enabled,
+                        account_non_locked = EXCLUDED.account_non_locked,
+                        passwd = EXCLUDED.passwd,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        owner_id = EXCLUDED.owner_id,
+                        update_id = EXCLUDED.update_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_user_account SET
+                        user_name = NEW.user_name,
+                        first_name = NEW.first_name,
+                        last_name = NEW.last_name,
+                        email = NEW.email,
+                        phone = NEW.phone,
+                        institutional_affiliation = NEW.institutional_affiliation,
+                        user_type_id = NEW.user_type_id,
+                        status_id = NEW.status_id,
+                        active_study_id = NEW.active_study,
+                        enabled = NEW.enabled,
+                        account_non_locked = NEW.account_non_locked,
+                        passwd = NEW.passwd,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        owner_id = NEW.owner_id,
+                        update_id = NEW.update_id
+                    WHERE user_id = OLD.user_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_user_account WHERE user_id = OLD.user_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_module_study_user_role_to_study_user_role()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO study_user_role (
+                        study_user_role_id, role_name, study_id, user_name, status_id, owner_id
+                    )
+                    VALUES (
+                        NEW.study_user_role_id, NEW.role_name, NEW.study_id, NEW.user_name, NEW.status_id, NEW.owner_id
+                    )
+                    ON CONFLICT (study_user_role_id) DO UPDATE SET
+                        role_name = EXCLUDED.role_name,
+                        study_id = EXCLUDED.study_id,
+                        user_name = EXCLUDED.user_name,
+                        status_id = EXCLUDED.status_id,
+                        owner_id = EXCLUDED.owner_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE study_user_role SET
+                        role_name = NEW.role_name,
+                        study_id = NEW.study_id,
+                        user_name = NEW.user_name,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id
+                    WHERE study_user_role_id = OLD.study_user_role_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM study_user_role WHERE study_user_role_id = OLD.study_user_role_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_study_user_role_to_module_study_user_role()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_study_user_role (
+                        study_user_role_id, role_name, study_id, user_name, status_id, owner_id
+                    )
+                    VALUES (
+                        NEW.study_user_role_id, NEW.role_name, NEW.study_id, NEW.user_name, NEW.status_id, NEW.owner_id
+                    )
+                    ON CONFLICT (study_user_role_id) DO UPDATE SET
+                        role_name = EXCLUDED.role_name,
+                        study_id = EXCLUDED.study_id,
+                        user_name = EXCLUDED.user_name,
+                        status_id = EXCLUDED.status_id,
+                        owner_id = EXCLUDED.owner_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_study_user_role SET
+                        role_name = NEW.role_name,
+                        study_id = NEW.study_id,
+                        user_name = NEW.user_name,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id
+                    WHERE study_user_role_id = OLD.study_user_role_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_study_user_role WHERE study_user_role_id = OLD.study_user_role_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_user_account ON module_user_account;
+            CREATE TRIGGER trg_sync_module_user_account
+            AFTER INSERT OR UPDATE OR DELETE ON module_user_account
+            FOR EACH ROW EXECUTE FUNCTION sync_module_user_account_to_user_account();
+
+            DROP TRIGGER IF EXISTS trg_sync_user_account_to_module ON user_account;
+            CREATE TRIGGER trg_sync_user_account_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON user_account
+            FOR EACH ROW EXECUTE FUNCTION sync_user_account_to_module_user_account();
+
+            DROP TRIGGER IF EXISTS trg_sync_module_study_user_role ON module_study_user_role;
+            CREATE TRIGGER trg_sync_module_study_user_role
+            AFTER INSERT OR UPDATE OR DELETE ON module_study_user_role
+            FOR EACH ROW EXECUTE FUNCTION sync_module_study_user_role_to_study_user_role();
+
+            DROP TRIGGER IF EXISTS trg_sync_study_user_role_to_module ON study_user_role;
+            CREATE TRIGGER trg_sync_study_user_role_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON study_user_role
+            FOR EACH ROW EXECUTE FUNCTION sync_study_user_role_to_module_study_user_role();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_user_account_to_module ON user_account;
+            DROP FUNCTION IF EXISTS sync_user_account_to_module_user_account();
+            DROP TRIGGER IF EXISTS trg_sync_study_user_role_to_module ON study_user_role;
+            DROP FUNCTION IF EXISTS sync_study_user_role_to_module_study_user_role();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

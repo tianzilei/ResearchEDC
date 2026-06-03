@@ -6,6 +6,52 @@
 
 ---
 
+## 2026-06-03 — Phase B Schema Ownership 启动：双向同步 Trigger + 实体表重映射
+
+- **模块:** `app`, `shared`
+- **原因:** 启动 Phase B Schema Ownership，实施 Option B（新建 module 独有表 + 双向同步 trigger），消除 Modulith module 与 legacy 代码对同一张表的数据竞争。
+
+### 变更内容
+
+1. **10 组双向同步 Trigger（3,494 行 Liquibase 迁移脚本）:**
+   - 每张 legacy 表 ↔ module 表各有两个 PostgreSQL trigger 函数
+   - 使用 `pg_trigger_depth() > 1` 防递归无限循环
+   - 涵盖 10 个域：study, subject, event, datacapture, crf, identity, rule, dataset-filter, discrepancy-note, subjectgroup
+   - `release.xml` 已注册所有迁移文件
+
+2. **5 个 JPA 实体表重映射:**
+   - `FilterEntity`: `filter` → `module_filter`（序列重命名 `module_filter_id_seq`）
+   - `DatasetEntity`: `dataset` → `module_dataset`
+   - `UserAccountEntity`: `user_account` → `module_user_account`（序列重命名，列 `active_study` → `active_study_id`）
+   - `RoleEntity`: `study_user_role` → `module_role`
+   - `StudyGroupClassEntity`: `study_group_class` → `module_study_group_class`
+
+3. **新 Adapter 代码:**
+   - `app/.../filter/internal/adapter/FilterDaoAdapter.java` — 替代 `FilterDAO` 直调
+   - `app/.../subjectgroup/internal/adapter/StudyGroupClassDaoAdapter.java` — 替代 `StudyGroupClassDAO` 直调
+
+4. **Repository 增强:**
+   - `StudyGroupClassRepository` 新增 4 个 native query（`module_study_group_class` JOIN `module_study`）
+
+5. **DaoRegistrar 排除更新:**
+   - `FilterDAO`、`StudyGroupClassDAO` 加入排除列表
+
+### 测试验证
+
+- **构建:** `mvn clean compile` ✅ | `mvn test -pl app -am` 247/247 ✅
+- **Modulith 验证:** `ModulithVerificationTest` ✅
+- **前端:** `pnpm typecheck` 0 errors | `pnpm test` 25/25 ✅
+- **问卷服务:** `pytest` 39/39 ✅
+- **部署:** Bare deploy 全部 6 服务运行正常
+
+### 剩余工作
+
+- 剩余 5 个 module 的实体表重映射（study, subject, event, datacapture, crf/rule/discrepancynote）
+- Trigger 迁移脚本 DB 验证（INSERT/UPDATE/DELETE 往返测试）
+- 其余 module 的 Adapter 代码
+
+---
+
 ## 2026-05-30 — 导入/导出优化与中文编码修复
 
 - **模块:** `app`, `frontend`, `web`
