@@ -46,5 +46,8 @@ jobs:
         run: pnpm lint
         continue-on-error: true
 
+      - name: Unit tests
+        run: pnpm test --run
+
       - name: Build
         run: pnpm build
