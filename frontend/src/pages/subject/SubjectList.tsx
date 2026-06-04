@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, Table, Button, Space, Typography, Modal, Form, Input, Select, DatePicker, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useCurrentStudy } from "@/hooks/useStudies";
@@ -26,13 +26,18 @@ export default function SubjectList() {
   const [createOpen, setCreateOpen] = useState(false);
   const [form] = Form.useForm();
 
-  useState(() => {
-    if (!currentStudy?.id) return;
+  useEffect(() => {
+    if (!currentStudy?.id) {
+      setSubjects([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     fetch(`/api/v1/subjects/by-study?studyId=${currentStudy.id}`)
       .then(r => r.ok ? r.json() : [])
       .then(data => { setSubjects(data); setLoading(false); })
       .catch(() => setLoading(false));
-  });
+  }, [currentStudy?.id]);
 
   const handleCreate = async () => {
     try {

@@ -3,6 +3,7 @@ import { RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { StudyProvider } from "@/hooks/useStudies";
 import router from "@/router";
 
 const queryClient = new QueryClient({
@@ -24,7 +25,9 @@ export function AppProviders({ children }: AppProvidersProps) {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          {children ?? <RouterProvider router={router} />}
+          <StudyProvider>
+            {children ?? <RouterProvider router={router} />}
+          </StudyProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
