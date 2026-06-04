@@ -79,11 +79,6 @@ public class RandomizeService extends RandomizationRegistrar {
     IStudyDAO sdao=null;
 
 
-    public RandomizeService(DataSource ds) {
-        this.ds = ds;
-        this.expressionService = new ExpressionService(ds);
-    }
-
     @Autowired
     public RandomizeService(DataSource ds, ExpressionService expressionService, IStudySubjectDAO studySubjectDAO, IStudyDAO studyDAO,
             IUserAccountDAO userAccountDAO, ISubjectDAO subjectDAO, StudyGroupClassDao studyGroupClassDAO, StudyGroupDao studyGroupDAO,
