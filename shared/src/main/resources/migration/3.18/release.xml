@@ -50,15 +50,19 @@
     <include file="migration/3.18/2026-05-23-module-study-event-definition-table.xml"/>
     <include file="migration/3.18/2026-05-23-module-study-event-table.xml"/>
     <include file="migration/3.18/2026-05-23-module-event-crf-table.xml"/>
+    <include file="migration/3.18/2026-06-05-module-event-definition-crf-table.xml"/>
     <include file="migration/3.18/2026-05-23-module-study-event-definition-sync-trigger.xml"/>
     <include file="migration/3.18/2026-05-23-module-study-event-sync-trigger.xml"/>
     <include file="migration/3.18/2026-05-23-module-event-crf-sync-trigger.xml"/>
     <include file="migration/3.18/2026-06-03-event-bidirectional-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-06-05-event-definition-crf-bidirectional-sync-trigger.xml"/>
     <!-- Module-owned fork tables (Phase B: Schema Ownership — datacapture module) -->
     <include file="migration/3.18/2026-05-23-module-item-data-table.xml"/>
     <include file="migration/3.18/2026-05-23-module-item-data-sync-trigger.xml"/>
     <include file="migration/3.18/2026-05-23-module-item-group-table.xml"/>
     <include file="migration/3.18/2026-05-23-module-item-group-sync-trigger.xml"/>
+    <include file="migration/3.18/2026-06-05-module-item-group-metadata-table.xml"/>
+    <include file="migration/3.18/2026-06-05-item-group-metadata-bidirectional-sync-trigger.xml"/>
     <include file="migration/3.18/2026-05-23-module-response-set-table.xml"/>
     <include file="migration/3.18/2026-05-23-module-response-set-sync-trigger.xml"/>
     <include file="migration/3.18/2026-06-03-datacapture-bidirectional-sync-trigger.xml"/>

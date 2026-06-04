@@ -40,12 +40,12 @@ import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +83,7 @@ public class ExtractBean {
     private ICrfDAO crfDao;
     private ICrfVersionDAO crfVersionDao;
     private IItemDAO itemDao;
-    private ItemFormMetadataDAO itemFormMetadataDao;
+    private IItemFormMetadataDAO itemFormMetadataDao;
     private StudyGroupDao studyGroupDao;
     private StudyGroupClassDao studyGroupClassDao;
     private IStudyEventDAO studyEventDao;
@@ -91,7 +91,7 @@ public class ExtractBean {
     private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
     private Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory = LegacyDaoFactory::crfVersionDao;
     private Function<DataSource, IItemDAO> itemDaoFactory = LegacyDaoFactory::itemDao;
-    private Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory = ItemFormMetadataDAO::new;
+    private Function<DataSource, IItemFormMetadataDAO> itemFormMetadataDaoFactory = LegacyDaoFactory::itemFormMetadataDao;
     private Function<DataSource, StudyGroupDao> studyGroupDaoFactory = LegacyDaoFactory::studyGroupDao;
     private Function<DataSource, StudyGroupClassDao> studyGroupClassDaoFactory = LegacyDaoFactory::studyGroupClassDao;
     private Function<DataSource, IStudyEventDAO> studyEventDaoFactory = LegacyDaoFactory::studyEventDao;
@@ -819,7 +819,7 @@ public class ExtractBean {
         ICrfDAO cdao = getCrfDao();
         ICrfVersionDAO cvdao = getCrfVersionDao();
         IItemDAO idao = getItemDao();
-        ItemFormMetadataDAO ifmDAO = getItemFormMetadataDao();
+        IItemFormMetadataDAO ifmDAO = getItemFormMetadataDao();
         StudyGroupDao studygroupDAO = getStudyGroupDao();
         StudyGroupClassDao studygroupclassDAO = getStudyGroupClassDao();
         studyGroupClasses = new ArrayList();
@@ -2992,7 +2992,7 @@ public class ExtractBean {
         return itemDao;
     }
 
-    private ItemFormMetadataDAO getItemFormMetadataDao() {
+    private IItemFormMetadataDAO getItemFormMetadataDao() {
         if (itemFormMetadataDao == null) {
             itemFormMetadataDao = itemFormMetadataDaoFactory.apply(ds);
         }

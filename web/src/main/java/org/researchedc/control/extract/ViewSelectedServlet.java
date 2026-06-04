@@ -19,7 +19,7 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -38,7 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ViewSelectedServlet extends SecureController {
 
     @Autowired
-    protected ItemFormMetadataDAO itemFormMetadataDao;
+    protected IItemFormMetadataDAO itemFormMetadataDao;
 
     Locale locale;
 
@@ -97,7 +97,7 @@ public class ViewSelectedServlet extends SecureController {
 
         ICrfDAO crfdao = this.crfDao;
         IItemDAO idao = this.itemDao;
-        ItemFormMetadataDAO imfdao = this.itemFormMetadataDao;
+        IItemFormMetadataDAO imfdao = this.itemFormMetadataDao;
         ArrayList ids = CreateDatasetServlet.allSedItemIdsInStudy(events, crfdao, idao);// new
                                                                                         // ArrayList();
         // ArrayList allItemsInStudy = EditSelectedServlet.selectAll(events,
@@ -136,7 +136,7 @@ public class ViewSelectedServlet extends SecureController {
 
     }
 
-    public static ArrayList getAllSelected(DatasetBean db, IItemDAO idao, ItemFormMetadataDAO imfdao) throws Exception {
+    public static ArrayList getAllSelected(DatasetBean db, IItemDAO idao, IItemFormMetadataDAO imfdao) throws Exception {
         ArrayList items = new ArrayList();
         // ArrayList itemIds = db.getItemIds();
         ArrayList itemDefCrfs = db.getItemDefCrf();

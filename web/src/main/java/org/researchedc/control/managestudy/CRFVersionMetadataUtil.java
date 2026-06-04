@@ -12,10 +12,10 @@ import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -27,16 +27,16 @@ public class CRFVersionMetadataUtil {
     protected IItemDAO itemDao;
 
     @Autowired
-    protected SectionDAO sectionDao;
+    protected ISectionDAO sectionDao;
 
     @Autowired
     protected IItemGroupDAO itemGroupDao;
 
     @Autowired
-    protected ItemGroupMetadataDAO itemGroupMetadataDao;
+    protected IItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
-    protected ItemFormMetadataDAO itemFormMetadataDao;
+    protected IItemFormMetadataDAO itemFormMetadataDao;
 
 	private DataSource dataSource = null;
 	
@@ -50,12 +50,12 @@ public class CRFVersionMetadataUtil {
     public ArrayList<SectionBean> retrieveFormMetadata(CRFVersionBean version) throws Exception {
 
         IItemDAO idao = this.itemDao;
-        ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
+        IItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
 
             // tbh, 102007
-            SectionDAO sdao = this.sectionDao;
+            ISectionDAO sdao = this.sectionDao;
             IItemGroupDAO igdao = this.itemGroupDao;
-            ItemGroupMetadataDAO igmdao = this.itemGroupMetadataDao;
+            IItemGroupMetadataDAO igmdao = this.itemGroupMetadataDao;
             ArrayList sections = (ArrayList) sdao.findByVersionId(version.getId());
             HashMap versionMap = new HashMap();
             for (int i = 0; i < sections.size(); i++) {

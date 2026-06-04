@@ -39,10 +39,10 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.domain.crfdata.DynamicsItemFormMetadataBean;
 import org.researchedc.domain.crfdata.DynamicsItemGroupMetadataBean;
 import org.researchedc.domain.rule.RuleSetBean;
@@ -84,9 +84,9 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
     private final Function<DataSource, IItemDataDAO> itemDataDaoFactory;
     private final Function<DataSource, IItemDAO> itemDaoFactory;
     private final Function<DataSource, IItemGroupDAO> itemGroupDaoFactory;
-    private final Function<DataSource, SectionDAO> sectionDaoFactory;
-    private final Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
-    private final Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory;
+    private final Function<DataSource, ISectionDAO> sectionDaoFactory;
+    private final Function<DataSource, IItemFormMetadataDAO> itemFormMetadataDaoFactory;
+    private final Function<DataSource, IItemGroupMetadataDAO> itemGroupMetadataDaoFactory;
     private final Function<DataSource, IStudyEventDAO> studyEventDaoFactory;
     private final Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory;
     private ExpressionService expressionService;
@@ -94,7 +94,7 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
     
     public DynamicsMetadataService(DataSource ds) {
         this(ds, LegacyDaoFactory::eventCrfDao, LegacyDaoFactory::itemDataDao, LegacyDaoFactory::itemDao, LegacyDaoFactory::itemGroupDao,
-                SectionDAO::new, ItemFormMetadataDAO::new, ItemGroupMetadataDAO::new,
+                LegacyDaoFactory::sectionDao, LegacyDaoFactory::itemFormMetadataDao, LegacyDaoFactory::itemGroupMetadataDao,
                 LegacyDaoFactory::studyEventDao, LegacyDaoFactory::eventDefinitionCrfDao);
     }
 
@@ -102,9 +102,9 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
             Function<DataSource, IItemDataDAO> itemDataDaoFactory,
             Function<DataSource, IItemDAO> itemDaoFactory,
             Function<DataSource, IItemGroupDAO> itemGroupDaoFactory,
-            Function<DataSource, SectionDAO> sectionDaoFactory,
-            Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory,
-            Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory,
+            Function<DataSource, ISectionDAO> sectionDaoFactory,
+            Function<DataSource, IItemFormMetadataDAO> itemFormMetadataDaoFactory,
+            Function<DataSource, IItemGroupMetadataDAO> itemGroupMetadataDaoFactory,
             Function<DataSource, IStudyEventDAO> studyEventDaoFactory,
             Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory) {
         this.ds = ds;
@@ -1078,15 +1078,15 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
         return itemGroupDaoFactory.apply(ds);
     }
 
-    private SectionDAO getSectionDAO() {
+    private ISectionDAO getSectionDAO() {
         return sectionDaoFactory.apply(ds);
     }
 
-    private ItemFormMetadataDAO getItemFormMetadataDAO() {
+    private IItemFormMetadataDAO getItemFormMetadataDAO() {
         return itemFormMetadataDaoFactory.apply(ds);
     }
 
-    private ItemGroupMetadataDAO getItemGroupMetadataDAO() {
+    private IItemGroupMetadataDAO getItemGroupMetadataDAO() {
         return itemGroupMetadataDaoFactory.apply(ds);
     }
 

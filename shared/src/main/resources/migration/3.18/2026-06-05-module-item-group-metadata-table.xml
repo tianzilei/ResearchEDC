@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: Schema Ownership - module-owned item_group_metadata table -->
+
+    <changeSet author="research-edc" id="2026-06-05-module-item-group-metadata-seq-1">
+        <comment>Create sequence for module_item_group_metadata PK</comment>
+        <createSequence sequenceName="module_item_group_metadata_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-05-module-item-group-metadata-table-2">
+        <comment>Create module_item_group_metadata table with columns used by the DataCapture module</comment>
+        <createTable tableName="module_item_group_metadata">
+            <column name="item_group_metadata_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="item_group_id" type="INT"/>
+            <column name="header" type="VARCHAR(255)"/>
+            <column name="subheader" type="VARCHAR(255)"/>
+            <column name="layout" type="VARCHAR(100)"/>
+            <column name="repeat_number" type="INT"/>
+            <column name="repeat_max" type="INT"/>
+            <column name="repeat_array" type="VARCHAR(255)"/>
+            <column name="row_start_number" type="INT"/>
+            <column name="crf_version_id" type="INT"/>
+            <column name="item_id" type="INT"/>
+            <column name="ordinal" type="INT"/>
+            <column name="borders" type="INT"/>
+            <column name="show_group" type="BOOLEAN"/>
+            <column name="repeating_group" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-05-module-item-group-metadata-pk-3">
+        <comment>Add primary key on item_group_metadata_id</comment>
+        <addPrimaryKey columnNames="item_group_metadata_id" constraintName="pk_module_item_group_metadata" tableName="module_item_group_metadata"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-05-module-item-group-metadata-copy-4" failOnError="false">
+        <comment>Copy existing data from legacy item_group_metadata table to module_item_group_metadata</comment>
+        <sql>
+            INSERT INTO module_item_group_metadata (
+                item_group_metadata_id, item_group_id, header, subheader,
+                layout, repeat_number, repeat_max, repeat_array,
+                row_start_number, crf_version_id, item_id, ordinal,
+                borders, show_group, repeating_group
+            )
+            SELECT
+                item_group_metadata_id, item_group_id, header, subheader,
+                layout, repeat_number, repeat_max, repeat_array,
+                row_start_number, crf_version_id, item_id, ordinal,
+                borders, show_group, repeating_group
+            FROM item_group_metadata
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-05-module-item-group-metadata-indexes-5">
+        <comment>Create lookup indexes for module_item_group_metadata</comment>
+        <createIndex indexName="i_module_igm_item_group_id" tableName="module_item_group_metadata">
+            <column name="item_group_id"/>
+        </createIndex>
+        <createIndex indexName="i_module_igm_crf_version_id" tableName="module_item_group_metadata">
+            <column name="crf_version_id"/>
+        </createIndex>
+        <createIndex indexName="i_module_igm_item_id" tableName="module_item_group_metadata">
+            <column name="item_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-05-module-item-group-metadata-seq-val-6" failOnError="false">
+        <comment>Set sequence to max existing item_group_metadata_id</comment>
+        <sql>
+            SELECT setval('module_item_group_metadata_id_seq', COALESCE((SELECT MAX(item_group_metadata_id) FROM item_group_metadata), 1))
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

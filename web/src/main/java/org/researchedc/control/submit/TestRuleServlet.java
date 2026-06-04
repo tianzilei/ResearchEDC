@@ -25,7 +25,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.domain.rule.action.DiscrepancyNoteActionBean;
@@ -74,7 +74,7 @@ public class TestRuleServlet extends SecureController {
     @Autowired
     IRuleSetDAO ruleSetDao;
     IItemDAO itemDAO;
-    ItemFormMetadataDAO itemFormMetadataDAO;
+    IItemFormMetadataDAO itemFormMetadataDAO;
     RulesPostImportContainerService rulesPostImportContainerService;
     private ExpressionService expressionService;
     private final String TARGET = "target";
@@ -494,7 +494,7 @@ else
         return itemDAO;
     }
 
-    private ItemFormMetadataDAO getItemFormMetadataDAO() {
+    private IItemFormMetadataDAO getItemFormMetadataDAO() {
         itemFormMetadataDAO = this.itemFormMetadataDAO != null ? itemFormMetadataDAO : this.itemFormMetadataDao;
         return itemFormMetadataDAO;
     }

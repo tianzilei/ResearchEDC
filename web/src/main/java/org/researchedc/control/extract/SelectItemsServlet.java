@@ -23,7 +23,7 @@ import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -42,7 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class SelectItemsServlet extends SecureController {
 
     @Autowired
-    protected ItemFormMetadataDAO itemFormMetadataDao;
+    protected IItemFormMetadataDAO itemFormMetadataDao;
 
     Locale locale;
     // < ResourceBundlerestext,resexception,respage;
@@ -108,7 +108,7 @@ public class SelectItemsServlet extends SecureController {
         int discAttr = fp.getInt("discAttr");
         ICrfDAO crfdao = this.crfDao;
         IItemDAO idao = this.itemDao;
-        ItemFormMetadataDAO imfdao = this.itemFormMetadataDao;
+        IItemFormMetadataDAO imfdao = this.itemFormMetadataDao;
         IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
 
         HashMap events = (HashMap) session.getAttribute(CreateDatasetServlet.EVENTS_FOR_CREATE_DATASET);

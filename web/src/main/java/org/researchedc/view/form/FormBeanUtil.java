@@ -23,7 +23,7 @@ import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.service.crfdata.DynamicsMetadataService;
@@ -68,7 +68,7 @@ public class FormBeanUtil {
     protected IItemGroupDAO itemGroupDao;
 
     @Autowired
-    protected ItemGroupMetadataDAO itemGroupMetadataDao;
+    protected IItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
     protected ItemFormMetadataDAO itemFormMetadataDao;
@@ -817,7 +817,7 @@ public class FormBeanUtil {
         DisplaySectionBean displaySectionBean = new DisplaySectionBean();
 
         IItemGroupDAO formGroupDAO = this.itemGroupDao;
-        ItemGroupMetadataDAO igMetaDAO = this.itemGroupMetadataDao;
+        IItemGroupMetadataDAO igMetaDAO = this.itemGroupMetadataDao;
         IItemDAO itemDao = this.itemDao;
         ItemFormMetadataDAO metaDao = this.itemFormMetadataDao;
         SectionDAO sectionDao = this.sectionDao;
@@ -924,7 +924,7 @@ public class FormBeanUtil {
         DisplaySectionBean displaySectionBean = new DisplaySectionBean();
 
         IItemGroupDAO formGroupDAO = this.itemGroupDao;
-        ItemGroupMetadataDAO igMetaDAO = this.itemGroupMetadataDao;
+        IItemGroupMetadataDAO igMetaDAO = this.itemGroupMetadataDao;
         IItemDAO itemDao = this.itemDao;
         ItemFormMetadataDAO metaDao = this.itemFormMetadataDao;
         SectionDAO sectionDao = this.sectionDao;
@@ -1261,7 +1261,7 @@ public class FormBeanUtil {
             ServletContext context) {
         DisplaySectionBean dBean = new DisplaySectionBean();
         IItemGroupDAO formGroupDAO = this.itemGroupDao;
-        ItemGroupMetadataDAO igMetaDAO = this.itemGroupMetadataDao;
+        IItemGroupMetadataDAO igMetaDAO = this.itemGroupMetadataDao;
         IItemDAO itemDao = this.itemDao;
         // Get all items associated with this crfVersion ID; divide them up into
         // items with a group, and those without a group.
@@ -1340,7 +1340,7 @@ public class FormBeanUtil {
 
         DisplaySectionBean dBean = new DisplaySectionBean();
         IItemGroupDAO formGroupDAO = this.itemGroupDao;
-        ItemGroupMetadataDAO igMetaDAO = this.itemGroupMetadataDao;
+        IItemGroupMetadataDAO igMetaDAO = this.itemGroupMetadataDao;
         IItemDAO itemDao = this.itemDao;
         ItemFormMetadataDAO metaDao = this.itemFormMetadataDao;
 

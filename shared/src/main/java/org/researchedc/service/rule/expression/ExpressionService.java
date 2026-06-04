@@ -45,12 +45,12 @@ import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.domain.datamap.StudyEvent;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.expression.ExpressionObjectWrapper;
@@ -94,7 +94,7 @@ public class ExpressionService {
     private IStudyEventDefinitionDAO studyEventDefinitionDao;
     private EventDefinitionCRFDao eventDefinitionCRFDao;
     private DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
-    private ItemGroupMetadataDAO itemGroupMetadataDao;
+    private IItemGroupMetadataDAO itemGroupMetadataDao;
     private EventCRFDao eventCRFDao;
     private IItemGroupDAO itemGroupDao;
     private ICrfDAO crfDao;
@@ -102,19 +102,19 @@ public class ExpressionService {
     private IItemDataDAO itemDataDao;
     private IStudyEventDAO studyEventDao;
     private IStudySubjectDAO studySubjectDao;
-    private ItemFormMetadataDAO itemFormMetadataDao;
+    private IItemFormMetadataDAO itemFormMetadataDao;
     private Function<DataSource, IItemDAO> itemDaoFactory;
     private Function<DataSource, IItemDataDAO> itemDataDaoFactory;
     private Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory;
     private Function<DataSource, ICrfDAO> crfDaoFactory;
     private Function<DataSource, IItemGroupDAO> itemGroupDaoFactory;
-    private Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory;
+    private Function<DataSource, IItemGroupMetadataDAO> itemGroupMetadataDaoFactory;
     private Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory;
     private Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
     private Function<DataSource, IStudyEventDAO> studyEventDaoFactory;
     private Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory;
     private Function<DataSource, EventCRFDao> eventCrfDaoFactory;
-    private Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
+    private Function<DataSource, IItemFormMetadataDAO> itemFormMetadataDaoFactory;
     public final static String STARTDATE = ".STARTDATE";
     public final static String STATUS = ".STATUS";
     public static final String STUDY_EVENT_OID_START_KEY = "SE_";
@@ -131,18 +131,18 @@ public class ExpressionService {
     @Autowired
     public ExpressionService(DataSource ds) {
         init(ds, null, LegacyDaoFactory::itemDao, LegacyDaoFactory::itemDataDao, LegacyDaoFactory::crfVersionDao,
-                LegacyDaoFactory::crfDao, LegacyDaoFactory::itemGroupDao, ItemGroupMetadataDAO::new,
+                LegacyDaoFactory::crfDao, LegacyDaoFactory::itemGroupDao, LegacyDaoFactory::itemGroupMetadataDao,
                 LegacyDaoFactory::eventDefinitionCrfDao, LegacyDaoFactory::studyEventDefinitionDao,
                 LegacyDaoFactory::studyEventDao,                 LegacyDaoFactory::studySubjectDao, LegacyDaoFactory::eventCrfDao,
-                ItemFormMetadataDAO::new);
+                LegacyDaoFactory::itemFormMetadataDao);
     }
 
     public ExpressionService(ExpressionObjectWrapper expressionWrapper) {
         init(expressionWrapper.getDs(), expressionWrapper, LegacyDaoFactory::itemDao, LegacyDaoFactory::itemDataDao,
                 LegacyDaoFactory::crfVersionDao, LegacyDaoFactory::crfDao, LegacyDaoFactory::itemGroupDao,
-                ItemGroupMetadataDAO::new, LegacyDaoFactory::eventDefinitionCrfDao,
+                LegacyDaoFactory::itemGroupMetadataDao, LegacyDaoFactory::eventDefinitionCrfDao,
                 LegacyDaoFactory::studyEventDefinitionDao, LegacyDaoFactory::studyEventDao, LegacyDaoFactory::studySubjectDao,
-                LegacyDaoFactory::eventCrfDao, ItemFormMetadataDAO::new);
+                LegacyDaoFactory::eventCrfDao, LegacyDaoFactory::itemFormMetadataDao);
     }
 
     private void init(DataSource ds, ExpressionObjectWrapper expressionWrapper,
@@ -151,13 +151,13 @@ public class ExpressionService {
             Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory,
             Function<DataSource, ICrfDAO> crfDaoFactory,
             Function<DataSource, IItemGroupDAO> itemGroupDaoFactory,
-            Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory,
+            Function<DataSource, IItemGroupMetadataDAO> itemGroupMetadataDaoFactory,
             Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory,
             Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory,
             Function<DataSource, IStudyEventDAO> studyEventDaoFactory,
             Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory,
             Function<DataSource, EventCRFDao> eventCrfDaoFactory,
-            Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory) {
+            Function<DataSource, IItemFormMetadataDAO> itemFormMetadataDaoFactory) {
         this.itemDaoFactory = itemDaoFactory;
         this.itemDataDaoFactory = itemDataDaoFactory;
         this.crfVersionDaoFactory = crfVersionDaoFactory;
@@ -1537,7 +1537,7 @@ public class ExpressionService {
         return itemGroupDao;
     }
 
-    private ItemGroupMetadataDAO getItemGroupMetadataDao() {
+    private IItemGroupMetadataDAO getItemGroupMetadataDao() {
         if (itemGroupMetadataDao == null) {
             itemGroupMetadataDao = itemGroupMetadataDaoFactory.apply(ds);
         }
@@ -1583,7 +1583,7 @@ public class ExpressionService {
         this.expressionWrapper = expressionWrapper;
     }
 
-    public ItemFormMetadataDAO getItemFormMetadataDao() {
+    public IItemFormMetadataDAO getItemFormMetadataDao() {
         if (itemFormMetadataDao == null) {
             itemFormMetadataDao = itemFormMetadataDaoFactory.apply(ds);
         }

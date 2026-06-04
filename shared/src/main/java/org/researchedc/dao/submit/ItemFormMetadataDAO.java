@@ -12,6 +12,7 @@ import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.EntityDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.core.PreparedStatementFactory;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
@@ -35,7 +36,7 @@ import javax.sql.DataSource;
 /**
  * @author ssachs
  */
-public class ItemFormMetadataDAO<K extends String,V extends ArrayList> extends EntityDAO {
+public class ItemFormMetadataDAO<K extends String,V extends ArrayList> extends EntityDAO implements IItemFormMetadataDAO {
 
     @Override
     protected void setDigesterName() {

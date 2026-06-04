@@ -9,8 +9,11 @@ import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.hibernate.RuleDao;
 import org.researchedc.dao.hibernate.RuleSetDao;
 import org.researchedc.dao.spi.DatasetDao;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.service.crfdata.InstantOnChangeService;
 import org.researchedc.service.extract.GenerateExtractFileService;
 import org.researchedc.service.extract.OdmFileCreation;
@@ -44,9 +47,19 @@ public class WebBeansConfig {
         return sdvUtil;
     }
 
+    @Bean
+    public IItemFormMetadataDAO itemFormMetadataDao(DataSource dataSource) {
+        return new ItemFormMetadataDAO(dataSource);
+    }
+
+    @Bean
+    public ISectionDAO sectionDao(DataSource dataSource) {
+        return new SectionDAO(dataSource);
+    }
+
     @Bean("instantOnChangeService")
     public InstantOnChangeService instantOnChangeService(DataSource dataSource) {
-        return new InstantOnChangeService(dataSource, new ItemFormMetadataDAO(dataSource));
+        return new InstantOnChangeService(dataSource, itemFormMetadataDao(dataSource));
     }
 
     @Bean
@@ -57,8 +70,8 @@ public class WebBeansConfig {
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public ItemFormMetadataDAO extractItemFormMetadataDao(DataSource dataSource) {
-        return new ItemFormMetadataDAO(dataSource);
+    public IItemFormMetadataDAO extractItemFormMetadataDao(DataSource dataSource) {
+        return itemFormMetadataDao(dataSource);
     }
 
     @Bean
@@ -80,7 +93,7 @@ public class WebBeansConfig {
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public GenerateExtractFileService generateExtractFileService(DataSource dataSource,
             CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao, DatasetDao extractDatasetDao,
-            ItemFormMetadataDAO extractItemFormMetadataDao,
+            IItemFormMetadataDAO extractItemFormMetadataDao,
             ArchivedDatasetFileDAO extractArchivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         return new GenerateExtractFileService(dataSource, coreResources, ruleSetRuleDao,
                 extractDatasetDao, extractItemFormMetadataDao, extractArchivedDatasetFileDao,

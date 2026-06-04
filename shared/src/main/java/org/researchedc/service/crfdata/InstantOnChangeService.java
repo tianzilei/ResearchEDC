@@ -10,7 +10,7 @@ package org.researchedc.service.crfdata;
 import org.researchedc.bean.submit.DisplayItemBean;
 import org.researchedc.bean.submit.DisplayItemGroupBean;
 import org.researchedc.bean.submit.DisplayItemWithGroupBean;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.domain.crfdata.InstantOnChangePairContainer;
 import org.researchedc.service.crfdata.front.InstantOnChangeFrontStr;
 import org.researchedc.service.crfdata.front.InstantOnChangeFrontStrGroup;
@@ -34,9 +34,9 @@ public class InstantOnChangeService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     DataSource dataSource;
-    private final ItemFormMetadataDAO itemFormMetadataDao;
+    private final IItemFormMetadataDAO itemFormMetadataDao;
 
-    public InstantOnChangeService(DataSource dataSource, ItemFormMetadataDAO itemFormMetadataDao) {
+    public InstantOnChangeService(DataSource dataSource, IItemFormMetadataDAO itemFormMetadataDao) {
         this.dataSource = dataSource;
         this.itemFormMetadataDao = itemFormMetadataDao;
     }
@@ -203,7 +203,7 @@ public class InstantOnChangeService {
     }
 
 
-    public ItemFormMetadataDAO getItemFormMetadataDAO() {
+    public IItemFormMetadataDAO getItemFormMetadataDAO() {
         return itemFormMetadataDao;
     }
 

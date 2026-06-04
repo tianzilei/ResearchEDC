@@ -101,7 +101,7 @@ import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.domain.crfdata.DynamicsItemFormMetadataBean;
@@ -142,7 +142,7 @@ import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 public abstract class DataEntryServlet extends CoreSecureController {
 
     @Autowired
-    protected ItemGroupMetadataDAO itemGroupMetadataDao;
+    protected IItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
     protected SectionDAO sectionDao;
@@ -4063,7 +4063,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         ArrayList<ItemFormMetadataBean> shownRequiredAllItemsInCrfVersion = itemFormMetadataDao.findAllItemsRequiredAndShownByCrfVersionId(ecb.getCRFVersionId());
         ArrayList<ItemFormMetadataBean> hiddenRequiredAllItemsInCrfVersion = itemFormMetadataDao.findAllItemsRequiredAndHiddenByCrfVersionId(ecb
                 .getCRFVersionId());
-        ItemGroupMetadataDAO<String, ArrayList> igdao = this.itemGroupMetadataDao;
+        IItemGroupMetadataDAO igdao = this.itemGroupMetadataDao;
         
         ArrayList<ItemDataBean> itemdatas = null;
         for (ItemFormMetadataBean shownItemMeta : shownRequiredAllItemsInCrfVersion) {

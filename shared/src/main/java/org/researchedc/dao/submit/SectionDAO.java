@@ -11,6 +11,7 @@ import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.dao.core.AuditableEntityDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
@@ -34,7 +35,7 @@ import javax.sql.DataSource;
  *
  *
  */
-public class SectionDAO extends AuditableEntityDAO {
+public class SectionDAO extends AuditableEntityDAO implements ISectionDAO {
 
     // private DAODigester digester;
 

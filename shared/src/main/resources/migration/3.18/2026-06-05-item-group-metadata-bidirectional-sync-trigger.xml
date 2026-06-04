@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="research-edc" id="2026-06-05-item-group-metadata-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between item_group_metadata and module_item_group_metadata</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_item_group_metadata_to_item_group_metadata()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO item_group_metadata (
+                        item_group_metadata_id, item_group_id, header, subheader,
+                        layout, repeat_number, repeat_max, repeat_array,
+                        row_start_number, crf_version_id, item_id, ordinal,
+                        borders, show_group, repeating_group
+                    )
+                    VALUES (
+                        NEW.item_group_metadata_id, NEW.item_group_id, NEW.header, NEW.subheader,
+                        NEW.layout, NEW.repeat_number, NEW.repeat_max, NEW.repeat_array,
+                        NEW.row_start_number, NEW.crf_version_id, NEW.item_id, NEW.ordinal,
+                        NEW.borders, NEW.show_group, NEW.repeating_group
+                    )
+                    ON CONFLICT (item_group_metadata_id) DO UPDATE SET
+                        item_group_id = EXCLUDED.item_group_id,
+                        header = EXCLUDED.header,
+                        subheader = EXCLUDED.subheader,
+                        layout = EXCLUDED.layout,
+                        repeat_number = EXCLUDED.repeat_number,
+                        repeat_max = EXCLUDED.repeat_max,
+                        repeat_array = EXCLUDED.repeat_array,
+                        row_start_number = EXCLUDED.row_start_number,
+                        crf_version_id = EXCLUDED.crf_version_id,
+                        item_id = EXCLUDED.item_id,
+                        ordinal = EXCLUDED.ordinal,
+                        borders = EXCLUDED.borders,
+                        show_group = EXCLUDED.show_group,
+                        repeating_group = EXCLUDED.repeating_group;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE item_group_metadata SET
+                        item_group_id = NEW.item_group_id,
+                        header = NEW.header,
+                        subheader = NEW.subheader,
+                        layout = NEW.layout,
+                        repeat_number = NEW.repeat_number,
+                        repeat_max = NEW.repeat_max,
+                        repeat_array = NEW.repeat_array,
+                        row_start_number = NEW.row_start_number,
+                        crf_version_id = NEW.crf_version_id,
+                        item_id = NEW.item_id,
+                        ordinal = NEW.ordinal,
+                        borders = NEW.borders,
+                        show_group = NEW.show_group,
+                        repeating_group = NEW.repeating_group
+                    WHERE item_group_metadata_id = OLD.item_group_metadata_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM item_group_metadata WHERE item_group_metadata_id = OLD.item_group_metadata_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_item_group_metadata_to_module_item_group_metadata()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_item_group_metadata (
+                        item_group_metadata_id, item_group_id, header, subheader,
+                        layout, repeat_number, repeat_max, repeat_array,
+                        row_start_number, crf_version_id, item_id, ordinal,
+                        borders, show_group, repeating_group
+                    )
+                    VALUES (
+                        NEW.item_group_metadata_id, NEW.item_group_id, NEW.header, NEW.subheader,
+                        NEW.layout, NEW.repeat_number, NEW.repeat_max, NEW.repeat_array,
+                        NEW.row_start_number, NEW.crf_version_id, NEW.item_id, NEW.ordinal,
+                        NEW.borders, NEW.show_group, NEW.repeating_group
+                    )
+                    ON CONFLICT (item_group_metadata_id) DO UPDATE SET
+                        item_group_id = EXCLUDED.item_group_id,
+                        header = EXCLUDED.header,
+                        subheader = EXCLUDED.subheader,
+                        layout = EXCLUDED.layout,
+                        repeat_number = EXCLUDED.repeat_number,
+                        repeat_max = EXCLUDED.repeat_max,
+                        repeat_array = EXCLUDED.repeat_array,
+                        row_start_number = EXCLUDED.row_start_number,
+                        crf_version_id = EXCLUDED.crf_version_id,
+                        item_id = EXCLUDED.item_id,
+                        ordinal = EXCLUDED.ordinal,
+                        borders = EXCLUDED.borders,
+                        show_group = EXCLUDED.show_group,
+                        repeating_group = EXCLUDED.repeating_group;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_item_group_metadata SET
+                        item_group_id = NEW.item_group_id,
+                        header = NEW.header,
+                        subheader = NEW.subheader,
+                        layout = NEW.layout,
+                        repeat_number = NEW.repeat_number,
+                        repeat_max = NEW.repeat_max,
+                        repeat_array = NEW.repeat_array,
+                        row_start_number = NEW.row_start_number,
+                        crf_version_id = NEW.crf_version_id,
+                        item_id = NEW.item_id,
+                        ordinal = NEW.ordinal,
+                        borders = NEW.borders,
+                        show_group = NEW.show_group,
+                        repeating_group = NEW.repeating_group
+                    WHERE item_group_metadata_id = OLD.item_group_metadata_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_item_group_metadata WHERE item_group_metadata_id = OLD.item_group_metadata_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_item_group_metadata ON module_item_group_metadata;
+            CREATE TRIGGER trg_sync_module_item_group_metadata
+            AFTER INSERT OR UPDATE OR DELETE ON module_item_group_metadata
+            FOR EACH ROW EXECUTE FUNCTION sync_module_item_group_metadata_to_item_group_metadata();
+
+            DROP TRIGGER IF EXISTS trg_sync_item_group_metadata_to_module ON item_group_metadata;
+            CREATE TRIGGER trg_sync_item_group_metadata_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON item_group_metadata
+            FOR EACH ROW EXECUTE FUNCTION sync_item_group_metadata_to_module_item_group_metadata();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_module_item_group_metadata ON module_item_group_metadata;
+            DROP FUNCTION IF EXISTS sync_module_item_group_metadata_to_item_group_metadata();
+            DROP TRIGGER IF EXISTS trg_sync_item_group_metadata_to_module ON item_group_metadata;
+            DROP FUNCTION IF EXISTS sync_item_group_metadata_to_module_item_group_metadata();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

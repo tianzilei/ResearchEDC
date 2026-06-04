@@ -28,7 +28,6 @@ import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.action.StratificationFactorBean;
@@ -68,7 +67,6 @@ public class RandomizeService extends RandomizationRegistrar {
     private SectionDAO sectionDAO;
     // private CRFVersionDAO crfVersionDAO;
     private ItemFormMetadataDAO itemFormMetadataDAO;
-    private ItemGroupMetadataDAO itemGroupMetadataDAO;
     private IStudyEventDAO studyEventDAO;
     private ExpressionService expressionService;
     private IStudySubjectDAO studySubjectDAO;

@@ -18,9 +18,9 @@ import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -37,13 +37,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ViewItemDetailServlet extends SecureController {
 
     @Autowired
-    protected SectionDAO sectionDao;
+    protected ISectionDAO sectionDao;
 
     @Autowired
-    protected ItemFormMetadataDAO itemFormMetadataDao;
+    protected IItemFormMetadataDAO itemFormMetadataDao;
 
     @Autowired
-    protected ItemGroupMetadataDAO itemGroupMetadataDao;
+    protected IItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
     protected ICrfVersionDAO crfVersionDao;
@@ -77,11 +77,11 @@ public class ViewItemDetailServlet extends SecureController {
         int itemId = fp.getInt(ITEM_ID);
         String itemOid = fp.getString(ITEM_OID);
         IItemDAO idao = this.itemDao;
-        ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
-        ItemGroupMetadataDAO igmdao = this.itemGroupMetadataDao;
+        IItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
+        IItemGroupMetadataDAO igmdao = this.itemGroupMetadataDao;
         ICrfVersionDAO cvdao = this.crfVersionDao;
         ICrfDAO cdao = this.crfDao;
-        SectionDAO sectionDao = this.sectionDao;
+        ISectionDAO sectionDao = this.sectionDao;
 
         if (itemId == 0 && itemOid == null) {
             addPageMessage(respage.getString("please_choose_an_item_first"));

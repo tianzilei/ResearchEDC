@@ -13,7 +13,7 @@ import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.action.InsertActionBean;
 import org.researchedc.domain.rule.action.PropertyBean;
@@ -36,7 +36,7 @@ import javax.sql.DataSource;
 public class InsertActionValidator implements Validator {
 
     IItemDAO itemDAO;
-    ItemFormMetadataDAO itemFormMetadataDAO;
+    IItemFormMetadataDAO itemFormMetadataDAO;
     EventDefinitionCRFDao eventDefinitionCRFDAO;
     IStudyEventDefinitionDAO studyEventDefinitionDAO;
     ICrfDAO crfDAO;
@@ -48,7 +48,7 @@ public class InsertActionValidator implements Validator {
     private final Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
     private final Function<DataSource, ICrfDAO> crfDaoFactory;
     private final Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory;
-    private final Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
+    private final Function<DataSource, IItemFormMetadataDAO> itemFormMetadataDaoFactory;
 
     public InsertActionValidator(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -56,7 +56,7 @@ public class InsertActionValidator implements Validator {
         this.studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
         this.crfDaoFactory = LegacyDaoFactory::crfDao;
         this.eventDefinitionCrfDaoFactory = LegacyDaoFactory::eventDefinitionCrfDao;
-        this.itemFormMetadataDaoFactory = ItemFormMetadataDAO::new;
+        this.itemFormMetadataDaoFactory = LegacyDaoFactory::itemFormMetadataDao;
     }
 
     /**
@@ -350,7 +350,7 @@ public class InsertActionValidator implements Validator {
         return eventDefinitionCRFDAO;
     }
 
-    public ItemFormMetadataDAO getItemFormMetadataDAO() {
+    public IItemFormMetadataDAO getItemFormMetadataDAO() {
         if (itemFormMetadataDAO == null) {
             itemFormMetadataDAO = itemFormMetadataDaoFactory.apply(dataSource);
         }
