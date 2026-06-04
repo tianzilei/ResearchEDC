@@ -33,7 +33,7 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.odmbeans.ODMBean;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
+import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.job.JobTerminationMonitor;
@@ -57,7 +57,7 @@ public class OdmFileCreation {
     private DataSource dataSource;
     private CoreResources coreResources;
     private DatasetDao datasetDao;
-    private ArchivedDatasetFileDAO archivedDatasetFileDao;
+    private ArchivedDatasetFileDao archivedDatasetFileDao;
 
     private static File files[]=null;
     private static List<File> oldFiles = new LinkedList<File>();
@@ -66,7 +66,7 @@ public class OdmFileCreation {
     }
 
     public OdmFileCreation(DataSource dataSource, CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao,
-            DatasetDao datasetDao, ArchivedDatasetFileDAO archivedDatasetFileDao) {
+            DatasetDao datasetDao, ArchivedDatasetFileDao archivedDatasetFileDao) {
         this.dataSource = dataSource;
         this.coreResources = coreResources;
         this.ruleSetRuleDao = ruleSetRuleDao;
@@ -403,7 +403,7 @@ public class OdmFileCreation {
         return datasetDao;
     }
 
-    private ArchivedDatasetFileDAO getArchivedDatasetFileDao() {
+    private ArchivedDatasetFileDao getArchivedDatasetFileDao() {
         return archivedDatasetFileDao;
     }
 

@@ -34,7 +34,7 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
+import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IRuleDAO;
@@ -94,7 +94,7 @@ public class ExportDatasetServlet extends SecureController {
     @Override
     public void processRequest() throws Exception {
         DatasetDao dsdao = this.datasetDao;
-        ArchivedDatasetFileDAO asdfdao = this.archivedDatasetFileDao;
+        ArchivedDatasetFileDao asdfdao = this.archivedDatasetFileDao;
         FormProcessor fp = new FormProcessor(request);
 
         GenerateExtractFileService generateFileService = SpringServletAccess.getApplicationContext(context)
@@ -514,7 +514,7 @@ public class ExportDatasetServlet extends SecureController {
           }
     }
 
-    public void loadList(DatasetBean db, ArchivedDatasetFileDAO asdfdao, int datasetId, FormProcessor fp, ExtractBean eb) {
+    public void loadList(DatasetBean db, ArchivedDatasetFileDao asdfdao, int datasetId, FormProcessor fp, ExtractBean eb) {
         logger.info("action is blank");
         request.setAttribute("dataset", db);
         logger.info("just set dataset to request");
