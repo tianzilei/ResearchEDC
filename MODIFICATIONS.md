@@ -6,6 +6,57 @@
 
 ---
 
+## 2026-06-05 — Phase B 完成：24/24 DAO 家族 SPI 拓宽 + Module Adapter 完善
+
+- **模块:** `app`, `shared`, `web`
+- **原因:** 完成 Phase B Schema Ownership 和 Phase C SPI widening，所有 24 个 DAO 家族 SPI 拓宽完毕，所有 Module adapter 创建完毕。
+
+### 变更内容
+
+1. **新增 5 个 SPI 接口拓宽（共 24/24 完成）：**
+   - `IItemFormMetadataDAO`：`ItemFormMetadataDAO` 实现 + ItemFormMetadataDaoAdapter
+   - `ISectionDAO`：`SectionDAO` 实现 + SectionDaoAdapter
+   - `IItemGroupMetadataDAO`：`ItemGroupMetadataDaoAdapter` 实现
+   - `EventDefinitionCRFDao`：`EventDefinitionCrfEntity` 表重映射到 `module_event_definition_crf`
+   - `ArchivedDatasetFileDao`：`ArchivedDatasetFileDAO` 实现 + 8 个 consumer 文件 SPI 化
+
+2. **新增 2 个 Module-owned 表（共 27/27 完成）：**
+   - `module_event_definition_crf`：Entity + Repository + Liquibase 迁移 + 双向同步 trigger
+   - `module_item_group_metadata`：Entity + Repository + Liquibase 迁移 + 双向同步 trigger
+
+3. **新增 2 个 Module Adapter（共 24 个完成）：**
+   - `SectionDaoAdapter`：CRF module，Bridge `ISectionDAO` 到 `SectionRepository`（`module_section`）
+   - `ItemFormMetadataDaoAdapter`：CRF module，Bridge `IItemFormMetadataDAO` 到 `ItemFormMetadataRepository`（`module_item_form_metadata`）
+   - 两个 Adapter 均 extend legacy DAO 并注入真实 DataSource，复杂查询方法（如 `getNumItems*`）委托给父类 legacy SQL
+
+4. **WebBeansConfig 清理：**
+   - 移除 `new ItemFormMetadataDAO(dataSource)` 和 `new SectionDAO(dataSource)`
+   - 移除 `new ArchivedDatasetFileDAO(dataSource)`，改用 `LegacyDaoFactory.archivedDatasetFileDao()`
+   - **0 `new XxxDAO()` 调用残留**
+
+5. **DaoRegistrar 更新：**
+   - 添加 `SectionDAO`、`ArchivedDatasetFileDAO` 到 SKIP_CLASSES
+
+6. **Consumer 文件 SPI 化（8 个文件）：**
+   - `OdmFileCreation.java`、`GenerateExtractFileService.java`、`XSLTTransformJob.java`
+   - `CoreSecureController.java`、`SecureController.java`
+   - `ExportDatasetServlet.java`、`ShowFileServlet.java`
+
+7. **Repository 增强：**
+   - `ItemFormMetadataRepository`：新增 4 个查询方法
+
+8. **文档更新：**
+   - `AGENTS.md`：Phase B 状态 → COMPLETE，24/24 DAO 家族 SPI 完成
+   - `LEGACY_REFACTOR_PLAN.md`：Phase B 状态 → COMPLETE
+
+### 验证结果
+- `mvn compile` ✅
+- `ModulithVerificationTest` 1/0/0 ✅
+- Module tests 369/0/0 ✅
+- Gauntlet：0 `new XxxDAO(` in consumer code ✅
+
+---
+
 ## 2026-06-03 — Phase B Schema Ownership 启动：双向同步 Trigger + 实体表重映射
 
 - **模块:** `app`, `shared`
