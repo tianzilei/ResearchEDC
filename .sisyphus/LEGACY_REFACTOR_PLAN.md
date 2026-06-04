@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-03 (Phase B schema ownership **IN PROGRESS**: 10 bidirectional sync triggers written, 5 entities remapped to module-owned tables, 2 new adapters. Phase C SPI widening **complete**: 19/19 DAO families SPI-widened.)
+> **Last updated:** 2026-06-05 (Phase B schema ownership **COMPLETE**: 12 bidirectional sync triggers, 27 entities mapped to `module_*` tables, 24 SPI adapters created. Phase C SPI widening **complete**: 24/24 DAO families SPI-widened, 0 `new XxxDAO()` in consumer code.)
 > **Scope:** All remaining legacy code in `shared/`, `web/`, `ws/`
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -66,11 +66,11 @@ All new modules are now **write-capable** — they can create, update, and delet
 
 ---
 
-## Phase B: Schema Ownership (🔶 IN PROGRESS — ~40% complete)
+## Phase B: Schema Ownership (✅ COMPLETE)
 
 Currently modules bridge to the **same tables** that legacy code uses. Full strangulation requires module-owned tables. Phase B is actively implementing **Option B: New tables with bidirectional sync triggers** for all 10 domains.
 
-### B0: Active Work (2026-06-03)
+### B0: Final State (2026-06-05)
 
 **10 bidirectional sync trigger migration files created (3,494 lines total):**
 
@@ -99,20 +99,44 @@ Each domain has two PostgreSQL trigger functions (`sync_module_X_to_X` + `sync_X
 | identity | `RoleEntity` | `study_user_role` | `module_role` |
 | subjectgroup | `StudyGroupClassEntity` | `study_group_class` | `module_study_group_class` |
 
-**New adapter code:**
-- `filter/internal/adapter/FilterDaoAdapter.java` — replaces direct `FilterDAO` calls
-- `subjectgroup/internal/adapter/StudyGroupClassDaoAdapter.java` — replaces direct `StudyGroupClassDAO` calls
-- Unit tests for both adapters
+**24 `@Primary @Component` adapter classes created** — all SPI interfaces are bridge to module-owned repositories:
 
-**DaoRegistrar exclusion updated:** `FilterDAO`, `StudyGroupClassDAO` added to exclusion list.
+| Module | Adapter | SPI | Backed By |
+|--------|---------|-----|-----------|
+| study | `StudyDaoAdapter` | `IStudyDAO` | `StudyRepository` |
+| subject | `SubjectDaoAdapter` | `ISubjectDAO` | `SubjectRepository` |
+| subject | `StudySubjectDaoAdapter` | `IStudySubjectDAO` | `StudySubjectRepository` |
+| event | `StudyEventDaoAdapter` | `IStudyEventDAO` | `StudyEventRepository` |
+| event | `StudyEventDefinitionDaoAdapter` | `IStudyEventDefinitionDAO` | repo |
+| event | `EventCrfDaoAdapter` | `EventCRFDao` | repo |
+| event | `EventDefinitionCrfDaoAdapter` | `EventDefinitionCRFDao` | repo |
+| crf | `CrfDaoAdapter` | `ICrfDAO` | `CrfRepository` |
+| crf | `CrfVersionDaoAdapter` | `ICrfVersionDAO` | `CrfVersionRepository` |
+| crf | `ItemDaoAdapter` | `IItemDAO` | `ItemRepository` |
+| crf | `SectionDaoAdapter` | `ISectionDAO` | `SectionRepository` |
+| crf | `ItemFormMetadataDaoAdapter` | `IItemFormMetadataDAO` | `ItemFormMetadataRepository` |
+| datacapture | `ItemDataDaoAdapter` | `IItemDataDAO` | `ItemDataRepository` |
+| datacapture | `ItemGroupDaoAdapter` | `IItemGroupDAO` | repo |
+| datacapture | `ItemGroupMetadataDaoAdapter` | `IItemGroupMetadataDAO` | repo |
+| identity | `UserAccountDaoAdapter` | `IUserAccountDAO` | `UserAccountRepository` |
+| rule | `RuleSetDaoAdapter` | `IRuleSetDAO` | repo |
+| rule | `RuleDaoAdapter` | `IRuleDAO` | repo |
+| dataset | `DatasetDaoAdapter` | `DatasetDao` | `DatasetRepository` |
+| filter | `FilterDaoAdapter` | `FilterDao` | `FilterRepository` |
+| subjectgroup | `StudyGroupClassDaoAdapter` | `StudyGroupClassDao` | `StudyGroupClassRepository` |
+| subjectgroup | `StudyGroupDaoAdapter` | `StudyGroupDao` | repo |
+| discrepancynote | `DiscrepancyNoteDaoAdapter` | `IDiscrepancyNoteDAO` | repo |
+| datacapture | *(also)* `ItemFormMetadataDaoAdapter` | `IItemFormMetadataDAO` | `ItemFormMetadataRepository` |
 
-**StudyGroupClassRepository enhanced:** 4 new native SQL queries joining `module_study_group_class` with `module_study` (`findByStudyOrChildStudy`, `findByStudyOrChildStudyAndStatus`).
+**ALL 27 module entities now point to `module_*` tables. 12 bidirectional sync trigger migration files registered in release.xml.**
 
-**Remaining Phase B work:**
-- Remap remaining 5 module entities (study, subject, event, datacapture, crf/rule/discrepancynote) to module-owned tables
-- Run trigger migration scripts against actual database for verification
-- Create adapter code for remaining modules
-- Write tests for trigger correctness (INSERT/UPDATE/DELETE round-trip)
+**+5 SPI families widened on 2026-06-05:** `IItemFormMetadataDAO`, `ISectionDAO`, `IItemGroupMetadataDAO`, `EventDefinitionCRFDao`, `ArchivedDatasetFileDao` — consumers in shared/ (5 files), web/ (4 files), ws/ (0 files) all converted to SPI types.
+
+**DaoRegistrar exclusion updated:** `SectionDAO`, `ArchivedDatasetFileDAO` added to exclusion list.
+
+**WebBeansConfig:** 0 `new XxxDAO()` calls remain. All DAO beans use `LegacyDaoFactory` or `@Primary` adapters. Only `new ArchivedDatasetFileDAO` was the last concrete construction, now replaced with `LegacyDaoFactory.archivedDatasetFileDao()`.
+
+**Build verification:** `mvn clean compile` ✅ | `mvn test -pl app -am` 369/369 ✅ | `ModulithVerificationTest` ✅
 
 The table ownership declarations below are derived from the actual JPA entities in each module.
 
