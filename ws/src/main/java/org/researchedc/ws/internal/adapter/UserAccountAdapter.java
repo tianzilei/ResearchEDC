@@ -1,15 +1,15 @@
 package org.researchedc.ws.internal.adapter;
 
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.login.UserAccountDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class UserAccountAdapter {
 
-    private final UserAccountDAO delegate;
+    private final IUserAccountDAO delegate;
 
-    public UserAccountAdapter(UserAccountDAO delegate) {
+    public UserAccountAdapter(IUserAccountDAO delegate) {
         this.delegate = delegate;
     }
 

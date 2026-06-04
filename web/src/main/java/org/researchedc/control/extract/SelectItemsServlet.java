@@ -22,7 +22,7 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.StudyGroupDao;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -107,7 +107,7 @@ public class SelectItemsServlet extends SecureController {
         int groupAttr = fp.getInt("groupAttr");
         int discAttr = fp.getInt("discAttr");
         ICrfDAO crfdao = this.crfDao;
-        ItemDAO idao = this.itemDao;
+        IItemDAO idao = this.itemDao;
         ItemFormMetadataDAO imfdao = this.itemFormMetadataDao;
         IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
 

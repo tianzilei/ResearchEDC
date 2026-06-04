@@ -56,12 +56,12 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.slf4j.Logger;
@@ -77,7 +77,7 @@ public class ImportCRFDataService {
     protected EventDefinitionCRFDao eventDefinitionCrfDao;
 
     @Autowired
-    protected ItemDAO itemDao;
+    protected IItemDAO itemDao;
 
     @Autowired
     protected IStudyEventDefinitionDAO studyEventDefinitionDao;
@@ -98,7 +98,7 @@ public class ImportCRFDataService {
     protected ItemFormMetadataDAO itemFormMetadataDao;
 
     @Autowired
-    protected ItemGroupDAO itemGroupDao;
+    protected IItemGroupDAO itemGroupDao;
 
     @Autowired
     protected ICrfVersionDAO crfVersionDao;
@@ -107,7 +107,7 @@ public class ImportCRFDataService {
 
     private final DataSource ds;
 
-    private ItemDataDAO itemDataDao;
+    private IItemDataDAO itemDataDao;
 
     public static ResourceBundle respage;
 
@@ -516,7 +516,7 @@ public class ImportCRFDataService {
                                 ArrayList<ImportItemDataBean> itemDataBeans = itemGroupDataBean.getItemData();
                                 logger.debug("iterating through group beans: " + itemGroupDataBean.getItemGroupOID());
                                 // put a checker in here
-                                ItemGroupDAO itemGroupDAO = this.itemGroupDao;
+                                IItemGroupDAO itemGroupDAO = this.itemGroupDao;
                                 ItemGroupBean testBean = itemGroupDAO.findByOid(itemGroupDataBean.getItemGroupOID());
                                 if (testBean == null) {
                                     // TODO i18n of message
@@ -532,7 +532,7 @@ public class ImportCRFDataService {
 
                                 for (ImportItemDataBean importItemDataBean : itemDataBeans) {
                                     logger.debug("   iterating through item data beans: " + importItemDataBean.getItemOID());
-                                    ItemDAO itemDAO = this.itemDao;
+                                    IItemDAO itemDAO = this.itemDao;
                                     ItemFormMetadataDAO itemFormMetadataDAO = this.itemFormMetadataDao;
 
                                     List<ItemBean> itemBeans = itemDAO.findByOid(importItemDataBean.getItemOID());
@@ -1033,8 +1033,8 @@ public class ImportCRFDataService {
             IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
             IStudyEventDefinitionDAO studyEventDefinitionDAO = this.studyEventDefinitionDao;
             ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
-            ItemGroupDAO itemGroupDAO = this.itemGroupDao;
-            ItemDAO itemDAO = this.itemDao;
+            IItemGroupDAO itemGroupDAO = this.itemGroupDao;
+            IItemDAO itemDAO = this.itemDao;
 
             if (subjectDataBeans != null) {// need to do this so as not to
                 // throw the exception below and
@@ -1218,7 +1218,7 @@ public class ImportCRFDataService {
         return errors;
     }
 
-    private ItemDataDAO getItemDataDao() {
+    private IItemDataDAO getItemDataDao() {
         itemDataDao = this.itemDataDao != null ? itemDataDao : this.itemDataDao;
         return itemDataDao;
     }

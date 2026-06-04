@@ -30,9 +30,9 @@ import org.researchedc.core.util.CrfTemplateColumnNameEnum;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.hibernate.MeasurementUnitDao;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.exception.CRFReadingException;
 import org.researchedc.logic.score.ScoreValidator;
 import org.researchedc.web.SQLInitServlet;
@@ -111,11 +111,11 @@ public class SpreadSheetTableRepeating implements SpreadSheetTable {
     @Autowired
     private ICrfDAO crfDao;
     @Autowired
-    private ItemDAO itemDao;
+    private IItemDAO itemDao;
     @Autowired
     private ICrfVersionDAO crfVersionDao;
     @Autowired
-    private ItemGroupDAO itemGroupDao;
+    private IItemGroupDAO itemGroupDao;
     @Autowired
     private ItemFormMetadataDAO itemFormMetadataDao;
 
@@ -187,9 +187,9 @@ public class SpreadSheetTableRepeating implements SpreadSheetTable {
 
         ICrfDAO cdao = this.crfDao;
         CRFBean crf = (CRFBean) cdao.findByPK(crfId);
-        ItemDAO idao = this.itemDao;
+        IItemDAO idao = this.itemDao;
         ICrfVersionDAO cvdao = this.crfVersionDao;
-        ItemGroupDAO itemGroupDao = this.itemGroupDao;
+        IItemGroupDAO itemGroupDao = this.itemGroupDao;
         SheetValidationContainer sheetContainer = new SheetValidationContainer();
         HashMap<String, String> allItems = (HashMap<String, String>)sheetContainer.getAllItems();
         //HashMap<String, String> allItems = new HashMap<String, String>();

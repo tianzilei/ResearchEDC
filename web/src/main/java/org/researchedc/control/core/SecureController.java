@@ -84,10 +84,10 @@ import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.submit.SubjectGroupMapDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.datamap.EventDefinitionCrf;
 import org.researchedc.domain.datamap.EventDefinitionCrfTag;
@@ -194,9 +194,9 @@ public abstract class SecureController extends HttpServlet {
     @Autowired
     protected IStudySubjectDAO studySubjectDao;
     @Autowired
-    protected ItemDataDAO itemDataDao;
+    protected IItemDataDAO itemDataDao;
     @Autowired
-    protected ItemDAO itemDao;
+    protected IItemDAO itemDao;
     @Autowired
     protected ItemFormMetadataDAO itemFormMetadataDao;
     @Autowired
@@ -212,7 +212,7 @@ public abstract class SecureController extends HttpServlet {
     @Autowired
     protected SectionDAO sectionDao;
     @Autowired
-    protected ItemGroupDAO itemGroupDao;
+    protected IItemGroupDAO itemGroupDao;
     @Autowired
     protected StudyGroupClassDao studyGroupClassDao;
     @Autowired
@@ -1110,9 +1110,9 @@ public abstract class SecureController extends HttpServlet {
         IStudySubjectDAO ssdao = studySubjectDao;
         if ("itemData".equalsIgnoreCase(note.getEntityType())) {
             int itemDataId = note.getEntityId();
-            ItemDataDAO iddao = itemDataDao;
+            IItemDataDAO iddao = itemDataDao;
             ItemDataBean itemData = (ItemDataBean) iddao.findByPK(itemDataId);
-            ItemDAO idao = itemDao;
+            IItemDAO idao = itemDao;
             if (StringUtil.isBlank(note.getEntityName())) {
                 ItemBean item = (ItemBean) idao.findByPK(itemData.getItemId());
                 note.setEntityName(item.getName());

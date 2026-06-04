@@ -19,7 +19,7 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -94,7 +94,7 @@ public class EditSelectedServlet extends SecureController {
         // is not part of the EditSelected-related JSP>>
         request.setAttribute("EditSelectedSubmitted", true);
         // <<
-        ItemDAO idao = this.itemDao;
+        IItemDAO idao = this.itemDao;
         // ICrfDAO crfdao = this.crfDao;
         ItemFormMetadataDAO imfdao = this.itemFormMetadataDao;
         ICrfDAO crfdao = this.crfDao;
@@ -189,7 +189,7 @@ public class EditSelectedServlet extends SecureController {
         }
         request.setAttribute("eventlist", events);
 
-        ItemDAO idao = this.itemDao;
+        IItemDAO idao = this.itemDao;
         ICrfDAO crfdao = this.crfDao;
         ArrayList allItems = selectAll(events, crfdao, idao);
         Iterator it = events.keySet().iterator();
@@ -222,7 +222,7 @@ public class EditSelectedServlet extends SecureController {
      * @param events
      * @return
      */
-    public static ArrayList selectAll(HashMap events, ICrfDAO crfdao, ItemDAO idao) {
+    public static ArrayList selectAll(HashMap events, ICrfDAO crfdao, IItemDAO idao) {
 
         ArrayList allItems = new ArrayList();
 

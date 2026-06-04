@@ -35,10 +35,10 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.logic.rulerunner.ExecutionMode;
 import org.researchedc.logic.rulerunner.ImportDataRuleRunnerContainer;
@@ -82,7 +82,7 @@ public class VerifyImportedCRFDataServlet extends SecureController {
     @Override
     @SuppressWarnings(value = "unchecked")
     public void processRequest() throws Exception {
-        ItemDataDAO itemDataDao = this.itemDataDao;
+        IItemDataDAO itemDataDao = this.itemDataDao;
         itemDataDao.setFormatDates(false);
         EventCRFDao eventCrfDao = this.eventCrfDao;
         CrfBusinessLogicHelper crfBusinessLogicHelper = new CrfBusinessLogicHelper(sm.getDataSource());
@@ -226,7 +226,7 @@ public class VerifyImportedCRFDataServlet extends SecureController {
                         // "+displayItemBean.getData().getName());
                         // logger.info("continued:
                         // "+displayItemBean.getData().getItemId());
-                        ItemDAO idao = this.itemDao;
+                        IItemDAO idao = this.itemDao;
                         ItemBean ibean = (ItemBean) idao.findByPK(displayItemBean.getData().getItemId());
                         // logger.info("continued2: getName " +
                         // ibean.getName());

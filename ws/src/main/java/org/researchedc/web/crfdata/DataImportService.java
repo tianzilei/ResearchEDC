@@ -30,8 +30,8 @@ import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.logic.rulerunner.ExecutionMode;
@@ -57,11 +57,11 @@ public class DataImportService {
     XmlSchemaValidationHelper schemaValidator = new XmlSchemaValidationHelper();
     ResourceBundle respage;
     @Autowired
-    private ItemDataDAO itemDataDao;
+    private IItemDataDAO itemDataDao;
     @Autowired
     private EventCRFDao eventCrfDao;
     @Autowired
-    private ItemDAO itemDao;
+    private IItemDAO itemDao;
     @Autowired
     private IStudySubjectDAO studySubjectDao;
     @Autowired

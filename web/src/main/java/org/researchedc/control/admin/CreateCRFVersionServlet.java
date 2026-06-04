@@ -26,9 +26,9 @@ import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.MeasurementUnitDao;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.exception.CRFReadingException;
 import org.researchedc.exception.OpenClinicaException;
@@ -619,7 +619,7 @@ public class CreateCRFVersionServlet extends SecureController {
      * @return the items found
      */
     private ArrayList isItemSame(HashMap items, CRFVersionBean version) {
-        ItemDAO idao = this.itemDao;
+        IItemDAO idao = this.itemDao;
         ArrayList diffItems = new ArrayList();
         Set names = items.keySet();
         Iterator it = names.iterator();
@@ -642,7 +642,7 @@ public class CreateCRFVersionServlet extends SecureController {
     }
 
     private ItemBean isResponseValid(HashMap items, CRFVersionBean version) {
-        ItemDAO idao = this.itemDao;
+        IItemDAO idao = this.itemDao;
         ItemFormMetadataDAO metadao = this.itemFormMetadataDao;
         Set names = items.keySet();
         Iterator it = names.iterator();

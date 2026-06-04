@@ -21,7 +21,7 @@ import org.researchedc.core.util.ItemGroupCrvVersionUtil;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.domain.rule.action.RuleActionBean;
@@ -134,7 +134,7 @@ public class ViewCRFServlet extends SecureController {
     private  ArrayList< ItemGroupCrvVersionUtil> verifyUniqueItemPlacementInGroups(	String crfName){
 		
 		//get all items with group / version info from db 
-		 ItemDAO idao = this.itemDao;
+		 IItemDAO idao = this.itemDao;
 		 int check_group_count = 0;
 		 StringBuffer item_messages = null; String temp_buffer=null; //use for first record in the group
 		 ArrayList< ItemGroupCrvVersionUtil> results = new ArrayList< ItemGroupCrvVersionUtil>();

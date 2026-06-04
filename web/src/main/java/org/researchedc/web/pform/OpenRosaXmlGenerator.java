@@ -28,9 +28,9 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.RuleActionPropertyDao;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.rule.action.PropertyBean;
@@ -69,7 +69,7 @@ public class OpenRosaXmlGenerator {
     protected ICrfDAO crfDao;
 
     @Autowired
-    protected ItemDAO itemDao;
+    protected IItemDAO itemDao;
 
     @Autowired
     protected SectionDAO sectionDao;
@@ -84,7 +84,7 @@ public class OpenRosaXmlGenerator {
     protected ItemFormMetadataDAO itemFormMetadataDao;
 
     @Autowired
-    protected ItemGroupDAO itemGroupDao;
+    protected IItemGroupDAO itemGroupDao;
 
     private XMLContext xmlContext = null;
     private DataSource dataSource = null;
@@ -92,8 +92,8 @@ public class OpenRosaXmlGenerator {
     CoreResources coreResources;
 
     private RuleActionPropertyDao ruleActionPropertyDao;
-    private ItemDAO idao;
-    private ItemGroupDAO igdao;
+    private IItemDAO idao;
+    private IItemGroupDAO igdao;
     private ItemGroupMetadataDAO igmdao;
     private ItemFormMetadataDAO itemFormMetadataDAO;
     private SectionDAO sdao;

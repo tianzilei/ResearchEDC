@@ -25,10 +25,10 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.domain.datamap.VersioningMap;
 import org.researchedc.view.Page;
@@ -50,7 +50,7 @@ public class DeleteCRFVersionServlet extends SecureController {
     @Autowired
     IStudyEventDAO studyEventDao;
     @Autowired
-    ItemDataDAO itemDataDao;
+    IItemDataDAO itemDataDao;
     @Autowired
     EventCRFDao eventCrfDao;
     @Autowired

@@ -3,15 +3,15 @@ package org.researchedc.ws.internal.adapter;
 import java.util.ArrayList;
 
 import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class CRFVersionAdapter {
 
-    private final CRFVersionDAO delegate;
+    private final ICrfVersionDAO delegate;
 
-    public CRFVersionAdapter(CRFVersionDAO delegate) {
+    public CRFVersionAdapter(ICrfVersionDAO delegate) {
         this.delegate = delegate;
     }
 
@@ -24,7 +24,7 @@ public class CRFVersionAdapter {
         return (ArrayList<CRFVersionBean>) delegate.findAllByOid(oid);
     }
 
-    public CRFVersionDAO getDelegate() {
+    public ICrfVersionDAO getDelegate() {
         return delegate;
     }
 }

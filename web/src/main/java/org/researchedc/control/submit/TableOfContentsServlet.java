@@ -40,9 +40,9 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.service.crfdata.DynamicsMetadataService;
 import org.researchedc.view.Page;
@@ -591,7 +591,7 @@ public class TableOfContentsServlet extends SecureController {
         return "";
     }
 
-    public static ArrayList getSections(EventCRFBean ecb, DataSource ds, SectionDAO sdao, ItemGroupDAO igdao) {
+    public static ArrayList getSections(EventCRFBean ecb, DataSource ds, SectionDAO sdao, IItemGroupDAO igdao) {
         HashMap numItemsBySectionId = sdao.getNumItemsBySectionId();
         HashMap numItemsPlusRepeatBySectionId = sdao.getNumItemsPlusRepeatBySectionId(ecb);
         HashMap numItemsCompletedBySectionId = sdao.getNumItemsCompletedBySectionId(ecb);
@@ -638,7 +638,7 @@ public class TableOfContentsServlet extends SecureController {
     }
 
     public static DisplayTableOfContentsBean getDisplayBean(EventCRFBean ecb, DataSource ds, StudyBean currentStudy, IStudySubjectDAO ssdao,
-            IStudyEventDAO sedao, SectionDAO sdao, ItemGroupDAO igdao, IStudyEventDefinitionDAO seddao, ICrfVersionDAO cvdao, ICrfDAO cdao, IStudyDAO studyDao,
+            IStudyEventDAO sedao, SectionDAO sdao, IItemGroupDAO igdao, IStudyEventDefinitionDAO seddao, ICrfVersionDAO cvdao, ICrfDAO cdao, IStudyDAO studyDao,
             EventDefinitionCRFDao edcdao) {
         DisplayTableOfContentsBean answer = new DisplayTableOfContentsBean();
 
@@ -682,7 +682,7 @@ public class TableOfContentsServlet extends SecureController {
      * @return
      */
     public static DisplayTableOfContentsBean getDisplayBeanWithShownSections(DataSource ds, DisplayTableOfContentsBean displayTableOfContentsBean,
-            DynamicsMetadataService dynamicsMetadataService, SectionDAO sectionDAO, ItemGroupDAO itemGroupDAO) {
+            DynamicsMetadataService dynamicsMetadataService, SectionDAO sectionDAO, IItemGroupDAO itemGroupDAO) {
         if(displayTableOfContentsBean == null) {
             return displayTableOfContentsBean;
         }

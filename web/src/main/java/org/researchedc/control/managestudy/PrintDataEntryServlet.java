@@ -36,9 +36,9 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -84,7 +84,7 @@ public class PrintDataEntryServlet extends DataEntryServlet {
     @Autowired
     private ICrfVersionDAO crfVersionDao;
     @Autowired
-    private ItemGroupDAO itemGroupDao;
+    private IItemGroupDAO itemGroupDao;
     @Autowired
     private SectionDAO sectionDao;
     @Autowired
@@ -198,7 +198,7 @@ Locale locale;
         }
 
         // Find out whether the sections involve groups
-        ItemGroupDAO itemGroupDao = this.itemGroupDao;
+        IItemGroupDAO itemGroupDao = this.itemGroupDao;
         // Find truely grouped tables, not groups with a name of 'Ungrouped'
         // CRF VERSION ID WILL BE 0 IF "ecId" IS NOT IN THE QUERYSTRING
         int crfVersionId = ecb.getCRFVersionId();

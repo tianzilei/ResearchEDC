@@ -50,10 +50,10 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -243,7 +243,7 @@ public class ViewDiscrepancyNoteServlet extends SecureController {
         }
         ItemBean item = new ItemBean();
         if (itemId > 0) {
-            ItemDAO idao = this.itemDao;
+            IItemDAO idao = this.itemDao;
             item = (ItemBean) idao.findByPK(itemId);
             request.setAttribute("item", item);
             request.setAttribute("entityName", item.getName());
@@ -253,7 +253,7 @@ public class ViewDiscrepancyNoteServlet extends SecureController {
         int preUserId = 0;
         if (!StringUtil.isBlank(name)) {
             if ("itemData".equalsIgnoreCase(name)) {
-                ItemDataDAO iddao = this.itemDataDao;
+                IItemDataDAO iddao = this.itemDataDao;
                 itemData = (ItemDataBean) iddao.findByPK(entityId);
                 request.setAttribute("entityValue", itemData.getValue());
                 request.setAttribute("entityName", item.getName());

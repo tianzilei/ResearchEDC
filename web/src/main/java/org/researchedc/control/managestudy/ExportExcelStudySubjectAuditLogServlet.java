@@ -32,9 +32,9 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.view.Page;
@@ -216,7 +216,7 @@ public class ExportExcelStudySubjectAuditLogServlet extends SecureController {
                     logger.info("eventCRFAudits size [" + eventCRFAudits.size() + "] eventCRF id [" + eventCRF.getId() + "]");
                 }
             }
-            ItemDataDAO itemDataDao = this.itemDataDao;
+            IItemDataDAO itemDataDao = this.itemDataDao;
             for (Object o :eventCRFAudits) {
                 AuditBean ab = (AuditBean)o;
                 if (ab.getAuditTable().equalsIgnoreCase("item_data")) {

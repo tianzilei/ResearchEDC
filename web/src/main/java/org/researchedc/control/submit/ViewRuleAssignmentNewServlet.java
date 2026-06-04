@@ -20,10 +20,10 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IRuleSetDAO;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.crfdata.HideCRFManager;
@@ -86,7 +86,7 @@ public class ViewRuleAssignmentNewServlet extends SecureController {
         IStudyEventDAO sedao = this.studyEventDao;
         IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         EventCRFDao ecdao = this.eventCrfDao;
-        ItemDAO itemdao = this.itemDao;
+        IItemDAO itemdao = this.itemDao;
         StudyBean studyWithEventDefinitions = currentStudy;
         if (currentStudy.getParentStudyId() > 0) {
             studyWithEventDefinitions = new StudyBean();

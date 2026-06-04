@@ -20,8 +20,8 @@ import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
@@ -40,9 +40,9 @@ public class CrfBusinessLogicHelper {
     @Autowired
     private EventCRFDao eventCrfDao;
     @Autowired
-    private ItemDataDAO itemDataDao;
+    private IItemDataDAO itemDataDao;
     @Autowired
-    private ItemDAO itemDao;
+    private IItemDAO itemDao;
     @Autowired
     private IStudyDAO studyDao;
     @Autowired

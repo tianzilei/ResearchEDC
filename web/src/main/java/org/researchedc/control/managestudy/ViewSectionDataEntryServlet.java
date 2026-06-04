@@ -8,7 +8,7 @@
 package org.researchedc.control.managestudy;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.submit.SectionDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -100,7 +100,7 @@ public class ViewSectionDataEntryServlet extends DataEntryServlet {
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
-    private ItemGroupDAO itemGroupDao;
+    private IItemGroupDAO itemGroupDao;
     @Autowired
     private SectionDAO sectionDao;
     @Autowired
@@ -457,7 +457,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
         boolean hasItemGroup = false;
         // we will look into db to see if any repeating items for this CRF
         // section
-        ItemGroupDAO igdao = this.itemGroupDao;
+        IItemGroupDAO igdao = this.itemGroupDao;
         List<ItemGroupBean> itemGroups = igdao.findLegitGroupBySectionId(sectionId);
         if (!itemGroups.isEmpty()) {
             hasItemGroup = true;

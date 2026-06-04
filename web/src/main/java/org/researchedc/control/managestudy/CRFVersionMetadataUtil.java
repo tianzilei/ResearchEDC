@@ -11,9 +11,9 @@ import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.bean.submit.SectionBean;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +24,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CRFVersionMetadataUtil {
 
     @Autowired
-    protected ItemDAO itemDao;
+    protected IItemDAO itemDao;
 
     @Autowired
     protected SectionDAO sectionDao;
 
     @Autowired
-    protected ItemGroupDAO itemGroupDao;
+    protected IItemGroupDAO itemGroupDao;
 
     @Autowired
     protected ItemGroupMetadataDAO itemGroupMetadataDao;
@@ -49,12 +49,12 @@ public class CRFVersionMetadataUtil {
 	 */
     public ArrayList<SectionBean> retrieveFormMetadata(CRFVersionBean version) throws Exception {
 
-        ItemDAO idao = this.itemDao;
+        IItemDAO idao = this.itemDao;
         ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
 
             // tbh, 102007
             SectionDAO sdao = this.sectionDao;
-            ItemGroupDAO igdao = this.itemGroupDao;
+            IItemGroupDAO igdao = this.itemGroupDao;
             ItemGroupMetadataDAO igmdao = this.itemGroupMetadataDao;
             ArrayList sections = (ArrayList) sdao.findByVersionId(version.getId());
             HashMap versionMap = new HashMap();

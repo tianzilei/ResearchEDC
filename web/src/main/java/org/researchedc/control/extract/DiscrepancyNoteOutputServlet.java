@@ -1,9 +1,9 @@
 package org.researchedc.control.extract;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IItemDAO;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
@@ -54,7 +54,7 @@ import org.researchedc.service.managestudy.ViewNotesService;
 import org.researchedc.service.managestudy.ViewNotesSortCriteria;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 
@@ -70,7 +70,7 @@ public class DiscrepancyNoteOutputServlet extends SecureController {
     protected ItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
-    protected ItemGroupDAO itemGroupDao;
+    protected IItemGroupDAO itemGroupDao;
 
     @Autowired
     protected ICrfVersionDAO crfVersionDao;
@@ -289,11 +289,11 @@ public class DiscrepancyNoteOutputServlet extends SecureController {
         ICrfDAO cdao = this.crfDao;
         IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
         EventCRFDao ecdao = this.eventCrfDao;
-        ItemDataDAO iddao = this.itemDataDao;
-        ItemDAO idao = this.itemDao;
+        IItemDataDAO iddao = this.itemDataDao;
+        IItemDAO idao = this.itemDao;
         IStudyDAO studyDao = this.studyDao;
         ItemGroupMetadataDAO<String, ArrayList> igmdao = this.itemGroupMetadataDao;
-        ItemGroupDAO<String, ArrayList> igdao = this.itemGroupDao;
+        IItemGroupDAO igdao = this.itemGroupDao;
 
         ArrayList<DiscrepancyNoteBean> allNotes = new ArrayList<DiscrepancyNoteBean>();
 

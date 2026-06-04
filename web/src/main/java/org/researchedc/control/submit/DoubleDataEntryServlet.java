@@ -37,7 +37,7 @@ import org.researchedc.control.form.RuleValidator;
 import org.researchedc.control.form.ScoreItemValidator;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -52,7 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DoubleDataEntryServlet extends DataEntryServlet {
 
     @Autowired
-    protected ItemDataDAO itemDataDao;
+    protected IItemDataDAO itemDataDao;
 
     @Autowired
     protected SectionDAO sectionDao;
@@ -431,7 +431,7 @@ public class DoubleDataEntryServlet extends DataEntryServlet {
     protected DisplayItemBean validateCalcTypeDisplayItemBean(ScoreItemValidator sv, DisplayItemBean dib, String inputName, HttpServletRequest request) {
 
         org.researchedc.bean.core.ResponseType rt = dib.getMetadata().getResponseSet().getResponseType();
-        ItemDataDAO iddao = this.itemDataDao;
+        IItemDataDAO iddao = this.itemDataDao;
         boolean isSingleItem = false;
         HttpSession session = request.getSession();
         if (StringUtil.isBlank(inputName)) {// for single items

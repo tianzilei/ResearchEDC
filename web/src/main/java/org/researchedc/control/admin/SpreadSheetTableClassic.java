@@ -38,9 +38,9 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.hibernate.MeasurementUnitDao;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.exception.CRFReadingException;
 import org.researchedc.logic.score.ScoreValidator;
@@ -71,7 +71,7 @@ import org.researchedc.dao.spi.IItemDataDAO;
 public class SpreadSheetTableClassic implements SpreadSheetTable {
 
     @Autowired
-    protected ItemGroupDAO itemGroupDao;// extends
+    protected IItemGroupDAO itemGroupDao;// extends
     // SpreadSheetTable
     // {
 
@@ -100,13 +100,13 @@ public class SpreadSheetTableClassic implements SpreadSheetTable {
     @Autowired
     private ICrfDAO crfDao;
     @Autowired
-    private ItemDataDAO itemDataDao;
+    private IItemDataDAO itemDataDao;
     @Autowired
-    private ItemDAO itemDao;
+    private IItemDAO itemDao;
     @Autowired
     private ICrfVersionDAO crfVersionDao;
     @Autowired
-    private ItemGroupDAO itemGroupDaoField;
+    private IItemGroupDAO itemGroupDaoField;
 
     // the default; all crf ids should be > 0, tbh 8-29 :-)
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
@@ -164,9 +164,9 @@ public class SpreadSheetTableClassic implements SpreadSheetTable {
         CRFBean crf = (CRFBean) cdao.findByPK(crfId);
 
         IItemDataDAO iddao = this.itemDataDao;
-        ItemDAO idao = this.itemDao;
+        IItemDAO idao = this.itemDao;
         ICrfVersionDAO cvdao = this.crfVersionDao;
-        ItemGroupDAO itemGroupDao = this.itemGroupDaoField;
+        IItemGroupDAO itemGroupDao = this.itemGroupDaoField;
 
         int validSheetNum = 0;
         for (int j = 0; j < numSheets; j++) {

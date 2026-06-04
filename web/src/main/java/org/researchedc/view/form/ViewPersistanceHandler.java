@@ -3,7 +3,7 @@ package org.researchedc.view.form;
 import org.researchedc.bean.submit.DisplayItemBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.core.SessionManager;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ViewPersistanceHandler {
 
     @Autowired
-    protected ItemDataDAO itemDataDao;
+    protected IItemDataDAO itemDataDao;
     private List<ItemDataBean> itemDataBeans;
     private ViewBuilderUtil viewBuilderUtil;
 
@@ -33,7 +33,7 @@ public class ViewPersistanceHandler {
     public List<ItemDataBean> fetchPersistedData(int sectionId, int eventcrfId) {
 
         //SessionManager sessionManager = new SessionManager();
-        ItemDataDAO itemDataDAO = this.itemDataDao;
+        IItemDataDAO itemDataDAO = this.itemDataDao;
         List<ItemDataBean> itemDataBeans = itemDataDAO.findAllActiveBySectionIdAndEventCRFId(sectionId, eventcrfId);
         return itemDataBeans == null ? new ArrayList<ItemDataBean>() : itemDataBeans;
     }

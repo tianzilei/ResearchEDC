@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class EventDefinitionCRFAdapter {
 
-    private final EventDefinitionCRFDAO delegate;
+    private final EventDefinitionCRFDao delegate;
 
-    public EventDefinitionCRFAdapter(EventDefinitionCRFDAO delegate) {
+    public EventDefinitionCRFAdapter(EventDefinitionCRFDao delegate) {
         this.delegate = delegate;
     }
 
@@ -30,7 +30,7 @@ public class EventDefinitionCRFAdapter {
         return (List<EventDefinitionCRFBean>) delegate.findAllActiveByEventDefinitionId(study, eventDefinitionId);
     }
 
-    public EventDefinitionCRFDAO getDelegate() {
+    public EventDefinitionCRFDao getDelegate() {
         return delegate;
     }
 }

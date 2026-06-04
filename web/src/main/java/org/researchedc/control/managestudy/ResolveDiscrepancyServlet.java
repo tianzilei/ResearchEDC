@@ -38,9 +38,9 @@ import org.researchedc.control.submit.EnterDataForStudyEventServlet;
 import org.researchedc.control.submit.TableOfContentsServlet;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.service.DiscrepancyNoteUtil;
 import org.researchedc.view.Page;
@@ -152,7 +152,7 @@ private static final String INPUT_NOTE_ID = "noteId";
 
         // this is for item data
         else if ("itemdata".equalsIgnoreCase(entityType)) {
-            ItemDataDAO iddao = this.itemDataDao;
+            IItemDataDAO iddao = this.itemDataDao;
             ItemDataBean idb = (ItemDataBean) iddao.findByPK(id);
 
             EventCRFDao ecdao = this.eventCrfDao;
@@ -245,7 +245,7 @@ private static final String INPUT_NOTE_ID = "noteId";
         boolean toView = false;
         boolean isCompleted = false;
         if ("itemdata".equalsIgnoreCase(entityType)) {
-                ItemDataDAO iddao = this.itemDataDao;
+                IItemDataDAO iddao = this.itemDataDao;
             ItemDataBean idb = (ItemDataBean) iddao.findByPK(discrepancyNoteBean.getEntityId());
 
             EventCRFDao ecdao = this.eventCrfDao;

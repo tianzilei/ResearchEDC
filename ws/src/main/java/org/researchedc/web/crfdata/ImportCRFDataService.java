@@ -56,10 +56,10 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -74,7 +74,7 @@ public class ImportCRFDataService {
 
     private final DataSource ds;
 
-    private ItemDataDAO itemDataDao;
+    private IItemDataDAO itemDataDao;
 
     public static ResourceBundle respage;
     @Autowired
@@ -92,15 +92,15 @@ public class ImportCRFDataService {
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCRFDAO;
     @Autowired
-    private ItemGroupDAO itemGroupDAO;
+    private IItemGroupDAO itemGroupDAO;
     @Autowired
-    private ItemDAO itemDAO;
+    private IItemDAO itemDAO;
     @Autowired
     private ItemFormMetadataDAO itemFormMetadataDAO;
     @Autowired
     private ICrfDAO crfDAO;
     @Autowired
-    private ItemDataDAO itemDataDaoField;
+    private IItemDataDAO itemDataDaoField;
 
     public ImportCRFDataService(DataSource ds, Locale locale) {
         ResourceBundleProvider.updateLocale(locale);
@@ -110,7 +110,7 @@ public class ImportCRFDataService {
 
     /*
      * purpose: look up EventCRFBeans by the following: Study Subject, Study Event, CRF Version, using the
-     * findByEventSubjectVersion method in EventCRFDAO. May return more than one, hmm.
+     * findByEventSubjectVersion method in EventCRFDao. May return more than one, hmm.
      */
     public List<EventCRFBean> fetchEventCRFBeans(ODMContainer odmContainer, UserAccountBean ub) {
         ArrayList<EventCRFBean> eventCRFBeans = new ArrayList<EventCRFBean>();

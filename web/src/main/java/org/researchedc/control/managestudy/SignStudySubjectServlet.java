@@ -49,7 +49,7 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.service.DiscrepancyNoteUtil;
 import org.researchedc.view.Page;
@@ -420,7 +420,7 @@ public class SignStudySubjectServlet extends SecureController {
         IStudyEventDAO sedao = studyEventDao;
         ICrfDAO cdao = crfDao;
         ICrfVersionDAO cvdao = crfVersionDao;
-        ItemDataDAO iddao = itemDataDao;
+        IItemDataDAO iddao = itemDataDao;
         EventDefinitionCRFDao edcdao = eventDefinitionCrfDao;
 
         for (i = 0; i < eventCRFs.size(); i++) {
@@ -521,7 +521,7 @@ public class SignStudySubjectServlet extends SecureController {
         }
 
         ICrfVersionDAO cvdao = crfVersionDao;
-        ItemDataDAO iddao = itemDataDao;
+        IItemDataDAO iddao = itemDataDao;
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecrf = (EventCRFBean) eventCRFs.get(i);
             int crfId = cvdao.getCRFIdFromCRFVersionId(ecrf.getCRFVersionId());
