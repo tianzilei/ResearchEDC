@@ -2,7 +2,7 @@
 
 **Derived from:** OpenClinica v3.x  
 **Generated:** 2026-05-25  
-**Updated:** 2026-06-03  
+**Updated:** 2026-06-05  
 **Branch:** master
 
 ## OVERVIEW
@@ -11,7 +11,7 @@ ResearchEDC is an independently maintained research electronic data capture (EDC
 
 New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. Legacy code consolidated into `shared/` module, with `web/` (484 files + 419 JSP) and `ws/` (75 files) being incrementally strangulated into Modulith modules.
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 247/247** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 19/19** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership 🔶 IN PROGRESS (10 triggers, 5 entities remapped)**
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 369/369** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)**
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 ✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
@@ -215,10 +215,11 @@ python -m pytest app/tests/ -v
 - **Frontend TypeScript:** ✅ `pnpm typecheck` — 0 errors (strict mode).
 - **DAO constructor baseline:** `DaoProvider` bridge has been removed. Direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) is now 0 matches across `shared/`, `web/`, and `ws/`. All 19 DAO families are SPI-widened; deletion is gated on module-owned replacement implementations (Phase B).
 
-### Legacy DAO Refactor Handoff (2026-06-02)
+### Legacy DAO Refactor Handoff (2026-06-05)
 
-- **Status:** Phase C SPI widening **COMPLETE** — all 19 DAO families are SPI-widened. All consumer references in web/ (45+ files), shared/ (15+ files), and ws/ (0 files) now use SPI interfaces. Remaining concrete type names are limited to DAO implementation classes themselves, `LegacyDaoFactory`, `DaoRegistrar` bean name strings, `OdmExtractDAO extends DatasetDAO` inheritance, and commented-out code in 3 extract servlets — all harmless.
-- **DAO families SPI-widened (19 of 19):**
+- **Status:** Phase C SPI widening **COMPLETE** — all **24 DAO families** are SPI-widened. All consumer references in web/ (50+ files), shared/ (20+ files), and ws/ (0 files) now use SPI interfaces. Remaining concrete type names are limited to DAO implementation classes, `LegacyDaoFactory`, `DaoRegistrar` bean name strings, `OdmExtractDAO extends DatasetDAO` inheritance, and commented-out code in 3 extract servlets — all harmless.
+- **Phase B adapters:** 24 `@Primary @Component` adapter classes in `app/module/*/internal/adapter/` bridge all SPI interfaces to module-owned repositories (27 `module_*` tables). A few complex analytical methods (e.g., `getNumItems*`, `findNext`) delegate to parent legacy DAO SQL.
+- **DAO families SPI-widened (24 of 24):**
   - ✅ **StudyDAO / StudySubjectDAO / SubjectDAO / UserAccountDAO** — boundary-only; concrete refs limited to implementation classes, `LegacyDaoFactory`, and `UserAccountAdapter`
   - ✅ **CRFDAO → ICrfDAO** — `460fab3f2`, `01efa4b05`
   - ✅ **CRFVersionDAO → ICrfVersionDAO** — ~20 commits (`9da44e612`–`1e337b75b`)
@@ -227,24 +228,29 @@ python -m pytest app/tests/ -v
   - ✅ **ItemDAO → IItemDAO** — `8b90a2601`
   - ✅ **ItemDataDAO → IItemDataDAO** — `1b409b230`, `962726f2d`
   - ✅ **ItemGroupDAO → IItemGroupDAO** — `f9d7d5d65`
+  - ✅ **ItemFormMetadataDAO → IItemFormMetadataDAO** — `46879ad29`, `3987e59d1`
+  - ✅ **ItemGroupMetadataDAO → IItemGroupMetadataDAO** — `46879ad29`
+  - ✅ **SectionDAO → ISectionDAO** — `46879ad29`, `3987e59d1`
   - ✅ **StudyEventDAO → IStudyEventDAO** — ~10 commits (`6896446c1`–`df4a832e5`); 45 web/ + 15 shared/ consumer files all SPI-typed
   - ✅ **StudyEventDefinitionDAO → IStudyEventDefinitionDAO** — ~10 commits (`868a4f6fa`–`968391b3b`); 40+ web/ + 15+ shared/ consumer files all SPI-typed
+  - ✅ **EventDefinitionCRFDAO → EventDefinitionCRFDao** — `46879ad29`
   - ✅ **RuleSetDAO → IRuleSetDAO** — `cf22f06d2`, `579cbfab0`; 4 web/ + 4 shared/ consumers all SPI-typed
   - ✅ **RuleDAO → IRuleDAO** — `62595dd32`; 1 web/ + 3 shared/ consumers all SPI-typed
   - ✅ **DatasetDAO → DatasetDao** — `d374b275c`; web/ has commented code only, shared/ uses SPI
   - ✅ **FilterDAO → FilterDao** — web/ has commented code only, all consumers use SPI
   - ✅ **StudyGroupClassDAO → StudyGroupClassDao** — 4 shared/ consumers all SPI-typed
   - ✅ **StudyGroupDAO → StudyGroupDao** — 3 shared/ consumers all SPI-typed
-- **Remaining work:** DAO `.java` file deletion is blocked by the need for module-owned/repository-backed replacements (Phase B schema ownership). The consuming code is ready — deletion is gated on providing new SPI implementations.
+  - ✅ **ArchivedDatasetFileDAO → ArchivedDatasetFileDao** — `58278d68b`; 8 consumer files converted
+- **Remaining work:** DAO `.java` file deletion is blocked on proving module-owned repository paths in production. Legacy DAO files (65+ in `shared/dao/`) are still the fallback for complex SQL queries. HibernateConfig still constructs all legacy DAO beans (harmless, shadowed by `@Primary` adapters). Minor DAO families (`AuditDao`, `IAuditEventDAO`, `IStudyParameterValueDAO`, `SubjectGroupMapDao`) remain without adapters — these are legacy-only data paths. 3 `PasswordRequirementsDao` calls remain in legacy servlets (not in target families).
 - **Gauntlet commands:**
   - `git status --short`
-  - `rg -n "\b(StudyEventDAO|StudyEventDefinitionDAO|RuleSetDAO|RuleDAO|DatasetDAO|FilterDAO|StudyGroupClassDAO|StudyGroupDAO)\b" shared/src/main/java web/src/main/java ws/src/main/java -g '*.java' | cut -d: -f1 | sort -u`
   - `mvn -pl app -am compile -DskipTests && mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+  - `mvn test -pl app -am 2>&1 | grep "Tests run:"`
 - **Refactor rule of thumb:** do not modify released migrations, do not bypass `SecureController`, do not add new legacy code to `shared/`, and verify the SPI covers every invoked method before widening.
 
-### Phase B Schema Ownership Handoff (2026-06-03)
+### Phase B Schema Ownership Handoff (2026-06-05)
 
-- **Status:** Phase B schema ownership is **IN PROGRESS** (~40% complete). Working tree has uncommitted changes implementing Option B (new module-owned tables with bidirectional sync triggers).
+- **Status:** Phase B schema ownership is **COMPLETE**. 27 entities mapped to `module_*` tables, 12 bidirectional sync triggers registered, 24 SPI adapters bridging to module-owned repositories.
 - **10 bidirectional sync trigger migration files** created (3,494 lines total): study, subject, event, datacapture, crf, identity, rule, dataset-filter, discrepancy-note, subjectgroup. Each has two PostgreSQL trigger functions with `pg_trigger_depth() > 1` recursion guard. Registered in `release.xml`.
 - **5 JPA entities remapped** to module-owned tables: `FilterEntity` (`module_filter`), `DatasetEntity` (`module_dataset`), `UserAccountEntity` (`module_user_account`), `RoleEntity` (`module_role`), `StudyGroupClassEntity` (`module_study_group_class`). Sequences renamed to match (e.g., `module_filter_id_seq`).
 - **New adapter code:** `FilterDaoAdapter.java` + `StudyGroupClassDaoAdapter.java` with unit tests.
