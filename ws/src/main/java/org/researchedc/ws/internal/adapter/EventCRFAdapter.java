@@ -6,15 +6,15 @@ import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class EventCRFAdapter {
 
-    private final EventCRFDAO delegate;
+    private final EventCRFDao delegate;
 
-    public EventCRFAdapter(EventCRFDAO delegate) {
+    public EventCRFAdapter(EventCRFDao delegate) {
         this.delegate = delegate;
     }
 
@@ -66,7 +66,7 @@ public class EventCRFAdapter {
         delegate.setSDVStatus(sdvStatus, userId, eventCrfId);
     }
 
-    public EventCRFDAO getDelegate() {
+    public EventCRFDao getDelegate() {
         return delegate;
     }
 }

@@ -50,10 +50,10 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -256,7 +256,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
             if ("itemData".equalsIgnoreCase(entityType)||"itemdata".equalsIgnoreCase(entityType)) {
                 ItemBean item = (ItemBean) this.itemDao.findByPK(itemId);
                 
-                ItemDataDAO iddao = this.itemDataDao;
+                IItemDataDAO iddao = this.itemDataDao;
                 ItemDataBean itemData = null;
               
                 if(entityId == 0 && fp.isSubmitted()) {
@@ -805,8 +805,8 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
 
                         // generate message here
                         IUserAccountDAO userAccountDAO = this.userAccountDao;
-                        ItemDAO itemDAO = this.itemDao;
-                        ItemDataDAO iddao = this.itemDataDao;
+                        IItemDAO itemDAO = this.itemDao;
+                        IItemDataDAO iddao = this.itemDataDao;
                         ItemBean item = new ItemBean();
                         ItemDataBean itemData = new ItemDataBean();
                         SectionBean section = new SectionBean();
@@ -942,7 +942,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
     private void updateStudySubjectStatus(String entityType, int entityId) {
         if ("itemData".equalsIgnoreCase(entityType)) {
             int itemDataId = entityId;
-            ItemDataDAO iddao = this.itemDataDao;
+            IItemDataDAO iddao = this.itemDataDao;
             ItemDataBean itemData = (ItemDataBean) iddao.findByPK(itemDataId);
             EventCRFDao ecdao = this.eventCrfDao;
             IStudyEventDAO svdao = this.studyEventDao;
@@ -988,7 +988,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
     private void updateStudyEvent(String entityType, int entityId) {
         if ("itemData".equalsIgnoreCase(entityType)) {
             int itemDataId = entityId;
-            ItemDataDAO iddao = this.itemDataDao;
+            IItemDataDAO iddao = this.itemDataDao;
             ItemDataBean itemData = (ItemDataBean) iddao.findByPK(itemDataId);
             EventCRFDao ecdao = this.eventCrfDao;
             IStudyEventDAO svdao = this.studyEventDao;
@@ -1049,7 +1049,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
 	     		// row with X			IG_TEST__GROUP1_6727_1input320
 	     		if (field.contains("_0input") || field.contains("manual")){
 	     			//get ordinal
-	     			ItemDataDAO iddao = this.itemDataDao;
+	     			IItemDataDAO iddao = this.itemDataDao;
 		    		
 	     			boolean isExistInDB = iddao.isItemExists(item_id,ordinal_for_repeating_group_field,event_crf_id);
 	     			return (isExistInDB)? 1: -1;
@@ -1080,7 +1080,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
 	    		
 	    	}else{
 	    		//get max ordinal from DB
-	    		ItemDataDAO iddao = this.itemDataDao;
+	    		IItemDataDAO iddao = this.itemDataDao;
 	    		//IG_TEST__GROUP1_6727_manual1input320
 	    		String[] field_name_items=field_name.split("_");
 	    		

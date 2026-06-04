@@ -24,7 +24,7 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
@@ -73,7 +73,7 @@ public class TestRuleServlet extends SecureController {
     RuleSetRuleDao ruleSetRuleDao;
     @Autowired
     IRuleSetDAO ruleSetDao;
-    ItemDAO itemDAO;
+    IItemDAO itemDAO;
     ItemFormMetadataDAO itemFormMetadataDAO;
     RulesPostImportContainerService rulesPostImportContainerService;
     private ExpressionService expressionService;
@@ -489,7 +489,7 @@ else
         return ruleSetDao;
     }
 
-    private ItemDAO getItemDAO() {
+    private IItemDAO getItemDAO() {
         itemDAO = this.itemDAO != null ? itemDAO : this.itemDao;
         return itemDAO;
     }

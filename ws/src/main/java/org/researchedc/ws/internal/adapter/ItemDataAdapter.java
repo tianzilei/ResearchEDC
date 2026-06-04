@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemDataBean;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ItemDataAdapter {
 
-    private final ItemDataDAO delegate;
+    private final IItemDataDAO delegate;
 
-    public ItemDataAdapter(ItemDataDAO delegate) {
+    public ItemDataAdapter(IItemDataDAO delegate) {
         this.delegate = delegate;
     }
 
@@ -50,7 +50,7 @@ public class ItemDataAdapter {
         return (ItemDataBean) delegate.findByPK(id);
     }
 
-    public ItemDataDAO getDelegate() {
+    public IItemDataDAO getDelegate() {
         return delegate;
     }
 }

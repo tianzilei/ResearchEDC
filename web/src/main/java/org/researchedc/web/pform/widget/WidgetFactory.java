@@ -8,7 +8,7 @@ import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.SectionBean;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.domain.datamap.Section;
 import org.researchedc.domain.rule.expression.ExpressionBean;
 import org.researchedc.web.pform.OpenRosaXmlGenerator;

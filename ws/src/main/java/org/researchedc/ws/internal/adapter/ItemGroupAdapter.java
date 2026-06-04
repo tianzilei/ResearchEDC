@@ -3,15 +3,15 @@ package org.researchedc.ws.internal.adapter;
 import java.util.List;
 
 import org.researchedc.bean.submit.ItemGroupBean;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ItemGroupAdapter {
 
-    private final ItemGroupDAO delegate;
+    private final IItemGroupDAO delegate;
 
-    public ItemGroupAdapter(ItemGroupDAO delegate) {
+    public ItemGroupAdapter(IItemGroupDAO delegate) {
         this.delegate = delegate;
     }
 
@@ -24,7 +24,7 @@ public class ItemGroupAdapter {
         return (List<ItemGroupBean>) delegate.findAllByOid(oid);
     }
 
-    public ItemGroupDAO getDelegate() {
+    public IItemGroupDAO getDelegate() {
         return delegate;
     }
 }

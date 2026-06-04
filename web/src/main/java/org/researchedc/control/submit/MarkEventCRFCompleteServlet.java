@@ -21,9 +21,9 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.crfdata.DynamicsMetadataService;
@@ -81,7 +81,7 @@ public class MarkEventCRFCompleteServlet extends SecureController {
     }
 
     private boolean isEachRequiredFieldFillout() {
-        ItemDataDAO iddao = this.itemDataDao;
+        IItemDataDAO iddao = this.itemDataDao;
         ArrayList dataList = iddao.findAllBlankRequiredByEventCRFId(ecb.getId(), ecb.getCRFVersionId());
         // empty means all required fields got filled out,return true-jxu
         return dataList.isEmpty();
@@ -232,7 +232,7 @@ public class MarkEventCRFCompleteServlet extends SecureController {
                 ecb = (EventCRFBean) ecdao.update(ecb);
                 ecdao.markComplete(ecb, ide);
 
-                ItemDataDAO iddao = this.itemDataDao;
+                IItemDataDAO iddao = this.itemDataDao;
                 iddao.updateStatusByEventCRF(ecb, newStatus);
 
                 // change status for event

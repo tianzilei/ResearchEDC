@@ -5,7 +5,7 @@ import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.*;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class VariableSubstitutionHelper {
      * @param studySubject Subject associated with the display section.
      */
     public static void replaceVariables(DisplaySectionBean section, StudyBean study, StudySubjectBean studySubject,
-                                        StudyEventDefinitionBean eventDef, StudyEventBean event, DataSource dataSource, ItemDAO itemDAO) {
+                                        StudyEventDefinitionBean eventDef, StudyEventBean event, DataSource dataSource, IItemDAO itemDAO) {
 
         StrSubstitutor subst = new StrSubstitutor(buildTokensMap(section, studySubject, study, eventDef, event, dataSource, itemDAO));
 
@@ -61,7 +61,7 @@ public class VariableSubstitutionHelper {
     @SuppressWarnings("unchecked")
     private static Map<String, String> buildTokensMap(DisplaySectionBean section, StudySubjectBean studySubject,
                                                       StudyBean study, StudyEventDefinitionBean eventDef,
-                                                      StudyEventBean event, DataSource dataSource, ItemDAO itemDAO) {
+                                                      StudyEventBean event, DataSource dataSource, IItemDAO itemDAO) {
 
         List<ItemBean> items = itemDAO.findAllWithItemDataByCRFVersionId(
                 section.getCrfVersion().getId(), section.getEventCRF().getId());

@@ -20,17 +20,17 @@ import org.researchedc.bean.core.Utils;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.core.util.CrfTemplateColumnNameEnum;
 import org.researchedc.core.util.ItemGroupCrvVersionUtil;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Component
 public class SpreadSheetItemUtil {
 
-	private static ItemDAO staticItemDao;
+	private static IItemDAO staticItemDao;
 
 	@Autowired
-	public void setItemDao(ItemDAO itemDao) {
+	public void setItemDao(IItemDAO itemDao) {
 		SpreadSheetItemUtil.staticItemDao = itemDao;
 	}
 	
@@ -694,7 +694,7 @@ public class SpreadSheetItemUtil {
             		*/
 		
 		//get all items with group / version info from db 
-		 ItemDAO idao = staticItemDao;
+		 IItemDAO idao = staticItemDao;
 		 int row_count = 1; int check_group_count = 0;
 		 StringBuffer item_messages = null;
 		 ArrayList<ItemGroupCrvVersionUtil> item_group_crf_records= idao.findAllWithItemGroupCRFVersionMetadataByCRFId(   crfName) ;

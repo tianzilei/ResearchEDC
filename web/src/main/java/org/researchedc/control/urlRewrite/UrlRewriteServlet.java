@@ -28,8 +28,8 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -48,7 +48,7 @@ public class UrlRewriteServlet extends CoreSecureController {
     protected SectionDAO sectionDao;
 
     @Autowired
-    protected ItemGroupDAO itemGroupDao;
+    protected IItemGroupDAO itemGroupDao;
 
     @Autowired
     protected ICrfVersionDAO crfVersionDao;
@@ -236,8 +236,8 @@ public class UrlRewriteServlet extends CoreSecureController {
                     IStudyEventDefinitionDAO sedefdao = this.studyEventDefinitionDao;
                     ICrfDAO crfdao = this.crfDao;
                     ICrfVersionDAO crfvdao = this.crfVersionDao;
-                    ItemDAO idao = this.itemDao;
-                    ItemGroupDAO igdao = this.itemGroupDao;
+                    IItemDAO idao = this.itemDao;
+                    IItemGroupDAO igdao = this.itemGroupDao;
                     IStudyEventDAO sedao = this.studyEventDao;
 
                     StudyBean study = null;

@@ -47,10 +47,10 @@ import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.exception.OpenClinicaSystemException;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -87,7 +87,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ImportSpringJob extends QuartzJobBean {
 
     @Autowired
-    protected ItemDAO itemDao;
+    protected IItemDAO itemDao;
 
     @Autowired
     protected IUserAccountDAO userAccountDao;
@@ -129,7 +129,7 @@ public class ImportSpringJob extends QuartzJobBean {
     private DataSource dataSource;
     private OpenClinicaMailSender mailSender;
     private ImportCRFDataService dataService;
-    private ItemDataDAO itemDataDao;// = this.itemDataDao;
+    private IItemDataDAO itemDataDao;// = this.itemDataDao;
     private EventCRFDao eventCrfDao;// = this.eventCrfDao;
     private IAuditEventDAO auditEventDAO;
     private TriggerService triggerService;
@@ -688,7 +688,7 @@ public class ImportSpringJob extends QuartzJobBean {
                                 logger.debug("found: id " + itemDataBean2.getId() + " name " + itemDataBean2.getName());
                                 displayItemBean.getData().setId(itemDataBean2.getId());
                             }
-                            ItemDAO idao = this.itemDao;
+                            IItemDAO idao = this.itemDao;
                             ItemBean ibean = (ItemBean) idao.findByPK(displayItemBean.getData().getItemId());
                             logger.debug("*** checking for validation errors: " + ibean.getName());
                             String itemOid = displayItemBean.getItem().getOid() + "_" + wrapper.getStudyEventRepeatKey() + "_"

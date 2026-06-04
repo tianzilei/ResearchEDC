@@ -22,10 +22,10 @@ import org.researchedc.control.core.SecureController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
@@ -42,7 +42,7 @@ public class RemoveCRFVersionServlet extends SecureController {
     @Autowired
     EventCRFDao eventCrfDao;
     @Autowired
-    ItemDataDAO itemDataDao;
+    IItemDataDAO itemDataDao;
 
     @Autowired
     private ICrfVersionDAO crfVersionDao;

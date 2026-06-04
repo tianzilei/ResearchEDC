@@ -26,7 +26,7 @@ import org.researchedc.control.submit.DataEntryServlet;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -57,7 +57,7 @@ public class PrintCRFServlet extends DataEntryServlet {
     @Autowired
     private ICrfVersionDAO crfVersionDao;
     @Autowired
-    private ItemGroupDAO itemGroupDao;
+    private IItemGroupDAO itemGroupDao;
     @Autowired
     private SectionDAO sectionDao;
 
@@ -124,7 +124,7 @@ Locale locale;
             // BWP 2/7/2008>> Find out if the CRF has grouped tables, and if so,
             // use
             // that dedicated JSP
-            ItemGroupDAO itemGroupDao = this.itemGroupDao;
+            IItemGroupDAO itemGroupDao = this.itemGroupDao;
             // Find truely grouped tables, not groups with a name of 'Ungrouped'
             List<ItemGroupBean> itemGroupBeans = itemGroupDao.findOnlyGroupsByCRFVersionID(crfVersionId);
 

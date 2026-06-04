@@ -19,9 +19,9 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.view.Page;
@@ -65,7 +65,7 @@ public class ViewCRFVersionServlet extends SecureController {
     public void processRequest() throws Exception {
 
         ICrfVersionDAO cvdao = this.crfVersionDao;
-        ItemDAO idao = this.itemDao;
+        IItemDAO idao = this.itemDao;
         ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
         FormProcessor fp = new FormProcessor(request);
         // checks which module the requests are from

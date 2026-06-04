@@ -20,7 +20,7 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.slf4j.Logger;
@@ -69,7 +69,7 @@ public class ChangeCRFVersionController {
     protected EventDefinitionCRFDao eventDefinitionCrfDao;
 
     @Autowired
-    protected ItemDAO itemDao;
+    protected IItemDAO itemDao;
 
     @Autowired
     protected IStudyEventDefinitionDAO studyEventDefinitionDao;
@@ -300,7 +300,7 @@ public class ChangeCRFVersionController {
         int cur_counter = 0; int new_counter = 0;
 	       
         try{
-        	ItemDAO item_dao = this.itemDao;
+        	IItemDAO item_dao = this.itemDao;
         	ItemDataBean d_bean = null;
         	//get metadata to find repeat group or not
 	        ItemGroupMetadataDAO dao_item_form_mdata = this.itemGroupMetadataDao;

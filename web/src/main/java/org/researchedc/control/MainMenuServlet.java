@@ -30,7 +30,7 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;

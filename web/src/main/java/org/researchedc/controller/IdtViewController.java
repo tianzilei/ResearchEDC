@@ -25,7 +25,7 @@ import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.domain.datamap.EventCrfFlag;
 import org.researchedc.domain.datamap.EventCrfFlagWorkflow;
 import org.researchedc.domain.datamap.EventDefinitionCrfTag;

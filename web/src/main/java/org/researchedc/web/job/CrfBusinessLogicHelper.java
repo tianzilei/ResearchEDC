@@ -15,10 +15,10 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +40,10 @@ public class CrfBusinessLogicHelper {
     protected EventDefinitionCRFDao eventDefinitionCrfDao;
 
     @Autowired
-    protected ItemDAO itemDao;
+    protected IItemDAO itemDao;
 
     @Autowired
-    protected ItemDataDAO itemDataDao;
+    protected IItemDataDAO itemDataDao;
 
     @Autowired
     protected IStudyEventDefinitionDAO studyEventDefinitionDao;
@@ -84,8 +84,8 @@ public class CrfBusinessLogicHelper {
     }
 
     protected boolean isEachRequiredFieldFillout(EventCRFBean ecb) {
-        ItemDataDAO iddao = this.itemDataDao;
-        ItemDAO idao = this.itemDao;
+        IItemDataDAO iddao = this.itemDataDao;
+        IItemDAO idao = this.itemDao;
         int allRequiredNum = idao.findAllRequiredByCRFVersionId(ecb.getCRFVersionId());
         int allRequiredFilledOut = iddao.findAllRequiredByEventCRFId(ecb);
         if (allRequiredNum > allRequiredFilledOut) {
@@ -208,7 +208,7 @@ public class CrfBusinessLogicHelper {
         // getEventDefinitionCRFBean();
         DataEntryStage stage = ecb.getStage();
         EventCRFDao eventCrfDao = this.eventCrfDao;
-        ItemDataDAO itemDataDao = this.itemDataDao;
+        IItemDataDAO itemDataDao = this.itemDataDao;
         IStudyDAO sdao = this.studyDao;
         IStudySubjectDAO ssdao = this.studySubjectDao;
         StudyBean study = sdao.findByStudySubjectId(ecb.getStudySubjectId());

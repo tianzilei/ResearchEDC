@@ -37,8 +37,8 @@ import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.DiscrepancyNotesSummary;
@@ -75,8 +75,8 @@ public class ListNotesTableFactory extends AbstractTableFactory {
     private IStudyEventDAO studyEventDao;
     private IStudyEventDefinitionDAO studyEventDefinitionDao;
     private EventDefinitionCRFDao eventDefinitionCRFDao;
-    private ItemDataDAO itemDataDao;
-    private ItemDAO itemDao;
+    private IItemDataDAO itemDataDao;
+    private IItemDAO itemDao;
     private EventCRFDao eventCRFDao;
     private StudyBean currentStudy;
     private ResourceBundle resword;
@@ -600,19 +600,19 @@ public class ListNotesTableFactory extends AbstractTableFactory {
         this.eventDefinitionCRFDao = eventDefinitionCRFDao;
     }
 
-    public ItemDataDAO getItemDataDao() {
+    public IItemDataDAO getItemDataDao() {
         return itemDataDao;
     }
 
-    public void setItemDataDao(ItemDataDAO itemDataDao) {
+    public void setItemDataDao(IItemDataDAO itemDataDao) {
         this.itemDataDao = itemDataDao;
     }
 
-    public ItemDAO getItemDao() {
+    public IItemDAO getItemDao() {
         return itemDao;
     }
 
-    public void setItemDao(ItemDAO itemDao) {
+    public void setItemDao(IItemDAO itemDao) {
         this.itemDao = itemDao;
     }
 

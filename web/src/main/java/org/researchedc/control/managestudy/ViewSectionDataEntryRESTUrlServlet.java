@@ -49,9 +49,9 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -94,7 +94,7 @@ public class ViewSectionDataEntryRESTUrlServlet extends ViewSectionDataEntryServ
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
-    private ItemGroupDAO itemGroupDao;
+    private IItemGroupDAO itemGroupDao;
     @Autowired
     private SectionDAO sectionDao;
     @Autowired
@@ -414,7 +414,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
         boolean hasItemGroup = false;
         // we will look into db to see if any repeating items for this CRF
         // section
-        ItemGroupDAO igdao = this.itemGroupDao;
+        IItemGroupDAO igdao = this.itemGroupDao;
         List<ItemGroupBean> itemGroups = igdao.findLegitGroupBySectionId(sectionId);
         if (!itemGroups.isEmpty()) {
             hasItemGroup = true;

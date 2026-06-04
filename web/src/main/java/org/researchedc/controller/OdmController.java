@@ -35,9 +35,9 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.domain.datamap.EventCrf;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.ParticipantEventService;
@@ -73,7 +73,7 @@ public class OdmController {
     protected StudyParameterValueDAO studyParameterValueDao;
 
     @Autowired
-    protected ItemDataDAO itemDataDao;
+    protected IItemDataDAO itemDataDao;
 
     @Autowired
     protected IStudyEventDefinitionDAO studyEventDefinitionDao;
@@ -87,7 +87,7 @@ public class OdmController {
     @Autowired
     protected ICrfVersionDAO crfVersionDao;
     @Autowired
-    protected EventCRFDAO legacyEventCrfDao;
+    protected EventCRFDao legacyEventCrfDao;
     @Autowired
     protected IStudyDAO legacyStudyDao;
     @Autowired
@@ -266,8 +266,8 @@ public class OdmController {
         ICrfVersionDAO versionDAO = this.crfVersionDao;
         IStudyDAO studyDAO = this.studyDao;
         IStudySubjectDAO studySubjectDAO = this.studySubjectDao;
-        EventCRFDAO eventCRFDAO = this.legacyEventCrfDao;
-        ItemDataDAO itemDataDAO = this.itemDataDao;
+        EventCRFDao eventCRFDAO = this.legacyEventCrfDao;
+        IItemDataDAO itemDataDAO = this.itemDataDao;
         ICrfDAO crfDAO = this.crfDao;
         List<ODMcomplexTypeDefinitionFormData> formDatas = new ArrayList<>();
         try {

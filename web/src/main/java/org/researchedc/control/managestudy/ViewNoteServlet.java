@@ -31,10 +31,10 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -111,7 +111,7 @@ public static final String NOTE_ID = "id";
                     IItemDataDAO iddao = this.itemDataDao;
                     ItemDataBean itemData = (ItemDataBean) iddao.findByPK(note.getEntityId());
 
-                    ItemDAO idao = this.itemDao;
+                    IItemDAO idao = this.itemDao;
                     ItemBean item = (ItemBean) idao.findByPK(itemData.getItemId());
 
                     note.setEntityValue(itemData.getValue());

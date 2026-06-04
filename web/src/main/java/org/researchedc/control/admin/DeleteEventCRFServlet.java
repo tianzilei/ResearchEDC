@@ -40,10 +40,10 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
@@ -74,7 +74,7 @@ public class DeleteEventCRFServlet extends SecureController {
     @Autowired
     IStudyEventDefinitionDAO studyEventDefinitionDao;
     @Autowired
-    ItemDataDAO itemDataDao;
+    IItemDataDAO itemDataDao;
 
     @Autowired
     private ICrfVersionDAO crfVersionDao;
@@ -89,7 +89,7 @@ public class DeleteEventCRFServlet extends SecureController {
 	DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
 	DynamicsItemGroupMetadataDao dynamicsItemGroupMetadataDao;
 	ItemFormMetadataDAO ifmdao;
-	ItemDataDAO iddao;
+	IItemDataDAO iddao;
 	ItemGroupMetadataDAO igmdao;
     IStudyEventDAO sedao;
 	/**

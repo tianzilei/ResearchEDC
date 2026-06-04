@@ -15,7 +15,7 @@ import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.view.form.FormBeanUtil;

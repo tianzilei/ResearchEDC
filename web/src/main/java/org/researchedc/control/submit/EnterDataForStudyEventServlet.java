@@ -41,9 +41,9 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.crfdata.HideCRFManager;
 import org.researchedc.view.Page;
@@ -312,7 +312,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
         }
 
         ICrfVersionDAO cvdao = this.crfVersionDao;
-        ItemDataDAO iddao = this.itemDataDao;
+        IItemDataDAO iddao = this.itemDataDao;
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecrf = (EventCRFBean) eventCRFs.get(i);
             int crfId = cvdao.getCRFIdFromCRFVersionId(ecrf.getCRFVersionId());
@@ -466,7 +466,7 @@ public class EnterDataForStudyEventServlet extends SecureController {
 
         ICrfDAO cdao = this.crfDao;
         ICrfVersionDAO cvdao = this.crfVersionDao;
-        ItemDataDAO iddao = this.itemDataDao;
+        IItemDataDAO iddao = this.itemDataDao;
 
         for (i = 0; i < eventCRFs.size(); i++) {
             EventCRFBean ecb = (EventCRFBean) eventCRFs.get(i);

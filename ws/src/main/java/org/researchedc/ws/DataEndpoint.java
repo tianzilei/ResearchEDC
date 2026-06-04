@@ -29,7 +29,7 @@ import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.i18n.util.ResourceBundleProvider;

@@ -3,15 +3,15 @@ package org.researchedc.ws.internal.adapter;
 import java.util.List;
 
 import org.researchedc.bean.submit.ItemBean;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ItemAdapter {
 
-    private final ItemDAO delegate;
+    private final IItemDAO delegate;
 
-    public ItemAdapter(ItemDAO delegate) {
+    public ItemAdapter(IItemDAO delegate) {
         this.delegate = delegate;
     }
 
@@ -28,7 +28,7 @@ public class ItemAdapter {
         return delegate.findAllRequiredByCRFVersionId(crfVersionId);
     }
 
-    public ItemDAO getDelegate() {
+    public IItemDAO getDelegate() {
         return delegate;
     }
 }

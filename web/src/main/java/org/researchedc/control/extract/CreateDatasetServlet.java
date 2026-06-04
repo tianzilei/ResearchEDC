@@ -40,10 +40,10 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.StudyGroupClassDao;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.service.crfdata.HideCRFManager;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -200,7 +200,7 @@ public class CreateDatasetServlet extends SecureController {
                     forwardPage(Page.CREATE_DATASET_1);
                 } else {
                     crfdao = this.crfDao;
-                    ItemDAO idao = this.itemDao;
+                    IItemDAO idao = this.itemDao;
                     ArrayList sedItemIds = CreateDatasetServlet.allSedItemIdsInStudy(events, crfdao, idao);
 
                     session.setAttribute("numberOfStudyItems", Integer.toString(sedItemIds.size()));
@@ -1041,7 +1041,7 @@ public class CreateDatasetServlet extends SecureController {
         }
     }
 
-    public static ArrayList<String> allSedItemIdsInStudy(HashMap events, ICrfDAO crfdao, ItemDAO idao) {
+    public static ArrayList<String> allSedItemIdsInStudy(HashMap events, ICrfDAO crfdao, IItemDAO idao) {
         ArrayList<String> sedItemIds = new ArrayList<String>();
         Iterator it = events.keySet().iterator();
         while (it.hasNext()) {
