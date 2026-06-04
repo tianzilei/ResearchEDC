@@ -15,6 +15,7 @@ import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
 import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import javax.sql.DataSource;
  * TODO To change the template for this generated type comment go to Window -
  * Preferences - Java - Code Style - Code Templates
  */
-public class ArchivedDatasetFileDAO extends AuditableEntityDAO {
+public class ArchivedDatasetFileDAO extends AuditableEntityDAO implements ArchivedDatasetFileDao {
     private DAODigester digester;
     private IUserAccountDAO userAccountDao;
     private Function<DataSource, IUserAccountDAO> userAccountDaoFactory = LegacyDaoFactory::userAccountDao;

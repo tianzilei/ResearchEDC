@@ -32,7 +32,7 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
+import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.spi.IItemFormMetadataDAO;
@@ -54,12 +54,12 @@ public class GenerateExtractFileService {
     private final RuleSetRuleDao ruleSetRuleDao;
     private final DatasetDao datasetDao;
     private final IItemFormMetadataDAO itemFormMetadataDao;
-    private final ArchivedDatasetFileDAO archivedDatasetFileDao;
+    private final ArchivedDatasetFileDao archivedDatasetFileDao;
     private final OdmFileCreation odmFileCreation;
 
     public GenerateExtractFileService(DataSource ds, HttpServletRequest request, CoreResources coreResources,
             RuleSetRuleDao ruleSetRuleDao, DatasetDao datasetDao, IItemFormMetadataDAO itemFormMetadataDao,
-            ArchivedDatasetFileDAO archivedDatasetFileDao, OdmFileCreation odmFileCreation) {
+            ArchivedDatasetFileDao archivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         this.ds = ds;
         this.request = request;
         this.coreResources = coreResources;
@@ -72,7 +72,7 @@ public class GenerateExtractFileService {
 
     public GenerateExtractFileService(DataSource ds, CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao,
             DatasetDao datasetDao, IItemFormMetadataDAO itemFormMetadataDao,
-            ArchivedDatasetFileDAO archivedDatasetFileDao, OdmFileCreation odmFileCreation) {
+            ArchivedDatasetFileDao archivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         this(ds, null, coreResources, ruleSetRuleDao, datasetDao, itemFormMetadataDao,
                 archivedDatasetFileDao, odmFileCreation);
     }
@@ -669,7 +669,7 @@ public class GenerateExtractFileService {
         return itemFormMetadataDao;
     }
 
-    private ArchivedDatasetFileDAO getArchivedDatasetFileDao() {
+    private ArchivedDatasetFileDao getArchivedDatasetFileDao() {
         return archivedDatasetFileDao;
     }
 

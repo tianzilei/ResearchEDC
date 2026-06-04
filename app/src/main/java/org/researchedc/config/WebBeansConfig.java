@@ -4,10 +4,10 @@ import javax.sql.DataSource;
 
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
 import org.researchedc.dao.hibernate.RuleDao;
 import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -65,15 +65,15 @@ public class WebBeansConfig {
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public ArchivedDatasetFileDAO extractArchivedDatasetFileDao(DataSource dataSource) {
-        return new ArchivedDatasetFileDAO(dataSource);
+    public ArchivedDatasetFileDao extractArchivedDatasetFileDao(DataSource dataSource) {
+        return LegacyDaoFactory.archivedDatasetFileDao(dataSource);
     }
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public OdmFileCreation odmFileCreation(DataSource dataSource, CoreResources coreResources,
             RuleSetRuleDao ruleSetRuleDao, DatasetDao extractDatasetDao,
-            ArchivedDatasetFileDAO extractArchivedDatasetFileDao) {
+            ArchivedDatasetFileDao extractArchivedDatasetFileDao) {
         return new OdmFileCreation(dataSource, coreResources, ruleSetRuleDao,
                 extractDatasetDao, extractArchivedDatasetFileDao);
     }
@@ -83,7 +83,7 @@ public class WebBeansConfig {
     public GenerateExtractFileService generateExtractFileService(DataSource dataSource,
             CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao, DatasetDao extractDatasetDao,
             IItemFormMetadataDAO extractItemFormMetadataDao,
-            ArchivedDatasetFileDAO extractArchivedDatasetFileDao, OdmFileCreation odmFileCreation) {
+            ArchivedDatasetFileDao extractArchivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         return new GenerateExtractFileService(dataSource, coreResources, ruleSetRuleDao,
                 extractDatasetDao, extractItemFormMetadataDao, extractArchivedDatasetFileDao,
                 odmFileCreation);

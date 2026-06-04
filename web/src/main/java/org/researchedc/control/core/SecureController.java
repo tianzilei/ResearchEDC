@@ -67,7 +67,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
+import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.hibernate.EventDefinitionCrfTagDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
@@ -182,7 +182,7 @@ public abstract class SecureController extends HttpServlet {
     private static String SCHEDULER = "schedulerFactoryBean";
 
     @Autowired
-    protected ArchivedDatasetFileDAO archivedDatasetFileDao;
+    protected ArchivedDatasetFileDao archivedDatasetFileDao;
     @Autowired
     protected DatasetDao datasetDao;
     @Autowired

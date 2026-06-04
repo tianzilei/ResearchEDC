@@ -11,7 +11,7 @@ import org.researchedc.bean.extract.ArchivedDatasetFileBean;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
+import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -52,7 +52,7 @@ public class ShowFileServlet extends SecureController {
         DatasetDao dsdao = this.datasetDao;
         DatasetBean db = (DatasetBean) dsdao.findByPK(dsId);
 
-        ArchivedDatasetFileDAO asdfdao = this.archivedDatasetFileDao;
+        ArchivedDatasetFileDao asdfdao = this.archivedDatasetFileDao;
         ArchivedDatasetFileBean asdfBean = (ArchivedDatasetFileBean) asdfdao.findByPK(fileId);
 
         ArrayList newFileList = new ArrayList();

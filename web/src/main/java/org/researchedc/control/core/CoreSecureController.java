@@ -40,7 +40,7 @@ import org.researchedc.core.EmailEngine;
 import org.researchedc.core.SessionManager;
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
+import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -98,7 +98,7 @@ public abstract class CoreSecureController extends HttpServlet {
     protected HashMap errors = new HashMap();
 
     @Autowired
-    protected ArchivedDatasetFileDAO archivedDatasetFileDao;
+    protected ArchivedDatasetFileDao archivedDatasetFileDao;
     @Autowired
     protected IStudyDAO studyDao;
     @Autowired

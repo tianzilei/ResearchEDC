@@ -45,7 +45,7 @@ import org.researchedc.core.OpenClinicaMailSender;
 import org.researchedc.core.util.XMLFileFilter;
 import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
+import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -97,7 +97,7 @@ public class XsltTransformJob extends QuartzJobBean {
     private OdmFileCreation odmFileCreation;
     private IStudyDAO studyDao;
     private IUserAccountDAO userAccountDao;
-    private ArchivedDatasetFileDAO archivedDatasetFileDao;
+    private ArchivedDatasetFileDao archivedDatasetFileDao;
     private AuditEventDAO auditEventDAO;
     private DatasetDao datasetDao;
 
@@ -618,7 +618,7 @@ public class XsltTransformJob extends QuartzJobBean {
             datasetDao = ctx.getBean(DatasetDao.class);
             userAccountDao = ctx.getBean(IUserAccountDAO.class);
             studyDao = ctx.getBean(IStudyDAO.class);
-            archivedDatasetFileDao = ctx.getBean(ArchivedDatasetFileDAO.class);
+            archivedDatasetFileDao = ctx.getBean(ArchivedDatasetFileDao.class);
             generateFileService = ctx.getBean(GenerateExtractFileService.class);
             odmFileCreation = ctx.getBean(OdmFileCreation.class);
         } catch (SchedulerException e) {
