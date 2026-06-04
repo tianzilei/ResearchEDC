@@ -11,4 +11,12 @@ public interface ItemDataRepository extends JpaRepository<ItemDataEntity, Intege
     List<ItemDataEntity> findByEventCrfIdOrderByItemId(Integer eventCrfId);
 
     List<ItemDataEntity> findByEventCrfIdAndItemId(Integer eventCrfId, Integer itemId);
+
+    List<ItemDataEntity> findByEventCrfId(Integer eventCrfId);
+
+    List<ItemDataEntity> findByEventCrfIdAndItemIdAndStatusIdNot(Integer eventCrfId, Integer itemId, Integer statusId);
+
+    List<ItemDataEntity> findByItemIdAndEventCrfId(Integer itemId, Integer eventCrfId);
+
+    List<ItemDataEntity> findByItemIdAndEventCrfIdAndOrdinal(Integer itemId, Integer eventCrfId, Integer ordinal);
 }

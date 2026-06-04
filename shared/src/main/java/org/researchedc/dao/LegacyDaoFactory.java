@@ -2,123 +2,149 @@ package org.researchedc.dao;
 
 import javax.sql.DataSource;
 
-import org.researchedc.dao.extract.DatasetDAO;
-import org.researchedc.dao.managestudy.EventDefinitionCRFDAO;
-import org.researchedc.dao.managestudy.StudyDAO;
-import org.researchedc.dao.managestudy.StudyEventDAO;
-import org.researchedc.dao.managestudy.StudyEventDefinitionDAO;
-import org.researchedc.dao.managestudy.StudyGroupClassDAO;
-import org.researchedc.dao.managestudy.StudyGroupDAO;
-import org.researchedc.dao.managestudy.StudySubjectDAO;
-import org.researchedc.dao.login.UserAccountDAO;
-import org.researchedc.dao.admin.CRFDAO;
-import org.researchedc.dao.managestudy.DiscrepancyNoteDAO;
-import org.researchedc.dao.rule.RuleDAO;
-import org.researchedc.dao.rule.RuleSetDAO;
-import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.DatasetDao;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.spi.DatasetDao;
-import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.spi.IRuleDAO;
 import org.researchedc.dao.spi.IRuleSetDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.ISubjectDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.StudyGroupDao;
-import org.researchedc.dao.submit.CRFVersionDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
-import org.researchedc.dao.submit.SubjectDAO;
+import org.springframework.context.ApplicationContext;
 
 public final class LegacyDaoFactory {
+
+    private static volatile ApplicationContext applicationContext;
 
     private LegacyDaoFactory() {
     }
 
+    public static void setApplicationContext(ApplicationContext ctx) {
+        applicationContext = ctx;
+    }
+
     public static IStudyDAO studyDao(DataSource dataSource) {
-        return new StudyDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(IStudyDAO.class)
+                : null;
     }
 
     public static IStudySubjectDAO studySubjectDao(DataSource dataSource) {
-        return new StudySubjectDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(IStudySubjectDAO.class)
+                : null;
     }
 
     public static IStudyEventDefinitionDAO studyEventDefinitionDao(DataSource dataSource) {
-        return new StudyEventDefinitionDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(IStudyEventDefinitionDAO.class)
+                : null;
     }
 
     public static IStudyEventDAO studyEventDao(DataSource dataSource) {
-        return new StudyEventDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(IStudyEventDAO.class)
+                : null;
     }
 
     public static EventDefinitionCRFDao eventDefinitionCrfDao(DataSource dataSource) {
-        return new EventDefinitionCRFDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(EventDefinitionCRFDao.class)
+                : null;
     }
 
     public static ISubjectDAO subjectDao(DataSource dataSource) {
-        return new SubjectDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(ISubjectDAO.class)
+                : null;
     }
 
     public static IUserAccountDAO userAccountDao(DataSource dataSource) {
-        return new UserAccountDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(IUserAccountDAO.class)
+                : null;
     }
 
     public static ICrfDAO crfDao(DataSource dataSource) {
-        return new CRFDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(ICrfDAO.class)
+                : null;
     }
 
     public static ICrfVersionDAO crfVersionDao(DataSource dataSource) {
-        return new CRFVersionDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(ICrfVersionDAO.class)
+                : null;
     }
 
     public static IDiscrepancyNoteDAO discrepancyNoteDao(DataSource dataSource) {
-        return new DiscrepancyNoteDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(IDiscrepancyNoteDAO.class)
+                : null;
     }
 
     public static EventCRFDao eventCrfDao(DataSource dataSource) {
-        return new EventCRFDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(EventCRFDao.class)
+                : null;
     }
 
     public static IItemDataDAO itemDataDao(DataSource dataSource) {
-        return new ItemDataDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(IItemDataDAO.class)
+                : null;
     }
 
     public static IItemDAO itemDao(DataSource dataSource) {
-        return new ItemDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(IItemDAO.class)
+                : null;
     }
 
     public static IItemGroupDAO itemGroupDao(DataSource dataSource) {
-        return new ItemGroupDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(IItemGroupDAO.class)
+                : null;
     }
 
     public static IRuleDAO ruleDao(DataSource dataSource) {
-        return new RuleDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(IRuleDAO.class)
+                : null;
     }
 
     public static IRuleSetDAO ruleSetDao(DataSource dataSource) {
-        return new RuleSetDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(IRuleSetDAO.class)
+                : null;
     }
 
     public static DatasetDao datasetDao(DataSource dataSource) {
-        return new DatasetDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(DatasetDao.class)
+                : null;
     }
 
     public static StudyGroupClassDao studyGroupClassDao(DataSource dataSource) {
-        return new StudyGroupClassDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(StudyGroupClassDao.class)
+                : null;
     }
 
     public static StudyGroupDao studyGroupDao(DataSource dataSource) {
-        return new StudyGroupDAO(dataSource);
+        return applicationContext != null
+                ? applicationContext.getBean(StudyGroupDao.class)
+                : null;
     }
 }

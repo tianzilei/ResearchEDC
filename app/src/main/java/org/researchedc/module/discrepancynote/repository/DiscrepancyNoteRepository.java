@@ -14,5 +14,11 @@ public interface DiscrepancyNoteRepository extends JpaRepository<DiscrepancyNote
 
     List<DiscrepancyNoteEntity> findByEntityTypeAndEntityId(String entityType, Integer entityId);
 
+    List<DiscrepancyNoteEntity> findByStudyIdAndParentDnId(Integer studyId, Integer parentDnId);
+
+    List<DiscrepancyNoteEntity> findByStudyIdAndParentDnIdIsNull(Integer studyId);
+
+    List<DiscrepancyNoteEntity> findByEntityTypeAndEntityIdAndParentDnIdIsNull(String entityType, Integer entityId);
+
     long countByResolutionStatusIdNot(Integer resolutionStatusId);
 }

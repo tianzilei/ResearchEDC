@@ -13,4 +13,16 @@ public interface CrfVersionRepository extends JpaRepository<CrfVersionEntity, In
     List<CrfVersionEntity> findByCrfIdOrderByCrfVersionId(Integer crfId);
 
     Optional<CrfVersionEntity> findByOcOid(String ocOid);
+
+    List<CrfVersionEntity> findByCrfId(Integer crfId);
+
+    List<CrfVersionEntity> findByCrfIdAndStatusId(Integer crfId, Integer statusId);
+
+    List<CrfVersionEntity> findByCrfIdAndStatusIdNot(Integer crfId, Integer statusId);
+
+    Optional<CrfVersionEntity> findByName(String name);
+
+    List<CrfVersionEntity> findByOcOidContaining(String ocOid);
+
+    Optional<CrfVersionEntity> findByNameAndCrfId(String name, Integer crfId);
 }

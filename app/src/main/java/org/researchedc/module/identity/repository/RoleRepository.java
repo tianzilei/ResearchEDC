@@ -1,5 +1,6 @@
 package org.researchedc.module.identity.repository;
 
+import java.util.Collection;
 import java.util.List;
 import org.researchedc.module.identity.entity.RoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,10 @@ public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
     List<RoleEntity> findByUserName(String userName);
 
     List<RoleEntity> findByStudyId(Integer studyId);
+
+    List<RoleEntity> findByUserNameAndStudyId(String userName, Integer studyId);
+
+    List<RoleEntity> findByRoleName(String roleName);
+
+    List<RoleEntity> findByRoleNameIn(Collection<String> roleNames);
 }
