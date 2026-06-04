@@ -81,7 +81,7 @@ import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.CRFVersionDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.SourceDataVerification;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -751,7 +751,7 @@ public class OdmExtractDAO extends DatasetDAO {
     public void getODMMetadataForForm(MetaDataVersionBean metadata,String formVersionOID,String odmVersion){
     	  FormDefBean formDef = new FormDefBean();
     	  String cvIds = new String("");
-    	  CRFVersionDAO<String, ArrayList> crfVersionDAO = new CRFVersionDAO<String, ArrayList>(this.ds);
+    	  ICrfVersionDAO crfVersionDAO = LegacyDaoFactory.crfVersionDao(this.ds);
   	 	CRFVersionBean crfVersionBean = crfVersionDAO.findByOid(formVersionOID);
   	 	cvIds =crfVersionBean.getId()+"";
   	 	

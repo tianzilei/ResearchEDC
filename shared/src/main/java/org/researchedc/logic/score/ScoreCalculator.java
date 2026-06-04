@@ -40,8 +40,9 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ResponseOptionBean;
 import org.researchedc.core.SessionManager;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.LegacyDaoFactory;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.exception.ScoreException;
@@ -75,28 +76,28 @@ public class ScoreCalculator {
 
     private final Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
 
-    private final Function<DataSource, ItemDAO> itemDaoFactory;
+    private final Function<DataSource, IItemDAO> itemDaoFactory;
 
-    private final Function<DataSource, ItemDataDAO> itemDataDaoFactory;
+    private final Function<DataSource, IItemDataDAO> itemDataDaoFactory;
 
     private final ArrayList<String> errors = new ArrayList<String>();
 
     private ItemFormMetadataDAO itemFormMetadataDao;
 
-    private ItemDAO itemDao;
+    private IItemDAO itemDao;
 
-    private ItemDataDAO itemDataDao;
+    private IItemDataDAO itemDataDao;
 
     private static int DEFAULT_DECIMAL = 4;
 
     public ScoreCalculator(SessionManager sm, EventCRFBean ecb, UserAccountBean ub) {
-        this(sm, ecb, ub, ItemFormMetadataDAO::new, ItemDAO::new, ItemDataDAO::new);
+        this(sm, ecb, ub, ItemFormMetadataDAO::new, LegacyDaoFactory::itemDao, LegacyDaoFactory::itemDataDao);
     }
 
     ScoreCalculator(SessionManager sm, EventCRFBean ecb, UserAccountBean ub,
             Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory,
-            Function<DataSource, ItemDAO> itemDaoFactory,
-            Function<DataSource, ItemDataDAO> itemDataDaoFactory) {
+            Function<DataSource, IItemDAO> itemDaoFactory,
+            Function<DataSource, IItemDataDAO> itemDataDaoFactory) {
         this.sm = sm;
         this.ecb = ecb;
         this.ub = ub;
@@ -181,8 +182,8 @@ public class ScoreCalculator {
      * if(err.length()>0) { errors.add("Item " + ifmb.getLeftItemText() + "
      * contains calculation errors: " + err.toString()); } } } } catch
      * (OpenClinicaException e) { logger.error(e.getMessage()); }
-     * //ecb.setNeedsRecalc(false); //EventCRFDAO ecdao = new
-     * EventCRFDAO(sm.getDataSource()); //ecb = ecdao.update(ecb);
+     * //ecb.setNeedsRecalc(false); //EventCRFDao ecdao = new
+     * EventCRFDao(sm.getDataSource()); //ecb = ecdao.update(ecb);
      * 
      * return updateFailedItems; }
      */
@@ -526,14 +527,14 @@ public class ScoreCalculator {
         return itemFormMetadataDao;
     }
 
-    private ItemDAO getItemDao() {
+    private IItemDAO getItemDao() {
         if (itemDao == null) {
             itemDao = itemDaoFactory.apply(sm.getDataSource());
         }
         return itemDao;
     }
 
-    private ItemDataDAO getItemDataDao() {
+    private IItemDataDAO getItemDataDao() {
         if (itemDataDao == null) {
             itemDataDao = itemDataDaoFactory.apply(sm.getDataSource());
         }

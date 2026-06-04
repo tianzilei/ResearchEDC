@@ -17,14 +17,14 @@ import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
+import org.researchedc.dao.spi.EventCRFDao;
 
 public class ParticipantEventService {
 
     private DataSource dataSource = null;
     private IStudyDAO studyDAO = null;
     private IStudyEventDAO studyEventDAO = null;
-    private EventCRFDAO eventCRFDAO = null;
+    private EventCRFDao eventCRFDAO = null;
     private EventDefinitionCRFDao eventDefCRFDAO = null;
     private ICrfVersionDAO crfVersionDAO = null;
     
@@ -32,7 +32,7 @@ public class ParticipantEventService {
         this.dataSource = dataSource;
     }
 
-    public ParticipantEventService(IStudyDAO studyDAO, IStudyEventDAO studyEventDAO, EventCRFDAO eventCRFDAO,
+    public ParticipantEventService(IStudyDAO studyDAO, IStudyEventDAO studyEventDAO, EventCRFDao eventCRFDAO,
             EventDefinitionCRFDao eventDefCRFDAO, ICrfVersionDAO crfVersionDAO) {
         this.studyDAO = studyDAO;
         this.studyEventDAO = studyEventDAO;
@@ -142,9 +142,9 @@ public class ParticipantEventService {
     }
 
     /**
-     * @return the EventCRFDAO
+     * @return the EventCRFDao
      */
-    private EventCRFDAO getEventCRFDAO() {
+    private EventCRFDao getEventCRFDAO() {
         return eventCRFDAO;
     }
 

@@ -23,11 +23,11 @@ import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.StudyGroupDao;
-import org.researchedc.dao.submit.EventCRFDAO;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.rule.RuleSetBean;
@@ -61,10 +61,10 @@ public class RandomizeService extends RandomizationRegistrar {
     private DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
     private DynamicsItemGroupMetadataDao dynamicsItemGroupMetadataDao;
     DataSource ds;
-    private EventCRFDAO eventCRFDAO;
-    private ItemDataDAO itemDataDAO;
-    private ItemDAO itemDAO;
-    private ItemGroupDAO itemGroupDAO;
+    private EventCRFDao eventCRFDAO;
+    private IItemDataDAO itemDataDAO;
+    private IItemDAO itemDAO;
+    private IItemGroupDAO itemGroupDAO;
     private SectionDAO sectionDAO;
     // private CRFVersionDAO crfVersionDAO;
     private ItemFormMetadataDAO itemFormMetadataDAO;
@@ -89,7 +89,7 @@ public class RandomizeService extends RandomizationRegistrar {
     @Autowired
     public RandomizeService(DataSource ds, ExpressionService expressionService, IStudySubjectDAO studySubjectDAO, IStudyDAO studyDAO,
             IUserAccountDAO userAccountDAO, ISubjectDAO subjectDAO, StudyGroupClassDao studyGroupClassDAO, StudyGroupDao studyGroupDAO,
-            ItemDataDAO itemDataDAO) {
+            IItemDataDAO itemDataDAO) {
         this.ds = ds;
         this.expressionService = expressionService;
         this.studySubjectDAO = studySubjectDAO;
@@ -318,11 +318,11 @@ public class RandomizeService extends RandomizationRegistrar {
         this.expressionService = expressionService;
     }
 
-    public ItemDataDAO getItemDataDAO() {
+    public IItemDataDAO getItemDataDAO() {
         return itemDataDAO;
     }
 
-    public void setItemDataDAO(ItemDataDAO itemDataDAO) {
+    public void setItemDataDAO(IItemDataDAO itemDataDAO) {
         this.itemDataDAO = itemDataDAO;
     }
     private StudyBean getStudy(String oid) {

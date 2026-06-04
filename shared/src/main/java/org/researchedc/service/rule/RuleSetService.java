@@ -54,8 +54,8 @@ import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.Status;
@@ -130,9 +130,9 @@ public class RuleSetService implements RuleSetServiceInterface {
     @Autowired
     private IStudyEventDAO studyEventDao;
     @Autowired
-    private EventCRFDAO eventCrfDao;
+    private EventCRFDao eventCrfDao;
     @Autowired
-    private ItemDAO itemDao;
+    private IItemDAO itemDao;
     @Autowired
     private IItemDataDAO itemDataDao;
     @Autowired
@@ -1057,11 +1057,11 @@ public class RuleSetService implements RuleSetServiceInterface {
         return studyEventDao;
     }
 
-    private EventCRFDAO getEventCrfDao() {
+    private EventCRFDao getEventCrfDao() {
         return eventCrfDao;
     }
 
-    private ItemDAO getItemDao() {
+    private IItemDAO getItemDao() {
         return itemDao;
     }
 

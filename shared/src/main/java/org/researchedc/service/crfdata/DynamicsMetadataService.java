@@ -36,11 +36,11 @@ import org.researchedc.dao.hibernate.DynamicsItemGroupMetadataDao;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.submit.EventCRFDAO;
-import org.researchedc.dao.submit.ItemDAO;
-import org.researchedc.dao.submit.ItemDataDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.crfdata.DynamicsItemFormMetadataBean;
@@ -80,10 +80,10 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
     private DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
     private DynamicsItemGroupMetadataDao dynamicsItemGroupMetadataDao;
     DataSource ds;
-    private final Function<DataSource, EventCRFDAO> eventCrfDaoFactory;
-    private final Function<DataSource, ItemDataDAO> itemDataDaoFactory;
-    private final Function<DataSource, ItemDAO> itemDaoFactory;
-    private final Function<DataSource, ItemGroupDAO> itemGroupDaoFactory;
+    private final Function<DataSource, EventCRFDao> eventCrfDaoFactory;
+    private final Function<DataSource, IItemDataDAO> itemDataDaoFactory;
+    private final Function<DataSource, IItemDAO> itemDaoFactory;
+    private final Function<DataSource, IItemGroupDAO> itemGroupDaoFactory;
     private final Function<DataSource, SectionDAO> sectionDaoFactory;
     private final Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
     private final Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory;
@@ -93,15 +93,15 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
     private RandomizeService randomizeService;
     
     public DynamicsMetadataService(DataSource ds) {
-        this(ds, EventCRFDAO::new, ItemDataDAO::new, ItemDAO::new, ItemGroupDAO::new,
+        this(ds, LegacyDaoFactory::eventCrfDao, LegacyDaoFactory::itemDataDao, LegacyDaoFactory::itemDao, LegacyDaoFactory::itemGroupDao,
                 SectionDAO::new, ItemFormMetadataDAO::new, ItemGroupMetadataDAO::new,
                 LegacyDaoFactory::studyEventDao, LegacyDaoFactory::eventDefinitionCrfDao);
     }
 
-    public DynamicsMetadataService(DataSource ds, Function<DataSource, EventCRFDAO> eventCrfDaoFactory,
-            Function<DataSource, ItemDataDAO> itemDataDaoFactory,
-            Function<DataSource, ItemDAO> itemDaoFactory,
-            Function<DataSource, ItemGroupDAO> itemGroupDaoFactory,
+    public DynamicsMetadataService(DataSource ds, Function<DataSource, EventCRFDao> eventCrfDaoFactory,
+            Function<DataSource, IItemDataDAO> itemDataDaoFactory,
+            Function<DataSource, IItemDAO> itemDaoFactory,
+            Function<DataSource, IItemGroupDAO> itemGroupDaoFactory,
             Function<DataSource, SectionDAO> sectionDaoFactory,
             Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory,
             Function<DataSource, ItemGroupMetadataDAO> itemGroupMetadataDaoFactory,
@@ -1062,19 +1062,19 @@ public class DynamicsMetadataService implements MetadataServiceInterface {
     //JN: The following methods were all returning global variables causing an issue in the case of concurrent users. Modified to return new DAO Object. The thread pooling will take care of any heap issues and I do not expect any.
 
 
-    private EventCRFDAO getEventCRFDAO() {
+    private EventCRFDao getEventCRFDAO() {
         return eventCrfDaoFactory.apply(ds);
     }
 
-    private ItemDataDAO getItemDataDAO() {
+    private IItemDataDAO getItemDataDAO() {
         return itemDataDaoFactory.apply(ds);
     }
 
-    private ItemDAO getItemDAO() {
+    private IItemDAO getItemDAO() {
         return itemDaoFactory.apply(ds);
     }
 
-    private ItemGroupDAO getItemGroupDAO() {
+    private IItemGroupDAO getItemGroupDAO() {
         return itemGroupDaoFactory.apply(ds);
     }
 
