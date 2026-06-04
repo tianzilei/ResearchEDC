@@ -33,6 +33,7 @@ vi.mock("@/hooks/useStudies", () => ({
   useCurrentStudy: () => ({
     currentStudy: null,
     setCurrentStudy: vi.fn(),
+    clearCurrentStudy: vi.fn(),
   }),
 }));
 
