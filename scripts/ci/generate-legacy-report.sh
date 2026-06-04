@@ -18,10 +18,12 @@ EHCACHE_USAGE=0
 JAX_COUNT=0
 MODULE_LEGACY_IMPORTS=0
 
-DAO_IMPORTS=$(grep -rl --include='*.java' 'org\.akaza\.openclinica\.\(.*\.\)\?dao\.' app/ web/ ws/ core/ 2>/dev/null || true)
+# Post-rename: org.akaza.openclinica → org.researchedc
+# Check for remaining old-package references
+DAO_IMPORTS=$(grep -rl --include='*.java' 'org\.akaza\.openclinica\.\(.*\.\)\?dao\.' app/ web/ ws/ shared/ 2>/dev/null || true)
 LEGACY_DAO_IMPORTS=$(echo "$DAO_IMPORTS" | grep -c . || true)
 
-BEAN_IMPORTS=$(grep -rl --include='*.java' 'org\.akaza\.openclinica\.\(.*\.\)\?bean\.' app/ web/ ws/ core/ 2>/dev/null || true)
+BEAN_IMPORTS=$(grep -rl --include='*.java' 'org\.akaza\.openclinica\.\(.*\.\)\?bean\.' app/ web/ ws/ shared/ 2>/dev/null || true)
 LEGACY_BEAN_IMPORTS=$(echo "$BEAN_IMPORTS" | grep -c . || true)
 
 JSP_FILES=$(find web -name '*.jsp' 2>/dev/null || true)
@@ -33,14 +35,22 @@ SECURE_CONTROLLER_COUNT=$(echo "$SC_CLASSES" | grep -c . || true)
 SOAP_FILES=$(find ws -name '*.java' 2>/dev/null || true)
 SOAP_JAVA_COUNT=$(echo "$SOAP_FILES" | grep -c . || true)
 
-EHCACHE_FILES=$(grep -rl --include='*.java' 'net\.sf\.ehcache\|Ehcache\|CacheManager' app/ core/ web/ ws/ 2>/dev/null || true)
+EHCACHE_FILES=$(grep -rl --include='*.java' 'net\.sf\.ehcache\|Ehcache\|CacheManager' app/ web/ ws/ shared/ 2>/dev/null || true)
 EHCACHE_USAGE=$(echo "$EHCACHE_FILES" | grep -c . || true)
 
-JAX_FILES=$(grep -rl --include='*.java' 'import javax\.' app/ core/ web/ ws/ 2>/dev/null || true)
+JAX_FILES=$(grep -rl --include='*.java' 'import javax\.' app/ web/ ws/ shared/ 2>/dev/null || true)
 JAX_COUNT=$(echo "$JAX_FILES" | grep -c . || true)
 
-MODULE_IMPORTS=$(grep -rl --include='*.java' 'import org\.akaza\.openclinica\.core\.\|import org\.akaza\.openclinica\.bean\.\|import org\.akaza\.openclinica\.dao\.\|import org\.akaza\.openclinica\.domain\.' app/module/ 2>/dev/null || true)
+# Check app/module/ for forbidden legacy imports
+MODULE_IMPORTS=$(grep -rl --include='*.java' 'import org\.researchedc\.dao\.\|import org\.researchedc\.bean\.\|import org\.researchedc\.domain\.\|import org\.akaza\.openclinica\.' app/module/ 2>/dev/null || true)
 MODULE_LEGACY_IMPORTS=$(echo "$MODULE_IMPORTS" | grep -c . || true)
+
+# SPI coverage: count SPI interfaces with @Primary adapters
+SPI_COUNT=$(find shared/src/main/java/org/researchedc/dao/spi -name '*.java' -type f | wc -l)
+ADAPTER_COUNT=$(find app -path '*/internal/adapter/*DaoAdapter.java' -o -path '*/internal/adapter/*DaoAdapter.java' | wc -l)
+
+# Direct DAO construction gauge
+NEW_DAO_COUNT=$(git grep -c 'new \([A-Z][a-zA-Z]*DAO\b\|[A-Z][a-zA-Z]*Dao\b\)(' -- '*.java' ':!app/src/main/java/org/researchedc/config/' ':!shared/src/main/java/org/researchedc/dao/' ':!*Test*.java' ':!app/src/main/java/org/researchedc/module/*/internal/adapter/' 2>/dev/null | tail -1 | cut -d: -f2 || echo 0)
 
 cat > "${REPORT_FILE}" <<HEADER
 # ResearchEDC Legacy Refactor Report
@@ -51,20 +61,23 @@ Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
 | Metric | Count |
 |--------|-------|
-| Legacy DAO imports (app/web/ws/core) | ${LEGACY_DAO_IMPORTS} |
-| Legacy Bean imports (app/web/ws/core) | ${LEGACY_BEAN_IMPORTS} |
+| org.akaza.openclinica.*dao.* residual imports | ${LEGACY_DAO_IMPORTS} |
+| org.akaza.openclinica.*bean.* residual imports | ${LEGACY_BEAN_IMPORTS} |
 | JSP files (web/) | ${JSP_COUNT} |
 | SecureController subclasses (web/) | ${SECURE_CONTROLLER_COUNT} |
 | SOAP Java files (ws/) | ${SOAP_JAVA_COUNT} |
-| Ehcache usage files (app/core/web/ws) | ${EHCACHE_USAGE} |
-| javax.* residual import files (app/core/web/ws) | ${JAX_COUNT} |
-| Modern module imports from legacy (app/module/) | ${MODULE_LEGACY_IMPORTS} |
+| Ehcache usage files | ${EHCACHE_USAGE} |
+| javax.* residual import files | ${JAX_COUNT} |
+| Module legacy imports (app/module/) | ${MODULE_LEGACY_IMPORTS} |
+| SPI interfaces | ${SPI_COUNT} |
+| @Primary module adapters | ${ADAPTER_COUNT} |
+| Direct new XxxDAO() in consumer code | ${NEW_DAO_COUNT} |
 
 ---
 
-## 1. Legacy DAO Imports
+## 1. Old Package Imports (org.akaza.openclinica)
 
-Files importing legacy DAO classes (${LEGACY_DAO_IMPORTS} files):
+Files still importing old-package DAO classes (${LEGACY_DAO_IMPORTS} files):
 
 HEADER
 
@@ -73,16 +86,16 @@ if [ -n "$DAO_IMPORTS" ] && [ "$LEGACY_DAO_IMPORTS" -gt 0 ]; then
     echo "- \`${f}\`" >> "${REPORT_FILE}"
   done
 else
-  echo "_No legacy DAO imports found._" >> "${REPORT_FILE}"
+  echo "_No old-package DAO imports found._" >> "${REPORT_FILE}"
 fi
 
 cat >> "${REPORT_FILE}" <<SECTION2
 
 ---
 
-## 2. Legacy Bean Imports
+## 2. Old Package Bean Imports
 
-Files importing legacy Bean classes (${LEGACY_BEAN_IMPORTS} files):
+Files importing old-package Bean classes (${LEGACY_BEAN_IMPORTS} files):
 
 SECTION2
 
@@ -91,7 +104,7 @@ if [ -n "$BEAN_IMPORTS" ] && [ "$LEGACY_BEAN_IMPORTS" -gt 0 ]; then
     echo "- \`${f}\`" >> "${REPORT_FILE}"
   done
 else
-  echo "_No legacy Bean imports found._" >> "${REPORT_FILE}"
+  echo "_No old-package Bean imports found._" >> "${REPORT_FILE}"
 fi
 
 cat >> "${REPORT_FILE}" <<SECTION3
@@ -188,9 +201,9 @@ cat >> "${REPORT_FILE}" <<SECTION8
 
 ---
 
-## 8. Modern Module Imports from Legacy
+## 8. Module Legacy Imports
 
-Files in \`app/module/\` importing legacy core/bean/dao/domain packages: ${MODULE_LEGACY_IMPORTS}
+Files in \`app/module/\` importing legacy packages: ${MODULE_LEGACY_IMPORTS}
 
 SECTION8
 
@@ -199,8 +212,22 @@ if [ -n "$MODULE_IMPORTS" ] && [ "$MODULE_LEGACY_IMPORTS" -gt 0 ]; then
     echo "- \`${f}\`" >> "${REPORT_FILE}"
   done
 else
-  echo "_No modern module imports from legacy packages._" >> "${REPORT_FILE}"
+  echo "_No module legacy imports found._" >> "${REPORT_FILE}"
 fi
+
+cat >> "${REPORT_FILE}" <<SECTION9
+
+---
+
+## 9. SPI Coverage
+
+| Metric | Count |
+|--------|-------|
+| SPI interfaces | ${SPI_COUNT} |
+| @Primary module adapters | ${ADAPTER_COUNT} |
+| Direct new XxxDAO() in consumer code | ${NEW_DAO_COUNT} |
+
+SECTION9
 
 cat >> "${REPORT_FILE}" <<FOOTER
 
