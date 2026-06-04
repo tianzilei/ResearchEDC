@@ -27,7 +27,7 @@ import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -47,7 +47,7 @@ public class RemoveCRFVersionServlet extends SecureController {
     @Autowired
     private ICrfVersionDAO crfVersionDao;
     @Autowired
-    private SectionDAO sectionDao;
+    private ISectionDAO sectionDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     /**
@@ -95,7 +95,7 @@ public class RemoveCRFVersionServlet extends SecureController {
                 return;
             }
 
-            SectionDAO secdao = this.sectionDao;
+            ISectionDAO secdao = this.sectionDao;
 
             EventCRFDao evdao = this.eventCrfDao;
             // find all event crfs by version id

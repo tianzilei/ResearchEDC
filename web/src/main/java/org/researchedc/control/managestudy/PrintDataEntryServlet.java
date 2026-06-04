@@ -39,7 +39,7 @@ import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemGroupDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -86,7 +86,7 @@ public class PrintDataEntryServlet extends DataEntryServlet {
     @Autowired
     private IItemGroupDAO itemGroupDao;
     @Autowired
-    private SectionDAO sectionDao;
+    private ISectionDAO sectionDao;
     @Autowired
     private ISubjectDAO subjectDao;
 
@@ -126,7 +126,7 @@ Locale locale;
         int eventCRFId = fp.getInt("ecId");
         //JN:The following were the the global variables, moved as local.
         EventCRFBean ecb ;
-        SectionDAO sdao = this.sectionDao;
+        ISectionDAO sdao = this.sectionDao;
        ArrayList<SectionBean> allSectionBeans = new ArrayList<SectionBean>();
         ArrayList sectionBeans = new ArrayList();
         String age = "";

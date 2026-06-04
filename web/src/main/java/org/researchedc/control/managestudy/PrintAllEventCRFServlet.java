@@ -27,7 +27,7 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.view.display.DisplaySectionBeanHandler;
@@ -66,7 +66,7 @@ public class PrintAllEventCRFServlet extends DataEntryServlet {
     @Autowired
     private IItemGroupDAO itemGroupDao;
     @Autowired
-    private SectionDAO sectionDao;
+    private ISectionDAO sectionDao;
 
 Locale locale;
 
@@ -150,7 +150,7 @@ Locale locale;
             request.setAttribute("isInternetExplorer", "true");
         }
 
-        SectionDAO sdao = this.sectionDao;
+        ISectionDAO sdao = this.sectionDao;
         ICrfVersionDAO crfVersionDAO = this.crfVersionDao;
         ICrfDAO crfDao = this.crfDao;
         Map sedCrfBeans = null;

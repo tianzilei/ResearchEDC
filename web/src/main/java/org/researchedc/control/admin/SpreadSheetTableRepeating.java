@@ -31,7 +31,7 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.hibernate.MeasurementUnitDao;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.exception.CRFReadingException;
 import org.researchedc.logic.score.ScoreValidator;
@@ -117,7 +117,7 @@ public class SpreadSheetTableRepeating implements SpreadSheetTable {
     @Autowired
     private IItemGroupDAO itemGroupDao;
     @Autowired
-    private ItemFormMetadataDAO itemFormMetadataDao;
+    private IItemFormMetadataDAO itemFormMetadataDao;
 
     // the default; all crf ids should be > 0, tbh 8-29 :-)
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());

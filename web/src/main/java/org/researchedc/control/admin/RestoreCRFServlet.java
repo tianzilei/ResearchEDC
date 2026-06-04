@@ -23,7 +23,7 @@ import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -43,7 +43,7 @@ public class RestoreCRFServlet extends SecureController {
     @Autowired
     private ICrfVersionDAO crfVersionDao;
     @Autowired
-    private SectionDAO sectionDao;
+    private ISectionDAO sectionDao;
     /**
      *
      */
@@ -84,7 +84,7 @@ public class RestoreCRFServlet extends SecureController {
             EventDefinitionCRFDao edcdao = this.eventDefinitionCrfDao;
             ArrayList edcs = (ArrayList) edcdao.findAllByCRF(crfId);
 
-            SectionDAO secdao = this.sectionDao;
+            ISectionDAO secdao = this.sectionDao;
 
             EventCRFDao evdao = this.eventCrfDao;
             ArrayList eventCRFs = evdao.findAllByCRF(crfId);

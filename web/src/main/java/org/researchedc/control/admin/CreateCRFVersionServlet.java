@@ -29,7 +29,7 @@ import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.exception.CRFReadingException;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -64,7 +64,7 @@ public class CreateCRFVersionServlet extends SecureController {
     @Autowired
     private ICrfVersionDAO crfVersionDao;
     @Autowired
-    private ItemFormMetadataDAO itemFormMetadataDao;
+    private IItemFormMetadataDAO itemFormMetadataDao;
 
     Locale locale;
     FileUploadHelper uploadHelper = new FileUploadHelper();
@@ -643,7 +643,7 @@ public class CreateCRFVersionServlet extends SecureController {
 
     private ItemBean isResponseValid(HashMap items, CRFVersionBean version) {
         IItemDAO idao = this.itemDao;
-        ItemFormMetadataDAO metadao = this.itemFormMetadataDao;
+        IItemFormMetadataDAO metadao = this.itemFormMetadataDao;
         Set names = items.keySet();
         Iterator it = names.iterator();
         while (it.hasNext()) {

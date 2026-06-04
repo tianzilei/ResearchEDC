@@ -41,7 +41,7 @@ import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.service.DiscrepancyNoteUtil;
 import org.researchedc.view.Page;
 import org.researchedc.web.InconsistentStateException;
@@ -62,7 +62,7 @@ public class ResolveDiscrepancyServlet extends SecureController {
     @Autowired
     private IDiscrepancyNoteDAO discrepancyNoteDao;
     @Autowired
-    private ItemFormMetadataDAO itemFormMetadataDao;
+    private IItemFormMetadataDAO itemFormMetadataDao;
 
 private static final String INPUT_NOTE_ID = "noteId";
     private static final String CAN_ADMIN_EDIT = "canAdminEdit";
@@ -163,7 +163,7 @@ private static final String INPUT_NOTE_ID = "noteId";
 
             StudySubjectBean ssb = (StudySubjectBean) ssdao.findByPK(ecb.getStudySubjectId());
 
-            ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
+            IItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
             ItemFormMetadataBean ifmb = ifmdao.findByItemIdAndCRFVersionId(idb.getItemId(), ecb.getCRFVersionId());
 
             if (currentRole.getRole().equals(Role.MONITOR) || !isCompleted) {
