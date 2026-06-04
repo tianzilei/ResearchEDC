@@ -315,6 +315,51 @@ public class StudyEntity {
     public String getEligibility() { return eligibility; }
     public void setEligibility(String v) { this.eligibility = v; }
 
+    public String getUrl() { return url; }
+    public void setUrl(String v) { this.url = v; }
+
+    public String getUrlDescription() { return urlDescription; }
+    public void setUrlDescription(String v) { this.urlDescription = v; }
+
+    public String getAgeMax() { return ageMax; }
+    public void setAgeMax(String v) { this.ageMax = v; }
+
+    public String getAgeMin() { return ageMin; }
+    public void setAgeMin(String v) { this.ageMin = v; }
+
+    public Boolean getHealthyVolunteerAccepted() { return healthyVolunteerAccepted; }
+    public void setHealthyVolunteerAccepted(Boolean v) { this.healthyVolunteerAccepted = v; }
+
     public Boolean getResultsReference() { return resultsReference; }
     public void setResultsReference(Boolean v) { this.resultsReference = v; }
+
+    public String getFacilityZip() { return facilityZip; }
+    public void setFacilityZip(String v) { this.facilityZip = v; }
+
+    public String getFacilityRecruitmentStatus() { return facilityRecruitmentStatus; }
+    public void setFacilityRecruitmentStatus(String v) { this.facilityRecruitmentStatus = v; }
+
+    public String getFacilityContactName() { return facilityContactName; }
+    public void setFacilityContactName(String v) { this.facilityContactName = v; }
+
+    public String getFacilityContactDegree() { return facilityContactDegree; }
+    public void setFacilityContactDegree(String v) { this.facilityContactDegree = v; }
+
+    public String getFacilityContactPhone() { return facilityContactPhone; }
+    public void setFacilityContactPhone(String v) { this.facilityContactPhone = v; }
+
+    public String getFacilityContactEmail() { return facilityContactEmail; }
+    public void setFacilityContactEmail(String v) { this.facilityContactEmail = v; }
+
+    public LocalDateTime getProtocolDateVerification() { return protocolDateVerification; }
+    public void setProtocolDateVerification(LocalDateTime v) { this.protocolDateVerification = v; }
+
+    public String getMedlineIdentifier() { return medlineIdentifier; }
+    public void setMedlineIdentifier(String v) { this.medlineIdentifier = v; }
+
+    public Integer getOldStatusId() { return oldStatusId; }
+    public void setOldStatusId(Integer v) { this.oldStatusId = v; }
+
+    public Integer getVersion() { return version; }
+    public void setVersion(Integer v) { this.version = v; }
 }

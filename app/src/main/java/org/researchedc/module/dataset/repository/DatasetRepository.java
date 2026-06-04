@@ -10,4 +10,18 @@ import java.util.List;
 public interface DatasetRepository extends JpaRepository<DatasetEntity, Integer> {
 
     List<DatasetEntity> findByStudyId(Integer studyId);
+
+    List<DatasetEntity> findByStatusId(Integer statusId);
+
+    List<DatasetEntity> findByStudyIdAndStatusId(Integer studyId, Integer statusId);
+
+    List<DatasetEntity> findByNameAndStudyId(String name, Integer studyId);
+
+    List<DatasetEntity> findByStudyIdOrderByName(Integer studyId);
+
+    List<DatasetEntity> findTop5ByStudyIdOrderByDatasetId(Integer studyId);
+
+    List<DatasetEntity> findByOwnerIdAndStudyId(Integer ownerId, Integer studyId);
+
+    List<DatasetEntity> findAllByOrderByStudyIdAscNameAsc();
 }

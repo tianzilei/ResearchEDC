@@ -1,5 +1,6 @@
 package org.researchedc.module.identity.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.researchedc.module.identity.entity.UserAccountEntity;
@@ -13,4 +14,6 @@ public interface UserAccountRepository extends JpaRepository<UserAccountEntity, 
 
     List<UserAccountEntity> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
         String firstName, String lastName);
+
+    List<UserAccountEntity> findByUserNameIn(Collection<String> userNames);
 }
