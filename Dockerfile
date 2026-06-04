@@ -1,10 +1,11 @@
 FROM node:22-alpine AS frontend
+ENV NODE_ENV=production
 WORKDIR /build/frontend
 RUN corepack enable && corepack prepare pnpm@11.1.2 --activate
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --ignore-scripts && pnpm rebuild esbuild
+RUN pnpm install --ignore-scripts && pnpm rebuild esbuild
 COPY frontend/ .
-RUN pnpm build
+RUN npx tsc -b && npx vite build
 
 FROM maven:3.9-eclipse-temurin-21 AS backend
 WORKDIR /build

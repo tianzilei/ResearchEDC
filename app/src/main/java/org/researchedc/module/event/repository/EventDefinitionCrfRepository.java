@@ -66,9 +66,16 @@ public interface EventDefinitionCrfRepository extends JpaRepository<EventDefinit
             WHERE edc.parent_id = ?1
               AND edc.study_id = ?2
             """, nativeQuery = true)
-    List<EventDefinitionCrfEntity> findByCrfDefinitionInSiteOnly(Integer definitionId, Integer crfId);
+    List<EventDefinitionCrfEntity> findByParentIdAndStudyId(Integer parentId, Integer studyId);
 
-    List<EventDefinitionCrfEntity> findByParentStudyIdAndStatusId(Integer parentStudyId, Integer statusId);
+    @Query(value = """
+            SELECT edc.*
+            FROM module_event_definition_crf edc
+            WHERE edc.study_id = ?1
+              AND edc.parent_id IS NOT NULL
+              AND edc.status_id = ?2
+            """, nativeQuery = true)
+    List<EventDefinitionCrfEntity> findSiteCrfsByStudyAndStatus(Integer studyId, Integer statusId);
 
     @Query(value = """
             SELECT edc.*
