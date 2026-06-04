@@ -20,7 +20,7 @@ import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -38,7 +38,7 @@ public class RestoreCRFVersionServlet extends SecureController {
     @Autowired
     private ICrfVersionDAO crfVersionDao;
     @Autowired
-    private SectionDAO sectionDao;
+    private ISectionDAO sectionDao;
     /**
      *
      */
@@ -80,7 +80,7 @@ public class RestoreCRFVersionServlet extends SecureController {
             }
             CRFVersionBean version = (CRFVersionBean) cvdao.findByPK(versionId);
 
-            SectionDAO secdao = this.sectionDao;
+            ISectionDAO secdao = this.sectionDao;
 
             EventCRFDao evdao = this.eventCrfDao;
             // find all event crfs by version id

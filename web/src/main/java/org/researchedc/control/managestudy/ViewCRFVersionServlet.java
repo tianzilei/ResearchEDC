@@ -20,7 +20,7 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.view.Page;
@@ -41,7 +41,7 @@ public class ViewCRFVersionServlet extends SecureController {
     @Autowired
     private ICrfVersionDAO crfVersionDao;
     @Autowired
-    private ItemFormMetadataDAO itemFormMetadataDao;
+    private IItemFormMetadataDAO itemFormMetadataDao;
 
 /**
      * Checks whether the user has the right permission to proceed function
@@ -65,7 +65,7 @@ public class ViewCRFVersionServlet extends SecureController {
 
         ICrfVersionDAO cvdao = this.crfVersionDao;
         IItemDAO idao = this.itemDao;
-        ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
+        IItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
         FormProcessor fp = new FormProcessor(request);
         // checks which module the requests are from
         String module = fp.getString(MODULE);

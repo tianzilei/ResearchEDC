@@ -20,7 +20,7 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -41,7 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EditSelectedServlet extends SecureController {
 
     @Autowired
-    protected ItemFormMetadataDAO itemFormMetadataDao;
+    protected IItemFormMetadataDAO itemFormMetadataDao;
 
     Locale locale;
 
@@ -96,7 +96,7 @@ public class EditSelectedServlet extends SecureController {
         // <<
         IItemDAO idao = this.itemDao;
         // ICrfDAO crfdao = this.crfDao;
-        ItemFormMetadataDAO imfdao = this.itemFormMetadataDao;
+        IItemFormMetadataDAO imfdao = this.itemFormMetadataDao;
         ICrfDAO crfdao = this.crfDao;
 
         DatasetBean db = (DatasetBean) session.getAttribute("newDataset");

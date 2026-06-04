@@ -23,8 +23,8 @@ import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -40,9 +40,9 @@ import org.researchedc.dao.spi.IItemDataDAO;
 public class ViewEventCRFServlet extends SecureController {
     
     @Autowired
-    private ItemFormMetadataDAO itemFormMetadataDao;
+    private IItemFormMetadataDAO itemFormMetadataDao;
     @Autowired
-    private SectionDAO sectionDao;
+    private ISectionDAO sectionDao;
 
 /**
      *
@@ -62,9 +62,9 @@ public class ViewEventCRFServlet extends SecureController {
         EventCRFDao ecdao = this.eventCrfDao;
         IItemDataDAO iddao = this.itemDataDao;
         IItemDAO idao = this.itemDao;
-        ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
+        IItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
         ICrfDAO cdao = this.crfDao;
-        SectionDAO secdao = this.sectionDao;
+        ISectionDAO secdao = this.sectionDao;
 
         if (eventCRFId == 0) {
             addPageMessage(respage.getString("please_choose_an_event_CRF_to_view"));
