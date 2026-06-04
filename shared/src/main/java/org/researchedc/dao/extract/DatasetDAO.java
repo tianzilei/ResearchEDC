@@ -17,7 +17,8 @@ import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.DAODigester;
 import org.researchedc.dao.core.SQLFactory;
 import org.researchedc.dao.core.TypeNames;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.LegacyDaoFactory;
 
 import java.sql.Types;
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ public class DatasetDAO extends AuditableEntityDAO implements org.researchedc.da
 
     // private DataSource ds;
     // private DAODigester digester;
-    private ItemDAO itemDao;
-    private Function<DataSource, ItemDAO> itemDaoFactory = ItemDAO::new;
+    private IItemDAO itemDao;
+    private Function<DataSource, IItemDAO> itemDaoFactory = LegacyDaoFactory::itemDao;
 
     @Override
     protected void setDigesterName() {
@@ -705,7 +706,7 @@ public class DatasetDAO extends AuditableEntityDAO implements org.researchedc.da
         return db;
     }
 
-    private ItemDAO getItemDao() {
+    private IItemDAO getItemDao() {
         if (itemDao == null) {
             itemDao = itemDaoFactory.apply(ds);
         }

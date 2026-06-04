@@ -17,7 +17,7 @@ import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
@@ -57,13 +57,13 @@ public class ImportDataRuleRunnerContainer {
     private IStudyEventDefinitionDAO studyEventDefinitionDao;
     private ICrfVersionDAO crfVersionDao;
     private IStudyEventDAO studyEventDao;
-    private ItemDAO<String, ArrayList> itemDao;
+    private IItemDAO itemDao;
     private ItemGroupMetadataDAO<String, ArrayList> itemGroupMetadataDao;
     private final Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
     private final Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
     private final Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory = LegacyDaoFactory::crfVersionDao;
     private final Function<DataSource, IStudyEventDAO> studyEventDaoFactory = LegacyDaoFactory::studyEventDao;
-    private final Function<DataSource, ItemDAO<String, ArrayList>> itemDaoFactory = ItemDAO::new;
+    private final Function<DataSource, IItemDAO> itemDaoFactory = LegacyDaoFactory::itemDao;
     private final Function<DataSource, ItemGroupMetadataDAO<String, ArrayList>> itemGroupMetadataDaoFactory = ItemGroupMetadataDAO::new;
 
     /**
@@ -235,7 +235,7 @@ public class ImportDataRuleRunnerContainer {
         return studyEventDao;
     }
 
-    private ItemDAO<String, ArrayList> getItemDao(DataSource ds) {
+    private IItemDAO getItemDao(DataSource ds) {
         if (itemDao == null) {
             itemDao = itemDaoFactory.apply(ds);
         }

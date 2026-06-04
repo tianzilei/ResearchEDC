@@ -35,7 +35,7 @@ import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
 import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.slf4j.Logger;

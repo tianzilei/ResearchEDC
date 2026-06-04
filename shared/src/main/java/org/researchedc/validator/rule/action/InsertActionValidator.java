@@ -12,7 +12,7 @@ import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.submit.ItemDAO;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.action.InsertActionBean;
@@ -35,7 +35,7 @@ import javax.sql.DataSource;
 
 public class InsertActionValidator implements Validator {
 
-    ItemDAO itemDAO;
+    IItemDAO itemDAO;
     ItemFormMetadataDAO itemFormMetadataDAO;
     EventDefinitionCRFDao eventDefinitionCRFDAO;
     IStudyEventDefinitionDAO studyEventDefinitionDAO;
@@ -44,7 +44,7 @@ public class InsertActionValidator implements Validator {
     EventDefinitionCRFBean eventDefinitionCRFBean;
     ExpressionService expressionService;
     RuleSetBean ruleSetBean;
-    private final Function<DataSource, ItemDAO> itemDaoFactory;
+    private final Function<DataSource, IItemDAO> itemDaoFactory;
     private final Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory;
     private final Function<DataSource, ICrfDAO> crfDaoFactory;
     private final Function<DataSource, EventDefinitionCRFDao> eventDefinitionCrfDaoFactory;
@@ -52,7 +52,7 @@ public class InsertActionValidator implements Validator {
 
     public InsertActionValidator(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.itemDaoFactory = ItemDAO::new;
+        this.itemDaoFactory = LegacyDaoFactory::itemDao;
         this.studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
         this.crfDaoFactory = LegacyDaoFactory::crfDao;
         this.eventDefinitionCrfDaoFactory = LegacyDaoFactory::eventDefinitionCrfDao;
@@ -322,7 +322,7 @@ public class InsertActionValidator implements Validator {
 
     }
 
-    public ItemDAO getItemDAO() {
+    public IItemDAO getItemDAO() {
         if (itemDAO == null) {
             itemDAO = itemDaoFactory.apply(dataSource);
         }
