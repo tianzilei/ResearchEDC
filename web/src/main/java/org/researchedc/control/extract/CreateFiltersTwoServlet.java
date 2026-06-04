@@ -23,8 +23,8 @@ import org.researchedc.dao.spi.FilterDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -52,7 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CreateFiltersTwoServlet extends SecureController {
 
     @Autowired
-    protected SectionDAO sectionDao;
+    protected ISectionDAO sectionDao;
 
     @Autowired
     protected FilterDao filterDao;
@@ -61,7 +61,7 @@ public class CreateFiltersTwoServlet extends SecureController {
     protected ICrfVersionDAO crfVersionDao;
 
     @Autowired
-    protected ItemFormMetadataDAO itemFormMetadataDao;
+    protected IItemFormMetadataDAO itemFormMetadataDao;
 
     Locale locale;
 
@@ -133,7 +133,7 @@ public class CreateFiltersTwoServlet extends SecureController {
             if (crfId > 0) {
                 ICrfVersionDAO cvDAO = this.crfVersionDao;
                 ICrfDAO cDAO = this.crfDao;
-                SectionDAO secDAO = this.sectionDao;
+                ISectionDAO secDAO = this.sectionDao;
                 Collection sections = secDAO.findByVersionId(crfId);
                 CRFVersionBean cvBean = (CRFVersionBean) cvDAO.findByPK(crfId);
                 CRFBean cBean = (CRFBean) cDAO.findByPK(cvBean.getCrfId());
@@ -159,10 +159,10 @@ public class CreateFiltersTwoServlet extends SecureController {
             FormProcessor fp = new FormProcessor(request);
             int sectionId = fp.getInt("sectionId");
             if (sectionId > 0) {
-                SectionDAO secDAO = this.sectionDao;
+                ISectionDAO secDAO = this.sectionDao;
                 SectionBean secBean = (SectionBean) secDAO.findByPK(sectionId);
                 session.setAttribute("secBean", secBean);
-                ItemFormMetadataDAO ifmDAO = this.itemFormMetadataDao;
+                IItemFormMetadataDAO ifmDAO = this.itemFormMetadataDao;
                 Collection metadatas = ifmDAO.findAllBySectionId(sectionId);
                 if (metadatas.size() > 0) {
                     request.setAttribute("metadatas", metadatas);
@@ -170,7 +170,7 @@ public class CreateFiltersTwoServlet extends SecureController {
                 } else {
                     CRFVersionBean cvBean = (CRFVersionBean) session.getAttribute("cvBean");
                     addPageMessage(respage.getString("section_not_have_questions_select_another"));
-                    // SectionDAO secDAO = this.sectionDao;
+                    // ISectionDAO secDAO = this.sectionDao;
                     Collection sections = secDAO.findByVersionId(cvBean.getId());
 
                     request.setAttribute("sections", sections);
@@ -180,7 +180,7 @@ public class CreateFiltersTwoServlet extends SecureController {
             } else {
                 CRFVersionBean cvBean = (CRFVersionBean) session.getAttribute("cvBean");
                 addPageMessage(respage.getString("select_section_before_select_question"));
-                SectionDAO secDAO = this.sectionDao;
+                ISectionDAO secDAO = this.sectionDao;
                 Collection sections = secDAO.findByVersionId(cvBean.getId());
 
                 request.setAttribute("sections", sections);
@@ -195,14 +195,14 @@ public class CreateFiltersTwoServlet extends SecureController {
             // item form metadata bean, and stick them in a collection
             // and send the user to create_filter_screen_4
             if (alist.size() > 0) {
-                ItemFormMetadataDAO ifmDAO = this.itemFormMetadataDao;
+                IItemFormMetadataDAO ifmDAO = this.itemFormMetadataDao;
                 Collection questions = ifmDAO.findByMultiplePKs(alist);
                 session.setAttribute("questions", questions);
                 forwardPage(Page.CREATE_FILTER_SCREEN_4);
             } else {
                 SectionBean secBean = (SectionBean) session.getAttribute("secBean");
                 addPageMessage(respage.getString("select_questions_before_set_parameters"));
-                ItemFormMetadataDAO ifmDAO = this.itemFormMetadataDao;
+                IItemFormMetadataDAO ifmDAO = this.itemFormMetadataDao;
                 Collection metadatas = ifmDAO.findAllBySectionId(secBean.getId());
                 request.setAttribute("metadatas", metadatas);
                 forwardPage(Page.CREATE_FILTER_SCREEN_3_2);

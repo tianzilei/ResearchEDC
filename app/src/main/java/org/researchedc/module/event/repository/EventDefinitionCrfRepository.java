@@ -32,7 +32,7 @@ public interface EventDefinitionCrfRepository extends JpaRepository<EventDefinit
 
     @Query(value = """
             SELECT edc.*
-            FROM event_definition_crf edc
+            FROM module_event_definition_crf edc
             WHERE edc.study_event_definition_id = ?1
               AND edc.parent_id IS NULL
               AND edc.status_id = 1
@@ -41,7 +41,7 @@ public interface EventDefinitionCrfRepository extends JpaRepository<EventDefinit
 
     @Query(value = """
             SELECT edc.*
-            FROM event_definition_crf edc
+            FROM module_event_definition_crf edc
             WHERE edc.study_event_definition_id = ?1
               AND edc.study_id = ?2
               AND edc.status_id = 1
@@ -52,7 +52,7 @@ public interface EventDefinitionCrfRepository extends JpaRepository<EventDefinit
 
     @Query(value = """
             SELECT edc.*
-            FROM event_definition_crf edc
+            FROM module_event_definition_crf edc
             WHERE edc.study_event_definition_id = ?1
               AND edc.study_id = ?2
               AND edc.parent_id IS NULL
@@ -62,7 +62,7 @@ public interface EventDefinitionCrfRepository extends JpaRepository<EventDefinit
 
     @Query(value = """
             SELECT edc.*
-            FROM event_definition_crf edc
+            FROM module_event_definition_crf edc
             WHERE edc.parent_id = ?1
               AND edc.study_id = ?2
             """, nativeQuery = true)
@@ -72,7 +72,7 @@ public interface EventDefinitionCrfRepository extends JpaRepository<EventDefinit
 
     @Query(value = """
             SELECT edc.*
-            FROM event_definition_crf edc
+            FROM module_event_definition_crf edc
             WHERE edc.submission_url = ?1 AND edc.study_id = ?2
             """, nativeQuery = true)
     List<EventDefinitionCrfEntity> findBySubmissionUrlAndStudyId(String submissionUrl, Integer studyId);

@@ -46,7 +46,6 @@ import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.domain.datamap.DnItemDataMap;
 import org.researchedc.domain.datamap.DnItemDataMapId;
 import org.researchedc.domain.rule.action.RuleActionRunLogBean;
@@ -90,7 +89,6 @@ public class DeleteEventCRFServlet extends SecureController {
 	DynamicsItemGroupMetadataDao dynamicsItemGroupMetadataDao;
 	ItemFormMetadataDAO ifmdao;
 	IItemDataDAO iddao;
-	ItemGroupMetadataDAO igmdao;
     IStudyEventDAO sedao;
 	/**
      * 

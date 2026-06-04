@@ -1,6 +1,6 @@
 package org.researchedc.control.extract;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemDAO;
@@ -67,7 +67,7 @@ import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 public class DiscrepancyNoteOutputServlet extends SecureController {
 
     @Autowired
-    protected ItemGroupMetadataDAO itemGroupMetadataDao;
+    protected IItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
     protected IItemGroupDAO itemGroupDao;
@@ -292,7 +292,7 @@ public class DiscrepancyNoteOutputServlet extends SecureController {
         IItemDataDAO iddao = this.itemDataDao;
         IItemDAO idao = this.itemDao;
         IStudyDAO studyDao = this.studyDao;
-        ItemGroupMetadataDAO<String, ArrayList> igmdao = this.itemGroupMetadataDao;
+        IItemGroupMetadataDAO igmdao = this.itemGroupMetadataDao;
         IItemGroupDAO igdao = this.itemGroupDao;
 
         ArrayList<DiscrepancyNoteBean> allNotes = new ArrayList<DiscrepancyNoteBean>();

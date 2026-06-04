@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="research-edc" id="2026-06-05-event-definition-crf-bidirectional-sync" dbms="postgresql">
+        <comment>Create guarded bidirectional sync between event_definition_crf and module_event_definition_crf</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION sync_module_event_definition_crf_to_event_definition_crf()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO event_definition_crf (
+                        event_definition_crf_id, study_event_definition_id, study_id, crf_id,
+                        required_crf, double_entry, require_all_text_filled, decision_conditions,
+                        null_values, default_version_id, status_id, owner_id, date_created,
+                        date_updated, update_id, ordinal, electronic_signature, hide_crf,
+                        source_data_verification_code, selected_version_ids, parent_id,
+                        participant_form, allow_anonymous_submission, submission_url
+                    )
+                    VALUES (
+                        NEW.event_definition_crf_id, NEW.study_event_definition_id, NEW.study_id, NEW.crf_id,
+                        NEW.required_crf, NEW.double_entry, NEW.require_all_text_filled, NEW.decision_conditions,
+                        NEW.null_values, NEW.default_version_id, NEW.status_id, NEW.owner_id, NEW.date_created,
+                        NEW.date_updated, NEW.update_id, NEW.ordinal, NEW.electronic_signature, NEW.hide_crf,
+                        NEW.source_data_verification_code, NEW.selected_version_ids, NEW.parent_id,
+                        NEW.participant_form, NEW.allow_anonymous_submission, NEW.submission_url
+                    )
+                    ON CONFLICT (event_definition_crf_id) DO UPDATE SET
+                        study_event_definition_id = EXCLUDED.study_event_definition_id,
+                        study_id = EXCLUDED.study_id,
+                        crf_id = EXCLUDED.crf_id,
+                        required_crf = EXCLUDED.required_crf,
+                        double_entry = EXCLUDED.double_entry,
+                        require_all_text_filled = EXCLUDED.require_all_text_filled,
+                        decision_conditions = EXCLUDED.decision_conditions,
+                        null_values = EXCLUDED.null_values,
+                        default_version_id = EXCLUDED.default_version_id,
+                        status_id = EXCLUDED.status_id,
+                        owner_id = EXCLUDED.owner_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        update_id = EXCLUDED.update_id,
+                        ordinal = EXCLUDED.ordinal,
+                        electronic_signature = EXCLUDED.electronic_signature,
+                        hide_crf = EXCLUDED.hide_crf,
+                        source_data_verification_code = EXCLUDED.source_data_verification_code,
+                        selected_version_ids = EXCLUDED.selected_version_ids,
+                        parent_id = EXCLUDED.parent_id,
+                        participant_form = EXCLUDED.participant_form,
+                        allow_anonymous_submission = EXCLUDED.allow_anonymous_submission,
+                        submission_url = EXCLUDED.submission_url;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE event_definition_crf SET
+                        study_event_definition_id = NEW.study_event_definition_id,
+                        study_id = NEW.study_id,
+                        crf_id = NEW.crf_id,
+                        required_crf = NEW.required_crf,
+                        double_entry = NEW.double_entry,
+                        require_all_text_filled = NEW.require_all_text_filled,
+                        decision_conditions = NEW.decision_conditions,
+                        null_values = NEW.null_values,
+                        default_version_id = NEW.default_version_id,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        ordinal = NEW.ordinal,
+                        electronic_signature = NEW.electronic_signature,
+                        hide_crf = NEW.hide_crf,
+                        source_data_verification_code = NEW.source_data_verification_code,
+                        selected_version_ids = NEW.selected_version_ids,
+                        parent_id = NEW.parent_id,
+                        participant_form = NEW.participant_form,
+                        allow_anonymous_submission = NEW.allow_anonymous_submission,
+                        submission_url = NEW.submission_url
+                    WHERE event_definition_crf_id = OLD.event_definition_crf_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM event_definition_crf WHERE event_definition_crf_id = OLD.event_definition_crf_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE OR REPLACE FUNCTION sync_event_definition_crf_to_module_event_definition_crf()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                IF pg_trigger_depth() > 1 THEN
+                    RETURN COALESCE(NEW, OLD);
+                END IF;
+
+                IF (TG_OP = 'INSERT') THEN
+                    INSERT INTO module_event_definition_crf (
+                        event_definition_crf_id, study_event_definition_id, study_id, crf_id,
+                        required_crf, double_entry, require_all_text_filled, decision_conditions,
+                        null_values, default_version_id, status_id, owner_id, date_created,
+                        date_updated, update_id, ordinal, electronic_signature, hide_crf,
+                        source_data_verification_code, selected_version_ids, parent_id,
+                        participant_form, allow_anonymous_submission, submission_url
+                    )
+                    VALUES (
+                        NEW.event_definition_crf_id, NEW.study_event_definition_id, NEW.study_id, NEW.crf_id,
+                        NEW.required_crf, NEW.double_entry, NEW.require_all_text_filled, NEW.decision_conditions,
+                        NEW.null_values, NEW.default_version_id, NEW.status_id, NEW.owner_id, NEW.date_created,
+                        NEW.date_updated, NEW.update_id, NEW.ordinal, NEW.electronic_signature, NEW.hide_crf,
+                        NEW.source_data_verification_code, NEW.selected_version_ids, NEW.parent_id,
+                        NEW.participant_form, NEW.allow_anonymous_submission, NEW.submission_url
+                    )
+                    ON CONFLICT (event_definition_crf_id) DO UPDATE SET
+                        study_event_definition_id = EXCLUDED.study_event_definition_id,
+                        study_id = EXCLUDED.study_id,
+                        crf_id = EXCLUDED.crf_id,
+                        required_crf = EXCLUDED.required_crf,
+                        double_entry = EXCLUDED.double_entry,
+                        require_all_text_filled = EXCLUDED.require_all_text_filled,
+                        decision_conditions = EXCLUDED.decision_conditions,
+                        null_values = EXCLUDED.null_values,
+                        default_version_id = EXCLUDED.default_version_id,
+                        status_id = EXCLUDED.status_id,
+                        owner_id = EXCLUDED.owner_id,
+                        date_created = EXCLUDED.date_created,
+                        date_updated = EXCLUDED.date_updated,
+                        update_id = EXCLUDED.update_id,
+                        ordinal = EXCLUDED.ordinal,
+                        electronic_signature = EXCLUDED.electronic_signature,
+                        hide_crf = EXCLUDED.hide_crf,
+                        source_data_verification_code = EXCLUDED.source_data_verification_code,
+                        selected_version_ids = EXCLUDED.selected_version_ids,
+                        parent_id = EXCLUDED.parent_id,
+                        participant_form = EXCLUDED.participant_form,
+                        allow_anonymous_submission = EXCLUDED.allow_anonymous_submission,
+                        submission_url = EXCLUDED.submission_url;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'UPDATE') THEN
+                    UPDATE module_event_definition_crf SET
+                        study_event_definition_id = NEW.study_event_definition_id,
+                        study_id = NEW.study_id,
+                        crf_id = NEW.crf_id,
+                        required_crf = NEW.required_crf,
+                        double_entry = NEW.double_entry,
+                        require_all_text_filled = NEW.require_all_text_filled,
+                        decision_conditions = NEW.decision_conditions,
+                        null_values = NEW.null_values,
+                        default_version_id = NEW.default_version_id,
+                        status_id = NEW.status_id,
+                        owner_id = NEW.owner_id,
+                        date_created = NEW.date_created,
+                        date_updated = NEW.date_updated,
+                        update_id = NEW.update_id,
+                        ordinal = NEW.ordinal,
+                        electronic_signature = NEW.electronic_signature,
+                        hide_crf = NEW.hide_crf,
+                        source_data_verification_code = NEW.source_data_verification_code,
+                        selected_version_ids = NEW.selected_version_ids,
+                        parent_id = NEW.parent_id,
+                        participant_form = NEW.participant_form,
+                        allow_anonymous_submission = NEW.allow_anonymous_submission,
+                        submission_url = NEW.submission_url
+                    WHERE event_definition_crf_id = OLD.event_definition_crf_id;
+                    RETURN NEW;
+                ELSIF (TG_OP = 'DELETE') THEN
+                    DELETE FROM module_event_definition_crf WHERE event_definition_crf_id = OLD.event_definition_crf_id;
+                    RETURN OLD;
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_sync_module_event_definition_crf ON module_event_definition_crf;
+            CREATE TRIGGER trg_sync_module_event_definition_crf
+            AFTER INSERT OR UPDATE OR DELETE ON module_event_definition_crf
+            FOR EACH ROW EXECUTE FUNCTION sync_module_event_definition_crf_to_event_definition_crf();
+
+            DROP TRIGGER IF EXISTS trg_sync_event_definition_crf_to_module ON event_definition_crf;
+            CREATE TRIGGER trg_sync_event_definition_crf_to_module
+            AFTER INSERT OR UPDATE OR DELETE ON event_definition_crf
+            FOR EACH ROW EXECUTE FUNCTION sync_event_definition_crf_to_module_event_definition_crf();
+        ]]></sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS trg_sync_event_definition_crf_to_module ON event_definition_crf;
+            DROP FUNCTION IF EXISTS sync_event_definition_crf_to_module_event_definition_crf();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

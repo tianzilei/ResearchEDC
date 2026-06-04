@@ -16,7 +16,9 @@ import org.researchedc.dao.rule.action.RuleActionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IRuleSetDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
@@ -24,8 +26,6 @@ import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.rule.RuleBulkExecuteContainer;
 import org.researchedc.domain.rule.RuleBulkExecuteContainerTwo;
 import org.researchedc.domain.rule.RuleSetBean;
@@ -65,8 +65,8 @@ public class RuleRunner {
     private IStudyParameterValueDAO studyParameterValueDao;
     private IUserAccountDAO userAccountDao;
     private IDiscrepancyNoteDAO discrepancyNoteDao;
-    private ItemFormMetadataDAO itemFormMetadataDao;
-    private SectionDAO sectionDao;
+    private IItemFormMetadataDAO itemFormMetadataDao;
+    private ISectionDAO sectionDao;
     private JavaMailSenderImpl mailSender;
     protected RuleRunnerMode ruleRunnerMode;
     protected DynamicsMetadataService dynamicsMetadataService;
@@ -234,11 +234,11 @@ public class RuleRunner {
         return studySubjectDao;
     }
 
-    ItemFormMetadataDAO getItemFormMetadataDAO() {
+    IItemFormMetadataDAO getItemFormMetadataDAO() {
         return itemFormMetadataDao;
     }
 
-    SectionDAO getSectionDAO() {
+    ISectionDAO getSectionDAO() {
         return sectionDao;
     }
 
@@ -264,7 +264,7 @@ public class RuleRunner {
 
     public void setDaoCollaborators(IRuleSetDAO ruleSetDao, ICrfDAO crfDao, RuleSetRuleDAO ruleSetRuleDao, RuleActionDAO ruleActionDao,
             IStudyEventDAO studyEventDao, IItemDataDAO itemDataDao, EventCRFDao eventCrfDao, ICrfVersionDAO crfVersionDao,
-            IStudySubjectDAO studySubjectDao, ItemFormMetadataDAO itemFormMetadataDao, SectionDAO sectionDao, IStudyDAO studyDao,
+            IStudySubjectDAO studySubjectDao, IItemFormMetadataDAO itemFormMetadataDao, ISectionDAO sectionDao, IStudyDAO studyDao,
             IStudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
             IDiscrepancyNoteDAO discrepancyNoteDao, ExpressionService expressionService) {
         this.ruleSetDao = ruleSetDao;

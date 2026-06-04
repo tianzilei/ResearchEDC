@@ -18,7 +18,7 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.domain.rule.action.RuleActionBean;
@@ -58,13 +58,13 @@ public class ImportDataRuleRunnerContainer {
     private ICrfVersionDAO crfVersionDao;
     private IStudyEventDAO studyEventDao;
     private IItemDAO itemDao;
-    private ItemGroupMetadataDAO<String, ArrayList> itemGroupMetadataDao;
+    private IItemGroupMetadataDAO itemGroupMetadataDao;
     private final Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
     private final Function<DataSource, IStudyEventDefinitionDAO> studyEventDefinitionDaoFactory = LegacyDaoFactory::studyEventDefinitionDao;
     private final Function<DataSource, ICrfVersionDAO> crfVersionDaoFactory = LegacyDaoFactory::crfVersionDao;
     private final Function<DataSource, IStudyEventDAO> studyEventDaoFactory = LegacyDaoFactory::studyEventDao;
     private final Function<DataSource, IItemDAO> itemDaoFactory = LegacyDaoFactory::itemDao;
-    private final Function<DataSource, ItemGroupMetadataDAO<String, ArrayList>> itemGroupMetadataDaoFactory = ItemGroupMetadataDAO::new;
+    private final Function<DataSource, IItemGroupMetadataDAO> itemGroupMetadataDaoFactory = LegacyDaoFactory::itemGroupMetadataDao;
 
     /**
      * Populate importDataTrueRuleSets and variableAndValue.
@@ -242,7 +242,7 @@ public class ImportDataRuleRunnerContainer {
         return itemDao;
     }
 
-    private ItemGroupMetadataDAO<String, ArrayList> getItemGroupMetadataDao(DataSource ds) {
+    private IItemGroupMetadataDAO getItemGroupMetadataDao(DataSource ds) {
         if (itemGroupMetadataDao == null) {
             itemGroupMetadataDao = itemGroupMetadataDaoFactory.apply(ds);
         }

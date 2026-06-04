@@ -43,7 +43,7 @@ import org.researchedc.core.SessionManager;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.exception.ScoreException;
 import org.slf4j.Logger;
@@ -74,7 +74,7 @@ public class ScoreCalculator {
 
     private final UserAccountBean ub;
 
-    private final Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory;
+    private final Function<DataSource, IItemFormMetadataDAO> itemFormMetadataDaoFactory;
 
     private final Function<DataSource, IItemDAO> itemDaoFactory;
 
@@ -82,7 +82,7 @@ public class ScoreCalculator {
 
     private final ArrayList<String> errors = new ArrayList<String>();
 
-    private ItemFormMetadataDAO itemFormMetadataDao;
+    private IItemFormMetadataDAO itemFormMetadataDao;
 
     private IItemDAO itemDao;
 
@@ -91,11 +91,11 @@ public class ScoreCalculator {
     private static int DEFAULT_DECIMAL = 4;
 
     public ScoreCalculator(SessionManager sm, EventCRFBean ecb, UserAccountBean ub) {
-        this(sm, ecb, ub, ItemFormMetadataDAO::new, LegacyDaoFactory::itemDao, LegacyDaoFactory::itemDataDao);
+        this(sm, ecb, ub, LegacyDaoFactory::itemFormMetadataDao, LegacyDaoFactory::itemDao, LegacyDaoFactory::itemDataDao);
     }
 
     ScoreCalculator(SessionManager sm, EventCRFBean ecb, UserAccountBean ub,
-            Function<DataSource, ItemFormMetadataDAO> itemFormMetadataDaoFactory,
+            Function<DataSource, IItemFormMetadataDAO> itemFormMetadataDaoFactory,
             Function<DataSource, IItemDAO> itemDaoFactory,
             Function<DataSource, IItemDataDAO> itemDataDaoFactory) {
         this.sm = sm;
@@ -520,7 +520,7 @@ public class ScoreCalculator {
         return value;
     }
 
-    private ItemFormMetadataDAO getItemFormMetadataDao() {
+    private IItemFormMetadataDAO getItemFormMetadataDao() {
         if (itemFormMetadataDao == null) {
             itemFormMetadataDao = itemFormMetadataDaoFactory.apply(sm.getDataSource());
         }

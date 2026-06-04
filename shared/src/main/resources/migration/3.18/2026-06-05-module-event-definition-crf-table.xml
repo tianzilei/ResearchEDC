@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <!-- Phase B: Schema Ownership - module-owned event_definition_crf table -->
+
+    <changeSet author="research-edc" id="2026-06-05-module-event-definition-crf-seq-1">
+        <comment>Create sequence for module_event_definition_crf PK</comment>
+        <createSequence sequenceName="module_event_definition_crf_id_seq"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-05-module-event-definition-crf-table-2">
+        <comment>Create module_event_definition_crf table with all columns matching EventDefinitionCrfEntity</comment>
+        <createTable tableName="module_event_definition_crf">
+            <column name="event_definition_crf_id" type="INT"><constraints nullable="false"/></column>
+            <column name="study_event_definition_id" type="INT"/>
+            <column name="study_id" type="INT"/>
+            <column name="crf_id" type="INT"/>
+            <column name="required_crf" type="BOOLEAN"/>
+            <column name="double_entry" type="BOOLEAN"/>
+            <column name="require_all_text_filled" type="BOOLEAN"/>
+            <column name="decision_conditions" type="BOOLEAN"/>
+            <column name="null_values" type="VARCHAR(255)"/>
+            <column name="default_version_id" type="INT"/>
+            <column name="status_id" type="INT"/>
+            <column name="owner_id" type="INT"/>
+            <column name="date_created" type="TIMESTAMP"/>
+            <column name="date_updated" type="TIMESTAMP"/>
+            <column name="update_id" type="INT"/>
+            <column name="ordinal" type="INT"/>
+            <column name="electronic_signature" type="BOOLEAN"/>
+            <column name="hide_crf" type="BOOLEAN"/>
+            <column name="source_data_verification_code" type="INT"/>
+            <column name="selected_version_ids" type="VARCHAR(150)"/>
+            <column name="parent_id" type="INT"/>
+            <column name="participant_form" type="BOOLEAN"/>
+            <column name="allow_anonymous_submission" type="BOOLEAN"/>
+            <column name="submission_url" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-05-module-event-definition-crf-pk-3">
+        <comment>Add primary key on event_definition_crf_id</comment>
+        <addPrimaryKey columnNames="event_definition_crf_id" constraintName="pk_module_event_definition_crf" tableName="module_event_definition_crf"/>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-05-module-event-definition-crf-copy-4" failOnError="false">
+        <comment>Copy existing data from legacy event_definition_crf table to module_event_definition_crf</comment>
+        <sql>
+            INSERT INTO module_event_definition_crf (
+                event_definition_crf_id, study_event_definition_id, study_id, crf_id,
+                required_crf, double_entry, require_all_text_filled, decision_conditions,
+                null_values, default_version_id, status_id, owner_id, date_created,
+                date_updated, update_id, ordinal, electronic_signature, hide_crf,
+                source_data_verification_code, selected_version_ids, parent_id,
+                participant_form, allow_anonymous_submission, submission_url
+            )
+            SELECT
+                event_definition_crf_id, study_event_definition_id, study_id, crf_id,
+                required_crf, double_entry, require_all_text_filled, decision_conditions,
+                null_values, default_version_id, status_id, owner_id, date_created,
+                date_updated, update_id, ordinal, electronic_signature, hide_crf,
+                source_data_verification_code, selected_version_ids, parent_id,
+                participant_form, allow_anonymous_submission, submission_url
+            FROM event_definition_crf
+        </sql>
+    </changeSet>
+
+    <changeSet author="research-edc" id="2026-06-05-module-event-definition-crf-seq-val-5" failOnError="false">
+        <comment>Set sequence to max existing event_definition_crf_id</comment>
+        <sql>SELECT setval('module_event_definition_crf_id_seq', COALESCE((SELECT MAX(event_definition_crf_id) FROM event_definition_crf), 1))</sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -11,6 +11,9 @@ import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.dao.spi.IRuleDAO;
 import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -115,6 +118,24 @@ public final class LegacyDaoFactory {
     public static IItemGroupDAO itemGroupDao(DataSource dataSource) {
         return applicationContext != null
                 ? applicationContext.getBean(IItemGroupDAO.class)
+                : null;
+    }
+
+    public static IItemFormMetadataDAO itemFormMetadataDao(DataSource dataSource) {
+        return applicationContext != null
+                ? applicationContext.getBean(IItemFormMetadataDAO.class)
+                : null;
+    }
+
+    public static ISectionDAO sectionDao(DataSource dataSource) {
+        return applicationContext != null
+                ? applicationContext.getBean(ISectionDAO.class)
+                : null;
+    }
+
+    public static IItemGroupMetadataDAO itemGroupMetadataDao(DataSource dataSource) {
+        return applicationContext != null
+                ? applicationContext.getBean(IItemGroupMetadataDAO.class)
                 : null;
     }
 

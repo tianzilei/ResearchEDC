@@ -19,7 +19,7 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.TableOfContentsServlet;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -67,7 +67,7 @@ public class ViewTableOfContentServlet extends SecureController {
         return getDisplayBean(crfVersionId, this.sectionDao, this.crfVersionDao, this.crfDao);
     }
 
-    public static DisplayTableOfContentsBean getDisplayBean(int crfVersionId, SectionDAO sectionDao, ICrfVersionDAO crfVersionDao, ICrfDAO crfDao) {
+    public static DisplayTableOfContentsBean getDisplayBean(int crfVersionId, ISectionDAO sectionDao, ICrfVersionDAO crfVersionDao, ICrfDAO crfDao) {
         DisplayTableOfContentsBean answer = new DisplayTableOfContentsBean();
 
         ArrayList sections = getSections(crfVersionId, sectionDao);
@@ -90,7 +90,7 @@ public class ViewTableOfContentServlet extends SecureController {
         return getSections(crfVersionId, this.sectionDao);
     }
 
-    public static ArrayList getSections(int crfVersionId, SectionDAO sdao) {
+    public static ArrayList getSections(int crfVersionId, ISectionDAO sdao) {
 
         HashMap numItemsBySectionId = sdao.getNumItemsBySectionId();
         ArrayList sections = sdao.findAllByCRFVersionId(crfVersionId);

@@ -47,7 +47,9 @@ import org.researchedc.dao.rule.action.RuleActionDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IRuleSetDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
@@ -56,8 +58,6 @@ import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
-import org.researchedc.dao.submit.SectionDAO;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.crfdata.DynamicsItemFormMetadataBean;
 import org.researchedc.domain.datamap.StudyEvent;
@@ -136,9 +136,9 @@ public class RuleSetService implements RuleSetServiceInterface {
     @Autowired
     private IItemDataDAO itemDataDao;
     @Autowired
-    private ItemFormMetadataDAO itemFormMetadataDao;
+    private IItemFormMetadataDAO itemFormMetadataDao;
     @Autowired
-    private SectionDAO sectionDao;
+    private ISectionDAO sectionDao;
     @Autowired
     private IStudyParameterValueDAO studyParameterValueDao;
     @Autowired
@@ -1065,7 +1065,7 @@ public class RuleSetService implements RuleSetServiceInterface {
         return itemDao;
     }
 
-    private ItemFormMetadataDAO getItemFormMetadataDao() {
+    private IItemFormMetadataDAO getItemFormMetadataDao() {
         return itemFormMetadataDao;
     }
 
@@ -1095,7 +1095,7 @@ public class RuleSetService implements RuleSetServiceInterface {
         return studySubjecdao;
     }
 
-    private SectionDAO getSectionDao() {
+    private ISectionDAO getSectionDao() {
         return sectionDao;
     }
 

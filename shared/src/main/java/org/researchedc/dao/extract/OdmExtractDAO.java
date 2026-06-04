@@ -82,7 +82,7 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyParameterValueDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.domain.SourceDataVerification;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.job.JobTerminationMonitor;
@@ -99,11 +99,11 @@ import org.researchedc.logic.odmExport.MetadataUnit;
 public class OdmExtractDAO extends DatasetDAO {
 
     private ICrfDAO crfDao;
-    private SectionDAO sectionDao;
+    private ISectionDAO sectionDao;
     private IStudyDAO studyDao;
     private StudyParameterValueDAO studyParameterValueDao;
     private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
-    private Function<DataSource, SectionDAO> sectionDaoFactory = SectionDAO::new;
+    private Function<DataSource, ISectionDAO> sectionDaoFactory = LegacyDaoFactory::sectionDao;
     private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
     private Function<DataSource, StudyParameterValueDAO> studyParameterValueDaoFactory = StudyParameterValueDAO::new;
 	
@@ -3167,7 +3167,7 @@ private void fetchItemGroupMetaData(MetaDataVersionBean metadata,String cvIds, S
         return crfDao;
     }
 
-    private SectionDAO getSectionDao() {
+    private ISectionDAO getSectionDao() {
         if (sectionDao == null) {
             sectionDao = sectionDaoFactory.apply(this.ds);
         }

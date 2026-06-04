@@ -21,7 +21,7 @@ import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +84,7 @@ public class ChangeCRFVersionController {
     protected IStudyEventDAO studyEventDao;
 
     @Autowired
-    protected ItemGroupMetadataDAO itemGroupMetadataDao;
+    protected IItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
     protected AuditDAO auditDao;
@@ -303,7 +303,7 @@ public class ChangeCRFVersionController {
         	IItemDAO item_dao = this.itemDao;
         	ItemDataBean d_bean = null;
         	//get metadata to find repeat group or not
-	        ItemGroupMetadataDAO dao_item_form_mdata = this.itemGroupMetadataDao;
+	        IItemGroupMetadataDAO dao_item_form_mdata = this.itemGroupMetadataDao;
 	        List<ItemGroupMetadataBean> beans_item_form_mdata = dao_item_form_mdata.findByCrfVersion( crfVersionId);
 	        HashMap<Integer, ItemGroupMetadataBean> hash_item_form_mdata = new HashMap<Integer, ItemGroupMetadataBean>(beans_item_form_mdata.size());
 	        //put in hash 

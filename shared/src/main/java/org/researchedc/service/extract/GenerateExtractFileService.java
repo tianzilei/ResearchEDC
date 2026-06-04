@@ -35,8 +35,8 @@ import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.extract.ArchivedDatasetFileDAO;
 import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +53,12 @@ public class GenerateExtractFileService {
     private static List<File> oldFiles = new LinkedList<File>();
     private final RuleSetRuleDao ruleSetRuleDao;
     private final DatasetDao datasetDao;
-    private final ItemFormMetadataDAO itemFormMetadataDao;
+    private final IItemFormMetadataDAO itemFormMetadataDao;
     private final ArchivedDatasetFileDAO archivedDatasetFileDao;
     private final OdmFileCreation odmFileCreation;
 
     public GenerateExtractFileService(DataSource ds, HttpServletRequest request, CoreResources coreResources,
-            RuleSetRuleDao ruleSetRuleDao, DatasetDao datasetDao, ItemFormMetadataDAO itemFormMetadataDao,
+            RuleSetRuleDao ruleSetRuleDao, DatasetDao datasetDao, IItemFormMetadataDAO itemFormMetadataDao,
             ArchivedDatasetFileDAO archivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         this.ds = ds;
         this.request = request;
@@ -71,7 +71,7 @@ public class GenerateExtractFileService {
     }
 
     public GenerateExtractFileService(DataSource ds, CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao,
-            DatasetDao datasetDao, ItemFormMetadataDAO itemFormMetadataDao,
+            DatasetDao datasetDao, IItemFormMetadataDAO itemFormMetadataDao,
             ArchivedDatasetFileDAO archivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         this(ds, null, coreResources, ruleSetRuleDao, datasetDao, itemFormMetadataDao,
                 archivedDatasetFileDao, odmFileCreation);
@@ -665,7 +665,7 @@ public class GenerateExtractFileService {
         return datasetDao;
     }
 
-    private ItemFormMetadataDAO getItemFormMetadataDao() {
+    private IItemFormMetadataDAO getItemFormMetadataDao() {
         return itemFormMetadataDao;
     }
 
