@@ -26,7 +26,7 @@ import org.researchedc.control.DefaultActionsEditor;
 import org.researchedc.control.OCTableFacadeImpl;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
@@ -68,7 +68,7 @@ public class ViewRuleAssignmentTableFactory extends AbstractTableFactory {
     private ResourceBundle resword;
     private final boolean showMoreLink;
     private final boolean isDesignerRequest;
-    private ItemFormMetadataDAO itemFormMetadataDAO;
+    private IItemFormMetadataDAO itemFormMetadataDAO;
     private List<Integer> ruleSetRuleIds;
     private final String designerURL;
     private String[] columnNames = new String[] {};
@@ -371,11 +371,11 @@ public class ViewRuleAssignmentTableFactory extends AbstractTableFactory {
         this.currentStudy = currentStudy;
     }
 
-    public ItemFormMetadataDAO getItemFormMetadataDAO() {
+    public IItemFormMetadataDAO getItemFormMetadataDAO() {
         return itemFormMetadataDAO;
     }
 
-    public void setItemFormMetadataDAO(ItemFormMetadataDAO itemFormMetadataDAO) {
+    public void setItemFormMetadataDAO(IItemFormMetadataDAO itemFormMetadataDAO) {
         this.itemFormMetadataDAO = itemFormMetadataDAO;
     }
 

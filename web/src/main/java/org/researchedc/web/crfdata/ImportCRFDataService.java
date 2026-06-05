@@ -60,7 +60,7 @@ import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -95,7 +95,7 @@ public class ImportCRFDataService {
     protected IStudyDAO studyDao;
 
     @Autowired
-    protected ItemFormMetadataDAO itemFormMetadataDao;
+    protected IItemFormMetadataDAO itemFormMetadataDao;
 
     @Autowired
     protected IItemGroupDAO itemGroupDao;
@@ -533,7 +533,7 @@ public class ImportCRFDataService {
                                 for (ImportItemDataBean importItemDataBean : itemDataBeans) {
                                     logger.debug("   iterating through item data beans: " + importItemDataBean.getItemOID());
                                     IItemDAO itemDAO = this.itemDao;
-                                    ItemFormMetadataDAO itemFormMetadataDAO = this.itemFormMetadataDao;
+                                    IItemFormMetadataDAO itemFormMetadataDAO = this.itemFormMetadataDao;
 
                                     List<ItemBean> itemBeans = itemDAO.findByOid(importItemDataBean.getItemOID());
                                     if (!itemBeans.isEmpty()) {

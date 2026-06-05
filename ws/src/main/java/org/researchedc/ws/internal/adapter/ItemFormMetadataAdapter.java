@@ -3,15 +3,15 @@ package org.researchedc.ws.internal.adapter;
 import java.util.ArrayList;
 
 import org.researchedc.bean.submit.ItemFormMetadataBean;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ItemFormMetadataAdapter {
 
-    private final ItemFormMetadataDAO delegate;
+    private final IItemFormMetadataDAO delegate;
 
-    public ItemFormMetadataAdapter(ItemFormMetadataDAO delegate) {
+    public ItemFormMetadataAdapter(IItemFormMetadataDAO delegate) {
         this.delegate = delegate;
     }
 
@@ -20,7 +20,7 @@ public class ItemFormMetadataAdapter {
         return (ArrayList<ItemFormMetadataBean>) delegate.findAllByItemId(itemId);
     }
 
-    public ItemFormMetadataDAO getDelegate() {
+    public IItemFormMetadataDAO getDelegate() {
         return delegate;
     }
 }

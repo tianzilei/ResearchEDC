@@ -99,10 +99,10 @@ import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.spi.IItemGroupMetadataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.domain.crfdata.DynamicsItemFormMetadataBean;
 import org.researchedc.domain.rule.RuleSetBean;
@@ -145,7 +145,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
     protected IItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
-    protected SectionDAO sectionDao;
+    protected ISectionDAO sectionDao;
 
     @Autowired
     protected AuditDAO auditDao;
@@ -154,7 +154,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
     protected ICrfVersionDAO crfVersionDao;
 
     @Autowired
-    protected ItemFormMetadataDAO itemFormMetadataDao;
+    protected IItemFormMetadataDAO itemFormMetadataDao;
 
     @Autowired
     protected IItemGroupDAO itemGroupDao;
@@ -332,7 +332,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         HttpSession session = request.getSession();
         StudyBean currentStudy =    (StudyBean) session.getAttribute("study");
         StudyUserRoleBean  currentRole = (StudyUserRoleBean) session.getAttribute("userRole");
-        SectionDAO sdao =  this.sectionDao;
+        ISectionDAO sdao =  this.sectionDao;
         /**
          * Determines whether the form was submitted. Calculated once in processRequest. The reason we don't use the normal means to determine if the form was
          * submitted (ie FormProcessor.isSubmitted) is because when we use forwardPage, Java confuses the inputs from the just-processed form with the inputs for
@@ -2180,7 +2180,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
             FormProcessor fp = new FormProcessor(request);
             EventCRFDao ecdao = this.eventCrfDao;
 
-            SectionDAO sdao = this.sectionDao;
+            ISectionDAO sdao = this.sectionDao;
             EventCRFBean   ecb = (EventCRFBean) request.getAttribute(INPUT_EVENT_CRF);
        //JN:Happening when drilling down?
         if (ecb == null) {
@@ -2291,7 +2291,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
      */
     protected boolean checkGroups(FormProcessor fp, EventCRFBean ecb) {
         int sectionId = fp.getInt(INPUT_SECTION_ID, true);
-        SectionDAO sdao = this.sectionDao;
+        ISectionDAO sdao = this.sectionDao;
         if (sectionId <= 0) {
             ArrayList sections = sdao.findAllByCRFVersionId(ecb.getCRFVersionId());
 
@@ -3252,7 +3252,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
        EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
        SectionBean sb = (SectionBean)request.getAttribute(SECTION_BEAN);
        EventDefinitionCRFBean edcb = (EventDefinitionCRFBean)request.getAttribute(EVENT_DEF_CRF_BEAN);
-       SectionDAO sdao;
+       ISectionDAO sdao;
         // Find out whether there are ungrouped items in this section
         boolean hasUngroupedItems = false;
         int eventDefinitionCRFId = fp.getInt("eventDefinitionCRFId");
@@ -3321,7 +3321,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
         // setup DAO's here to avoid creating too many objects
        IItemDAO idao = this.itemDao;
-       ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
+       IItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
        IItemDataDAO iddao = this.itemDataDao;
 
         // Use itemGroups to determine if there are any ungrouped items
@@ -3373,7 +3373,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         ArrayList sections = new ArrayList();
         HttpSession session = request.getSession();
         StudyBean study = (StudyBean) session.getAttribute("study");
-      SectionDAO  sdao = this.sectionDao;
+      ISectionDAO  sdao = this.sectionDao;
       IItemDataDAO iddao = this.itemDataDao;
        // ALL_SECTION_BEANS
         ArrayList<SectionBean> allSectionBeans = (ArrayList<SectionBean>)request.getAttribute(ALL_SECTION_BEANS);
@@ -3408,7 +3408,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
             // setup DAO's here to avoid creating too many objects
            IItemDAO idao = this.itemDao;
-           ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
+           IItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
             iddao = this.itemDataDao;
 
             // get all the display item beans
@@ -3449,7 +3449,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
      * @return An array of DisplayItemBean objects, one per parent item in the section. Note that there is no guarantee on the ordering of the objects.
      * @throws Exception
      */
-    private ArrayList getParentDisplayItems(boolean hasGroup, SectionBean sb, EventDefinitionCRFBean edcb, IItemDAO idao, ItemFormMetadataDAO ifmdao,
+    private ArrayList getParentDisplayItems(boolean hasGroup, SectionBean sb, EventDefinitionCRFBean edcb, IItemDAO idao, IItemFormMetadataDAO ifmdao,
             IItemDataDAO iddao, boolean hasUngroupedItems, HttpServletRequest request) throws Exception {
         ArrayList answer = new ArrayList();
         EventCRFBean ecb = (EventCRFBean) request.getAttribute(INPUT_EVENT_CRF);
@@ -3564,7 +3564,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         IItemDAO idao = this.itemDao;
         ArrayList childItemBeans = idao.findAllByParentIdAndCRFVersionId(parentId, ecb.getCRFVersionId());
         IItemDataDAO iddao = this.itemDataDao;
-        ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
+        IItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
         for (int i = 0; i < childItemBeans.size(); i++) {
             ItemBean child = (ItemBean) childItemBeans.get(i);
             ItemDataBean data = iddao.findByItemIdAndEventCRFId(child.getId(), ecb.getId());
@@ -4057,7 +4057,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         // need to update this method to accomodate dynamics, tbh
         IItemDataDAO iddao = this.itemDataDao;
         IItemDAO idao = this.itemDao;
-        ItemFormMetadataDAO itemFormMetadataDao = this.itemFormMetadataDao;
+        IItemFormMetadataDAO itemFormMetadataDao = this.itemFormMetadataDao;
    
        // Below code will iterate all shown and hidden required fields/items in a crf version and verify if the data field is filled up with value or if not , then it is a hidden field with no show rule triggered for the item.        
         ArrayList<ItemFormMetadataBean> shownRequiredAllItemsInCrfVersion = itemFormMetadataDao.findAllItemsRequiredAndShownByCrfVersionId(ecb.getCRFVersionId());
@@ -4135,7 +4135,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
      */
     private boolean saveItemsToMarkComplete(Status completeStatus, HttpServletRequest request) throws Exception {
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
-       SectionDAO sdao = this.sectionDao;
+       ISectionDAO sdao = this.sectionDao;
         ArrayList sections = sdao.findAllByCRFVersionId(ecb.getCRFVersionId());
         UserAccountBean ub =(UserAccountBean) request.getSession().getAttribute(USER_BEAN_NAME);
         IItemDataDAO iddao = this.itemDataDao;
@@ -4201,7 +4201,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
      * @return
      */
     protected boolean isSectionReviewedOnce(SectionBean sb, HttpServletRequest request) {
-        SectionDAO sdao = this.sectionDao;
+        ISectionDAO sdao = this.sectionDao;
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
         EventDefinitionCRFBean edcb = (EventDefinitionCRFBean)request.getAttribute(EVENT_DEF_CRF_BEAN);
         DataEntryStage stage = ecb.getStage();
@@ -4240,7 +4240,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
     }
 
     protected boolean isCreateItemReqd(SectionBean sb, HttpServletRequest request) {
-        SectionDAO sdao = this.sectionDao;
+        ISectionDAO sdao = this.sectionDao;
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
         EventDefinitionCRFBean edcb = (EventDefinitionCRFBean)request.getAttribute(EVENT_DEF_CRF_BEAN);
         DataEntryStage stage = ecb.getStage();
@@ -4285,7 +4285,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
      * @return
      */
     protected boolean isEachSectionReviewedOnce(HttpServletRequest request) {
-        SectionDAO sdao = this.sectionDao;
+        ISectionDAO sdao = this.sectionDao;
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
         DataEntryStage stage = ecb.getStage();
         EventDefinitionCRFBean edcb = (EventDefinitionCRFBean)request.getAttribute(EVENT_DEF_CRF_BEAN);
@@ -4459,7 +4459,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         IItemDataDAO iddao = this.itemDataDao;
         int maxOrdinal = iddao.getMaxOrdinalForGroup(ecb, sb, itemGroup.getItemGroupBean());
         if(maxOrdinal==0)maxOrdinal = 1;//Incase of no data
-        ItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
+        IItemFormMetadataDAO ifmdao = this.itemFormMetadataDao;
         List<DisplayItemGroupBean> itemGroups = new ArrayList<DisplayItemGroupBean>();
         boolean groupHasData = false;
         for(int i=1;i<=maxOrdinal;i++){
@@ -4770,7 +4770,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
     protected HashMap<String, String> prepareScoreItemdata(HttpServletRequest request) {
         HashMap<String, String> scoreItemdata = new HashMap<String, String>();
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
-        SectionDAO sdao = this.sectionDao;
+        ISectionDAO sdao = this.sectionDao;
         ArrayList<SectionBean> sbs = sdao.findAllByCRFVersionId(ecb.getCRFVersionId());
         for (SectionBean section : sbs) {
             HashMap<String, String> data = prepareSectionItemDataBeans(section.getId(), request);
@@ -4799,7 +4799,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
     protected HashMap<Integer, TreeSet<Integer>> prepareItemdataOrdinals(HttpServletRequest request) {
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
         HashMap<Integer, TreeSet<Integer>> ordinals = new HashMap<Integer, TreeSet<Integer>>();
-        SectionDAO sdao = this.sectionDao;
+        ISectionDAO sdao = this.sectionDao;
         ArrayList<SectionBean> sbs = sdao.findAllByCRFVersionId(ecb.getCRFVersionId());
         IItemDataDAO iddao = this.itemDataDao;
         for (SectionBean section : sbs) {
@@ -4829,7 +4829,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         HashMap<Integer, Integer> groupSizes = new HashMap<Integer, Integer>();
         EventCRFBean ecb = (EventCRFBean)request.getAttribute(INPUT_EVENT_CRF);
         IItemDataDAO iddao = this.itemDataDao;
-        SectionDAO sdao = this.sectionDao;
+        ISectionDAO sdao = this.sectionDao;
         Iterator iter = scoreItems.keySet().iterator();
         while (iter.hasNext()) {
             int itemId = scoreItems.get(iter.next().toString()).getId();

@@ -17,7 +17,7 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.view.form.FormBeanUtil;
 import org.researchedc.view.form.ViewPersistanceHandler;
 
@@ -44,7 +44,7 @@ public class DisplaySectionBeanHandler {
     protected IStudyDAO studyDao;
 
     @Autowired
-    protected SectionDAO sectionDao;
+    protected ISectionDAO sectionDao;
     private boolean hasStoredData = false;
     private int crfVersionId;
     private int eventCRFId;
@@ -96,7 +96,7 @@ public class DisplaySectionBeanHandler {
         ViewPersistanceHandler persistanceHandler;
         ArrayList<SectionBean> allCrfSections;
         // DAO classes for getting item definitions
-        SectionDAO sectionDao;
+        ISectionDAO sectionDao;
         ICrfVersionDAO crfVersionDao;
 
         if (displaySectionBeans == null) {
