@@ -30,7 +30,7 @@ import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class UrlRewriteServlet extends CoreSecureController {
 
     @Autowired
-    protected SectionDAO sectionDao;
+    protected ISectionDAO sectionDao;
 
     @Autowired
     protected IItemGroupDAO itemGroupDao;
@@ -142,7 +142,7 @@ public class UrlRewriteServlet extends CoreSecureController {
 		                    }
 		                    //@pgawade 16-Aug-2012: fix for issue https://issuetracker.openclinica.com/view.php?id=12343#c55853
 		                    //retrieve sectionId from tabId
-		                    SectionDAO sdao = this.sectionDao;
+		                    ISectionDAO sdao = this.sectionDao;
 		                    if(mapQueryParams.containsKey("tabId")){
 			                    HashMap sectionIdMap = sdao.getSectionIdForTabId(ocResource.getFormVersionID(), Integer.parseInt(mapQueryParams.get("tabId")));
 			                    Integer sectionId = null;

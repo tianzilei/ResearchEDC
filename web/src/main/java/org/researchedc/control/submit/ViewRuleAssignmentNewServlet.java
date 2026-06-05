@@ -24,7 +24,7 @@ import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.crfdata.HideCRFManager;
 import org.researchedc.service.rule.RuleSetServiceInterface;
@@ -50,7 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ViewRuleAssignmentNewServlet extends SecureController {
 
     @Autowired
-    protected ItemFormMetadataDAO itemFormMetadataDao;
+    protected IItemFormMetadataDAO itemFormMetadataDao;
 
     private static final long serialVersionUID = 9116068126651934226L;
     protected final Logger log = LoggerFactory.getLogger(ViewRuleAssignmentNewServlet.class);
@@ -59,7 +59,7 @@ public class ViewRuleAssignmentNewServlet extends SecureController {
     XmlSchemaValidationHelper schemaValidator = new XmlSchemaValidationHelper();
     RuleSetServiceInterface ruleSetService;
     RulesPostImportContainerService rulesPostImportContainerService;
-    ItemFormMetadataDAO itemFormMetadataDAO;
+    IItemFormMetadataDAO itemFormMetadataDAO;
 
     private boolean showMoreLink;
     private boolean isDesigner;
@@ -191,7 +191,7 @@ public class ViewRuleAssignmentNewServlet extends SecureController {
         return ruleSetService;
     }
 
-    public ItemFormMetadataDAO getItemFormMetadataDAO() {
+    public IItemFormMetadataDAO getItemFormMetadataDAO() {
         itemFormMetadataDAO = this.itemFormMetadataDAO == null ? this.itemFormMetadataDao : itemFormMetadataDAO;
         return itemFormMetadataDAO;
     }

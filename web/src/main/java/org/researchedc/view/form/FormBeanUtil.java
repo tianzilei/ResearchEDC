@@ -21,10 +21,10 @@ import org.researchedc.core.SessionManager;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
 import org.researchedc.dao.spi.IItemGroupMetadataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.service.crfdata.DynamicsMetadataService;
 import org.jdom.Element;
@@ -62,7 +62,7 @@ public class FormBeanUtil {
     protected IItemDataDAO itemDataDao;
 
     @Autowired
-    protected SectionDAO sectionDao;
+    protected ISectionDAO sectionDao;
 
     @Autowired
     protected IItemGroupDAO itemGroupDao;
@@ -71,7 +71,7 @@ public class FormBeanUtil {
     protected IItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
-    protected ItemFormMetadataDAO itemFormMetadataDao;
+    protected IItemFormMetadataDAO itemFormMetadataDao;
 
     private static Logger logger = LoggerFactory.getLogger(FormBeanUtil.class);
     public static final String UNGROUPED = "Ungrouped";
@@ -124,7 +124,7 @@ public class FormBeanUtil {
             EventCRFBean eventCrfBean, 
             int sectionId,
             List<String> nullValuesList, 
-            ServletContext context, ItemFormMetadataDAO metaDao, IItemDataDAO itemDataDAO) {
+            ServletContext context, IItemFormMetadataDAO metaDao, IItemDataDAO itemDataDAO) {
         // logger = LoggerFactory.getLogger(getClass().getName());
         List<DisplayItemBean> disBeans = new ArrayList<DisplayItemBean>();
         if (itemBeans == null || itemBeans.isEmpty())
@@ -201,7 +201,7 @@ public class FormBeanUtil {
             int sectionId,
             List<String> nullValuesList, 
             ServletContext context,
-            int crfVersionId, ItemFormMetadataDAO metaDao, IItemDataDAO itemDataDAO) {
+            int crfVersionId, IItemFormMetadataDAO metaDao, IItemDataDAO itemDataDAO) {
         // logger = LoggerFactory.getLogger(getClass().getName());
         List<DisplayItemBean> disBeans = new ArrayList<DisplayItemBean>();
         if (itemBeans == null || itemBeans.isEmpty())
@@ -271,7 +271,7 @@ public class FormBeanUtil {
     }
 
     public static List<DisplayItemBean> getDisplayBeansFromItems(List<ItemBean> itemBeans, DataSource dataSource, EventCRFBean eventCrfBean, int sectionId,
-            EventDefinitionCRFBean edcb, int test, ServletContext context, ItemFormMetadataDAO metaDao, IItemDataDAO itemDataDao) {
+            EventDefinitionCRFBean edcb, int test, ServletContext context, IItemFormMetadataDAO metaDao, IItemDataDAO itemDataDao) {
         //int test is for method overloading. 
         List<DisplayItemBean> disBeans = new ArrayList<DisplayItemBean>();
         if (itemBeans == null || itemBeans.isEmpty())
@@ -819,8 +819,8 @@ public class FormBeanUtil {
         IItemGroupDAO formGroupDAO = this.itemGroupDao;
         IItemGroupMetadataDAO igMetaDAO = this.itemGroupMetadataDao;
         IItemDAO itemDao = this.itemDao;
-        ItemFormMetadataDAO metaDao = this.itemFormMetadataDao;
-        SectionDAO sectionDao = this.sectionDao;
+        IItemFormMetadataDAO metaDao = this.itemFormMetadataDao;
+        ISectionDAO sectionDao = this.sectionDao;
 
         // Give the DisplaySectionBean a legitimate SectionBean
         SectionBean secBean = (SectionBean) sectionDao.findByPK(sectionId);
@@ -926,8 +926,8 @@ public class FormBeanUtil {
         IItemGroupDAO formGroupDAO = this.itemGroupDao;
         IItemGroupMetadataDAO igMetaDAO = this.itemGroupMetadataDao;
         IItemDAO itemDao = this.itemDao;
-        ItemFormMetadataDAO metaDao = this.itemFormMetadataDao;
-        SectionDAO sectionDao = this.sectionDao;
+        IItemFormMetadataDAO metaDao = this.itemFormMetadataDao;
+        ISectionDAO sectionDao = this.sectionDao;
 
         // Give the DisplaySectionBean a legitimate SectionBean
         SectionBean secBean = (SectionBean) sectionDao.findByPK(sectionId);
@@ -1342,7 +1342,7 @@ public class FormBeanUtil {
         IItemGroupDAO formGroupDAO = this.itemGroupDao;
         IItemGroupMetadataDAO igMetaDAO = this.itemGroupMetadataDao;
         IItemDAO itemDao = this.itemDao;
-        ItemFormMetadataDAO metaDao = this.itemFormMetadataDao;
+        IItemFormMetadataDAO metaDao = this.itemFormMetadataDao;
 
         List<ItemGroupBean> arrList = formGroupDAO.findLegitGroupBySectionId(sectionId);
         // all items associated with the section, including those not in a group
@@ -1423,7 +1423,7 @@ public class FormBeanUtil {
     }
 
     public boolean sectionHasUngroupedItems(DataSource dataSource, int sectionId, List<DisplayItemGroupBean> displayFormBeans) {
-        ItemFormMetadataDAO metaDao = this.itemFormMetadataDao;
+        IItemFormMetadataDAO metaDao = this.itemFormMetadataDao;
         List<ItemFormMetadataBean> allMetas = new ArrayList<ItemFormMetadataBean>();
         try {
             allMetas = metaDao.findAllBySectionId(sectionId);

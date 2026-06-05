@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
 
 import java.text.DateFormat;
@@ -102,7 +102,7 @@ public class ViewSectionDataEntryServlet extends DataEntryServlet {
     @Autowired
     private IItemGroupDAO itemGroupDao;
     @Autowired
-    private SectionDAO sectionDao;
+    private ISectionDAO sectionDao;
     @Autowired
     private ISubjectDAO subjectDao;
 
@@ -232,7 +232,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
         session.removeAttribute("presetValues");
 
         EventCRFDao ecdao = this.eventCrfDao;
-        SectionDAO sdao = this.sectionDao;
+        ISectionDAO sdao = this.sectionDao;
         String age = "";
         if (sectionId == 0 && crfVersionId == 0 && eventCRFId == 0) {
             addPageMessage(respage.getString("please_choose_a_CRF_to_view"), request);

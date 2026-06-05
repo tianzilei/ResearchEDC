@@ -24,7 +24,7 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.service.crfdata.DynamicsMetadataService;
 import org.researchedc.view.Page;
@@ -43,7 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class MarkEventCRFCompleteServlet extends SecureController {
 
     @Autowired
-    protected SectionDAO sectionDao;
+    protected ISectionDAO sectionDao;
 
     Locale locale;
     // < ResourceBundleresexception,respage,resword;
@@ -88,7 +88,7 @@ public class MarkEventCRFCompleteServlet extends SecureController {
     }
 
     private boolean isEachSectionReviewedOnce() {
-        SectionDAO sdao = this.sectionDao;
+        ISectionDAO sdao = this.sectionDao;
 
         DataEntryStage stage = ecb.getStage();
 

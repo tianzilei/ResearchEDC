@@ -58,7 +58,7 @@ import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
 
 import org.researchedc.exception.OpenClinicaException;
@@ -96,7 +96,7 @@ public class ImportCRFDataService {
     @Autowired
     private IItemDAO itemDAO;
     @Autowired
-    private ItemFormMetadataDAO itemFormMetadataDAO;
+    private IItemFormMetadataDAO itemFormMetadataDAO;
     @Autowired
     private ICrfDAO crfDAO;
     @Autowired

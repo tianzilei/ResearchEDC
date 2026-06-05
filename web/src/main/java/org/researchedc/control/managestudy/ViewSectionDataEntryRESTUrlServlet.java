@@ -52,7 +52,7 @@ import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemGroupDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.DiscrepancyNoteThread;
@@ -96,7 +96,7 @@ public class ViewSectionDataEntryRESTUrlServlet extends ViewSectionDataEntryServ
     @Autowired
     private IItemGroupDAO itemGroupDao;
     @Autowired
-    private SectionDAO sectionDao;
+    private ISectionDAO sectionDao;
     @Autowired
     private ISubjectDAO subjectDao;
 
@@ -186,7 +186,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
         session.removeAttribute("presetValues");
 
         EventCRFDao ecdao = this.eventCrfDao;
-        SectionDAO sdao = this.sectionDao;
+        ISectionDAO sdao = this.sectionDao;
         String age = "";
         if (sectionId == 0 && crfVersionId == 0 && eventCRFId == 0) {
             addPageMessage(respage.getString("please_choose_a_CRF_to_view"), request);

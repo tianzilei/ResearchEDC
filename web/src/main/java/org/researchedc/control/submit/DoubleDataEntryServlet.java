@@ -38,7 +38,7 @@ import org.researchedc.control.form.ScoreItemValidator;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
@@ -55,7 +55,7 @@ public class DoubleDataEntryServlet extends DataEntryServlet {
     protected IItemDataDAO itemDataDao;
 
     @Autowired
-    protected SectionDAO sectionDao;
+    protected ISectionDAO sectionDao;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DoubleDataEntryServlet.class);
 
@@ -132,7 +132,7 @@ public class DoubleDataEntryServlet extends DataEntryServlet {
                 tabNumber = fp.getInt("tab");
             }
         }
-        SectionDAO sectionDao = this.sectionDao;
+        ISectionDAO sectionDao = this.sectionDao;
         int crfVersionId = ecb.getCRFVersionId();
         int eventCRFId = ecb.getId();
         ArrayList sections = sectionDao.findAllByCRFVersionId(crfVersionId);

@@ -54,7 +54,7 @@ import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.submit.SectionDAO;
+import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
@@ -73,7 +73,7 @@ import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 public class CreateDiscrepancyNoteServlet extends SecureController {
 
     @Autowired
-    protected SectionDAO sectionDao;
+    protected ISectionDAO sectionDao;
 
     @Autowired
     protected ICrfVersionDAO crfVersionDao;
@@ -821,7 +821,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
                                 + "'>" + SQLInitServlet.getField("sysURL.base") + "</A><BR/>");
                         message.append(respage.getString("you_received_this_from"));
                         StudyBean study = (StudyBean) studyDAO.findByPK(note.getStudyId());
-                        SectionDAO sectionDAO = this.sectionDao;
+                        ISectionDAO sectionDAO = this.sectionDao;
 
                         if ("itemData".equalsIgnoreCase(entityType)) {
                             itemData = (ItemDataBean) iddao.findByPK(note.getEntityId());
