@@ -23,12 +23,12 @@ import org.researchedc.bean.submit.crfdata.ExportSubjectDataBean;
 import org.researchedc.bean.submit.crfdata.ImportItemDataBean;
 import org.researchedc.bean.submit.crfdata.ImportItemGroupDataBean;
 import org.researchedc.bean.submit.crfdata.SubjectGroupDataBean;
-import org.researchedc.dao.hibernate.AuditLogEventDao;
-import org.researchedc.dao.hibernate.StudyDao;
-import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
-import org.researchedc.dao.hibernate.StudySubjectDao;
-import org.researchedc.dao.hibernate.StudyUserRoleDao;
-import org.researchedc.dao.hibernate.UserAccountDao;
+import org.researchedc.dao.spi.AuditLogEventDao;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.StudyUserRoleDao;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.EventCRFStatus;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.datamap.AuditLogEvent;
@@ -76,17 +76,17 @@ public class GenerateClinicalDataServiceImpl implements GenerateClinicalDataServ
     private static final Object SUBJECT_GROUP_MAP = "subject_group_map";
 	private static boolean isActiveRoleAtSite = true;
 	
-	private StudyDao studyDao;
+	private IStudyDAO studyDao;
 
-	private StudySubjectDao studySubjectDao;
-	private StudyEventDefinitionDao studyEventDefDao;
+	private IStudySubjectDAO studySubjectDao;
+	private IStudyEventDefinitionDAO studyEventDefDao;
 	
 	private boolean collectDns=true;
 	private boolean collectAudits=true;
 	private AuditLogEventDao auditEventDAO;
 	private Locale locale;
 	
-	private UserAccountDao userAccountDao;
+	private IUserAccountDAO userAccountDao;
     private StudyUserRoleDao studyUserRoleDao;
 	
 	public AuditLogEventDao getAuditEventDAO() {
@@ -112,19 +112,19 @@ public class GenerateClinicalDataServiceImpl implements GenerateClinicalDataServ
 		this.collectAudits = collectAudits;
 	}
 
-	public StudyEventDefinitionDao getStudyEventDefDao() {
+	public IStudyEventDefinitionDAO getStudyEventDefDao() {
 		return studyEventDefDao;
 	}
 
-	public void setStudyEventDefDao(StudyEventDefinitionDao studyEventDefDao) {
+	public void setStudyEventDefDao(IStudyEventDefinitionDAO studyEventDefDao) {
 		this.studyEventDefDao = studyEventDefDao;
 	}
 
-	public StudySubjectDao getStudySubjectDao() {
+	public IStudySubjectDAO getStudySubjectDao() {
 		return studySubjectDao;
 	}
 
-	public void setStudySubjectDao(StudySubjectDao studySubjectDao) {
+	public void setStudySubjectDao(IStudySubjectDAO studySubjectDao) {
 		this.studySubjectDao = studySubjectDao;
 	}
 
@@ -175,11 +175,11 @@ public class GenerateClinicalDataServiceImpl implements GenerateClinicalDataServ
 		return constructClinicalData(study,listStudySubjects(studySubjectOID));
 	}
 
-	public StudyDao getStudyDao() {
+	public IStudyDAO getStudyDao() {
 		return studyDao;
 	}
 
-	public void setStudyDao(StudyDao studyDao) {
+	public void setStudyDao(IStudyDAO studyDao) {
 		this.studyDao = studyDao;
 	}
 
@@ -885,7 +885,7 @@ public class GenerateClinicalDataServiceImpl implements GenerateClinicalDataServ
 		{
 		
 
-			StudySubjectDao ssdao =getStudySubjectDao();
+			IStudySubjectDAO ssdao =getStudySubjectDao();
 			StudySubject ss = (StudySubject) getStudySubjectDao().findByColumnName(
 						studySubjectOID, "ocOid");
 		studyOID = ss.getStudy().getOc_oid();
@@ -989,11 +989,11 @@ public class GenerateClinicalDataServiceImpl implements GenerateClinicalDataServ
 	return sEs;
 	}
 
-	public UserAccountDao getUserAccountDao() {
+	public IUserAccountDAO getUserAccountDao() {
 		return userAccountDao;
 	}
 
-	public void setUserAccountDao(UserAccountDao userAccountDao) {
+	public void setUserAccountDao(IUserAccountDAO userAccountDao) {
 		this.userAccountDao = userAccountDao;
 	}
 

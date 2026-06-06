@@ -14,8 +14,8 @@ import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
 import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.dao.hibernate.EventDefinitionCrfTagDao;
-import org.researchedc.dao.hibernate.UserAccountDao;
+import org.researchedc.dao.spi.EventDefinitionCrfTagDao;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.datamap.EventDefinitionCrfTag;
 import org.researchedc.domain.user.UserAccount;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class EventDefinitionCrfTagService {
     EventDefinitionCrfTagDao eventDefinitionCrfTagDao = null;
 
     @Autowired
-    UserAccountDao userDaoDomain = null;
+    IUserAccountDAO userDaoDomain = null;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -97,11 +97,11 @@ public class EventDefinitionCrfTagService {
 
     }
 
-    public UserAccountDao getUserDaoDomain() {
+    public IUserAccountDAO getUserDaoDomain() {
         return userDaoDomain;
     }
 
-    public void setUserDaoDomain(UserAccountDao userDaoDomain) {
+    public void setUserDaoDomain(IUserAccountDAO userDaoDomain) {
         this.userDaoDomain = userDaoDomain;
     }
 

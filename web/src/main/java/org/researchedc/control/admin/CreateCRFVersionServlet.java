@@ -24,7 +24,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.MeasurementUnitDao;
+import org.researchedc.dao.spi.MeasurementUnitDao;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;

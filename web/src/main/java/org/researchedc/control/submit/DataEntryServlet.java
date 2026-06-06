@@ -87,7 +87,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
+import org.researchedc.dao.spi.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;

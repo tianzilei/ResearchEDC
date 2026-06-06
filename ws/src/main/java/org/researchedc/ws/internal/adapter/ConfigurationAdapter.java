@@ -1,6 +1,6 @@
 package org.researchedc.ws.internal.adapter;
 
-import org.researchedc.dao.hibernate.ConfigurationDao;
+import org.researchedc.dao.spi.ConfigurationDao;
 import org.researchedc.domain.technicaladmin.ConfigurationBean;
 import org.springframework.stereotype.Repository;
 

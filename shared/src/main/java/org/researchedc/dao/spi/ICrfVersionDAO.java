@@ -65,5 +65,8 @@ public interface ICrfVersionDAO {
 
     public Map<Integer, CRFVersionBean> buildCrfVersionById(Integer studySubjectId);
     default org.researchedc.domain.datamap.CrfVersion findByOcOID(String OCOID) { throw new UnsupportedOperationException(); }
-
+    default java.io.Serializable save(CrfVersion entity) { throw new UnsupportedOperationException(); }
+    default String getValidOid(CrfVersion crfVersion, String crfName, String crfVersionName) { throw new UnsupportedOperationException(); }
+    default CrfVersion findById(Integer id) { throw new UnsupportedOperationException(); }
+    default CrfVersion findByNameCrfId(String name, Integer crfId) { throw new UnsupportedOperationException(); }
 }

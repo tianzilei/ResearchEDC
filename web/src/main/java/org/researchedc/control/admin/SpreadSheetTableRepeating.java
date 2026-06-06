@@ -29,7 +29,7 @@ import org.researchedc.core.form.StringUtil;
 import org.researchedc.core.util.CrfTemplateColumnNameEnum;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.hibernate.MeasurementUnitDao;
+import org.researchedc.dao.spi.MeasurementUnitDao;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;

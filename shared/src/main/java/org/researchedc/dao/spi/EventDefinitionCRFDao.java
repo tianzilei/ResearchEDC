@@ -7,6 +7,7 @@ import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
+import org.researchedc.domain.datamap.EventDefinitionCrf;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,4 +54,9 @@ public interface EventDefinitionCRFDao {
     ArrayList<EventDefinitionCRFBean> findAllActiveSitesAndStudiesPerParentStudy(int parentStudyId);
     ArrayList<EventDefinitionCRFBean> findAllSubmissionUriAndStudyId(String submissionUri, int studyId);
     List findAllCrfMigrationDoesNotPerform(CRFVersionBean sourceCrfVersionBean, CRFVersionBean targetCrfVersionBean, ArrayList<String> studyEventDefnlist, ArrayList<String> sitelist);
+
+    // Domain-entity-returning methods (default for gradual migration)
+    default List<EventDefinitionCrf> findAvailableByStudyEventDefStudy(Integer studyEventDefinitionId, Integer studyId) { throw new UnsupportedOperationException(); }
+    default List<EventDefinitionCrf> findSiteHiddenByStudyEventDefStudy(Integer studyEventDefinitionId, Integer studyId) { throw new UnsupportedOperationException(); }
+    default List<EventDefinitionCrf> findByStudyEventDefinitionId(int studyEventDefinitionId) { throw new UnsupportedOperationException(); }
 }

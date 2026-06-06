@@ -34,4 +34,6 @@ public interface IStudyEventDefinitionDAO {
     Map<Integer, Integer> buildMaxOrdinalByStudyEvent(int studySubjectId);
     java.util.ArrayList findAllActiveByStudy(StudyBean study);
     default StudyEventDefinition findByStudyEventDefinitionId(int studyEventDefinitionId) { throw new UnsupportedOperationException(); }
+    default StudyEventDefinition findByColumnName(Object value, String columnName) { throw new UnsupportedOperationException(); }
+    default StudyEventDefinition findById(Integer id) { throw new UnsupportedOperationException(); }
 }

@@ -1,6 +1,8 @@
 package org.researchedc.dao.spi;
 
 import org.researchedc.bean.core.EntityBean;
+import org.researchedc.domain.datamap.Item;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,4 +84,11 @@ public interface IItemDAO {
 
     public ArrayList<ItemGroupCrvVersionUtil> findAllWithItemDetailsGroupCRFVersionMetadataByCRFId( String  crfName);
 
+    default Item findByNameCrfId(String name, int crfId) { throw new UnsupportedOperationException(); }
+    default int getItemDataTypeId(Item item) { throw new UnsupportedOperationException(); }
+    default Serializable save(Item entity) { throw new UnsupportedOperationException(); }
+    default Item findByOcOID(String ocOid) { throw new UnsupportedOperationException(); }
+    default String getValidOid(Item item, String crfName, String itemLabel, ArrayList<String> oidList) { throw new UnsupportedOperationException(); }
+    default List<Item> findAllByCrfVersionId(Integer crfVersionId) { throw new UnsupportedOperationException(); }
+    default ArrayList<Item> findByItemGroupCrfVersionOrdered(Integer itemGroupId, Integer crfVersionId) { throw new UnsupportedOperationException(); }
 }

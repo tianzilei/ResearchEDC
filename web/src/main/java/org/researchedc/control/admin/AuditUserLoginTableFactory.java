@@ -2,7 +2,7 @@ package org.researchedc.control.admin;
 
 import org.researchedc.control.AbstractTableFactory;
 import org.researchedc.control.DefaultActionsEditor;
-import org.researchedc.dao.hibernate.AuditUserLoginDao;
+import org.researchedc.dao.spi.AuditUserLoginDao;
 import org.researchedc.dao.hibernate.AuditUserLoginFilter;
 import org.researchedc.dao.hibernate.AuditUserLoginSort;
 import org.researchedc.domain.technicaladmin.AuditUserLoginBean;

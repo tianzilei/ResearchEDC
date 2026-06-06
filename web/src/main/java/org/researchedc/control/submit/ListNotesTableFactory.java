@@ -25,7 +25,7 @@ import org.researchedc.control.AbstractTableFactory;
 import org.researchedc.control.DefaultActionsEditor;
 import org.researchedc.control.DropdownFilter;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.hibernate.AuditUserLoginDao;
+import org.researchedc.dao.spi.AuditUserLoginDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;

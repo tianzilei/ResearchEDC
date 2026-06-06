@@ -8,12 +8,12 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
-import org.researchedc.dao.hibernate.DynamicsItemGroupMetadataDao;
-import org.researchedc.dao.hibernate.StudyEventDao;
-import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
-import org.researchedc.dao.hibernate.StudySubjectDao;
-import org.researchedc.dao.hibernate.UserAccountDao;
+import org.researchedc.dao.spi.DynamicsItemFormMetadataDao;
+import org.researchedc.dao.spi.DynamicsItemGroupMetadataDao;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.datamap.StudyEvent;
 import org.researchedc.domain.datamap.StudyEventDefinition;
 import org.researchedc.domain.datamap.StudySubject;
@@ -38,14 +38,14 @@ public class BeanPropertyService{
     private DynamicsItemGroupMetadataDao dynamicsItemGroupMetadataDao;
     DataSource ds;
 
-    private StudyEventDefinitionDao studyEventDefinitionDao;
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
    
 
-	private StudyEventDao studyEventDAO;
+	private IStudyEventDAO studyEventDAO;
     private ExpressionService expressionService;
-    private StudySubjectDao studySubjectDao;
+    private IStudySubjectDAO studySubjectDao;
 
-    private UserAccountDao userAccountDao;
+    private IUserAccountDAO userAccountDao;
     
  private static final Logger LOGGER = LoggerFactory.getLogger(BeanPropertyService.class);
    
@@ -230,13 +230,13 @@ public class BeanPropertyService{
         this.dynamicsItemFormMetadataDao = dynamicsItemFormMetadataDao;
     }
 
-    public StudyEventDefinitionDao getStudyEventDefinitionDao() {
+    public IStudyEventDefinitionDAO getStudyEventDefinitionDao() {
 		return studyEventDefinitionDao;
 	}
 
 
 	public void setStudyEventDefinitionDao(
-			StudyEventDefinitionDao studyEventDefinitionDao) {
+			IStudyEventDefinitionDAO studyEventDefinitionDao) {
 		this.studyEventDefinitionDao = studyEventDefinitionDao;
 	}
 
@@ -249,33 +249,33 @@ public class BeanPropertyService{
         this.expressionService = expressionService;
     }
 
-    public StudyEventDao getStudyEventDAO() {
+    public IStudyEventDAO getStudyEventDAO() {
 		return studyEventDAO;
 	}
 
 
-	public void setStudyEventDAO(StudyEventDao studyEventDAO) {
+	public void setStudyEventDAO(IStudyEventDAO studyEventDAO) {
 		this.studyEventDAO = studyEventDAO;
 	}
 
 
 
-	 public StudySubjectDao getStudySubjectDao() {
+	 public IStudySubjectDAO getStudySubjectDao() {
 			return studySubjectDao;
 		}
 
 
-		public void setStudySubjectDao(StudySubjectDao studySubjectDao) {
+		public void setStudySubjectDao(IStudySubjectDAO studySubjectDao) {
 			this.studySubjectDao = studySubjectDao;
 		}
 
 
-		public UserAccountDao getUserAccountDao() {
+		public IUserAccountDAO getUserAccountDao() {
 			return userAccountDao;
 		}
 
 
-		public void setUserAccountDao(UserAccountDao userAccountDao) {
+		public void setUserAccountDao(IUserAccountDAO userAccountDao) {
 			this.userAccountDao = userAccountDao;
 		}
 

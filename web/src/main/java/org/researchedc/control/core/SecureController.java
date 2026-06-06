@@ -69,7 +69,7 @@ import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
-import org.researchedc.dao.hibernate.EventDefinitionCrfTagDao;
+import org.researchedc.dao.spi.EventDefinitionCrfTagDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;

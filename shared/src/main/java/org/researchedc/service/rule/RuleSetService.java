@@ -32,14 +32,14 @@ import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
+import org.researchedc.dao.spi.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.researchedc.dao.spi.RuleDomainDao;
 import org.researchedc.dao.spi.RuleSetAuditDomainDao;
 import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.IRuleSetRuleDAO;
-import org.researchedc.dao.hibernate.StudyEventDao;
-import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
 import org.researchedc.dao.spi.ICrfVersionDAO;
@@ -147,8 +147,8 @@ public class RuleSetService implements RuleSetServiceInterface {
     private RuleActionRunLogDomainDao ruleActionRunLogDao;
     private BeanPropertyService beanPropertyService;
     //hibernate based daos
-    private StudyEventDao studyEventDomainDao;
-    private StudyEventDefinitionDao studyEventDefDomainDao;
+    private IStudyEventDAO studyEventDomainDao;
+    private IStudyEventDefinitionDAO studyEventDefDomainDao;
     /*
      * (non-Javadoc)
      * @see org.researchedc.service.rule.RuleSetServiceInterface#saveRuleSet(org.researchedc.domain.rule.RuleSetBean)
@@ -1175,19 +1175,19 @@ public class RuleSetService implements RuleSetServiceInterface {
 }
 
     
-    public StudyEventDao getStudyEventDomainDao() {
+    public IStudyEventDAO getStudyEventDomainDao() {
 		return studyEventDomainDao;
 	}
 
-	public void setStudyEventDomainDao(StudyEventDao studyEventDomainDao) {
+	public void setStudyEventDomainDao(IStudyEventDAO studyEventDomainDao) {
 		this.studyEventDomainDao = studyEventDomainDao;
 	}
 
-	public StudyEventDefinitionDao getStudyEventDefDomainDao() {
+	public IStudyEventDefinitionDAO getStudyEventDefDomainDao() {
 		return studyEventDefDomainDao;
 	}
 
-	public void setStudyEventDefDomainDao(StudyEventDefinitionDao studyEventDefDomainDao) {
+	public void setStudyEventDefDomainDao(IStudyEventDefinitionDAO studyEventDefDomainDao) {
 		this.studyEventDefDomainDao = studyEventDefDomainDao;
 	}
 

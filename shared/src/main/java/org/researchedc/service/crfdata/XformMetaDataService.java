@@ -8,20 +8,20 @@ import org.researchedc.bean.core.Utils;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.dao.hibernate.CrfDao;
-import org.researchedc.dao.hibernate.CrfVersionDao;
-import org.researchedc.dao.hibernate.CrfVersionMediaDao;
-import org.researchedc.dao.hibernate.ItemDao;
-import org.researchedc.dao.hibernate.ItemDataTypeDao;
-import org.researchedc.dao.hibernate.ItemFormMetadataDao;
-import org.researchedc.dao.hibernate.ItemGroupDao;
-import org.researchedc.dao.hibernate.ItemGroupMetadataDao;
-import org.researchedc.dao.hibernate.ItemReferenceTypeDao;
-import org.researchedc.dao.hibernate.ResponseTypeDao;
-import org.researchedc.dao.hibernate.SectionDao;
-import org.researchedc.dao.hibernate.StudyDao;
-import org.researchedc.dao.hibernate.UserAccountDao;
-import org.researchedc.dao.hibernate.VersioningMapDao;
+import org.researchedc.dao.spi.ICrfDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.CrfVersionMediaDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.ItemDataTypeDao;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
+import org.researchedc.dao.spi.ItemReferenceTypeDao;
+import org.researchedc.dao.spi.ResponseTypeDao;
+import org.researchedc.dao.spi.ISectionDAO;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.dao.spi.VersioningMapDao;
 import org.researchedc.domain.datamap.CrfBean;
 import org.researchedc.domain.datamap.CrfVersion;
 import org.researchedc.domain.datamap.CrfVersionMedia;
@@ -60,37 +60,37 @@ public class XformMetaDataService {
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     @Autowired
-    private StudyDao studyDao;
+    private IStudyDAO studyDao;
 
     @Autowired
-    private CrfDao crfDao;
+    private ICrfDAO crfDao;
 
     @Autowired
-    private SectionDao sectionDao;
+    private ISectionDAO sectionDao;
 
     @Autowired
-    private UserAccountDao userDao;
+    private IUserAccountDAO userDao;
 
     @Autowired
-    private CrfVersionDao crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
 
     @Autowired
     private CrfVersionMediaDao crfVersionMediaDao;
 
     @Autowired
-    private ItemGroupDao itemGroupDao;
+    private IItemGroupDAO itemGroupDao;
 
     @Autowired
-    private ItemGroupMetadataDao itemGroupMetadataDao;
+    private IItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
     private VersioningMapDao versioningMapDao;
 
     @Autowired
-    private ItemFormMetadataDao itemFormMetadataDao;
+    private IItemFormMetadataDAO itemFormMetadataDao;
 
     @Autowired
-    private ItemDao itemDao;
+    private IItemDAO itemDao;
 
     @Autowired
     private ItemDataTypeDao itemDataTypeDao;
