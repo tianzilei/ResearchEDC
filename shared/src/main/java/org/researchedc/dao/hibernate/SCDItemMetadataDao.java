@@ -8,12 +8,13 @@
 package org.researchedc.dao.hibernate;
 
 import org.researchedc.bean.submit.ItemFormMetadataBean;
+import org.researchedc.dao.spi.SCDItemMetadataDomainDao;
 import org.researchedc.domain.crfdata.SCDItemMetadataBean;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SCDItemMetadataDao extends AbstractDomainDao<SCDItemMetadataBean>{
+public class SCDItemMetadataDao extends AbstractDomainDao<SCDItemMetadataBean> implements SCDItemMetadataDomainDao {
     
     @Override
     Class<SCDItemMetadataBean> domainClass() {
@@ -27,7 +28,7 @@ public class SCDItemMetadataDao extends AbstractDomainDao<SCDItemMetadataBean>{
             + "select ifm.item_form_metadata_id from item_form_metadata ifm where ifm.section_id = :sectionId)";
         org.hibernate.query.Query q = this.getCurrentSession().createNativeQuery(query, this.domainClass());
         q.setParameter("sectionId", sectionId);
-        return (ArrayList<SCDItemMetadataBean>) q.list();  
+        return (ArrayList<SCDItemMetadataBean>) q.list();
     }
     
     @SuppressWarnings("unchecked")

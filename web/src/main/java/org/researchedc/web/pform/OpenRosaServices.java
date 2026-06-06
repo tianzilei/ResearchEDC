@@ -59,7 +59,7 @@ import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.CrfVersionMediaDao;
 import org.researchedc.dao.spi.RuleActionPropertyDomainDao;
-import org.researchedc.dao.hibernate.SCDItemMetadataDao;
+import org.researchedc.dao.spi.SCDItemMetadataDomainDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -129,7 +129,7 @@ public class OpenRosaServices {
     private CoreResources coreResources;
     private OpenRosaSubmissionController openRosaSubmissionController;
     private RuleActionPropertyDomainDao ruleActionPropertyDao;
-    private SCDItemMetadataDao scdItemMetadataDao;
+    private SCDItemMetadataDomainDao scdItemMetadataDao;
     ParticipantPortalRegistrar participantPortalRegistrar;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     IStudyDAO sdao;
@@ -555,11 +555,11 @@ public class OpenRosaServices {
         this.ruleActionPropertyDao = ruleActionPropertyDao;
     }
 
-    public SCDItemMetadataDao getScdItemMetadataDao() {
+    public SCDItemMetadataDomainDao getScdItemMetadataDao() {
         return scdItemMetadataDao;
     }
 
-    public void setScdItemMetadataDao(SCDItemMetadataDao scdItemMetadataDao) {
+    public void setScdItemMetadataDao(SCDItemMetadataDomainDao scdItemMetadataDao) {
         this.scdItemMetadataDao = scdItemMetadataDao;
     }
 
