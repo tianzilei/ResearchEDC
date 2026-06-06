@@ -49,10 +49,10 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.hibernate.EventCrfDao;
-import org.researchedc.dao.hibernate.StudyEventDao;
-import org.researchedc.dao.hibernate.StudySubjectDao;
-import org.researchedc.dao.hibernate.CrfVersionDao;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.datamap.CrfVersion;
 import org.researchedc.domain.datamap.EventCrf;
@@ -112,14 +112,14 @@ public class BatchCRFMigrationController implements Runnable {
     OpenClinicaMailSender openClinicaMailSender;
 
     @Autowired
-    private EventCrfDao eventCrfDao;
+    private EventCRFDao eventCrfDao;
 
     @Autowired
-    private StudySubjectDao studySubjectDao;
+    private IStudySubjectDAO studySubjectDao;
     @Autowired
-    private StudyEventDao studyEventDao;
+    private IStudyEventDAO studyEventDao;
     @Autowired
-    private CrfVersionDao crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
 
     @Autowired
     private SessionFactory sessionFactory;

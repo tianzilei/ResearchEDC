@@ -22,7 +22,7 @@ import org.researchedc.bean.core.Role;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.admin.DownloadVersionSpreadSheetServlet;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.ConfigurationDao;
+import org.researchedc.dao.spi.ConfigurationDao;
 import org.researchedc.domain.technicaladmin.ConfigurationBean;
 import org.springframework.beans.factory.annotation.Autowired;
 

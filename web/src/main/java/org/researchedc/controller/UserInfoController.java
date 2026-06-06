@@ -11,7 +11,7 @@ import org.researchedc.bean.login.UserDTO;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
-import org.researchedc.dao.hibernate.AuthoritiesDao;
+import org.researchedc.dao.spi.AuthoritiesDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;

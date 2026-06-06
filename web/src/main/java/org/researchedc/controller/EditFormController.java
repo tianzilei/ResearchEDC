@@ -19,18 +19,18 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.CrfVersionDao;
-import org.researchedc.dao.hibernate.EventCrfDao;
-import org.researchedc.dao.hibernate.ItemDao;
-import org.researchedc.dao.hibernate.ItemDataDao;
-import org.researchedc.dao.hibernate.ItemFormMetadataDao;
-import org.researchedc.dao.hibernate.ItemGroupDao;
-import org.researchedc.dao.hibernate.ItemGroupMetadataDao;
-import org.researchedc.dao.hibernate.ResponseTypeDao;
-import org.researchedc.dao.hibernate.SectionDao;
-import org.researchedc.dao.hibernate.StudyEventDao;
-import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
-import org.researchedc.dao.hibernate.StudySubjectDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
+import org.researchedc.dao.spi.ResponseTypeDao;
+import org.researchedc.dao.spi.ISectionDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.domain.datamap.CrfVersion;
@@ -82,43 +82,43 @@ public class EditFormController {
     ServletContext context;
 
     @Autowired
-    private CrfVersionDao crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
 
     @Autowired
-    private SectionDao sectionDao;
+    private ISectionDAO sectionDao;
 
     @Autowired
     @Qualifier("studyEventDaoDomain")
-    private StudyEventDao studyEventDao;
+    private IStudyEventDAO studyEventDao;
 
     @Autowired
     @Qualifier("studyEventDefDaoDomain")
-    private StudyEventDefinitionDao studyEventDefinitionDao;
+    private IStudyEventDefinitionDAO studyEventDefinitionDao;
 
     @Autowired
     @Qualifier("studySubjectDaoDomain")
-    private StudySubjectDao studySubjectDao;
+    private IStudySubjectDAO studySubjectDao;
 
     @Autowired
-    private EventCrfDao eventCrfDao;
+    private EventCRFDao eventCrfDao;
 
     @Autowired
-    private ItemDao itemDao;
+    private IItemDAO itemDao;
 
     @Autowired
-    private ItemGroupDao itemGroupDao;
+    private IItemGroupDAO itemGroupDao;
 
     @Autowired
-    private ItemGroupMetadataDao itemGroupMetadataDao;
+    private IItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
-    private ItemFormMetadataDao itemFormMetadataDao;
+    private IItemFormMetadataDAO itemFormMetadataDao;
 
     @Autowired
     private ResponseTypeDao responseTypeDao;
 
     @Autowired
-    private ItemDataDao itemDataDao;
+    private IItemDataDAO itemDataDao;
 
     public static final String FORM_CONTEXT = "ecid";
     ParticipantPortalRegistrar participantPortalRegistrar;

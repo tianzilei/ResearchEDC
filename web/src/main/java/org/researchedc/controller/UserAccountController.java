@@ -29,7 +29,7 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.SecurityManager;
-import org.researchedc.dao.hibernate.AuthoritiesDao;
+import org.researchedc.dao.spi.AuthoritiesDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;

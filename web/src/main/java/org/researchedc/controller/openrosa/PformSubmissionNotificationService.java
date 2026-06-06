@@ -3,7 +3,7 @@ package org.researchedc.controller.openrosa;
 import java.util.HashMap;
 
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.CrfVersionDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.service.pmanage.Study;
 import org.researchedc.service.pmanage.Submission;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 public class PformSubmissionNotificationService {
 
     @Autowired
-    private CrfVersionDao crfVersionDao;
+    private ICrfVersionDAO crfVersionDao;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
