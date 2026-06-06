@@ -11,6 +11,7 @@ import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.researchedc.dao.spi.RuleDomainDao;
 import org.researchedc.dao.spi.RuleSetAuditDomainDao;
 import org.researchedc.dao.spi.RuleSetDomainDao;
+import org.researchedc.dao.spi.SCDItemMetadataDomainDao;
 import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.spi.OpenClinicaVersionDao;
 import org.researchedc.dao.spi.PasswordRequirements;
@@ -187,7 +188,7 @@ public class HibernateConfig {
     }
 
     @Bean
-    public SCDItemMetadataDao scdItemMetadataDao() {
+    public SCDItemMetadataDomainDao scdItemMetadataDao() {
         return new SCDItemMetadataDao();
     }
 

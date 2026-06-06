@@ -11,7 +11,7 @@ import org.researchedc.bean.submit.DisplayItemBean;
 import org.researchedc.bean.submit.DisplaySectionBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ResponseOptionBean;
-import org.researchedc.dao.hibernate.SCDItemMetadataDao;
+import org.researchedc.dao.spi.SCDItemMetadataDomainDao;
 import org.researchedc.domain.crfdata.SCDItemMetadataBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,15 +28,15 @@ import javax.sql.DataSource;
  * @author ywang
  */
 public class SimpleConditionalDisplayService {
-    
+
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     DataSource dataSource;
-    SCDItemMetadataDao scdItemMetadataDao;                                                                            
-    
+    SCDItemMetadataDomainDao scdItemMetadataDao;
+
     public SimpleConditionalDisplayService(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-    
+
     /**
      * Initialize ItemFormMetadataBean in DisplaySectionBean for simple conditional display
      * @param displaySection
@@ -51,7 +51,7 @@ public class SimpleConditionalDisplayService {
         } else if(cds.size()>0){
             ArrayList<DisplayItemBean> displayItems = initSCDItems(displaySection.getItems(),cds,showSCDItemIds);
             HashMap<Integer, ArrayList<SCDItemMetadataBean>> scdPairMap = getControlMetaIdAndSCDSetMap(sectionId,cds);
-            if(scdPairMap == null) {   
+            if(scdPairMap == null) {
                 logger.info("SimpleConditionalDisplayService.getControlMetaIdAndSCDSetMap returned null.");
             } else {
                 for(DisplayItemBean displayItem : displayItems) {
@@ -70,7 +70,7 @@ public class SimpleConditionalDisplayService {
                         //displayItem is scd item
                         displayItem.setIsSCDtoBeShown(showSCDItemIds.contains(displayItem.getMetadata().getItemId()));
                     }
-                    
+
                     if(displayItem.getChildren().size()>0) {
                         ArrayList<DisplayItemBean> cs = displayItem.getChildren();
                         for(DisplayItemBean c : cs) {
@@ -96,7 +96,7 @@ public class SimpleConditionalDisplayService {
         }
         return displaySection;
     }
-    
+
     public ArrayList<DisplayItemBean> initSCDItems(ArrayList<DisplayItemBean> displayItems, ArrayList<SCDItemMetadataBean> cds, Set<Integer>showSCDItemIds) {
         ArrayList<DisplayItemBean> dis = displayItems;
         HashMap<Integer, SCDItemMetadataBean> scds = (HashMap<Integer, SCDItemMetadataBean>)this.getSCDMetaIdAndSCDSetMap(cds);
@@ -121,7 +121,7 @@ public class SimpleConditionalDisplayService {
         }
         return dis;
     }
-    
+
     public HashMap<Integer, ArrayList<SCDItemMetadataBean>> getControlMetaIdAndSCDSetMap(int sectionId, ArrayList<SCDItemMetadataBean> scdSets) {
         HashMap<Integer, ArrayList<SCDItemMetadataBean>> cdPairMap = new HashMap<Integer, ArrayList<SCDItemMetadataBean>>();
         if(scdSets == null) {
@@ -136,7 +136,7 @@ public class SimpleConditionalDisplayService {
         }
         return cdPairMap;
     }
-    
+
     public Map<Integer,SCDItemMetadataBean> getSCDMetaIdAndSCDSetMap(ArrayList<SCDItemMetadataBean> scdSets) {
         Map<Integer,SCDItemMetadataBean> map = new HashMap<Integer, SCDItemMetadataBean>();
         if(scdSets==null) {
@@ -148,7 +148,7 @@ public class SimpleConditionalDisplayService {
         }
         return map;
     }
-    
+
     /**
      * Base on chosen option of a control item. scdItemId has to be initialized for SCDItemMetadataBean.
      * @param dib
@@ -173,11 +173,11 @@ public class SimpleConditionalDisplayService {
         }
         return showIds;
     }
-    
- 
+
+
     /**
      * Return true if a SCDItemMetadataBean has a chosen optionValue
-     * 
+     *
      * @param chosenOption
      * @param cd
      * @return
@@ -201,7 +201,7 @@ public class SimpleConditionalDisplayService {
         }
         return false;
     }
-    
+
 
     /**
      * Return true, if a SCDItemMetadataBean to show initially.
@@ -244,12 +244,12 @@ public class SimpleConditionalDisplayService {
         this.dataSource = dataSource;
     }
 
-    public SCDItemMetadataDao getScdItemMetadataDao() {
+    public SCDItemMetadataDomainDao getScdItemMetadataDao() {
         return scdItemMetadataDao;
     }
 
-    public void setScdItemMetadataDao(SCDItemMetadataDao scdItemMetadataDao) {
+    public void setScdItemMetadataDao(SCDItemMetadataDomainDao scdItemMetadataDao) {
         this.scdItemMetadataDao = scdItemMetadataDao;
     }
-    
+
 }
