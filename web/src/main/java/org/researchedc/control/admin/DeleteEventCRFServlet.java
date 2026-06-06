@@ -33,7 +33,7 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.hibernate.DynamicsItemGroupMetadataDao;
-import org.researchedc.dao.hibernate.RuleActionRunLogDao;
+import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -84,7 +84,7 @@ public class DeleteEventCRFServlet extends SecureController {
 	public static String EVENT_CRF_ID = "ecId";
 	@Autowired
 	private IDiscrepancyNoteDAO dnDao;
-	RuleActionRunLogDao ruleActionRunLogDao;
+	RuleActionRunLogDomainDao ruleActionRunLogDao;
 	DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;
 	DynamicsItemGroupMetadataDao dynamicsItemGroupMetadataDao;
         IItemFormMetadataDAO ifmdao;
@@ -286,8 +286,8 @@ public class DeleteEventCRFServlet extends SecureController {
 	}
 	
 	
-	private RuleActionRunLogDao getRuleActionRunLogDao() {
-		ruleActionRunLogDao = this.ruleActionRunLogDao != null ? ruleActionRunLogDao : (RuleActionRunLogDao) SpringServletAccess.getApplicationContext(context).getBean("ruleActionRunLogDao");
+	private RuleActionRunLogDomainDao getRuleActionRunLogDao() {
+		ruleActionRunLogDao = this.ruleActionRunLogDao != null ? ruleActionRunLogDao : (RuleActionRunLogDomainDao) SpringServletAccess.getApplicationContext(context).getBean("ruleActionRunLogDao");
 		return ruleActionRunLogDao;
 	}
 	private DynamicsItemFormMetadataDao getDynamicsItemFormMetadataDao() {

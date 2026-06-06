@@ -7,8 +7,8 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.core.SubjectEventStatus;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
@@ -52,7 +52,6 @@ import java.util.Locale;
 
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * @author jxu
@@ -63,7 +62,7 @@ public abstract class ListStudySubjectServlet extends SecureController {
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
 
 // Shaoyu Su
     Locale locale;
@@ -126,7 +125,7 @@ public abstract class ListStudySubjectServlet extends SecureController {
         IStudySubjectDAO sdao = this.studySubjectDao;
         IStudyEventDAO sedao = this.studyEventDao;
         IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
-        SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+        SubjectGroupMapDao sgmdao = this.subjectGroupMapDao;
         StudyGroupClassDao sgcdao = this.studyGroupClassDao;
         StudyGroupDao sgdao = this.studyGroupDao;
         IStudySubjectDAO ssdao = this.studySubjectDao;

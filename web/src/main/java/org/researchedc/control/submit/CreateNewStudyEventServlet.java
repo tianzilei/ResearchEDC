@@ -22,7 +22,7 @@ import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -746,8 +746,8 @@ public class CreateNewStudyEventServlet extends SecureController {
     }
 
     
-    private RuleSetDao getRuleSetDao() {
-       return SpringServletAccess.getApplicationContext(context).getBean(RuleSetDao.class);
+    private RuleSetDomainDao getRuleSetDao() {
+       return SpringServletAccess.getApplicationContext(context).getBean(RuleSetDomainDao.class);
         
     }
 

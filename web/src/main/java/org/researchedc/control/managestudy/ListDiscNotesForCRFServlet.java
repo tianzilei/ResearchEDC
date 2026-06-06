@@ -5,7 +5,7 @@ package org.researchedc.control.managestudy;
  */
 
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import org.researchedc.dao.spi.StudyGroupClassDao;
-import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,7 @@ public class ListDiscNotesForCRFServlet extends SecureController {
     @Autowired
     private ISubjectDAO subjectDao;
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
 
 public static final String DISCREPANCY_NOTE_TYPE = "discrepancyNoteType";
     public static final String RESOLUTION_STATUS = "resolutionStatus";
@@ -222,9 +221,9 @@ public static final String DISCREPANCY_NOTE_TYPE = "discrepancyNoteType";
         return studyGroupClassDAO;
     }
 
-    public SubjectGroupMapDAO getSubjectGroupMapDAO() {
+    public SubjectGroupMapDao getSubjectGroupMapDAO() {
         subjectGroupMapDAO = this.subjectGroupMapDAO == null ? this.subjectGroupMapDao : subjectGroupMapDAO;
-        return (SubjectGroupMapDAO) subjectGroupMapDAO;
+        return subjectGroupMapDAO;
     }
 
     public IStudyEventDAO getStudyEventDAO() {

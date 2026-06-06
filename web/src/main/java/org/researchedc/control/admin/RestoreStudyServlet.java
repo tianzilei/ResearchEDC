@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.admin;
 
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.DatasetBean;
@@ -70,7 +70,7 @@ public class RestoreStudyServlet extends SecureController {
     @Autowired
     private IUserAccountDAO userAccountDao;
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
@@ -194,7 +194,7 @@ public class RestoreStudyServlet extends SecureController {
                 // restore all study_group
                 StudyGroupDao sgdao = this.studyGroupDao;
                 StudyGroupClassDao sgcdao = this.studyGroupClassDao;
-                SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+                SubjectGroupMapDao sgmdao = this.subjectGroupMapDao;
                 ArrayList groups = sgcdao.findAllByStudy(study);
                 for (int i = 0; i < groups.size(); i++) {
                     StudyGroupClassBean group = (StudyGroupClassBean) groups.get(i);

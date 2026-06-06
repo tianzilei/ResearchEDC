@@ -6,7 +6,7 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
@@ -16,7 +16,6 @@ import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 

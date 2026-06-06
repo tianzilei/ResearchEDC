@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * @author jxu

@@ -19,9 +19,8 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.SecurityManager;
-import org.researchedc.dao.hibernate.ConfigurationDao;
-import org.researchedc.dao.hibernate.PasswordRequirementsDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.dao.spi.PasswordRequirements;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.view.Page;
@@ -39,14 +38,14 @@ public class ResetPasswordServlet extends SecureController {
     protected IUserAccountDAO userAccountDao;
 
     /**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -5259201015824317949L;
 
 	/**
-	 * 
+	 *
 	 */
-	
+
 
 	@Override
     public void mayProceed() throws InsufficientPermissionException {
@@ -92,13 +91,13 @@ public class ResetPasswordServlet extends SecureController {
         ubForm.setPasswdChallengeQuestion(passwdChallengeQ);
         ubForm.setPasswdChallengeAnswer(passwdChallengeA);
         request.setAttribute("userBean1", ubForm);
-        
+
         SecurityManager sm = ((SecurityManager) SpringServletAccess.getApplicationContext(context).getBean("securityManager"));
- if (!sm.isPasswordValid(ub.getPasswd(), oldPwd, getUserDetails())) {         
+ if (!sm.isPasswordValid(ub.getPasswd(), oldPwd, getUserDetails())) {
 		 Validator.addError(errors, "oldPasswd", resexception.getString("wrong_old_password"));
             request.setAttribute("formMessages", errors);
-           
-            
+
+
             forwardPage(Page.RESET_PASSWORD);
         } else {
             if (mustChangePwd.equalsIgnoreCase("yes")) {
@@ -117,11 +116,9 @@ public class ResetPasswordServlet extends SecureController {
                 v.addValidation("passwd", Validator.IS_A_PASSWORD);
                 v.addValidation("passwd1", Validator.CHECK_SAME, "passwd");
 
-                ConfigurationDao configurationDao = SpringServletAccess
-                        .getApplicationContext(context)
-                        .getBean(ConfigurationDao.class);
-
-                PasswordRequirementsDao passwordRequirementsDao = new PasswordRequirementsDao(configurationDao);
+                PasswordRequirements passwordRequirementsDao = SpringServletAccess
+                    .getApplicationContext(context)
+                    .getBean(PasswordRequirements.class);
 
                 Locale locale = LocaleResolver.getLocale(request);
                 ResourceBundle resexception = ResourceBundleProvider.getExceptionsBundle(locale);

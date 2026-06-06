@@ -46,7 +46,7 @@ import org.researchedc.core.SecurityManager;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -686,8 +686,8 @@ public static final String EVENT_ID = "event_id";
     	
 	}
     
-    private RuleSetDao getRuleSetDao() {
-       return SpringServletAccess.getApplicationContext(context).getBean(RuleSetDao.class);
+    private RuleSetDomainDao getRuleSetDao() {
+       return SpringServletAccess.getApplicationContext(context).getBean(RuleSetDomainDao.class);
         
     }
 

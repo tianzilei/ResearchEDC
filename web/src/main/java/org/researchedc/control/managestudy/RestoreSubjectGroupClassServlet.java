@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyGroupBean;
@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RestoreSubjectGroupClassServlet extends SecureController {
     
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
 
 /**
      *
@@ -65,7 +65,7 @@ public class RestoreSubjectGroupClassServlet extends SecureController {
         } else {
             StudyGroupClassDao sgcdao = this.studyGroupClassDao;
             StudyGroupDao sgdao = this.studyGroupDao;
-            SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+            SubjectGroupMapDao sgmdao = this.subjectGroupMapDao;
 
             if (action.equalsIgnoreCase("confirm")) {
                 StudyGroupClassBean sgcb = (StudyGroupClassBean) sgcdao.findByPK(classId);

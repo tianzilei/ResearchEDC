@@ -34,7 +34,7 @@ import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
@@ -51,14 +51,14 @@ public class GenerateExtractFileService {
 
     private static File files[]=null;
     private static List<File> oldFiles = new LinkedList<File>();
-    private final RuleSetRuleDao ruleSetRuleDao;
+    private final IRuleSetRuleDAO ruleSetRuleDao;
     private final DatasetDao datasetDao;
     private final IItemFormMetadataDAO itemFormMetadataDao;
     private final ArchivedDatasetFileDao archivedDatasetFileDao;
     private final OdmFileCreation odmFileCreation;
 
     public GenerateExtractFileService(DataSource ds, HttpServletRequest request, CoreResources coreResources,
-            RuleSetRuleDao ruleSetRuleDao, DatasetDao datasetDao, IItemFormMetadataDAO itemFormMetadataDao,
+            IRuleSetRuleDAO ruleSetRuleDao, DatasetDao datasetDao, IItemFormMetadataDAO itemFormMetadataDao,
             ArchivedDatasetFileDao archivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         this.ds = ds;
         this.request = request;
@@ -70,7 +70,7 @@ public class GenerateExtractFileService {
         this.odmFileCreation = odmFileCreation;
     }
 
-    public GenerateExtractFileService(DataSource ds, CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao,
+    public GenerateExtractFileService(DataSource ds, CoreResources coreResources, IRuleSetRuleDAO ruleSetRuleDao,
             DatasetDao datasetDao, IItemFormMetadataDAO itemFormMetadataDao,
             ArchivedDatasetFileDao archivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         this(ds, null, coreResources, ruleSetRuleDao, datasetDao, itemFormMetadataDao,

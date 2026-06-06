@@ -19,7 +19,7 @@ import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
@@ -45,7 +45,7 @@ public class AnonymousFormControllerV2 {
     protected ICrfDAO crfDao;
 
     @Autowired
-    protected StudyParameterValueDAO studyParameterValueDao;
+    protected IStudyParameterValueDAO studyParameterValueDao;
 
     @Autowired
     protected EventDefinitionCRFDao eventDefinitionCrfDao;
@@ -176,7 +176,7 @@ public class AnonymousFormControllerV2 {
         boolean accessPermission = false;
         StudyBean siteStudy = getStudy(studyOid);
         StudyBean study = getParentStudy(studyOid);
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
         participantPortalRegistrar = new ParticipantPortalRegistrar();
         String pManageStatus = participantPortalRegistrar.getRegistrationStatus(study.getOid()).toString(); // ACTIVE , PENDING , INACTIVE

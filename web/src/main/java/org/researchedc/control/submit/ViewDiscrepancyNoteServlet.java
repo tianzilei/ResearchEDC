@@ -41,7 +41,6 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
@@ -69,7 +68,7 @@ import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 public class ViewDiscrepancyNoteServlet extends SecureController {
 
     @Autowired
-    protected AuditDAO auditDao;
+    protected AuditDao auditDao;
 
     @Autowired
     protected ICrfVersionDAO crfVersionDao;

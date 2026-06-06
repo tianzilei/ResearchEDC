@@ -20,7 +20,7 @@ import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.domain.datamap.Study;
 import org.researchedc.domain.datamap.StudyEvent;
@@ -61,7 +61,7 @@ import java.util.Locale;
 public class OdmStudySubjectController {
 
     @Autowired
-    protected StudyParameterValueDAO studyParameterValueDao;
+    protected IStudyParameterValueDAO studyParameterValueDao;
 
     @Autowired
     protected IStudySubjectDAO studySubjectDao;
@@ -206,7 +206,7 @@ public class OdmStudySubjectController {
 	private boolean mayProceed(String studyOid, StudySubjectBean ssBean) throws Exception {
 		boolean accessPermission = false;
 		StudyBean study = getParentStudy(studyOid);
-		StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+		IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
 		StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
 		participantPortalRegistrar = new ParticipantPortalRegistrar();
 		String pManageStatus = participantPortalRegistrar.getRegistrationStatus(studyOid).toString(); // ACTIVE , PENDING , INACTIVE

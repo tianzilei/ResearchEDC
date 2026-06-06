@@ -12,8 +12,7 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
-import org.researchedc.dao.hibernate.ConfigurationDao;
-import org.researchedc.dao.hibernate.PasswordRequirementsDao;
+import org.researchedc.dao.spi.PasswordRequirements;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +35,9 @@ public class ConfigurePasswordRequirementsServlet extends SecureController {
     @Override
     protected void processRequest() throws Exception {
         FormProcessor fp = new FormProcessor(request);
-
-        ConfigurationDao configurationDao = SpringServletAccess
+        PasswordRequirements passwordRequirementsDao = SpringServletAccess
                 .getApplicationContext(context)
-                .getBean(ConfigurationDao.class);
-        PasswordRequirementsDao passwordRequirementsDao = new PasswordRequirementsDao(configurationDao);
+                .getBean(PasswordRequirements.class);
 
         if (!fp.isSubmitted()) {
             setPresetValues(new HashMap<String,Object>(passwordRequirementsDao.configs()));
@@ -82,7 +79,7 @@ public class ConfigurePasswordRequirementsServlet extends SecureController {
     }
 
     private HashMap<String,Object> submittedValues(
-            PasswordRequirementsDao passwordRequirementsDao, FormProcessor fp) {
+            PasswordRequirements passwordRequirementsDao, FormProcessor fp) {
         HashMap<String,Object> values = new HashMap<String,Object>();
         for (String key: passwordRequirementsDao.boolConfigKeys()) {
             String val = fp.getString(key);

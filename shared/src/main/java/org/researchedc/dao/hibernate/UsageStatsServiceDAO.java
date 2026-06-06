@@ -14,13 +14,14 @@ import java.util.Map;
 
 import org.researchedc.domain.usageStats.LogUsageStatsBean;
 import org.researchedc.service.usageStats.LogUsageStatsService;
+import org.researchedc.dao.spi.UsageStatsServiceDao;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author pgawade
  *
  */
-public class UsageStatsServiceDAO extends AbstractDomainDao<LogUsageStatsBean> {
+public class UsageStatsServiceDAO extends AbstractDomainDao<LogUsageStatsBean> implements UsageStatsServiceDao {
     private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass().getName());
 
     @Override
@@ -28,16 +29,16 @@ public class UsageStatsServiceDAO extends AbstractDomainDao<LogUsageStatsBean> {
         return LogUsageStatsBean.class;
     }
 
-    public LogUsageStatsBean findLatestUsageStatParamValue(String param_key) {
+    public LogUsageStatsBean findLatestUsageStatParamValue(String paramKey) {
         // logger.debug("UsageStatsServiceDAO -> findLatestUsageStatParamValue");
 
         String query =
- "from " + getDomainClassName() + " usageStatParams where param_key = :param_key order by update_timestamp desc limit 1;";
+ "from " + getDomainClassName() + " usageStatParams where param_key = :paramKey order by update_timestamp desc limit 1;";
 
         List<LogUsageStatsBean> logUsageStatsBeanLst = new ArrayList<LogUsageStatsBean>();
         LogUsageStatsBean logUsageStatsBeanRet = new LogUsageStatsBean();
         org.hibernate.query.Query q = getCurrentSession().createQuery(query);
-        q.setParameter("param_key", param_key);
+        q.setParameter("paramKey", paramKey);
         logUsageStatsBeanLst = q.list();
         if ((null != logUsageStatsBeanLst) && (logUsageStatsBeanLst.size() != 0)) {
             logUsageStatsBeanRet = logUsageStatsBeanLst.get(0);

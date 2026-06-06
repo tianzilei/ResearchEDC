@@ -35,7 +35,7 @@ import org.researchedc.bean.odmbeans.ODMBean;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.job.JobTerminationMonitor;
 import org.researchedc.logic.odmExport.AdminDataCollector;
 import org.researchedc.logic.odmExport.ClinicalDataCollector;
@@ -53,7 +53,7 @@ public class OdmFileCreation {
 
     private static final Logger LOG = LoggerFactory.getLogger(OdmFileCreation.class);
 
-    private RuleSetRuleDao ruleSetRuleDao;
+    private IRuleSetRuleDAO ruleSetRuleDao;
     private DataSource dataSource;
     private CoreResources coreResources;
     private DatasetDao datasetDao;
@@ -65,7 +65,7 @@ public class OdmFileCreation {
     public OdmFileCreation() {
     }
 
-    public OdmFileCreation(DataSource dataSource, CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao,
+    public OdmFileCreation(DataSource dataSource, CoreResources coreResources, IRuleSetRuleDAO ruleSetRuleDao,
             DatasetDao datasetDao, ArchivedDatasetFileDao archivedDatasetFileDao) {
         this.dataSource = dataSource;
         this.coreResources = coreResources;
@@ -415,11 +415,11 @@ public class OdmFileCreation {
         this.dataSource = dataSource;
     }
 
-    public RuleSetRuleDao getRuleSetRuleDao() {
+    public IRuleSetRuleDAO getRuleSetRuleDao() {
         return ruleSetRuleDao;
     }
 
-    public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
+    public void setRuleSetRuleDao(IRuleSetRuleDAO ruleSetRuleDao) {
         this.ruleSetRuleDao = ruleSetRuleDao;
     }
 

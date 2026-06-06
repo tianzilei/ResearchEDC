@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
@@ -18,7 +18,6 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.ArrayList;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

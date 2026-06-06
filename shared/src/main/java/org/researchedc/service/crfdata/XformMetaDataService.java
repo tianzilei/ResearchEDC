@@ -365,7 +365,7 @@ public class XformMetaDataService {
             Integer itemId = (Integer) itemDao.save(item);
             item.setItemId(itemId);
         }
-        ItemValidator validator = new ItemValidator(itemDao, oldDataType, newDataType);
+        ItemValidator validator = new ItemValidator(oldDataType, newDataType);
         DataBinder dataBinder = new DataBinder(item);
         Errors itemErrors = dataBinder.getBindingResult();
         validator.validate(item, itemErrors);

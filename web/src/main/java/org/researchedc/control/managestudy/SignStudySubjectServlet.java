@@ -11,8 +11,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.admin.AuditEventBean;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.admin.StudyEventAuditBean;
@@ -57,7 +57,6 @@ import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.bean.DisplayStudyEventRow;
 import org.researchedc.web.bean.EntityBeanTable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * Created by IntelliJ IDEA. User: bads Date: Jun 10, 2008 Time: 5:28:46 PM To
@@ -75,7 +74,7 @@ public class SignStudySubjectServlet extends SecureController {
     @Autowired
     private ISubjectDAO subjectDao;
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
     @Autowired
     private IUserAccountDAO userAccountDao;
 
@@ -351,7 +350,7 @@ public class SignStudySubjectServlet extends SecureController {
         table.computeDisplay();
 
         request.setAttribute("table", table);
-        SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+        SubjectGroupMapDao sgmdao = this.subjectGroupMapDao;
         ArrayList groupMaps = (ArrayList) sgmdao.findAllByStudySubject(studySubId);
         request.setAttribute("groups", groupMaps);
 

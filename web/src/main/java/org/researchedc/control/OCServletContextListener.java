@@ -7,11 +7,10 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.OpenClinicaVersionDAO;
-import org.researchedc.dao.hibernate.UsageStatsServiceDAO;
+import org.researchedc.dao.spi.OpenClinicaVersionDao;
+import org.researchedc.dao.spi.UsageStatsServiceDao;
 import org.researchedc.domain.OpenClinicaVersionBean;
 import org.researchedc.service.usageStats.LogUsageStatsService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * ServletContextListener used as a controller for throwing an error when
@@ -23,8 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class OCServletContextListener implements ServletContextListener {
     private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass().getName());
 
-    UsageStatsServiceDAO usageStatsServiceDAO;
-    OpenClinicaVersionDAO openClinicaVersionDAO;
+    UsageStatsServiceDao usageStatsServiceDAO;
+    OpenClinicaVersionDao openClinicaVersionDAO;
     public static String OpenClinicaVersion = "OpenClinica.version";
 
 	@Override
@@ -68,17 +67,15 @@ public class OCServletContextListener implements ServletContextListener {
         return OCStartEventDetails;
     }
 
-    private UsageStatsServiceDAO getUsageStatsServiceDAO(ServletContext context) {
+    private UsageStatsServiceDao getUsageStatsServiceDAO(ServletContext context) {
         usageStatsServiceDAO =
-            this.usageStatsServiceDAO != null ? usageStatsServiceDAO : (UsageStatsServiceDAO) SpringServletAccess.getApplicationContext(context).getBean(
-                    "usageStatsServiceDAO");
+            this.usageStatsServiceDAO != null ? usageStatsServiceDAO : SpringServletAccess.getApplicationContext(context).getBean(UsageStatsServiceDao.class);
         return usageStatsServiceDAO;
     }
 
-    private OpenClinicaVersionDAO getOpenClinicaVersionDAO(ServletContext context) {
+    private OpenClinicaVersionDao getOpenClinicaVersionDAO(ServletContext context) {
         openClinicaVersionDAO =
-            this.openClinicaVersionDAO != null ? openClinicaVersionDAO : (OpenClinicaVersionDAO) SpringServletAccess.getApplicationContext(context).getBean(
-                    "openClinicaVersionDAO");
+            this.openClinicaVersionDAO != null ? openClinicaVersionDAO : SpringServletAccess.getApplicationContext(context).getBean(OpenClinicaVersionDao.class);
         return openClinicaVersionDAO;
     }
 

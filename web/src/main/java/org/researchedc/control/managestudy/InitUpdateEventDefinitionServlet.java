@@ -15,7 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.NullValue;
 import org.researchedc.bean.core.Role;
@@ -45,7 +45,6 @@ import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * Prepares to update study event definition

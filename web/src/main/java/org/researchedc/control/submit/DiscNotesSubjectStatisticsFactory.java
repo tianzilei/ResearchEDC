@@ -12,7 +12,7 @@ import java.util.Set;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
@@ -28,7 +28,6 @@ import org.researchedc.control.submit.ListDiscNotesSubjectTableFactory.SubjectEv
 
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.managestudy.ListDiscNotesSubjectFilter;

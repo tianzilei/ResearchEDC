@@ -12,7 +12,7 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.logic.odmExport.AdminDataCollector;
 import org.researchedc.logic.odmExport.MetaDataCollector;
 import org.researchedc.view.Page;
@@ -80,8 +80,8 @@ public class DownloadStudyMetadataServlet extends SecureController {
         return (CoreResources) SpringServletAccess.getApplicationContext(context).getBean("coreResources");
     }
     
-    private RuleSetRuleDao getRuleSetRuleDao() {
-        return (RuleSetRuleDao) SpringServletAccess.getApplicationContext(context).getBean("ruleSetRuleDao");
+    private IRuleSetRuleDAO getRuleSetRuleDao() {
+        return (IRuleSetRuleDAO) SpringServletAccess.getApplicationContext(context).getBean("ruleSetRuleDao");
     }
     
 }

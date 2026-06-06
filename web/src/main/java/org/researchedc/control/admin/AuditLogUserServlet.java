@@ -10,7 +10,6 @@ package org.researchedc.control.admin;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ import java.util.Locale;
 public class AuditLogUserServlet extends SecureController {
 
     @Autowired
-    private AuditEventDAO auditEventDao;
+    private IAuditEventDAO auditEventDao;
     @Autowired
     private IUserAccountDAO userAccountDao;
 

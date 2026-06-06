@@ -17,8 +17,8 @@ import org.researchedc.bean.managestudy.StudyGroupClassBean;
 import org.researchedc.bean.oid.GenericOidGenerator;
 import org.researchedc.bean.oid.OidGenerator;
 import org.researchedc.dao.LegacyDaoFactory;
-import org.researchedc.dao.hibernate.RuleDao;
-import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.RuleDomainDao;
+import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.domain.Status;
@@ -81,8 +81,8 @@ public class RulesPostImportContainerService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     DataSource ds;
-    private RuleDao ruleDao;
-    private RuleSetDao ruleSetDao;
+    private RuleDomainDao ruleDao;
+    private RuleSetDomainDao ruleSetDao;
     private final OidGenerator oidGenerator;
     private StudyBean currentStudy;
     private UserAccountBean userAccount;
@@ -826,7 +826,7 @@ public class RulesPostImportContainerService {
     /**
      * @return the ruleDao
      */
-    public RuleDao getRuleDao() {
+    public RuleDomainDao getRuleDao() {
         return ruleDao;
     }
 
@@ -834,14 +834,14 @@ public class RulesPostImportContainerService {
      * @param ruleDao
      *            the ruleDao to set
      */
-    public void setRuleDao(RuleDao ruleDao) {
+    public void setRuleDao(RuleDomainDao ruleDao) {
         this.ruleDao = ruleDao;
     }
 
     /**
      * @return the ruleSetDao
      */
-    public RuleSetDao getRuleSetDao() {
+    public RuleSetDomainDao getRuleSetDao() {
         return ruleSetDao;
     }
 
@@ -849,7 +849,7 @@ public class RulesPostImportContainerService {
      * @param ruleSetDao
      *            the ruleSetDao to set
      */
-    public void setRuleSetDao(RuleSetDao ruleSetDao) {
+    public void setRuleSetDao(RuleSetDomainDao ruleSetDao) {
         this.ruleSetDao = ruleSetDao;
     }
 

@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -34,7 +34,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * Processes request to add new CRFs info study event definition

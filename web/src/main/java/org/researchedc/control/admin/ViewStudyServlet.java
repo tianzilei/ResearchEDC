@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.admin;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.control.core.SecureController;
@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * @author jxu

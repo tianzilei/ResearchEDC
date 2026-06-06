@@ -19,7 +19,7 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.odmbeans.ODMBean;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IRuleDAO;
@@ -80,7 +80,7 @@ public class RuleController {
     @Autowired
     @Qualifier("dataSource")
     private BasicDataSource dataSource;
-    private RuleSetRuleDao ruleSetRuleDao;
+    private IRuleSetRuleDAO ruleSetRuleDao;
     private RuleSetServiceInterface ruleSetService;
     private RulesPostImportContainerService rulesPostImportContainerService;
     private MessageSource messageSource;
@@ -526,12 +526,12 @@ public class RuleController {
         this.ruleSetService = ruleSetService;
     }
 
-    public RuleSetRuleDao getRuleSetRuleDao() {
+    public IRuleSetRuleDAO getRuleSetRuleDao() {
         return ruleSetRuleDao;
     }
 
     @Autowired
-    public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
+    public void setRuleSetRuleDao(IRuleSetRuleDAO ruleSetRuleDao) {
         this.ruleSetRuleDao = ruleSetRuleDao;
     }
 

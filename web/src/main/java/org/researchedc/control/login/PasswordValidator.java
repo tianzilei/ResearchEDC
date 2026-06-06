@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.hibernate.PasswordRequirementsDao;
+import org.researchedc.dao.spi.PasswordRequirements;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,33 +17,33 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class PasswordValidator {
     private static boolean hasLowerCaseChars(String str) {
-    	int len = str.length();
-    	for (int i = 0; i < len; i++) {
-    		if (Character.isLowerCase(str.charAt(i))) return true;
-    	}
-    	return false;
+	int len = str.length();
+	for (int i = 0; i < len; i++) {
+		if (Character.isLowerCase(str.charAt(i))) return true;
+	}
+	return false;
     }
     private static boolean hasUpperCaseChars(String str) {
-    	int len = str.length();
-    	for (int i = 0; i < len; i++) {
-    		if (Character.isUpperCase(str.charAt(i))) return true;
-    	}
-    	return false;
+	int len = str.length();
+	for (int i = 0; i < len; i++) {
+		if (Character.isUpperCase(str.charAt(i))) return true;
+	}
+	return false;
     }
     private static boolean hasDigits(String str) {
-    	int len = str.length();
-    	for (int i = 0; i < len; i++) {
-    		if (Character.isDigit(str.charAt(i))) return true;
-    	}
-    	return false;
+	int len = str.length();
+	for (int i = 0; i < len; i++) {
+		if (Character.isDigit(str.charAt(i))) return true;
+	}
+	return false;
     }
     private static boolean hasSpecialChars(String str) {
-    	int len = str.length();
-    	for (int i = 0; i < len; i++) {
-    		if (PasswordRequirementsDao.SPECIALS.indexOf(str.charAt(i)) >= 0)
-    			return true;
-    	}
-    	return false;
+	int len = str.length();
+	for (int i = 0; i < len; i++) {
+		if (PasswordRequirements.SPECIALS.indexOf(str.charAt(i)) >= 0)
+			return true;
+	}
+	return false;
     }
 
     /**
@@ -56,46 +56,46 @@ public class PasswordValidator {
      */
 
     public static List<String> validatePassword(
-    		PasswordRequirementsDao passwordRequirementsDao,
-    		IUserAccountDAO userDao,
-    		int userId,
-    		String newPassword,
-    		String newHash,
-    		ResourceBundle resexception) {
-    	ArrayList<String> errors = new ArrayList<String>();
+		PasswordRequirements passwordRequirementsDao,
+		IUserAccountDAO userDao,
+		int userId,
+		String newPassword,
+		String newHash,
+		ResourceBundle resexception) {
+	ArrayList<String> errors = new ArrayList<String>();
 
-    	UserAccountBean userBean = (UserAccountBean) userDao.findByPK(userId);
+	UserAccountBean userBean = (UserAccountBean) userDao.findByPK(userId);
         if (userBean.getPasswd().equals(newHash)) {
             errors.add(resexception.getString("pwd_cannot_reuse"));
         }
 
-    	int
-    		minLen = passwordRequirementsDao.minLength(),
-    		maxLen = passwordRequirementsDao.maxLength();
+	int
+		minLen = passwordRequirementsDao.minLength(),
+		maxLen = passwordRequirementsDao.maxLength();
 
-    	if (newPassword.length() == 0) {
-    	    return new ArrayList<String>();
-    	}
+	if (newPassword.length() == 0) {
+	    return new ArrayList<String>();
+	}
 
-    	if (minLen > 0 && newPassword.length() < minLen) {
-    		errors.add(resexception.getString("pwd_too_short") + " " + minLen + " " + resexception.getString("chars"));
-    	}
+	if (minLen > 0 && newPassword.length() < minLen) {
+		errors.add(resexception.getString("pwd_too_short") + " " + minLen + " " + resexception.getString("chars"));
+	}
 
-    	if (maxLen > 0 && newPassword.length() > maxLen) {
-    		errors.add(resexception.getString("pwd_too_long") + " " + maxLen + " " + resexception.getString("chars" ));
-    	}
-    	if (passwordRequirementsDao.hasLower() && !hasLowerCaseChars(newPassword)) {
-    		errors.add(resexception.getString("pwd_needs_lower_case"));
-    	}
-    	if (passwordRequirementsDao.hasUpper() && !hasUpperCaseChars(newPassword)) {
-    		errors.add(resexception.getString("pwd_needs_upper_case"));
-    	}
-    	if (passwordRequirementsDao.hasDigits() && !hasDigits(newPassword)) {
-    		errors.add(resexception.getString("pwd_needs_digits"));
-    	}
-    	if (passwordRequirementsDao.hasSpecials() && !hasSpecialChars(newPassword)) {
-    		errors.add(resexception.getString("pwd_needs_special_chars"));
-    	}
-    	return errors;
+	if (maxLen > 0 && newPassword.length() > maxLen) {
+		errors.add(resexception.getString("pwd_too_long") + " " + maxLen + " " + resexception.getString("chars" ));
+	}
+	if (passwordRequirementsDao.hasLower() && !hasLowerCaseChars(newPassword)) {
+		errors.add(resexception.getString("pwd_needs_lower_case"));
+	}
+	if (passwordRequirementsDao.hasUpper() && !hasUpperCaseChars(newPassword)) {
+		errors.add(resexception.getString("pwd_needs_upper_case"));
+	}
+	if (passwordRequirementsDao.hasDigits() && !hasDigits(newPassword)) {
+		errors.add(resexception.getString("pwd_needs_digits"));
+	}
+	if (passwordRequirementsDao.hasSpecials() && !hasSpecialChars(newPassword)) {
+		errors.add(resexception.getString("pwd_needs_special_chars"));
+	}
+	return errors;
     }
 }

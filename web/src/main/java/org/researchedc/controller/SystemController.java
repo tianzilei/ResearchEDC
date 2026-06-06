@@ -38,7 +38,7 @@ import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.pmanage.Authorization;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
@@ -63,7 +63,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class SystemController {
 
     @Autowired
-    protected StudyParameterValueDAO studyParameterValueDao;
+    protected IStudyParameterValueDAO studyParameterValueDao;
 
     @Autowired
     protected IUserAccountDAO userAccountDao;
@@ -1044,13 +1044,13 @@ public class SystemController {
     }
 
     public StudyParameterValueBean getParticipateMod(StudyBean studyBean, String value) {
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(studyBean.getId(), value);
         return pStatus;
     }
 
     public void getRandomizeMod() {
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
 
     }
 

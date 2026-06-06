@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.admin;
 
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.login.StudyUserRoleBean;
@@ -69,7 +69,7 @@ public class RemoveStudyServlet extends SecureController {
     @Autowired
     private IUserAccountDAO userAccountDao;
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
@@ -193,7 +193,7 @@ public class RemoveStudyServlet extends SecureController {
                 // in study_group table
                 StudyGroupClassDao sgcdao = this.studyGroupClassDao;
                 StudyGroupDao sgdao = this.studyGroupDao;
-                SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+                SubjectGroupMapDao sgmdao = this.subjectGroupMapDao;
 
                 // YW 09-27-2007, enable status updating for StudyGroupClassBean
                 ArrayList groups = sgcdao.findAllByStudy(study);

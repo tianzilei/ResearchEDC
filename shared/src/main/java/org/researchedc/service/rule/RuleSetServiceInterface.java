@@ -15,10 +15,10 @@ import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemBean;
-import org.researchedc.dao.hibernate.RuleDao;
-import org.researchedc.dao.hibernate.RuleSetAuditDao;
-import org.researchedc.dao.hibernate.RuleSetDao;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.spi.RuleDomainDao;
+import org.researchedc.dao.spi.RuleSetAuditDomainDao;
+import org.researchedc.dao.spi.RuleSetDomainDao;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
 import org.researchedc.domain.Status;
@@ -177,39 +177,39 @@ public interface RuleSetServiceInterface {
     /**
      * @return the ruleSetDao
      */
-    public abstract RuleSetDao getRuleSetDao();
+    public abstract RuleSetDomainDao getRuleSetDao();
 
     /**
      * @param ruleSetDao
      *            the ruleSetDao to set
      */
-    public abstract void setRuleSetDao(RuleSetDao ruleSetDao);
+    public abstract void setRuleSetDao(RuleSetDomainDao ruleSetDao);
 
     /**
      * @param ruleSetRuleDao
      *            the ruleSetRuleDao to set
      */
-    public abstract void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao);
+    public abstract void setRuleSetRuleDao(IRuleSetRuleDAO ruleSetRuleDao);
 
     /**
      * @return the ruleSetRuleDao
      */
-    public abstract RuleSetRuleDao getRuleSetRuleDao();
+    public abstract IRuleSetRuleDAO getRuleSetRuleDao();
 
     /**
      * @return the ruleDao
      */
-    public abstract RuleDao getRuleDao();
+    public abstract RuleDomainDao getRuleDao();
 
     /**
      * @param ruleDao
      *            the ruleDao to set
      */
-    public abstract void setRuleDao(RuleDao ruleDao);
+    public abstract void setRuleDao(RuleDomainDao ruleDao);
 
-    public RuleSetAuditDao getRuleSetAuditDao();
+    public RuleSetAuditDomainDao getRuleSetAuditDao();
 
-    public void setRuleSetAuditDao(RuleSetAuditDao ruleSetAuditDao);
+    public void setRuleSetAuditDao(RuleSetAuditDomainDao ruleSetAuditDao);
 
     public JavaMailSenderImpl getMailSender();
 

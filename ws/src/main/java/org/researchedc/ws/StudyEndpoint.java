@@ -7,7 +7,7 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.odmbeans.ODMBean;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 
@@ -58,23 +58,23 @@ public class StudyEndpoint {
     private IUserAccountDAO userAccountDao;
     private final MessageSource messages;
     private final CoreResources coreResources;
-    private final RuleSetRuleDao ruleSetRuleDao;
-  
+    private final IRuleSetRuleDAO ruleSetRuleDao;
+
     private final Locale locale;
 
-    public StudyEndpoint(DataSource dataSource, MessageSource messages, 
-    		CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao) {
+    public StudyEndpoint(DataSource dataSource, MessageSource messages,
+		CoreResources coreResources, IRuleSetRuleDAO ruleSetRuleDao) {
         this.dataSource = dataSource;
         this.messages = messages;
         this.locale = Locale.of("en_US");
         this.coreResources = coreResources;
         this.ruleSetRuleDao = ruleSetRuleDao;
-        
+
     }
 
     /**
      * if NAMESPACE_URI_V1:getStudyListRequest execute this method
-     * 
+     *
      * @return
      * @throws Exception
      */
@@ -107,7 +107,7 @@ public class StudyEndpoint {
         Element resultElement = document.createElementNS(NAMESPACE_URI_V1, "result");
         resultElement.setTextContent(confirmation);
         responseElement.appendChild(resultElement);
-        
+
         Element odmElement = document.createElementNS(NAMESPACE_URI_V1, "odm");
         String reportText = getReport(study);
         odmElement.setTextContent(reportText);//meta.getXmlOutput().toString());
@@ -117,7 +117,7 @@ public class StudyEndpoint {
 
     }
 
-    
+
     private String getReport(StudyBean currentStudy){
 //    	ServletContext servletContext =
 //    	    (ServletContext) context.getMessageContext().get(MessageContext.SERVLET_CONTEXT);
@@ -138,7 +138,7 @@ public class StudyEndpoint {
         adc.setOdmbean(odmb);
         mdc.collectFileData();
         adc.collectFileData();
-        
+
         FullReportBean report = new FullReportBean();
         report.setAdminDataMap(adc.getOdmAdminDataMap());
         report.setOdmStudyMap(mdc.getOdmStudyMap());
@@ -146,7 +146,7 @@ public class StudyEndpoint {
         report.setOdmBean(mdc.getODMBean());
         report.setODMVersion("oc1.3");
         report.createStudyMetaOdmXml(Boolean.FALSE);
-       
+
         return  report.getXmlOutput().toString().trim();
     }
     private Element mapConfirmation(String confirmation, Errors errors) throws Exception {
@@ -170,10 +170,10 @@ public class StudyEndpoint {
     }
 
     //private StudyMetadataRequestBean unMarshallRequest(Element studyEventDefinitionListAll) {
-    	private BaseStudyDefinitionBean unMarshallRequest(Element studyEventDefinitionListAll) {
+	private BaseStudyDefinitionBean unMarshallRequest(Element studyEventDefinitionListAll) {
 
         Element studyIdentifierElement = DomUtils.getChildElementByTagName(studyEventDefinitionListAll, "identifier");
-        String studyIdentifier = studyIdentifierElement == null ? null : DomUtils.getTextValue(studyIdentifierElement).trim();   
+        String studyIdentifier = studyIdentifierElement == null ? null : DomUtils.getTextValue(studyIdentifierElement).trim();
         BaseStudyDefinitionBean studyMetadataRequest = new BaseStudyDefinitionBean(studyIdentifier,  getUserAccount());
         return studyMetadataRequest;
 
@@ -193,7 +193,7 @@ public class StudyEndpoint {
 
     /**
      * if NAMESPACE_URI_V1:getStudyListRequest execute this method
-     * 
+     *
      * @return
      * @throws Exception
      */
@@ -205,7 +205,7 @@ public class StudyEndpoint {
 
     /**
      * Helper Method to get the user account
-     * 
+     *
      * @return UserAccountBean
      */
     private UserAccountBean getUserAccount() {
@@ -250,7 +250,7 @@ public class StudyEndpoint {
 
     /**
      * Create Response
-     * 
+     *
      * @param confirmation
      * @return
      * @throws Exception
@@ -311,7 +311,7 @@ public class StudyEndpoint {
     }
 
 
-    
-   
+
+
 
 }

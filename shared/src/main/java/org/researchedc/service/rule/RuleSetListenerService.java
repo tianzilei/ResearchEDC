@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.researchedc.bean.managestudy.StudyEventBean;
-import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.domain.datamap.StudyEvent;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.expression.ExpressionBean;
@@ -22,39 +22,39 @@ public class RuleSetListenerService implements ApplicationListener<OnStudyEventU
 
 	private RuleSetService ruleSetService;
 
-	private RuleSetDao ruleSetDao;
+	private RuleSetDomainDao ruleSetDao;
 
 
 
 
 @Override
 	public void onApplicationEvent(final OnStudyEventUpdated event) {
-	
+
 		LOGGER.debug("listening");
-	if (event.getContainer().getChangeDetails().getStartDateChanged() || event.getContainer().getChangeDetails().getStatusChanged()){ 
-       
+	if (event.getContainer().getChangeDetails().getStartDateChanged() || event.getContainer().getChangeDetails().getStatusChanged()){
+
 		StudyEvent studyEvent = event.getContainer().getEvent();
-		
+
 		Integer studyEventDefId = studyEvent.getStudyEventDefinition().getStudyEventDefinitionId();
 		Integer studyEventOrdinal = studyEvent.getSampleOrdinal();
 		Integer userId = studyEvent.getUpdateId();
-		
+
 		if(userId==null && studyEvent.getUserAccount()!=null ) userId=  studyEvent.getUserAccount().getUserId();
-		  
+
 		StudyEventBean studyEventBean = new StudyEventBean();
 		studyEventBean.setId(studyEvent.getStudyEventId());
 
 		ArrayList<RuleSetBean> ruleSets = (ArrayList<RuleSetBean>) createRuleSet(studyEventDefId);
 		for (RuleSetBean ruleSet : ruleSets){
-			ArrayList<RuleSetBean> ruleSetBeans = new ArrayList();		
+			ArrayList<RuleSetBean> ruleSetBeans = new ArrayList();
 	            ExpressionBean eBean = new ExpressionBean();
-    			eBean.setValue(ruleSet.getTarget().getValue()+".A.B");
-    			ruleSet.setTarget(eBean);
-    			ruleSet.addExpression(getRuleSetService().replaceSEDOrdinal(ruleSet.getTarget(), studyEventBean));
+			eBean.setValue(ruleSet.getTarget().getValue()+".A.B");
+			ruleSet.setTarget(eBean);
+			ruleSet.addExpression(getRuleSetService().replaceSEDOrdinal(ruleSet.getTarget(), studyEventBean));
 			ruleSetBeans.add(ruleSet);
 			getRuleSetService().runIndividualRulesInBeanProperty(ruleSetBeans, userId,event.getContainer().getChangeDetails() , studyEventOrdinal);
-        	}	
-		   
+	}
+
 		}
 
 }
@@ -69,21 +69,21 @@ public void setRuleSetService(RuleSetService ruleSetService) {
 }
 
 
-public RuleSetDao getRuleSetDao() {
+public RuleSetDomainDao getRuleSetDao() {
 	return ruleSetDao;
 }
 
 
-public void setRuleSetDao(RuleSetDao ruleSetDao) {
+public void setRuleSetDao(RuleSetDomainDao ruleSetDao) {
 	this.ruleSetDao = ruleSetDao;
 }
 
-private List<RuleSetBean> createRuleSet(Integer studyEventDefId) {	
+private List<RuleSetBean> createRuleSet(Integer studyEventDefId) {
     List<RuleSetBean> ruleSetsDB = new ArrayList<RuleSetBean>();
     List<RuleSetBean> ruleSetCopies = new ArrayList<RuleSetBean>();
 	ruleSetsDB = getRuleSetDao().findAllByStudyEventDefIdWhereItemIsNull(studyEventDefId);
-	
-	for (RuleSetBean ruleSetDB:ruleSetsDB) { 
+
+	for (RuleSetBean ruleSetDB:ruleSetsDB) {
 	    RuleSetBean ruleSetCopy = (RuleSetBean) SerializationUtils.clone(ruleSetDB);
 	    ruleSetCopies.add(ruleSetCopy);
 	}

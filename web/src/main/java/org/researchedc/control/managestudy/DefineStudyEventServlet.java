@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.NullValue;
 import org.researchedc.bean.core.NumericComparisonOperator;
@@ -48,7 +48,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * @author jxu

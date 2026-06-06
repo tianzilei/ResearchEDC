@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.core.DiscrepancyNoteType;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.ResolutionStatus;
@@ -42,7 +42,7 @@ import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
@@ -162,7 +162,7 @@ public class AddNewSubjectServlet extends SecureController {
             StudyBean parentStudy = (StudyBean) stdao.findByPK(parentStudyId);
             classes = sgcdao.findAllActiveByStudy(parentStudy);
         }
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean parentSPV = spvdao.findByHandleAndStudy(parentStudyId, "collectDob");
         currentStudy.getStudyParameterConfig().setCollectDob(parentSPV.getValue());
         parentSPV = spvdao.findByHandleAndStudy(parentStudyId, "genderRequired");
@@ -743,7 +743,7 @@ public class AddNewSubjectServlet extends SecureController {
                     studySubject = ssd.createWithoutGroup(studySubject);
                 }
                 if (!classes.isEmpty() && studySubject.isActive()) {
-                    SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+                    SubjectGroupMapDao sgmdao = this.subjectGroupMapDao;
                     for (int i = 0; i < classes.size(); i++) {
                         StudyGroupClassBean group = (StudyGroupClassBean) classes.get(i);
                         int studyGroupId = group.getStudyGroupId();
@@ -865,8 +865,8 @@ public class AddNewSubjectServlet extends SecureController {
     }
 
     
-    private RuleSetDao getRuleSetDao() {
-       return SpringServletAccess.getApplicationContext(context).getBean(RuleSetDao.class);
+    private RuleSetDomainDao getRuleSetDao() {
+       return SpringServletAccess.getApplicationContext(context).getBean(RuleSetDomainDao.class);
         
     }
 

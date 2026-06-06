@@ -8,9 +8,9 @@
 package org.researchedc.control.login;
 
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.StudyUserRoleBean;
@@ -35,7 +35,6 @@ import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ISubjectDAO;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -61,7 +60,7 @@ public class ChangeStudyServlet extends SecureController {
     @Autowired
     protected ISubjectDAO subjectDao;
     @Autowired
-    protected SubjectGroupMapDAO subjectGroupMapDao;
+    protected SubjectGroupMapDao subjectGroupMapDao;
     @Autowired
     protected EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
@@ -395,7 +394,7 @@ public class ChangeStudyServlet extends SecureController {
         return studyGroupClassDao;
     }
 
-    public SubjectGroupMapDAO getSubjectGroupMapDAO() {
+    public SubjectGroupMapDao getSubjectGroupMapDAO() {
         return subjectGroupMapDao;
     }
 
@@ -431,7 +430,7 @@ public class ChangeStudyServlet extends SecureController {
         return studyParameterValueDao;
     }
 
-    public void setStudyParameterValueDAO(StudyParameterValueDAO studyParameterValueDAO) {
+    public void setStudyParameterValueDAO(IStudyParameterValueDAO studyParameterValueDAO) {
         this.studyParameterValueDao = studyParameterValueDAO;
     }
 

@@ -5,6 +5,7 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.domain.Status;
+import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.expression.ExpressionBean;
 import org.hibernate.annotations.Cache;
@@ -14,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigInteger;
 import java.util.ArrayList;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class RuleSetDao extends AbstractDomainDao<RuleSetBean> {
+public class RuleSetDao extends AbstractDomainDao<RuleSetBean> implements RuleSetDomainDao {
 
     @Override
     public Class<RuleSetBean> domainClass() {

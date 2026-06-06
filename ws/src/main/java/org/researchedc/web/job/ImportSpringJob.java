@@ -18,7 +18,7 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.bean.submit.crfdata.SummaryStatsBean;
-import org.researchedc.dao.admin.AuditEventDAO;
+import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;

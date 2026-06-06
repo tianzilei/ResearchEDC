@@ -12,8 +12,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.control.admin.EventStatusStatisticsTableFactory;
@@ -33,7 +33,6 @@ import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.ISubjectDAO;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -61,13 +60,13 @@ public class MainMenuServlet extends SecureController {
     private IStudySubjectDAO studySubjectDAO;
     private IStudyEventDAO studyEventDAO;
     private StudyGroupClassDao studyGroupClassDAO;
-    private SubjectGroupMapDAO subjectGroupMapDAO;
+    private SubjectGroupMapDao subjectGroupMapDAO;
     private IStudyDAO studyDAO;
     private EventCRFDao eventCRFDAO;
     private EventDefinitionCRFDao eventDefintionCRFDAO;
     private StudyGroupDao studyGroupDAO;
     private IDiscrepancyNoteDAO discrepancyNoteDAO;
-    private StudyParameterValueDAO studyParameterValueDAO;
+    private IStudyParameterValueDAO studyParameterValueDAO;
 
     // < ResourceBundle respage;
 
@@ -180,7 +179,7 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
                 request.setAttribute("assignedDiscrepancies", assignedDiscrepancies == null ? 0 : assignedDiscrepancies);
 
                 int parentStudyId = currentStudy.getParentStudyId()>0?currentStudy.getParentStudyId():currentStudy.getId();
-                StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+                IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
                 StudyParameterValueBean parentSPV = spvdao.findByHandleAndStudy(parentStudyId, "subjectIdGeneration");
                 currentStudy.getStudyParameterConfig().setSubjectIdGeneration(parentSPV.getValue());
                 String idSetting = parentSPV.getValue();
@@ -304,7 +303,7 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
     }
 
 
-    public StudyParameterValueDAO getStudyParameterValueDAO() {
+    public IStudyParameterValueDAO getStudyParameterValueDAO() {
      studyParameterValueDAO = this.studyParameterValueDAO == null ? this.studyParameterValueDao : studyParameterValueDAO;
 		return studyParameterValueDAO;
 	}
@@ -333,7 +332,7 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
         return studyGroupClassDAO;
     }
 
-    public SubjectGroupMapDAO getSubjectGroupMapDAO() {
+    public SubjectGroupMapDao getSubjectGroupMapDAO() {
         subjectGroupMapDAO = this.subjectGroupMapDAO == null ? this.subjectGroupMapDao : subjectGroupMapDAO;
         return subjectGroupMapDAO;
     }

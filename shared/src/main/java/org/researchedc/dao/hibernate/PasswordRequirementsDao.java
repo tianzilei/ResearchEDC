@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.researchedc.domain.technicaladmin.ConfigurationBean;
+import org.researchedc.dao.spi.PasswordRequirements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PasswordRequirementsDao {
+public class PasswordRequirementsDao implements PasswordRequirements {
 	public static final String
 	    PWD_CHARS_MIN = "pwd.chars.min",
 	    PWD_CHARS_MAX = "pwd.chars.max",
@@ -19,9 +20,7 @@ public class PasswordRequirementsDao {
 	    PWD_CHARS_CASE_UPPER = "pwd.chars.case.upper",
 	    PWD_CHARS_CASE_LOWER = "pwd.chars.case.lower",
 	    PWD_CHANGE_REQUIRED = "pwd.change.required",
-	    PWD_EXPIRATION_DAYS = "pwd.expiration.days",
-
-	    SPECIALS = "!@#$%&*()";
+	    PWD_EXPIRATION_DAYS = "pwd.expiration.days";
 
 	private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 	private final ConfigurationDao configurationDao;

@@ -4,9 +4,9 @@ import javax.sql.DataSource;
 
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
-import org.researchedc.dao.hibernate.RuleDao;
-import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
+import org.researchedc.dao.spi.RuleDomainDao;
+import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IItemFormMetadataDAO;
@@ -72,7 +72,7 @@ public class WebBeansConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public OdmFileCreation odmFileCreation(DataSource dataSource, CoreResources coreResources,
-            RuleSetRuleDao ruleSetRuleDao, DatasetDao extractDatasetDao,
+            IRuleSetRuleDAO ruleSetRuleDao, DatasetDao extractDatasetDao,
             ArchivedDatasetFileDao extractArchivedDatasetFileDao) {
         return new OdmFileCreation(dataSource, coreResources, ruleSetRuleDao,
                 extractDatasetDao, extractArchivedDatasetFileDao);
@@ -81,7 +81,7 @@ public class WebBeansConfig {
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public GenerateExtractFileService generateExtractFileService(DataSource dataSource,
-            CoreResources coreResources, RuleSetRuleDao ruleSetRuleDao, DatasetDao extractDatasetDao,
+            CoreResources coreResources, IRuleSetRuleDAO ruleSetRuleDao, DatasetDao extractDatasetDao,
             IItemFormMetadataDAO extractItemFormMetadataDao,
             ArchivedDatasetFileDao extractArchivedDatasetFileDao, OdmFileCreation odmFileCreation) {
         return new GenerateExtractFileService(dataSource, coreResources, ruleSetRuleDao,
@@ -92,7 +92,7 @@ public class WebBeansConfig {
     @Bean("rulesPostImportContainerService")
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public RulesPostImportContainerService rulesPostImportContainerService(DataSource dataSource,
-            RuleDao ruleDao, RuleSetDao ruleSetDao, IStudyDAO studyDao) {
+            RuleDomainDao ruleDao, RuleSetDomainDao ruleSetDao, IStudyDAO studyDao) {
         RulesPostImportContainerService service = new RulesPostImportContainerService(dataSource);
         service.setRuleDao(ruleDao);
         service.setRuleSetDao(ruleSetDao);

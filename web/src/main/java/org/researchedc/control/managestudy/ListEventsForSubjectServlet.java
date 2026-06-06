@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.managestudy.DisplayStudyEventBean;
 import org.researchedc.bean.managestudy.DisplayStudySubjectBean;
@@ -53,7 +53,7 @@ public class ListEventsForSubjectServlet extends SecureController {
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
 
 Locale locale;
 
@@ -123,7 +123,7 @@ Locale locale;
         IStudySubjectDAO sdao = this.studySubjectDao;
         IStudyEventDAO sedao = this.studyEventDao;
 
-        SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+        SubjectGroupMapDao sgmdao = this.subjectGroupMapDao;
         StudyGroupClassDao sgcdao = this.studyGroupClassDao;
 
         EventCRFDao ecdao = this.eventCrfDao;

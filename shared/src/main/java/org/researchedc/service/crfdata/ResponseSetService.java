@@ -10,7 +10,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.researchedc.dao.hibernate.ResponseSetDao;
+import org.researchedc.dao.spi.ResponseSetDomainDao;
 import org.researchedc.domain.datamap.CrfVersion;
 import org.researchedc.domain.datamap.ResponseSet;
 import org.researchedc.domain.datamap.ResponseType;
@@ -44,7 +44,7 @@ public class ResponseSetService {
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     @Autowired
-    private ResponseSetDao responseSetDao;
+    private ResponseSetDomainDao responseSetDao;
 
     public ResponseSetService() {
     }

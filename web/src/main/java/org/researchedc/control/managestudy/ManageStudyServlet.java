@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IAuditEventDAO;
-import org.researchedc.dao.admin.AuditEventDAO;
 
 /**
  * Generates the index page of manage study module

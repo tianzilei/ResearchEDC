@@ -1,6 +1,5 @@
 package org.researchedc.validator.xform;
 
-import org.researchedc.dao.hibernate.ItemDao;
 import org.researchedc.domain.datamap.Item;
 import org.researchedc.domain.datamap.ItemDataType;
 import org.springframework.validation.Errors;
@@ -9,12 +8,11 @@ import org.springframework.validation.Validator;
 
 public class ItemValidator implements Validator {
 
-    private ItemDao itemDao = null;
+
     private ItemDataType newDataType = null;
     private ItemDataType oldDataType = null;
 
-    public ItemValidator(ItemDao itemDao, ItemDataType oldDataType, ItemDataType newDataType) {
-        this.itemDao = itemDao;
+    public ItemValidator(ItemDataType oldDataType, ItemDataType newDataType) {
         this.oldDataType = oldDataType;
         this.newDataType = newDataType;
     }

@@ -1,6 +1,6 @@
 package org.researchedc.control.submit;
 
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.ResolutionStatus;
@@ -34,7 +34,6 @@ import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.StudyGroupDao;
 import org.researchedc.dao.spi.StudyGroupClassDao;
-import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.jmesa.core.filter.FilterMatcher;

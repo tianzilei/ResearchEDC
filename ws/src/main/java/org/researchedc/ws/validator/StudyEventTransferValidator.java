@@ -2,7 +2,7 @@ package org.researchedc.ws.validator;
 
 import java.util.Date;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.StudyUserRoleBean;
@@ -18,7 +18,6 @@ import org.researchedc.ws.bean.StudyEventTransferBean;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.researchedc.bean.service.StudyParameterValueBean;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 import javax.sql.DataSource;
 

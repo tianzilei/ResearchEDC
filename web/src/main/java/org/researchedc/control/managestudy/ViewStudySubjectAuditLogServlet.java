@@ -8,7 +8,7 @@
 
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.admin.AuditBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.Utils;
@@ -24,7 +24,6 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.SubmitDataServlet;
-import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
@@ -45,7 +44,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * @author jsampson
