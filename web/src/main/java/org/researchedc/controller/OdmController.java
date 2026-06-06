@@ -28,7 +28,7 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.EventCrfDao;
+import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -106,7 +106,7 @@ public class OdmController {
     RuleController ruleController;
 
     @Autowired
-    EventCrfDao eventCrfDao;
+    EventCRFDao eventCrfDao;
 
     public static final String FORM_CONTEXT = "ecid";
     ParticipantPortalRegistrar participantPortalRegistrar;

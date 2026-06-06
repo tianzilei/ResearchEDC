@@ -17,7 +17,7 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.SpringServletAccess;
-import org.researchedc.dao.hibernate.AuthoritiesDao;
+import org.researchedc.dao.spi.AuthoritiesDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;

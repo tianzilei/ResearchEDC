@@ -17,16 +17,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.researchedc.controller.openrosa.ItemItemDataContainer;
 import org.researchedc.controller.openrosa.PformValidator;
 import org.researchedc.controller.openrosa.SubmissionContainer;
-import org.researchedc.dao.hibernate.CrfVersionDao;
-import org.researchedc.dao.hibernate.DiscrepancyNoteDao;
-import org.researchedc.dao.hibernate.DiscrepancyNoteTypeDao;
-import org.researchedc.dao.hibernate.DnItemDataMapDao;
-import org.researchedc.dao.hibernate.ItemDao;
-import org.researchedc.dao.hibernate.ItemDataDao;
-import org.researchedc.dao.hibernate.ItemFormMetadataDao;
-import org.researchedc.dao.hibernate.ItemGroupDao;
-import org.researchedc.dao.hibernate.ItemGroupMetadataDao;
-import org.researchedc.dao.hibernate.ResolutionStatusDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
+import org.researchedc.dao.spi.DiscrepancyNoteTypeDao;
+import org.researchedc.dao.spi.DnItemDataMapDao;
+import org.researchedc.dao.spi.IItemDAO;
+import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
+import org.researchedc.dao.spi.IItemGroupDAO;
+import org.researchedc.dao.spi.IItemGroupMetadataDAO;
+import org.researchedc.dao.spi.ResolutionStatusDao;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.datamap.CrfVersion;
 import org.researchedc.domain.datamap.DiscrepancyNote;
@@ -60,25 +60,25 @@ import org.xml.sax.InputSource;
 public class ItemProcessor implements Processor, Ordered {
 
     @Autowired
-    ItemDataDao itemDataDao;
+    IItemDataDAO itemDataDao;
     
     @Autowired
-    ItemDao itemDao;
+    IItemDAO itemDao;
     
     @Autowired
-    ItemGroupDao itemGroupDao;
+    IItemGroupDAO itemGroupDao;
     
     @Autowired
-    ItemGroupMetadataDao itemGroupMetadataDao;
+    IItemGroupMetadataDAO itemGroupMetadataDao;
     
     @Autowired
-    ItemFormMetadataDao itemFormMetadataDao;
+    IItemFormMetadataDAO itemFormMetadataDao;
     
     @Autowired
-    CrfVersionDao crfVersionDao;
+    ICrfVersionDAO crfVersionDao;
     
     @Autowired
-    DiscrepancyNoteDao discrepancyNoteDao;
+    IDiscrepancyNoteDAO discrepancyNoteDao;
     
     @Autowired
     ResolutionStatusDao resolutionStatusDao;

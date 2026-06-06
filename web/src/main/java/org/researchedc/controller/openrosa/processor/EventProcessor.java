@@ -4,10 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.researchedc.controller.openrosa.SubmissionContainer;
-import org.researchedc.dao.hibernate.CompletionStatusDao;
+import org.researchedc.dao.spi.CompletionStatusDao;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.hibernate.EventCrfDao;
-import org.researchedc.dao.hibernate.EventDefinitionCrfDao;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -41,7 +41,7 @@ public class EventProcessor implements Processor, Ordered {
     IStudyEventDefinitionDAO studyEventDefinitionDao;
     
     @Autowired
-    EventCrfDao eventCrfDao;
+    EventCRFDao eventCrfDao;
     
     @Autowired
     ICrfVersionDAO crfVersionDao;
@@ -50,7 +50,7 @@ public class EventProcessor implements Processor, Ordered {
     CompletionStatusDao completionStatusDao;
     
     @Autowired
-    EventDefinitionCrfDao eventDefinitionCrfDao;
+    EventDefinitionCRFDao eventDefinitionCrfDao;
     
     @Autowired
     IItemDataDAO itemDataDao;

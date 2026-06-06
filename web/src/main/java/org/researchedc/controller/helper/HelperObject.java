@@ -12,10 +12,10 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.core.OpenClinicaMailSender;
-import org.researchedc.dao.hibernate.CrfVersionDao;
-import org.researchedc.dao.hibernate.EventCrfDao;
-import org.researchedc.dao.hibernate.StudyEventDao;
-import org.researchedc.dao.hibernate.StudySubjectDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +37,10 @@ public class HelperObject {
     ResourceBundle resterms;
     String urlBase;
     OpenClinicaMailSender openClinicaMailSender;
-    EventCrfDao eventCrfDao;
-    StudyEventDao studyEventDao;
-    StudySubjectDao studySubjectDao;
-    CrfVersionDao crfVersionDao;
+    EventCRFDao eventCrfDao;
+    IStudyEventDAO studyEventDao;
+    IStudySubjectDAO studySubjectDao;
+    ICrfVersionDAO crfVersionDao;
     SessionFactory sessionFactory;
     Session session;
 
@@ -144,35 +144,35 @@ public class HelperObject {
         this.eventCrfListToMigrate = eventCrfListToMigrate;
     }
 
-    public EventCrfDao getEventCrfDao() {
+    public EventCRFDao getEventCrfDao() {
         return eventCrfDao;
     }
 
-    public void setEventCrfDao(EventCrfDao eventCrfDao) {
+    public void setEventCrfDao(EventCRFDao eventCrfDao) {
         this.eventCrfDao = eventCrfDao;
     }
 
-    public StudyEventDao getStudyEventDao() {
+    public IStudyEventDAO getStudyEventDao() {
         return studyEventDao;
     }
 
-    public void setStudyEventDao(StudyEventDao studyEventDao) {
+    public void setStudyEventDao(IStudyEventDAO studyEventDao) {
         this.studyEventDao = studyEventDao;
     }
 
-    public StudySubjectDao getStudySubjectDao() {
+    public IStudySubjectDAO getStudySubjectDao() {
         return studySubjectDao;
     }
 
-    public void setStudySubjectDao(StudySubjectDao studySubjectDao) {
+    public void setStudySubjectDao(IStudySubjectDAO studySubjectDao) {
         this.studySubjectDao = studySubjectDao;
     }
 
-    public CrfVersionDao getCrfVersionDao() {
+    public ICrfVersionDAO getCrfVersionDao() {
         return crfVersionDao;
     }
 
-    public void setCrfVersionDao(CrfVersionDao crfVersionDao) {
+    public void setCrfVersionDao(ICrfVersionDAO crfVersionDao) {
         this.crfVersionDao = crfVersionDao;
     }
 

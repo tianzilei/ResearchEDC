@@ -20,7 +20,7 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.StudyModuleStatusDao;
+import org.researchedc.dao.spi.StudyModuleStatusDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;

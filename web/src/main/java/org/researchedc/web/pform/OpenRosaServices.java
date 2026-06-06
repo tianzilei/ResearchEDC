@@ -57,7 +57,7 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.controller.openrosa.OpenRosaSubmissionController;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.CrfVersionMediaDao;
+import org.researchedc.dao.spi.CrfVersionMediaDao;
 import org.researchedc.dao.spi.RuleActionPropertyDomainDao;
 import org.researchedc.dao.spi.SCDItemMetadataDomainDao;
 import org.researchedc.dao.spi.IStudyDAO;

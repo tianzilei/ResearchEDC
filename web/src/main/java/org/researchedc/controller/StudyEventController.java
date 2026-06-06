@@ -6,8 +6,8 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.researchedc.dao.hibernate.EventCrfDao;
-import org.researchedc.dao.hibernate.EventDefinitionCrfDao;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
@@ -46,7 +46,7 @@ public class StudyEventController {
 	private BasicDataSource dataSource;
 	
 	@Autowired
-    private EventCrfDao eventCrfDao;
+    private EventCRFDao eventCrfDao;
 	
 	@Autowired
     private IStudyEventDAO studyEventDao;
@@ -58,7 +58,7 @@ public class StudyEventController {
 	private IStudyEventDefinitionDAO studyEventDefinitionDao;
 	
 	@Autowired
-    private EventDefinitionCrfDao eventDefinitionCrfDao;
+    private EventDefinitionCRFDao eventDefinitionCrfDao;
 	
 	@Autowired
 	private IStudyParameterValueDAO studyParameterValueDao;
