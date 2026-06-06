@@ -8,7 +8,6 @@ import org.researchedc.dao.hibernate.*;
 import org.researchedc.dao.spi.IRuleSetRuleAuditDAO;
 import org.researchedc.dao.spi.RuleActionPropertyDomainDao;
 import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
-import org.researchedc.dao.spi.RuleDomainDao;
 import org.researchedc.dao.spi.RuleSetAuditDomainDao;
 import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.SCDItemMetadataDomainDao;
@@ -91,11 +90,6 @@ public class HibernateConfig {
     @Bean
     public RuleSetAuditDomainDao ruleSetAuditDao() {
         return new RuleSetAuditDao();
-    }
-
-    @Bean
-    public RuleDomainDao ruleDao() {
-        return new RuleDao();
     }
 
     @Bean
