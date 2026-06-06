@@ -2,9 +2,10 @@ package org.researchedc.dao.hibernate;
 
 import java.util.List;
 
+import org.researchedc.dao.spi.ResponseSetDomainDao;
 import org.researchedc.domain.datamap.ResponseSet;
 
-public class ResponseSetDao extends AbstractDomainDao<ResponseSet> {
+public class ResponseSetDao extends AbstractDomainDao<ResponseSet> implements ResponseSetDomainDao {
 
     @Override
     Class<ResponseSet> domainClass() {

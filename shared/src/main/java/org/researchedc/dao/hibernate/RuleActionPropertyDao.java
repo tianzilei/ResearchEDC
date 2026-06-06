@@ -3,8 +3,9 @@ package org.researchedc.dao.hibernate;
 import java.util.ArrayList;
 
 import org.researchedc.domain.rule.action.PropertyBean;
+import org.researchedc.dao.spi.RuleActionPropertyDomainDao;
 
-public class RuleActionPropertyDao extends AbstractDomainDao<PropertyBean> {
+public class RuleActionPropertyDao extends AbstractDomainDao<PropertyBean> implements RuleActionPropertyDomainDao {
 
     @Override
     public Class<PropertyBean> domainClass() {

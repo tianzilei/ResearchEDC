@@ -1,8 +1,9 @@
 package org.researchedc.dao.hibernate;
 
 import org.researchedc.domain.rule.RuleBean;
+import org.researchedc.dao.spi.RuleDomainDao;
 
-public class RuleDao extends AbstractDomainDao<RuleBean> {
+public class RuleDao extends AbstractDomainDao<RuleBean> implements RuleDomainDao {
 
     @Override
     public Class<RuleBean> domainClass() {

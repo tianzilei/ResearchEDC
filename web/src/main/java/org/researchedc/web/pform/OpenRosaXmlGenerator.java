@@ -26,7 +26,7 @@ import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.managestudy.CRFVersionMetadataUtil;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.RuleActionPropertyDao;
+import org.researchedc.dao.spi.RuleActionPropertyDomainDao;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemFormMetadataDAO;
@@ -91,7 +91,7 @@ public class OpenRosaXmlGenerator {
     protected final Logger log = LoggerFactory.getLogger(OpenRosaXmlGenerator.class);
     CoreResources coreResources;
 
-    private RuleActionPropertyDao ruleActionPropertyDao;
+    private RuleActionPropertyDomainDao ruleActionPropertyDao;
     private IItemDAO idao;
     private IItemGroupDAO igdao;
     private IItemGroupMetadataDAO igmdao;
@@ -99,7 +99,7 @@ public class OpenRosaXmlGenerator {
     private ISectionDAO sdao;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-    public OpenRosaXmlGenerator(CoreResources core, DataSource dataSource, RuleActionPropertyDao ruleActionPropertyDao) throws Exception {
+    public OpenRosaXmlGenerator(CoreResources core, DataSource dataSource, RuleActionPropertyDomainDao ruleActionPropertyDao) throws Exception {
         this.dataSource = dataSource;
         this.coreResources = core;
         this.ruleActionPropertyDao = ruleActionPropertyDao;
@@ -820,11 +820,11 @@ public class OpenRosaXmlGenerator {
 
     }
 
-    public RuleActionPropertyDao getRuleActionPropertyDao() {
+    public RuleActionPropertyDomainDao getRuleActionPropertyDao() {
         return ruleActionPropertyDao;
     }
 
-    public void setRuleActionPropertyDao(RuleActionPropertyDao ruleActionPropertyDao) {
+    public void setRuleActionPropertyDao(RuleActionPropertyDomainDao ruleActionPropertyDao) {
         this.ruleActionPropertyDao = ruleActionPropertyDao;
     }
 

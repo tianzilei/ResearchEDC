@@ -11,7 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -37,7 +37,6 @@ import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * View the details of a study event definition

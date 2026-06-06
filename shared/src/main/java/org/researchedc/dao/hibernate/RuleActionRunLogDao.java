@@ -1,9 +1,10 @@
 package org.researchedc.dao.hibernate;
 
 import org.researchedc.domain.rule.action.RuleActionRunLogBean;
+import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.springframework.transaction.annotation.Transactional;
 
-public class RuleActionRunLogDao extends AbstractDomainDao<RuleActionRunLogBean> {
+public class RuleActionRunLogDao extends AbstractDomainDao<RuleActionRunLogBean> implements RuleActionRunLogDomainDao {
 
     @Override
     public Class<RuleActionRunLogBean> domainClass() {

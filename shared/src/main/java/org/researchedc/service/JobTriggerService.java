@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.hibernate.RuleSetDao;
+import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.rule.RuleSetBean;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JobTriggerService {
     @Autowired
-    RuleSetDao ruleSetDao;
+    RuleSetDomainDao ruleSetDao;
     @Autowired
     DataSource ds;
     @Autowired

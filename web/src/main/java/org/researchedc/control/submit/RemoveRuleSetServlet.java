@@ -12,8 +12,8 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.dao.spi.IRuleSetDAO;
-import org.researchedc.dao.hibernate.RuleSetRuleAuditDao;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.spi.IRuleSetRuleAuditDAO;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleAuditBean;
@@ -32,8 +32,8 @@ public class RemoveRuleSetServlet extends SecureController {
     @Autowired
     IRuleSetDAO ruleSetDao;
     RuleSetServiceInterface ruleSetService;
-    RuleSetRuleAuditDao ruleSetRuleAuditDao;
-    RuleSetRuleDao ruleSetRuleDao;
+    IRuleSetRuleAuditDAO ruleSetRuleAuditDao;
+    IRuleSetRuleDAO ruleSetRuleDao;
 
     private static String RULESET_ID = "ruleSetId";
     private static String RULESET = "ruleSet";
@@ -103,16 +103,16 @@ public class RemoveRuleSetServlet extends SecureController {
         this.ruleSetDao = ruleSetDao;
     }
 
-    private RuleSetRuleAuditDao getRuleSetRuleAuditDao() {
+    private IRuleSetRuleAuditDAO getRuleSetRuleAuditDao() {
         ruleSetRuleAuditDao =
-            this.ruleSetRuleAuditDao != null ? ruleSetRuleAuditDao : (RuleSetRuleAuditDao) SpringServletAccess.getApplicationContext(context).getBean(
+            this.ruleSetRuleAuditDao != null ? ruleSetRuleAuditDao : (IRuleSetRuleAuditDAO) SpringServletAccess.getApplicationContext(context).getBean(
                     "ruleSetRuleAuditDao");
         return ruleSetRuleAuditDao;
     }
 
-    private RuleSetRuleDao getRuleSetRuleDao() {
+    private IRuleSetRuleDAO getRuleSetRuleDao() {
         ruleSetRuleDao =
-            this.ruleSetRuleDao != null ? ruleSetRuleDao : (RuleSetRuleDao) SpringServletAccess.getApplicationContext(context).getBean("ruleSetRuleDao");
+            this.ruleSetRuleDao != null ? ruleSetRuleDao : (IRuleSetRuleDAO) SpringServletAccess.getApplicationContext(context).getBean("ruleSetRuleDao");
         return ruleSetRuleDao;
     }
 

@@ -4,7 +4,7 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.ItemDataBean;
-import org.researchedc.dao.hibernate.RuleActionRunLogDao;
+import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.logic.rulerunner.ExecutionMode;
@@ -17,11 +17,11 @@ public class InsertActionProcessor implements ActionProcessor {
 
     DataSource ds;
     DynamicsMetadataService itemMetadataService;
-    RuleActionRunLogDao ruleActionRunLogDao;
+    RuleActionRunLogDomainDao ruleActionRunLogDao;
     RuleSetBean ruleSet;
     RuleSetRuleBean ruleSetRule;
 
-    public InsertActionProcessor(DataSource ds, DynamicsMetadataService itemMetadataService, RuleActionRunLogDao ruleActionRunLogDao, RuleSetBean ruleSet,
+    public InsertActionProcessor(DataSource ds, DynamicsMetadataService itemMetadataService, RuleActionRunLogDomainDao ruleActionRunLogDao, RuleSetBean ruleSet,
             RuleSetRuleBean ruleSetRule) {
         this.itemMetadataService = itemMetadataService;
         this.ruleSet = ruleSet;

@@ -43,7 +43,7 @@ import org.researchedc.bean.service.ProcessingResultType;
 import org.researchedc.core.EmailEngine;
 import org.researchedc.core.OpenClinicaMailSender;
 import org.researchedc.core.util.XMLFileFilter;
-import org.researchedc.dao.admin.AuditEventDAO;
+import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
@@ -98,7 +98,7 @@ public class XsltTransformJob extends QuartzJobBean {
     private IStudyDAO studyDao;
     private IUserAccountDAO userAccountDao;
     private ArchivedDatasetFileDao archivedDatasetFileDao;
-    private AuditEventDAO auditEventDAO;
+    private IAuditEventDAO auditEventDAO;
     private DatasetDao datasetDao;
 
     private final TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -174,30 +174,30 @@ public class XsltTransformJob extends QuartzJobBean {
 
             String filedescription = epBean.getFiledescription();
             if(deleteOld ) {
-            	 String[] exportFileName = epBean.getExportFileName();
-            	 String simpleDatePattern = "yyyy-MM-dd-HHmmssSSS";
-            	 SimpleDateFormat sdfDir = new SimpleDateFormat(simpleDatePattern);
-            	 String latestTimestr = sdfDir.format(new java.util.Date());
+	 String[] exportFileName = epBean.getExportFileName();
+	 String simpleDatePattern = "yyyy-MM-dd-HHmmssSSS";
+	 SimpleDateFormat sdfDir = new SimpleDateFormat(simpleDatePattern);
+	 String latestTimestr = sdfDir.format(new java.util.Date());
             String fileType = "";
 
-            	 /**
-            	  *  FOR SAS:
+	 /**
+	  *  FOR SAS:
                   *  extract.12.exportname=SAS_MAP.xml,SAS_DATA.xml,SAS_FORMAT.sas
                   *  no time stamp to replace in those file name
-            	  */
+	  */
             if(filedescription.indexOf("SAS Data") > -1) {
-            		 ;//skip
-            	 }else {
-            		 int i =0;
-                	 while(i < exportFileName.length) {
-                		 fileType = FilenameUtils.getExtension(exportFileName[i]);
-                		 exportFileName[i] = exportFileName[i].substring(0, exportFileName[i].lastIndexOf("_")) + "_" + latestTimestr+ "." + fileType;;
-                		 i++;
-                	 }
+		 ;//skip
+	 }else {
+		 int i =0;
+	 while(i < exportFileName.length) {
+		 fileType = FilenameUtils.getExtension(exportFileName[i]);
+		 exportFileName[i] = exportFileName[i].substring(0, exportFileName[i].lastIndexOf("_")) + "_" + latestTimestr+ "." + fileType;;
+		 i++;
+	 }
 
-            		 epBean.setExportFileName(exportFileName);
+		 epBean.setExportFileName(exportFileName);
 
-            		 dataMap.put(POST_FILE_NAME,exportFileName[0]);
+		 dataMap.put(POST_FILE_NAME,exportFileName[0]);
             }
 
             }
@@ -233,9 +233,9 @@ public class XsltTransformJob extends QuartzJobBean {
             int fId = 0;
             Iterator<Entry<String, Integer>> it = answerMap.entrySet().iterator();
             while(it.hasNext()) {
-            	JobTerminationMonitor.check();
+	JobTerminationMonitor.check();
 
-            	Entry<String, Integer> entry = it.next();
+	Entry<String, Integer> entry = it.next();
                 String key = entry.getKey();
                 Integer value = entry.getValue();
                 ODMXMLFileName = key;// JN: Since there is a logic to
@@ -262,7 +262,7 @@ public class XsltTransformJob extends QuartzJobBean {
             File oldFilesPath = new File(generalFileDir);
             while(fileCntr<numXLS)
             {
-            	JobTerminationMonitor.check();
+	JobTerminationMonitor.check();
 
                 String xsltPath = dataMap.getString(XSLT_PATH)+ File.separator +epBean.getFileName()[fileCntr];
                 in = new java.io.FileInputStream(xsltPath);
@@ -272,9 +272,9 @@ public class XsltTransformJob extends QuartzJobBean {
 
                 //endfile
                 if(outputPath.endsWith(File.separator)) {
-                	 endFile = outputPath +  epBean.getExportFileName()[fileCntr];
+	 endFile = outputPath +  epBean.getExportFileName()[fileCntr];
                 }else {
-                	 endFile = outputPath + File.separator + epBean.getExportFileName()[fileCntr];
+	 endFile = outputPath + File.separator + epBean.getExportFileName()[fileCntr];
                 }
 
 
@@ -614,7 +614,7 @@ public class XsltTransformJob extends QuartzJobBean {
             ApplicationContext ctx = (ApplicationContext) scheduler.getContext().get("applicationContext");
 
             mailSender = ctx.getBean(OpenClinicaMailSender.class);
-            auditEventDAO = ctx.getBean(AuditEventDAO.class);
+            auditEventDAO = ctx.getBean(IAuditEventDAO.class);
             datasetDao = ctx.getBean(DatasetDao.class);
             userAccountDao = ctx.getBean(IUserAccountDAO.class);
             studyDao = ctx.getBean(IStudyDAO.class);

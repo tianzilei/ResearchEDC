@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -21,7 +21,6 @@ import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyConfigService;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.apache.commons.lang3.StringUtils;

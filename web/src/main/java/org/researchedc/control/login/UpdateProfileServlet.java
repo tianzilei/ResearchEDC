@@ -21,10 +21,9 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
-import org.researchedc.dao.hibernate.ConfigurationDao;
-import org.researchedc.dao.hibernate.PasswordRequirementsDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.PasswordRequirements;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.view.Page;
@@ -95,11 +94,6 @@ public class UpdateProfileServlet extends SecureController {
             v.addValidation("passwdChallengeAnswer", Validator.NO_BLANKS);
             v.addValidation("oldPasswd", Validator.NO_BLANKS);// old password
         String password = fp.getString("passwd").trim();
-
-        ConfigurationDao configurationDao = SpringServletAccess
-                .getApplicationContext(context)
-                .getBean(ConfigurationDao.class);
-
         org.researchedc.core.SecurityManager sm =
                 (org.researchedc.core.SecurityManager) SpringServletAccess
                 .getApplicationContext(context)
@@ -112,8 +106,9 @@ public class UpdateProfileServlet extends SecureController {
             v.addValidation("passwd", Validator.IS_A_PASSWORD);// new password
             v.addValidation("passwd1", Validator.CHECK_SAME, "passwd");// confirm
             // password
-
-            PasswordRequirementsDao passwordRequirementsDao = new PasswordRequirementsDao(configurationDao);
+            PasswordRequirements passwordRequirementsDao = SpringServletAccess
+                    .getApplicationContext(context)
+                    .getBean(PasswordRequirements.class);
             Locale locale = LocaleResolver.getLocale(request);
             ResourceBundle resexception = ResourceBundleProvider.getExceptionsBundle(locale);
 

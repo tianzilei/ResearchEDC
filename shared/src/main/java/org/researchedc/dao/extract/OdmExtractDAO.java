@@ -80,7 +80,7 @@ import org.researchedc.dao.core.TypeNames;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.domain.SourceDataVerification;
@@ -101,11 +101,11 @@ public class OdmExtractDAO extends DatasetDAO {
     private ICrfDAO crfDao;
     private ISectionDAO sectionDao;
     private IStudyDAO studyDao;
-    private StudyParameterValueDAO studyParameterValueDao;
+    private IStudyParameterValueDAO studyParameterValueDao;
     private Function<DataSource, ICrfDAO> crfDaoFactory = LegacyDaoFactory::crfDao;
     private Function<DataSource, ISectionDAO> sectionDaoFactory = LegacyDaoFactory::sectionDao;
     private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
-    private Function<DataSource, StudyParameterValueDAO> studyParameterValueDaoFactory = StudyParameterValueDAO::new;
+    private Function<DataSource, IStudyParameterValueDAO> studyParameterValueDaoFactory = LegacyDaoFactory::studyParameterValueDao;
 	
 
     public OdmExtractDAO(DataSource ds) {
@@ -3181,7 +3181,7 @@ private void fetchItemGroupMetaData(MetaDataVersionBean metadata,String cvIds, S
         return studyDao;
     }
 
-    private StudyParameterValueDAO getStudyParameterValueDao() {
+    private IStudyParameterValueDAO getStudyParameterValueDao() {
         if (studyParameterValueDao == null) {
             studyParameterValueDao = studyParameterValueDaoFactory.apply(this.ds);
         }

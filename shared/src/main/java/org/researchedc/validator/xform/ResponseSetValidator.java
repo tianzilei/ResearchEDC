@@ -3,7 +3,7 @@ package org.researchedc.validator.xform;
 import java.util.Arrays;
 import java.util.List;
 
-import org.researchedc.dao.hibernate.ResponseSetDao;
+import org.researchedc.dao.spi.ResponseSetDomainDao;
 import org.researchedc.domain.datamap.Item;
 import org.researchedc.domain.datamap.ResponseSet;
 import org.slf4j.Logger;
@@ -15,10 +15,10 @@ public class ResponseSetValidator implements Validator {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-    private ResponseSetDao responseSetDao = null;
+    private ResponseSetDomainDao responseSetDao = null;
     private Item item;
 
-    public ResponseSetValidator(ResponseSetDao responseSetDao, Item item) {
+    public ResponseSetValidator(ResponseSetDomainDao responseSetDao, Item item) {
         this.responseSetDao = responseSetDao;
         this.item = item;
     }

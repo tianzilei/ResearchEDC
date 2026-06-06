@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.researchedc.service.usageStats;
 
@@ -9,7 +9,7 @@ import java.util.Map;
 import jakarta.servlet.ServletContext;
 import javax.sql.DataSource;
 
-import org.researchedc.dao.hibernate.UsageStatsServiceDAO;
+import org.researchedc.dao.spi.UsageStatsServiceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ public class LogUsageStatsService {
     protected final static Logger logger = LoggerFactory.getLogger("org.researchedc.service.usageStats.LogUsageStatsService");
 
     DataSource dataSource;
-    UsageStatsServiceDAO usageStatsServiceDAO;
+    UsageStatsServiceDao usageStatsServiceDAO;
     ServletContext context;
 
     public LogUsageStatsService(DataSource dataSource) {

@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.admin.DisplayStudyBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -39,7 +39,7 @@ public class ReassignStudySubjectServlet extends SecureController {
     @Autowired
     private ISubjectDAO subjectDao;
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
 
 /**
      *
@@ -81,7 +81,7 @@ public class ReassignStudySubjectServlet extends SecureController {
             SubjectBean subject = (SubjectBean) subdao.findByPK(subjectId);
             request.setAttribute("subject", subject);
 
-            SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+            SubjectGroupMapDao sgmdao = this.subjectGroupMapDao;
             ArrayList groupMaps = (ArrayList) sgmdao.findAllByStudySubject(studySubId);
 
             if (StringUtil.isBlank(action)) {

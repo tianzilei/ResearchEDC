@@ -38,7 +38,6 @@ import org.researchedc.controller.helper.ReportLog;
 import org.researchedc.controller.helper.TransferObject;
 import org.researchedc.core.EmailEngine;
 import org.researchedc.core.OpenClinicaMailSender;
-import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.ICrfDAO;
@@ -50,7 +49,6 @@ import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
-import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.hibernate.EventCrfDao;
 import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudySubjectDao;
@@ -96,7 +94,7 @@ public class BatchCRFMigrationController implements Runnable {
     protected IStudyDAO studyDao;
 
     @Autowired
-    protected AuditDAO auditDao;
+    protected AuditDao auditDao;
 
     @Autowired
     private EventCRFDao legacyEventCrfDao;

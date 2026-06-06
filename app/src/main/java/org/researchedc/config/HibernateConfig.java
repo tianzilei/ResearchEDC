@@ -5,6 +5,17 @@ import javax.sql.DataSource;
 import org.hibernate.SessionFactory;
 import org.researchedc.dao.QueryStore;
 import org.researchedc.dao.hibernate.*;
+import org.researchedc.dao.spi.IRuleSetRuleAuditDAO;
+import org.researchedc.dao.spi.RuleActionPropertyDomainDao;
+import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
+import org.researchedc.dao.spi.RuleDomainDao;
+import org.researchedc.dao.spi.RuleSetAuditDomainDao;
+import org.researchedc.dao.spi.RuleSetDomainDao;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
+import org.researchedc.dao.spi.OpenClinicaVersionDao;
+import org.researchedc.dao.spi.PasswordRequirements;
+import org.researchedc.dao.spi.ResponseSetDomainDao;
+import org.researchedc.dao.spi.UsageStatsServiceDao;
 import org.researchedc.dao.managestudy.ViewNotesDaoImpl;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -67,37 +78,37 @@ public class HibernateConfig {
     // ──────────────────────────────────────────────────────────────────────
 
     @Bean
-    public RuleActionRunLogDao ruleActionRunLogDao() {
+    public RuleActionRunLogDomainDao ruleActionRunLogDao() {
         return new RuleActionRunLogDao();
     }
 
     @Bean
-    public RuleSetDao ruleSetDao() {
+    public RuleSetDomainDao ruleSetDao() {
         return new RuleSetDao();
     }
 
     @Bean
-    public RuleSetAuditDao ruleSetAuditDao() {
+    public RuleSetAuditDomainDao ruleSetAuditDao() {
         return new RuleSetAuditDao();
     }
 
     @Bean
-    public RuleDao ruleDao() {
+    public RuleDomainDao ruleDao() {
         return new RuleDao();
     }
 
     @Bean
-    public RuleActionPropertyDao ruleActionPropertyDao() {
+    public RuleActionPropertyDomainDao ruleActionPropertyDao() {
         return new RuleActionPropertyDao();
     }
 
     @Bean
-    public RuleSetRuleDao ruleSetRuleDao() {
+    public IRuleSetRuleDAO ruleSetRuleDao() {
         return new RuleSetRuleDao();
     }
 
     @Bean
-    public RuleSetRuleAuditDao ruleSetRuleAuditDao() {
+    public IRuleSetRuleAuditDAO ruleSetRuleAuditDao() {
         return new RuleSetRuleAuditDao();
     }
 
@@ -161,7 +172,7 @@ public class HibernateConfig {
     }
 
     @Bean
-    public ResponseSetDao responseSetDao() {
+    public ResponseSetDomainDao responseSetDao() {
         return new ResponseSetDao();
     }
 
@@ -355,6 +366,11 @@ public class HibernateConfig {
     }
 
     @Bean
+    public PasswordRequirements passwordRequirements(ConfigurationDao configurationDao) {
+        return new PasswordRequirementsDao(configurationDao);
+    }
+
+    @Bean
     public TagDao tagDao() {
         return new TagDao();
     }
@@ -365,12 +381,12 @@ public class HibernateConfig {
     }
 
     @Bean
-    public UsageStatsServiceDAO usageStatsServiceDAO() {
+    public UsageStatsServiceDao usageStatsServiceDAO() {
         return new UsageStatsServiceDAO();
     }
 
     @Bean
-    public OpenClinicaVersionDAO openClinicaVersionDAO() {
+    public OpenClinicaVersionDao openClinicaVersionDAO() {
         return new OpenClinicaVersionDAO();
     }
 

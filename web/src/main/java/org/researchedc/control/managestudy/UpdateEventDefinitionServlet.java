@@ -8,7 +8,7 @@
 package org.researchedc.control.managestudy;
 
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.*;
 import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
@@ -52,7 +52,6 @@ import java.util.ListIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * @author jxu

@@ -32,7 +32,7 @@ import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.hibernate.StudySubjectDao;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.domain.datamap.CrfVersion;
 import org.researchedc.domain.datamap.EventCrf;
 import org.researchedc.domain.datamap.Item;
@@ -69,7 +69,7 @@ import org.w3c.dom.Element;
 public class EditFormController {
 
     @Autowired
-    protected StudyParameterValueDAO studyParameterValueDao;
+    protected IStudyParameterValueDAO studyParameterValueDao;
 
     @Autowired
     protected IStudyDAO studyDao;
@@ -349,7 +349,7 @@ public class EditFormController {
         boolean accessPermission = false;
         StudyBean siteStudy = getStudy(studyOid);
         StudyBean study = getParentStudy(studyOid);
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
         participantPortalRegistrar = new ParticipantPortalRegistrar();
         String pManageStatus = participantPortalRegistrar.getRegistrationStatus(study.getOid()).toString(); // ACTIVE ,

@@ -58,13 +58,13 @@ import org.researchedc.controller.openrosa.OpenRosaSubmissionController;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.hibernate.CrfVersionMediaDao;
-import org.researchedc.dao.hibernate.RuleActionPropertyDao;
+import org.researchedc.dao.spi.RuleActionPropertyDomainDao;
 import org.researchedc.dao.hibernate.SCDItemMetadataDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.domain.datamap.CrfVersionMedia;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
 import org.researchedc.web.pform.formlist.XForm;
@@ -97,7 +97,7 @@ public class OpenRosaServices {
     protected ICrfDAO crfDao;
 
     @Autowired
-    protected StudyParameterValueDAO studyParameterValueDao;
+    protected IStudyParameterValueDAO studyParameterValueDao;
 
     @Autowired
     protected IStudyEventDAO studyEventDao;
@@ -128,7 +128,7 @@ public class OpenRosaServices {
     private DataSource dataSource;
     private CoreResources coreResources;
     private OpenRosaSubmissionController openRosaSubmissionController;
-    private RuleActionPropertyDao ruleActionPropertyDao;
+    private RuleActionPropertyDomainDao ruleActionPropertyDao;
     private SCDItemMetadataDao scdItemMetadataDao;
     ParticipantPortalRegistrar participantPortalRegistrar;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
@@ -547,11 +547,11 @@ public class OpenRosaServices {
         this.openRosaSubmissionController = openRosaSubmissionController;
     }
 
-    public RuleActionPropertyDao getRuleActionPropertyDao() {
+    public RuleActionPropertyDomainDao getRuleActionPropertyDao() {
         return ruleActionPropertyDao;
     }
 
-    public void setRuleActionPropertyDao(RuleActionPropertyDao ruleActionPropertyDao) {
+    public void setRuleActionPropertyDao(RuleActionPropertyDomainDao ruleActionPropertyDao) {
         this.ruleActionPropertyDao = ruleActionPropertyDao;
     }
 
@@ -643,7 +643,7 @@ public class OpenRosaServices {
     private boolean mayProceedSubmission(String studyOid, StudySubjectBean ssBean) throws Exception {
         boolean accessPermission = false;
         StudyBean study = getParentStudy(studyOid);
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
         participantPortalRegistrar = new ParticipantPortalRegistrar();
         String pManageStatus = participantPortalRegistrar.getRegistrationStatus(studyOid).toString(); // ACTIVE ,
@@ -663,7 +663,7 @@ public class OpenRosaServices {
     private boolean mayProceedPreview(String studyOid) throws Exception {
         boolean accessPermission = false;
         StudyBean study = getParentStudy(studyOid);
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
 
         StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
         participantPortalRegistrar = new ParticipantPortalRegistrar();

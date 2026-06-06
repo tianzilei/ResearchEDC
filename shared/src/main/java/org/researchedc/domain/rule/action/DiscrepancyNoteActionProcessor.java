@@ -3,7 +3,7 @@ package org.researchedc.domain.rule.action;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.ItemDataBean;
-import org.researchedc.dao.hibernate.RuleActionRunLogDao;
+import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.domain.rule.RuleSetRuleBean;
 import org.researchedc.logic.rulerunner.ExecutionMode;
@@ -16,17 +16,17 @@ public class DiscrepancyNoteActionProcessor implements ActionProcessor {
 
     DataSource ds;
     DiscrepancyNoteService discrepancyNoteService;
-    RuleActionRunLogDao ruleActionRunLogDao;
+    RuleActionRunLogDomainDao ruleActionRunLogDao;
     RuleSetRuleBean ruleSetRule;
     IDiscrepancyNoteDAO discrepancyNoteDao;
 
-    public DiscrepancyNoteActionProcessor(DataSource ds, RuleActionRunLogDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule) {
+    public DiscrepancyNoteActionProcessor(DataSource ds, RuleActionRunLogDomainDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule) {
         this.ds = ds;
         this.ruleActionRunLogDao = ruleActionRunLogDao;
         this.ruleSetRule = ruleSetRule;
     }
 
-    public DiscrepancyNoteActionProcessor(DataSource ds, RuleActionRunLogDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule,
+    public DiscrepancyNoteActionProcessor(DataSource ds, RuleActionRunLogDomainDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule,
             IDiscrepancyNoteDAO discrepancyNoteDao) {
         this(ds, ruleActionRunLogDao, ruleSetRule);
         this.discrepancyNoteDao = discrepancyNoteDao;

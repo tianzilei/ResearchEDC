@@ -1,6 +1,6 @@
 package org.researchedc.controller.helper;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.bean.managestudy.StudyBean;
@@ -30,7 +30,7 @@ public class SetUpStudyRole {
     @Autowired
     private IStudyDAO studyDao;
     @Autowired
-    private StudyParameterValueDAO studyParameterValueDao;
+    private IStudyParameterValueDAO studyParameterValueDao;
     private StudyConfigService studyConfigService;
 
     public static final String STUDY_INFO_PANEL = "panel";
@@ -39,7 +39,7 @@ public class SetUpStudyRole {
         this.dataSource = dataSource;
     }
 
-    public SetUpStudyRole(DataSource dataSource, IStudyDAO studyDao, StudyParameterValueDAO studyParameterValueDao,
+    public SetUpStudyRole(DataSource dataSource, IStudyDAO studyDao, IStudyParameterValueDAO studyParameterValueDao,
             StudyConfigService studyConfigService) {
         this.dataSource = dataSource;
         this.studyDao = studyDao;
@@ -62,7 +62,7 @@ public class SetUpStudyRole {
         StudyInfoPanel panel = new StudyInfoPanel();
 
         if (userAccountBean.getId() > 0 && userAccountBean.getActiveStudyId() > 0) {
-            StudyParameterValueDAO spvdao = studyParameterValueDao;
+            IStudyParameterValueDAO spvdao = studyParameterValueDao;
             currentStudy = (StudyBean) studyDao.findByPK(userAccountBean.getActiveStudyId());
 
             ArrayList studyParameters = spvdao.findParamConfigByStudy(currentStudy);

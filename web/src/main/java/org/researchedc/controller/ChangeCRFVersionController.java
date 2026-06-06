@@ -10,7 +10,6 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ItemGroupMetadataBean;
-import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
@@ -87,7 +86,7 @@ public class ChangeCRFVersionController {
     protected IItemGroupMetadataDAO itemGroupMetadataDao;
 
     @Autowired
-    protected AuditDAO auditDao;
+    protected AuditDao auditDao;
 
     @Autowired
     protected ICrfVersionDAO crfVersionDao;

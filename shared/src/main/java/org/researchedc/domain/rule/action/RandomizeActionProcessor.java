@@ -5,7 +5,7 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.bean.submit.ItemDataBean;
-import org.researchedc.dao.hibernate.RuleActionRunLogDao;
+import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.domain.rule.RuleSetBean;
@@ -25,7 +25,7 @@ public class RandomizeActionProcessor implements ActionProcessor {
 
     DataSource ds;
     DynamicsMetadataService itemMetadataService;
-    RuleActionRunLogDao ruleActionRunLogDao;
+    RuleActionRunLogDomainDao ruleActionRunLogDao;
     RuleSetBean ruleSet;
     RuleSetRuleBean ruleSetRule;
     IStudyDAO sdao=null;
@@ -34,7 +34,7 @@ public class RandomizeActionProcessor implements ActionProcessor {
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
 
-    public RandomizeActionProcessor(DataSource ds, DynamicsMetadataService itemMetadataService, RuleActionRunLogDao ruleActionRunLogDao, RuleSetBean ruleSet,
+    public RandomizeActionProcessor(DataSource ds, DynamicsMetadataService itemMetadataService, RuleActionRunLogDomainDao ruleActionRunLogDao, RuleSetBean ruleSet,
             RuleSetRuleBean ruleSetRule) {
         this.itemMetadataService = itemMetadataService;
         this.ruleSet = ruleSet;
@@ -43,7 +43,7 @@ public class RandomizeActionProcessor implements ActionProcessor {
         this.ds = ds;
     }
 
-    public RandomizeActionProcessor(DataSource ds, DynamicsMetadataService itemMetadataService, RuleActionRunLogDao ruleActionRunLogDao, RuleSetBean ruleSet,
+    public RandomizeActionProcessor(DataSource ds, DynamicsMetadataService itemMetadataService, RuleActionRunLogDomainDao ruleActionRunLogDao, RuleSetBean ruleSet,
             RuleSetRuleBean ruleSetRule, IStudyDAO studyDao, IStudyParameterValueDAO studyParameterValueDao) {
         this(ds, itemMetadataService, ruleActionRunLogDao, ruleSet, ruleSetRule);
         this.sdao = studyDao;

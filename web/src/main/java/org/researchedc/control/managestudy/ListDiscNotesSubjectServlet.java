@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.submit.ListDiscNotesSubjectTableFactory;
@@ -48,7 +48,7 @@ public class ListDiscNotesSubjectServlet extends SecureController {
     @Autowired
     private ISubjectDAO subjectDao;
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
 
 public static final String RESOLUTION_STATUS = "resolutionStatus";
     // Include extra path info on the URL, which generates a file name hint in
@@ -143,7 +143,7 @@ public static final String RESOLUTION_STATUS = "resolutionStatus";
         IStudySubjectDAO sdao = this.studySubjectDao;
         IStudyEventDAO sedao = this.studyEventDao;
         IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
-        SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+        SubjectGroupMapDao sgmdao = this.subjectGroupMapDao;
         StudyGroupClassDao sgcdao = this.studyGroupClassDao;
         StudyGroupDao sgdao = this.studyGroupDao;
         IStudySubjectDAO ssdao = this.studySubjectDao;

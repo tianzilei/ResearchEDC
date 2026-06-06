@@ -19,8 +19,8 @@ import javax.sql.DataSource;
 
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.admin.AuditEventBean;
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.admin.StudyEventAuditBean;
@@ -47,7 +47,6 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.CreateNewStudyEventServlet;
 import org.researchedc.control.submit.SubmitDataServlet;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
@@ -70,7 +69,6 @@ import org.researchedc.web.bean.DisplayStudyEventRow;
 import org.researchedc.web.bean.EntityBeanTable;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.researchedc.dao.spi.IStudyParameterValueDAO;
 
 /**
  * @author jxu
@@ -88,7 +86,7 @@ public class ViewStudySubjectServlet extends SecureController {
     @Autowired
     private ISubjectDAO subjectDao;
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
     @Autowired
     private IUserAccountDAO userAccountDao;
 
@@ -321,7 +319,7 @@ public class ViewStudySubjectServlet extends SecureController {
             // request.setAttribute("displayEvents", displayEvents);
 
             // find group info
-            SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+            SubjectGroupMapDao sgmdao = this.subjectGroupMapDao;
             ArrayList groupMaps = (ArrayList) sgmdao.findAllByStudySubject(studySubId);
             request.setAttribute("groups", groupMaps);
 

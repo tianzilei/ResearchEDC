@@ -20,6 +20,7 @@ import org.researchedc.dao.spi.IRuleSetDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
@@ -173,6 +174,12 @@ public final class LegacyDaoFactory {
     public static StudyGroupDao studyGroupDao(DataSource dataSource) {
         return applicationContext != null
                 ? applicationContext.getBean(StudyGroupDao.class)
+                : null;
+    }
+
+    public static IStudyParameterValueDAO studyParameterValueDao(DataSource dataSource) {
+        return applicationContext != null
+                ? applicationContext.getBean(IStudyParameterValueDAO.class)
                 : null;
     }
 }

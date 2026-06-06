@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.DatasetBean;
@@ -53,7 +53,7 @@ public class RemoveSiteServlet extends SecureController {
     @Autowired
     private EventDefinitionCRFDao eventDefinitionCrfDao;
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
     @Autowired
     private IUserAccountDAO userAccountDao;
 
@@ -156,7 +156,7 @@ public class RemoveSiteServlet extends SecureController {
 
                 // remove all study_group
                 StudyGroupDao sgdao = this.studyGroupDao;
-                SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+                SubjectGroupMapDao sgmdao = this.subjectGroupMapDao;
                 ArrayList groups = sgdao.findAllByStudy(study);
                 for (int i = 0; i < groups.size(); i++) {
                     StudyGroupBean group = (StudyGroupBean) groups.get(i);

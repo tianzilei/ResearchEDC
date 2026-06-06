@@ -8,7 +8,7 @@ import javax.sql.DataSource;
 import net.sf.json.JSON;
 import net.sf.json.xml.XMLSerializer;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.extract.odm.ClinicalDataReportBean;
 import org.researchedc.bean.extract.odm.FullReportBean;
 import org.researchedc.bean.extract.odm.MetaDataReportBean;
@@ -17,7 +17,7 @@ import org.researchedc.bean.odmbeans.ODMBean;
 import org.researchedc.bean.odmbeans.OdmClinicalDataBean;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IRuleSetDAO;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.domain.datamap.Study;
@@ -34,19 +34,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class MetadataCollectorResource {
 
     @Autowired
-    protected StudyParameterValueDAO studyParameterValueDao;
+    protected IStudyParameterValueDAO studyParameterValueDao;
     @Autowired
     protected StudyConfigService studyConfigService;
 
     private static final int INDENT_LEVEL = 2;
 	private DataSource dataSource;
-	
+
 	private IStudyDAO studyDao;
-	
-private RuleSetRuleDao ruleSetRuleDao;	
+
+private IRuleSetRuleDAO ruleSetRuleDao;
 
 private CoreResources coreResources;
-//Testing purposes TODO:remove me 
+//Testing purposes TODO:remove me
 private IStudyDAO studyDaoHib;
 
 	public IStudyDAO getStudyDaoHib() {
@@ -73,13 +73,13 @@ public void setCoreResources(CoreResources coreResources) {
 
 
 
-	public RuleSetRuleDao getRuleSetRuleDao() {
+	public IRuleSetRuleDAO getRuleSetRuleDao() {
 	return ruleSetRuleDao;
 }
 
 
 
-public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
+public void setRuleSetRuleDao(IRuleSetRuleDAO ruleSetRuleDao) {
 	this.ruleSetRuleDao = ruleSetRuleDao;
 }
 
@@ -110,15 +110,15 @@ public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
 
 
 	public MetadataCollectorResource(){
-		
+
 	}
-	
-	
-	
+
+
+
 	public String collectODMMetadata(String studyOID){
-		
+
 		StudyBean studyBean = getStudyDao().findByOid(studyOID);
-		
+
 	    MetaDataCollector mdc = new MetaDataCollector(this.dataSource, studyBean,getRuleSetRuleDao());
         AdminDataCollector adc = new AdminDataCollector(this.dataSource, studyBean);
         MetaDataCollector.setTextLength(200);
@@ -136,7 +136,7 @@ public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
      adc.setOdmbean(odmb);
         mdc.collectFileData();
    adc.collectFileData();
-        
+
         FullReportBean report = new FullReportBean();
         report.setAdminDataMap(adc.getOdmAdminDataMap());
         report.setOdmStudyMap(mdc.getOdmStudyMap());
@@ -144,27 +144,27 @@ public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
         report.setOdmBean(mdc.getODMBean());
         report.setODMVersion("oc1.3");
         report.createStudyMetaOdmXml(Boolean.FALSE);
-		
+
         return report.getXmlOutput().toString().trim();
-		
+
 	}
-	
-	
+
+
 	public String collectODMMetadataJson(String studyOID){
 		net.sf.json.xml.XMLSerializer xmlserializer = new XMLSerializer();
 		JSON json = xmlserializer.read(collectODMMetadata(studyOID));
 		return json.toString(INDENT_LEVEL);
-		
+
 	}
 
 
-	
+
 	public JSON collectODMMetadataJson(String studyOID,String formVersionOID){
 		net.sf.json.xml.XMLSerializer xmlserializer = new XMLSerializer();
 		JSON json = xmlserializer.read(collectODMMetadataForForm(studyOID,formVersionOID));
 		return json;
 	}
-	
+
 	public String collectODMMetadataJsonString(String studyOID,String formVersionOID){
 		net.sf.json.xml.XMLSerializer xmlserializer = new XMLSerializer();
 		JSON json = xmlserializer.read(collectODMMetadataForForm(studyOID,formVersionOID));
@@ -193,9 +193,9 @@ public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
         if(studyBean==null)
         mdc.collectFileData(formVersionOID);
         else
-        	mdc.collectFileData();
+	mdc.collectFileData();
         adc.collectFileData();
-        
+
         FullReportBean report = new FullReportBean();
         report.setAdminDataMap(adc.getOdmAdminDataMap());
         report.setOdmStudyMap(mdc.getOdmStudyMap());
@@ -203,8 +203,8 @@ public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
         report.setOdmBean(mdc.getODMBean());
         report.setODMVersion("oc1.3");
         report.createStudyMetaOdmXml(Boolean.FALSE);
-     
-     
+
+
 		return report.getXmlOutput().toString().trim();
 	}
 
@@ -234,8 +234,8 @@ public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
 	        else
 	        	mdc.collectFileData();
 	        adc.collectFileData();
-	        
-	        
+
+
 	        FullReportBean report = new FullReportBean();
 	        report.setAdminDataMap(adc.getOdmAdminDataMap());
 	        report.setOdmStudyMap(mdc.getOdmStudyMap());
@@ -245,12 +245,12 @@ public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
 
 			report.setClinicalDataMap(clinicalDataMap);
 	        report.setODMVersion("oc1.3");
-	       
-	     
+
+
 	        return report;
 	}
 	private StudyBean populateStudyBean(StudyBean studyBean) {
-		 StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+		 IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
 		  @SuppressWarnings("rawtypes")
 		ArrayList studyParameters = spvdao.findParamConfigByStudy(studyBean);
 
@@ -264,9 +264,9 @@ public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
               // YW >>
               studyBean = studyConfigService.setParametersForSite(studyBean);
           }
-		 
+
 	return studyBean;
 	}
-	
-	
+
+
 }

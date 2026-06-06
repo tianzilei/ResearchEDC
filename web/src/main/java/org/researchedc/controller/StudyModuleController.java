@@ -26,7 +26,7 @@ import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IRuleDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.domain.managestudy.StudyModuleStatus;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -65,7 +65,7 @@ import org.springframework.web.bind.support.SessionStatus;
 public class StudyModuleController {
 
     @Autowired
-    protected StudyParameterValueDAO studyParameterValueDao;
+    protected IStudyParameterValueDAO studyParameterValueDao;
 
     @Autowired
     protected EventDefinitionCRFDao eventDefinitionCrfDao;
@@ -111,7 +111,7 @@ public class StudyModuleController {
     public String deactivateParticipate(@PathVariable("study") String studyOid, HttpServletRequest request) throws Exception {
         studyDao = this.studyDao;
         StudyBean study = studyDao.findByOid(studyOid);
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean spv = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
         spv.setStudyId(study.getId());
         spv.setParameter("participantPortal");
@@ -131,7 +131,7 @@ public class StudyModuleController {
     public String deactivateRandomization(@PathVariable("study") String studyOid, HttpServletRequest request) throws Exception {
         studyDao = this.studyDao;
         StudyBean study = studyDao.findByOid(studyOid);
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean spv = spvdao.findByHandleAndStudy(study.getId(), "randomization");
         spv.setStudyId(study.getId());
         spv.setParameter("randomization");
@@ -151,7 +151,7 @@ public class StudyModuleController {
     public String reactivateParticipate(@PathVariable("study") String studyOid, HttpServletRequest request) throws Exception {
         studyDao = this.studyDao;
         StudyBean study = studyDao.findByOid(studyOid);
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean spv = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
         spv.setStudyId(study.getId());
         spv.setParameter("participantPortal");
@@ -171,7 +171,7 @@ public class StudyModuleController {
     public String reactivateRandomization(@PathVariable("study") String studyOid, HttpServletRequest request) throws Exception {
         studyDao = this.studyDao;
         StudyBean study = studyDao.findByOid(studyOid);
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean spv = spvdao.findByHandleAndStudy(study.getId(), "randomization");
         spv.setStudyId(study.getId());
         spv.setParameter("randomization");
@@ -192,7 +192,7 @@ public class StudyModuleController {
     public String registerParticipate(@PathVariable("study") String studyOid, HttpServletRequest request) throws Exception {
         studyDao = this.studyDao;
         StudyBean study = studyDao.findByOid(studyOid);
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean spv = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
         ParticipantPortalRegistrar registrar = new ParticipantPortalRegistrar();
 
@@ -246,7 +246,7 @@ public class StudyModuleController {
     public String registerRandimization(@PathVariable("study") String studyOid, HttpServletRequest request) throws Exception {
         studyDao = this.studyDao;
         StudyBean study = studyDao.findByOid(studyOid);
-        StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+        IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
         StudyParameterValueBean spv = spvdao.findByHandleAndStudy(study.getId(), "randomization");
         RandomizationRegistrar randomizationRegistrar = new RandomizationRegistrar();
 

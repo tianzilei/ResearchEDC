@@ -23,7 +23,6 @@ import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.SubmitDataServlet;
-import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;

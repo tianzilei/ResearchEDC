@@ -18,7 +18,7 @@ import org.researchedc.bean.extract.DatasetBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.odmbeans.MetaDataVersionProtocolBean;
 import org.researchedc.bean.odmbeans.OdmStudyBean;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.job.JobTerminationMonitor;
 
 /**
@@ -40,26 +40,26 @@ import org.researchedc.job.JobTerminationMonitor;
 public class MetaDataCollector extends OdmDataCollector {
     private LinkedHashMap<String, OdmStudyBean> odmStudyMap;
     private static int textLength = 4000;
-    private RuleSetRuleDao ruleSetRuleDao;
+    private IRuleSetRuleDAO ruleSetRuleDao;
 
     // protected final Logger logger =
     // LoggerFactory.getLogger(getClass().getName());
 
-    public MetaDataCollector(DataSource ds, StudyBean study,RuleSetRuleDao ruleSetRuleDao) {
+    public MetaDataCollector(DataSource ds, StudyBean study,IRuleSetRuleDAO ruleSetRuleDao) {
         super(ds, study);
         this.ruleSetRuleDao = ruleSetRuleDao;
         odmStudyMap = new LinkedHashMap<String, OdmStudyBean>();
     }
 
-    public MetaDataCollector(DataSource ds, DatasetBean dataset, StudyBean currentStudy,RuleSetRuleDao ruleSetRuleDao) {
+    public MetaDataCollector(DataSource ds, DatasetBean dataset, StudyBean currentStudy,IRuleSetRuleDAO ruleSetRuleDao) {
         super(ds, dataset, currentStudy);
         this.ruleSetRuleDao = ruleSetRuleDao;
         odmStudyMap = new LinkedHashMap<String, OdmStudyBean>();
     }
 
-    public MetaDataCollector(DataSource ds,RuleSetRuleDao ruleSetRuleDao) {
-    	this.ruleSetRuleDao = ruleSetRuleDao;
-    	
+    public MetaDataCollector(DataSource ds,IRuleSetRuleDAO ruleSetRuleDao) {
+	this.ruleSetRuleDao = ruleSetRuleDao;
+
     }
 
     @Override
@@ -143,17 +143,17 @@ public class MetaDataCollector extends OdmDataCollector {
         return textLength;
     }
 
-    public RuleSetRuleDao getRuleSetRuleDao() {
+    public IRuleSetRuleDAO getRuleSetRuleDao() {
         return ruleSetRuleDao;
     }
 
-    public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
+    public void setRuleSetRuleDao(IRuleSetRuleDAO ruleSetRuleDao) {
         this.ruleSetRuleDao = ruleSetRuleDao;
     }
 
 	public void collectFileData(String formVersionOID) {
 		  this.collectOdmRoot();
 	        this.collectMetadataUnitMap(formVersionOID);
-		
+
 	}
 }

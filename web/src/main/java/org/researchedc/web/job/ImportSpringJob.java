@@ -41,7 +41,6 @@ import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.bean.submit.crfdata.SummaryStatsBean;
 import org.researchedc.control.submit.ImportCRFInfoContainer;
 import org.researchedc.core.OpenClinicaMailSender;
-import org.researchedc.dao.admin.AuditEventDAO;
 import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IUserAccountDAO;
@@ -96,7 +95,7 @@ public class ImportSpringJob extends QuartzJobBean {
     protected IStudyDAO studyDao;
 
     @Autowired
-    protected AuditEventDAO auditEventDao;
+    protected IAuditEventDAO auditEventDao;
     @Autowired
     protected IStudySubjectDAO studySubjectDao;
     @Autowired

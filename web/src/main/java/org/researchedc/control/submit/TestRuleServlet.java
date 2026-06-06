@@ -23,7 +23,7 @@ import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.IRuleSetDAO;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.domain.rule.RuleSetBean;
@@ -70,7 +70,7 @@ public class TestRuleServlet extends SecureController {
 
     Locale locale;
     XmlSchemaValidationHelper schemaValidator = new XmlSchemaValidationHelper();
-    RuleSetRuleDao ruleSetRuleDao;
+    IRuleSetRuleDAO ruleSetRuleDao;
     @Autowired
     IRuleSetDAO ruleSetDao;
     IItemDAO itemDAO;
@@ -478,9 +478,9 @@ else
         throw new InsufficientPermissionException(Page.MENU_SERVLET, resexception.getString("may_not_submit_data"), "1");
     }
 
-    private RuleSetRuleDao getRuleSetRuleDao() {
+    private IRuleSetRuleDAO getRuleSetRuleDao() {
         ruleSetRuleDao =
-            this.ruleSetRuleDao != null ? ruleSetRuleDao : (RuleSetRuleDao) SpringServletAccess.getApplicationContext(context).getBean("ruleSetRuleDao");
+            this.ruleSetRuleDao != null ? ruleSetRuleDao : (IRuleSetRuleDAO) SpringServletAccess.getApplicationContext(context).getBean("ruleSetRuleDao");
         return ruleSetRuleDao;
     }
 

@@ -84,7 +84,6 @@ import org.researchedc.control.managestudy.ViewNotesServlet;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.core.SessionManager;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
@@ -148,7 +147,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
     protected ISectionDAO sectionDao;
 
     @Autowired
-    protected AuditDAO auditDao;
+    protected AuditDao auditDao;
 
     @Autowired
     protected ICrfVersionDAO crfVersionDao;

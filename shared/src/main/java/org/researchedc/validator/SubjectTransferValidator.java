@@ -7,7 +7,7 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.SubjectTransferBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.dao.LegacyDaoFactory;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.springframework.validation.Errors;
@@ -25,16 +25,16 @@ public class SubjectTransferValidator implements Validator {
     DataSource dataSource;
     IStudyDAO studyDAO;
     IStudySubjectDAO studySubjectDAO;
-    StudyParameterValueDAO studyParameterValueDAO;
+    IStudyParameterValueDAO studyParameterValueDAO;
     private final Function<DataSource, IStudyDAO> studyDaoFactory;
     private final Function<DataSource, IStudySubjectDAO> studySubjectDaoFactory;
-    private final Function<DataSource, StudyParameterValueDAO> studyParameterValueDaoFactory;
+    private final Function<DataSource, IStudyParameterValueDAO> studyParameterValueDaoFactory;
 
     public SubjectTransferValidator(DataSource dataSource) {
         this.dataSource = dataSource;
         this.studyDaoFactory = LegacyDaoFactory::studyDao;
         this.studySubjectDaoFactory = LegacyDaoFactory::studySubjectDao;
-        this.studyParameterValueDaoFactory = StudyParameterValueDAO::new;
+        this.studyParameterValueDaoFactory = LegacyDaoFactory::studyParameterValueDao;
     }
 
     public boolean supports(Class clazz) {
@@ -164,7 +164,7 @@ public class SubjectTransferValidator implements Validator {
         return studySubjectDAO;
     }
 
-    public StudyParameterValueDAO getStudyParameterValueDAO() {
+    public IStudyParameterValueDAO getStudyParameterValueDAO() {
         if (studyParameterValueDAO == null) {
             studyParameterValueDAO = studyParameterValueDaoFactory.apply(dataSource);
         }

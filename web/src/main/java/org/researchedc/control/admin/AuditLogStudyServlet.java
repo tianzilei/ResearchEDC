@@ -14,7 +14,6 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.admin.AuditDAO;
 import org.researchedc.dao.spi.AuditDao;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
@@ -32,7 +31,7 @@ import org.researchedc.web.InsufficientPermissionException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-import org.researchedc.dao.admin.AuditEventDAO;
+import org.researchedc.dao.spi.IAuditEventDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -43,12 +42,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class AuditLogStudyServlet extends SecureController {
 
     @Autowired
-    protected AuditEventDAO auditEventDao;
+    protected IAuditEventDAO auditEventDao;
 
     Locale locale;
 
     @Autowired
-    private AuditDAO auditDao;
+    private AuditDao auditDao;
     // <ResourceBundle resword,resexception,respage;
 
     public static String getLink(int userId) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.dao.core.CoreResources;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.domain.rule.RuleBean;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
@@ -18,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-public class RuleSetRuleDao extends AbstractDomainDao<RuleSetRuleBean> {
+public class RuleSetRuleDao extends AbstractDomainDao<RuleSetRuleBean> implements IRuleSetRuleDAO {
 
     private CoreResources coreResources;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());

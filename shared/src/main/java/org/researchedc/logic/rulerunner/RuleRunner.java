@@ -10,9 +10,7 @@ import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.dao.spi.ICrfDAO;
-import org.researchedc.dao.hibernate.RuleActionRunLogDao;
-import org.researchedc.dao.rule.RuleSetRuleDAO;
-import org.researchedc.dao.rule.action.RuleActionDAO;
+import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
@@ -51,8 +49,6 @@ public class RuleRunner {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     private IRuleSetDAO ruleSetDao;
-    private RuleSetRuleDAO ruleSetRuleDao;
-    private RuleActionDAO ruleActionDao;
     private ICrfDAO crfDao;
     private ICrfVersionDAO crfVersionDao;
     private IStudyEventDAO studyEventDao;
@@ -70,7 +66,7 @@ public class RuleRunner {
     private JavaMailSenderImpl mailSender;
     protected RuleRunnerMode ruleRunnerMode;
     protected DynamicsMetadataService dynamicsMetadataService;
-    protected RuleActionRunLogDao ruleActionRunLogDao;
+    protected RuleActionRunLogDomainDao ruleActionRunLogDao;
     DataSource ds;
 
     String requestURLMinusServletPath;
@@ -206,14 +202,6 @@ public class RuleRunner {
         return crfDao;
     }
 
-    RuleSetRuleDAO getRuleSetRuleDao() {
-        return ruleSetRuleDao;
-    }
-
-    RuleActionDAO getRuleActionDao() {
-        return ruleActionDao;
-    }
-
     IStudyEventDAO getStudyEventDao() {
         return studyEventDao;
     }
@@ -262,15 +250,13 @@ public class RuleRunner {
         return discrepancyNoteDao;
     }
 
-    public void setDaoCollaborators(IRuleSetDAO ruleSetDao, ICrfDAO crfDao, RuleSetRuleDAO ruleSetRuleDao, RuleActionDAO ruleActionDao,
+    public void setDaoCollaborators(IRuleSetDAO ruleSetDao, ICrfDAO crfDao,
             IStudyEventDAO studyEventDao, IItemDataDAO itemDataDao, EventCRFDao eventCrfDao, ICrfVersionDAO crfVersionDao,
             IStudySubjectDAO studySubjectDao, IItemFormMetadataDAO itemFormMetadataDao, ISectionDAO sectionDao, IStudyDAO studyDao,
             IStudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
             IDiscrepancyNoteDAO discrepancyNoteDao, ExpressionService expressionService) {
         this.ruleSetDao = ruleSetDao;
         this.crfDao = crfDao;
-        this.ruleSetRuleDao = ruleSetRuleDao;
-        this.ruleActionDao = ruleActionDao;
         this.studyEventDao = studyEventDao;
         this.itemDataDao = itemDataDao;
         this.eventCrfDao = eventCrfDao;
@@ -298,11 +284,11 @@ public class RuleRunner {
         this.dynamicsMetadataService = dynamicsMetadataService;
     }
 
-    public RuleActionRunLogDao getRuleActionRunLogDao() {
+    public RuleActionRunLogDomainDao getRuleActionRunLogDao() {
         return ruleActionRunLogDao;
     }
 
-    public void setRuleActionRunLogDao(RuleActionRunLogDao ruleActionRunLogDao) {
+    public void setRuleActionRunLogDao(RuleActionRunLogDomainDao ruleActionRunLogDao) {
         this.ruleActionRunLogDao = ruleActionRunLogDao;
     }
 

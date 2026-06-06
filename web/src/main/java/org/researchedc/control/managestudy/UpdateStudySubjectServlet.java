@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
@@ -50,7 +50,7 @@ public class UpdateStudySubjectServlet extends SecureController {
     @Autowired
     private ISubjectDAO subjectDao;
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
 
 /**
      * Checks whether the user has the right permission to proceed function
@@ -103,7 +103,7 @@ public class UpdateStudySubjectServlet extends SecureController {
 
             StudyGroupClassDao sgcdao = this.studyGroupClassDao;
             StudyGroupDao sgdao = this.studyGroupDao;
-            SubjectGroupMapDAO sgmdao = this.subjectGroupMapDao;
+            SubjectGroupMapDao sgmdao = this.subjectGroupMapDao;
             ArrayList groupMaps = (ArrayList) sgmdao.findAllByStudySubject(studySubId);
 
             HashMap gMaps = new HashMap();

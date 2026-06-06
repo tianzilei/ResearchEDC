@@ -1,6 +1,6 @@
 package org.researchedc.domain.rule.action;
 
-import org.researchedc.dao.hibernate.RuleActionRunLogDao;
+import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 public class ActionProcessorFacade {
 
     public static ActionProcessor getActionProcessor(ActionType actionType, DataSource ds,
-            DynamicsMetadataService itemMetadataService, RuleSetBean ruleSet, RuleActionRunLogDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule,
+            DynamicsMetadataService itemMetadataService, RuleSetBean ruleSet, RuleActionRunLogDomainDao ruleActionRunLogDao, RuleSetRuleBean ruleSetRule,
             IStudyDAO studyDao, IStudySubjectDAO studySubjectDao, IStudyEventDAO studyEventDao,
             IStudyEventDefinitionDAO studyEventDefinitionDao, IStudyParameterValueDAO studyParameterValueDao, IUserAccountDAO userAccountDao,
             IDiscrepancyNoteDAO discrepancyNoteDao)

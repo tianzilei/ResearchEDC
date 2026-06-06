@@ -33,17 +33,15 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
-import org.researchedc.dao.hibernate.RuleActionRunLogDao;
-import org.researchedc.dao.hibernate.RuleDao;
-import org.researchedc.dao.hibernate.RuleSetAuditDao;
-import org.researchedc.dao.hibernate.RuleSetDao;
-import org.researchedc.dao.hibernate.RuleSetRuleDao;
+import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
+import org.researchedc.dao.spi.RuleDomainDao;
+import org.researchedc.dao.spi.RuleSetAuditDomainDao;
+import org.researchedc.dao.spi.RuleSetDomainDao;
+import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.hibernate.StudyEventDao;
 import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
-import org.researchedc.dao.rule.RuleSetRuleDAO;
-import org.researchedc.dao.rule.action.RuleActionDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
@@ -101,12 +99,11 @@ public class RuleSetService implements RuleSetServiceInterface {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     private DataSource dataSource;
-    private RuleSetDao ruleSetDao;
-    private RuleSetAuditDao ruleSetAuditDao;
-    private RuleDao ruleDao;
-    private RuleSetRuleDao ruleSetRuleDao;
+    private RuleSetDomainDao ruleSetDao;
+    private RuleSetAuditDomainDao ruleSetAuditDao;
+    private RuleDomainDao ruleDao;
+    private IRuleSetRuleDAO ruleSetRuleDao;
     private JavaMailSenderImpl mailSender;
-    // private RuleSetRuleDAO ruleSetRuleDao;
     private BulkEmailSenderService bulkEmailSenderService;
 
     // Jdbc based DAOs
@@ -123,10 +120,6 @@ public class RuleSetService implements RuleSetServiceInterface {
 
     @Autowired
     private IRuleSetDAO legacyRuleSetDao;
-    @Autowired
-    private RuleSetRuleDAO legacyRuleSetRuleDao;
-    @Autowired
-    private RuleActionDAO ruleActionDao;
     @Autowired
     private IStudyEventDAO studyEventDao;
     @Autowired
@@ -151,7 +144,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     private String requestURLMinusServletPath;
     private String contextPath;
     private DynamicsMetadataService dynamicsMetadataService;
-    private RuleActionRunLogDao ruleActionRunLogDao;
+    private RuleActionRunLogDomainDao ruleActionRunLogDao;
     private BeanPropertyService beanPropertyService;
     //hibernate based daos
     private StudyEventDao studyEventDomainDao;
@@ -1013,27 +1006,27 @@ public class RuleSetService implements RuleSetServiceInterface {
         this.studyDao = studyDao;
     }
 
-    public RuleSetDao getRuleSetDao() {
+    public RuleSetDomainDao getRuleSetDao() {
         return ruleSetDao;
     }
 
-    public void setRuleSetDao(RuleSetDao ruleSetDao) {
+    public void setRuleSetDao(RuleSetDomainDao ruleSetDao) {
         this.ruleSetDao = ruleSetDao;
     }
 
-    public void setRuleSetRuleDao(RuleSetRuleDao ruleSetRuleDao) {
+    public void setRuleSetRuleDao(IRuleSetRuleDAO ruleSetRuleDao) {
         this.ruleSetRuleDao = ruleSetRuleDao;
     }
 
-    public RuleSetRuleDao getRuleSetRuleDao() {
+    public IRuleSetRuleDAO getRuleSetRuleDao() {
         return ruleSetRuleDao;
     }
 
-    public RuleDao getRuleDao() {
+    public RuleDomainDao getRuleDao() {
         return ruleDao;
     }
 
-    public void setRuleDao(RuleDao ruleDao) {
+    public void setRuleDao(RuleDomainDao ruleDao) {
         this.ruleDao = ruleDao;
     }
 
@@ -1043,14 +1036,6 @@ public class RuleSetService implements RuleSetServiceInterface {
 
     private IRuleSetDAO getLegacyRuleSetDao() {
         return legacyRuleSetDao;
-    }
-
-    private RuleSetRuleDAO getLegacyRuleSetRuleDao() {
-        return legacyRuleSetRuleDao;
-    }
-
-    private RuleActionDAO getRuleActionDao() {
-        return ruleActionDao;
     }
 
     private IStudyEventDAO getStudyEventDao() {
@@ -1107,11 +1092,11 @@ public class RuleSetService implements RuleSetServiceInterface {
         this.dynamicsItemFormMetadataDao = dynamicsItemFormMetadataDao;
     }
 
-    public RuleSetAuditDao getRuleSetAuditDao() {
+    public RuleSetAuditDomainDao getRuleSetAuditDao() {
         return ruleSetAuditDao;
     }
 
-    public void setRuleSetAuditDao(RuleSetAuditDao ruleSetAuditDao) {
+    public void setRuleSetAuditDao(RuleSetAuditDomainDao ruleSetAuditDao) {
         this.ruleSetAuditDao = ruleSetAuditDao;
     }
 
@@ -1131,11 +1116,11 @@ public class RuleSetService implements RuleSetServiceInterface {
         this.dynamicsMetadataService = dynamicsMetadataService;
     }
 
-    public RuleActionRunLogDao getRuleActionRunLogDao() {
+    public RuleActionRunLogDomainDao getRuleActionRunLogDao() {
         return ruleActionRunLogDao;
     }
 
-    public void setRuleActionRunLogDao(RuleActionRunLogDao ruleActionRunLogDao) {
+    public void setRuleActionRunLogDao(RuleActionRunLogDomainDao ruleActionRunLogDao) {
         this.ruleActionRunLogDao = ruleActionRunLogDao;
     }
 
@@ -1154,7 +1139,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     }
 
     private void configureRuleRunner(RuleRunner ruleRunner) {
-        ruleRunner.setDaoCollaborators(getLegacyRuleSetDao(), getCrfDao(), getLegacyRuleSetRuleDao(), getRuleActionDao(), getStudyEventDao(),
+        ruleRunner.setDaoCollaborators(getLegacyRuleSetDao(), getCrfDao(), getStudyEventDao(),
                 getItemDataDao(), getEventCrfDao(), getCrfVersionDao(), getStudySubjectDao(), getItemFormMetadataDao(), getSectionDao(),
                 getStudyDao(), getStudyEventDefinitionDao(), studyParameterValueDao, userAccountDao, discrepancyNoteDao, getExpressionService());
     }

@@ -25,7 +25,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.ArchivedDatasetFileBean;
@@ -58,7 +58,7 @@ import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.dao.spi.StudyGroupDao;
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.i18n.core.LocaleResolver;
@@ -102,7 +102,7 @@ public abstract class CoreSecureController extends HttpServlet {
     @Autowired
     protected IStudyDAO studyDao;
     @Autowired
-    protected StudyParameterValueDAO studyParameterValueDao;
+    protected IStudyParameterValueDAO studyParameterValueDao;
     @Autowired
     protected StudyConfigService studyConfigService;
     @Autowired
@@ -138,7 +138,7 @@ public abstract class CoreSecureController extends HttpServlet {
     @Autowired
     protected ISubjectDAO subjectDao;
     @Autowired
-    protected SubjectGroupMapDAO subjectGroupMapDao;
+    protected SubjectGroupMapDao subjectGroupMapDao;
 
     private static String SCHEDULER = "schedulerFactoryBean";
 
@@ -425,7 +425,7 @@ public abstract class CoreSecureController extends HttpServlet {
             IStudyDAO sdao = studyDao;
             if (currentStudy == null || currentStudy.getId() <= 0) {
                 if (ub.getId() > 0 && ub.getActiveStudyId() > 0) {
-                    StudyParameterValueDAO spvdao = studyParameterValueDao;
+                    IStudyParameterValueDAO spvdao = studyParameterValueDao;
                     currentStudy = (StudyBean) sdao.findByPK(ub.getActiveStudyId());
 
                     ArrayList studyParameters = spvdao.findParamConfigByStudy(currentStudy);

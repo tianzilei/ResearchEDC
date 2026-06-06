@@ -14,6 +14,7 @@ import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +30,9 @@ public class StudyConfigService {
 
     private DataSource ds;
     private IStudyDAO studyDao;
-    private StudyParameterValueDAO studyParameterValueDao;
+    private IStudyParameterValueDAO studyParameterValueDao;
     private Function<DataSource, IStudyDAO> studyDaoFactory = LegacyDaoFactory::studyDao;
-    private Function<DataSource, StudyParameterValueDAO> studyParameterValueDaoFactory = StudyParameterValueDAO::new;
+    private Function<DataSource, IStudyParameterValueDAO> studyParameterValueDaoFactory = LegacyDaoFactory::studyParameterValueDao;
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     public StudyConfigService(DataSource ds) {
@@ -278,7 +279,7 @@ public class StudyConfigService {
         return studyDao;
     }
 
-    private StudyParameterValueDAO getStudyParameterValueDao() {
+    private IStudyParameterValueDAO getStudyParameterValueDao() {
         if (studyParameterValueDao == null) {
             studyParameterValueDao = studyParameterValueDaoFactory.apply(ds);
         }

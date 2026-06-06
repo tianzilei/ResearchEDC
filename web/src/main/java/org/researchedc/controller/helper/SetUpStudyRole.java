@@ -1,7 +1,7 @@
 package org.researchedc.controller.helper;
 
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.dao.service.StudyConfigService;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.core.Role;
@@ -25,7 +25,7 @@ import java.util.Iterator;
 public class SetUpStudyRole {
 
     @Autowired
-    protected StudyParameterValueDAO studyParameterValueDao;
+    protected IStudyParameterValueDAO studyParameterValueDao;
 
     @Autowired
     protected IStudyDAO studyDao;
@@ -41,7 +41,7 @@ public class SetUpStudyRole {
         this.dataSource = dataSource;
     }
 
-    public SetUpStudyRole(DataSource dataSource, StudyParameterValueDAO studyParameterValueDao, IStudyDAO studyDao,
+    public SetUpStudyRole(DataSource dataSource, IStudyParameterValueDAO studyParameterValueDao, IStudyDAO studyDao,
             StudyConfigService studyConfigService) {
         this.dataSource = dataSource;
         this.studyParameterValueDao = studyParameterValueDao;
@@ -66,7 +66,7 @@ public class SetUpStudyRole {
         IStudyDAO sdao = this.studyDao;
 
         if (userAccountBean.getId() > 0 && userAccountBean.getActiveStudyId() > 0) {
-            StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+            IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
             currentStudy = (StudyBean) sdao.findByPK(userAccountBean.getActiveStudyId());
 
             ArrayList studyParameters = spvdao.findParamConfigByStudy(currentStudy);

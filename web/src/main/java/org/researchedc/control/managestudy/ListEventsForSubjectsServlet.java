@@ -7,7 +7,7 @@
  */
 package org.researchedc.control.managestudy;
 
-import org.researchedc.dao.submit.SubjectGroupMapDAO;
+import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormDiscrepancyNotes;
@@ -30,7 +30,6 @@ import org.researchedc.web.InsufficientPermissionException;
 
 import java.util.Locale;
 import org.researchedc.dao.spi.StudyGroupClassDao;
-import org.researchedc.dao.spi.SubjectGroupMapDao;
 import org.researchedc.dao.spi.StudyGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -47,7 +46,7 @@ public class ListEventsForSubjectsServlet extends SecureController {
     @Autowired
     private ISubjectDAO subjectDao;
     @Autowired
-    private SubjectGroupMapDAO subjectGroupMapDao;
+    private SubjectGroupMapDao subjectGroupMapDao;
 
 // Shaoyu Su
     private static final long serialVersionUID = 1L;
@@ -167,9 +166,9 @@ public class ListEventsForSubjectsServlet extends SecureController {
         return studyGroupClassDAO;
     }
 
-    public SubjectGroupMapDAO getSubjectGroupMapDAO() {
+    public SubjectGroupMapDao getSubjectGroupMapDAO() {
         subjectGroupMapDAO = this.subjectGroupMapDAO == null ? this.subjectGroupMapDao : subjectGroupMapDAO;
-        return (SubjectGroupMapDAO) subjectGroupMapDAO;
+        return subjectGroupMapDAO;
     }
 
     public IStudyEventDAO getStudyEventDAO() {

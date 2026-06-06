@@ -15,7 +15,7 @@ import org.researchedc.dao.hibernate.AuthoritiesDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.service.StudyParameterValueDAO;
+import org.researchedc.dao.spi.IStudyParameterValueDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UserInfoController {
 
     @Autowired
-    protected StudyParameterValueDAO studyParameterValueDao;
+    protected IStudyParameterValueDAO studyParameterValueDao;
 
     @Autowired
     protected IUserAccountDAO userAccountDao;
@@ -299,7 +299,7 @@ private UserDTO buildUserDTO(UserAccountBean userAccountBean) {
 		boolean accessPermission = false;
 		StudyBean siteStudy = getStudy(studyOid);
 		StudyBean study = getParentStudy(studyOid);
-		StudyParameterValueDAO spvdao = this.studyParameterValueDao;
+		IStudyParameterValueDAO spvdao = this.studyParameterValueDao;
 		StudyParameterValueBean pStatus = spvdao.findByHandleAndStudy(study.getId(), "participantPortal");
 		participantPortalRegistrar = new ParticipantPortalRegistrar();
 		String pManageStatus = participantPortalRegistrar.getRegistrationStatus(study.getOid()).toString(); // ACTIVE , PENDING , INACTIVE

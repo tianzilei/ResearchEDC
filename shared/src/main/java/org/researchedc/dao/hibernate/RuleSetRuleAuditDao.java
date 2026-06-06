@@ -1,11 +1,12 @@
 package org.researchedc.dao.hibernate;
 
+import org.researchedc.dao.spi.IRuleSetRuleAuditDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleAuditBean;
 
 import java.util.ArrayList;
 
-public class RuleSetRuleAuditDao extends AbstractDomainDao<RuleSetRuleAuditBean> {
+public class RuleSetRuleAuditDao extends AbstractDomainDao<RuleSetRuleAuditBean> implements IRuleSetRuleAuditDAO {
 
     @Override
     public Class<RuleSetRuleAuditBean> domainClass() {
