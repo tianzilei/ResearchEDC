@@ -2,7 +2,7 @@ package org.researchedc.domain.rule.expression;
 
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.dao.hibernate.StudyEventDao;
+import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.domain.rule.RuleSetBean;
 
 import java.util.HashMap;
@@ -20,7 +20,7 @@ public class ExpressionObjectWrapper {
 
     // This will carry item/value pairs used in DataEntry Rule Execution
     HashMap<String, String> itemsAndTheirValues = new HashMap<String, String>();
-    StudyEventDao studyEventDaoHib;
+    IStudyEventDAO studyEventDaoHib;
     Integer StudySubjectId;
     
     public static final String CONTEXT_EXPRESSION = "expression";
@@ -35,11 +35,11 @@ public class ExpressionObjectWrapper {
 		StudySubjectId = studySubjectId;
 	}
 
-	public StudyEventDao getStudyEventDaoHib() {
+	public IStudyEventDAO getStudyEventDaoHib() {
 		return studyEventDaoHib;
 	}
 
-	public void setStudyEventDaoHib(StudyEventDao studyEventDaoHib) {
+	public void setStudyEventDaoHib(IStudyEventDAO studyEventDaoHib) {
 		this.studyEventDaoHib = studyEventDaoHib;
 	}
 

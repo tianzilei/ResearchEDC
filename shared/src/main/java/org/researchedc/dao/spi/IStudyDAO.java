@@ -40,4 +40,6 @@ public interface IStudyDAO {
     void deleteTestOnly(String name);
     ArrayList<Integer> getStudyIdsByCRF(int crfId);
     default Study findByOcOID(String OCOID) { throw new UnsupportedOperationException(); }
+    default Study findById(int id) { throw new UnsupportedOperationException(); }
+    default Study findByColumnName(Object value, String columnName) { throw new UnsupportedOperationException(); }
 }

@@ -12,7 +12,7 @@ import static org.jmesa.facade.TableFacadeFactory.createTableFacade;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.hibernate.DatabaseChangeLogDao;
+import org.researchedc.dao.spi.DatabaseChangeLogDao;
 import org.researchedc.domain.technicaladmin.DatabaseChangeLogBean;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;

@@ -1,6 +1,7 @@
 package org.researchedc.dao.spi;
 
 import org.researchedc.bean.core.EntityBean;
+import org.researchedc.domain.datamap.ItemGroupMetadata;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,4 +42,8 @@ public interface IItemGroupMetadataDAO {
 
     public List<ItemGroupMetadataBean> findByCrfVersion(Integer crfVersionId);
 
+    default ItemGroupMetadata saveOrUpdate(ItemGroupMetadata entity) { throw new UnsupportedOperationException(); }
+    default ArrayList<ItemGroupMetadata> findByItemGroupCrfVersion(Integer itemGroupId, Integer crfVersionId) { throw new UnsupportedOperationException(); }
+    default ItemGroupMetadata findByItemGroupCrfVersionOrdered(int item_id, int crf_version_id) { throw new UnsupportedOperationException(); }
+    default List<ItemGroupMetadata> findAllByCrfVersion(int crfVersionId) { throw new UnsupportedOperationException(); }
 }

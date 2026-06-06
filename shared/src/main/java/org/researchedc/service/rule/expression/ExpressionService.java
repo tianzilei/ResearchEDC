@@ -39,7 +39,7 @@ import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.LegacyDaoFactory;
-import org.researchedc.dao.hibernate.DynamicsItemFormMetadataDao;
+import org.researchedc.dao.spi.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IItemDAO;

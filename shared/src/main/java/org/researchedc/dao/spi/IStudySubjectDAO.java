@@ -73,6 +73,9 @@ public interface IStudySubjectDAO {
     default ArrayList<StudySubject> findByLabelAndParentStudy(String label, Study parentStudy) { throw new UnsupportedOperationException(); }
     default StudySubject saveOrUpdate(StudySubject studySubject) { throw new UnsupportedOperationException(); }
     default String getValidOid(StudySubject studySubject, ArrayList<String> oidList) { throw new UnsupportedOperationException(); }
+    default StudySubject findById(Integer id) { throw new UnsupportedOperationException(); }
+    default StudySubject findByColumnName(Object value, String columnName) { throw new UnsupportedOperationException(); }
+    default java.util.List<org.researchedc.domain.datamap.StudyEvent> fetchListSEs(String ocOid) { throw new UnsupportedOperationException(); }
     Integer getCountofStudySubjectsAtStudyOrSite(StudyBean currentStudy);
     Integer getCountofStudySubjectsAtStudy(StudyBean currentStudy);
     Integer getCountofStudySubjects(StudyBean currentStudy);

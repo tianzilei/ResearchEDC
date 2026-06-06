@@ -10,7 +10,7 @@ package org.researchedc.control.admin;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.dao.hibernate.AuditUserLoginDao;
+import org.researchedc.dao.spi.AuditUserLoginDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;

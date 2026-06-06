@@ -6,8 +6,8 @@ import javax.sql.DataSource;
 
 //import com.ecyrd.speed4j.StopWatch;
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.hibernate.StudyEventDao;
-import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.domain.Status;
 import org.researchedc.domain.datamap.StudyEvent;
 import org.researchedc.domain.rule.RuleBean;
@@ -39,7 +39,7 @@ public class BeanPropertyRuleRunner extends RuleRunner{
 	}
 
 	public void runRules(List<RuleSetBean> ruleSets, DataSource ds,
-                         BeanPropertyService beanPropertyService, StudyEventDao studyEventDaoHib, StudyEventDefinitionDao studyEventDefDaoHib,
+                         BeanPropertyService beanPropertyService, IStudyEventDAO studyEventDaoHib, IStudyEventDefinitionDAO studyEventDefDaoHib,
                          StudyEventChangeDetails changeDetails,Integer userId , JavaMailSenderImpl mailSender) 
 	{
         for (RuleSetBean ruleSet : ruleSets) 

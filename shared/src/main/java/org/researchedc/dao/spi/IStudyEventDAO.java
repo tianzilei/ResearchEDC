@@ -56,7 +56,12 @@ public interface IStudyEventDAO extends Listener {
     StudyEventBean findAllByStudyEventDefinitionAndCrfOidsAndOrdinal(String studyEventDefinitionOid, String crfOrCrfVersionOid, String ordinal, String studySubjectId);
     HashMap getStudySubjectCRFData(StudyBean sb, int studySubjectId, int eventDefId, String crfVersionOID, int eventOrdinal);
     default StudyEvent fetchByStudyEventDefOIDAndOrdinal(String oid, Integer ordinal, int studySubjectId) { throw new UnsupportedOperationException(); }
+    default StudyEvent fetchByStudyEventDefOIDAndOrdinalTransactional(String defOid, Integer ordinal, Integer studySubjectId) { throw new UnsupportedOperationException(); }
+    default java.util.List fetchListByStudyEventDefOID(String defOid, Integer studySubjectId) { throw new UnsupportedOperationException(); }
+    default StudyEvent findByStudyEventId(Integer studyEventId) { throw new UnsupportedOperationException(); }
+    default StudyEvent saveOrUpdate(StudyEventContainer container) { throw new UnsupportedOperationException(); }
     default StudyEvent saveOrUpdateTransactional(StudyEventContainer container) { throw new UnsupportedOperationException(); }
     default Integer findMaxOrdinalByStudySubjectStudyEventDefinition(int studySubjectId, int studyEventDefinitionId) { throw new UnsupportedOperationException(); }
+    default StudyEvent findById(Integer id) { throw new UnsupportedOperationException(); }
     boolean isThisRepeatingEventScheduledMoreThanOneTime(int studyId, int sed_Id);
 }

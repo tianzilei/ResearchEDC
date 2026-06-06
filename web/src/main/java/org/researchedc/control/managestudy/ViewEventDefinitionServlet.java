@@ -28,7 +28,7 @@ import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.hibernate.EventDefinitionCrfTagDao;
+import org.researchedc.dao.spi.EventDefinitionCrfTagDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.domain.datamap.CrfBean;
 import org.researchedc.service.managestudy.EventDefinitionCrfTagService;

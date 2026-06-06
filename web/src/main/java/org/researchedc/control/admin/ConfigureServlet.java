@@ -11,7 +11,7 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
-import org.researchedc.dao.hibernate.ConfigurationDao;
+import org.researchedc.dao.spi.ConfigurationDao;
 import org.researchedc.domain.technicaladmin.ConfigurationBean;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;

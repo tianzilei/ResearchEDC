@@ -1,6 +1,6 @@
 package org.researchedc.ws.internal.adapter;
 
-import org.researchedc.dao.hibernate.AuditUserLoginDao;
+import org.researchedc.dao.spi.AuditUserLoginDao;
 import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
 import org.springframework.stereotype.Repository;
 

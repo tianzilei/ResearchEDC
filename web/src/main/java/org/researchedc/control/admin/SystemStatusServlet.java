@@ -9,7 +9,7 @@ package org.researchedc.control.admin;
 
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
-import org.researchedc.dao.hibernate.DatabaseChangeLogDao;
+import org.researchedc.dao.spi.DatabaseChangeLogDao;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.web.util.HtmlUtils;

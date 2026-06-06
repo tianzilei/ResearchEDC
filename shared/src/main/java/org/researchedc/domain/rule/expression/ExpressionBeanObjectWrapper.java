@@ -4,8 +4,8 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.dao.hibernate.StudyEventDao;
-import org.researchedc.dao.hibernate.StudyEventDefinitionDao;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.domain.datamap.StudySubject;
 import org.researchedc.domain.rule.RuleSetBean;
 
@@ -14,19 +14,19 @@ import java.util.HashMap;
 
 public class ExpressionBeanObjectWrapper {
 
-    public StudyEventDao getStudyEventDaoHib() {
+    public IStudyEventDAO getStudyEventDaoHib() {
 		return studyEventDaoHib;
 	}
 
-	public void setStudyEventDaoHib(StudyEventDao studyEventDaoHib) {
+	public void setStudyEventDaoHib(IStudyEventDAO studyEventDaoHib) {
 		this.studyEventDaoHib = studyEventDaoHib;
 	}
 
-	public StudyEventDefinitionDao getStudyEventDefDaoHib() {
+	public IStudyEventDefinitionDAO getStudyEventDefDaoHib() {
 		return studyEventDefDaoHib;
 	}
 
-	public void setStudyEventDefDaoHib(StudyEventDefinitionDao studyEventDefDaoHib) {
+	public void setStudyEventDefDaoHib(IStudyEventDefinitionDAO studyEventDefDaoHib) {
 		this.studyEventDefDaoHib = studyEventDefDaoHib;
 	}
 
@@ -37,8 +37,8 @@ public class ExpressionBeanObjectWrapper {
     EventCRFBean eventCrf; // used only in data entry based rule executions
     Integer studySubjectBeanId;
     UserAccountBean userAccountBean;
-    StudyEventDao studyEventDaoHib;
-    StudyEventDefinitionDao studyEventDefDaoHib;
+    IStudyEventDAO studyEventDaoHib;
+    IStudyEventDefinitionDAO studyEventDefDaoHib;
 
     public UserAccountBean getUserAccountBean() {
 		return userAccountBean;
@@ -58,7 +58,7 @@ public class ExpressionBeanObjectWrapper {
         this.expressionBean = expressionBean;
     }
 
-    /*public ExpressionBeanObjectWrapper(DataSource ds, StudyBean studyBean, ExpressionBean expressionBean, RuleSetBean ruleSet,StudySubjectBean studySubjectBean, StudyEventDao studyEventDao, StudyEventDefinitionDao studyEventDefDao) {
+    /*public ExpressionBeanObjectWrapper(DataSource ds, StudyBean studyBean, ExpressionBean expressionBean, RuleSetBean ruleSet,StudySubjectBean studySubjectBean, IStudyEventDAO studyEventDao, IStudyEventDefinitionDAO studyEventDefDao) {
         super();
         this.ds = ds;
         this.studyBean = studyBean;
@@ -69,7 +69,7 @@ public class ExpressionBeanObjectWrapper {
         this.studyEventDaoHib = studyEventDao;
     }*/
     
-    public ExpressionBeanObjectWrapper(DataSource ds, StudyBean studyBean, ExpressionBean expressionBean, RuleSetBean ruleSet,Integer studySubjectBeanId, StudyEventDao studyEventDao, StudyEventDefinitionDao studyEventDefDao) {
+    public ExpressionBeanObjectWrapper(DataSource ds, StudyBean studyBean, ExpressionBean expressionBean, RuleSetBean ruleSet,Integer studySubjectBeanId, IStudyEventDAO studyEventDao, IStudyEventDefinitionDAO studyEventDefDao) {
         super();
         this.ds = ds;
         this.studyBean = studyBean;

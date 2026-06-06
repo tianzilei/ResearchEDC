@@ -17,9 +17,9 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.dao.hibernate.CrfDao;
+import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.hibernate.CrfVersionDao;
+import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.domain.datamap.CrfBean;
 import org.researchedc.domain.datamap.CrfVersion;
 import org.researchedc.domain.xform.XformContainer;
@@ -52,8 +52,8 @@ public class CreateXformCRFVersionServlet extends SecureController {
 
     @Override
     protected void processRequest() throws Exception {
-        CrfDao crfDao = (CrfDao) SpringServletAccess.getApplicationContext(context).getBean("crfDao");
-        CrfVersionDao crfVersionDao = (CrfVersionDao) SpringServletAccess.getApplicationContext(context).getBean("crfVersionDao");
+        ICrfDAO crfDao = (ICrfDAO) SpringServletAccess.getApplicationContext(context).getBean("crfDao");
+        ICrfVersionDAO crfVersionDao = (ICrfVersionDAO) SpringServletAccess.getApplicationContext(context).getBean("crfVersionDao");
 
         Locale locale = LocaleResolver.getLocale(request);
         ResourceBundleProvider.updateLocale(locale);
@@ -112,7 +112,7 @@ public class CreateXformCRFVersionServlet extends SecureController {
             logger.debug("Didn't find any errors.  CRF data saved.");
 
             // Save any media files uploaded with xform
-	        CrfBean crf = (submittedCrfName == null || submittedCrfName.equals("")) ? crfDao.findByCrfId(version.getCrfId()) : crfDao.findByName(submittedCrfName);
+	        CrfBean crf = (submittedCrfName == null || submittedCrfName.equals("")) ? crfDao.findByCrfId(version.getCrfId()) : crfDao.findByNameEntity(submittedCrfName);
 	        CrfVersion newVersion = crfVersionDao.findByNameCrfId(submittedCrfVersionName, crf.getCrfId());
 	        saveAttachedMedia(items, crf, newVersion);
         }
