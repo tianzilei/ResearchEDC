@@ -280,11 +280,6 @@ public class HibernateConfig {
         return new StudyModuleStatusDao();
     }
 
-    @Bean
-    public SubjectDao subjectDao() {
-        return new SubjectDao();
-    }
-
     // ──────────────────────────────────────────────────────────────────────
     //  User / Auth DAOs
     // ──────────────────────────────────────────────────────────────────────
