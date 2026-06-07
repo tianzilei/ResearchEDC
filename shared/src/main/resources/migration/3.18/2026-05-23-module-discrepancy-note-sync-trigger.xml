@@ -16,12 +16,12 @@
                     INSERT INTO discrepancy_note (
                         discrepancy_note_id, description, discrepancy_note_type_id,
                         resolution_status_id, detailed_notes, date_created, owner_id,
-                        parent_dn_id, entity_type, entity_id, study_id, assigned_user_id
+                        parent_dn_id, entity_type, study_id, assigned_user_id
                     )
                     VALUES (
                         NEW.discrepancy_note_id, NEW.description, NEW.discrepancy_note_type_id,
                         NEW.resolution_status_id, NEW.detailed_notes, NEW.date_created, NEW.owner_id,
-                        NEW.parent_dn_id, NEW.entity_type, NEW.entity_id, NEW.study_id, NEW.assigned_user_id
+                        NEW.parent_dn_id, NEW.entity_type, NEW.study_id, NEW.assigned_user_id
                     );
                     RETURN NEW;
                 ELSIF (TG_OP = 'UPDATE') THEN
@@ -34,7 +34,6 @@
                         owner_id = NEW.owner_id,
                         parent_dn_id = NEW.parent_dn_id,
                         entity_type = NEW.entity_type,
-                        entity_id = NEW.entity_id,
                         study_id = NEW.study_id,
                         assigned_user_id = NEW.assigned_user_id
                     WHERE discrepancy_note_id = OLD.discrepancy_note_id;
