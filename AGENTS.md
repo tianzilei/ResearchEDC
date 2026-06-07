@@ -251,7 +251,7 @@ python -m pytest app/tests/ -v
   - `mvn test -pl app -am 2>&1 | grep "Tests run:"`
 - **Refactor rule of thumb:** do not modify released migrations, do not bypass `SecureController`, do not add new legacy code to `shared/`, and verify the SPI covers every invoked method before widening.
 
-### Phase B Schema Ownership Handoff (2026-06-05)
+### Phase B Schema Ownership Handoff (2026-06-07)
 
 - **Status:** Phase B schema ownership is **COMPLETE**. 27 entities mapped to `module_*` tables, 12 bidirectional sync triggers registered, 24 SPI adapters bridging to module-owned repositories.
 - **10 bidirectional sync trigger migration files** created (3,494 lines total): study, subject, event, datacapture, crf, identity, rule, dataset-filter, discrepancy-note, subjectgroup. Each has two PostgreSQL trigger functions with `pg_trigger_depth() > 1` recursion guard. Registered in `release.xml`.
@@ -259,8 +259,10 @@ python -m pytest app/tests/ -v
 - **New adapter code:** `FilterDaoAdapter.java` + `StudyGroupClassDaoAdapter.java` with unit tests.
 - **DaoRegistrar exclusion updated:** `FilterDAO`, `StudyGroupClassDAO` added.
 - **StudyGroupClassRepository** enhanced with 4 native SQL queries (`findByStudyOrChildStudy`, `findByStudyOrChildStudyAndStatus`).
-- **Remaining Phase B work:** remap remaining 5 module entities (study, subject, event, datacapture, crf/rule/discrepancynote), run trigger migrations against actual DB for verification, create remaining adapter code.
-- **Build verification:** `mvn clean compile` ✅ | `mvn test -pl app -am` 247/247 ✅ | `ModulithVerificationTest` ✅
+- **PostgreSQL validation:** completed on disposable databases. `shared/src/main/resources/migration/master.xml` applied cleanly, `scripts/ci/check-phase-b-postgres.sh` verified 54 sync functions, 54 sync triggers, representative bidirectional insert/update/delete sync for `study`, `filter`, and `discrepancy_note`, and repeated update convergence without recursion loops.
+- **Discrepancy-note migration fix:** legacy `discrepancy_note` has no `entity_id`; Phase B copy/sync now stores `NULL AS entity_id` module-side and omits that column when writing back to legacy.
+- **Remaining Phase B work:** none. Next work is Phase 0 legacy route/workflow inventory and Phase 1 vertical JSP/servlet deletion slices in `docs/refactor/remove-legacy-code-plan.md`.
+- **Verification:** `bash scripts/ci/check-phase-b-migrations.sh` ✅ | full Liquibase PostgreSQL update ✅ | `scripts/ci/check-phase-b-postgres.sh` ✅ | commit `0963eec2c`
 
 ## SUBMODULE REFERENCES
 
