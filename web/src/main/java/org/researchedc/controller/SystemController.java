@@ -71,7 +71,7 @@ public class SystemController {
     @Autowired
     protected IStudyDAO studyDao;
 
-    // Add in Spring Cor files /healthcheck path to avoid firewall
+    // Data source used by system health and diagnostics endpoints
     @Autowired
     @Qualifier("dataSource")
     private BasicDataSource dataSource;

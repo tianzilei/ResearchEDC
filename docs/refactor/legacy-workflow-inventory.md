@@ -1,6 +1,6 @@
 # Legacy Workflow Inventory
 
-Generated: 2026-06-07 13:24:21 UTC
+Generated: 2026-06-07 16:10:10 UTC
 
 Full CSV inventory: `legacy-workflow-inventory.csv`
 
@@ -16,22 +16,22 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 | `scheduled-job` | 6 |
 | `shared-service` | 60 |
 | `soap-endpoint` | 7 |
-| `spring-mvc-route` | 96 |
+| `spring-mvc-route` | 92 |
 
 ## Summary By Classification
 
 | Classification | Count |
 |---|---:|
 | `keep compatibility` | 125 |
-| `replace` | 765 |
-| `unknown` | 73 |
+| `replace` | 764 |
+| `unknown` | 70 |
 
 ## Summary By Phase Slice
 
 | Phase slice | Count |
 |---|---:|
-| `phase-0-inventory-and-gates` | 65 |
-| `phase-1-admin-read-only` | 51 |
+| `phase-0-inventory-and-gates` | 62 |
+| `phase-1-admin-read-only` | 50 |
 | `phase-1-admin-write` | 6 |
 | `phase-1-crf-metadata` | 105 |
 | `phase-1-data-entry-discrepancy` | 100 |
@@ -97,7 +97,6 @@ Candidate artifacts:
 | legacy-servlet | web/src/main/java/org/researchedc/control/techadmin/TechAdminServlet.java | org.researchedc.control.techadmin.TechAdminServlet | /TechAdmin |
 | legacy-servlet | web/src/main/java/org/researchedc/control/techadmin/ViewSchedulerServlet.java | org.researchedc.control.techadmin.ViewSchedulerServlet | /ViewScheduler |
 | spring-mvc-route | web/src/main/java/org/researchedc/controller/AccountController.java | org.researchedc.controller.AccountController:1018 | /auditcrc |
-| spring-mvc-route | web/src/main/java/org/researchedc/controller/ReportController.java | org.researchedc.controller.ReportController:23 | /healthcheck |
 | spring-mvc-route | web/src/main/java/org/researchedc/controller/SystemController.java | org.researchedc.controller.SystemController:161 | /config |
 | spring-mvc-route | web/src/main/java/org/researchedc/controller/SystemController.java | org.researchedc.controller.SystemController:310 | /extract |
 | spring-mvc-route | web/src/main/java/org/researchedc/controller/SystemController.java | org.researchedc.controller.SystemController:402 | /modules |
@@ -181,9 +180,6 @@ These require manual owner/category assignment before deletion work:
 | scheduled-job | ws/src/main/java/org/researchedc/web/job/ImportSpringJob.java | org.researchedc.web.job.ImportSpringJob | (quartz/job class) |
 | shared-service | shared/src/main/java/org/researchedc/service/JobTriggerService.java | org.researchedc.service.JobTriggerService | (shared service) |
 | spring-mvc-route | web/src/main/java/org/researchedc/controller/IdtViewController.java | org.researchedc.controller.IdtViewController:148 | / |
-| spring-mvc-route | web/src/main/java/org/researchedc/controller/ReportController.java | org.researchedc.controller.ReportController:116 | /rulecurrentdate |
-| spring-mvc-route | web/src/main/java/org/researchedc/controller/ReportController.java | org.researchedc.controller.ReportController:140 | /runtime |
-| spring-mvc-route | web/src/main/java/org/researchedc/controller/ReportController.java | org.researchedc.controller.ReportController:71 | /runonschedule |
 | spring-mvc-route | web/src/main/java/org/researchedc/controller/RuleController.java | org.researchedc.controller.RuleController:71 | /rule |
 | spring-mvc-route | web/src/main/java/org/researchedc/controller/ScheduledJobController.java | org.researchedc.controller.for:184 | /cancelScheduledJob |
 | spring-mvc-route | web/src/main/java/org/researchedc/controller/ScheduledJobController.java | org.researchedc.controller.for:64 | /listCurrentScheduledJobs |

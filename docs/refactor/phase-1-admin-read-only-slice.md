@@ -1,6 +1,6 @@
 # Phase 1 Admin Read-Only Slice
 
-**Status:** ledger generated; deletion not started.  
+**Status:** first route deletion committed in progress.  
 **Inventory source:** `docs/refactor/legacy-workflow-inventory.csv` (`phase_slice=phase-1-admin-read-only`).  
 **Slice ledger:** `docs/refactor/phase-1-admin-read-only-ledger.csv` and `docs/refactor/phase-1-admin-read-only-ledger.md`.
 
@@ -30,16 +30,17 @@ No file in this slice may be deleted until all checks are true for that file's w
 
 ## Ledger Result
 
-The initial ledger contains 51 rows:
+The initial ledger started with 51 rows. After removing `ReportController`, it tracks 50 active rows plus 1 deleted route:
 
 | Status | Count | Meaning |
 |---|---:|---|
-| `needs replacement` | 49 | A frontend route or partial API exists, but backend field/permission/audit parity is not fully proven. |
+| `needs replacement` | 48 | A frontend route or partial API exists, but backend field/permission/audit parity is not fully proven. |
 | `blocked` | 2 | Product/route retirement decision is needed before implementation. |
+| `deleted` | 1 | Legacy route removed after replacement and reference proof. |
 
 ## First Execution Tasks
 
-1. Move clients/probes from legacy `ReportController` `/healthcheck` to `/api/v1/dashboard/health` and `/api/v1/rules/schedule/*`, then redirect or unregister the legacy routes after reference checks.
+1. Complete: `ReportController` `/healthcheck` was removed after replacement APIs were added and reference checks found no production callers.
 2. For audit rows, compare legacy JSP/servlet fields and filters against `/api/v1/audit` and `/app/admin/audit-log`.
 3. For system/log/job rows, add or identify module-owned backend APIs before deleting JSP/servlet paths.
 4. Delete only rows marked `covered` or `retire`, one workflow at a time, after route, permission, output parity, and reference checks pass.
@@ -52,4 +53,4 @@ Rule schedule replacement added:
 - `POST /api/v1/rules/schedule/current-date` replaces `/healthcheck/rulecurrentdate`.
 - `GET /api/v1/rules/schedule/default-runtime` replaces `/healthcheck/runtime`.
 
-Legacy `/healthcheck` remains in place until callers/probes are moved and route references are proven absent.
+Legacy `/healthcheck` has been unregistered by deleting `ReportController`; `/api/v1/dashboard/health` and `/api/v1/rules/schedule/*` are the replacement routes.
