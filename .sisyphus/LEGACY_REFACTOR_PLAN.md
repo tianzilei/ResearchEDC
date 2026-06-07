@@ -72,13 +72,26 @@ All new modules are now **write-capable** — they can create, update, and delet
 
 ## Phase B: Schema Ownership (✅ COMPLETE)
 
-Currently modules bridge to the **same tables** that legacy code uses. Full strangulation requires module-owned tables. Phase B is actively implementing **Option B: New tables with bidirectional sync triggers** for all 10 domains.
+Modules now own `module_*` tables with bidirectional sync triggers back to the legacy tables. Phase B implemented **Option B: New tables with bidirectional sync triggers** for all 10 domains and PostgreSQL validation completed on 2026-06-07.
 
 ### B0: Final State (2026-06-05)
 
 **10 bidirectional sync trigger migration files created (3,494 lines total):**
 
 Each domain has two PostgreSQL trigger functions (`sync_module_X_to_X` + `sync_X_to_module_X`) with `pg_trigger_depth() > 1` recursion guard, ensuring legacy and module-owned tables stay in sync during the transition.
+
+### B1: PostgreSQL Validation (2026-06-07)
+
+Status: **complete** in commit `0963eec2c`.
+
+- Applied `shared/src/main/resources/migration/master.xml` cleanly to disposable PostgreSQL databases.
+- Added `scripts/ci/check-phase-b-postgres.sh`, gated by explicit `PHASE_B_PG*` environment variables.
+- Verified 54 expected Phase B sync functions and 54 expected sync triggers.
+- Proved representative bidirectional insert/update/delete sync for `study` <-> `module_study`, `filter` <-> `module_filter`, and `discrepancy_note` <-> `module_discrepancy_note`.
+- Confirmed repeated bidirectional updates converge without recursive trigger loops.
+- Fixed discrepancy-note sync for the actual legacy schema: legacy `discrepancy_note` has no `entity_id`, so module copy/sync stores `NULL AS entity_id` from legacy and omits `entity_id` when writing back to legacy.
+
+Next work is no longer Phase B. Continue with the legacy route/workflow inventory and Phase 1 JSP/servlet deletion slices tracked in `docs/refactor/remove-legacy-code-plan.md`.
 
 | Migration File | Lines | Tables |
 |---|---|---|

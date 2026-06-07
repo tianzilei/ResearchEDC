@@ -64,6 +64,12 @@ Remaining Phase 0 work:
 - Build the legacy route/workflow inventory and classify each artifact as `replace`, `retire`, `keep compatibility`, or `unknown`.
 - Add owner/deletion-gate metadata for each workflow slice.
 
+Current next action:
+
+1. Generate the route/workflow inventory for `web/` servlets, JSPs, Spring MVC controllers, SOAP endpoints, DAO implementations, Quartz jobs, and shared services.
+2. Tag each artifact with `replace`, `retire`, `keep compatibility`, or `unknown`.
+3. Pick the first low-risk Phase 1 vertical slice, preferably admin read-only pages, and define its route parity, permission parity, audit parity, and deletion proof.
+
 ## Phase B PostgreSQL Validation
 
 Status: **complete on 2026-06-07** against disposable PostgreSQL databases.
@@ -82,6 +88,8 @@ Validated sequence:
 7. Added `scripts/ci/check-phase-b-postgres.sh`, gated by explicit database environment variables so it only runs when a disposable DB is available.
 
 Validation uncovered and fixed a discrepancy-note migration bug: the legacy `discrepancy_note` table does not have `entity_id`, so legacy-to-module sync now stores `NULL AS entity_id` and module-to-legacy sync no longer writes that column.
+
+Recorded in commit `0963eec2c`.
 
 Exit gate:
 
