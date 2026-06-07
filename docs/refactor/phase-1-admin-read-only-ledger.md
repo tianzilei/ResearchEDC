@@ -8,8 +8,8 @@ This ledger is conservative: `covered` means a plausible replacement route exist
 
 | Ledger status | Count |
 |---|---:|
-| `blocked` | 3 |
-| `needs replacement` | 48 |
+| `blocked` | 2 |
+| `needs replacement` | 49 |
 
 ## Rows
 
@@ -52,7 +52,7 @@ This ledger is conservative: `covered` means a plausible replacement route exist
 | blocked | legacy-servlet | web/src/main/java/org/researchedc/control/techadmin/TechAdminServlet.java | /TechAdmin | /app/admin or formal retirement | Decide whether this shell is replaced by SPA admin navigation or retired before deleting route/JSP. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/techadmin/ViewSchedulerServlet.java | /ViewScheduler | /app/admin/jobs | Inventory Quartz job fields/actions, add read-only module API, and prove empty/error state parity. |
 | needs replacement | spring-mvc-route | web/src/main/java/org/researchedc/controller/AccountController.java | /auditcrc | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
-| blocked | spring-mvc-route | web/src/main/java/org/researchedc/controller/ReportController.java | /healthcheck | /api/v1/dashboard/health plus rule-schedule helper replacement or retirement | Split or replace the rule helper endpoints before removing or redirecting the /healthcheck controller base route. |
+| needs replacement | spring-mvc-route | web/src/main/java/org/researchedc/controller/ReportController.java | /healthcheck | /api/v1/dashboard/health plus /api/v1/rules/schedule/* | Move clients/probes to /api/v1/dashboard/health and /api/v1/rules/schedule/*, then redirect or unregister the legacy /healthcheck routes. |
 | needs replacement | spring-mvc-route | web/src/main/java/org/researchedc/controller/SystemController.java | /config | /api/v1/dashboard/status, /api/v1/dashboard/health, and legacy /auth/api/v1/system endpoints | Move required system/config/filesystem/database fields to module-owned API or formally retire sensitive diagnostics. |
 | needs replacement | spring-mvc-route | web/src/main/java/org/researchedc/controller/SystemController.java | /extract | /api/v1/dashboard/status, /api/v1/dashboard/health, and legacy /auth/api/v1/system endpoints | Move required system/config/filesystem/database fields to module-owned API or formally retire sensitive diagnostics. |
 | needs replacement | spring-mvc-route | web/src/main/java/org/researchedc/controller/SystemController.java | /modules | /api/v1/dashboard/status, /api/v1/dashboard/health, and legacy /auth/api/v1/system endpoints | Move required system/config/filesystem/database fields to module-owned API or formally retire sensitive diagnostics. |

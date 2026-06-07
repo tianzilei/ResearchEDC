@@ -66,7 +66,7 @@ Completed on 2026-06-07 after Phase B validation:
 - `docs/refactor/legacy-workflow-inventory.md` summarizes the inventory: 765 `replace`, 125 `keep compatibility`, and 73 `unknown` artifacts.
 - `scripts/ci/generate-legacy-report.sh` now includes the workflow inventory artifacts in the generated legacy report.
 - The first low-risk Phase 1 vertical slice is selected: `phase-1-admin-read-only`, documented in `docs/refactor/phase-1-admin-read-only-slice.md`.
-- `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows: 0 `covered`, 48 `needs replacement`, and 3 `blocked`.
+- `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows: 0 `covered`, 49 `needs replacement`, and 2 `blocked`.
 
 Remaining Phase 0 work:
 
@@ -75,7 +75,7 @@ Remaining Phase 0 work:
 
 Current next action:
 
-1. Resolve the blocked `ReportController` `/healthcheck` row by splitting/replacing its rule-schedule helper endpoints before any health route redirect/removal.
+1. Move clients/probes from legacy `ReportController` `/healthcheck` to `/api/v1/dashboard/health` and `/api/v1/rules/schedule/*`, then redirect or unregister the legacy routes after reference checks.
 2. For audit rows, compare legacy JSP/servlet filters and fields against `/api/v1/audit` and `/app/admin/audit-log`; move rows from `needs replacement` to `covered` only with permission and output parity proof.
 3. For system/log/job rows, add or identify module-owned backend APIs before deleting JSP/servlet paths.
 4. Delete only rows marked `covered` or `retire`, one workflow at a time, after route, permission, audit/status/log, and reference parity are proven.
