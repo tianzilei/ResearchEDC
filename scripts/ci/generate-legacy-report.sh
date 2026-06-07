@@ -10,6 +10,7 @@ echo "=== Legacy Refactor Report ==="
 echo "Generating report at ${REPORT_FILE} ..."
 
 bash scripts/ci/legacy-baseline.sh "${REPORT_DIR}" >/dev/null
+scripts/ci/generate-legacy-inventory.py --output-dir "${REPORT_DIR}" --basename legacy-workflow-inventory >/dev/null
 
 LEGACY_DAO_IMPORTS=0
 LEGACY_BEAN_IMPORTS=0
@@ -217,19 +218,33 @@ else
   echo "_No module legacy imports found._" >> "${REPORT_FILE}"
 fi
 
-cat >> "${REPORT_FILE}" <<SECTION9
+cat >> "${REPORT_FILE}" <<'SECTION9'
 
 ---
 
-## 9. SPI Coverage
+## 9. Workflow Inventory
 
+Generated inventory artifacts:
+
+- `legacy-workflow-inventory.md`
+- `legacy-workflow-inventory.csv`
+
+The inventory assigns initial `replace`, `retire`, `keep compatibility`, or `unknown` classifications and deletion gates for Phase 0/Phase 1 planning.
+
+---
+
+## 10. SPI Coverage
+
+SECTION9
+
+cat >> "${REPORT_FILE}" <<SECTION10
 | Metric | Count |
 |--------|-------|
 | SPI interfaces | ${SPI_COUNT} |
 | @Primary module adapters | ${ADAPTER_COUNT} |
 | Direct new XxxDAO() in consumer code | ${NEW_DAO_COUNT} |
 
-SECTION9
+SECTION10
 
 cat >> "${REPORT_FILE}" <<FOOTER
 
