@@ -10,7 +10,8 @@ This ledger is conservative: `needs replacement` means a plausible replacement r
 |---|---:|
 | `blocked` | 2 |
 | `deleted` | 1 |
-| `needs replacement` | 48 |
+| `covered` | 1 |
+| `needs replacement` | 47 |
 
 ## Rows
 
@@ -36,7 +37,7 @@ This ledger is conservative: `needs replacement` means a plausible replacement r
 | needs replacement | jsp-view | web/src/main/webapp/WEB-INF/jsp/managestudy/viewStudySubjectAudit.jsp | /WEB-INF/jsp/managestudy/viewStudySubjectAudit.jsp | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
 | needs replacement | jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/viewRuleSetAudits.jsp | /WEB-INF/jsp/submit/viewRuleSetAudits.jsp | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
 | blocked | jsp-view | web/src/main/webapp/WEB-INF/jsp/techadmin/index.jsp | /WEB-INF/jsp/techadmin/index.jsp | /app/admin or formal retirement | Decide whether this shell is replaced by SPA admin navigation or retired before deleting route/JSP. |
-| needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditDatabaseServlet.java | /AuditDatabase | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
+| covered | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditDatabaseServlet.java | /AuditDatabase | `GET /api/v1/audit/database-changelog` | Field parity and sysadmin permission parity are covered by module tests; delete after route registration, JSP reference, and SPA navigation cleanup proof. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditLogStudyServlet.java | /AuditLogStudy | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditLogUserServlet.java | /AuditLogUser | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditUserActivityServlet.java | /AuditUserActivity | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
