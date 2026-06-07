@@ -34,8 +34,8 @@ The initial ledger started with 51 rows. After removing `ReportController`, it t
 
 | Status | Count | Meaning |
 |---|---:|---|
-| `covered` | 1 | Replacement API, output fields, and permission parity are proven; deletion still waits for route/JSP reference cleanup. |
-| `needs replacement` | 47 | A frontend route or partial API exists, but backend field/permission/audit parity is not fully proven. |
+| `covered` | 2 | Replacement API, output fields, and permission parity are proven; deletion still waits for route/JSP reference cleanup. |
+| `needs replacement` | 46 | A frontend route or partial API exists, but backend field/permission/audit parity is not fully proven. |
 | `blocked` | 2 | Product/route retirement decision is needed before implementation. |
 | `deleted` | 1 | Legacy route removed after replacement and reference proof. |
 
@@ -62,3 +62,10 @@ Audit database changelog replacement added:
 - The route is guarded with `@PreAuthorize("hasRole('SYSADMIN')")`, matching `AuditDatabaseServlet.mayProceed()` `ub.isSysAdmin()` behavior.
 - `ResearchEdcUserDetailsService` now maps legacy `user_type_id = 1` to `ROLE_SYSADMIN` so module APIs can express sysadmin-only gates.
 - `AuditDatabaseServlet` is marked `covered` in the ledger, not deleted; deletion still requires route registration, JSP reference, and SPA navigation cleanup proof.
+
+Audit user login activity replacement added:
+
+- `GET /api/v1/audit/user-logins` replaces the field output of `/AuditUserActivity` with `id`, `userName`, `userAccountId`, `loginAttemptDate`, `loginStatus`, `loginStatusCode`, and `details`.
+- The endpoint accepts the legacy table filters `userName`, `loginAttemptDate`, `loginStatus`, and `details`, returns a Spring `Page`, and defaults to `loginAttemptDate` descending when no sort is supplied.
+- The route is guarded with `@PreAuthorize("hasRole('SYSADMIN')")`, matching `AuditUserActivityServlet.mayProceed()` `ub.isSysAdmin()` behavior.
+- `AuditUserActivityServlet` is marked `covered` in the ledger, not deleted; deletion still requires route registration, JSP reference, and SPA navigation cleanup proof.

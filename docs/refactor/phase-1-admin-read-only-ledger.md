@@ -10,8 +10,8 @@ This ledger is conservative: `needs replacement` means a plausible replacement r
 |---|---:|
 | `blocked` | 2 |
 | `deleted` | 1 |
-| `covered` | 1 |
-| `needs replacement` | 47 |
+| `covered` | 2 |
+| `needs replacement` | 46 |
 
 ## Rows
 
@@ -40,7 +40,7 @@ This ledger is conservative: `needs replacement` means a plausible replacement r
 | covered | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditDatabaseServlet.java | /AuditDatabase | `GET /api/v1/audit/database-changelog` | Field parity and sysadmin permission parity are covered by module tests; delete after route registration, JSP reference, and SPA navigation cleanup proof. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditLogStudyServlet.java | /AuditLogStudy | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditLogUserServlet.java | /AuditLogUser | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
-| needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditUserActivityServlet.java | /AuditUserActivity | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
+| covered | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditUserActivityServlet.java | /AuditUserActivity | `GET /api/v1/audit/user-logins` | Field, filter, pagination, sort default, and sysadmin permission parity are covered by module tests; delete after route registration, JSP reference, and SPA navigation cleanup proof. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/SystemStatusServlet.java | /SystemStatus | /api/v1/dashboard/status, /api/v1/dashboard/health, and legacy /auth/api/v1/system endpoints | Move required system/config/filesystem/database fields to module-owned API or formally retire sensitive diagnostics. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/ViewAllJobsServlet.java | /ViewAllJobs | /app/admin/jobs | Inventory Quartz job fields/actions, add read-only module API, and prove empty/error state parity. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/ViewJobServlet.java | /ViewJob | /app/admin/jobs | Inventory Quartz job fields/actions, add read-only module API, and prove empty/error state parity. |
