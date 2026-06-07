@@ -13,9 +13,13 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.researchedc.module.audit.dto.AuditUserEventDTO;
+import org.researchedc.module.audit.dto.AuditUserEventsDTO;
 import org.researchedc.module.audit.dto.AuditUserLoginDTO;
+import org.researchedc.module.audit.dto.AuditUserSummaryDTO;
 import org.researchedc.module.audit.dto.DatabaseChangeLogDTO;
 import org.researchedc.module.audit.service.AuditService;
+import org.researchedc.module.audit.service.AuditUserEventService;
 import org.researchedc.module.audit.service.AuditUserLoginService;
 import org.researchedc.module.audit.service.DatabaseChangeLogService;
 import org.springframework.data.domain.PageImpl;
@@ -40,6 +44,16 @@ class AuditControllerTest {
     }
 
     @Test
+    void listUserEvents_requiresSysAdminRole() throws Exception {
+        Method method = AuditController.class.getMethod("listUserEvents", int.class);
+
+        PreAuthorize preAuthorize = method.getAnnotation(PreAuthorize.class);
+
+        assertNotNull(preAuthorize);
+        assertEquals("hasRole('SYSADMIN')", preAuthorize.value());
+    }
+
+    @Test
     void listDatabaseChangeLog_requiresSysAdminRole() throws Exception {
         Method method = AuditController.class.getMethod("listDatabaseChangeLog");
 
@@ -52,6 +66,7 @@ class AuditControllerTest {
     @Test
     void listUserLogins_returnsLegacyFieldParity() throws Exception {
         AuditService auditService = org.mockito.Mockito.mock(AuditService.class);
+        AuditUserEventService auditUserEventService = org.mockito.Mockito.mock(AuditUserEventService.class);
         AuditUserLoginService auditUserLoginService = org.mockito.Mockito.mock(AuditUserLoginService.class);
         DatabaseChangeLogService databaseChangeLogService =
                 org.mockito.Mockito.mock(DatabaseChangeLogService.class);
@@ -62,7 +77,7 @@ class AuditControllerTest {
 
         MockMvc mvc = MockMvcBuilders
                 .standaloneSetup(new AuditController(
-                        auditService, auditUserLoginService, databaseChangeLogService))
+                        auditService, auditUserEventService, auditUserLoginService, databaseChangeLogService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
 
@@ -81,8 +96,72 @@ class AuditControllerTest {
     }
 
     @Test
+    void listUserEvents_returnsLegacyFieldParity() throws Exception {
+        AuditService auditService = org.mockito.Mockito.mock(AuditService.class);
+        AuditUserEventService auditUserEventService = org.mockito.Mockito.mock(AuditUserEventService.class);
+        AuditUserLoginService auditUserLoginService = org.mockito.Mockito.mock(AuditUserLoginService.class);
+        DatabaseChangeLogService databaseChangeLogService =
+                org.mockito.Mockito.mock(DatabaseChangeLogService.class);
+        AuditUserEventsDTO dto = new AuditUserEventsDTO(
+                new AuditUserSummaryDTO(7, "sysadmin", "sysadmin", "System", "Admin"),
+                List.of(new AuditUserEventDTO(
+                        42,
+                        "2026-06-07T12:00:00Z",
+                        "user_account",
+                        7,
+                        99,
+                        "updated",
+                        "updated",
+                        "user_updated",
+                        "user_updated",
+                        "email",
+                        "old.test",
+                        "new.test",
+                        11,
+                        "Main Study",
+                        12,
+                        "SUBJ-001",
+                        java.util.Map.of("email", "new.test"),
+                        java.util.Map.of())));
+        when(auditUserEventService.listUserEvents(7)).thenReturn(dto);
+
+        MockMvc mvc = MockMvcBuilders
+                .standaloneSetup(new AuditController(
+                        auditService, auditUserEventService, auditUserLoginService, databaseChangeLogService))
+                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+                .build();
+
+        mvc.perform(get("/api/v1/audit/users/7/events"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.user.id").value(7))
+                .andExpect(jsonPath("$.user.userName").value("sysadmin"))
+                .andExpect(jsonPath("$.user.name").value("sysadmin"))
+                .andExpect(jsonPath("$.user.firstName").value("System"))
+                .andExpect(jsonPath("$.user.lastName").value("Admin"))
+                .andExpect(jsonPath("$.events", hasSize(1)))
+                .andExpect(jsonPath("$.events[0].id").value(42))
+                .andExpect(jsonPath("$.events[0].auditDate").value("2026-06-07T12:00:00Z"))
+                .andExpect(jsonPath("$.events[0].auditTable").value("user_account"))
+                .andExpect(jsonPath("$.events[0].userId").value(7))
+                .andExpect(jsonPath("$.events[0].entityId").value(99))
+                .andExpect(jsonPath("$.events[0].reasonForChange").value("updated"))
+                .andExpect(jsonPath("$.events[0].reasonForChangeKey").value("updated"))
+                .andExpect(jsonPath("$.events[0].actionMessage").value("user_updated"))
+                .andExpect(jsonPath("$.events[0].actionMessageKey").value("user_updated"))
+                .andExpect(jsonPath("$.events[0].columnName").value("email"))
+                .andExpect(jsonPath("$.events[0].oldValue").value("old.test"))
+                .andExpect(jsonPath("$.events[0].newValue").value("new.test"))
+                .andExpect(jsonPath("$.events[0].studyId").value(11))
+                .andExpect(jsonPath("$.events[0].studyName").value("Main Study"))
+                .andExpect(jsonPath("$.events[0].subjectId").value(12))
+                .andExpect(jsonPath("$.events[0].subjectName").value("SUBJ-001"))
+                .andExpect(jsonPath("$.events[0].changes.email").value("new.test"));
+    }
+
+    @Test
     void listDatabaseChangeLog_returnsLegacyFieldParity() throws Exception {
         AuditService auditService = org.mockito.Mockito.mock(AuditService.class);
+        AuditUserEventService auditUserEventService = org.mockito.Mockito.mock(AuditUserEventService.class);
         AuditUserLoginService auditUserLoginService = org.mockito.Mockito.mock(AuditUserLoginService.class);
         DatabaseChangeLogService databaseChangeLogService =
                 org.mockito.Mockito.mock(DatabaseChangeLogService.class);
@@ -100,7 +179,7 @@ class AuditControllerTest {
 
         MockMvc mvc = MockMvcBuilders
                 .standaloneSetup(new AuditController(
-                        auditService, auditUserLoginService, databaseChangeLogService))
+                        auditService, auditUserEventService, auditUserLoginService, databaseChangeLogService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
 

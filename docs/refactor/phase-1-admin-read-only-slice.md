@@ -34,8 +34,8 @@ The initial ledger started with 51 rows. After removing `ReportController`, it t
 
 | Status | Count | Meaning |
 |---|---:|---|
-| `covered` | 2 | Replacement API, output fields, and permission parity are proven; deletion still waits for route/JSP reference cleanup. |
-| `needs replacement` | 46 | A frontend route or partial API exists, but backend field/permission/audit parity is not fully proven. |
+| `covered` | 3 | Replacement API, output fields, and permission parity are proven; deletion still waits for route/JSP reference cleanup. |
+| `needs replacement` | 45 | A frontend route or partial API exists, but backend field/permission/audit parity is not fully proven. |
 | `blocked` | 2 | Product/route retirement decision is needed before implementation. |
 | `deleted` | 1 | Legacy route removed after replacement and reference proof. |
 
@@ -69,3 +69,9 @@ Audit user login activity replacement added:
 - The endpoint accepts the legacy table filters `userName`, `loginAttemptDate`, `loginStatus`, and `details`, returns a Spring `Page`, and defaults to `loginAttemptDate` descending when no sort is supplied.
 - The route is guarded with `@PreAuthorize("hasRole('SYSADMIN')")`, matching `AuditUserActivityServlet.mayProceed()` `ub.isSysAdmin()` behavior.
 - `AuditUserActivityServlet` is marked `covered` in the ledger, not deleted; deletion still requires route registration, JSP reference, and SPA navigation cleanup proof.
+
+Audit user event log replacement added:
+
+- `GET /api/v1/audit/users/{userId}/events` replaces the field output of `/AuditLogUser?userLogId=...` with a user summary plus audit event rows containing `id`, `auditDate`, `auditTable`, `userId`, `entityId`, localized and raw reason/action values, study/subject context, column values, `changes`, and `otherInfo`.
+- The route is guarded with `@PreAuthorize("hasRole('SYSADMIN')")`, matching `AuditLogUserServlet.mayProceed()` `ub.isSysAdmin()` behavior.
+- `AuditLogUserServlet` is marked `covered` in the ledger, not deleted; deletion still requires route registration, JSP reference, and SPA navigation cleanup proof.
