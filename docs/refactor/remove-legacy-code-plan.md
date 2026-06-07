@@ -62,23 +62,22 @@ Completed on 2026-06-07:
 Completed on 2026-06-07 after Phase B validation:
 
 - `scripts/ci/generate-legacy-inventory.py` generates CSV and Markdown inventories for legacy servlets, JSPs, Spring MVC routes, SOAP endpoints, DAO files, Quartz jobs, and shared services.
-- `docs/refactor/legacy-workflow-inventory.csv` records 963 artifacts with initial `replace`, `keep compatibility`, or `unknown` classifications and deletion gates.
-- `docs/refactor/legacy-workflow-inventory.md` summarizes the inventory: 765 `replace`, 125 `keep compatibility`, and 73 `unknown` artifacts.
+- `docs/refactor/legacy-workflow-inventory.csv` initially recorded 963 artifacts with `replace`, `keep compatibility`, or `unknown` classifications and deletion gates; after deleting `ReportController`, the active inventory records 959 artifacts.
+- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 764 `replace`, 125 `keep compatibility`, and 70 `unknown` artifacts.
 - `scripts/ci/generate-legacy-report.sh` now includes the workflow inventory artifacts in the generated legacy report.
 - The first low-risk Phase 1 vertical slice is selected: `phase-1-admin-read-only`, documented in `docs/refactor/phase-1-admin-read-only-slice.md`.
-- `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows: 0 `covered`, 49 `needs replacement`, and 2 `blocked`.
+- `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows: 1 `deleted`, 48 `needs replacement`, and 2 `blocked`.
 
 Remaining Phase 0 work:
 
-- Reduce the 73 `unknown` inventory rows by assigning owners/categories in follow-up slice ledgers.
+- Reduce the 70 `unknown` inventory rows by assigning owners/categories in follow-up slice ledgers.
 - Add per-workflow owner metadata once the first slice ledger is created.
 
 Current next action:
 
-1. Move clients/probes from legacy `ReportController` `/healthcheck` to `/api/v1/dashboard/health` and `/api/v1/rules/schedule/*`, then redirect or unregister the legacy routes after reference checks.
-2. For audit rows, compare legacy JSP/servlet filters and fields against `/api/v1/audit` and `/app/admin/audit-log`; move rows from `needs replacement` to `covered` only with permission and output parity proof.
-3. For system/log/job rows, add or identify module-owned backend APIs before deleting JSP/servlet paths.
-4. Delete only rows marked `covered` or `retire`, one workflow at a time, after route, permission, audit/status/log, and reference parity are proven.
+1. Continue audit rows: compare legacy JSP/servlet filters and fields against `/api/v1/audit` and `/app/admin/audit-log`; move rows from `needs replacement` to `covered` only with permission and output parity proof.
+2. For system/log/job rows, add or identify module-owned backend APIs before deleting JSP/servlet paths.
+3. Delete only rows marked `covered` or `retire`, one workflow at a time, after route, permission, audit/status/log, and reference parity are proven.
 
 ## Phase B PostgreSQL Validation
 

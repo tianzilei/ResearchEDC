@@ -2,14 +2,15 @@
 
 **Inventory filter:** `phase_slice=phase-1-admin-read-only` from `docs/refactor/legacy-workflow-inventory.csv`.
 
-This ledger is conservative: `covered` means a plausible replacement route exists, not that deletion is approved. A row still needs route, permission, audit/status/log, and reference proof before code removal.
+This ledger is conservative: `needs replacement` means a plausible replacement route exists, not that deletion is approved. A row still needs route, permission, audit/status/log, and reference proof before code removal. `deleted` rows have passed reference checks and no longer appear in the generated active inventory.
 
 ## Summary
 
 | Ledger status | Count |
 |---|---:|
 | `blocked` | 2 |
-| `needs replacement` | 49 |
+| `deleted` | 1 |
+| `needs replacement` | 48 |
 
 ## Rows
 
@@ -52,7 +53,7 @@ This ledger is conservative: `covered` means a plausible replacement route exist
 | blocked | legacy-servlet | web/src/main/java/org/researchedc/control/techadmin/TechAdminServlet.java | /TechAdmin | /app/admin or formal retirement | Decide whether this shell is replaced by SPA admin navigation or retired before deleting route/JSP. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/techadmin/ViewSchedulerServlet.java | /ViewScheduler | /app/admin/jobs | Inventory Quartz job fields/actions, add read-only module API, and prove empty/error state parity. |
 | needs replacement | spring-mvc-route | web/src/main/java/org/researchedc/controller/AccountController.java | /auditcrc | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
-| needs replacement | spring-mvc-route | web/src/main/java/org/researchedc/controller/ReportController.java | /healthcheck | /api/v1/dashboard/health plus /api/v1/rules/schedule/* | Move clients/probes to /api/v1/dashboard/health and /api/v1/rules/schedule/*, then redirect or unregister the legacy /healthcheck routes. |
+| deleted | spring-mvc-route | web/src/main/java/org/researchedc/controller/ReportController.java | /healthcheck | /api/v1/dashboard/health plus /api/v1/rules/schedule/* | Deleted after reference scan found no production callers outside ReportController; generated inventory dropped the four legacy Spring MVC routes. |
 | needs replacement | spring-mvc-route | web/src/main/java/org/researchedc/controller/SystemController.java | /config | /api/v1/dashboard/status, /api/v1/dashboard/health, and legacy /auth/api/v1/system endpoints | Move required system/config/filesystem/database fields to module-owned API or formally retire sensitive diagnostics. |
 | needs replacement | spring-mvc-route | web/src/main/java/org/researchedc/controller/SystemController.java | /extract | /api/v1/dashboard/status, /api/v1/dashboard/health, and legacy /auth/api/v1/system endpoints | Move required system/config/filesystem/database fields to module-owned API or formally retire sensitive diagnostics. |
 | needs replacement | spring-mvc-route | web/src/main/java/org/researchedc/controller/SystemController.java | /modules | /api/v1/dashboard/status, /api/v1/dashboard/health, and legacy /auth/api/v1/system endpoints | Move required system/config/filesystem/database fields to module-owned API or formally retire sensitive diagnostics. |
