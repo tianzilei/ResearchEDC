@@ -34,7 +34,8 @@ The initial ledger started with 51 rows. After removing `ReportController`, it t
 
 | Status | Count | Meaning |
 |---|---:|---|
-| `needs replacement` | 48 | A frontend route or partial API exists, but backend field/permission/audit parity is not fully proven. |
+| `covered` | 1 | Replacement API, output fields, and permission parity are proven; deletion still waits for route/JSP reference cleanup. |
+| `needs replacement` | 47 | A frontend route or partial API exists, but backend field/permission/audit parity is not fully proven. |
 | `blocked` | 2 | Product/route retirement decision is needed before implementation. |
 | `deleted` | 1 | Legacy route removed after replacement and reference proof. |
 
@@ -54,3 +55,10 @@ Rule schedule replacement added:
 - `GET /api/v1/rules/schedule/default-runtime` replaces `/healthcheck/runtime`.
 
 Legacy `/healthcheck` has been unregistered by deleting `ReportController`; `/api/v1/dashboard/health` and `/api/v1/rules/schedule/*` are the replacement routes.
+
+Audit database changelog replacement added:
+
+- `GET /api/v1/audit/database-changelog` replaces the field output of `/AuditDatabase` with `id`, `author`, `fileName`, `dateExecuted`, `md5Sum`, `description`, `comments`, `tag`, and `liquibase`.
+- The route is guarded with `@PreAuthorize("hasRole('SYSADMIN')")`, matching `AuditDatabaseServlet.mayProceed()` `ub.isSysAdmin()` behavior.
+- `ResearchEdcUserDetailsService` now maps legacy `user_type_id = 1` to `ROLE_SYSADMIN` so module APIs can express sysadmin-only gates.
+- `AuditDatabaseServlet` is marked `covered` in the ledger, not deleted; deletion still requires route registration, JSP reference, and SPA navigation cleanup proof.

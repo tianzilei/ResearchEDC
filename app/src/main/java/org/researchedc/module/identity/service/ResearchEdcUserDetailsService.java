@@ -25,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ResearchEdcUserDetailsService implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(ResearchEdcUserDetailsService.class);
+    private static final int SYSADMIN_USER_TYPE_ID = 1;
+    private static final int TECHADMIN_USER_TYPE_ID = 3;
 
     private final UserAccountRepository userAccountRepository;
     private final RoleRepository roleRepository;
@@ -58,6 +60,13 @@ public class ResearchEdcUserDetailsService implements UserDetailsService {
                     .collect(Collectors.toSet());
         } catch (Exception e) {
             logger.warn("Failed to load roles for user {}: {}", username, e.getMessage());
+        }
+
+        if (Integer.valueOf(SYSADMIN_USER_TYPE_ID).equals(user.getUserTypeId())) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_SYSADMIN"));
+        }
+        if (Integer.valueOf(TECHADMIN_USER_TYPE_ID).equals(user.getUserTypeId())) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_TECHADMIN"));
         }
 
         return new User(

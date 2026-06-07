@@ -1,21 +1,34 @@
 package org.researchedc.module.audit.controller;
 
+import java.util.List;
+
 import org.researchedc.module.audit.dto.AuditLogDTO;
+import org.researchedc.module.audit.dto.DatabaseChangeLogDTO;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
+import org.researchedc.module.audit.service.DatabaseChangeLogService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/audit")
 public class AuditController {
 
     private final AuditService auditService;
+    private final DatabaseChangeLogService databaseChangeLogService;
 
-    public AuditController(AuditService auditService) {
+    public AuditController(AuditService auditService,
+                           DatabaseChangeLogService databaseChangeLogService) {
         this.auditService = auditService;
+        this.databaseChangeLogService = databaseChangeLogService;
     }
 
     @GetMapping
@@ -28,6 +41,12 @@ public class AuditController {
     @GetMapping("/{id}")
     public ResponseEntity<AuditLogDTO> getAuditLog(@PathVariable Long id) {
         return ResponseEntity.ok(auditService.getAuditLog(id));
+    }
+
+    @GetMapping("/database-changelog")
+    @PreAuthorize("hasRole('SYSADMIN')")
+    public ResponseEntity<List<DatabaseChangeLogDTO>> listDatabaseChangeLog() {
+        return ResponseEntity.ok(databaseChangeLogService.listChangeLogs());
     }
 
     @PostMapping
