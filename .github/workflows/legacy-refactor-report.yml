@@ -24,6 +24,9 @@ jobs:
       - name: Create report directory
         run: mkdir -p build/reports/legacy
 
+      - name: Check legacy guardrails
+        run: bash scripts/ci/check-legacy-guardrails.sh
+
       - name: Generate legacy refactor report
         run: bash scripts/ci/generate-legacy-report.sh
 

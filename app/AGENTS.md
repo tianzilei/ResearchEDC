@@ -42,6 +42,7 @@ app/src/main/java/org/researchedc/
 - **Entities:** `@Entity(name = "Module<Name>")` avoids name collision with legacy `domain/datamap/` entities
 - **FKs:** Plain `Integer`/`Long` columns, NOT JPA `@ManyToOne` (follows randomization pattern as reference)
 - **Anti-corruption layer:** Legacy DAO access restricted to `module/<name>/internal/adapter/` only
+- **Legacy removal:** adapters are temporary containment boundaries, not proof that legacy code is removed. Keep public module APIs free of `shared/` types and retire adapters only after repository-backed behavior and tests replace the delegated legacy methods.
 - **Cross-module events:** `ApplicationEvents` from Spring Modulith — never `@Autowired` across module boundaries
 - **Tests:** JUnit 5 + `@SpringBootTest` where DB needed, `ModulithVerificationTest` enforces no circular deps
 

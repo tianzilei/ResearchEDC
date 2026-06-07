@@ -2,16 +2,16 @@
 
 **Derived from:** OpenClinica v3.x  
 **Generated:** 2026-05-25  
-**Updated:** 2026-06-05  
+**Updated:** 2026-06-07  
 **Branch:** master
 
 ## OVERVIEW
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x. Built on Java 21 with Spring Framework 6.1.5, Hibernate ORM 6.4.4, and Liquibase migrations. Multi-module Maven project supporting Oracle and PostgreSQL.
 
-New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. Legacy code consolidated into `shared/` module, with `web/` (484 files + 419 JSP) and `ws/` (75 files) being incrementally strangulated into Modulith modules.
+New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface remains substantial: `shared/` (~793 Java files, including 182 DAO files), `web/` (484 Java files + 419 JSP files, 189 SecureController/CoreSecureController subclasses), and `ws/` (75 Java files) are still being incrementally strangulated into Modulith modules.
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 369/369** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)**
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 369/369** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **Legacy removal ❌ NOT COMPLETE — see `docs/refactor/remove-legacy-code-plan.md`**
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 ✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
@@ -26,7 +26,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │       ├── export/          # 导出中心 (异步任务, 9 文件)
 │       ├── crf/             # CRF 元数据 (含 LegacyCrfAdapter, 21 文件)
 │       ├── notification/    # 通知模块 (事件驱动邮件, 5 文件)
-│       ├── legacy/          # 遗留网关 (底层 DAO REST 封装, 25 文件)
+│       ├── legacy/          # 遗留网关 (底层 DAO REST 封装, compatibility only)
 │       ├── audit/           # 审计日志 (事件驱动 + 独立表, 16 文件)
 │       ├── study/           # 研究管理 (映射 study 表, 19 文件)
 │       ├── subject/         # 受试者管理 (映射 subject/study_subject, 19 文件)
@@ -39,7 +39,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │       ├── filter/          # 过滤器管理 (JPA 实体 + 仓库, 7 文件)
 │       ├── subjectgroup/    # 受试者分组 (JPA 实体 + 仓库, 9 文件)
 │       └── discrepancynote/ # 差异备注管理 (JPA 实体 + 仓库, 7 文件)
-├── shared/                  # 共享领域逻辑与数据访问 — ~770 文件 (取代 legacy-core)
+├── shared/                  # 共享领域逻辑与数据访问 — ~793 Java 文件 (取代 legacy-core, still legacy-heavy)
 │   ├── bean/                # DTOs (253 文件)
 │   ├── dao/                 # 数据访问层 (169 文件, 含 29 SPI 接口)
 │   ├── domain/              # Hibernate 实体 (166 文件)
@@ -48,8 +48,8 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │   └── ...                  # job, exception, validator, i18n, patterns, config
 ├── frontend/                # React 19 + TypeScript SPA (pnpm workspace, 94 文件)
 ├── questionnaire-service/   # Python FastAPI 问卷微服务 (独立部署, 74 文件)
-├── web/                     # 遗留 Web UI — ~484 文件 + 419 JSP (待绞杀)
-├── ws/                      # 遗留 SOAP — ~75 文件 (待绞杀)
+├── web/                     # 遗留 Web UI — 484 Java 文件 + 419 JSP (待绞杀)
+├── ws/                      # 遗留 SOAP — 75 Java 文件 (待绞杀/退休)
 ├── deploy/                  # Bare host reverse proxy / observability configs
 ├── deploy.sh                # Single bare host deploy shell
 ├── pom.xml                  # Maven parent
@@ -92,7 +92,8 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | **SubjectGroup module** | `app/.../module/subjectgroup/` | 分组类/组 JPA 实体 (gateway only) |
 | **DiscrepancyNote module** | `app/.../module/discrepancynote/` | 差异备注 JPA 实体 (gateway only) |
 | **Shared (legacy) logic** | `shared/src/main/java/org/researchedc/` | DAO/domain/service/bean/logic |
-| Legacy DAOs (JPA) | `shared/.../dao/hibernate/` | AbstractDomainDao 子类 (67 文件) |
+| Legacy DAOs | `shared/.../dao/` | 182 DAO/SPI/implementation files; deletion blocked by replacement proof |
+| Legacy DAOs (JPA) | `shared/.../dao/hibernate/` | AbstractDomainDao 子类 |
 | Legacy DAO SPI interfaces | `shared/.../dao/spi/` | 29 个接口 (IStudyDAO, ISubjectDAO, ...) |
 | Legacy Hibernate entities | `shared/.../domain/datamap/` | ~62 实体, JPA 注解 |
 | Web controllers | `web/.../control/**/*.java` | 186 个 SecureController 子类 |
@@ -102,6 +103,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | Liquibase migrations | `shared/.../migration/` | 193 个版本化 schema 变更 |
 | i18n strings | `shared/.../i18n/*.properties` | 6 种语言 |
 | Bare deploy | `deploy.sh` | single host deployment entry point |
+| Legacy removal plan | `docs/refactor/remove-legacy-code-plan.md` | Current baseline, phases, and deletion gates |
 | SPA fallback config | `app/.../config/WebMvcConfig.java` | `/app/**` -> React index.html |
 
 ## CONVENTIONS
@@ -211,9 +213,10 @@ python -m pytest app/tests/ -v
 - **Routing:** `/app/*` -> React SPA, `/legacy/*` -> JSP, `/q/*` -> questionnaire, `/api/*` -> REST
 - **Modulith:** Only `org.researchedc.module.*` is verified; `shared/` packages are excluded
 - **Version:** 0.1
-- **legacy-core → shared:** `legacy-core/` was removed on 2026-05-23. All code consolidated into `shared/` module with `@Repository`/`@Service` annotations and package rename to `org.researchedc`.
+- **legacy-core → shared:** `legacy-core/` was removed on 2026-05-23. Its code was consolidated into `shared/` with `@Repository`/`@Service` annotations and package rename to `org.researchedc`. This was a module consolidation, **not** full legacy code removal.
 - **Frontend TypeScript:** ✅ `pnpm typecheck` — 0 errors (strict mode).
 - **DAO constructor baseline:** `DaoProvider` bridge has been removed. Direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) is now 0 matches across `shared/`, `web/`, and `ws/`. All 19 DAO families are SPI-widened; deletion is gated on module-owned replacement implementations (Phase B).
+- **Legacy removal baseline (2026-06-07):** legacy code remains in `shared/`, `web/`, and `ws/`; do not claim legacy removal is complete until `web/` JSP/servlet routes, `ws/` SOAP endpoints, legacy DAO implementations, and legacy-only beans/services have explicit replacement coverage and deletion PRs.
 
 ### Legacy DAO Refactor Handoff (2026-06-05)
 
@@ -268,4 +271,5 @@ python -m pytest app/tests/ -v
 - [frontend/AGENTS.md](./frontend/AGENTS.md) — React 19 SPA (TypeScript, Vite, Ant Design)
 - [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) — Python FastAPI microservice
 - [LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md) — Remaining legacy refactoring roadmap
+- [Remove Legacy Code Plan](./docs/refactor/remove-legacy-code-plan.md) — Explicit deletion plan and measurable gates
 - [Clinical Workflow Hardening Plan](./.sisyphus/plans/clinical-workflow-hardening-plan.md) — Randomization setup, questionnaire import/mobile/fingerprint/temp links, e-signature, MinIO, security, import/export, and backups

@@ -1,7 +1,7 @@
 # ResearchEDC
 
 - Version: 0.1
-- Last updated: 2026-06-02
+- Last updated: 2026-06-07
 - License: GNU LGPL
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x.
@@ -39,15 +39,27 @@ The long-running refactor follows a strangler pattern: keep legacy behavior work
 Current high-level status:
 
 - `legacy-core/` has been consolidated into `shared/` with package rename to `org.researchedc`.
+- Legacy code is **not fully removed**. Current baseline still includes `shared/` legacy beans/DAOs/services, `web/` JSP/SecureController workflows, and `ws/` SOAP endpoints.
 - Spring XML and Ehcache-era configuration have largely been replaced by Java configuration and modern cache/security wiring.
 - Modulith modules exist for study, subject, event, data capture, identity, CRF, export, audit, randomization, dashboard, rule, dataset, filter, subject group, discrepancy note, notification, and legacy gateway functions.
 - React SPA covers major workflows and keeps remaining JSP pages reachable through the legacy frame path.
 - Questionnaire service has its own API, data model, scoring engine, and tests.
 - `DaoProvider` has been removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` construction is at 0 active matches across the legacy Java surfaces.
-- All 19 legacy DAO families have been SPI-widened; consumers use SPI interfaces exclusively. Remaining concrete type references are limited to DAO implementation classes, `LegacyDaoFactory`, and harmless commented-out code.
+- Legacy DAO consumer work is mostly complete: `DaoProvider` and direct DAO construction are gone, and the target DAO families have been SPI-widened. The DAO implementation files still remain until module-owned replacements are proven under production workflows.
 - Remaining legacy deletion work is providing module-owned/repository-backed SPI implementations (Phase B schema ownership) before legacy DAO `.java` files can be deleted.
+- Phase II (@SuppressWarnings elimination) is **COMPLETE**. Reduced from 168 to 72 annotations (57% reduction). Remaining 72 are all genuine (27 non-deferred) or deferred (45 TableFactory, will self-resolve with SPA strangulation).
 
-For detailed handoff notes, see [AGENTS.md](./AGENTS.md) and [.sisyphus/LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md).
+Current legacy removal baseline:
+
+| Surface | Current Count | Removal Gate |
+|---------|---------------|--------------|
+| `web/` Java | 484 files | Routes migrated to SPA/module APIs, servlet registrations removed |
+| JSP pages | 419 files | No direct navigation or include dependency remains |
+| `ws/` Java | 75 files | SOAP retired or backed by non-legacy module ports |
+| `shared/dao` | 182 files | SPI implementations replaced by module-owned repositories/services |
+| SecureController subclasses | 189 matches | Workflow migrated or deleted |
+
+For detailed handoff notes, see [AGENTS.md](./AGENTS.md), [.sisyphus/LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md), and [docs/refactor/remove-legacy-code-plan.md](./docs/refactor/remove-legacy-code-plan.md).
 
 ## Verification Snapshot
 
@@ -66,7 +78,7 @@ Current baseline from project notes:
 |-------|--------|
 | Backend compile | Passing |
 | Modulith verification | Passing |
-| Java module tests | 235/235 passing |
+| Java module tests | 369/369 passing |
 | Frontend typecheck | 0 errors |
 | Frontend tests | 25/25 passing |
 | Questionnaire service tests | 39/39 passing |
@@ -78,6 +90,7 @@ Current baseline from project notes:
 
 - [AGENTS.md](./AGENTS.md) — project knowledge base and current refactor handoff
 - [.sisyphus/LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md) — legacy strangulation plan and progress
+- [docs/refactor/remove-legacy-code-plan.md](./docs/refactor/remove-legacy-code-plan.md) — current legacy baseline and deletion plan
 - [MODIFICATIONS.md](./MODIFICATIONS.md) — chronological change log
 - [app/AGENTS.md](./app/AGENTS.md) — Spring Boot entry point and Modulith notes
 - [shared/AGENTS.md](./shared/AGENTS.md) — shared legacy domain/data-access notes
