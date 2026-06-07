@@ -1,10 +1,11 @@
 # web/ - Web UI Layer
 
 **Module:** Web interface, JSP pages, servlets, REST controllers  
-**Files:** ~484 Java files, ~419 JSP files  
+**Files:** 484 Java files, 419 JSP files  
 
 > **前端共存:** 新 React SPA 运行于 `/app/*` 路径，旧 JSP 继续运行于 `/legacy/*`（通过 Nginx 路由）。
 > 新前端代码位于 `frontend/src/`，与 web 模块无关。REST 控制器仍在此模块中供新旧前端共用。
+> **Legacy removal status:** this module is still legacy-heavy. Current scan shows 189 `SecureController`/`CoreSecureController` subclasses and 419 JSP files. Do not delete servlets/JSPs until the matching SPA route, module API, redirect, and permission behavior are verified.
 
 ## STRUCTURE
 
@@ -35,6 +36,7 @@ web/src/main/webapp/
 | Admin panel | `control/admin/` | System administration |
 | REST API | `controller/` | Spring @Controller classes |
 | JSP pages | `webapp/WEB-INF/jsp/` | View templates |
+| Legacy deletion plan | `../docs/refactor/remove-legacy-code-plan.md` | Workflow migration and deletion gates |
 
 ## CONVENTIONS
 

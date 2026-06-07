@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-05 (Phase B schema ownership **COMPLETE**: 12 bidirectional sync triggers, 27 entities mapped to `module_*` tables, 24 SPI adapters created. Phase C SPI widening **complete**: 24/24 DAO families SPI-widened, 0 `new XxxDAO()` in consumer code.)
+> **Last updated:** 2026-06-07 (Legacy code removal is **not complete**. Phase B schema ownership and Phase C SPI widening are complete, but `shared/`, `web/`, and `ws/` still contain substantial legacy code. See `docs/refactor/remove-legacy-code-plan.md`.)
 > **Scope:** All remaining legacy code in `shared/`, `web/`, `ws/`
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -21,14 +21,18 @@
 | 5 | `datacapture` | Bridge to `item_data`/`response_set` | `/api/v1/data-capture` |
 | — | `identity` | Bridge to `user_account`/`study_user_role` | `/api/v1/identity` |
 
-### Remaining legacy code (~1,274 files; Phase B adds 10 migration files + 4 adapter files)
+### Remaining legacy code baseline (2026-06-07)
 
 ```
-shared/   ~770 files →  bean/  dao/  domain/  service/  logic/  job/  exception/  validator/  i18n/  patterns/  core/  log/
-web/      ~484 files →  control/ (186 servlets)  controller/ Spring MVC
-            + 419 JSP pages
-ws/        ~75 files →  SOAP endpoints + validators + beans + logic + client
+shared/   793 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
+          182 files under shared/src/main/java/org/researchedc/dao
+web/      484 Java files → control/ servlets, controller/ Spring MVC, view helpers, filters
+          419 JSP pages
+          189 SecureController/CoreSecureController subclass matches
+ws/       75 Java files → SOAP endpoints + validators + adapters + logic + client
 ```
+
+Important distinction: `legacy-core/` removal was a module consolidation into `shared/`; it was not full legacy code removal.
 
 ---
 
@@ -386,7 +390,7 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 
 ---
 
-## Phase G: JSP Strangulation (Infrastructure Built ✅ — Pages In Progress)
+## Phase G: JSP Strangulation (Infrastructure Built ✅ — Deletion NOT Complete)
 
 ### G1: Current State
 419 JSP pages across 6 functional areas. React SPA now replaces or provides:
@@ -424,7 +428,7 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 
 ### G3: Page Migration Roadmap
 
-**All batches complete (225/417 JSPs replaced across 6 phases):**
+SPA replacement coverage exists for major workflows, but physical JSP/servlet deletion is not complete. Current repository still contains 419 JSP files and 189 `SecureController`/`CoreSecureController` subclass matches. Treat the list below as replacement coverage, not deletion proof:
 - ✅ `managestudy/study/*` — **~20 JSPs** replaced by React StudyList/Create/Detail/Edit/Sites
 - ✅ `managestudy/subject/*` — **~40 JSPs** replaced by React SubjectList + SubjectDetail
 - ✅ `managestudy/event/*` — **~15 JSPs** replaced by React EventList/Schedule/Complete
@@ -439,7 +443,7 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 - ✅ `extract/` — **~50 JSPs** replaced by ExportCenter, DatasetBuilder, FilterBuilder
 - ✅ `login/` — **~16 JSPs** replaced by Keycloak OIDC & Profile page
 - ✅ `include/*` — **~61 JSPs** replaced by React AppLayout shell
-- ✅ Remaining **~137 JSPs** (print views, row fragments, edge views) accessible via `/app/legacy/*` LegacyFrame
+- 🔶 Remaining JSPs/servlets continue to be accessible through `/app/legacy/*` LegacyFrame or direct legacy routes until their deletion gates are met.
 
 ---
 
@@ -467,12 +471,12 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 | Phase | Description | Estimated Effort | Dependencies |
 |-------|-------------|-----------------|--------------|
 | A1-A5 | Write operations | ✅ COMPLETE | None |
-| B1-B3 | Schema ownership | 🔶 IN PROGRESS (~40%). 10 trigger migrations written (3,494 lines), 5 entities remapped, 2 adapters. | Phase A complete |
-| C1-C4 | Legacy code deletion | 🔶 In progress (19/19 DAO families SPI-widened — consumer widening complete; DAO file deletion blocked by module-owned replacement need) | **0 direct legacy constructor matches, 0 `DaoProvider.getDao()` calls. All 19 DAO families SPI-widened; 5 entities remapped to module-owned tables with dual-sync triggers (Phase B). Deletion gated on full schema ownership migration.** |
+| B1-B3 | Schema ownership | ✅ COMPLETE | 12 bidirectional sync triggers, 27 entities remapped, 24 adapters |
+| C1-C4 | Legacy code deletion | 🔶 In progress, not complete | **0 direct legacy constructor matches, 0 `DaoProvider.getDao()` calls, 24/24 DAO families SPI-widened. Physical deletion remains blocked by web/ws workflows, DAO implementation replacement proof, and shared bean/service/domain caller cleanup.** |
 | D1-D2 | Config migration | ✅ Complete | 11 XML → Java Config, dead XML stubs cleanup (2026-05-23) |
 | E1-E2 | Auth unification | ✅ Complete | Dual SecurityFilterChain (JWT API + OIDC web) |
 | F1-F2 | SOAP adapters | ✅ Infrastructure built | 3 adapters created; study/study-subject adapters are SPI-backed, UserAccountAdapter remains a concrete containment wrapper, and no `DaoProvider.getDao()` calls remain |
-| G1-G3 | JSP strangulation | ✅ Complete | 225/417 JSPs replaced; remaining 192 through LegacyFrame iframe |
+| G1-G3 | JSP strangulation | 🔶 Replacement coverage in progress; deletion not complete | 419 JSP files still present; 189 SecureController/CoreSecureController subclass matches remain |
 | H1 | Data migration | ✅ COMPLETE | Phase A complete |
 | **S1** | **Contract tests** | **✅ COMPLETE** | **41 MockMvc tests for 8 legacy-gateway controllers** |
 | **S2** | **Service tests** | **✅ COMPLETE** | **47 new tests + 25 frontend + 31 questionnaire** |

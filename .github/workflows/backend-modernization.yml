@@ -61,14 +61,8 @@ jobs:
           SPRING_DATASOURCE_USERNAME: clinica
           SPRING_DATASOURCE_PASSWORD: clinica
 
-      - name: Gauntlet — verify 0 new XxxDAO() in consumer code
-        run: |
-          echo "=== Checking for direct legacy DAO construction in consumer code ==="
-          git grep -n 'new \([A-Z][a-zA-Z]*DAO\b\|CrfDao\|RuleDao\|StudyDao\|SubjectDao\|DatasetDao\|FilterDao\|StudyGroupDao\|DiscrepancyNoteDao\|EventCrfDao\|ItemDao\|ItemDataDao\|ItemGroupDao\|SectionDao\|ItemFormMetadataDao\|ItemGroupMetadataDao\)(' -- '*.java' ':!app/src/main/java/org/researchedc/config/' ':!shared/src/main/java/org/researchedc/dao/' ':!*Test*.java' ':!*adapter/Item*' ':!*adapter/Section*' ':!*adapter/Event*' ':!*adapter/Crf*' ':!*adapter/Rule*' ':!*adapter/Study*' ':!*adapter/Subject*' ':!*adapter/User*' ':!*adapter/Filter*' ':!*adapter/Dataset*' ':!*adapter/Discrepancy*' > /tmp/gauntlet-new-dao.txt || true
-          if [ -s /tmp/gauntlet-new-dao.txt ]; then
-            echo "❌ FAIL: Found remaining direct legacy DAO construction:"
-            cat /tmp/gauntlet-new-dao.txt
-            exit 1
-          else
-            echo "✅ PASS: 0 direct legacy DAO construction sites in consumer code"
-          fi
+      - name: Legacy guardrails
+        run: bash scripts/ci/check-legacy-guardrails.sh
+
+      - name: Phase B migration static checks
+        run: bash scripts/ci/check-phase-b-migrations.sh

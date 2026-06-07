@@ -9,6 +9,8 @@ mkdir -p "${REPORT_DIR}"
 echo "=== Legacy Refactor Report ==="
 echo "Generating report at ${REPORT_FILE} ..."
 
+bash scripts/ci/legacy-baseline.sh "${REPORT_DIR}" >/dev/null
+
 LEGACY_DAO_IMPORTS=0
 LEGACY_BEAN_IMPORTS=0
 JSP_COUNT=0
@@ -26,13 +28,13 @@ LEGACY_DAO_IMPORTS=$(echo "$DAO_IMPORTS" | grep -c . || true)
 BEAN_IMPORTS=$(grep -rl --include='*.java' 'org\.akaza\.openclinica\.\(.*\.\)\?bean\.' app/ web/ ws/ shared/ 2>/dev/null || true)
 LEGACY_BEAN_IMPORTS=$(echo "$BEAN_IMPORTS" | grep -c . || true)
 
-JSP_FILES=$(find web -name '*.jsp' 2>/dev/null || true)
+JSP_FILES=$(find web/src/main/webapp -name '*.jsp' 2>/dev/null || true)
 JSP_COUNT=$(echo "$JSP_FILES" | grep -c . || true)
 
-SC_CLASSES=$(grep -rl --include='*.java' 'extends\s\+SecureController\|extends\s\+CoreSecureController' web/ 2>/dev/null || true)
+SC_CLASSES=$(grep -rl --include='*.java' 'extends\s\+SecureController\|extends\s\+CoreSecureController' web/src/main/java 2>/dev/null || true)
 SECURE_CONTROLLER_COUNT=$(echo "$SC_CLASSES" | grep -c . || true)
 
-SOAP_FILES=$(find ws -name '*.java' 2>/dev/null || true)
+SOAP_FILES=$(find ws/src/main/java -name '*.java' 2>/dev/null || true)
 SOAP_JAVA_COUNT=$(echo "$SOAP_FILES" | grep -c . || true)
 
 EHCACHE_FILES=$(grep -rl --include='*.java' 'net\.sf\.ehcache\|Ehcache\|CacheManager' app/ web/ ws/ shared/ 2>/dev/null || true)
@@ -65,7 +67,7 @@ Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
 | org.akaza.openclinica.*bean.* residual imports | ${LEGACY_BEAN_IMPORTS} |
 | JSP files (web/) | ${JSP_COUNT} |
 | SecureController subclasses (web/) | ${SECURE_CONTROLLER_COUNT} |
-| SOAP Java files (ws/) | ${SOAP_JAVA_COUNT} |
+| SOAP Java files (ws/src/main/java) | ${SOAP_JAVA_COUNT} |
 | Ehcache usage files | ${EHCACHE_USAGE} |
 | javax.* residual import files | ${JAX_COUNT} |
 | Module legacy imports (app/module/) | ${MODULE_LEGACY_IMPORTS} |
@@ -149,7 +151,7 @@ cat >> "${REPORT_FILE}" <<SECTION5
 
 ## 5. SOAP Java Files
 
-Total SOAP Java files: ${SOAP_JAVA_COUNT}
+Total SOAP Java files under ws/src/main/java: ${SOAP_JAVA_COUNT}
 
 SECTION5
 

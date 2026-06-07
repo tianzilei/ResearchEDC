@@ -78,7 +78,7 @@ test methods awaiting reactivation.
 | SPI interfaces | ✅ 29 interfaces for DI (replaces direct DAO class references) |
 | Liquibase migrations | ✅ ~193 XML files, versioned from 3.x through 3.18 |
 | Strangulation target | 🔶 Active — new code goes to `app/module/` |
-| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. **11 of 19 DAO families** have been SPI-widened (StudyDAO, StudySubjectDAO, SubjectDAO, UserAccountDAO, CRFDAO, CRFVersionDAO, DiscrepancyNoteDAO, EventCRFDAO, ItemDAO, ItemDataDAO, ItemGroupDAO). **8 remaining families** (`StudyEventDAO`, `StudyEventDefinitionDAO`, `RuleSetDAO`, `RuleDAO`, `DatasetDAO`, `FilterDAO`, `StudyGroupClassDAO`, `StudyGroupDAO`) await SPI widening. |
+| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 182 DAO/SPI/implementation files still exist. Deletion is blocked until module-owned repositories/services fully replace the SPI implementations and legacy web/ws workflows no longer need the DAO behavior. |
 
 ## ANTI-PATTERNS
 

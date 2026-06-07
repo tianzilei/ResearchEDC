@@ -1,7 +1,9 @@
 # ws/ - Web Services
 
 **Module:** SOAP web services for study/subject/event management  
-**Files:** ~75 Java files  
+**Files:** 75 Java files  
+
+> **Legacy removal status:** SOAP remains part of the legacy surface. Endpoint adapters reduce DAO coupling, but the module is not deleted and should be retired only after each external SOAP contract has an owner-approved replacement or deprecation path.
 
 ## STRUCTURE
 
@@ -25,6 +27,7 @@ ws/src/main/java/org/researchedc/
 | Subject operations | `ws/StudySubjectEndpoint.java` | Subject CRUD |
 | Event operations | `ws/EventEndpoint.java` | Study event endpoints |
 | CRF operations | `ws/CrfEndpoint.java` | Case report form endpoints |
+| Legacy deletion plan | `../docs/refactor/remove-legacy-code-plan.md` | SOAP retirement gates |
 
 ## CONVENTIONS
 
