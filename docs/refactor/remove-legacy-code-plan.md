@@ -64,29 +64,31 @@ Remaining Phase 0 work:
 - Build the legacy route/workflow inventory and classify each artifact as `replace`, `retire`, `keep compatibility`, or `unknown`.
 - Add owner/deletion-gate metadata for each workflow slice.
 
-## Next Step: Phase B PostgreSQL Validation
+## Phase B PostgreSQL Validation
 
-Before deleting any legacy workflow or DAO implementation, validate the Phase B schema ownership triggers against a disposable PostgreSQL database.
+Status: **complete on 2026-06-07** against disposable PostgreSQL databases.
 
-Recommended sequence:
+Validated sequence:
 
-1. Start a disposable PostgreSQL database with the ResearchEDC schema prerequisites.
-2. Apply Liquibase from `shared/src/main/resources/migration/master.xml`.
-3. Verify that expected `sync_*` functions and `trg_sync_*` triggers exist for the 12 Phase B migration files checked by `scripts/ci/check-phase-b-migrations.sh`.
-4. Manually test bidirectional sync for low-risk domains first:
+1. Created disposable PostgreSQL databases owned by the `researchedc` role.
+2. Applied Liquibase from `shared/src/main/resources/migration/master.xml`.
+3. Verified expected `sync_*` functions and `trg_sync_*` triggers for the 12 Phase B migration files checked by `scripts/ci/check-phase-b-migrations.sh`.
+4. Tested bidirectional sync for representative low-risk domains:
    - `study` <-> `module_study`
    - `filter` <-> `module_filter`
    - `discrepancy_note` <-> `module_discrepancy_note`
-5. For each tested pair, verify legacy-to-module and module-to-legacy insert/update/delete propagation.
-6. Confirm no recursive trigger loop occurs under repeated updates.
-7. Convert the proven SQL checks into `scripts/ci/check-phase-b-postgres.sh`, gated by explicit database environment variables so it only runs when a disposable DB is available.
+5. Verified legacy-to-module and module-to-legacy insert/update/delete propagation for each tested pair.
+6. Confirmed repeated bidirectional updates converge without recursive trigger loops.
+7. Added `scripts/ci/check-phase-b-postgres.sh`, gated by explicit database environment variables so it only runs when a disposable DB is available.
+
+Validation uncovered and fixed a discrepancy-note migration bug: the legacy `discrepancy_note` table does not have `entity_id`, so legacy-to-module sync now stores `NULL AS entity_id` and module-to-legacy sync no longer writes that column.
 
 Exit gate:
 
-- Static migration checks pass.
-- Liquibase applies cleanly to PostgreSQL.
+- Static migration checks pass: `bash scripts/ci/check-phase-b-migrations.sh`.
+- Liquibase applies cleanly to PostgreSQL from `shared/src/main/resources/migration/master.xml`.
 - Bidirectional sync is proven for representative low-risk domains.
-- A repeatable PostgreSQL validation script exists for future Phase B changes.
+- A repeatable PostgreSQL validation script exists for future Phase B changes: `scripts/ci/check-phase-b-postgres.sh`.
 
 ## Phase 1: Web/JSP Workflow Deletion
 
