@@ -66,7 +66,7 @@ Completed on 2026-06-07 after Phase B validation:
 - `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 764 `replace`, 125 `keep compatibility`, and 70 `unknown` artifacts.
 - `scripts/ci/generate-legacy-report.sh` now includes the workflow inventory artifacts in the generated legacy report.
 - The first low-risk Phase 1 vertical slice is selected: `phase-1-admin-read-only`, documented in `docs/refactor/phase-1-admin-read-only-slice.md`.
-- `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows: 1 `deleted`, 1 `covered`, 47 `needs replacement`, and 2 `blocked`.
+- `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows: 1 `deleted`, 2 `covered`, 46 `needs replacement`, and 2 `blocked`.
 
 Remaining Phase 0 work:
 

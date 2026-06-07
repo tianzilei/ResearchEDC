@@ -3,9 +3,12 @@ package org.researchedc.module.audit.controller;
 import java.util.List;
 
 import org.researchedc.module.audit.dto.AuditLogDTO;
+import org.researchedc.module.audit.dto.AuditUserLoginDTO;
+import org.researchedc.module.audit.dto.AuditUserLoginQuery;
 import org.researchedc.module.audit.dto.DatabaseChangeLogDTO;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
+import org.researchedc.module.audit.service.AuditUserLoginService;
 import org.researchedc.module.audit.service.DatabaseChangeLogService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +26,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuditController {
 
     private final AuditService auditService;
+    private final AuditUserLoginService auditUserLoginService;
     private final DatabaseChangeLogService databaseChangeLogService;
 
     public AuditController(AuditService auditService,
+                           AuditUserLoginService auditUserLoginService,
                            DatabaseChangeLogService databaseChangeLogService) {
         this.auditService = auditService;
+        this.auditUserLoginService = auditUserLoginService;
         this.databaseChangeLogService = databaseChangeLogService;
     }
 
@@ -41,6 +47,19 @@ public class AuditController {
     @GetMapping("/{id}")
     public ResponseEntity<AuditLogDTO> getAuditLog(@PathVariable Long id) {
         return ResponseEntity.ok(auditService.getAuditLog(id));
+    }
+
+    @GetMapping("/user-logins")
+    @PreAuthorize("hasRole('SYSADMIN')")
+    public ResponseEntity<Page<AuditUserLoginDTO>> listUserLogins(
+            @RequestParam(required = false) String userName,
+            @RequestParam(required = false) String loginAttemptDate,
+            @RequestParam(required = false) String loginStatus,
+            @RequestParam(required = false) String details,
+            Pageable pageable) {
+        AuditUserLoginQuery query = new AuditUserLoginQuery(
+                userName, loginAttemptDate, loginStatus, details, pageable);
+        return ResponseEntity.ok(auditUserLoginService.listUserLogins(query));
     }
 
     @GetMapping("/database-changelog")
