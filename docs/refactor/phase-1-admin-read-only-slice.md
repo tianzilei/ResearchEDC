@@ -34,12 +34,22 @@ The initial ledger contains 51 rows:
 
 | Status | Count | Meaning |
 |---|---:|---|
-| `needs replacement` | 48 | A frontend route or partial API exists, but backend field/permission/audit parity is not proven. |
-| `blocked` | 3 | Product/route or endpoint replacement decision is needed before implementation. |
+| `needs replacement` | 49 | A frontend route or partial API exists, but backend field/permission/audit parity is not fully proven. |
+| `blocked` | 2 | Product/route retirement decision is needed before implementation. |
 
 ## First Execution Tasks
 
-1. Resolve the blocked `ReportController` `/healthcheck` row by splitting/replacing its rule-schedule helper endpoints before any health route redirect/removal.
+1. Move clients/probes from legacy `ReportController` `/healthcheck` to `/api/v1/dashboard/health` and `/api/v1/rules/schedule/*`, then redirect or unregister the legacy routes after reference checks.
 2. For audit rows, compare legacy JSP/servlet fields and filters against `/api/v1/audit` and `/app/admin/audit-log`.
 3. For system/log/job rows, add or identify module-owned backend APIs before deleting JSP/servlet paths.
 4. Delete only rows marked `covered` or `retire`, one workflow at a time, after route, permission, output parity, and reference checks pass.
+
+## Replacement Progress
+
+Rule schedule replacement added:
+
+- `POST /api/v1/rules/schedule/check` replaces `/healthcheck/runonschedule`.
+- `POST /api/v1/rules/schedule/current-date` replaces `/healthcheck/rulecurrentdate`.
+- `GET /api/v1/rules/schedule/default-runtime` replaces `/healthcheck/runtime`.
+
+Legacy `/healthcheck` remains in place until callers/probes are moved and route references are proven absent.
