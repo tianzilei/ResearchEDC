@@ -6,6 +6,41 @@
 
 ---
 
+## 2026-06-09 - Documentation sync after Enterprise and mail removal
+
+- **Commit:** `7d62e73ad` removed Enterprise and active mail-delivery surfaces; this documentation pass refreshes the current baseline and inventory.
+- **Modules:** `app`, `shared`, `web`, `frontend`, `docs`, `.sisyphus`
+- **Reason:** Keep the handoff docs aligned after Phase 1 deletion slices and avoid documenting Enterprise, mail delivery, or the absent `ws/` SOAP module as active functionality.
+
+### Changes
+
+1. **Enterprise / mail status:**
+   - Retired Enterprise UI/functionality and related legacy routes.
+   - Recorded the deletion of 6 login auxiliary servlets, 11 JSPs, the Enterprise SPA page, mail sender classes, and mail-delivery dependencies.
+   - Clarified that active mail delivery is retired, while email/contact fields remain compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
+
+2. **Legacy inventory refresh:**
+   - Regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` with `scripts/ci/generate-legacy-inventory.py`.
+   - Current active inventory: 515 artifacts; 377 `replace`, 99 `keep compatibility`, 39 `unknown`.
+
+3. **Current baseline:**
+   - `shared/`: 713 Java files; `shared/dao`: 175 files.
+   - `web/`: 263 Java files; 175 JSP files; 87 `SecureController`/`CoreSecureController` subclasses.
+   - `ws/`: absent from the current tree.
+   - `frontend/src`: 102 TypeScript/TSX files; `questionnaire-service`: 76 Python files.
+
+4. **Documentation updates:**
+   - Updated root/module `AGENTS.md`, `README.md`, `docs/refactor/remove-legacy-code-plan.md`, `.sisyphus/LEGACY_REFACTOR_PLAN.md`, deployment notes, and the login plan.
+   - Marked email-change/mail-verification flows as superseded by the email-field removal plan; future account and research-contact flows should not require email.
+
+### Verification Baseline
+
+- `mvn -pl app -am compile -DskipTests` passed in the removal slice.
+- `mvn test -pl app -am` passed 295/295 in the removal slice.
+- `ModulithVerificationTest` passed 1/0/0.
+- `cd frontend && pnpm typecheck` passed.
+- `cd frontend && pnpm test --run` passed 25/25.
+
 ## 2026-06-05 — Phase B 完成：24/24 DAO 家族 SPI 拓宽 + Module Adapter 完善
 
 - **模块:** `app`, `shared`, `web`

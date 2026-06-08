@@ -31,7 +31,7 @@ bash deploy.sh start
 
 | 服务 | 端口 | 说明 |
 |------|------|------|
-| App | 8080 | Spring Boot 内嵌 Tomcat (React SPA + Legacy JSP + SOAP) |
+| App | 8080 | Spring Boot 内嵌 Tomcat (React SPA + Legacy JSP + REST/OpenRosa APIs) |
 | Questionnaire | 8000 | Python FastAPI |
 
 ## 管理命令

@@ -78,15 +78,15 @@ Completed on 2026-06-07:
 Completed on 2026-06-07 after Phase B validation:
 
 - `scripts/ci/generate-legacy-inventory.py` generates CSV and Markdown inventories for legacy servlets, JSPs, Spring MVC routes, SOAP endpoints, DAO files, Quartz jobs, and shared services.
-- `docs/refactor/legacy-workflow-inventory.csv` initially recorded 963 artifacts with `replace`, `keep compatibility`, or `unknown` classifications and deletion gates; after deleting `ReportController`, the active inventory records 959 artifacts.
-- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 764 `replace`, 125 `keep compatibility`, and 70 `unknown` artifacts.
+- `docs/refactor/legacy-workflow-inventory.csv` initially recorded 963 artifacts. The regenerated 2026-06-09 inventory now records 515 active artifacts after Phase 1 deletion slices and SOAP module retirement.
+- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 377 `replace`, 99 `keep compatibility`, and 39 `unknown` artifacts.
 - `scripts/ci/generate-legacy-report.sh` now includes the workflow inventory artifacts in the generated legacy report.
 - The first low-risk Phase 1 vertical slice is selected: `phase-1-admin-read-only`, documented in `docs/refactor/phase-1-admin-read-only-slice.md`.
 - `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows: 1 `deleted`, 3 `covered`, 45 `needs replacement`, and 2 `blocked`.
 
 Remaining Phase 0 work:
 
-- Reduce the 70 `unknown` inventory rows by assigning owners/categories in follow-up slice ledgers.
+- Reduce the 39 `unknown` inventory rows by assigning owners/categories in follow-up slice ledgers.
 - Add per-workflow owner metadata once the first slice ledger is created.
 
 Current next action:
@@ -269,15 +269,15 @@ spa_subject_detail    — Use full SPA subject detail (no legacy fallbacks)
 
 ## Phase 2: SOAP Retirement
 
-**Goal:** remove `ws/` or reduce it to a separately versioned compatibility adapter.
+**Goal:** keep SOAP retired in the current tree, or reduce any future compatibility surface to a separately versioned adapter.
 
-- Identify consumers for each SOAP endpoint.
+- Current baseline: `ws/` is absent and the generated inventory has no active SOAP endpoints.
 - Provide REST/module API replacements or formally deprecate the endpoint.
 - Replace adapter calls that still rely on legacy DAOs with module service ports.
 - Add contract tests for retained compatibility endpoints.
 - Remove SOAP schema/build dependencies only after no endpoint remains.
 
-**Exit gate:** `ws/` is deleted, or only an explicit compatibility module remains with no dependency on legacy DAOs/services.
+**Exit gate:** `ws/` remains absent, or only an explicit compatibility module exists with no dependency on legacy DAOs/services.
 
 ## Phase 3: DAO Implementation Deletion
 
@@ -304,7 +304,7 @@ High-risk DAO groups:
 
 **Goal:** remove legacy DTOs, services, rule helpers, jobs, and OpenClinica-era utility code that no longer has callers.
 
-- Delete DTO beans after the last servlet/SOAP/DAO caller is gone.
+- Delete DTO beans after the last servlet/DAO caller is gone; SOAP is already absent in the current tree.
 - Move business rules needed by the SPA/modules into module-owned services.
 - Retire Quartz jobs or rewrite them against module services.
 - Replace OpenClinica-specific exception/utility types where they leak into public APIs.
@@ -329,7 +329,7 @@ Candidates after prior phases:
 **Removed dependencies (19 total):**
 - web/pom.xml: XOM, EZMorph, spring-security-acl, Jersey (3 deps), jdom2 (6)
 - shared/pom.xml: JExcel (1)
-- ws/pom.xml: POI, Commons Math3, Commons Collections4, Commons Validator, Commons FileUpload, Commons IO, JDOM2, Jakarta Mail, Joda Time, Commons Lang3, ByteBuddy (11)
+- retired ws/pom.xml surface: POI, Commons Math3, Commons Collections4, Commons Validator, Commons FileUpload, Commons IO, JDOM2, Jakarta Mail, Joda Time, Commons Lang3, ByteBuddy (11)
 - parent pom.xml + research-edc-bom/pom.xml: jxl.version, sitemesh, jersey, jdom2, stax-ex, commons-logging, commons-beanutils-core properties and dependency management entries
 
 **Cannot remove yet (still actively used):**
@@ -344,7 +344,7 @@ Candidates after prior phases:
 - Old commons-dbcp — 7 imports (ExtendedBasicDataSource, controllers)
 - JSTL — 575 JSP references
 
-**Exit gate:** Maven modules `web` and `ws` are removed or no longer contain legacy runtime dependencies.
+**Exit gate:** Maven module `web` is removed or no longer contains legacy runtime dependencies; `ws` remains absent.
 
 ## Verification Commands
 
@@ -365,7 +365,7 @@ Use targeted E2E/curl checks for the workflow being removed.
 Legacy code removal is complete only when all are true:
 
 - `web/` has no JSPs, no `SecureController`/`CoreSecureController` production subclasses, and no legacy servlet registrations.
-- `ws/` is removed or explicitly retained as a non-legacy compatibility adapter.
+- `ws/` remains absent or is explicitly retained as a non-legacy compatibility adapter.
 - `shared/dao` legacy implementations are removed or replaced by module-owned ports with no legacy SQL delegation.
 - Legacy-only beans/services/jobs/utilities in `shared/` have no callers and are deleted.
 - Legacy-only dependencies are removed from Maven.
