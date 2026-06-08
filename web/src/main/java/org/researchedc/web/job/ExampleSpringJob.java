@@ -71,7 +71,6 @@ public class ExampleSpringJob extends QuartzJobBean {
     public static final String CDISC13OC = "cdisc13oc";
     public static final String SPSS = "spss";
     public static final String DATASET_ID = "dsId";
-    public static final String EMAIL = "contactEmail";
     public static final String USER_ID = "user_id";
     public static final String STUDY_NAME = "study_name";
     public static final String STUDY_ID = "studyId";
@@ -113,7 +112,6 @@ public class ExampleSpringJob extends QuartzJobBean {
              * jobDataMap.put(TAB, tab); jobDataMap.put(CDISC, cdisc);
              * jobDataMap.put(SPSS, spss);
              */
-            String alertEmail = dataMap.getString(EMAIL);
             String localeStr = dataMap.getString(LOCALE);
             if (localeStr != null) {
                 locale = Locale.of(localeStr);

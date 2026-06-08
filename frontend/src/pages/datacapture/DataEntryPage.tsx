@@ -250,17 +250,6 @@ export default function DataEntryPage() {
         </div>
       ),
     },
-    {
-      key: "rules",
-      label: "Rules",
-      children: (
-        <div style={{ padding: 24, textAlign: "center" }}>
-          <Button onClick={() => window.open(`/ViewRuleSetAudit?eventCrfId=${parsedEventCrfId}`, "_blank")}>
-            Evaluate Rules
-          </Button>
-        </div>
-      ),
-    },
   ];
 
   const canComplete =
@@ -314,9 +303,7 @@ export default function DataEntryPage() {
             <Button onClick={() => window.open(`/AdministrativeEditing?eventCrfId=${parsedEventCrfId}`, "_blank")}>
               Admin Edit
             </Button>
-            <Button onClick={() => window.open(`/PrintCRF?eventCrfId=${parsedEventCrfId}`, "_blank")}>
-              Print CRF
-            </Button>
+
             <Button onClick={handleBack}>
               Back
             </Button>

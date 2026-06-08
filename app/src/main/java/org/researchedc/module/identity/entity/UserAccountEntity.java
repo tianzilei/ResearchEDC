@@ -23,7 +23,7 @@ public class UserAccountEntity {
     private String lastName;
 
     @Column(length = 255)
-    private String email;
+    private String email; // compatibility field; email delivery retired, new accounts write empty string
 
     @Column(name = "phone", length = 255)
     private String phone;

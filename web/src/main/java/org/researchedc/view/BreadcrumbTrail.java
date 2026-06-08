@@ -221,10 +221,7 @@ public class BreadcrumbTrail {
              * this.generateURLString(request), Status.PENDING),2);
              * closeRestOfTrail(2); }
              */
-            else if (jspPage.equals(Page.SUBMIT_DATA)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("submit_data"), "ListStudySubjectsSubmit", Status.PENDING));
-            } else if (jspPage.equals(Page.VIEW_STUDY_SUBJECT)) {
+            else if (jspPage.equals(Page.VIEW_STUDY_SUBJECT)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_subjects"), "ListStudySubject", Status.AVAILABLE));
@@ -324,21 +321,7 @@ public class BreadcrumbTrail {
                     advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("data_entry"), "InitialDataEntry" + this.generateURLString(request),
                             Status.PENDING), ordinal);
                 closeRestOfTrail(ordinal);
-            } else if (jspPage.equals(Page.DOUBLE_DATA_ENTRY)) {
-                int ordinal = trail.size() - 2;
-                trail =
-                    advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("data_entry"), "DoubleDataEntry" + this.generateURLString(request),
-                            Status.PENDING), ordinal);
-                closeRestOfTrail(ordinal);
-            } else if (jspPage.equals(Page.MARK_EVENT_CRF_COMPLETE)) {
-                int ordinal = trail.size() - 1;
-                trail =
-                    advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("mark_event_CRF_complete"), "MarkEventCRFComplete"
-                        + this.generateURLString(request), Status.PENDING), ordinal);
-                closeRestOfTrail(ordinal);
-            }
-
-            else if (jspPage.equals(Page.CREATE_STUDY1)) {
+            } else if (jspPage.equals(Page.CREATE_STUDY1)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("study_description"), "#", Status.PENDING));
                 trail.add(new BreadcrumbBean(resworkflow.getString("study_status"), "#", Status.UNAVAILABLE));
@@ -770,25 +753,6 @@ public class BreadcrumbTrail {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("extract_datasets"), "ExtractDatasetsMain", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("view_filters"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.VIEW_RULES)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("rule_manage_assignment"), "ViewRuleAssignment", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("rule_manage"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.VIEW_RULE_SETS)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("rule_manage_assignment"), "ViewRuleAssignment", Status.AVAILABLE));
-            } else if (jspPage.equals(Page.IMPORT_RULES)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("import_rules_1"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("import_rules_2"), "ViewRuleAssignment", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("import_rules_3"), "#", Status.AVAILABLE));
-            } else if (jspPage.equals(Page.TEST_RULES)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("test_rules_validate"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("test_rules_test"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("test_rules_get_results"), "TestRule", Status.AVAILABLE));
             }
             // else {
             // trail = new ArrayList();

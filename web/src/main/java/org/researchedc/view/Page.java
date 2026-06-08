@@ -296,25 +296,6 @@ public enum Page {
      */
     IMPORT_CRF_DATA ("/WEB-INF/jsp/submit/import.jsp", "Import CRF Data"),
     VERIFY_IMPORT_SERVLET ("/VerifyImportedCRFData", "Verify Imported CRF Data Servlet"),
-    VERIFY_IMPORT_CRF_DATA ("/WEB-INF/jsp/submit/verifyImport.jsp", "Verify Imported CRF Data"),
-
-    /**
-     * Page for creating rule imports
-     */
-    IMPORT_RULES ("/WEB-INF/jsp/submit/importRules.jsp", "Import Rules"),
-    VIEW_RULE_SETS ("/WEB-INF/jsp/submit/listRuleSets.jsp", "List Rule Assignments"),
-    VIEW_RULE_SETS2 ("/WEB-INF/jsp/submit/listRuleSets2.jsp", "List Rule Assignments"),
-    VIEW_RULE_SETS_DESIGNER ("/WEB-INF/jsp/submit/listRuleSetsDesigner.jsp", "List Rule Assignments"),
-    VERIFY_RULES_IMPORT_SERVLET ("/VerifyImportedRule", "Verify Imported Rule Servlet"),
-    VERIFY_RULES_IMPORT ("/WEB-INF/jsp/submit/verifyImportRule.jsp", "Verify Imported Rules"),
-    VIEW_RULES ("/WEB-INF/jsp/submit/viewRules.jsp", "View Rules"),
-    VIEW_EXECUTED_RULES ("/WEB-INF/jsp/submit/viewExecutedRules.jsp", "View Rules"),
-    LIST_RULE_SETS_SERVLET ("/ViewRuleAssignment", "List Rule Assignments"),
-    REMOVE_RULE_SET ("/WEB-INF/jsp/submit/removeRuleSet.jsp", "Remove RuleSet"),
-    RESTORE_RULE_SET ("/WEB-INF/jsp/submit/restoreRuleSet.jsp", "Remove RuleSet"),
-    VIEW_EXECUTED_RULES_FROM_CRF ("/WEB-INF/jsp/submit/viewExecutedRulesFromCrf.jsp", "View Results"),
-    VIEW_RULESET_AUDITS ("/WEB-INF/jsp/submit/viewRuleSetAudits.jsp", "View Rule Audits"),
-    TEST_RULES ("/WEB-INF/jsp/submit/testRules.jsp", "Test Rules"),
 
     /**
      * Page for creating crf version.
@@ -413,9 +394,6 @@ public enum Page {
     MANAGE_STUDY_SERVLET ("/ManageStudy", "Manage Study Servlet"),
 
     SUBMIT_DATA ("/WEB-INF/jsp/" + "submit/index.jsp", "Submit Data Menu"),
-    // SUBMIT_DATA_SERVLET ("/SubmitData",
-    // "Submit Data Menu"),
-    SUBMIT_DATA_SERVLET ("/ListStudySubjectsSubmit", "Submit Data Menu"),
 
     CREATE_NEW_STUDY_EVENT ("/WEB-INF/jsp/" + "submit/createNewStudyEvent.jsp", "Create a New Study Event"),
     CREATE_NEW_STUDY_EVENT_SERVLET ("/CreateNewStudyEvent", "Create a New Study Event"),
@@ -439,8 +417,6 @@ public enum Page {
 
     DOUBLE_DATA_ENTRY ("/WEB-INF/jsp/" + "submit/doubleDataEntry.jsp", "Double Data Entry"),
     DOUBLE_DATA_ENTRY_SERVLET ("/DoubleDataEntry", "Double Data Entry"),
-
-    MARK_EVENT_CRF_COMPLETE ("/WEB-INF/jsp/" + "submit/markEventCRFComplete.jsp", "Mark Event CRF Complete"),
 
     ADMIN_EDIT ("/WEB-INF/jsp/" + "submit/administrativeEditing.jsp", "Administrative Editing"),
     ADMIN_EDIT_SERVLET ("/AdministrativeEditing", "Administrative Editing Servlet"),
@@ -519,10 +495,7 @@ public enum Page {
     ADD_DISCREPANCY_NOTE_DONE ("/WEB-INF/jsp/submit/addDiscrepancyNoteDone.jsp", "Add Discrepancy Note Done"),
     ADD_DISCREPANCY_NOTE_SAVE_DONE ("/WEB-INF/jsp/submit/addDiscrepancyNoteSaveDone.jsp", "Add Discrepancy Note Save Done"),
 
-    VIEW_DISCREPANCY_NOTE ("/WEB-INF/jsp/submit/viewDiscrepancyNote.jsp", "View Discrepancy Note"),
     VIEW_DISCREPANCY_NOTES_IN_STUDY ("/WEB-INF/jsp/managestudy/viewNotes.jsp", "View Discrepancy Notes in Study"),
-    VIEW_DISCREPANCY_NOTES_IN_STUDY_PRINT ("/WEB-INF/jsp/managestudy/viewNotesPrint.jsp",
-            "View Discrepancy Notes in Study Print"),
     VIEW_DISCREPANCY_NOTES_IN_STUDY_SERVLET ("/ViewNotes", "View Discrepancy Notes in Study"),
     VIEW_SINGLE_NOTE ("/WEB-INF/jsp/managestudy/viewNote.jsp", "View Single Note"),
 

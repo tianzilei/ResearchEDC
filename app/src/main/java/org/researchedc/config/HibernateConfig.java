@@ -76,30 +76,18 @@ public class HibernateConfig {
     //  Rule DAOs
     // ──────────────────────────────────────────────────────────────────────
 
-    @Bean
-    public RuleActionRunLogDomainDao ruleActionRunLogDao() {
-        return new RuleActionRunLogDao();
-    }
+    // RuleActionRunLogDao replaced by @Primary RuleActionRunLogDaoAdapter
 
     @Bean
     public RuleSetDomainDao ruleSetDao() {
         return new RuleSetDao();
     }
 
-    @Bean
-    public RuleSetAuditDomainDao ruleSetAuditDao() {
-        return new RuleSetAuditDao();
-    }
+    // RuleSetAuditDao replaced by @Primary RuleSetAuditDaoAdapter
 
-    @Bean
-    public IRuleSetRuleDAO ruleSetRuleDao() {
-        return new RuleSetRuleDao();
-    }
+    // RuleSetRuleDao replaced by @Primary RuleSetRuleDaoAdapter
 
-    @Bean
-    public IRuleSetRuleAuditDAO ruleSetRuleAuditDao() {
-        return new RuleSetRuleAuditDao();
-    }
+    // RuleSetRuleDao replaced by @Primary RuleSetRuleDaoAdapter
 
     // ──────────────────────────────────────────────────────────────────────
     //  CRF / Item DAOs
@@ -110,10 +98,7 @@ public class HibernateConfig {
         return new ItemGroupMetadataDao();
     }
 
-    @Bean
-    public SCDItemMetadataDomainDao scdItemMetadataDao() {
-        return new SCDItemMetadataDao();
-    }
+    // SCDItemMetadataDao replaced by @Primary SCDItemMetadataDaoAdapter
 
     // ──────────────────────────────────────────────────────────────────────
     //  Event / CRF DAOs
@@ -123,10 +108,7 @@ public class HibernateConfig {
     //  Study / Subject DAOs
     // ──────────────────────────────────────────────────────────────────────
 
-    @Bean
-    public StudyParameterValueDao studyParameterValueDao() {
-        return new StudyParameterValueDao();
-    }
+    // StudyParameterValueDao replaced by @Primary StudyParameterValueDaoAdapter
 
     // ──────────────────────────────────────────────────────────────────────
     //  User / Auth DAOs
@@ -175,15 +157,9 @@ public class HibernateConfig {
     //  Dynamics / Flag DAOs
     // ──────────────────────────────────────────────────────────────────────
 
-    @Bean
-    public DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao() {
-        return new DynamicsItemFormMetadataDao();
-    }
+    // DynamicsItemFormMetadataDao replaced by @Primary DynamicsItemFormMetadataDaoAdapter
 
-    @Bean
-    public DynamicsItemGroupMetadataDao dynamicsItemGroupMetadataDao() {
-        return new DynamicsItemGroupMetadataDao();
-    }
+    // DynamicsItemGroupMetadataDao replaced by @Primary DynamicsItemGroupMetadataDaoAdapter
 
     // ──────────────────────────────────────────────────────────────────────
     //  Misc / Config / Tag DAOs

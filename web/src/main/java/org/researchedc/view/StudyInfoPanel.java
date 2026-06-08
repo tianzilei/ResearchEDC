@@ -417,8 +417,7 @@ public class StudyInfoPanel {
                 this.setSubmitDataModule(false);
                 this.setCreateDataset(false);
 
-            } else if (page.equals(Page.LIST_STUDY_SUBJECT) || page.equals(Page.LIST_STUDY_SUBJECTS) || page.equals(Page.SUBMIT_DATA)
-                || page.equals(Page.SUBMIT_DATA_SERVLET)) {
+            } else if (page.equals(Page.LIST_STUDY_SUBJECT) || page.equals(Page.LIST_STUDY_SUBJECTS)) {
                 this.reset();
                 this.setStudyInfoShown(true);
                 this.setOrderedData(true);
@@ -451,18 +450,6 @@ public class StudyInfoPanel {
                 this.setCreateDataset(false);
                 this.setIconInfoShown(true);
                 this.setManageSubject(false);
-            } else if (page.equals(Page.VIEW_RULE_SETS2)) {
-                HashMap eventlist = (HashMap) request.getAttribute("eventlist");
-                ArrayList displayData = generateEventTree(eventlist, false);
-
-                this.reset();
-                this.setUserOrderedData(displayData);
-                this.setStudyInfoShown(true);
-                this.setOrderedData(true);
-                this.setCreateDataset(false);
-                this.setSubmitDataModule(false);
-                this.setExtractData(false);
-
             } else {
                 // automatically reset if we don't know what's happening
                 this.reset();

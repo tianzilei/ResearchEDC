@@ -574,9 +574,7 @@ public abstract class CoreSecureController extends HttpServlet {
             // rq_names += " - " + en_request.nextElement();
             // }
             // logger.info(rq_names);
-            if (!request.getRequestURI().endsWith("ResetPassword")) {
-                passwdTimeOut(request, response, ub);
-            }
+            passwdTimeOut(request, response, ub);
             mayProceed(request, response);
             //   pingJobServer(request);
             processRequest(request, response);

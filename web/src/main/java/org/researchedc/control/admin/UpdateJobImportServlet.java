@@ -69,15 +69,12 @@ public class UpdateJobImportServlet extends SecureController {
         request.setAttribute(CreateJobImportServlet.JOB_DESC, trigger.getDescription());
 
         dataMap = trigger.getJobDataMap();
-        String contactEmail = dataMap.getString(ImportSpringJob.EMAIL);
-        logger.debug("found email: " + contactEmail);
         int userId = dataMap.getInt(ImportSpringJob.USER_ID);
         int hours = dataMap.getInt(CreateJobImportServlet.HOURS);
         int minutes = dataMap.getInt(CreateJobImportServlet.MINUTES);
         String directory = dataMap.getString(ImportSpringJob.DIRECTORY);
         String studyName = dataMap.getString(ImportSpringJob.STUDY_NAME);
 
-        request.setAttribute(ImportSpringJob.EMAIL, contactEmail);
         request.setAttribute(ImportSpringJob.STUDY_NAME, studyName);
         request.setAttribute("filePath", directory);
         request.setAttribute("firstFilePath", IMPORT_DIR);

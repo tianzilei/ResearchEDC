@@ -18,8 +18,6 @@ interface ImportType {
 const IMPORT_TYPES: ImportType[] = [
   { key: "crf-data", label: "CRF 数据", jsp: "ImportCRFData", desc: "从 ODM XML 文件导入 CRF 数据", accept: ".xml" },
   { key: "crf-def", label: "CRF 定义", jsp: "ImportCRFInfo", desc: "导入 CRF 定义和元数据", accept: ".xml,.xls,.xlsx" },
-  { key: "rule", label: "规则", jsp: "ImportRule", desc: "导入规则定义 XML", accept: ".xml" },
-  { key: "subject", label: "受试者", jsp: "ImportSubject", desc: "导入受试者数据", accept: ".csv,.xls,.xlsx" },
 ];
 
 export default function ImportManager() {
@@ -90,7 +88,7 @@ export default function ImportManager() {
             <div>
               <Title level={4} style={{ margin: 0 }}>数据导入</Title>
               <Text type="secondary">
-                导入 CRF 数据、定义、规则和受试者 — 选择导入类型并上传文件
+                导入 CRF 数据和定义 — 选择导入类型并上传文件
               </Text>
             </div>
           </Space>

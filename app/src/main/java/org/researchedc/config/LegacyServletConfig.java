@@ -31,15 +31,6 @@ public class LegacyServletConfig {
             registerServlet(servletContext, "ImportCRFData",
                     "org.researchedc.control.submit.ImportCRFDataServlet",
                     "/ImportCRFData");
-            registerServlet(servletContext, "VerifyImportedCRFData",
-                    "org.researchedc.control.submit.VerifyImportedCRFDataServlet",
-                    "/VerifyImportedCRFData");
-            registerServlet(servletContext, "ImportRule",
-                    "org.researchedc.control.submit.ImportRuleServlet",
-                    "/ImportRule");
-            registerServlet(servletContext, "VerifyImportedRule",
-                    "org.researchedc.control.submit.VerifyImportedRuleServlet",
-                    "/VerifyImportedRule");
             registerServlet(servletContext, "ImportCRFInfo",
                     "org.researchedc.control.submit.ImportCRFInfo",
                     "/ImportCRFInfo");

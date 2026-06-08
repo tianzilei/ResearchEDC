@@ -36,7 +36,6 @@ public class TriggerService {
     public static final String SPSS = "spss";
     public static final String DATASET_ID = "dsId";
     public static final String DATE_START_JOB = "job";
-    public static final String EMAIL = "contactEmail";
     public static final String JOB_NAME = "jobName";
     public static final String JOB_DESC = "jobDesc";
     public static final String USER_ID = "user_id";
@@ -52,7 +51,6 @@ public class TriggerService {
         // check the above?
         int datasetId = fp.getInt(DATASET_ID);
         String period = fp.getString(PERIOD);
-        String email = fp.getString(EMAIL);
         String jobName = fp.getString(JOB_NAME);
         String jobDesc = fp.getString(JOB_DESC);
         String spss = fp.getString(SPSS);
@@ -97,7 +95,7 @@ public class TriggerService {
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put(DATASET_ID, datasetId);
         jobDataMap.put(PERIOD, period);
-        jobDataMap.put(EMAIL, email);
+        jobDataMap.put("contactEmail", "");
         jobDataMap.put(TAB, tab);
         jobDataMap.put(CDISC, cdisc);
         jobDataMap.put(ExampleSpringJob.CDISC12, cdisc12);
@@ -131,7 +129,6 @@ public class TriggerService {
 
         String jobName = fp.getString(JOB_NAME);
 
-        String email = fp.getString(EMAIL);
         String jobDesc = fp.getString(JOB_DESC);
         String directory = fp.getString(DIRECTORY);
 
@@ -157,7 +154,7 @@ public class TriggerService {
         // set job data map
         JobDataMap jobDataMap = new JobDataMap();
 
-        jobDataMap.put(EMAIL, email);
+        jobDataMap.put("contactEmail", "");
         jobDataMap.put(USER_ID, userAccount.getId());
         jobDataMap.put(STUDY_NAME, study.getName());
         jobDataMap.put(STUDY_OID, study.getOid());
@@ -175,7 +172,7 @@ public class TriggerService {
         v.addValidation(JOB_NAME, Validator.NO_BLANKS);
         // need to be unique too
         v.addValidation(JOB_DESC, Validator.NO_BLANKS);
-        v.addValidation(EMAIL, Validator.IS_A_EMAIL);
+        v.addValidation("contactEmail", Validator.IS_A_EMAIL);
         v.addValidation(PERIOD, Validator.NO_BLANKS);
         v.addValidation(DATE_START_JOB + "Date", Validator.IS_A_DATE);
         // v.addValidation(DATE_START_JOB + "Date", new Date(), Validator.DATE_IS_AFTER_OR_EQUAL);
@@ -354,8 +351,8 @@ public class TriggerService {
         v.addValidation(JOB_NAME, Validator.NO_LEADING_OR_TRAILING_SPACES);
         // need to be unique too
         v.addValidation(JOB_DESC, Validator.NO_BLANKS);
-        if (!"".equals(fp.getString(EMAIL))) {
-            v.addValidation(EMAIL, Validator.IS_A_EMAIL);
+        if (!"".equals(fp.getString("contactEmail"))) {
+            v.addValidation("contactEmail", Validator.IS_A_EMAIL);
         }
         // << tbh we are now allowing email to be optional
         // v.addValidation(PERIOD, Validator.NO_BLANKS);

@@ -54,7 +54,6 @@ export default function LogViewer() {
       {error ? (
         <Result status="warning" title="日志查看器不可用"
           subTitle={error}
-          extra={<Button onClick={() => window.open("/legacy/ViewLogMessage", "_blank")}>打开旧版日志查看器</Button>}
         />
       ) : logs.length === 0 && !loading ? (
         <Card>

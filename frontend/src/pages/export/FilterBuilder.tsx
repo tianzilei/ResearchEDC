@@ -57,15 +57,6 @@ export default function FilterBuilder() {
       title: t("filter.column.created"), dataIndex: "dateCreated", key: "created",
       render: (v: string) => v ? new Date(v).toLocaleDateString() : "-",
     },
-    {
-      title: "", key: "actions",
-      render: (_: unknown, record: FilterItem) => (
-        <Button size="small"
-          onClick={() => window.open(`/legacy/ViewFilterDetails?id=${record.id}`, "_blank")}>
-          {t("filter.action.viewDetails")}
-        </Button>
-      ),
-    },
   ];
 
   return (

@@ -625,9 +625,7 @@ public abstract class SecureController extends HttpServlet {
             // rq_names += " - " + en_request.nextElement();
             // }
             // logger.info(rq_names);
-            if (!request.getRequestURI().endsWith("ResetPassword")) {
-                passwdTimeOut();
-            }
+            passwdTimeOut();
             mayProceed();
             pingJobServer(request);
             processRequest();

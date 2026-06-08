@@ -53,7 +53,6 @@
 <jsp:useBean scope='request' id='cdisc13' class='java.lang.String'/>
 <jsp:useBean scope='request' id='cdisc13oc' class='java.lang.String'/>
 <jsp:useBean scope='request' id='spss' class='java.lang.String'/>
-<jsp:useBean scope='request' id='contactEmail' class='java.lang.String'/>
 
 <h1><span class="title_manage"><fmt:message key="update_scheduled_job" bundle="${resword}"/>: <fmt:message key="export_dataset" bundle="${resword}"/></span></h1>
 <p>
@@ -172,12 +171,6 @@
 
 
 
-	<tr>
-		<td class="text"><b><fmt:message key="contact_email" bundle="${resword}"/>:</b><br>
-		<jsp:include page="../showMessage.jsp"><jsp:param name="key" value="contactEmail"/></jsp:include></td>
-		<td class="text"><input type="text" name="contactEmail" size="60" value="<c:out value="${contactEmail}"/>"/>
-		</td>
-	</tr>
 	<tr>
 
 	</tr>
