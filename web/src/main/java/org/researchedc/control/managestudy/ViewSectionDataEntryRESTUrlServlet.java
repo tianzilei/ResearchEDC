@@ -41,7 +41,7 @@ import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.AddNewSubjectServlet;
-import org.researchedc.control.submit.TableOfContentsServlet;
+import org.researchedc.control.submit.TableOfContentsHelper;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.ICrfVersionDAO;
@@ -284,7 +284,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
             request.setAttribute("resolvedNum", resolvedNum + "");
             request.setAttribute("notAppNum", notAppNum + "");
 
-            DisplayTableOfContentsBean displayBean = TableOfContentsServlet.getDisplayBean(ecb, getDataSource(), currentStudy, this.studySubjectDao,
+            DisplayTableOfContentsBean displayBean = TableOfContentsHelper.getDisplayBean(ecb, getDataSource(), currentStudy, this.studySubjectDao,
                     this.studyEventDao, this.sectionDao, this.itemGroupDao, this.studyEventDefinitionDao, this.crfVersionDao, this.crfDao, this.studyDao,
                     this.eventDefinitionCrfDao);
             // Make sure that the interviewDate in the eventCRF is properly
@@ -325,7 +325,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
                 return;
             }
         } else if (crfVersionId > 0) {// for viewing blank CRF
-            DisplayTableOfContentsBean displayBean = ViewTableOfContentServlet.getDisplayBean(crfVersionId, this.sectionDao, this.crfVersionDao, this.crfDao);
+            DisplayTableOfContentsBean displayBean = TableOfContentsHelper.getDisplayBean(crfVersionId, this.sectionDao, this.crfVersionDao, this.crfDao);
             request.setAttribute("toc", displayBean);
             ArrayList sections = displayBean.getSections();
 

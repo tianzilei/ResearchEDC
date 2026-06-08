@@ -152,11 +152,6 @@
         ${findSubjectsHtml}
     </form>
 </div>
-    <div id="addSubjectForm" style="display:none;">
-         <c:import url="addSubjectMonitor.jsp"/>
-    </div>
-
-
 </c:if>
 
 <c:if test="${userRole.coordinator || userRole.director}">

@@ -8,17 +8,17 @@
 package org.researchedc.view;
 
 /**
- * 
- * 
+ *
+ *
  *         Provides a type-safe enumeration for JSP Page,converted from original static class.
  *         @author jnyayapathi
  */
 public enum Page {
-	
-	
-	
-          
-  
+
+
+
+
+
 
     /**
      * Page for logging in
@@ -37,32 +37,32 @@ public enum Page {
      */
                 MENU("/WEB-INF/jsp/menu.jsp", "Welcome to OpenClinica"),
                 MENU_SERVLET("/MainMenu", "Welcome to OpenClinica Main Servlet"),
-              
+
     // YW 06-25-2007 <<
     /**
      * Page for reset password when password is expired.
      */
                 RESET_PASSWORD("/WEB-INF/jsp/login/resetPassword.jsp", "Reset your expired password"),
-                
+
     // YW >>
 
     /**
      * Page for user to update profile
      */
                 UPDATE_PROFILE("/WEB-INF/jsp/login/updateProfile.jsp", "Update your profile"),
-                
+
 
     /**
      * Page for user to confirm inputs of updating profile
      */
                 UPDATE_PROFILE_CONFIRM("/WEB-INF/jsp/login/updateProfileConfirm.jsp", "Confirm your profile"),
-                
+
 
     /**
      * Page for user to request password
      */
                 CONTACT("/WEB-INF/jsp/login/contact.jsp", "Contact Form"),
-                
+
 
     /**
      * Page for user to request password
@@ -120,7 +120,6 @@ public enum Page {
 
     CONFIGURATION ("/WEB-INF/jsp/admin/configuration.jsp", "Configuration"),
    CONFIGURATION_PASSWORD_REQUIREMENTS("/WEB-INF/jsp/admin/configurationPasswordRequirements.jsp", "Configuration"),
-   SYSTEM_STATUSe("/WEB-INF/jsp/admin/systemStatus.jsp", "System Status"),
 
     /**
      * Page for creating a study.
@@ -322,15 +321,6 @@ public enum Page {
      * Page for creating crf.
      */
     BATCH_CRF_MIGRATION ("/WEB-INF/jsp/admin/batchCRFMigration.jsp", "batch CRF Migration"),
-    /**
-     * Page for viewing audit user activity.
-     */
-    AUDIT_USER_ACTIVITY ("/WEB-INF/jsp/admin/auditUserActivity.jsp", "Audit User Activity"),
-
-    /**
-     * Page for viewing audit database
-     */
-    AUDIT_DATABASE ("/WEB-INF/jsp/admin/auditDatabase.jsp", "Audit Database"),
 
     /**
      * Page for creating crf.
@@ -400,12 +390,6 @@ public enum Page {
     CREATE_CRF_VERSION_ERROR ("/WEB-INF/jsp/admin/createCRFVersionError.jsp", "Create a new CRF error"),
     REMOVE_CRF_VERSION_DEF ("/WEB-INF/jsp/admin/removeCRFVersionDef.jsp", "Remove CRF Version From Definition"),
 
-    AUDIT_LOG_USER ("/WEB-INF/jsp/admin/auditLogUser.jsp", "Audit Log display by User"),
-    AUDIT_LOG_STUDY ("/WEB-INF/jsp/admin/auditLogStudy.jsp", "Audit Log display by Study"),
-    AUDIT_LOGS_STUDY ("/WEB-INF/jsp/admin/studyAuditLog.jsp", "Audit Log display by Study"),
-
-    AUDIT_LOGS_ITEMS ("/WEB-INF/jsp/admin/auditItem.jsp", "Audit Log for Item"),
-
     /**
      * Page for extract datasets main, tbh
      */
@@ -449,7 +433,7 @@ public enum Page {
     ITEM_DETAIL ("/WEB-INF/jsp/extract/itemDetail.jsp", "Remove Dataset"),
     /**
      * Pages for create and show all filters, tbh
-     * 
+     *
      */
     APPLY_FILTER ("/WEB-INF/jsp/extract/applyFilter.jsp", "Apply Filter"),
     CREATE_FILTER_SCREEN_1 ("/WEB-INF/jsp/extract/createFilterScreen1.jsp", "Create Filter Screen One"),
@@ -480,17 +464,9 @@ public enum Page {
     UPDATE_JOB_EXPORT ("/WEB-INF/jsp/" + "admin/updateExportJob.jsp", "Update Export Job"),
     CREATE_JOB_IMPORT ("/WEB-INF/jsp/" + "admin/createImportJob.jsp", "Create Import Job"),
     UPDATE_JOB_IMPORT ("/WEB-INF/jsp/" + "admin/updateImportJob.jsp", "Update Import Job"),
-    VIEW_JOB ("/WEB-INF/jsp/" + "admin/viewJobs.jsp", "View Jobs"),
-    VIEW_ALL_JOBS ("/WEB-INF/jsp/" + "admin/viewAllJobs.jsp", "View Jobs"),
     VIEW_IMPORT_JOB ("/WEB-INF/jsp/" + "admin/viewImportJobs.jsp", "View Import Jobs"),
     VIEW_IMPORT_JOB_SERVLET ("/ViewImportJob", "View Import Jobs"),
-    VIEW_LOG_MESSAGE ("/WEB-INF/jsp/" + "admin/viewLogMessage.jsp", "View Log Message"),
-    // below line for redirect without having to generate the table, tbh
-    VIEW_JOB_SERVLET ("/ViewJob", "View Jobs"),
-    VIEW_SINGLE_JOB ("/WEB-INF/jsp/" + "admin/viewSingleJob.jsp", "View Jobs"),
-    // job creation and viewing pages, all under admin
     TECH_ADMIN_SYSTEM ("/WEB-INF/jsp/" + "techadmin/index.jsp", "Technical Administrator Menu"),
-    VIEW_SCHEDULER ("/WEB-INF/jsp/" + "admin/viewScheduler.jsp", "View System Scheduler"),
     ADMIN_SYSTEM_SERVLET ("/AdminSystem", "Administer System Servlet"),
     MANAGE_STUDY_SERVLET ("/ManageStudy", "Manage Study Servlet"),
 
@@ -507,11 +483,6 @@ public enum Page {
     ADD_EXISTING_SUBJECT ("/WEB-INF/jsp/" + "submit/addExistingSubject.jsp", "Enroll An Existing Subject"),
 
     INSTRUCTIONS_ENROLL_SUBJECT_SERVLET ("/AddNewSubject?instr=1", "Enroll New Subject Servlet"),
-
-    FIND_STUDY_EVENTS_SERVLET ("/FindStudyEvents", "Find Study Events"),
-    FIND_STUDY_EVENTS_STEP1 ("/WEB-INF/jsp/" + "submit/findStudyEventsStep1.jsp", "Find Study Events - Step 1"),
-    FIND_STUDY_EVENTS_STEP2 ("/WEB-INF/jsp/" + "submit/findStudyEventsStep2.jsp", "Find Study Events - Step 2"),
-    FIND_STUDY_EVENTS_STEP3 ("/WEB-INF/jsp/" + "submit/findStudyEventsStep3.jsp", "Find Study Events - Step 3"),
 
     ENTER_DATA_FOR_STUDY_EVENT ("/WEB-INF/jsp/" + "submit/enterDataForStudyEvent.jsp", "Enter Data for a Study Event"),
     ENTER_DATA_FOR_STUDY_EVENT_SERVLET ("/EnterDataForStudyEvent", "Enter Data for a Study Event"),
@@ -549,7 +520,6 @@ public enum Page {
     LIST_STUDY_SUBJECT ("/WEB-INF/jsp/" + "managestudy/listStudySubject.jsp", "list subjects in a study"),
     LIST_STUDY_SUBJECT_SERVLET ("/ListStudySubject", "list subjects in a study"),
     VIEW_STUDY_SUBJECT ("/WEB-INF/jsp/" + "managestudy/viewStudySubject.jsp", "View Subject in a study"),
-    VIEW_STUDY_SUBJECT_AUDIT ("/WEB-INF/jsp/" + "managestudy/viewStudySubjectAudit.jsp", "View Subject in a study Audit"),
     VIEW_STUDY_SUBJECT_SERVLET ("/ViewStudySubject", "View Subject in a study Servlet"),
 
     UPDATE_STUDY_SUBJECT ("/WEB-INF/jsp/" + "managestudy/updateStudySubject.jsp", "update Subject in a study"),
@@ -565,7 +535,6 @@ public enum Page {
 
     REMOVE_EVENT_CRF ("/WEB-INF/jsp/" + "managestudy/removeEventCRF.jsp", "Remove CRF from event"),
     RESTORE_EVENT_CRF ("/WEB-INF/jsp/" + "managestudy/restoreEventCRF.jsp", "Restore CRF to event"),
-    VIEW_EVENT_CRF ("/WEB-INF/jsp/" + "managestudy/viewEventCRF.jsp", "View Event CRF Data"),
     DELETE_EVENT_CRF ("/WEB-INF/jsp/" + "admin/deleteEventCRF.jsp", "Delete CRF from event"),
 
     UPDATE_SUBJECT ("/WEB-INF/jsp/" + "admin/updateSubject.jsp", "update a subject"),
@@ -584,21 +553,16 @@ public enum Page {
     SUBJECT_LIST ("/WEB-INF/jsp/admin/listSubject.jsp", "List all Subjects"),
     SUBJECT_LIST_SERVLET ("/ListSubject", "List all subjects servlet"),
 
-    VIEW_TABLE_OF_CONTENT ("/WEB-INF/jsp/managestudy/viewTableOfContents.jsp", "View Table Of Contents"),
-    VIEW_TABLE_OF_CONTENT_SERVLET ("/ViewTableOfContent", "View Table Of Contents Servlet"),
     VIEW_SECTION_DATA_ENTRY ("/WEB-INF/jsp/managestudy/viewSectionDataEntry.jsp", "View Section Data Entry"),
-    VIEW_SECTION_DATA_PREVIEW ("/WEB-INF/jsp/managestudy/viewSectionDataPreview.jsp", "View Section Data Preview"),
-    // YW 07-23-2007 << for preview in the issue000937
-    VIEW_SECTION_DATA_ENTRY_PREVIEW ("/SectionPreview", "Preview CRF Servlet"),
-    // YW >>
-
     VIEW_SECTION_DATA_ENTRY_PRINT ("/WEB-INF/jsp/managestudy/viewSectionDataEntryHtml.jsp", "View Section Data Entry Html"),
 
     VIEW_SECTION_DATA_ENTRY_SERVLET ("/ViewSectionDataEntry", "View Section Data Entry Servlet"),
 
+    VIEW_TABLE_OF_CONTENT ("/WEB-INF/jsp/managestudy/viewTableOfContents.jsp", "View Table Of Contents"),
+    VIEW_TABLE_OF_CONTENT_SERVLET ("/ViewTableOfContent", "View Table Of Contents Servlet"),
+
     EXPORT_DATA_CUSTOM ("", "Dataset Export"),
     VIEW_EVENT_CRF_CONTENT ("/WEB-INF/jsp/managestudy/viewEventCRFContent.jsp", "View Event CRF Content"),
-
     UPDATE_STUDY_EVENT ("/WEB-INF/jsp/managestudy/updateStudyEvent.jsp", "Upate Study Event"),
     UPDATE_STUDY_EVENT_SERVLET ("/UpdateStudyEvent", "Upate Study Event"),
     UPDATE_STUDY_EVENT_SIGNED ("/WEB-INF/jsp/managestudy/updateStudyEventSigned.jsp", "Upate Study Event"),
@@ -628,7 +592,6 @@ public enum Page {
     LIST_SUBJECT_DISC_NOTE ("/WEB-INF/jsp/managestudy/listSubjectDiscNote.jsp", "List Disc Notes By Subject"),
     LIST_DNOTES_FOR_CRF ("/WEB-INF/jsp/submit/listDNotesForCRF.jsp", "List Disc Notes By Subject and CRF"),
     CHOOSE_DOWNLOAD_FORMAT ("/WEB-INF/jsp/submit/chooseDownloadFormat.jsp", "Choose download format"),
-    LIST_SUBJECT_DISC_NOTE_SERVLET ("/ListDiscNotesSubjectServlet", "List Disc Notes Servlet"),
 
     FILE_UPLOAD ("/WEB-INF/jsp/submit/uploadFile.jsp", "Form For File Uploading"),
     //UPLOAD_FILE_SERVLET ("/UploadFile", "Upload File"),
@@ -642,26 +605,22 @@ public enum Page {
     // Page("pages/studymodule", "Manage study");
 
 
-    VIEW_ALL_SITE_DEFAULT_CRF_VERSIONS_PRINT ("/WEB-INF/jsp/managestudy/defaultAllSiteCrfVersionPrint.jsp",
-            "View default crf versions print"),
-    VIEW_DEFAULT_CRF_VERSIONS_PRINT ("/WEB-INF/jsp/managestudy/defaultCrfVersionPrint.jsp",
-            "View default crf versions print"),
-    VIEW_ALL_DEFAULT_CRF_VERSIONS_PRINT ("/WEB-INF/jsp/managestudy/defaultAllCrfVersionPrint.jsp",
-            "View default crf versions print"),
      MANAGE_STUDY_MODULE ( "/pages/studymodule",null),
-     VIEW_SECTION_DATA_ENTRY_SERVLET_REST_URL ("/ViewSectionDataEntryRESTUrlServlet", "View Section Data Entry Servlet for REST Url call"),
-     PARTICIPANT_FORM_SERVLET("/WEB-INF/jsp/submit/participantFormServlet.jsp","Participant Form Servlet");
-    
-      	
+     VIEW_SECTION_DATA_ENTRY_SERVLET_REST_URL ("/ViewSectionDataEntryRESTUrlServlet", "View Section Data Entry Servlet for REST Url call");
+
+
+
+
+
   //  private final static String path = "/WEB-INF/jsp/";
   //  public final static String servletPath = "/OpenClinica";
-    
+
 	private String fileName;
 	private String title;
-	
+
 	/**
      * Constructs the JSP Page instance
-     * 
+     *
      * @param fileName The filename of the JSP page
      * @param title The title of the JSP page
      */
@@ -672,7 +631,7 @@ public enum Page {
 
     /**
      * Gets the title attribute of the Page object.
-     * 
+     *
      * @return The title value
      */
     public String getTitle() {
@@ -681,7 +640,7 @@ public enum Page {
 
     /**
      * Gets the fileName attribute of the Page object.
-     * 
+     *
      * @return The fileName value
      */
     public String getFileName() {
@@ -692,10 +651,10 @@ public enum Page {
         this.fileName = newFileName;
     }
 
-    
-    
+
+
   /*  public static  Page setNewPage(String fileName, String title) {
-    
+
     	for (Page p : Page.values())
     	 {
     		if( p.fileName == fileName &&	 p.title == title)

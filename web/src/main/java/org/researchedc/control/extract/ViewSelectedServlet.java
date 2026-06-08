@@ -89,7 +89,7 @@ public class ViewSelectedServlet extends SecureController {
     public void processRequest() throws Exception {
 
         DatasetBean db = (DatasetBean) session.getAttribute("newDataset");
-        HashMap events = (HashMap) session.getAttribute(CreateDatasetServlet.EVENTS_FOR_CREATE_DATASET);
+        HashMap events = (HashMap) session.getAttribute(DatasetUtil.EVENTS_FOR_CREATE_DATASET);
         if (events == null) {
             events = new HashMap();
         }
@@ -98,7 +98,7 @@ public class ViewSelectedServlet extends SecureController {
         ICrfDAO crfdao = this.crfDao;
         IItemDAO idao = this.itemDao;
         IItemFormMetadataDAO imfdao = this.itemFormMetadataDao;
-        ArrayList ids = CreateDatasetServlet.allSedItemIdsInStudy(events, crfdao, idao);// new
+        ArrayList ids = DatasetUtil.allSedItemIdsInStudy(events, crfdao, idao);// new
                                                                                         // ArrayList();
         // ArrayList allItemsInStudy = EditSelectedServlet.selectAll(events,
         // crfdao, idao);

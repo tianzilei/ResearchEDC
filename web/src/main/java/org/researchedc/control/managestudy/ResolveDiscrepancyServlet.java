@@ -34,8 +34,8 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.submit.CreateDiscrepancyNoteServlet;
 import org.researchedc.control.submit.DataEntryServlet;
-import org.researchedc.control.submit.EnterDataForStudyEventServlet;
-import org.researchedc.control.submit.TableOfContentsServlet;
+import org.researchedc.control.submit.TableOfContentsHelper;
+import org.researchedc.control.submit.TableOfContentsHelper;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.EventCRFDao;
@@ -135,7 +135,7 @@ private static final String INPUT_NOTE_ID = "noteId";
 
             EventCRFDao ecdao = this.eventCrfDao;
             EventCRFBean ecb = (EventCRFBean) ecdao.findByPK(id);
-            request.setAttribute(TableOfContentsServlet.INPUT_EVENT_CRF_BEAN, ecb);
+            request.setAttribute(TableOfContentsHelper.INPUT_EVENT_CRF_BEAN, ecb);
             // If the request is passed along to ViewSectionDataEntryServlet,
             // that code needs
             // an event crf id; the (ecb.getId()+"") is necessary because
@@ -145,7 +145,7 @@ private static final String INPUT_NOTE_ID = "noteId";
         } else if ("studyevent".equalsIgnoreCase(entityType)) {
             IStudyEventDAO sedao = this.studyEventDao;
             StudyEventBean seb = (StudyEventBean) sedao.findByPK(id);
-            request.setAttribute(EnterDataForStudyEventServlet.INPUT_EVENT_ID, String.valueOf(id));
+            request.setAttribute(TableOfContentsHelper.INPUT_EVENT_ID, String.valueOf(id));
             request.setAttribute(UpdateStudyEventServlet.EVENT_ID, String.valueOf(id));
             request.setAttribute(UpdateStudyEventServlet.STUDY_SUBJECT_ID, String.valueOf(seb.getStudySubjectId()));
         }

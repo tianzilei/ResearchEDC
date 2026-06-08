@@ -45,9 +45,6 @@ public class LegacyServletConfig {
                     "/ImportCRFInfo");
 
             // ── Export servlets ─────────────────────────────────
-            registerServlet(servletContext, "ExportDataset",
-                    "org.researchedc.control.extract.ExportDatasetServlet",
-                    "/ExportDataset");
             registerServlet(servletContext, "CreateJobExport",
                     "org.researchedc.control.admin.CreateJobExportServlet",
                     "/CreateJobExport");
@@ -57,9 +54,6 @@ public class LegacyServletConfig {
             registerServlet(servletContext, "ViewImportJob",
                     "org.researchedc.control.admin.ViewImportJobServlet",
                     "/ViewImportJob");
-            registerServlet(servletContext, "ViewJob",
-                    "org.researchedc.control.admin.ViewJobServlet",
-                    "/ViewJob");
             registerServlet(servletContext, "ShowFile",
                     "org.researchedc.control.extract.ShowFileServlet",
                     "/ShowFile");
@@ -67,16 +61,7 @@ public class LegacyServletConfig {
                     "org.researchedc.control.extract.ChooseDownloadFormat",
                     "/ChooseDownloadFormat");
 
-            // ── Dataset export servlets ─────────────────────────
-            registerServlet(servletContext, "ExtractDatasetsMain",
-                    "org.researchedc.control.extract.ExtractDatasetsMainServlet",
-                    "/ExtractDatasetsMain");
-            registerServlet(servletContext, "CreateDataset",
-                    "org.researchedc.control.extract.CreateDatasetServlet",
-                    "/CreateDataset");
-            registerServlet(servletContext, "ViewDatasets",
-                    "org.researchedc.control.extract.ViewDatasetsServlet",
-                    "/ViewDatasets");
+
 
             log.info("Legacy import/export servlets registered");
         };

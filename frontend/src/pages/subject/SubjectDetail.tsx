@@ -2,10 +2,11 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Card, Descriptions, Button, Space, Typography, Table,
-  Modal, Form, Input, Select, message, Result,
+  Modal, Form, Input, Select, InputNumber, DatePicker, message, Result,
 } from "antd";
 
 import { SkeletonPage } from "@/components/SkeletonCard";
+import { useEventDefinitions, useScheduleEvent } from "@/hooks/useEvents";
 
 const { Title, Text } = Typography;
 
@@ -48,9 +49,18 @@ export default function SubjectDetail() {
   const [events, setEvents] = useState<StudyEvent[]>([]);
 
   const [signOpen, setSignOpen] = useState(false);
+  const [signLoading, setSignLoading] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
+  const [eventCreateOpen, setEventCreateOpen] = useState(false);
+  const [reassignOpen, setReassignOpen] = useState(false);
+  const [reassigning, setReassigning] = useState(false);
   const [signForm] = Form.useForm();
   const [updateForm] = Form.useForm();
+  const [eventCreateForm] = Form.useForm();
+  const [reassignForm] = Form.useForm();
+
+  const { data: eventDefs = [] } = useEventDefinitions(enrollment?.studyId);
+  const scheduleEvent = useScheduleEvent();
 
   const fetchData = useCallback(() => {
     if (!id) return;
@@ -74,7 +84,8 @@ export default function SubjectDetail() {
   const handleSign = async () => {
     try {
       const vals = await signForm.validateFields();
-      const res = await fetch(`/api/legacy/subjects/${id}/sign`, {
+      setSignLoading(true);
+      const res = await fetch(`/api/v1/subjects/${id}/sign`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(vals),
@@ -84,10 +95,13 @@ export default function SubjectDetail() {
         setSignOpen(false);
         signForm.resetFields();
       } else {
-        window.open(`/legacy/SignStudySubject?id=${id}`, "_blank");
-        setSignOpen(false);
+        message.error("签名失败，请稍后重试");
       }
-    } catch { void 0; }
+    } catch {
+      message.error("签名失败，请稍后重试");
+    } finally {
+      setSignLoading(false);
+    }
   };
 
   const handleUpdate = async () => {
@@ -107,6 +121,50 @@ export default function SubjectDetail() {
         message.error("Failed to update subject");
       }
     } catch { void 0; }
+  };
+
+  const handleCreateEvent = async () => {
+    try {
+      const vals = await eventCreateForm.validateFields();
+      await scheduleEvent.mutateAsync({
+        studySubjectId: Number(id),
+        studyEventDefinitionId: vals.eventDefinitionId,
+        location: vals.location ?? "",
+        ordinal: 0,
+        startDate: vals.startDate?.format("YYYY-MM-DD"),
+        endDate: vals.endDate?.format("YYYY-MM-DD"),
+      });
+      message.success("访视创建成功");
+      setEventCreateOpen(false);
+      eventCreateForm.resetFields();
+      fetchData();
+    } catch {
+      message.error("访视创建失败");
+    }
+  };
+
+  const handleReassign = async () => {
+    try {
+      const vals = await reassignForm.validateFields();
+      setReassigning(true);
+      const res = await fetch(`/api/v1/subjects/${id}/reassign`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studyId: vals.newStudyId }),
+      });
+      if (res.ok) {
+        message.success("受试者已重新分配");
+        setReassignOpen(false);
+        reassignForm.resetFields();
+        fetchData();
+      } else {
+        message.error("重新分配失败");
+      }
+    } catch {
+      message.error("重新分配失败");
+    } finally {
+      setReassigning(false);
+    }
   };
 
   if (loading) return <SkeletonPage />;
@@ -164,8 +222,7 @@ export default function SubjectDetail() {
             <Button onClick={() => { updateForm.setFieldsValue(subject); setUpdateOpen(true); }}>
               编辑
             </Button>
-            <Button
-              onClick={() => window.open(`/legacy/ReassignStudySubject?id=${id}`, "_blank")}>
+            <Button onClick={() => setReassignOpen(true)}>
               重新分配
             </Button>
             <Button onClick={() => navigate("/app/subjects")}>返回</Button>
@@ -196,7 +253,7 @@ export default function SubjectDetail() {
         styles={{ body: { padding: 0 } }}
         extra={
           <Button type="primary" size="small"
-            onClick={() => window.open(`/legacy/CreateNewStudyEvent?studySubjectId=${id}`, "_blank")}>
+            onClick={() => setEventCreateOpen(true)}>
             安排访视
           </Button>
         }
@@ -206,7 +263,8 @@ export default function SubjectDetail() {
       </Card>
 
       <Modal title="签署受试者数据" open={signOpen}
-        onOk={handleSign} onCancel={() => setSignOpen(false)}>
+        onOk={handleSign} onCancel={() => setSignOpen(false)}
+        confirmLoading={signLoading}>
         <Form form={signForm} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item name="reason" label="签署原因" rules={[{ required: true }]}>
             <Input.TextArea rows={3} placeholder="本人确认该数据完整准确" />
@@ -228,6 +286,41 @@ export default function SubjectDetail() {
           </Form.Item>
           <Form.Item name="dateOfBirth" label="出生日期">
             <Input placeholder="YYYY-MM-DD" />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal title="安排访视" open={eventCreateOpen}
+        onOk={handleCreateEvent} onCancel={() => setEventCreateOpen(false)}
+        confirmLoading={scheduleEvent.isPending}>
+        <Form form={eventCreateForm} layout="vertical" style={{ marginTop: 16 }}>
+          <Form.Item name="eventDefinitionId" label="访视定义" rules={[{ required: true, message: "请选择访视定义" }]}>
+            <Select
+              placeholder="选择访视类型"
+              options={eventDefs.map(d => ({
+                value: d.studyEventDefinitionId,
+                label: `${d.name}${d.ordinal ? ` (#${d.ordinal})` : ""}`,
+              }))}
+            />
+          </Form.Item>
+          <Form.Item name="location" label="地点">
+            <Input placeholder="例如：门诊部 1 楼" />
+          </Form.Item>
+          <Form.Item name="startDate" label="开始日期">
+            <DatePicker style={{ width: "100%" }} placeholder="选择开始日期" />
+          </Form.Item>
+          <Form.Item name="endDate" label="结束日期">
+            <DatePicker style={{ width: "100%" }} placeholder="选择结束日期（可选）" />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal title="重新分配受试者" open={reassignOpen}
+        onOk={handleReassign} onCancel={() => setReassignOpen(false)}
+        confirmLoading={reassigning}>
+        <Form form={reassignForm} layout="vertical" style={{ marginTop: 16 }}>
+          <Form.Item name="newStudyId" label="新研究 ID" rules={[{ required: true, message: "请输入新研究 ID" }]}>
+            <InputNumber style={{ width: "100%" }} min={1} placeholder="输入目标研究 ID" />
           </Form.Item>
         </Form>
       </Modal>

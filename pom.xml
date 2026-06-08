@@ -12,7 +12,6 @@
 		<module>research-edc-bom</module>
 		<module>shared</module>
 		<module>web</module>
-		<module>ws</module>
 		<module>app</module>
 	</modules>
 
@@ -54,11 +53,9 @@
 		<commons-math3.version>3.6.1</commons-math3.version>
 		<joda-time.version>2.12.7</joda-time.version>
 		<poi.version>5.2.5</poi.version>
-		<jxl.version>2.6.12</jxl.version>
 		<openpdf.version>2.0.2</openpdf.version>
 		<castor.version>1.4.1</castor.version>
 		<postgresql.version>42.7.3</postgresql.version>
-		<sitemesh.version>3.2.1</sitemesh.version>
 		<rome.version>1.18.0</rome.version>
 		<servlet-api.version>4.0.1</servlet-api.version>
 		<jakarta-servlet.version>6.0.0</jakarta-servlet.version>
@@ -66,16 +63,15 @@
 		<jakarta-transaction.version>2.0.1</jakarta-transaction.version>
 		<jakarta-mail.version>2.1.3</jakarta-mail.version>
 		<jakarta-xml-bind.version>4.0.1</jakarta-xml-bind.version>
-		<jakarta-xml-soap.version>3.0.1</jakarta-xml-soap.version>
-		<saaj-impl.version>3.0.3</saaj-impl.version>
+
+
 		<jstl-api.version>3.0.0</jstl-api.version>
 		<jstl-impl.version>3.0.1</jstl-impl.version>
 		<mockito.version>5.11.0</mockito.version>
 		<byte-buddy.version>1.14.12</byte-buddy.version>
 		<testcontainers.version>1.19.8</testcontainers.version>
-		<spring-ws.version>4.0.10</spring-ws.version>
-		<jersey.version>3.1.5</jersey.version>
-		<jdom2.version>2.0.6.1</jdom2.version>
+
+
 		<logback.version>1.5.7</logback.version>
 		<janino.version>3.1.10</janino.version>
 		<liquibase.version>4.3.5</liquibase.version>
@@ -149,21 +145,13 @@
 				<artifactId>slf4j-api</artifactId>
 				<version>2.0.16</version>
 			</dependency>
-			<dependency>
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging</artifactId>
-				<version>1.3.0</version>
-			</dependency>
+
 			<dependency>
 				<groupId>org.codehaus.castor</groupId>
 				<artifactId>castor-core</artifactId>
 				<version>1.4.1</version>
 			</dependency>
-			<dependency>
-				<groupId>org.jvnet.staxex</groupId>
-				<artifactId>stax-ex</artifactId>
-				<version>2.1.0</version>
-			</dependency>
+
 			<dependency>
 				<groupId>io.dropwizard.metrics</groupId>
 				<artifactId>metrics-core</artifactId>
@@ -231,11 +219,6 @@
 				<version>${poi.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>net.sourceforge.jexcelapi</groupId>
-				<artifactId>jxl</artifactId>
-				<version>${jxl.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>com.github.librepdf</groupId>
 				<artifactId>openpdf</artifactId>
 				<version>${openpdf.version}</version>
@@ -249,11 +232,6 @@
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
 				<version>${postgresql.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.sitemesh</groupId>
-				<artifactId>sitemesh</artifactId>
-				<version>${sitemesh.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.rometools</groupId>
@@ -295,16 +273,7 @@
 				<artifactId>jakarta.xml.bind-api</artifactId>
 				<version>${jakarta-xml-bind.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>jakarta.xml.soap</groupId>
-				<artifactId>jakarta.xml.soap-api</artifactId>
-				<version>${jakarta-xml-soap.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.xml.messaging.saaj</groupId>
-				<artifactId>saaj-impl</artifactId>
-				<version>${saaj-impl.version}</version>
-			</dependency>
+
 			<dependency>
 				<groupId>jakarta.servlet.jsp.jstl</groupId>
 				<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
@@ -345,38 +314,9 @@
 				<artifactId>junit-jupiter</artifactId>
 				<version>${testcontainers.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.springframework.ws</groupId>
-				<artifactId>spring-ws-core</artifactId>
-				<version>${spring-ws.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.ws</groupId>
-				<artifactId>spring-ws-security</artifactId>
-				<version>${spring-ws.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.jersey.core</groupId>
-				<artifactId>jersey-server</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.jersey.core</groupId>
-				<artifactId>jersey-client</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.jersey.ext</groupId>
-				<artifactId>jersey-spring6</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jdom</groupId>
-				<artifactId>jdom2</artifactId>
-				<version>${jdom2.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+
+</dependencies>
+</dependencyManagement>
 
 
 
@@ -609,21 +549,11 @@
 			<artifactId>antlr</artifactId>
 			<version>2.7.6</version>
 		</dependency>
-		<!-- required for WSDL schema collection -->
-		<dependency>
-			<groupId>org.apache.ws.commons.schema</groupId>
-			<artifactId>XmlSchema</artifactId>
-			<version>1.4.7</version>
-		</dependency>
 		<dependency>
 			<groupId>org.codehaus.castor</groupId>
 			<artifactId>castor-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils-core</artifactId>
-			<version>1.8.3</version>
-		</dependency>
+
 		<dependency>
 	<groupId>io.dropwizard.metrics</groupId>
 	<artifactId>metrics-core</artifactId>

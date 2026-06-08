@@ -1,7 +1,7 @@
 # ResearchEDC
 
 - Version: 0.1
-- Last updated: 2026-06-07
+- Last updated: 2026-06-08
 - License: GNU LGPL
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x.
@@ -53,11 +53,11 @@ Current legacy removal baseline:
 
 | Surface | Current Count | Removal Gate |
 |---------|---------------|--------------|
-| `web/` Java | 484 files | Routes migrated to SPA/module APIs, servlet registrations removed |
-| JSP pages | 419 files | No direct navigation or include dependency remains |
+| `web/` Java | 480 files | Routes migrated to SPA/module APIs, servlet registrations removed |
+| JSP pages | 416 files | No direct navigation or include dependency remains |
 | `ws/` Java | 75 files | SOAP retired or backed by non-legacy module ports |
-| `shared/dao` | 182 files | SPI implementations replaced by module-owned repositories/services |
-| SecureController subclasses | 189 matches | Workflow migrated or deleted |
+| `shared/dao` | 186 files | SPI implementations replaced by module-owned repositories/services |
+| SecureController subclasses | 186 matches | Workflow migrated or deleted |
 
 For detailed handoff notes, see [AGENTS.md](./AGENTS.md), [.sisyphus/LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md), and [docs/refactor/remove-legacy-code-plan.md](./docs/refactor/remove-legacy-code-plan.md).
 

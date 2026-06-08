@@ -14,7 +14,9 @@ import {
   Button,
   Modal,
   Form,
+  Input,
   InputNumber,
+  Switch,
   message,
   Popconfirm,
 } from "antd";
@@ -70,6 +72,9 @@ export default function RuleSetDetail() {
 
   const [addOpen, setAddOpen] = useState(false);
   const [addForm] = Form.useForm();
+  const [createOpen, setCreateOpen] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createForm] = Form.useForm();
   const queryClient = useQueryClient();
   const parsedRuleSetIdNum = ruleSetId ? Number(ruleSetId) : 0;
 
@@ -156,6 +161,33 @@ export default function RuleSetDetail() {
       addForm.resetFields();
       queryClient.invalidateQueries({ queryKey: ["rule-set", parsedRuleSetId] });
     } catch { void 0; }
+  };
+
+  const handleCreateRule = async () => {
+    try {
+      const vals = await createForm.validateFields();
+      setCreateLoading(true);
+      // Create the rule via API
+      const created: { ruleId: number } = await apiClient.post("/api/legacy/rules", {
+        name: vals.name,
+        description: vals.description ?? "",
+        enabled: vals.enabled ?? true,
+        expressionValue: vals.expressionValue ?? "",
+        expressionContext: null,
+      });
+      // Auto-add the new rule to the current rule set
+      await apiClient.post<void>(`/api/legacy/rule-sets/${parsedRuleSetIdNum}/rules`, {
+        ruleId: created.ruleId,
+      });
+      message.success("Rule created and added to rule set");
+      setCreateOpen(false);
+      createForm.resetFields();
+      queryClient.invalidateQueries({ queryKey: ["rule-set", parsedRuleSetId] });
+    } catch {
+      message.error("Failed to create rule");
+    } finally {
+      setCreateLoading(false);
+    }
   };
 
   const handleRemoveRule = async (ruleId: number) => {
@@ -272,9 +304,14 @@ export default function RuleSetDetail() {
       <Card
         title="Rules in this Rule Set"
         extra={
-          <Button type="primary" size="small" onClick={() => setAddOpen(true)}>
-            Add Rule
-          </Button>
+          <Space>
+            <Button type="primary" size="small" onClick={() => setCreateOpen(true)}>
+              Create Rule
+            </Button>
+            <Button size="small" onClick={() => setAddOpen(true)}>
+              Add Rule
+            </Button>
+          </Space>
         }
         style={{
           marginTop: 24,
@@ -311,6 +348,30 @@ export default function RuleSetDetail() {
         <Form form={addForm} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item name="ruleId" label="Rule ID" rules={[{ required: true }]}>
             <InputNumber style={{ width: "100%" }} placeholder="Enter rule ID" />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title="Create New Rule"
+        open={createOpen}
+        onOk={handleCreateRule}
+        onCancel={() => { setCreateOpen(false); createForm.resetFields(); }}
+        confirmLoading={createLoading}
+        okText="Create"
+      >
+        <Form form={createForm} layout="vertical" style={{ marginTop: 16 }}>
+          <Form.Item name="name" label="Rule Name" rules={[{ required: true }]}>
+            <Input placeholder="Enter rule name" />
+          </Form.Item>
+          <Form.Item name="description" label="Description">
+            <Input placeholder="Optional description" />
+          </Form.Item>
+          <Form.Item name="enabled" label="Enabled" valuePropName="checked" initialValue={true}>
+            <Switch />
+          </Form.Item>
+          <Form.Item name="expressionValue" label="Expression">
+            <Input.TextArea rows={3} placeholder="Expression value (e.g. age > 18)" />
           </Form.Item>
         </Form>
       </Modal>

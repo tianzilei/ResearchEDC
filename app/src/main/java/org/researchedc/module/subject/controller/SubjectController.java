@@ -4,6 +4,7 @@ import java.util.List;
 import jakarta.validation.Valid;
 import org.researchedc.module.subject.dto.CreateSubjectRequest;
 import org.researchedc.module.subject.dto.EnrollSubjectRequest;
+import org.researchedc.module.subject.dto.ReassignStudySubjectRequest;
 import org.researchedc.module.subject.dto.StudySubjectDTO;
 import org.researchedc.module.subject.dto.SubjectDTO;
 import org.researchedc.config.CurrentUserUtils;
@@ -13,12 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-
 
 @RestController
 @RequestMapping("/api/v1/subjects")
@@ -33,8 +33,7 @@ public class SubjectController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<SubjectDTO>> searchSubjects(
-            @RequestParam String query) {
+    public ResponseEntity<List<SubjectDTO>> searchSubjects(@RequestParam String query) {
         return ResponseEntity.ok(subjectService.searchSubjects(query));
     }
 
@@ -44,30 +43,34 @@ public class SubjectController {
     }
 
     @GetMapping("/by-study")
-    public ResponseEntity<List<StudySubjectDTO>> listStudySubjects(
-            @RequestParam Integer studyId) {
+    public ResponseEntity<List<StudySubjectDTO>> listStudySubjects(@RequestParam Integer studyId) {
         return ResponseEntity.ok(subjectService.listStudySubjects(studyId));
     }
 
     @GetMapping("/enrollment/{id}")
-    public ResponseEntity<StudySubjectDTO> getStudySubject(
-            @PathVariable Integer id) {
+    public ResponseEntity<StudySubjectDTO> getStudySubject(@PathVariable Integer id) {
         return ResponseEntity.ok(subjectService.getStudySubject(id));
     }
 
     @PostMapping
-    public ResponseEntity<SubjectDTO> createSubject(
-            @Valid @RequestBody CreateSubjectRequest request) {
+    public ResponseEntity<SubjectDTO> createSubject(@Valid @RequestBody CreateSubjectRequest request) {
         Integer ownerId = currentUserUtils.getCurrentUserId();
         SubjectDTO dto = subjectService.createSubject(request, ownerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PostMapping("/enroll")
-    public ResponseEntity<StudySubjectDTO> enrollSubject(
-            @Valid @RequestBody EnrollSubjectRequest request) {
+    public ResponseEntity<StudySubjectDTO> enrollSubject(@Valid @RequestBody EnrollSubjectRequest request) {
         Integer ownerId = currentUserUtils.getCurrentUserId();
         StudySubjectDTO dto = subjectService.enrollSubject(request, ownerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    }
+
+    @PutMapping("/api/v1/study-subjects/{id}/reassign")
+    public ResponseEntity<Void> reassignStudySubject(@PathVariable Integer id,
+            @Valid @RequestBody ReassignStudySubjectRequest request) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        subjectService.reassignStudySubject(id, request.getStudyId(), userId);
+        return ResponseEntity.ok().build();
     }
 }

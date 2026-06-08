@@ -10,24 +10,6 @@
     </description>
 
     <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
-            classpath:org/akaza/openclinica/applicationContext-security.xml
-            classpath:org/akaza/openclinica/applicationContext-web-beans.xml
-            classpath:org/akaza/openclinica/application-context-web-beans.xml
-            classpath:org/akaza/openclinica/applicationContext-core-timer.xml
-            classpath:org/akaza/openclinica/applicationContext-core-spring.xml
-            classpath:org/akaza/openclinica/applicationContext-core-security.xml
-            classpath:org/akaza/openclinica/applicationContext-core-service.xml
-            classpath:org/akaza/openclinica/applicationContext-core-scheduler.xml
-            classpath:org/akaza/openclinica/applicationContext-core-annotation-scheduler.xml
-            classpath:org/akaza/openclinica/applicationContext-core-hibernate.xml
-            classpath:org/akaza/openclinica/applicationContext-core-email.xml
-            classpath:org/akaza/openclinica/applicationContext-core-db.xml
-        </param-value>
-    </context-param>
-
-    <context-param>
         <param-name>jmesaMessagesLocation</param-name>
         <param-value>org/akaza/openclinica/jmesaResourceBundle</param-value>
     </context-param>
@@ -49,7 +31,6 @@
 
     <listener>
 
-
         <listener-class>
             org.springframework.security.web.session.HttpSessionEventPublisher
         </listener-class>
@@ -68,21 +49,6 @@
     </listener>
 
 
-    <!-- <filter> -->
-    <!-- <filter-name>restODMFilter</filter-name> -->
-    <!-- <filter-class>org.researchedc.web.filter.rest.RestODMFilter</filter-class> -->
-    <!-- <init-param> -->
-    <!--   <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name> -->
-    <!--   <param-value>org.researchedc.web.filter.rest</param-value> -->
-    <!-- </init-param> -->
-    <!-- </filter> -->
-
-
-    <!-- <filter-mapping> -->
-    <!-- <filter-name>restODMFilter</filter-name> -->
-    <!-- <url-pattern>/rest/*</url-pattern> -->
-    <!-- </filter-mapping> -->
-
 
     <filter>
         <filter-name>encodingFilter</filter-name>
@@ -96,9 +62,7 @@
             <param-value>true</param-value>
         </init-param>
 
-
     </filter>
-
 
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
@@ -114,7 +78,6 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-
     <servlet>
         <servlet-name>pages</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -129,20 +92,6 @@
     <servlet-mapping>
         <servlet-name>pages</servlet-name>
         <url-pattern>/oauth/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>ws</servlet-name>
-        <servlet-class>org.springframework.ws.transport.http.MessageDispatcherServlet</servlet-class>
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>/WEB-INF/ws-servlet-config.xml</param-value>
-        </init-param>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>ws</servlet-name>
-        <url-pattern>/ws/*</url-pattern>
     </servlet-mapping>
 
     <mime-mapping>
@@ -168,35 +117,6 @@
         <servlet-class>org.researchedc.control.extract.ChooseDownloadFormat</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ViewLogMessage</servlet-name>
-        <description>ViewLogMessage</description>
-        <servlet-class>org.researchedc.control.admin.ViewLogMessageServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RssReaderServlet</servlet-name>
-        <description>RssReaderServlet</description>
-        <servlet-class>org.researchedc.control.RssReaderServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>AuditUserActivityServlet</servlet-name>
-        <description>AuditUserActivityServlet</description>
-        <servlet-class>org.researchedc.control.admin.AuditUserActivityServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>SystemStatusServlet</servlet-name>
-        <description>SystemStatusServlet</description>
-        <servlet-class>org.researchedc.control.admin.SystemStatusServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>AuditDatabaseServlet</servlet-name>
-        <description>AuditDatabaseServlet</description>
-        <servlet-class>org.researchedc.control.admin.AuditDatabaseServlet</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>CheckCRFLocked</servlet-name>
         <description>CheckCRFLocked</description>
         <servlet-class>org.researchedc.control.submit.CheckCRFLocked</servlet-class>
@@ -214,12 +134,7 @@
         <servlet-class>org.researchedc.control.admin.ConfigurePasswordRequirementsServlet</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>DiscrepancyNoteOutputServlet</servlet-name>
-        <display-name>DiscrepancyNoteOutputServlet</display-name>
-        <description>DiscrepancyNoteOutputServlet</description>
-        <servlet-class>org.researchedc.control.extract.DiscrepancyNoteOutputServlet</servlet-class>
-    </servlet>
+
 
     <servlet>
         <servlet-name>FormServlet</servlet-name>
@@ -228,42 +143,14 @@
         <servlet-class>org.researchedc.view.form.FormServlet</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>ListDiscNotesForCRFServlet</servlet-name>
-        <display-name>ListDiscNotesForCRFServlet</display-name>
-        <description>ListDiscNotesForCRFServlet</description>
-        <servlet-class>org.researchedc.control.managestudy.ListDiscNotesForCRFServlet</servlet-class>
-    </servlet>
 
-    <!--    <servlet>
-            <servlet-name>ListDiscNotesSubjectServlet</servlet-name>
-            <display-name>ListDiscNotesSubjectServlet</display-name>
-            <description>ListDiscNotesSubjectServlet</description>
-            <servlet-class>org.researchedc.control.managestudy.ListDiscNotesSubjectServlet</servlet-class>
-        </servlet>-->
-    <servlet>
-        <servlet-name>ViewJobServlet</servlet-name>
-        <display-name>ViewJobServlet</display-name>
-        <description>ViewJobServlet</description>
-        <servlet-class>org.researchedc.control.admin.ViewJobServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewAllJobsServlet</servlet-name>
-        <display-name>ViewAllJobsServlet</display-name>
-        <description>ViewAllJobsServlet</description>
-        <servlet-class>org.researchedc.control.admin.ViewAllJobsServlet</servlet-class>
-    </servlet>
+
+
     <servlet>
         <servlet-name>ViewImportJobServlet</servlet-name>
         <display-name>ViewImportJobServlet</display-name>
         <description>ViewImportJobServlet</description>
         <servlet-class>org.researchedc.control.admin.ViewImportJobServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewSingleJobServlet</servlet-name>
-        <display-name>ViewSingleJobServlet</display-name>
-        <description>ViewSingleJobServlet</description>
-        <servlet-class>org.researchedc.control.admin.ViewSingleJobServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>PauseJobServlet</servlet-name>
@@ -351,49 +238,9 @@
         <servlet-class>org.researchedc.control.login.ChangeStudyServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AccessFileServlet</servlet-name>
-        <display-name>AccessFile</display-name>
-        <servlet-class>org.researchedc.control.extract.AccessFileServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ShowFileServlet</servlet-name>
-        <display-name>ShowFile</display-name>
-        <servlet-class>org.researchedc.control.extract.ShowFileServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>StudyAuditLogServlet</servlet-name>
-        <display-name>StudyAuditLog</display-name>
-        <servlet-class>org.researchedc.control.managestudy.StudyAuditLogServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AuditLogUserServlet</servlet-name>
-        <display-name>AuditLogUser</display-name>
-        <servlet-class>org.researchedc.control.admin.AuditLogUserServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>TechAdminServlet</servlet-name>
-        <display-name>TechAdmin</display-name>
-        <servlet-class>org.researchedc.control.techadmin.TechAdminServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewSchedulerServlet</servlet-name>
-        <display-name>ViewScehduler</display-name>
-        <servlet-class>org.researchedc.control.techadmin.ViewSchedulerServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AuditLogStudyServlet</servlet-name>
-        <display-name>AuditLogStudy</display-name>
-        <servlet-class>org.researchedc.control.admin.AuditLogStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ViewUserAccountServlet</servlet-name>
         <display-name>ViewUserAccount</display-name>
         <servlet-class>org.researchedc.control.admin.ViewUserAccountServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AddNewSubjectServlet</servlet-name>
-        <display-name>AddNewSubject</display-name>
-        <servlet-class>org.researchedc.control.submit.AddNewSubjectServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CreateNewStudyEventServlet</servlet-name>
@@ -416,11 +263,6 @@
         <servlet-class>org.researchedc.control.admin.ListUserAccountsServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EditStudyUserRoleServlet</servlet-name>
-        <display-name>EditStudyUserRole</display-name>
-        <servlet-class>org.researchedc.control.admin.EditStudyUserRoleServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>DeleteStudyUserRoleServlet</servlet-name>
         <display-name>DeleteStudyUserRole</display-name>
         <servlet-class>org.researchedc.control.admin.DeleteStudyUserRoleServlet</servlet-class>
@@ -436,24 +278,9 @@
         <servlet-class>org.researchedc.control.admin.UnLockUserServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>CreateStudyServlet</servlet-name>
-        <display-name>CreateStudy</display-name>
-        <servlet-class>org.researchedc.control.managestudy.CreateStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>InitUpdateStudyServlet</servlet-name>
         <display-name>InitUpdateStudy</display-name>
         <servlet-class>org.researchedc.control.managestudy.InitUpdateStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateStudyServlet</servlet-name>
-        <display-name>UpdateStudy</display-name>
-        <servlet-class>org.researchedc.control.managestudy.UpdateStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CreateSubStudyServlet</servlet-name>
-        <display-name>CreateSubStudy</display-name>
-        <servlet-class>org.researchedc.control.managestudy.CreateSubStudyServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InitUpdateSubStudyServlet</servlet-name>
@@ -461,44 +288,14 @@
         <servlet-class>org.researchedc.control.managestudy.InitUpdateSubStudyServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>UpdateSubStudyServlet</servlet-name>
-        <display-name>UpdateSubStudy</display-name>
-        <servlet-class>org.researchedc.control.managestudy.UpdateSubStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ListStudyServlet</servlet-name>
-        <display-name>ListStudy</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ListStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>AssignUserToStudyServlet</servlet-name>
         <display-name>AssignUserToStudy</display-name>
         <servlet-class>org.researchedc.control.managestudy.AssignUserToStudyServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ListCRFServlet</servlet-name>
-        <display-name>ListCRF</display-name>
-        <servlet-class>org.researchedc.control.admin.ListCRFServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DefineStudyEventServlet</servlet-name>
-        <display-name>DefineStudyEvent</display-name>
-        <servlet-class>org.researchedc.control.managestudy.DefineStudyEventServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ListEventDefinitionServlet</servlet-name>
-        <display-name>ListEventDefinition</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ListEventDefinitionServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>InitUpdateEventDefinitionServlet</servlet-name>
         <display-name>InitUpdateEventDefinition</display-name>
         <servlet-class>org.researchedc.control.managestudy.InitUpdateEventDefinitionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateEventDefinitionServlet</servlet-name>
-        <display-name>UpdateEventDefinition</display-name>
-        <servlet-class>org.researchedc.control.managestudy.UpdateEventDefinitionServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>RemoveCRFFromDefinitionServlet</servlet-name>
@@ -516,25 +313,11 @@
         <servlet-class>org.researchedc.control.managestudy.AddCRFToDefinitionServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ViewEventDefinitionServlet</servlet-name>
-        <display-name>ViewEventDefinition</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewEventDefinitionServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ViewEventDefinitionReadOnlyServlet</servlet-name>
         <display-name>ViewEventDefinitionReadOnly</display-name>
         <servlet-class>org.researchedc.control.managestudy.ViewEventDefinitionReadOnlyServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>CreateCRFServlet</servlet-name>
-        <display-name>CreateCRF</display-name>
-        <servlet-class>org.researchedc.control.admin.CreateCRFServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CreateCRFVersionServlet</servlet-name>
-        <display-name>CreateCRFVersion</display-name>
-        <servlet-class>org.researchedc.control.admin.CreateCRFVersionServlet</servlet-class>
-    </servlet>
+
     <servlet>
         <servlet-name>CreateXformCRFVersionServlet</servlet-name>
         <display-name>CreateXformCRFVersion</display-name>
@@ -545,41 +328,7 @@
         <display-name>InitCreateCRFVersion</display-name>
         <servlet-class>org.researchedc.control.admin.InitCreateCRFVersionServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ExtractDatasetsMainServlet</servlet-name>
-        <display-name>ExtractDatasetsMain</display-name>
-        <servlet-class>org.researchedc.control.extract.ExtractDatasetsMainServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewDatasetsServlet</servlet-name>
-        <display-name>ViewDatasets</display-name>
-        <servlet-class>org.researchedc.control.extract.ViewDatasetsServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CreateDatasetServlet</servlet-name>
-        <display-name>CreateDataset</display-name>
-        <servlet-class>org.researchedc.control.extract.CreateDatasetServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ExportDatasetServlet</servlet-name>
-        <display-name>ExportDataset</display-name>
-        <servlet-class>org.researchedc.control.extract.ExportDatasetServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>BatchCRFMigrationServlet</servlet-name>
-        <display-name>BatchCRFMigration</display-name>
-        <servlet-class>org.researchedc.control.admin.BatchCRFMigrationServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewCRFServlet</servlet-name>
-        <display-name>ViewCRF</display-name>
-        <servlet-class>org.researchedc.control.admin.ViewCRFServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateCRFServlet</servlet-name>
-        <display-name>UpdateCRF</display-name>
-        <servlet-class>org.researchedc.control.admin.UpdateCRFServlet</servlet-class>
-    </servlet>
+
     <servlet>
         <servlet-name>InitUpdateCRFServlet</servlet-name>
         <display-name>InitUpdateCRF</display-name>
@@ -595,26 +344,7 @@
         <display-name>ManageStudy</display-name>
         <servlet-class>org.researchedc.control.managestudy.ManageStudyServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>SubmitDataServlet</servlet-name>
-        <display-name>SubmitData</display-name>
-        <servlet-class>org.researchedc.control.submit.SubmitDataServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>FindStudyEventServlet</servlet-name>
-        <display-name>FindStudyEvent</display-name>
-        <servlet-class>org.researchedc.control.submit.FindStudyEventServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>EnterDataForStudyEventServlet</servlet-name>
-        <display-name>EnterDataForStudyEvent</display-name>
-        <servlet-class>org.researchedc.control.submit.EnterDataForStudyEventServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>TableOfContentsServlet</servlet-name>
-        <display-name>TableOfContents</display-name>
-        <servlet-class>org.researchedc.control.submit.TableOfContentsServlet</servlet-class>
-    </servlet>
+
     <servlet>
         <servlet-name>MarkEventCRFCompleteServlet</servlet-name>
         <display-name>MarkEventCRFComplete</display-name>
@@ -636,80 +366,8 @@
         <display-name>DoubleDataEntry</display-name>
         <servlet-class>org.researchedc.control.submit.DoubleDataEntryServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ListSiteServlet</servlet-name>
-        <display-name>ListSite</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ListSiteServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewSiteServlet</servlet-name>
-        <display-name>ViewSite</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewSiteServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveSiteServlet</servlet-name>
-        <display-name>RemoveSite</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RemoveSiteServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RestoreSiteServlet</servlet-name>
-        <display-name>RestoreSite</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RestoreSiteServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveEventDefinitionServlet</servlet-name>
-        <display-name>RemoveEventDefinition</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RemoveEventDefinitionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RestoreEventDefinitionServlet</servlet-name>
-        <display-name>RestoreEventDefinition</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RestoreEventDefinitionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>LockEventDefinitionServlet</servlet-name>
-        <display-name>LockEventDefinition</display-name>
-        <servlet-class>org.researchedc.control.managestudy.LockEventDefinitionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UnlockEventDefinitionServlet</servlet-name>
-        <display-name>UnlockEventDefinition</display-name>
-        <servlet-class>org.researchedc.control.managestudy.UnlockEventDefinitionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ListStudyUserServlet</servlet-name>
-        <display-name>ListStudyUser</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ListStudyUserServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewStudyUserServlet</servlet-name>
-        <display-name>ViewStudyUser</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewStudyUserServlet</servlet-class>
-    </servlet>
 
     <!-- Export Excel -->
-    <servlet>
-        <servlet-name>ExportExcelStudySubjectAuditLogServlet</servlet-name>
-        <display-name>ExportExcelStudySubjectAuditLog</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ExportExcelStudySubjectAuditLogServlet</servlet-class>
-    </servlet>
-
-
-    <servlet>
-        <servlet-name>SetStudyUserRoleServlet</servlet-name>
-        <display-name>SetStudyUserRole</display-name>
-        <servlet-class>org.researchedc.control.managestudy.SetStudyUserRoleServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveStudyUserRoleServlet</servlet-name>
-        <display-name>RemoveStudyUserRole</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RemoveStudyUserRoleServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RestoreStudyUserRoleServlet</servlet-name>
-        <display-name>RestoreStudyUserRole</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RestoreStudyUserRoleServlet</servlet-class>
-    </servlet>
     <servlet>
         <servlet-name>ListStudySubjectsServlet</servlet-name>
         <display-name>ListStudySubject</display-name>
@@ -724,26 +382,6 @@
         <servlet-name>ListStudySubjectsSubmitServlet</servlet-name>
         <display-name>ListStudySubjectsSubmit</display-name>
         <servlet-class>org.researchedc.control.submit.ListStudySubjectsSubmitServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewStudySubjectServlet</servlet-name>
-        <display-name>ViewStudySubject</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewStudySubjectServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateStudySubjectServlet</servlet-name>
-        <display-name>UpdateStudySubject</display-name>
-        <servlet-class>org.researchedc.control.managestudy.UpdateStudySubjectServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveStudySubjectServlet</servlet-name>
-        <display-name>RemoveStudySubject</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RemoveStudySubjectServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RestoreStudySubjectServlet</servlet-name>
-        <display-name>RestoreStudySubject</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RestoreStudySubjectServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>RemoveStudyEventServlet</servlet-name>
@@ -790,120 +428,12 @@
         <display-name>CreateFiltersThree</display-name>
         <servlet-class>org.researchedc.control.extract.CreateFiltersThreeServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ViewCRFVersionServlet</servlet-name>
-        <display-name>ViewCRFVersion</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewCRFVersionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewEventCRFServlet</servlet-name>
-        <display-name>ViewEventCRF</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewEventCRFServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ReassignStudySubjectServlet</servlet-name>
-        <display-name>ReassignStudySubject</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ReassignStudySubjectServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>EditFilterServlet</servlet-name>
-        <display-name>EditFilter</display-name>
-        <servlet-class>org.researchedc.control.extract.EditFilterServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveFilterServlet</servlet-name>
-        <display-name>RemoveFilter</display-name>
-        <servlet-class>org.researchedc.control.extract.RemoveFilterServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveDatasetServlet</servlet-name>
-        <display-name>RemoveDataset</display-name>
-        <servlet-class>org.researchedc.control.extract.RemoveDatasetServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RestoreDatasetServlet</servlet-name>
-        <display-name>RestoreDataset</display-name>
-        <servlet-class>org.researchedc.control.extract.RestoreDatasetServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>EditDatasetServlet</servlet-name>
-        <display-name>EditDataset</display-name>
-        <servlet-class>org.researchedc.control.extract.EditDatasetServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveStudyServlet</servlet-name>
-        <display-name>RemoveStudy</display-name>
-        <servlet-class>org.researchedc.control.admin.RemoveStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RestoreStudyServlet</servlet-name>
-        <display-name>RestoreStudy</display-name>
-        <servlet-class>org.researchedc.control.admin.RestoreStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ListSubjectServlet</servlet-name>
-        <display-name>ListSubject</display-name>
-        <servlet-class>org.researchedc.control.admin.ListSubjectServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateSubjectServlet</servlet-name>
-        <display-name>UpdateSubject</display-name>
-        <servlet-class>org.researchedc.control.admin.UpdateSubjectServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewStudyServlet</servlet-name>
-        <display-name>ViewStudy</display-name>
-        <servlet-class>org.researchedc.control.admin.ViewStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveCRFServlet</servlet-name>
-        <display-name>RemoveCRF</display-name>
-        <servlet-class>org.researchedc.control.admin.RemoveCRFServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RestoreCRFServlet</servlet-name>
-        <display-name>RestoreCRF</display-name>
-        <servlet-class>org.researchedc.control.admin.RestoreCRFServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveSubjectServlet</servlet-name>
-        <display-name>RemoveSubject</display-name>
-        <servlet-class>org.researchedc.control.admin.RemoveSubjectServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RestoreSubjectServlet</servlet-name>
-        <display-name>RestoreSubject</display-name>
-        <servlet-class>org.researchedc.control.admin.RestoreSubjectServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveCRFVersionServlet</servlet-name>
-        <display-name>RemoveCRFVersion</display-name>
-        <servlet-class>org.researchedc.control.admin.RemoveCRFVersionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RestoreCRFVersionServlet</servlet-name>
-        <display-name>RestoreCRFVersion</display-name>
-        <servlet-class>org.researchedc.control.admin.RestoreCRFVersionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewSubjectServlet</servlet-name>
-        <display-name>ViewSubjectVersion</display-name>
-        <servlet-class>org.researchedc.control.admin.ViewSubjectServlet</servlet-class>
-    </servlet>
+
+
     <servlet>
         <servlet-name>SetUserRoleServlet</servlet-name>
         <display-name>SetUserRole</display-name>
         <servlet-class>org.researchedc.control.admin.SetUserRoleServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewTableOfContentServlet</servlet-name>
-        <display-name>VIewTableOfContent</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewTableOfContentServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewStudySubjectAuditLogServlet</servlet-name>
-        <display-name>ViewStudySubjectAuditLog</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewStudySubjectAuditLogServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ViewSectionDataEntryServlet</servlet-name>
@@ -920,31 +450,7 @@
         <display-name>ViewSectionDataEntryById</display-name>
         <servlet-class>org.researchedc.control.managestudy.ViewSectionDataEntryByIdServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>PrintDataEntryServlet</servlet-name>
-        <display-name>PrintDataEntry</display-name>
-        <servlet-class>org.researchedc.control.managestudy.PrintDataEntryServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>PrintCRFServlet</servlet-name>
-        <display-name>PrintCRF</display-name>
-        <servlet-class>org.researchedc.control.managestudy.PrintCRFServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>PrintCRFOldServlet</servlet-name>
-        <display-name>PrintCRFOld</display-name>
-        <servlet-class>org.researchedc.control.managestudy.PrintCRFServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>PrintCRFByIdServlet</servlet-name>
-        <display-name>PrintCRFById</display-name>
-        <servlet-class>org.researchedc.control.managestudy.PrintCRFByIdServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewEventCRFContentServlet</servlet-name>
-        <display-name>ViewEventCRFContent</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewEventCRFContentServlet</servlet-class>
-    </servlet>
+
     <servlet>
         <servlet-name>ChangeDefinitionOrdinalServlet</servlet-name>
         <display-name>ChangeDefinitionOrdinal</display-name>
@@ -1001,45 +507,11 @@
         <servlet-class>org.researchedc.control.extract.EditSelectedServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ListSubjectGroupClassServlet</servlet-name>
-        <display-name>ListSubjectGroupClass</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ListSubjectGroupClassServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CreateSubjectGroupClassServlet</servlet-name>
-        <display-name>CreateSubjectGroupClass</display-name>
-        <servlet-class>org.researchedc.control.managestudy.CreateSubjectGroupClassServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateSubjectGroupClassServlet</servlet-name>
-        <display-name>UpdateSubjectGroupClass</display-name>
-        <servlet-class>org.researchedc.control.managestudy.UpdateSubjectGroupClassServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewSubjectGroupClassServlet</servlet-name>
-        <display-name>ViewSubjectGroupClass</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewSubjectGroupClassServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveSubjectGroupClassServlet</servlet-name>
-        <display-name>RemoveSubjectGroupClass</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RemoveSubjectGroupClassServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RestoreSubjectGroupClassServlet</servlet-name>
-        <display-name>RestoreSubjectGroupClass</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RestoreSubjectGroupClassServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>CreateDiscrepancyNoteServlet</servlet-name>
         <display-name>CreateDiscrepancyNote</display-name>
         <servlet-class>org.researchedc.control.submit.CreateDiscrepancyNoteServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ViewDiscrepancyNoteServlet</servlet-name>
-        <display-name>ViewDiscrepancyNote</display-name>
-        <servlet-class>org.researchedc.control.submit.ViewDiscrepancyNoteServlet</servlet-class>
-    </servlet>
+
     <servlet>
         <servlet-name>CreateOneDiscrepancyNoteServlet</servlet-name>
         <display-name>CreateOneDiscrepancyNote</display-name>
@@ -1061,16 +533,6 @@
         <servlet-class>org.researchedc.control.submit.DownloadAttachedFileServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ViewNotesServlet</servlet-name>
-        <display-name>ViewNotes</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewNotesServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewNoteServlet</servlet-name>
-        <display-name>ViewNote</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewNoteServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ResolveDiscrepancyServlet</servlet-name>
         <display-name>ResolveDiscrepancy</display-name>
         <servlet-class>org.researchedc.control.managestudy.ResolveDiscrepancyServlet</servlet-class>
@@ -1081,23 +543,9 @@
         <servlet-class>org.researchedc.control.managestudy.ListEventsForSubjectServlet</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>ListEventsForSubjectsServlet</servlet-name>
-        <display-name>ListEventsForSubjects</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ListEventsForSubjectsServlet</servlet-class>
-    </servlet>
 
-    <servlet>
-        <servlet-name>ViewSectionDataEntryPreview</servlet-name>
-        <display-name>ViewSectionDataEntryPreview</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewSectionDataEntryPreview</servlet-class>
-    </servlet>
 
-    <servlet>
-        <servlet-name>ViewCRFVersionPreview</servlet-name>
-        <display-name>ViewCRFVersionPreview</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewCRFVersionPreview</servlet-class>
-    </servlet>
+
 
     <servlet>
         <servlet-name>ImportCRFDataServlet</servlet-name>
@@ -1178,27 +626,9 @@
     </servlet>
 
     <servlet>
-        <servlet-name>ViewRuleSetAuditServlet</servlet-name>
-        <display-name>ViewRuleSetAudit</display-name>
-        <servlet-class>org.researchedc.control.submit.ViewRuleSetAuditServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>TestRuleServlet</servlet-name>
-        <display-name>TestRule</display-name>
-        <servlet-class>org.researchedc.control.submit.TestRuleServlet</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>ExecuteCrossEditCheckServlet</servlet-name>
         <display-name>ExecuteCrossEditCheck</display-name>
         <servlet-class>org.researchedc.control.rule.ExecuteCrossEditCheckServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>SignStudySubjectServlet</servlet-name>
-        <display-name>SignStudySubject</display-name>
-        <servlet-class>org.researchedc.control.managestudy.SignStudySubjectServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -1206,19 +636,6 @@
         <display-name>UpdateStudyNew</display-name>
         <servlet-class>org.researchedc.control.managestudy.UpdateStudyServletNew</servlet-class>
     </servlet>
-
-    <servlet>
-        <servlet-name>LockCRFVersionServlet</servlet-name>
-        <display-name>LockCRFVersion</display-name>
-        <servlet-class>org.researchedc.control.managestudy.LockCRFVersionServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>UnlockCRFVersionServlet</servlet-name>
-        <display-name>UnlockCRFVersion</display-name>
-        <servlet-class>org.researchedc.control.managestudy.UnlockCRFVersionServlet</servlet-class>
-    </servlet>
-
 
     <servlet>
         <servlet-name>MatchPasswordServlet</servlet-name>
@@ -1232,60 +649,9 @@
         <servlet-class>org.researchedc.control.submit.UploadFileServlet</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>PrintAllSiteEventCRFServlet</servlet-name>
-        <display-name>PrintAllSiteEventCRFServlet</display-name>
-        <servlet-class>org.researchedc.control.managestudy.PrintAllSiteEventCRFServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>PrintEventCRFServlet</servlet-name>
-        <display-name>PrintEventCRFServlet</display-name>
-        <servlet-class>org.researchedc.control.managestudy.PrintEventCRFServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>PrintAllEventCRFServlet</servlet-name>
-        <display-name>PrintAllEventCRFServlet</display-name>
-        <servlet-class>org.researchedc.control.managestudy.PrintAllEventCRFServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewItemAuditLogServlet</servlet-name>
-        <display-name>ViewItemAuditLogServlet</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewItemAuditLogServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>ParticipantFormServlet</servlet-name>
-        <display-name>ParticipantFormServlet</display-name>
-        <servlet-class>org.researchedc.control.submit.ParticipantFormServlet</servlet-class>
-    </servlet>
 
 
-    <servlet>
-        <servlet-name>OpenRosaFormDownloadServlet</servlet-name>
-        <display-name>OpenRosaFormDownloadServlet</display-name>
-        <servlet-class>org.researchedc.web.openrosa.OpenRosaFormDownloadServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>OpenRosaFormDownloadServlet</servlet-name>
-        <url-pattern>/openrosa/formXml</url-pattern>
-    </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>LockCRFVersionServlet</servlet-name>
-        <url-pattern>/LockCRFVersion</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>UnlockCRFVersionServlet</servlet-name>
-        <url-pattern>/UnlockCRFVersion</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>SignStudySubjectServlet</servlet-name>
-        <url-pattern>/SignStudySubject</url-pattern>
-    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>UpdateStudyServletNew</servlet-name>
@@ -1293,34 +659,11 @@
     </servlet-mapping>
 
 
-    <servlet-mapping>
-        <servlet-name>ListDiscNotesForCRFServlet</servlet-name>
-        <url-pattern>/ListDiscNotesForCRFServlet</url-pattern>
-    </servlet-mapping>
 
-    <!--    <servlet-mapping>
-            <servlet-name>ListDiscNotesSubjectServlet</servlet-name>
-            <url-pattern>/ListDiscNotesSubjectServlet</url-pattern>
-        </servlet-mapping>
-    -->
-    <servlet-mapping>
-        <servlet-name>ViewJobServlet</servlet-name>
-        <url-pattern>/ViewJob</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ViewAllJobsServlet</servlet-name>
-        <url-pattern>/ViewAllJobs</url-pattern>
-    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ViewImportJobServlet</servlet-name>
         <url-pattern>/ViewImportJob</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ViewSingleJobServlet</servlet-name>
-        <url-pattern>/ViewSingleJob</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -1359,15 +702,9 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>ViewRuleSetAuditServlet</servlet-name>
-        <url-pattern>/ViewRuleSetAudit</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>TestRuleServlet</servlet-name>
         <url-pattern>/TestRule</url-pattern>
     </servlet-mapping>
-
 
     <servlet-mapping>
         <servlet-name>ImportRuleServlet</servlet-name>
@@ -1429,15 +766,9 @@
         <url-pattern>/ImportCRFData</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>ViewCRFVersionPreview</servlet-name>
-        <url-pattern>/ViewCRFVersionPreview</url-pattern>
-    </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>ViewSectionDataEntryPreview</servlet-name>
-        <url-pattern>/SectionPreview</url-pattern>
-    </servlet-mapping>
+
+
 
     <servlet-mapping>
         <servlet-name>FormServlet</servlet-name>
@@ -1451,26 +782,6 @@
     <servlet-mapping>
         <servlet-name>ApplyFilterServlet</servlet-name>
         <url-pattern>/ApplyFilter</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditFilterServlet</servlet-name>
-        <url-pattern>/EditFilter</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditDatasetServlet</servlet-name>
-        <url-pattern>/EditDataset</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveFilterServlet</servlet-name>
-        <url-pattern>/RemoveFilter</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveDatasetServlet</servlet-name>
-        <url-pattern>/RemoveDataset</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreDatasetServlet</servlet-name>
-        <url-pattern>/RestoreDataset</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CreateFiltersOneServlet</servlet-name>
@@ -1493,18 +804,6 @@
         <url-pattern>/ShowFile</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AuditLogUserServlet</servlet-name>
-        <url-pattern>/AuditLogUser</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>StudyAuditLogServlet</servlet-name>
-        <url-pattern>/StudyAuditLog</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AuditLogStudyServlet</servlet-name>
-        <url-pattern>/AuditLogStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>CreateFiltersThreeServlet</servlet-name>
         <url-pattern>/CreateFiltersThree</url-pattern>
     </servlet-mapping>
@@ -1515,14 +814,6 @@
     <servlet-mapping>
         <servlet-name>RequestPasswordServlet</servlet-name>
         <url-pattern>/RequestPassword</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TechAdminServlet</servlet-name>
-        <url-pattern>/TechAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewSchedulerServlet</servlet-name>
-        <url-pattern>/ViewScheduler</url-pattern>
     </servlet-mapping>
     <!--    <servlet-mapping>
             <servlet-name>RequestAccountServlet</servlet-name>
@@ -1565,10 +856,6 @@
         <url-pattern>/UnLockUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EditStudyUserRoleServlet</servlet-name>
-        <url-pattern>/EditStudyUserRole</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ViewUserAccountServlet</servlet-name>
         <url-pattern>/ViewUserAccount</url-pattern>
     </servlet-mapping>
@@ -1581,77 +868,26 @@
         <url-pattern>/EditUserAccount</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CreateStudyServlet</servlet-name>
-        <url-pattern>/CreateStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CreateSubStudyServlet</servlet-name>
-        <url-pattern>/CreateSubStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>InitUpdateStudyServlet</servlet-name>
         <url-pattern>/InitUpdateStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateStudyServlet</servlet-name>
-        <url-pattern>/UpdateStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateSubStudyServlet</servlet-name>
-        <url-pattern>/UpdateSubStudy</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InitUpdateSubStudyServlet</servlet-name>
         <url-pattern>/InitUpdateSubStudy</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ListStudyServlet</servlet-name>
-        <url-pattern>/ListStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>AssignUserToStudyServlet</servlet-name>
         <url-pattern>/AssignUserToStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListCRFServlet</servlet-name>
-        <url-pattern>/ListCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DefineStudyEventServlet</servlet-name>
-        <url-pattern>/DefineStudyEvent</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListEventDefinitionServlet</servlet-name>
-        <url-pattern>/ListEventDefinition</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InitUpdateEventDefinitionServlet</servlet-name>
         <url-pattern>/InitUpdateEventDefinition</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>UpdateEventDefinitionServlet</servlet-name>
-        <url-pattern>/UpdateEventDefinition</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>AdminSystemServlet</servlet-name>
         <url-pattern>/AdminSystem</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SubmitDataServlet</servlet-name>
-        <url-pattern>/SubmitData</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>FindStudyEventServlet</servlet-name>
-        <url-pattern>/FindStudyEvent</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EnterDataForStudyEventServlet</servlet-name>
-        <url-pattern>/EnterDataForStudyEvent</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TableOfContentsServlet</servlet-name>
-        <url-pattern>/TableOfContents</url-pattern>
-    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>MarkEventCRFCompleteServlet</servlet-name>
         <url-pattern>/MarkEventCRFComplete</url-pattern>
@@ -1670,10 +906,6 @@
         <url-pattern>/DoubleDataEntry</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AddNewSubjectServlet</servlet-name>
-        <url-pattern>/AddNewSubject</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>CreateNewStudyEventServlet</servlet-name>
         <url-pattern>/CreateNewStudyEvent</url-pattern>
     </servlet-mapping>
@@ -1690,22 +922,6 @@
         <url-pattern>/AddCRFToDefinition</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewEventDefinitionServlet</servlet-name>
-        <url-pattern>/ViewEventDefinition</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewEventDefinitionReadOnlyServlet</servlet-name>
-        <url-pattern>/ViewEventDefinitionReadOnly</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CreateCRFServlet</servlet-name>
-        <url-pattern>/CreateCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CreateCRFVersionServlet</servlet-name>
-        <url-pattern>/CreateCRFVersion</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>CreateXformCRFVersionServlet</servlet-name>
         <url-pattern>/CreateXformCRFVersion</url-pattern>
     </servlet-mapping>
@@ -1714,92 +930,12 @@
         <url-pattern>/InitCreateCRFVersion</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ExtractDatasetsMainServlet</servlet-name>
-        <url-pattern>/ExtractDatasetsMain</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewDatasetsServlet</servlet-name>
-        <url-pattern>/ViewDatasets</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ExportDatasetServlet</servlet-name>
-        <url-pattern>/ExportDataset</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CreateDatasetServlet</servlet-name>
-        <url-pattern>/CreateDataset</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewCRFServlet</servlet-name>
-        <url-pattern>/ViewCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BatchCRFMigrationServlet</servlet-name>
-        <url-pattern>/BatchCRFMigration</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>InitUpdateCRFServlet</servlet-name>
         <url-pattern>/InitUpdateCRF</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>UpdateCRFServlet</servlet-name>
-        <url-pattern>/UpdateCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ChangeStudyServlet</servlet-name>
         <url-pattern>/ChangeStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListSiteServlet</servlet-name>
-        <url-pattern>/ListSite</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewSiteServlet</servlet-name>
-        <url-pattern>/ViewSite</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveSiteServlet</servlet-name>
-        <url-pattern>/RemoveSite</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreSiteServlet</servlet-name>
-        <url-pattern>/RestoreSite</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveEventDefinitionServlet</servlet-name>
-        <url-pattern>/RemoveEventDefinition</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreEventDefinitionServlet</servlet-name>
-        <url-pattern>/RestoreEventDefinition</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>LockEventDefinitionServlet</servlet-name>
-        <url-pattern>/LockEventDefinition</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UnlockEventDefinitionServlet</servlet-name>
-        <url-pattern>/UnlockEventDefinition</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListStudyUserServlet</servlet-name>
-        <url-pattern>/ListStudyUser</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewStudyUserServlet</servlet-name>
-        <url-pattern>/ViewStudyUser</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SetStudyUserRoleServlet</servlet-name>
-        <url-pattern>/SetStudyUserRole</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveStudyUserRoleServlet</servlet-name>
-        <url-pattern>/RemoveStudyUserRole</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreStudyUserRoleServlet</servlet-name>
-        <url-pattern>/RestoreStudyUserRole</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ListStudySubjectsManageServlet</servlet-name>
@@ -1808,22 +944,6 @@
     <servlet-mapping>
         <servlet-name>ListStudySubjectsServlet</servlet-name>
         <url-pattern>/ListStudySubjects</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewStudySubjectServlet</servlet-name>
-        <url-pattern>/ViewStudySubject</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateStudySubjectServlet</servlet-name>
-        <url-pattern>/UpdateStudySubject</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveStudySubjectServlet</servlet-name>
-        <url-pattern>/RemoveStudySubject</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreStudySubjectServlet</servlet-name>
-        <url-pattern>/RestoreStudySubject</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RemoveStudyEventServlet</servlet-name>
@@ -1841,92 +961,18 @@
         <servlet-name>RemoveEventCRFServlet</servlet-name>
         <url-pattern>/RemoveEventCRF</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreEventCRFServlet</servlet-name>
-        <url-pattern>/RestoreEventCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewCRFVersionServlet</servlet-name>
-        <url-pattern>/ViewCRFVersion</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewEventCRFServlet</servlet-name>
-        <url-pattern>/ViewEventCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ReassignStudySubjectServlet</servlet-name>
-        <url-pattern>/ReassignStudySubject</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveStudyServlet</servlet-name>
-        <url-pattern>/RemoveStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreStudyServlet</servlet-name>
-        <url-pattern>/RestoreStudy</url-pattern>
-    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>ListStudySubjectsSubmitServlet</servlet-name>
         <url-pattern>/ListStudySubjectsSubmit</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ListSubjectServlet</servlet-name>
-        <url-pattern>/ListSubject</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateSubjectServlet</servlet-name>
-        <url-pattern>/UpdateSubject</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewStudyServlet</servlet-name>
-        <url-pattern>/ViewStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveCRFServlet</servlet-name>
-        <url-pattern>/RemoveCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreCRFServlet</servlet-name>
-        <url-pattern>/RestoreCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveCRFVersionServlet</servlet-name>
-        <url-pattern>/RemoveCRFVersion</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreCRFVersionServlet</servlet-name>
-        <url-pattern>/RestoreCRFVersion</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveSubjectServlet</servlet-name>
-        <url-pattern>/RemoveSubject</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreSubjectServlet</servlet-name>
-        <url-pattern>/RestoreSubject</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewSubjectServlet</servlet-name>
-        <url-pattern>/ViewSubject</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>SetUserRoleServlet</servlet-name>
         <url-pattern>/SetUserRole</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewTableOfContentServlet</servlet-name>
-        <url-pattern>/ViewTableOfContent</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewStudySubjectAuditLogServlet</servlet-name>
-        <url-pattern>/ViewStudySubjectAuditLog</url-pattern>
-    </servlet-mapping>
+
 
     <!--  Export Excel -->
-    <servlet-mapping>
-        <servlet-name>ExportExcelStudySubjectAuditLogServlet</servlet-name>
-        <url-pattern>/ExportExcelStudySubjectAuditLog</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ViewSectionDataEntryServlet</servlet-name>
         <url-pattern>/ViewSectionDataEntry</url-pattern>
@@ -1939,26 +985,7 @@
         <servlet-name>ViewSectionDataEntryByIdServlet</servlet-name>
         <url-pattern>/ViewSectionDataEntryById</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PrintDataEntryServlet</servlet-name>
-        <url-pattern>/PrintDataEntry</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PrintCRFOldServlet</servlet-name>
-        <url-pattern>/PrintCRFOld</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PrintCRFServlet</servlet-name>
-        <url-pattern>/PrintCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PrintCRFByIdServlet</servlet-name>
-        <url-pattern>/PrintCRFById</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewEventCRFContentServlet</servlet-name>
-        <url-pattern>/ViewEventCRFContent</url-pattern>
-    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>ChangeDefinitionOrdinalServlet</servlet-name>
         <url-pattern>/ChangeDefinitionOrdinal</url-pattern>
@@ -2008,37 +1035,10 @@
         <url-pattern>/EditSelected</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ListSubjectGroupClassServlet</servlet-name>
-        <url-pattern>/ListSubjectGroupClass</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CreateSubjectGroupClassServlet</servlet-name>
-        <url-pattern>/CreateSubjectGroupClass</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateSubjectGroupClassServlet</servlet-name>
-        <url-pattern>/UpdateSubjectGroupClass</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewSubjectGroupClassServlet</servlet-name>
-        <url-pattern>/ViewSubjectGroupClass</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveSubjectGroupClassServlet</servlet-name>
-        <url-pattern>/RemoveSubjectGroupClass</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreSubjectGroupClassServlet</servlet-name>
-        <url-pattern>/RestoreSubjectGroupClass</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>CreateDiscrepancyNoteServlet</servlet-name>
         <url-pattern>/CreateDiscrepancyNote</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewDiscrepancyNoteServlet</servlet-name>
-        <url-pattern>/ViewDiscrepancyNote</url-pattern>
-    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>CreateOneDiscrepancyNoteServlet</servlet-name>
         <url-pattern>/CreateOneDiscrepancyNote</url-pattern>
@@ -2056,14 +1056,6 @@
         <url-pattern>/DownloadAttachedFile</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewNotesServlet</servlet-name>
-        <url-pattern>/ViewNotes</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewNoteServlet</servlet-name>
-        <url-pattern>/ViewNote</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ResolveDiscrepancyServlet</servlet-name>
         <url-pattern>/ResolveDiscrepancy</url-pattern>
     </servlet-mapping>
@@ -2072,25 +1064,10 @@
         <url-pattern>/ListEventsForSubject</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ListEventsForSubjectsServlet</servlet-name>
-        <url-pattern>/ListEventsForSubjects</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>MatchPasswordServlet</servlet-name>
         <url-pattern>/MatchPassword</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DiscrepancyNoteOutputServlet</servlet-name>
-        <url-pattern>/DiscrepancyNoteOutputServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AuditUserActivityServlet</servlet-name>
-        <url-pattern>/AuditUserActivity</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SystemStatusServlet</servlet-name>
-        <url-pattern>/SystemStatus</url-pattern>
-    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>ConfigurePasswordRequirementsServlet</servlet-name>
         <url-pattern>/ConfigurePasswordRequirements</url-pattern>
@@ -2100,16 +1077,8 @@
         <url-pattern>/Configure</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AuditDatabaseServlet</servlet-name>
-        <url-pattern>/AuditDatabase</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ChooseDownloadFormat</servlet-name>
         <url-pattern>/ChooseDownloadFormat</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewLogMessage</servlet-name>
-        <url-pattern>/ViewLogMessage</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RssReaderServlet</servlet-name>
@@ -2120,31 +1089,7 @@
         <url-pattern>/UploadFile</url-pattern>
     </servlet-mapping>
 
-    <!-- just for testing purposes -->
-    <servlet-mapping>
-        <servlet-name>ManageStudyServlet</servlet-name>
-        <url-pattern>/ManageStudy1</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PrintAllSiteEventCRFServlet</servlet-name>
-        <url-pattern>/PrintAllSiteEventCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PrintEventCRFServlet</servlet-name>
-        <url-pattern>/PrintEventCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>PrintAllEventCRFServlet</servlet-name>
-        <url-pattern>/PrintAllEventCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewItemAuditLogServlet</servlet-name>
-        <url-pattern>/ViewItemAuditLog</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ParticipantFormServlet</servlet-name>
-        <url-pattern>/ParticipantFormServlet</url-pattern>
-    </servlet-mapping>
+
 
 
     <servlet>
@@ -2171,40 +1116,5 @@
         <location>/WEB-INF/jsp/error.jsp</location>
 
     </error-page>
-
-    <servlet>
-        <servlet-name>OpenClinicaJersey2</servlet-name>
-        <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.researchedc.web.pform</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>OpenClinicaJersey2</servlet-name>
-        <url-pattern>/rest2/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>OpenClinicaJersey</servlet-name>
-        <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.researchedc.web.restful</param-value>
-        </init-param>
-        <init-param>
-            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-            <param-value>org.researchedc.web.filter.rest.RestODMFilter</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>OpenClinicaJersey</servlet-name>
-        <url-pattern>/rest/*</url-pattern>
-    </servlet-mapping>
-
 
 </web-app>

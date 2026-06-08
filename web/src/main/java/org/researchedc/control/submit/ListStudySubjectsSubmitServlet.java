@@ -48,7 +48,7 @@ public class ListStudySubjectsSubmitServlet extends ListStudySubjectServlet {
             return;
         }
 
-        if (SubmitDataServlet.mayViewData(ub, currentRole)) {
+        if (SubmitDataHelper.mayViewData(ub, currentRole)) {
             return;
         }
 
@@ -65,4 +65,5 @@ public class ListStudySubjectsSubmitServlet extends ListStudySubjectServlet {
     protected String getBaseURL() {
         return "ListStudySubjectsSubmit";
     }
+
 }

@@ -251,7 +251,7 @@ public class UpdateJobExportServlet extends SecureController {
                     // scheduler.rescheduleJob(triggerName, groupName,
                     // newTrigger)
                     addPageMessage("Your job has been successfully modified.");
-                    forwardPage(Page.VIEW_JOB_SERVLET);
+                    forwardPage(Page.VIEW_IMPORT_JOB_SERVLET);
                 } catch (SchedulerException se) {
                     se.printStackTrace();
                     // set a message here with the exception message

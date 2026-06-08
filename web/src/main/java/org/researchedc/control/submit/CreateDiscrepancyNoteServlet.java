@@ -164,7 +164,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
         checkStudyLocked(Page.MENU_SERVLET, respage.getString("current_study_locked"));
         locale = LocaleResolver.getLocale(request);
        
-        if (SubmitDataServlet.mayViewData(ub, currentRole)) {
+        if (SubmitDataHelper.mayViewData(ub, currentRole)) {
             return;
         }
 

@@ -14,7 +14,7 @@ import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.control.submit.SubmitDataServlet;
+import org.researchedc.control.submit.SubmitDataHelper;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IItemDAO;
@@ -63,7 +63,7 @@ public class ViewItemDetailServlet extends SecureController {
         // < respage =
         // ResourceBundle.getBundle("org.researchedc.i18n.page_messages",locale);
 
-        if (currentStudy.getParentStudyId() == 0 && SubmitDataServlet.mayViewData(ub, currentRole)) {
+        if (currentStudy.getParentStudyId() == 0 && SubmitDataHelper.mayViewData(ub, currentRole)) {
             return;
         }
         addPageMessage(respage.getString("no_have_correct_privilege_current_study") + respage.getString("change_study_contact_sysadmin"));

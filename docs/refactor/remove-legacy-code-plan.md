@@ -1,20 +1,35 @@
 # Remove Legacy Code Plan
 
-**Last updated:** 2026-06-07  
-**Status:** Legacy removal is **not complete**. This plan tracks the remaining deletion work after `legacy-core/` consolidation and DAO SPI widening.
+**Last updated:** 2026-06-08
+**Status:** Legacy removal is **not complete**. This plan tracks the remaining deletion work after `legacy-core/` consolidation, DAO SPI widening, and 5 Phase 1 deletion slices. SPA migration coverage mapping added 2026-06-08.
 
 ## Current Baseline
 
-These counts come from the current repository tree on 2026-06-07:
+These counts come from the current repository tree (updated 2026-06-08 after Phase 1 deletion slices, Phase 4 dead code cleanup, and Phase 5 dependency cleanup):
 
-| Surface | Count | Meaning |
-|---------|-------|---------|
-| `shared/src/main/java/org/researchedc` | 793 Java files | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities |
-| `shared/src/main/java/org/researchedc/dao` | 182 files | DAO SPI interfaces plus legacy DAO implementations |
-| `web/src/main/java` | 484 Java files | Legacy servlet/Spring MVC/JSP helper surface |
-| `web/src/main/webapp/**/*.jsp` | 419 files | JSP views and fragments |
-| `SecureController`/`CoreSecureController` subclasses | 189 matches | Legacy servlet workflows still present |
-| `ws/src/main/java` | 75 Java files | SOAP endpoints, validators, adapters, SOAP support |
+| Surface | Count (before) | Count (after) | Meaning |
+|---------|----------------|---------------|---------|
+| `shared/src/main/java/org/researchedc` | 793 | 718 | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities (-75) |
+| `shared/src/main/java/org/researchedc/dao` | 186 | 175 | DAO SPI interfaces plus legacy DAO implementations (-11 old DataSource-constructor DAOs) |
+| `web/src/main/java` | 480 | 354 | Legacy servlet/Spring MVC/JSP helper surface (-126) |
+| `web/src/main/webapp/**/*.jsp` | 416 | 213 | JSP views and fragments (-203) |
+| `SecureController`/`CoreSecureController` subclasses | 186 | 94 | Legacy servlet workflows still present (-92) |
+| `ws/src/main/java` | 75 | 29 | SOAP endpoints, validators, adapters, SOAP support (-46) |
+
+### Phase 1 Deletion Summary (5 slices completed)
+
+| Slice | Servlets Deleted | JSPs Deleted | web.xml Lines Removed |
+|-------|-----------------|--------------|----------------------|
+| Admin Read-Only | ~25 | ~30 | ~50 |
+| CRF Metadata | 13 | 27 | 26 |
+| Study/Subject/Event | 48 | 76+ | 430 |
+| Export/Dataset/Filter | 9 | ~40 | 77 |
+| Data Entry/Discrepancy | 19 | 17 | ~50 |
+| **TOTAL** | **~114** | **~190** | **~633** |
+
+**Result:** 331 files changed, 64,569 lines deleted. shared+app+ws BUILD SUCCESS.
+
+**Remaining Phase 1 work:** ~243 JSPs and ~91 SecureController subclasses remain, blocked by data entry, import, login, and OpenRosa workflows that require SPA replacements before deletion.
 
 Completed work should be described precisely:
 
@@ -132,6 +147,125 @@ For each slice:
 
 **Exit gate:** `web/src/main/webapp/**/*.jsp` count is 0 and no production servlet extends `SecureController` or `CoreSecureController`.
 
+### Phase 1 SPA Migration Coverage
+
+**Goal:** map every remaining legacy workflow to its SPA replacement status, so deletion slices can proceed with confidence.
+
+#### Existing SPA Routes (44 paths, 38 distinct page components)
+
+SPA route definitions live in `frontend/src/router/index.tsx` (React Router 7, `createBrowserRouter`). All authenticated routes are wrapped in `<ProtectedRoute>` → `<AppLayout>`.
+
+| SPA Route | Page Component | Replaces Legacy |
+|-----------|---------------|----------------|
+| `/app/dashboard` | `Dashboard` | Home page, study/site selector, module cards |
+| `/app/studies` | `StudyList` | study list + site tabs |
+| `/app/studies/create` | `StudyWizard` | create study workflow |
+| `/app/studies/:id` | `StudyDetail` | study detail view |
+| `/app/studies/:id/edit` | `StudyEditor` | study metadata editing |
+| `/app/studies/:id/sites` | `SiteManagement` | site CRUD |
+| `/app/studies/:studyId/event-definitions` | `EventDefinitionsPage` | event definition management |
+| `/app/studies/:studyId/subject-groups` | `SubjectGroupsPage` | subject group CRUD |
+| `/app/studies/:studyId/rules` | `RulesListPage` | rule set listing |
+| `/app/subjects` | `SubjectList` | subject list with create + enroll |
+| `/app/subjects/:id` | `SubjectDetail` | subject profile + events table |
+| `/app/subjects/:subjectId/events` | `EventList` | event schedule/list/complete |
+| `/app/subjects/:subjectId/events/:eventId/crfs/:eventCrfId/entry` | `DataEntryPage` | CRF data entry (basic) |
+| `/app/crfs` | `CrfList` | CRF library |
+| `/app/crfs/:versionId` | `CrfPreview` | CRF content preview |
+| `/app/crfs/:crfId/versions` | `CrfVersionManager` | CRF version history |
+| `/app/randomization` | `RandomizationDashboard` | randomization overview |
+| `/app/randomization/schemes/:id` | `SchemeEditor` | scheme design |
+| `/app/randomization/schemes/:id/allocate` | `AllocationPage` | subject allocation |
+| `/app/randomization/schemes/:id/unblind` | `UnblindingPage` | emergency unblinding |
+| `/app/randomization/schemes/:id/audit` | `AuditViewer` | randomization audit trail |
+| `/app/data-export` | `ExportCenter` | export job management |
+| `/app/data-export/datasets` | `DatasetBuilder` | dataset creation |
+| `/app/data-export/filters` | `FilterBuilder` | filter creation |
+| `/app/questionnaires/templates` | `QuestionnaireTemplates` | template library |
+| `/app/questionnaires/templates/:templateId/versions` | `QuestionnaireVersionEditor` | version management |
+| `/app/questionnaires/assignments` | `QuestionnaireAssignments` | subject assignment |
+| `/app/questionnaires/responses` | `QuestionnaireResponses` | response browser |
+| `/app/questionnaires/export` | `QuestionnaireExport` | response export |
+| `/app/questionnaires/my-tasks` | `QuestionnaireMyTasks` | assigned questionnaires |
+| `/app/admin` | `AdminDashboard` | admin navigation hub |
+| `/app/admin/users` | `UserManagement` | user CRUD + role assignment |
+| `/app/admin/audit-log` | `AuditLogViewer` | global audit log |
+| `/app/admin/system` | `SystemConfiguration` | health/version/config |
+| `/app/admin/crf-library` | `CrfAdmin` | CRF admin with version links |
+| `/app/admin/jobs` | `JobManager` | Quartz job management |
+| `/app/admin/import` | `ImportManager` | import upload (basic) |
+| `/app/admin/password-policy` | `PasswordPolicy` | password requirements config |
+| `/app/admin/logs` | `LogViewer` | application log viewer |
+| `/app/admin/studies/:studyId/users` | `StudyUserRoleEditor` | per-study user role editing |
+| `/app/profile` | `Profile` | user profile |
+| `/app/instructions`, `/app/instructions/:topic` | `Instructions` | workflow instructions |
+| `/app/actions/:entity/:action/:id` | `EntityAction` | remove/restore actions |
+| `/app/login` | `Login` | username/password login |
+| `/q/fill/:token` | `QuestionnaireFill` | public questionnaire fill |
+
+**Plus:** `/app/legacy/*` → `LegacyFrame` (iframe) for any unmigrated workflow.
+
+#### Orphan Components (built but NOT routed)
+
+| Component File | What It Does | Action Needed |
+|---------------|-------------|---------------|
+| `pages/rules/RuleSetDetail.tsx` | Rule set detail/edit page | Wire as route `studies/:studyId/rules/:ruleSetId` |
+| `components/questionnaire-builder/QuestionnaireBuilder.tsx` | Visual questionnaire builder | Wire as route `questionnaires/builder` |
+| `components/DiscrepancyNotes.tsx` | Discrepancy note CRUD component | Either give dedicated page route or keep inline only |
+
+#### SPA → Legacy Fallbacks (SPA pages that still open legacy JSPs)
+
+| SPA Page | Fallback Target | Workflow Missing |
+|----------|----------------|-----------------|
+| `SubjectDetail` | `/legacy/SignStudySubject` | E-signature capture |
+| `SubjectDetail` | `/legacy/ReassignStudySubject` | Subject reassignment |
+| `SubjectDetail` | `/legacy/CreateNewStudyEvent` | Study event creation wizard |
+| `EntityAction` | `/legacy/Remove*` / `/legacy/Restore*` | Remove/restore for unsupported entity types |
+
+#### Blocking Workflows: Remaining Legacy JSPs/Servlets by Category
+
+These are the legacy artifacts that have **no SPA replacement** and are blocking further deletion:
+
+| Category | JSPs | SecureControllers | Key Missing SPA Features |
+|----------|------|-------------------|-------------------------|
+| **Data Entry** | ~66 | ~26 | Full CRF rendering (sections, items, repeating groups), double data entry mode, discrepancy note workflow, rule execution during data entry, CRF print view, file upload/download on CRFs |
+| **Import** | 8 | 7 | Step-by-step import wizard (upload → validate → map → commit), rule XML import, import job scheduling |
+| **Login Auxiliary** | 11 | 5 | Change active study, enterprise landing, request new account, request study access, contact form |
+| **Profile/Password** | 6 | 5 | Update profile (name/email/affiliation/password), forgot password flow, admin password policy config |
+| **OpenRosa** | 0 | 0* | Spring MVC controller with legacy shared dependencies — needs modulith migration |
+| **Layout/Common** | 60 | — | Shared JSP fragments (headers, footers, sidebars, table renderers, navigation) — delete last |
+
+\*OpenRosa uses Spring MVC `@Controller`, not `SecureController`, but depends on legacy `web/` infrastructure.
+
+#### SPA Migration Priority (recommended order)
+
+Based on risk, effort, and dependency chain:
+
+1. **Profile/Password** (low effort, 6 JSPs, 5 servlets) — Smallest blocking surface. SPA already has `/app/profile`. Add forgot-password flow, profile editing, password policy config pages.
+2. **Login Auxiliary** (low effort, 11 JSPs, 5 servlets) — Change study, enterprise page, request account/study. SPA already has `/app/login`.
+3. **Entity Action completeness** — Extend `EntityAction` page to handle all entity types, removing legacy `/legacy/Remove*`/`/legacy/Restore*` fallbacks.
+4. **Subject Detail fallbacks** — Replace `/legacy/SignStudySubject` (e-signature), `/legacy/ReassignStudySubject`, `/legacy/CreateNewStudyEvent` with SPA-native components.
+5. **Rule editing** — Wire orphaned `RuleSetDetail.tsx` route; add rule creation/editing form.
+6. **Import** (moderate effort, 8 JSPs, 7 servlets) — SPA `ImportManager` exists but is basic. Build step-by-step import wizard with validation preview.
+7. **OpenRosa migration** (moderate effort, 0 JSPs) — Extract `OpenRosaSubmissionController` and its pform helpers into a Modulith module with module-owned DAO access.
+8. **Data Entry** (high effort, ~66 JSPs, ~26 servlets) — The critical path. SPA `DataEntryPage` exists but is thin. Requires: full CRF section/item/group rendering, double data entry mode, discrepancy notes inline, rule execution UI, CRF print/export, file attachments.
+9. **Layout/Common** — Delete only after ALL JSP pages are migrated.
+
+#### Feature Flag System (available for gated rollout)
+
+The SPA has a feature flag system at `hooks/useFeatureFlags.ts` backed by a JSONB column on `study` table:
+- API: `GET/PUT /api/v1/studies/:id/feature-flags`
+- Hook: `useFeatureFlags()`, `useUpdateFeatureFlags()`
+- Current default flags: none defined (`DEFAULT_FLAGS = {}`)
+
+**Recommended migration flags to add:**
+```
+spa_data_entry        — Use SPA DataEntryPage instead of legacy JSP data entry
+spa_e_signature       — Use SPA e-signature instead of legacy SignStudySubject
+spa_import            — Use SPA import wizard instead of legacy import JSPs
+spa_subject_detail    — Use full SPA subject detail (no legacy fallbacks)
+```
+
 ## Phase 2: SOAP Retirement
 
 **Goal:** remove `ws/` or reduce it to a separately versioned compatibility adapter.
@@ -188,6 +322,26 @@ Candidates after prior phases:
 - Castor/OpenClinica ODM dependencies if export/import has module-owned replacements.
 - JExcel/legacy POI paths after export migration.
 - Legacy Spring MVC/security compatibility shims.
+
+### Phase 5 Progress (2026-06-08)
+
+**Removed dependencies (19 total):**
+- web/pom.xml: XOM, EZMorph, spring-security-acl, Jersey (3 deps), jdom2 (6)
+- shared/pom.xml: JExcel (1)
+- ws/pom.xml: POI, Commons Math3, Commons Collections4, Commons Validator, Commons FileUpload, Commons IO, JDOM2, Jakarta Mail, Joda Time, Commons Lang3, ByteBuddy (11)
+- parent pom.xml + research-edc-bom/pom.xml: jxl.version, sitemesh, jersey, jdom2, stax-ex, commons-logging, commons-beanutils-core properties and dependency management entries
+
+**Cannot remove yet (still actively used):**
+- JMesa — 252 imports in codebase (table rendering)
+- Castor — ~30 imports (import/export XML marshalling)
+- JSON-Lib — 35 imports (2 files: JSONClinicalDataPostProcessor, MetadataCollectorResource)
+- OpenPDF — 1 import (DownloadDiscrepancyNote)
+- Saxon — 1 import (InputWidget)
+- Rome RSS — 9 imports (RssReaderServlet)
+- Quartz — 148 imports (job scheduling)
+- Commons Digester — 2 imports (DAODigester)
+- Old commons-dbcp — 7 imports (ExtendedBasicDataSource, controllers)
+- JSTL — 575 JSP references
 
 **Exit gate:** Maven modules `web` and `ws` are removed or no longer contain legacy runtime dependencies.
 

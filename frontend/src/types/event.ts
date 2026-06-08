@@ -49,4 +49,6 @@ export interface ScheduleEventRequest {
   studyEventDefinitionId: number;
   ordinal: number;
   location: string;
+  startDate?: string;
+  endDate?: string;
 }

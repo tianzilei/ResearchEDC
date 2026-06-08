@@ -592,11 +592,11 @@ public abstract class DataEntryServlet extends CoreSecureController {
         this.getItemMetadataService().updateGroupDynamicsInSection(displayItemWithGroups, section.getSection().getId(), ecb);
         section.setDisplayItemGroups(displayItemWithGroups);
         DisplayTableOfContentsBean toc =
-            TableOfContentsServlet.getDisplayBeanWithShownSections(getDataSource(), (DisplayTableOfContentsBean) request.getAttribute(TOC_DISPLAY),
+            TableOfContentsHelper.getDisplayBeanWithShownSections(getDataSource(), (DisplayTableOfContentsBean) request.getAttribute(TOC_DISPLAY),
                     (DynamicsMetadataService) SpringServletAccess.getApplicationContext(getServletContext()).getBean("dynamicsMetadataService"),
                     this.sectionDao, this.itemGroupDao);
         request.setAttribute(TOC_DISPLAY, toc);
-        LinkedList<Integer> sectionIdsInToc = TableOfContentsServlet.sectionIdsInToc(toc);
+        LinkedList<Integer> sectionIdsInToc = TableOfContentsHelper.sectionIdsInToc(toc);
 
         // why do we get previousSec and nextSec here, rather than in
         // getDisplayBeans?
@@ -604,7 +604,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         // section
         // if the validation was successful
         logMe("Entering  displayItemWithGroups sdao.findPrevious  "+System.currentTimeMillis());
-        int sIndex = TableOfContentsServlet.sectionIndexInToc(section.getSection(), toc, sectionIdsInToc);
+        int sIndex = TableOfContentsHelper.sectionIndexInToc(section.getSection(), toc, sectionIdsInToc);
         SectionBean previousSec = this.prevSection(section.getSection(), ecb, toc, sIndex);
         logMe("Entering  displayItemWithGroups sdao.findPrevious  end "+System.currentTimeMillis());
         SectionBean nextSec = this.nextSection(section.getSection(), ecb, toc, sIndex);
@@ -1859,12 +1859,12 @@ public abstract class DataEntryServlet extends CoreSecureController {
                     //
                     this.getItemMetadataService().updateGroupDynamicsInSection(displayItemWithGroups, section.getSection().getId(), ecb);
                     toc =
-                        TableOfContentsServlet.getDisplayBeanWithShownSections(getDataSource(), (DisplayTableOfContentsBean) request.getAttribute(TOC_DISPLAY),
+                        TableOfContentsHelper.getDisplayBeanWithShownSections(getDataSource(), (DisplayTableOfContentsBean) request.getAttribute(TOC_DISPLAY),
                                 (DynamicsMetadataService) SpringServletAccess.getApplicationContext(getServletContext()).getBean("dynamicsMetadataService"),
                                 this.sectionDao, this.itemGroupDao);
                     request.setAttribute(TOC_DISPLAY, toc);
-                    sectionIdsInToc = TableOfContentsServlet.sectionIdsInToc(toc);
-                    sIndex = TableOfContentsServlet.sectionIndexInToc(section.getSection(), toc, sectionIdsInToc);
+                    sectionIdsInToc = TableOfContentsHelper.sectionIdsInToc(toc);
+                    sIndex = TableOfContentsHelper.sectionIndexInToc(section.getSection(), toc, sectionIdsInToc);
                     previousSec = this.prevSection(section.getSection(), ecb, toc, sIndex);
                     nextSec = this.nextSection(section.getSection(), ecb, toc, sIndex);
                     section.setFirstSection(!previousSec.isActive());
@@ -1902,11 +1902,11 @@ public abstract class DataEntryServlet extends CoreSecureController {
                 if (!inSameSection) {// else if not in same section, progress as usual
                     /*
                     toc =
-                        TableOfContentsServlet.getDisplayBeanWithShownSections(getDataSource(), (DisplayTableOfContentsBean) request.getAttribute(TOC_DISPLAY),
+                        TableOfContentsHelper.getDisplayBeanWithShownSections(getDataSource(), (DisplayTableOfContentsBean) request.getAttribute(TOC_DISPLAY),
                                 (DynamicsMetadataService) SpringServletAccess.getApplicationContext(getServletContext()).getBean("dynamicsMetadataService"));
                     request.setAttribute(TOC_DISPLAY, toc);
-                    sectionIdsInToc = TableOfContentsServlet.sectionIdsInToc(toc);
-                    sIndex = TableOfContentsServlet.sectionIndexInToc(section.getSection(), toc, sectionIdsInToc);
+                    sectionIdsInToc = TableOfContentsHelper.sectionIdsInToc(toc);
+                    sIndex = TableOfContentsHelper.sectionIndexInToc(section.getSection(), toc, sectionIdsInToc);
                     previousSec = this.prevSection(section.getSection(), ecb, toc, sIndex);
                     nextSec = this.nextSection(section.getSection(), ecb, toc, sIndex);
                     section.setFirstSection(!previousSec.isActive());
@@ -2028,7 +2028,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
                         }
 
                         if (!forwardingSucceeded) {
-                            // request.setAttribute(TableOfContentsServlet.
+                            // request.setAttribute(TableOfContentsHelper.
                             // INPUT_EVENT_CRF_BEAN,
                             // ecb);
                             if (markSuccessfully) {
@@ -2243,7 +2243,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         }
         // added to allow sections shown on this page
         DisplayTableOfContentsBean displayBean = new DisplayTableOfContentsBean();
-        displayBean = TableOfContentsServlet.getDisplayBean(ecb, getDataSource(), currentStudy, this.studySubjectDao, this.studyEventDao, this.sectionDao,
+        displayBean = TableOfContentsHelper.getDisplayBean(ecb, getDataSource(), currentStudy, this.studySubjectDao, this.studyEventDao, this.sectionDao,
                 this.itemGroupDao, this.studyEventDefinitionDao, this.crfVersionDao, this.crfDao, this.studyDao, this.eventDefinitionCrfDao);
         // escape apostrophe in event name
         displayBean.getStudyEventDefinition().setName(displayBean.getStudyEventDefinition().getName().replace("'", "\\'").replace("\"", "\\\"").replace("\\", "\\\\"));
@@ -3917,7 +3917,7 @@ public abstract class DataEntryServlet extends CoreSecureController {
         getEventDefinitionCRFBean(request);
         DataEntryStage stage = ecb.getStage();
 
-        // request.setAttribute(TableOfContentsServlet.INPUT_EVENT_CRF_BEAN,
+        // request.setAttribute(TableOfContentsHelper.INPUT_EVENT_CRF_BEAN,
         // ecb);
         // request.setAttribute(INPUT_EVENT_CRF_ID, new Integer(ecb.getId()));
         LOGGER.trace("inout_event_crf_id:" + ecb.getId());
@@ -4212,10 +4212,10 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
         Integer key = Integer.valueOf(sb.getId());
 
-        int numItems = TableOfContentsServlet.getIntById(numItemsHM, key);
-        int numItemsPending = TableOfContentsServlet.getIntById(numItemsPendingHM, key);
-        int numItemsCompleted = TableOfContentsServlet.getIntById(numItemsCompletedHM, key);
-        int numItemsBlank = TableOfContentsServlet.getIntById(numItemsBlankHM, key);
+        int numItems = TableOfContentsHelper.getIntById(numItemsHM, key);
+        int numItemsPending = TableOfContentsHelper.getIntById(numItemsPendingHM, key);
+        int numItemsCompleted = TableOfContentsHelper.getIntById(numItemsCompletedHM, key);
+        int numItemsBlank = TableOfContentsHelper.getIntById(numItemsBlankHM, key);
         LOGGER.debug(" for " + key + " num items " + numItems + " num items blank " + numItemsBlank +  " num items pending " + numItemsPending + " completed " + numItemsCompleted);
 
         if (stage.equals(DataEntryStage.INITIAL_DATA_ENTRY) && edcb.isDoubleEntry())
@@ -4251,10 +4251,10 @@ public abstract class DataEntryServlet extends CoreSecureController {
 
         Integer key = Integer.valueOf(sb.getId());
 
-        int numItems = TableOfContentsServlet.getIntById(numItemsHM, key);
-        int numItemsPending = TableOfContentsServlet.getIntById(numItemsPendingHM, key);
-        int numItemsCompleted = TableOfContentsServlet.getIntById(numItemsCompletedHM, key);
-        int numItemsBlank = TableOfContentsServlet.getIntById(numItemsBlankHM, key);
+        int numItems = TableOfContentsHelper.getIntById(numItemsHM, key);
+        int numItemsPending = TableOfContentsHelper.getIntById(numItemsPendingHM, key);
+        int numItemsCompleted = TableOfContentsHelper.getIntById(numItemsCompletedHM, key);
+        int numItemsBlank = TableOfContentsHelper.getIntById(numItemsBlankHM, key);
         LOGGER.debug(" for " + key + " num items " + numItems + " num items blank " + numItemsBlank +     " num items pending " + numItemsPending + " completed " + numItemsCompleted);
 
         if (stage.equals(DataEntryStage.INITIAL_DATA_ENTRY) && edcb.isDoubleEntry())
@@ -4304,9 +4304,9 @@ public abstract class DataEntryServlet extends CoreSecureController {
             SectionBean sb = sections.get(i);
             Integer key = Integer.valueOf(sb.getId());
 
-            int numItems = TableOfContentsServlet.getIntById(numItemsHM, key);
-            int numItemsPending = TableOfContentsServlet.getIntById(numItemsPendingHM, key);
-            int numItemsCompleted = TableOfContentsServlet.getIntById(numItemsCompletedHM, key);
+            int numItems = TableOfContentsHelper.getIntById(numItemsHM, key);
+            int numItemsPending = TableOfContentsHelper.getIntById(numItemsPendingHM, key);
+            int numItemsCompleted = TableOfContentsHelper.getIntById(numItemsCompletedHM, key);
 
             if (stage.equals(DataEntryStage.INITIAL_DATA_ENTRY) && edcb.isDoubleEntry()) {
                 if (numItemsPending == 0 && numItems > 0) {

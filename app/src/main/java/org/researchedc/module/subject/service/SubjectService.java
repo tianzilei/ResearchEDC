@@ -37,30 +37,20 @@ public class SubjectService {
     }
 
     public List<SubjectDTO> searchSubjects(String query) {
-        return subjectRepository.findByUniqueIdentifierContainingIgnoreCase(query)
-            .stream()
-            .map(this::toSubjectDto)
-            .toList();
+        return subjectRepository.findByUniqueIdentifierContainingIgnoreCase(query).stream().map(this::toSubjectDto).toList();
     }
 
     public SubjectDTO getSubject(Integer subjectId) {
-        SubjectEntity entity = subjectRepository.findById(subjectId)
-            .orElseThrow(() -> new java.util.NoSuchElementException(
-                "Subject not found: " + subjectId));
+        SubjectEntity entity = subjectRepository.findById(subjectId).orElseThrow(() -> new java.util.NoSuchElementException("Subject not found: " + subjectId));
         return toSubjectDto(entity);
     }
 
     public List<StudySubjectDTO> listStudySubjects(Integer studyId) {
-        return studySubjectRepository.findByStudyIdOrderByLabel(studyId)
-            .stream()
-            .map(this::toStudySubjectDto)
-            .toList();
+        return studySubjectRepository.findByStudyIdOrderByLabel(studyId).stream().map(this::toStudySubjectDto).toList();
     }
 
     public StudySubjectDTO getStudySubject(Integer studySubjectId) {
-        StudySubjectEntity entity = studySubjectRepository.findById(studySubjectId)
-            .orElseThrow(() -> new java.util.NoSuchElementException(
-                "StudySubject not found: " + studySubjectId));
+        StudySubjectEntity entity = studySubjectRepository.findById(studySubjectId).orElseThrow(() -> new java.util.NoSuchElementException("StudySubject not found: " + studySubjectId));
         return toStudySubjectDto(entity);
     }
 
@@ -76,49 +66,27 @@ public class SubjectService {
         entity.setDobCollected(request.getDobCollected());
         entity.setDateCreated(LocalDateTime.now());
         entity.setOwnerId(ownerId);
-
         SubjectEntity saved = subjectRepository.save(entity);
-
-        auditService.recordAudit(
-                null, AuditEventType.CREATE, "Subject",
-                saved.getSubjectId().longValue(), saved.getUniqueIdentifier(),
-                null, null, ownerId, null, "subject");
-
+        auditService.recordAudit(null, AuditEventType.CREATE, "Subject", saved.getSubjectId().longValue(), saved.getUniqueIdentifier(), null, null, ownerId, null, "subject");
         return toSubjectDto(saved);
     }
 
     @Transactional
     public StudySubjectDTO enrollSubject(EnrollSubjectRequest request, Integer ownerId) {
-        if (request.getStudyId() == null) {
-            throw new IllegalArgumentException("Study ID is required");
-        }
-        if (request.getSubjectId() == null) {
-            throw new IllegalArgumentException("Subject ID is required");
-        }
-        if (!subjectRepository.existsById(request.getSubjectId())) {
-            throw new java.util.NoSuchElementException(
-                "Subject not found: " + request.getSubjectId());
-        }
-
+        if (request.getStudyId() == null) throw new IllegalArgumentException("Study ID is required");
+        if (request.getSubjectId() == null) throw new IllegalArgumentException("Subject ID is required");
+        if (!subjectRepository.existsById(request.getSubjectId())) throw new java.util.NoSuchElementException("Subject not found: " + request.getSubjectId());
         StudySubjectEntity entity = new StudySubjectEntity();
         entity.setStudyId(request.getStudyId());
         entity.setSubjectId(request.getSubjectId());
         entity.setLabel(request.getLabel());
         entity.setSecondaryLabel(request.getSecondaryLabel());
         entity.setEnrollmentDate(request.getEnrollmentDate());
-        entity.setOcOid(request.getOcOid() != null ? request.getOcOid()
-                : "SS_" + request.getSubjectId() + "_" + request.getStudyId());
+        entity.setOcOid(request.getOcOid() != null ? request.getOcOid() : "SS_" + request.getSubjectId() + "_" + request.getStudyId());
         entity.setDateCreated(LocalDateTime.now());
         entity.setOwnerId(ownerId);
-
         StudySubjectEntity saved = studySubjectRepository.save(entity);
-
-        auditService.recordAudit(
-                request.getStudyId(), AuditEventType.CREATE, "StudySubject",
-                saved.getStudySubjectId().longValue(), saved.getLabel(),
-                null, null, ownerId, "Enrolled in study " + request.getStudyId(), "subject");
-
-        // Optionally create a study event after enrollment
+        auditService.recordAudit(request.getStudyId(), AuditEventType.CREATE, "StudySubject", saved.getStudySubjectId().longValue(), saved.getLabel(), null, null, ownerId, "Enrolled in study " + request.getStudyId(), "subject");
         if (request.getEventDefinitionId() != null && request.getEventDefinitionId() > 0) {
             ScheduleEventRequest eventRequest = new ScheduleEventRequest();
             eventRequest.setStudySubjectId(saved.getStudySubjectId());
@@ -130,8 +98,20 @@ public class SubjectService {
             eventRequest.setSubjectEventStatusId(1);
             eventService.scheduleEvent(eventRequest, ownerId);
         }
-
         return toStudySubjectDto(saved);
+    }
+
+    @Transactional
+    public void reassignStudySubject(Integer studySubjectId, Integer newStudyId, Integer updaterId) {
+        if (studySubjectId == null) throw new IllegalArgumentException("studySubjectId is required");
+        if (newStudyId == null) throw new IllegalArgumentException("newStudyId is required");
+        StudySubjectEntity entity = studySubjectRepository.findById(studySubjectId).orElseThrow(() -> new java.util.NoSuchElementException("StudySubject not found: " + studySubjectId));
+        Integer oldStudyId = entity.getStudyId();
+        entity.setStudyId(newStudyId);
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(updaterId);
+        studySubjectRepository.save(entity);
+        auditService.recordAudit(newStudyId, AuditEventType.UPDATE, "StudySubject", entity.getStudySubjectId().longValue(), entity.getLabel(), "studyId=" + oldStudyId, "studyId=" + newStudyId, updaterId, "Reassigned subject from study " + oldStudyId + " to study " + newStudyId, "subject");
     }
 
     private SubjectDTO toSubjectDto(SubjectEntity e) {

@@ -74,7 +74,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-public class DynamicsMetadataService implements MetadataServiceInterface {
+public class DynamicsMetadataService {
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     private final String ESCAPED_SEPERATOR = "\\.";
     private DynamicsItemFormMetadataDao dynamicsItemFormMetadataDao;

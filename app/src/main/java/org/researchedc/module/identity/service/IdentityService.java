@@ -7,13 +7,16 @@ import java.util.NoSuchElementException;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.identity.dto.AssignRoleRequest;
+import org.researchedc.module.identity.dto.ChangePasswordRequest;
 import org.researchedc.module.identity.dto.CreateUserRequest;
 import org.researchedc.module.identity.dto.RoleDTO;
+import org.researchedc.module.identity.dto.UpdateProfileRequest;
 import org.researchedc.module.identity.dto.UserDTO;
 import org.researchedc.module.identity.entity.RoleEntity;
 import org.researchedc.module.identity.entity.UserAccountEntity;
 import org.researchedc.module.identity.repository.RoleRepository;
 import org.researchedc.module.identity.repository.UserAccountRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +27,19 @@ public class IdentityService {
     private final UserAccountRepository userAccountRepository;
     private final RoleRepository roleRepository;
     private final AuditService auditService;
+    private final PasswordEncoder passwordEncoder;
+    private static final int SYSADMIN_USER_TYPE_ID = 1;
+    private static final int REGULAR_USER_TYPE_ID = 2;
+    private static final int TECHADMIN_USER_TYPE_ID = 3;
 
     public IdentityService(UserAccountRepository userAccountRepository,
                            RoleRepository roleRepository,
-                           AuditService auditService) {
+                           AuditService auditService,
+                           PasswordEncoder passwordEncoder) {
         this.userAccountRepository = userAccountRepository;
         this.roleRepository = roleRepository;
         this.auditService = auditService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<UserDTO> searchUsers(String query) {
@@ -119,6 +128,62 @@ public class IdentityService {
                 null, null, ownerId, null, "identity");
     }
 
+    @Transactional
+    public UserDTO updateProfile(Integer userId, UpdateProfileRequest request, Integer updaterId) {
+        UserAccountEntity entity = userAccountRepository.findById(userId)
+            .orElseThrow(() -> new NoSuchElementException(
+                "User not found: " + userId));
+
+        if (request.getFirstName() != null) {
+            entity.setFirstName(request.getFirstName());
+        }
+        if (request.getLastName() != null) {
+            entity.setLastName(request.getLastName());
+        }
+        if (request.getEmail() != null) {
+            entity.setEmail(request.getEmail());
+        }
+        if (request.getPhone() != null) {
+            entity.setPhone(request.getPhone());
+        }
+        if (request.getInstitution() != null) {
+            entity.setInstitutionalAffiliation(request.getInstitution());
+        }
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(updaterId);
+
+        UserAccountEntity saved = userAccountRepository.save(entity);
+
+        auditService.recordAudit(
+                null, AuditEventType.UPDATE, "UserAccount",
+                saved.getUserId().longValue(), saved.getUserName(),
+                null, null, updaterId, "Profile updated", "identity");
+
+        return toUserDto(saved);
+    }
+
+    @Transactional
+    public void changePassword(Integer userId, ChangePasswordRequest request, Integer updaterId) {
+        UserAccountEntity entity = userAccountRepository.findById(userId)
+            .orElseThrow(() -> new NoSuchElementException(
+                "User not found: " + userId));
+
+        if (entity.getPasswordHash() == null || !passwordEncoder.matches(request.getOldPassword(), entity.getPasswordHash())) {
+            throw new IllegalArgumentException("Current password is incorrect");
+        }
+
+        entity.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(updaterId);
+
+        userAccountRepository.save(entity);
+
+        auditService.recordAudit(
+                null, AuditEventType.UPDATE, "UserAccount",
+                entity.getUserId().longValue(), entity.getUserName(),
+                null, null, updaterId, "Password changed", "identity");
+    }
+
     private UserDTO toUserDto(UserAccountEntity e) {
         UserDTO dto = new UserDTO();
         dto.setUserId(e.getUserId());
@@ -127,10 +192,23 @@ public class IdentityService {
         dto.setLastName(e.getLastName());
         dto.setEmail(e.getEmail());
         dto.setPhone(e.getPhone());
+        dto.setInstitutionalAffiliation(e.getInstitutionalAffiliation());
+        if (e.getUserTypeId() != null) {
+            dto.setUserType(userTypeName(e.getUserTypeId()));
+        }
         dto.setEnabled(e.getEnabled());
         dto.setActiveStudyId(e.getActiveStudyId());
         dto.setDateCreated(e.getDateCreated());
         return dto;
+    }
+
+    private String userTypeName(Integer userTypeId) {
+        return switch (userTypeId) {
+            case SYSADMIN_USER_TYPE_ID -> "business_administrator";
+            case REGULAR_USER_TYPE_ID -> "user";
+            case TECHADMIN_USER_TYPE_ID -> "technical_administrator";
+            default -> "invalid";
+        };
     }
 
     private RoleDTO toRoleDto(RoleEntity e) {

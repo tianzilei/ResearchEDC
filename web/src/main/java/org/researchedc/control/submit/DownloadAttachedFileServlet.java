@@ -57,7 +57,7 @@ public class DownloadAttachedFileServlet extends SecureController {
         if (ub.isSysAdmin()) {
             return;
         }
-        if (SubmitDataServlet.mayViewData(ub, currentRole)) {
+        if (SubmitDataHelper.mayViewData(ub, currentRole)) {
             return;
         }
 

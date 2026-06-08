@@ -1,15 +1,15 @@
 # ResearchEDC - PROJECT KNOWLEDGE BASE
 
-**Derived from:** OpenClinica v3.x  
-**Generated:** 2026-05-25  
-**Updated:** 2026-06-07  
+**Derived from:** OpenClinica v3.x
+**Generated:** 2026-05-25
+**Updated:** 2026-06-08
 **Branch:** master
 
 ## OVERVIEW
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x. Built on Java 21 with Spring Framework 6.1.5, Hibernate ORM 6.4.4, and Liquibase migrations. Multi-module Maven project supporting Oracle and PostgreSQL.
 
-New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface remains substantial: `shared/` (~793 Java files, including 182 DAO files), `web/` (484 Java files + 419 JSP files, 189 SecureController/CoreSecureController subclasses), and `ws/` (75 Java files) are still being incrementally strangulated into Modulith modules.
+New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface remains substantial: `shared/` (~718 Java files, including 175 DAO files), `web/` (354 Java files + 213 JSP files, 94 SecureController/CoreSecureController subclasses), and `ws/` (29 Java files) are still being incrementally strangulated into Modulith modules.
 
 **当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 369/369** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **Legacy removal ❌ NOT COMPLETE — see `docs/refactor/remove-legacy-code-plan.md`**
 
@@ -39,7 +39,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │       ├── filter/          # 过滤器管理 (JPA 实体 + 仓库, 7 文件)
 │       ├── subjectgroup/    # 受试者分组 (JPA 实体 + 仓库, 9 文件)
 │       └── discrepancynote/ # 差异备注管理 (JPA 实体 + 仓库, 7 文件)
-├── shared/                  # 共享领域逻辑与数据访问 — ~793 Java 文件 (取代 legacy-core, still legacy-heavy)
+├── shared/                  # 共享领域逻辑与数据访问 — ~733 Java 文件 (取代 legacy-core, still legacy-heavy)
 │   ├── bean/                # DTOs (253 文件)
 │   ├── dao/                 # 数据访问层 (169 文件, 含 29 SPI 接口)
 │   ├── domain/              # Hibernate 实体 (166 文件)
@@ -48,7 +48,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │   └── ...                  # job, exception, validator, i18n, patterns, config
 ├── frontend/                # React 19 + TypeScript SPA (pnpm workspace, 94 文件)
 ├── questionnaire-service/   # Python FastAPI 问卷微服务 (独立部署, 74 文件)
-├── web/                     # 遗留 Web UI — 484 Java 文件 + 419 JSP (待绞杀)
+├── web/                     # 遗留 Web UI — 480 Java 文件 + 416 JSP (待绞杀)
 ├── ws/                      # 遗留 SOAP — 75 Java 文件 (待绞杀/退休)
 ├── deploy/                  # Bare host reverse proxy / observability configs
 ├── deploy.sh                # Single bare host deploy shell
@@ -92,7 +92,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | **SubjectGroup module** | `app/.../module/subjectgroup/` | 分组类/组 JPA 实体 (gateway only) |
 | **DiscrepancyNote module** | `app/.../module/discrepancynote/` | 差异备注 JPA 实体 (gateway only) |
 | **Shared (legacy) logic** | `shared/src/main/java/org/researchedc/` | DAO/domain/service/bean/logic |
-| Legacy DAOs | `shared/.../dao/` | 182 DAO/SPI/implementation files; deletion blocked by replacement proof |
+| Legacy DAOs | `shared/.../dao/` | 186 DAO/SPI/implementation files; deletion blocked by replacement proof |
 | Legacy DAOs (JPA) | `shared/.../dao/hibernate/` | AbstractDomainDao 子类 |
 | Legacy DAO SPI interfaces | `shared/.../dao/spi/` | 29 个接口 (IStudyDAO, ISubjectDAO, ...) |
 | Legacy Hibernate entities | `shared/.../domain/datamap/` | ~62 实体, JPA 注解 |
