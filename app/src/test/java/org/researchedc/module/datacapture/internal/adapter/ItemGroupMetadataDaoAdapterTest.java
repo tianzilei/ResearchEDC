@@ -18,7 +18,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.dao.spi.IItemGroupMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.module.datacapture.entity.ItemGroupMetadataEntity;
 import org.researchedc.module.datacapture.repository.ItemGroupMetadataRepository;
 
@@ -36,8 +35,7 @@ class ItemGroupMetadataDaoAdapterTest {
     }
 
     @Test
-    void adapterRemainsAssignableToLegacyDaoAndSpi() {
-        assertInstanceOf(ItemGroupMetadataDAO.class, adapter);
+    void adapterIsAssignableToSpi() {
         assertInstanceOf(IItemGroupMetadataDAO.class, adapter);
     }
 

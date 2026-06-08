@@ -6,12 +6,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.submit.ItemGroupMetadataBean;
 import org.researchedc.dao.spi.IItemGroupMetadataDAO;
-import org.researchedc.dao.submit.ItemGroupMetadataDAO;
 import org.researchedc.module.datacapture.entity.ItemGroupMetadataEntity;
 import org.researchedc.module.datacapture.repository.ItemGroupMetadataRepository;
 import org.springframework.context.annotation.Primary;
@@ -21,12 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("itemGroupMetadataDAO")
 @Primary
 @Transactional(readOnly = true)
-public class ItemGroupMetadataDaoAdapter extends ItemGroupMetadataDAO<String, ArrayList> implements IItemGroupMetadataDAO {
+public class ItemGroupMetadataDaoAdapter implements IItemGroupMetadataDAO {
 
     private final ItemGroupMetadataRepository repository;
 
     public ItemGroupMetadataDaoAdapter(ItemGroupMetadataRepository repository) {
-        super((DataSource) null);
         this.repository = repository;
     }
 
