@@ -64,6 +64,7 @@ ws/src/main/resources/datainfo.properties
 .sisyphus/
 .opencode/
 .claude/
+.ai-work/
 
 # Local development files
 *.log
@@ -71,6 +72,7 @@ ws/src/main/resources/datainfo.properties
 *.swp
 *.swo
 *~
+run-opencode-loop.sh
 
 # Test outputs
 /test-output/
