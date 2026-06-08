@@ -8,9 +8,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  * <p>Enables Spring's {@code @Scheduled} annotation support with a thread pool of 42,
  * matching the legacy XML configuration ({@code task:scheduler pool-size="42"}).</p>
- *
- * <p>Existing {@code @Scheduled} methods in {@code BulkEmailSenderService} and
- * {@code JobTriggerService} will continue to work without modification.</p>
  */
 @Configuration
 @EnableScheduling

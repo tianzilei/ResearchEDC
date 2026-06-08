@@ -22,7 +22,6 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.core.EmailEngine;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -218,7 +217,7 @@ public class RestoreEventCRFServlet extends SecureController {
         logger.info("Sending email...");
         sendEmail(ub.getEmail().trim(), respage.getString("restore_event_CRF_to_event"), emailBody, false);
         // to admin
-        sendEmail(EmailEngine.getAdminEmail(), respage.getString("restore_event_CRF_to_event"), emailBody, false);
+        sendEmail("", respage.getString("restore_event_CRF_to_event"), emailBody, false);
         logger.info("Sending email done..");
     }
 

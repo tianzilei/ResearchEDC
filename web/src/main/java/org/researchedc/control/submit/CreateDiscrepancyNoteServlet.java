@@ -41,7 +41,6 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
-import org.researchedc.core.EmailEngine;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
@@ -864,7 +863,7 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
                         message.append(respage.getString("email_footer"));
 
                         String emailBodyString = message.toString();
-                        sendEmail(alertEmail.trim(), EmailEngine.getAdminEmail(), MessageFormat.format(respage.getString("mailDNSubject"),study.getName(), note.getEntityName()), emailBodyString, true, null,
+                        sendEmail(alertEmail.trim(), "", MessageFormat.format(respage.getString("mailDNSubject"),study.getName(), note.getEntityName()), emailBodyString, true, null,
                                 null, true);
 
                     } else {

@@ -196,46 +196,15 @@
         <description>The log out Servlet</description>
         <servlet-class>org.researchedc.control.login.LogoutServlet</servlet-class>
     </servlet>
-    <!--    <servlet>
-            <servlet-name>EnterpriseServlet</servlet-name>
-            <display-name>EnterpriseServlet</display-name>
-            <description>The Enterprise Servlet</description>
-            <servlet-class>org.researchedc.control.login.EnterpriseServlet</servlet-class>
-        </servlet>-->
     <servlet>
         <servlet-name>RequestPasswordServlet</servlet-name>
         <display-name>RequestPasswordServlet</display-name>
         <servlet-class>org.researchedc.control.login.RequestPasswordServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ContactServlet</servlet-name>
-        <display-name>ContactServlet</display-name>
-        <servlet-class>org.researchedc.control.login.ContactServlet</servlet-class>
-    </servlet>
-    <!--    <servlet>
-            <servlet-name>RequestAccountServlet</servlet-name>
-            <display-name>RequestAccountServlet</display-name>
-            <servlet-class>org.researchedc.control.login.RequestAccountServlet</servlet-class>
-        </servlet>-->
-    <servlet>
-        <servlet-name>RequestStudyServlet</servlet-name>
-        <display-name>RequestStudyServlet</display-name>
-        <servlet-class>org.researchedc.control.login.RequestStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ResetPasswordServlet</servlet-name>
         <display-name>ResetPassword</display-name>
         <servlet-class>org.researchedc.control.login.ResetPasswordServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateProfileServlet</servlet-name>
-        <display-name>UpdateProfile</display-name>
-        <servlet-class>org.researchedc.control.login.UpdateProfileServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ChangeStudyServlet</servlet-name>
-        <display-name>ChangeStudy</display-name>
-        <servlet-class>org.researchedc.control.login.ChangeStudyServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ViewUserAccountServlet</servlet-name>
@@ -795,10 +764,6 @@
         <servlet-name>AccessFileServlet</servlet-name>
         <url-pattern>/AccessFile</url-pattern>
     </servlet-mapping>
-    <!--<servlet-mapping>
-        <servlet-name>EnterpriseServlet</servlet-name>
-        <url-pattern>/Enterprise</url-pattern>
-    </servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>ShowFileServlet</servlet-name>
         <url-pattern>/ShowFile</url-pattern>
@@ -815,29 +780,13 @@
         <servlet-name>RequestPasswordServlet</servlet-name>
         <url-pattern>/RequestPassword</url-pattern>
     </servlet-mapping>
-    <!--    <servlet-mapping>
-            <servlet-name>RequestAccountServlet</servlet-name>
-            <url-pattern>/RequestAccount</url-pattern>
-        </servlet-mapping>-->
-    <servlet-mapping>
-        <servlet-name>RequestStudyServlet</servlet-name>
-        <url-pattern>/RequestStudy</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ResetPasswordServlet</servlet-name>
         <url-pattern>/ResetPassword</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>UpdateProfileServlet</servlet-name>
-        <url-pattern>/UpdateProfile</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
         <url-pattern>/Logout</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ContactServlet</servlet-name>
-        <url-pattern>/Contact</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ListUserAccountsServlet</servlet-name>
@@ -932,10 +881,6 @@
     <servlet-mapping>
         <servlet-name>InitUpdateCRFServlet</servlet-name>
         <url-pattern>/InitUpdateCRF</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ChangeStudyServlet</servlet-name>
-        <url-pattern>/ChangeStudy</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ListStudySubjectsManageServlet</servlet-name>

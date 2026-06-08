@@ -42,20 +42,6 @@ public class CoreResourcesConfig {
     }
 
     @Bean
-    public Properties enterpriseInfo() {
-        Properties props = new Properties();
-        try {
-            try (InputStream is = Thread.currentThread().getContextClassLoader()
-                    .getResourceAsStream("enterprise.properties")) {
-                if (is != null) props.load(is);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to load enterprise.properties", e);
-        }
-        return props;
-    }
-
-    @Bean
     public CoreResources coreResources(Properties dataInfo, Properties extractInfo) {
         CoreResources cr = new CoreResources();
         cr.setDataInfo(dataInfo);

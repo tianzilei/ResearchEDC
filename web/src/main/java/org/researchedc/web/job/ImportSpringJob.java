@@ -40,7 +40,6 @@ import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.bean.submit.crfdata.SummaryStatsBean;
 import org.researchedc.control.submit.ImportCRFInfoContainer;
-import org.researchedc.core.OpenClinicaMailSender;
 import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IUserAccountDAO;
@@ -126,7 +125,6 @@ public class ImportSpringJob extends QuartzJobBean {
     public static final String IMPORT_DIR_2 = SQLInitServlet.getField("filePath") + DEST_DIR + File.separator;
 
     private DataSource dataSource;
-    private OpenClinicaMailSender mailSender;
     private ImportCRFDataService dataService;
     private IItemDataDAO itemDataDao;// = this.itemDataDao;
     private EventCRFDao eventCrfDao;// = this.eventCrfDao;
@@ -166,7 +164,6 @@ public class ImportSpringJob extends QuartzJobBean {
         try {
             ApplicationContext appContext = (ApplicationContext) context.getScheduler().getContext().get("applicationContext");
             dataSource = (DataSource) appContext.getBean("dataSource");
-            mailSender = (OpenClinicaMailSender) appContext.getBean("openClinicaMailSender");
             RuleSetServiceInterface ruleSetService = (RuleSetServiceInterface) appContext.getBean("ruleSetService");
 
             itemDataDao = this.itemDataDao;
@@ -257,18 +254,6 @@ public class ImportSpringJob extends QuartzJobBean {
                         ruleSetService);
 
                 auditEventDAO.createRowForExtractDataJobSuccess(triggerBean, auditMessages.get(1));
-                try {
-                    if (contactEmail != null && !"".equals(contactEmail)) {
-                        mailSender.sendEmail(contactEmail, respage.getString("job_ran_for") + " " + triggerBean.getFullName(),
-                                generateMsg(auditMessages.get(0), contactEmail), true);
-                        logger.debug("email body: " + auditMessages.get(1));
-                    }
-                } catch (OpenClinicaSystemException e) {
-                    // Do nothing
-                    logger.error("=== throw an ocse === " + e.getMessage());
-                    e.printStackTrace();
-                }
-
             } else {
                 logger.debug("no real files found");
                 auditEventDAO.createRowForExtractDataJobSuccess(triggerBean, respage.getString("job_ran_but_no_files"));
@@ -290,13 +275,6 @@ public class ImportSpringJob extends QuartzJobBean {
             logger.error("found a fail exception: " + e.getMessage());
             e.printStackTrace();
             auditEventDAO.createRowForExtractDataJobFailure(triggerBean, e.getMessage());
-            try {
-                mailSender.sendEmail(contactEmail, respage.getString("job_failure_for") + " " + triggerBean.getFullName(), e.getMessage(), true);
-            } catch (OpenClinicaSystemException ose) {
-                // Do nothing
-                logger.error("=== throw an ocse: " + ose.getMessage());
-
-            }
         }
     }
 

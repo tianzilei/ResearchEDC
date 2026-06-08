@@ -16,8 +16,6 @@ import org.researchedc.bean.extract.ExtractBean;
 import org.researchedc.bean.extract.SPSSReportBean;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.core.EmailEngine;
-import org.researchedc.core.OpenClinicaMailSender;
 import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.DatasetDao;
@@ -82,7 +80,6 @@ public class ExampleSpringJob extends QuartzJobBean {
     private static final String DATASET_DIR = SQLInitServlet.getField("filePath") + "datasets" + File.separator;
 
     // private BasicDataSource basicDataSource;
-    private OpenClinicaMailSender mailSender;
     private DataSource dataSource;
     private GenerateExtractFileService generateFileService;
     private UserAccountBean userBean;
@@ -104,7 +101,6 @@ public class ExampleSpringJob extends QuartzJobBean {
             ApplicationContext appContext = (ApplicationContext) context.getScheduler().getContext().get("applicationContext");
             String studySubjectNumber = ((CoreResources) appContext.getBean("coreResources")).getField("extract.number");
             dataSource = (DataSource) appContext.getBean("dataSource");
-            mailSender = (OpenClinicaMailSender) appContext.getBean("openClinicaMailSender");
             IAuditEventDAO auditEventDAO = this.auditEventDao;
             // Scheduler scheduler = context.getScheduler();
             // JobDetail detail = context.getJobDetail();
@@ -215,7 +211,7 @@ public class ExampleSpringJob extends QuartzJobBean {
                 // message.append(pageMessages.getString("html_email_header_1")
                 // + " " + alertEmail +
                 // pageMessages.getString("html_email_header_2") + "<br/>");
-                message.append("<p>" + pageMessages.getString("email_header_1") + " " + EmailEngine.getAdminEmail() + " "
+                message.append("<p>" + pageMessages.getString("email_header_1") + " " + "" + " "
                     + pageMessages.getString("email_header_2") + " Job Execution " + pageMessages.getString("email_header_3") + "</p>");
                 message.append("<P>Dataset: " + datasetBean.getName() + "</P>");
                 message.append("<P>Study: " + activeStudy.getName() + "</P>");
@@ -351,14 +347,8 @@ public class ExampleSpringJob extends QuartzJobBean {
                     auditMessage.append(pageMessages.getString("you_can_access_spss") + getFileIdInt(fileName) + pageMessages.getString("access_end"));
                 }
 
-                // wrap up the message, and send the email
                 message.append("<p>" + pageMessages.getString("html_email_body_5") + "</P><P>" + pageMessages.getString("email_footer"));
-                try {
-                    mailSender.sendEmail(alertEmail.trim(), pageMessages.getString("job_ran_for") + " " + datasetBean.getName(), message.toString(), true);
-                } catch (OpenClinicaSystemException ose) {
-                    // Do Nothing, In the future we might want to have an email
-                    // status added to system.
-                }
+
                 TriggerBean triggerBean = new TriggerBean();
                 triggerBean.setDataset(datasetBean);
                 triggerBean.setUserAccount(userBean);

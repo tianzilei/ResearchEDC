@@ -27,12 +27,11 @@ import org.researchedc.domain.rule.expression.ExpressionObjectWrapper;
 import org.researchedc.exception.OpenClinicaSystemException;
 import org.researchedc.logic.expressionTree.OpenClinicaExpressionParser;
 import org.researchedc.logic.rulerunner.MessageContainer.MessageType;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ImportDataRuleRunner extends RuleRunner {
 
-    public ImportDataRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, JavaMailSenderImpl mailSender) {
+    public ImportDataRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, Object mailSender) {
         super(ds, requestURLMinusServletPath, contextPath, mailSender);
     }
 

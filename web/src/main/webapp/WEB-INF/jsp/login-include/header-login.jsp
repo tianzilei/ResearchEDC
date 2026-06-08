@@ -77,7 +77,7 @@
 
 <!-- CHANGE PROJECT BUTTON -->
 
-	<a class="buttontext" href="ChangeStudy"><fmt:message key="change_study" bundle="${resworkflow}"/></a>
+	<a class="buttontext" href="${pageContext.request.contextPath}/app/change-study"><fmt:message key="change_study" bundle="${resworkflow}"/></a>
 
 <!-- end CHANGE PROJECT BUTTON -->
 

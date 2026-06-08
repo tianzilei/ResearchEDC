@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -63,7 +62,7 @@ public class RuleRunner {
     private IDiscrepancyNoteDAO discrepancyNoteDao;
     private IItemFormMetadataDAO itemFormMetadataDao;
     private ISectionDAO sectionDao;
-    private JavaMailSenderImpl mailSender;
+    private Object mailSender;
     protected RuleRunnerMode ruleRunnerMode;
     protected DynamicsMetadataService dynamicsMetadataService;
     protected RuleActionRunLogDomainDao ruleActionRunLogDao;
@@ -77,7 +76,7 @@ public class RuleRunner {
     };
 
 
-    public RuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, JavaMailSenderImpl mailSender) {
+    public RuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, Object mailSender) {
         this.ds = ds;
         this.requestURLMinusServletPath = requestURLMinusServletPath;
         this.contextPath = contextPath;
@@ -272,7 +271,7 @@ public class RuleRunner {
         this.expressionService = expressionService;
     }
 
-    public JavaMailSenderImpl getMailSender() {
+    public Object getMailSender() {
         return mailSender;
     }
 

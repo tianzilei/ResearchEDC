@@ -76,11 +76,6 @@ public class LogFilterOther extends LogFilterBase {
             {
             logFacilityCode = SYSLOG_FACILITY_CRON;
             }
- else if ((loggerName.contains("core.EmailEngine")) || (loggerName.contains("core.OpenClinicaMailSender"))) // ws
-        {
-            logFacilityCode = SYSLOG_FACILITY_MAIL;
-        }
-
  else if ((loggerName.contains(".exception"))) {
             logFacilityCode = SYSLOG_FACILITY_DAEMON;
         }

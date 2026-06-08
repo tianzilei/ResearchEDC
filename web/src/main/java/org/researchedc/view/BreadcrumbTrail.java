@@ -407,11 +407,6 @@ public class BreadcrumbTrail {
             } else if (jspPage.equals(Page.ADMIN_SYSTEM) || jspPage.equals(Page.TECH_ADMIN_SYSTEM)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.ENTERPRISE)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("home"), "MainMenu", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("openclinica_enterprise"), "#", Status.PENDING));
-
             } else if (jspPage.equals(Page.MANAGE_STUDY)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "#", Status.PENDING));
@@ -623,16 +618,6 @@ public class BreadcrumbTrail {
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_event_definitions"), "ListEventDefinition", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("view_event_definition"), "#", Status.PENDING));
-
-            } else if (jspPage.equals(Page.CHANGE_STUDY)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("home"), "MainMenu", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("change_current_study"), "#", Status.PENDING));
-
-            } else if (jspPage.equals(Page.UPDATE_PROFILE)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("home"), "MainMenu", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("update_user_profile"), "#", Status.PENDING));
 
             } else if (jspPage.equals(Page.CREATE_SUB_STUDY)) {
                 trail = new ArrayList();

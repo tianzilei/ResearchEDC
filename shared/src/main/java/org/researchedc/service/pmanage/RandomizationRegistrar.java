@@ -1,25 +1,18 @@
 package org.researchedc.service.pmanage;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.core.EmailEngine;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.exception.OpenClinicaSystemException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.client.RestTemplate;
 
 public class RandomizationRegistrar {
@@ -85,24 +78,8 @@ public class RandomizationRegistrar {
     }
 
 
-    public void sendEmail(JavaMailSenderImpl mailSender, UserAccountBean user, String emailSubject, String message) throws OpenClinicaSystemException {
-
-        logger.info("Sending email...");
-        try {
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
-            helper.setFrom(EmailEngine.getAdminEmail());
-            helper.setTo(user.getEmail());
-            helper.setSubject(emailSubject);
-            helper.setText(message);
-
-            mailSender.send(mimeMessage);
-            logger.debug("Email sent successfully on {}", new Date());
-        } catch (MailException me) {
-            logger.error("Email could not be sent");
-        } catch (MessagingException me) {
-            logger.error("Email could not be sent");
-        }
+    public void sendEmail(Object mailSender, UserAccountBean user, String emailSubject, String message) throws OpenClinicaSystemException {
+        logger.debug("Email delivery disabled; skipped randomization email to {}", user == null ? null : user.getName());
     }
 
         public String randomizeStudy(String studyOid, String studyName,UserAccountBean userAccount) {

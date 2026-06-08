@@ -33,7 +33,6 @@ import org.researchedc.domain.rule.action.RuleActionRunBean.Phase;
 import org.researchedc.logic.rulerunner.ExecutionMode;
 import org.researchedc.logic.rulerunner.ImportDataRuleRunnerContainer;
 import org.researchedc.logic.rulerunner.MessageContainer;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 public interface RuleSetServiceInterface {
 
@@ -211,9 +210,9 @@ public interface RuleSetServiceInterface {
 
     public void setRuleSetAuditDao(RuleSetAuditDomainDao ruleSetAuditDao);
 
-    public JavaMailSenderImpl getMailSender();
+    public Object getMailSender();
 
-    public void setMailSender(JavaMailSenderImpl mailSender);
+    public void setMailSender(Object mailSender);
 
     /**
      * Return true if there is at least one rule should be run for a phase.

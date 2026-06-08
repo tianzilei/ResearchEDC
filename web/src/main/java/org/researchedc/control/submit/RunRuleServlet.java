@@ -22,7 +22,6 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -81,7 +80,7 @@ public class RunRuleServlet extends SecureController {
         ruleSetService =
             this.ruleSetService != null ? ruleSetService : (RuleSetServiceInterface) SpringServletAccess.getApplicationContext(context).getBean(
                     "ruleSetService");
-        ruleSetService.setMailSender((JavaMailSenderImpl) SpringServletAccess.getApplicationContext(context).getBean("mailSender"));
+        ruleSetService.setMailSender(null);
         ruleSetService.setContextPath(getContextPath());
         ruleSetService.setRequestURLMinusServletPath(getRequestURLMinusServletPath());
         return ruleSetService;

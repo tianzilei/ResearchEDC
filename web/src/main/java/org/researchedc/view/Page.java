@@ -26,7 +26,6 @@ public enum Page {
       	LOGIN("/WEB-INF/jsp/login/login.jsp", "OpenClinica Login"),
     	LOGIN_USER_ACCOUNT_DELETED("/WEB-INF/jsp/login/login.jsp" + "?action=userAccountDeleted",
                 "Unsuccessful Login Due to Account Deletion"),
-                ENTERPRISE("/WEB-INF/jsp/login/enterprise.jsp", "OpenClinica Enterprise"),
    /**
      * Page for logging out
      */
@@ -47,44 +46,9 @@ public enum Page {
     // YW >>
 
     /**
-     * Page for user to update profile
-     */
-                UPDATE_PROFILE("/WEB-INF/jsp/login/updateProfile.jsp", "Update your profile"),
-
-
-    /**
-     * Page for user to confirm inputs of updating profile
-     */
-                UPDATE_PROFILE_CONFIRM("/WEB-INF/jsp/login/updateProfileConfirm.jsp", "Confirm your profile"),
-
-
-    /**
-     * Page for user to request password
-     */
-                CONTACT("/WEB-INF/jsp/login/contact.jsp", "Contact Form"),
-
-
-    /**
      * Page for user to request password
      */
                 REQUEST_PWD("/WEB-INF/jsp/login/requestPassword.jsp","Request passwod form"),
-                REQUEST_STUDY("/WEB-INF/jsp/login/requestStudy.jsp", "Request study access"),
-
-
-    /**
-     * Page for user to request study access
-     */
-    REQUEST_STUDY_CONFIRM ("/WEB-INF/jsp/login/requestStudyConfirm.jsp", "Request study access Confirm"),
-
-    /**
-     * Page for changing study
-     */
-   CHANGE_STUDY ("/WEB-INF/jsp/login/changeStudy.jsp", "Change Study"),
-    CHANGE_STUDY_CONFIRM ("/WEB-INF/jsp/login/changeStudyConfirm.jsp", "Change Study Confirm"),
-
-    REQUEST_ACCOUNT("/WEB-INF/jsp/login/requestAccount.jsp", "Request account form"),
-
-    REQUEST_ACCOUNT_CONFIRM ("/WEB-INF/jsp/login/requestAccountConfirm.jsp", "Request account confirm"),
     /**
      * Page for user to confirm inputs of requesting password
      */
