@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("legacyEventService")
-public class EventService implements EventServiceInterface {
+public class EventService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     ISubjectDAO subjectDao;

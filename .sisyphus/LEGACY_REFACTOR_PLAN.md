@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-07 (Legacy code removal is **not complete**. Phase B schema ownership and Phase C SPI widening are complete, but `shared/`, `web/`, and `ws/` still contain substantial legacy code. See `docs/refactor/remove-legacy-code-plan.md`.)
+> **Last updated:** 2026-06-08 (Legacy code removal is **not complete**. Phase B schema ownership and Phase C SPI widening are complete, Phase 1 has 5 deletion slices done, but `shared/`, `web/`, and `ws/` still contain substantial legacy code. See `docs/refactor/remove-legacy-code-plan.md` for the current deletion plan and SPA migration coverage.)
 > **Scope:** All remaining legacy code in `shared/`, `web/`, `ws/`
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -21,15 +21,15 @@
 | 5 | `datacapture` | Bridge to `item_data`/`response_set` | `/api/v1/data-capture` |
 | — | `identity` | Bridge to `user_account`/`study_user_role` | `/api/v1/identity` |
 
-### Remaining legacy code baseline (2026-06-07)
+### Remaining legacy code baseline (2026-06-08, after Phase 1 deletions + Phase 4-5 cleanup)
 
 ```
-shared/   793 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
-          182 files under shared/src/main/java/org/researchedc/dao
-web/      484 Java files → control/ servlets, controller/ Spring MVC, view helpers, filters
-          419 JSP pages
-          189 SecureController/CoreSecureController subclass matches
-ws/       75 Java files → SOAP endpoints + validators + adapters + logic + client
+shared/   718 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
+          175 files under shared/src/main/java/org/researchedc/dao (-75 shared, -11 dao from Phase 4+5 cleanup)
+web/      354 Java files → control/ servlets, controller/ Spring MVC, view helpers, filters (-126 from Phase 1 slices)
+          213 JSP pages (-203 from Phase 1 slices)
+           94 SecureController/CoreSecureController subclass matches (-92 from Phase 1 slices)
+ws/        29 Java files → SOAP endpoints + validators + adapters + logic + client (-46 from Phase 5 dependency cleanup)
 ```
 
 Important distinction: `legacy-core/` removal was a module consolidation into `shared/`; it was not full legacy code removal.
@@ -441,22 +441,55 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 
 ### G3: Page Migration Roadmap
 
-SPA replacement coverage exists for major workflows, but physical JSP/servlet deletion is not complete. Current repository still contains 419 JSP files and 189 `SecureController`/`CoreSecureController` subclass matches. Treat the list below as replacement coverage, not deletion proof:
-- ✅ `managestudy/study/*` — **~20 JSPs** replaced by React StudyList/Create/Detail/Edit/Sites
-- ✅ `managestudy/subject/*` — **~40 JSPs** replaced by React SubjectList + SubjectDetail
-- ✅ `managestudy/event/*` — **~15 JSPs** replaced by React EventList/Schedule/Complete
-- ✅ `admin/user/*` — **~15 JSPs** replaced by React UserManagement
-- ✅ `admin/audit/*` — **~5 JSPs** replaced by React AuditLogViewer
-- ✅ `admin/system/*` — **~5 JSPs** replaced by React SystemConfiguration
-- ✅ `admin/crf/*` — **~20 JSPs** replaced by CrfAdmin + CRF version management
-- ✅ `admin/jobs/*` — **~10 JSPs** replaced by JobManager
-- ✅ `admin/rest/*` — **~14 JSPs** replaced by EntityAction page
-- ✅ `admin/other/*` — **~5 JSPs** replaced by PasswordPolicy, LogViewer, StudyUserRoleEditor
-- ✅ `submit/` — **~70 JSPs** replaced by DataEntryPage with form engine
-- ✅ `extract/` — **~50 JSPs** replaced by ExportCenter, DatasetBuilder, FilterBuilder
-- ✅ `login/` — **~16 JSPs** replaced by Keycloak OIDC & Profile page
-- ✅ `include/*` — **~61 JSPs** replaced by React AppLayout shell
-- 🔶 Remaining JSPs/servlets continue to be accessible through `/app/legacy/*` LegacyFrame or direct legacy routes until their deletion gates are met.
+SPA replacement coverage exists for major workflows, but physical JSP/servlet deletion is not complete. Current repository still contains 213 JSP files and 94 `SecureController`/`CoreSecureController` subclass matches. Treat the list below as replacement coverage, not deletion proof.
+
+#### Confirmed Coverage (JSP files physically deleted in Phase 1 slices)
+
+| Area | JSPs Deleted | SPA Replacement |
+|------|-------------|-----------------|
+| `managestudy/study/*` | ~20 | React StudyList/Create/Detail/Edit/Sites |
+| `managestudy/subject/*` | ~40 | React SubjectList + SubjectDetail |
+| `managestudy/event/*` | ~15 | React EventList/Schedule/Complete |
+| `admin/user/*` | ~15 | React UserManagement |
+| `admin/audit/*` | ~5 | React AuditLogViewer |
+| `admin/system/*` | ~5 | React SystemConfiguration |
+| `admin/crf/*` | ~20 | CrfAdmin + CRF version management |
+| `admin/jobs/*` | ~10 | JobManager |
+| `admin/rest/*` | ~14 | EntityAction page |
+| `admin/other/*` | ~5 | PasswordPolicy, LogViewer, StudyUserRoleEditor |
+| `extract/*` | ~50 | ExportCenter, DatasetBuilder, FilterBuilder |
+| `include/*` (deleted) | ~61 | React AppLayout shell |
+| **Total deleted** | **~260** | |
+
+#### SPA Pages Exist But Legacy NOT Deleted (Blocked by Missing Features)
+
+| Area | Remaining JSPs | Blocked By |
+|------|---------------|------------|
+| `submit/` (data entry) | ~60 | Full CRF rendering (sections, repeating groups, discrepancy notes, rule execution), double data entry mode, file attachments, CRF print |
+| `login/` (auxiliary) | ~11 | Change study, enterprise landing, request account, contact form (login page itself IS SPA-native) |
+| `login/` (profile) | 4 | Update profile, forgot password, reset password flows |
+| `submit/` (import) | 8 | Step-by-step import wizard with validation preview, rule import |
+| `include/` (remaining) | ~60 | Shared fragments used by all remaining JSP pages |
+
+#### Known SPA → Legacy Fallbacks (SPA pages still open legacy JSPs)
+
+| SPA Page | Legacy Fallback | Missing Feature |
+|----------|----------------|-----------------|
+| `SubjectDetail.tsx` | `/legacy/SignStudySubject` | E-signature capture |
+| `SubjectDetail.tsx` | `/legacy/ReassignStudySubject` | Subject reassignment |
+| `SubjectDetail.tsx` | `/legacy/CreateNewStudyEvent` | Study event scheduling wizard |
+| `EntityAction.tsx` | `/legacy/Remove*` / `/legacy/Restore*` | Remove/restore for unsupported entity types |
+
+#### Orphan SPA Components (built but not wired to routes)
+
+| Component | Action Needed |
+|-----------|--------------|
+| `pages/rules/RuleSetDetail.tsx` | Wire as route `studies/:studyId/rules/:ruleSetId` |
+| `components/questionnaire-builder/QuestionnaireBuilder.tsx` | Wire as route `questionnaires/builder` |
+
+#### Feature Flag System
+
+Available at `GET/PUT /api/v1/studies/:id/feature-flags` (JSONB on `study` table). Hook: `useFeatureFlags()`. Currently has zero default flags. Recommended migration flags: `spa_data_entry`, `spa_e_signature`, `spa_import`, `spa_subject_detail`.
 
 ---
 

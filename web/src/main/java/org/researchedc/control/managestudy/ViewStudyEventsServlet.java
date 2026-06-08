@@ -14,7 +14,7 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
-import org.researchedc.control.submit.SubmitDataServlet;
+import org.researchedc.control.submit.SubmitDataHelper;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
@@ -74,7 +74,7 @@ public class ViewStudyEventsServlet extends SecureController {
             return;
         }
 
-        if (SubmitDataServlet.mayViewData(ub, currentRole)) {
+        if (SubmitDataHelper.mayViewData(ub, currentRole)) {
             return;
         }
 

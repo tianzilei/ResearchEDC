@@ -1,30 +1,49 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
-  Card, Typography, Button, Space, Spin, Result, Breadcrumb, Tag, message,
+  Card, Typography, Button, Space, Spin, Result, Breadcrumb, Tag,
 } from "antd";
-
+import { apiClient } from "@/api/client";
 
 const { Title, Text, Paragraph } = Typography;
-
-const ENTITY_LABELS: Record<string, string> = {
-  "study": "研究",
-  "site": "站点",
-  "subject": "受试者",
-  "study-subject": "研究受试者",
-  "study-event": "研究事件",
-  "event-crf": "事件 CRF",
-  "event-definition": "事件定义",
-  "subject-group-class": "受试者分组类别",
-  "study-user-role": "研究用户角色",
-  "crf": "CRF",
-  "crf-version": "CRF 版本",
-};
 
 interface EntityInfo {
   id: number;
   name: string;
   status?: string;
+}
+
+const ENTITY_CONFIG: Record<string, { label: string; fetchUrl: (id: number) => string; apiPath: string; backLink: string }> = {
+  "study": { label: "Study", fetchUrl: (id) => `/api/v1/studies/${id}`, apiPath: "/api/v1/studies", backLink: "/app/studies" },
+  "site": { label: "Site", fetchUrl: (id) => `/api/v1/studies/${id}`, apiPath: "/api/v1/studies", backLink: "/app/studies" },
+  "subject": { label: "Subject", fetchUrl: (id) => `/api/v1/subjects/${id}`, apiPath: "", backLink: "/app/subjects" },
+  "study-subject": { label: "Study Subject", fetchUrl: (id) => `/api/v1/subjects/${id}`, apiPath: "", backLink: "/app/subjects" },
+  "study-event": { label: "Study Event", fetchUrl: (id) => `/api/v1/events/${id}`, apiPath: "", backLink: "/app/events" },
+  "event-crf": { label: "Event CRF", fetchUrl: () => "", apiPath: "", backLink: "/app/events" },
+  "event-definition": { label: "Event Definition", fetchUrl: () => "", apiPath: "", backLink: "/app/studies" },
+  "subject-group-class": { label: "Subject Group Class", fetchUrl: () => "", apiPath: "", backLink: "/app/admin" },
+  "study-user-role": { label: "Study User Role", fetchUrl: () => "", apiPath: "", backLink: "/app/admin" },
+  "crf": { label: "CRF", fetchUrl: (id) => `/api/legacy/crfs/${id}`, apiPath: "/api/legacy/crfs", backLink: "/app/admin/crf-library" },
+  "crf-version": { label: "CRF Version", fetchUrl: () => "", apiPath: "/api/legacy/crfs/versions", backLink: "/app/admin/crf-library" },
+  "rule": { label: "Rule", fetchUrl: () => "", apiPath: "/api/legacy/rules", backLink: "/app/studies" },
+};
+
+function parseEntityInfo(entity: string, id: number, data: any): EntityInfo | null {
+  if (!data) return null;
+  switch (entity) {
+    case "study": case "site":
+      return { id: data.studyId ?? id, name: data.name, status: data.status };
+    case "subject": case "study-subject":
+      return { id, name: data.uniqueIdentifier ?? `Subject #${id}` };
+    case "study-event":
+      return { id, name: data.label ?? `Event #${id}`, status: String(data.statusId ?? "") };
+    case "crf": case "crf-version":
+      return { id, name: data.name ?? `#${id}`, status: data.status };
+    case "rule":
+      return { id, name: data.name ?? `Rule #${id}` };
+    default:
+      return { id, name: `${entity} #${id}` };
+  }
 }
 
 export default function EntityAction() {
@@ -33,116 +52,105 @@ export default function EntityAction() {
   const [info, setInfo] = useState<EntityInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [performing, setPerforming] = useState(false);
+  const [apiSupported, setApiSupported] = useState(true);
   const [result, setResult] = useState<"idle" | "success" | "error">("idle");
 
-  const entityLabel = ENTITY_LABELS[entity ?? ""] ?? entity ?? "Entity";
+  const config = ENTITY_CONFIG[entity ?? ""];
+  const entityLabel = config?.label ?? entity ?? "Entity";
   const isRemove = action === "remove";
-  const isRestore = action === "restore";
+  const entityId = id ? Number(id) : 0;
 
   useEffect(() => {
     if (!entity || !id) return;
-    setLoading(true);
-    const entityId = Number(id);
 
-    const fetchPromises: Promise<unknown>[] = [];
-    if (entity === "study" || entity === "site") {
-      fetchPromises.push(
-        fetch(`/api/v1/studies/${entityId}`).then(r => r.ok ? r.json() : null)
-          .then((data: any) => {
-            if (data) setInfo({ id: data.studyId ?? entityId, name: data.name, status: data.status });
-          })
-      );
-    } else if (entity === "subject" || entity === "study-subject") {
-      fetchPromises.push(
-        fetch(`/api/v1/subjects/${entityId}`).then(r => r.ok ? r.json() : null)
-          .then((data: any) => {
-            if (data) setInfo({ id: entityId, name: data.uniqueIdentifier ?? `Subject #${entityId}` });
-          })
-      );
-    } else if (entity === "study-event") {
-      fetchPromises.push(
-        fetch(`/api/v1/events/${entityId}`).then(r => r.ok ? r.json() : null)
-          .then((data: any) => {
-            if (data) setInfo({ id: entityId, name: data.label ?? `Event #${entityId}`, status: String(data.statusId ?? "") });
-          })
-      );
-    } else if (entity === "crf") {
-      fetchPromises.push(
-        fetch(`/api/legacy/crfs/${entityId}`).then(r => r.ok ? r.json() : null)
-          .then((data: any) => {
-            if (data) setInfo({ id: entityId, name: data.name, status: data.status });
-          })
-      );
+    const fetchUrl = config?.fetchUrl(entityId);
+    if (!fetchUrl) {
+      setLoading(false);
+      setApiSupported(false);
+      return;
     }
 
-    Promise.all(fetchPromises).finally(() => setLoading(false));
+    apiClient
+      .get<any>(fetchUrl)
+      .then((data) => setInfo(parseEntityInfo(entity, entityId, data)))
+      .catch(() => setInfo(null))
+      .finally(() => setLoading(false));
   }, [entity, id]);
 
   const handleConfirm = async () => {
-    if (!entity || !id) return;
+    if (!entity || !config || !config.apiPath) {
+      setResult("error");
+      return;
+    }
+
     setPerforming(true);
-    const entityId = Number(id);
-
-    let apiUrl = "";
-    if (isRemove) {
-      if (entity === "study" || entity === "site") apiUrl = `/api/v1/studies/${entityId}`;
-      else if (entity === "crf") apiUrl = `/api/legacy/crfs/${entityId}`;
-    } else if (isRestore) {
-      // Restore endpoints vary — fallback to legacy
-    }
-
     try {
-      if (apiUrl) {
-        const method = isRemove ? "DELETE" : "PATCH";
-        const res = await fetch(apiUrl, { method });
-        if (res.ok || res.status === 204) {
-          setResult("success");
-          message.success(`${entityLabel} ${isRemove ? "已删除" : "已恢复"}`);
-        } else {
-          throw new Error("API returned error");
-        }
+      if (isRemove) {
+        await apiClient.delete(`${config.apiPath}/${entityId}`);
       } else {
-        window.location.href = `/legacy/${isRemove ? "Remove" : "Restore"}${entityLabel.replace(/-/g, "")}?id=${id}`;
-        return;
+        await apiClient.patch(`${config.apiPath}/${entityId}`);
       }
+      setResult("success");
     } catch {
-      window.location.href = `/legacy/${isRemove ? "Remove" : "Restore"}${entityLabel.replace(/-/g, "")}?id=${id}`;
+      setResult("error");
+    } finally {
+      setPerforming(false);
     }
-    setPerforming(false);
   };
 
-  if (loading) return <div style={{ padding: 80, textAlign: "center" }}><Spin size="large" /></div>;
+  if (loading) {
+    return <div style={{ padding: 80, textAlign: "center" }}><Spin size="large" /></div>;
+  }
+
+  if (!apiSupported) {
+    return (
+      <Result
+        status="info"
+        title={`${entityLabel} — Action Unavailable`}
+        subTitle={`Remove and restore operations for "${entityLabel}" are not yet available in the SPA. Use the legacy admin panel for this action.`}
+        extra={<Button type="primary" onClick={() => navigate(-1)}>Back</Button>}
+      />
+    );
+  }
 
   if (result === "success") {
     return (
       <Result
         status="success"
-        title={`${entityLabel} — ${isRemove ? "已删除" : "已恢复"}`}
-        subTitle={info ? `${info.name} 已${isRemove ? "删除" : "恢复"}。` : ""}
-        extra={<Button type="primary" onClick={() => navigate(-1)}>返回</Button>}
+        title={`${entityLabel} — ${isRemove ? "Removed" : "Restored"}`}
+      subTitle={info ? `${info.name} has been ${isRemove ? "removed" : "restored"}.` : ""}
+      extra={<Button type="primary" onClick={() => navigate(config?.backLink ?? "/app/admin")}>Go Back</Button>}
       />
     );
   }
 
-  const backLink = entity === "study" || entity === "site" ? "/app/studies" :
-    entity === "subject" || entity === "study-subject" ? "/app/subjects" :
-    entity === "crf" ? "/app/admin/crf-library" : "/app/admin";
+  if (result === "error") {
+    return (
+      <Result
+        status="error"
+        title="Operation Failed"
+        subTitle={`Could not ${isRemove ? "remove" : "restore"} this ${entityLabel.toLowerCase()}. It may be referenced by other data.`}
+        extra={<Button onClick={() => setResult("idle")}>Try Again</Button>}
+      />
+    );
+  }
+
+  const backLink = config?.backLink ?? "/app/admin";
 
   return (
     <div>
       <Breadcrumb items={[
-        { title: <Link to={backLink}>返回</Link> },
-        { title: `${isRemove ? "删除" : "恢复"} ${entityLabel}` },
+        { title: <Link to={backLink}>Back</Link> },
+        { title: `${isRemove ? "Remove" : "Restore"} ${entityLabel}` },
       ]} style={{ marginBottom: 16 }} />
 
       <Card style={{ maxWidth: 560, margin: "40px auto" }}>
         <Space direction="vertical" style={{ width: "100%", textAlign: "center" }} size={16}>
-
           <Title level={4}>
-            {isRemove ? "确认删除" : "确认恢复"}
+            Confirm {isRemove ? "Removal" : "Restore"}
           </Title>
           <Paragraph type="secondary">
-            确定要<Text strong>{isRemove ? "删除" : "恢复"}</Text>此{entityLabel}吗？
+            Are you sure you want to <Text strong>{isRemove ? "remove" : "restore"}</Text> this {entityLabel.toLowerCase()}?
             {info && (
               <div style={{ marginTop: 8 }}>
                 <Tag>{info.name}</Tag>
@@ -151,12 +159,16 @@ export default function EntityAction() {
             )}
           </Paragraph>
           <Space>
-            <Button type="primary" danger={isRemove}
-              onClick={handleConfirm} loading={performing}>
-              {isRemove ? "删除" : "恢复"}
+            <Button
+              type="primary"
+              danger={isRemove}
+              onClick={handleConfirm}
+              loading={performing}
+            >
+              {isRemove ? "Remove" : "Restore"}
             </Button>
             <Button onClick={() => navigate(-1)}>
-              取消
+              Cancel
             </Button>
           </Space>
         </Space>

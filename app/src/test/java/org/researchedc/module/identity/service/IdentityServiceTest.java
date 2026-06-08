@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class IdentityServiceTest {
@@ -29,12 +30,13 @@ class IdentityServiceTest {
     @Mock private UserAccountRepository userAccountRepository;
     @Mock private RoleRepository roleRepository;
     @Mock private AuditService auditService;
+    @Mock private PasswordEncoder passwordEncoder;
 
     private IdentityService service;
 
     @BeforeEach
     void setUp() {
-        service = new IdentityService(userAccountRepository, roleRepository, auditService);
+        service = new IdentityService(userAccountRepository, roleRepository, auditService, passwordEncoder);
     }
 
     private static UserAccountEntity createUser(Integer id, String userName) {

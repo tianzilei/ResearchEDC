@@ -607,7 +607,7 @@ public class CreateNewStudyEventServlet extends SecureController {
                 } // if
 
                 session.removeAttribute(AddNewSubjectServlet.FORM_DISCREPANCY_NOTES_NAME);
-                request.setAttribute(EnterDataForStudyEventServlet.INPUT_EVENT_ID, String.valueOf(studyEvent.getId()));
+                request.setAttribute(TableOfContentsHelper.INPUT_EVENT_ID, String.valueOf(studyEvent.getId()));
                 ArrayList <String> pMessage =  (ArrayList<String>) request.getAttribute(SecureController.PAGE_MESSAGE);
                 String url=response.encodeRedirectURL("EnterDataForStudyEvent?eventId=" + studyEvent.getId()+"&alertmessage="+ 
                         URLEncoder.encode(pMessage.get(0), "UTF-8"));
@@ -639,7 +639,7 @@ public class CreateNewStudyEventServlet extends SecureController {
         String exceptionName = resexception.getString("no_permission_to_add_new_study_event");
         String noAccessMessage = respage.getString("not_create_new_event") + " " + respage.getString("change_study_contact_sysadmin");
 
-        if (SubmitDataServlet.maySubmitData(ub, currentRole)) {
+        if (SubmitDataHelper.maySubmitData(ub, currentRole)) {
             return;
         }
 

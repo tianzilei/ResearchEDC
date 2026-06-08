@@ -30,6 +30,7 @@ const StudyWizard = lazy(() => import("@/pages/studies/StudyWizard"));
 const EventList = lazy(() => import("@/pages/events/EventList"));
 const DataEntryPage = lazy(() => import("@/pages/datacapture/DataEntryPage"));
 const RulesListPage = lazy(() => import("@/pages/rules/RulesListPage"));
+const RuleSetDetail = lazy(() => import("@/pages/rules/RuleSetDetail"));
 const StudyDetail = lazy(() => import("@/pages/studies/StudyDetail"));
 const StudyEditor = lazy(() => import("@/pages/studies/StudyEditor"));
 const SiteManagement = lazy(() => import("@/pages/studies/SiteManagement"));
@@ -45,6 +46,11 @@ const EntityAction = lazy(() => import("@/pages/EntityAction"));
 const DatasetBuilder = lazy(() => import("@/pages/export/DatasetBuilder"));
 const FilterBuilder = lazy(() => import("@/pages/export/FilterBuilder"));
 const Profile = lazy(() => import("@/pages/Profile"));
+const Enterprise = lazy(() => import("@/pages/Enterprise"));
+const ChangeStudy = lazy(() => import("@/pages/ChangeStudy"));
+const RequestAccount = lazy(() => import("@/pages/RequestAccount"));
+const RequestStudy = lazy(() => import("@/pages/RequestStudy"));
+const ContactForm = lazy(() => import("@/pages/ContactForm"));
 
 const QuestionnaireTemplates = lazy(() => import("@/pages/questionnaire/QuestionnaireTemplates"));
 const QuestionnaireVersionEditor = lazy(() => import("@/pages/questionnaire/QuestionnaireVersionEditor"));
@@ -90,6 +96,7 @@ const router = createBrowserRouter([
       { path: "studies/:studyId/event-definitions", element: <EventDefinitionsPage /> },
       { path: "studies/:studyId/subject-groups", element: <SubjectGroupsPage /> },
       { path: "studies/:studyId/rules", element: <RulesListPage /> },
+      { path: "studies/:studyId/rules/:ruleSetId", element: <RuleSetDetail /> },
       { path: "admin/users", element: <UserManagement /> },
       { path: "admin/audit-log", element: <AuditLogViewer /> },
       { path: "admin/system", element: <SystemConfiguration /> },
@@ -105,6 +112,11 @@ const router = createBrowserRouter([
       { path: "subjects/:subjectId/events", element: <EventList /> },
       { path: "subjects/:subjectId/events/:eventId/crfs/:eventCrfId/entry", element: <DataEntryPage /> },
       { path: "profile", element: <Profile /> },
+      { path: "enterprise", element: <Enterprise /> },
+      { path: "change-study", element: <ChangeStudy /> },
+      { path: "request-account", element: <RequestAccount /> },
+      { path: "request-study", element: <RequestStudy /> },
+      { path: "contact", element: <ContactForm /> },
       { path: "instructions", element: <Instructions /> },
       { path: "instructions/:topic", element: <Instructions /> },
       { path: "actions/:entity/:action/:id", element: <EntityAction /> },

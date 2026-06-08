@@ -39,6 +39,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/auth/login").permitAll()
                 .requestMatchers("/api/v1/auth/me").permitAll()
+                .requestMatchers("/api/v1/openrosa/**").permitAll()
                 .anyRequest().authenticated()
             )
             .logout(logout -> logout

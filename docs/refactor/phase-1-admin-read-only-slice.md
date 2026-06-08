@@ -30,14 +30,14 @@ No file in this slice may be deleted until all checks are true for that file's w
 
 ## Ledger Result
 
-The initial ledger started with 51 rows. After removing `ReportController`, it tracks 50 active rows plus 1 deleted route:
+The initial ledger started with 51 rows. After removing `ReportController` and 3 audit servlets, it tracks 47 active rows plus 4 deleted routes:
 
 | Status | Count | Meaning |
 |---|---:|---|
-| `covered` | 3 | Replacement API, output fields, and permission parity are proven; deletion still waits for route/JSP reference cleanup. |
-| `needs replacement` | 45 | A frontend route or partial API exists, but backend field/permission/audit parity is not fully proven. |
+| `covered` | 0 | All covered rows have been deleted. |
+| `needs replacement` | 44 | A frontend route or partial API exists, but backend field/permission/audit parity is not fully proven. |
 | `blocked` | 2 | Product/route retirement decision is needed before implementation. |
-| `deleted` | 1 | Legacy route removed after replacement and reference proof. |
+| `deleted` | 4 | Legacy routes removed after replacement and reference proof. |
 
 ## First Execution Tasks
 
@@ -61,17 +61,17 @@ Audit database changelog replacement added:
 - `GET /api/v1/audit/database-changelog` replaces the field output of `/AuditDatabase` with `id`, `author`, `fileName`, `dateExecuted`, `md5Sum`, `description`, `comments`, `tag`, and `liquibase`.
 - The route is guarded with `@PreAuthorize("hasRole('SYSADMIN')")`, matching `AuditDatabaseServlet.mayProceed()` `ub.isSysAdmin()` behavior.
 - `ResearchEdcUserDetailsService` now maps legacy `user_type_id = 1` to `ROLE_SYSADMIN` so module APIs can express sysadmin-only gates.
-- `AuditDatabaseServlet` is marked `covered` in the ledger, not deleted; deletion still requires route registration, JSP reference, and SPA navigation cleanup proof.
+- `AuditDatabaseServlet` deleted on 2026-06-08 after route registration, JSP reference, and SPA navigation cleanup proof.
 
 Audit user login activity replacement added:
 
 - `GET /api/v1/audit/user-logins` replaces the field output of `/AuditUserActivity` with `id`, `userName`, `userAccountId`, `loginAttemptDate`, `loginStatus`, `loginStatusCode`, and `details`.
 - The endpoint accepts the legacy table filters `userName`, `loginAttemptDate`, `loginStatus`, and `details`, returns a Spring `Page`, and defaults to `loginAttemptDate` descending when no sort is supplied.
 - The route is guarded with `@PreAuthorize("hasRole('SYSADMIN')")`, matching `AuditUserActivityServlet.mayProceed()` `ub.isSysAdmin()` behavior.
-- `AuditUserActivityServlet` is marked `covered` in the ledger, not deleted; deletion still requires route registration, JSP reference, and SPA navigation cleanup proof.
+- `AuditUserActivityServlet` deleted on 2026-06-08 after route registration, JSP reference, and SPA navigation cleanup proof.
 
 Audit user event log replacement added:
 
 - `GET /api/v1/audit/users/{userId}/events` replaces the field output of `/AuditLogUser?userLogId=...` with a user summary plus audit event rows containing `id`, `auditDate`, `auditTable`, `userId`, `entityId`, localized and raw reason/action values, study/subject context, column values, `changes`, and `otherInfo`.
 - The route is guarded with `@PreAuthorize("hasRole('SYSADMIN')")`, matching `AuditLogUserServlet.mayProceed()` `ub.isSysAdmin()` behavior.
-- `AuditLogUserServlet` is marked `covered` in the ledger, not deleted; deletion still requires route registration, JSP reference, and SPA navigation cleanup proof.
+- `AuditLogUserServlet` deleted on 2026-06-08 after route registration, JSP reference, and SPA navigation cleanup proof.

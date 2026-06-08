@@ -41,7 +41,7 @@ import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.control.submit.AddNewSubjectServlet;
-import org.researchedc.control.submit.SubmitDataServlet;
+import org.researchedc.control.submit.SubmitDataHelper;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
@@ -103,7 +103,7 @@ public static final String EVENT_ID = "event_id";
     @Override
     public void mayProceed() throws InsufficientPermissionException {
 
-        if (SubmitDataServlet.maySubmitData(ub, currentRole)) {
+        if (SubmitDataHelper.maySubmitData(ub, currentRole)) {
             return;
         }
 

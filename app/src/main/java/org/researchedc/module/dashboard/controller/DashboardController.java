@@ -5,6 +5,7 @@ import java.util.Map;
 import org.researchedc.module.dashboard.dto.BootstrapResponse;
 import org.researchedc.module.dashboard.dto.RecentActivityItem;
 import org.researchedc.module.dashboard.dto.StatusResponse;
+import org.researchedc.module.dashboard.dto.SystemInfoResponse;
 import org.researchedc.module.dashboard.dto.TasksResponse;
 import org.researchedc.module.dashboard.service.DashboardService;
 import org.springframework.http.ResponseEntity;
@@ -45,5 +46,10 @@ public class DashboardController {
     @GetMapping("/health")
     public ResponseEntity<Map<String, Object>> getHealth() {
         return ResponseEntity.ok(dashboardService.getHealth());
+    }
+
+    @GetMapping("/system-info")
+    public ResponseEntity<SystemInfoResponse> getSystemInfo() {
+        return ResponseEntity.ok(dashboardService.getSystemInfo());
     }
 }

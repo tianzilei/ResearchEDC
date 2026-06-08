@@ -3,12 +3,14 @@ package org.researchedc.module.audit.controller;
 import java.util.List;
 
 import org.researchedc.module.audit.dto.AuditLogDTO;
+import org.researchedc.module.audit.dto.AuditStudySubjectEventsDTO;
 import org.researchedc.module.audit.dto.AuditUserEventsDTO;
 import org.researchedc.module.audit.dto.AuditUserLoginDTO;
 import org.researchedc.module.audit.dto.AuditUserLoginQuery;
 import org.researchedc.module.audit.dto.DatabaseChangeLogDTO;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
+import org.researchedc.module.audit.service.AuditStudySubjectEventService;
 import org.researchedc.module.audit.service.AuditUserEventService;
 import org.researchedc.module.audit.service.AuditUserLoginService;
 import org.researchedc.module.audit.service.DatabaseChangeLogService;
@@ -28,15 +30,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuditController {
 
     private final AuditService auditService;
+    private final AuditStudySubjectEventService auditStudySubjectEventService;
     private final AuditUserEventService auditUserEventService;
     private final AuditUserLoginService auditUserLoginService;
     private final DatabaseChangeLogService databaseChangeLogService;
 
     public AuditController(AuditService auditService,
+                           AuditStudySubjectEventService auditStudySubjectEventService,
                            AuditUserEventService auditUserEventService,
                            AuditUserLoginService auditUserLoginService,
                            DatabaseChangeLogService databaseChangeLogService) {
         this.auditService = auditService;
+        this.auditStudySubjectEventService = auditStudySubjectEventService;
         this.auditUserEventService = auditUserEventService;
         this.auditUserLoginService = auditUserLoginService;
         this.databaseChangeLogService = databaseChangeLogService;
@@ -71,6 +76,12 @@ public class AuditController {
     @PreAuthorize("hasRole('SYSADMIN')")
     public ResponseEntity<AuditUserEventsDTO> listUserEvents(@PathVariable int userId) {
         return ResponseEntity.ok(auditUserEventService.listUserEvents(userId));
+    }
+
+    @GetMapping("/studies/{studyId}/subject-events")
+    @PreAuthorize("hasAnyRole('SYSADMIN','STUDY_DIRECTOR','COORDINATOR')")
+    public ResponseEntity<AuditStudySubjectEventsDTO> listStudySubjectEvents(@PathVariable int studyId) {
+        return ResponseEntity.ok(auditStudySubjectEventService.listStudySubjectEvents(studyId));
     }
 
     @GetMapping("/database-changelog")

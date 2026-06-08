@@ -6,7 +6,7 @@
     <artifactId>research-edc-app</artifactId>
     <packaging>war</packaging>
     <name>ResearchEDC Spring Boot Application</name>
-    <description>Spring Boot modular monolith combining web + ws modules</description>
+    <description>Spring Boot modular monolith with legacy web UI and Modulith REST API</description>
     <parent>
         <groupId>org.researchedc</groupId>
         <artifactId>research-edc</artifactId>
@@ -68,14 +68,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- ResearchEDC ws (classes JAR for compiled classes only) -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>research-edc-ws</artifactId>
-            <version>${project.version}</version>
-            <classifier>classes</classifier>
-        </dependency>
-
         <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -110,34 +102,6 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc-openapi.version}</version>
-        </dependency>
-
-        <!-- Spring Web Services (for SOAP endpoints from ws module) -->
-        <dependency>
-            <groupId>org.springframework.ws</groupId>
-            <artifactId>spring-ws-core</artifactId>
-        </dependency>
-
-        <!-- Spring WS Security (for XwsSecurityInterceptor) -->
-        <dependency>
-            <groupId>org.springframework.ws</groupId>
-            <artifactId>spring-ws-security</artifactId>
-        </dependency>
-
-        <!-- Jakarta SOAP API -->
-        <dependency>
-            <groupId>jakarta.xml.soap</groupId>
-            <artifactId>jakarta.xml.soap-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.messaging.saaj</groupId>
-            <artifactId>saaj-impl</artifactId>
-        </dependency>
-
-        <!-- Sitemesh (for JSP decoration) -->
-        <dependency>
-            <groupId>org.sitemesh</groupId>
-            <artifactId>sitemesh</artifactId>
         </dependency>
 
         <!-- Micrometer Prometheus (for metrics export) -->

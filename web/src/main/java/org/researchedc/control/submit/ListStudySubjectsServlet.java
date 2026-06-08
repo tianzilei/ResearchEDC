@@ -69,7 +69,7 @@ public class ListStudySubjectsServlet extends SecureController {
             return;
         }
 
-        if (SubmitDataServlet.mayViewData(ub, currentRole)) {
+        if (SubmitDataHelper.mayViewData(ub, currentRole)) {
             return;
         }
 

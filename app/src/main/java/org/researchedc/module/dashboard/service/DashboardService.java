@@ -1,13 +1,14 @@
 package org.researchedc.module.dashboard.service;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 import javax.sql.DataSource;
 import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.audit.dto.AuditLogDTO;
@@ -18,6 +19,7 @@ import org.researchedc.module.dashboard.dto.BootstrapResponse.StudyInfo;
 import org.researchedc.module.dashboard.dto.BootstrapResponse.UserInfo;
 import org.researchedc.module.dashboard.dto.RecentActivityItem;
 import org.researchedc.module.dashboard.dto.StatusResponse;
+import org.researchedc.module.dashboard.dto.SystemInfoResponse;
 import org.researchedc.module.dashboard.dto.TasksResponse;
 import org.researchedc.module.discrepancynote.service.DiscrepancyNoteService;
 import org.researchedc.module.event.service.EventService;
@@ -158,6 +160,36 @@ public class DashboardService {
 
         health.put("components", components);
         return health;
+    }
+
+    public SystemInfoResponse getSystemInfo() {
+        String dbProduct = "";
+        String dbVersion = "";
+        try (Connection conn = dataSource.getConnection()) {
+            DatabaseMetaData meta = conn.getMetaData();
+            dbProduct = meta.getDatabaseProductName();
+            dbVersion = meta.getDatabaseProductVersion();
+        } catch (SQLException ignored) {
+        }
+
+        Runtime rt = Runtime.getRuntime();
+        long totalMB = rt.totalMemory() / (1024 * 1024);
+        long freeMB = rt.freeMemory() / (1024 * 1024);
+        long usableDiskMB = new java.io.File(".").getUsableSpace() / (1024 * 1024);
+
+        return new SystemInfoResponse(
+            "ResearchEDC",
+            "0.1",
+            System.getProperty("java.version"),
+            System.getProperty("java.vendor"),
+            System.getProperty("os.name"),
+            System.getProperty("os.version"),
+            System.getProperty("os.arch"),
+            dbProduct,
+            dbVersion,
+            totalMB,
+            freeMB,
+            usableDiskMB);
     }
 
     public List<RecentActivityItem> getRecent() {

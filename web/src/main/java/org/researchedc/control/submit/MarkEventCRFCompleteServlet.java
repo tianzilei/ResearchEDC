@@ -101,9 +101,9 @@ public class MarkEventCRFCompleteServlet extends SecureController {
             SectionBean sb = (SectionBean) sections.get(i);
             Integer key = Integer.valueOf(sb.getId());
 
-            int numItems = TableOfContentsServlet.getIntById(numItemsHM, key);
-            int numItemsPending = TableOfContentsServlet.getIntById(numItemsPendingHM, key);
-            int numItemsCompleted = TableOfContentsServlet.getIntById(numItemsCompletedHM, key);
+            int numItems = TableOfContentsHelper.getIntById(numItemsHM, key);
+            int numItemsPending = TableOfContentsHelper.getIntById(numItemsPendingHM, key);
+            int numItemsCompleted = TableOfContentsHelper.getIntById(numItemsCompletedHM, key);
 
             if (stage.equals(DataEntryStage.INITIAL_DATA_ENTRY) && edcb.isDoubleEntry()) {
                 if (numItemsPending == 0 && numItems > 0) {
@@ -138,21 +138,21 @@ public class MarkEventCRFCompleteServlet extends SecureController {
         getEventDefinitionCRFBean();
         DataEntryStage stage = ecb.getStage();
 
-        request.setAttribute(TableOfContentsServlet.INPUT_EVENT_CRF_BEAN, ecb);
+        request.setAttribute(TableOfContentsHelper.INPUT_EVENT_CRF_BEAN, ecb);
         // Page errorPage = Page.TABLE_OF_CONTENTS_SERVLET;
         Page errorPage = Page.LIST_STUDY_SUBJECTS_SERVLET;
 
         /*
          * if (StringUtil.isBlank(ecb.getInterviewerName())) { if ((discNotes ==
          * null) ||
-         * discNotes.getNotes(TableOfContentsServlet.INPUT_INTERVIEWER).
+         * discNotes.getNotes(TableOfContentsHelper.INPUT_INTERVIEWER).
          * isEmpty()){ throw new InconsistentStateException(errorPage, "You may
          * not mark this Event CRF complete, because interviewer name is
          * blank."); } }
          *
          * if (ecb.getDateInterviewed() == null) { if ((discNotes == null) ||
          * (discNotes
-         * .getNotes(TableOfContentsServlet.INPUT_INTERVIEW_DATE).isEmpty()) ) {
+         * .getNotes(TableOfContentsHelper.INPUT_INTERVIEW_DATE).isEmpty()) ) {
          * throw new InconsistentStateException(errorPage, "You may not mark
          * this Event CRF complete, because interview date is blank."); } }
          */
@@ -184,10 +184,10 @@ public class MarkEventCRFCompleteServlet extends SecureController {
         }
 
         if (!fp.isSubmitted()) {
-            DisplayTableOfContentsBean toc = TableOfContentsServlet.getDisplayBean(ecb, sm.getDataSource(), currentStudy, this.studySubjectDao,
+            DisplayTableOfContentsBean toc = TableOfContentsHelper.getDisplayBean(ecb, sm.getDataSource(), currentStudy, this.studySubjectDao,
                     this.studyEventDao, this.sectionDao, this.itemGroupDao, this.studyEventDefinitionDao, this.crfVersionDao, this.crfDao, this.studyDao,
                     this.eventDefinitionCrfDao);
-            toc = TableOfContentsServlet.getDisplayBeanWithShownSections(sm.getDataSource(), toc,
+            toc = TableOfContentsHelper.getDisplayBeanWithShownSections(sm.getDataSource(), toc,
                     (DynamicsMetadataService)SpringServletAccess.getApplicationContext(getServletContext()).getBean("dynamicsMetadataService"),
                     this.sectionDao, this.itemGroupDao);
             request.setAttribute(BEAN_DISPLAY, toc);
@@ -259,7 +259,7 @@ public class MarkEventCRFCompleteServlet extends SecureController {
                 seb = (StudyEventBean) sedao.update(seb);
 
                 addPageMessage(respage.getString("event_CRF_marked_complete"));
-                request.setAttribute(EnterDataForStudyEventServlet.INPUT_EVENT_ID, String.valueOf(ecb.getStudyEventId()));
+                request.setAttribute(TableOfContentsHelper.INPUT_EVENT_ID, String.valueOf(ecb.getStudyEventId()));
                 forwardPage(Page.ENTER_DATA_FOR_STUDY_EVENT_SERVLET);
             } else {
                 request.setAttribute(DataEntryServlet.INPUT_IGNORE_PARAMETERS, Boolean.TRUE);
@@ -298,13 +298,13 @@ public class MarkEventCRFCompleteServlet extends SecureController {
         Role r = currentRole.getRole();
         if (ecb.getStage().equals(DataEntryStage.INITIAL_DATA_ENTRY)) {
             if (ecb.getOwnerId() != ub.getId() && !r.equals(Role.COORDINATOR) && !r.equals(Role.STUDYDIRECTOR)) {
-                request.setAttribute(TableOfContentsServlet.INPUT_EVENT_CRF_BEAN, ecb);
+                request.setAttribute(TableOfContentsHelper.INPUT_EVENT_CRF_BEAN, ecb);
                 addPageMessage(respage.getString("not_mark_CRF_complete6"));
                 throw new InsufficientPermissionException(Page.TABLE_OF_CONTENTS_SERVLET, resexception.getString("not_study_owner"), "1");
             }
         } else if (ecb.getStage().equals(DataEntryStage.DOUBLE_DATA_ENTRY)) {
             if (ecb.getValidatorId() != ub.getId() && !r.equals(Role.COORDINATOR) && !r.equals(Role.STUDYDIRECTOR)) {
-                request.setAttribute(TableOfContentsServlet.INPUT_EVENT_CRF_BEAN, ecb);
+                request.setAttribute(TableOfContentsHelper.INPUT_EVENT_CRF_BEAN, ecb);
                 addPageMessage(respage.getString("not_mark_CRF_complete7"));
                 throw new InsufficientPermissionException(Page.TABLE_OF_CONTENTS_SERVLET, resexception.getString("not_study_owner"), "1");
             }

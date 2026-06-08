@@ -110,7 +110,7 @@ public class EditSelectedServlet extends SecureController {
         // System.out.println("TTTTT found the second hashmap!");
         HashMap eventlist = (LinkedHashMap) session.getAttribute("eventsForCreateDataset");
         // }
-        ArrayList<String> ids = CreateDatasetServlet.allSedItemIdsInStudy(eventlist, crfdao, idao);
+        ArrayList<String> ids = DatasetUtil.allSedItemIdsInStudy(eventlist, crfdao, idao);
         // >> tbh 11/09, need to fill in a session variable
         if (selectAll) {
             logger.info("select all..........");
@@ -168,7 +168,7 @@ public class EditSelectedServlet extends SecureController {
 
         session.setAttribute("newDataset", db);
 
-        HashMap events = (HashMap) session.getAttribute(CreateDatasetServlet.EVENTS_FOR_CREATE_DATASET);
+        HashMap events = (HashMap) session.getAttribute(DatasetUtil.EVENTS_FOR_CREATE_DATASET);
         if (events == null) {
             events = new HashMap();
         }
@@ -183,7 +183,7 @@ public class EditSelectedServlet extends SecureController {
     }
 
     public DatasetBean selectAll(DatasetBean db) {
-        HashMap events = (HashMap) session.getAttribute(CreateDatasetServlet.EVENTS_FOR_CREATE_DATASET);
+        HashMap events = (HashMap) session.getAttribute(DatasetUtil.EVENTS_FOR_CREATE_DATASET);
         if (events == null) {
             events = new HashMap();
         }

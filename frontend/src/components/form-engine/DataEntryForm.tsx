@@ -62,6 +62,17 @@ export function DataEntryForm({
 
   const fieldsDisabled = useMemo(() => isFieldDisabled(statusConfig), [statusConfig]);
 
+  const discrepancyCount = useMemo(() => {
+    if (!statusConfig.isDoubleEntry || !statusConfig.originalValues) return 0;
+    let count = 0;
+    for (const item of items) {
+      const current = formValues[item.name] ?? "";
+      const original = statusConfig.originalValues[item.name];
+      if (original !== undefined && original !== current) count++;
+    }
+    return count;
+  }, [statusConfig.isDoubleEntry, statusConfig.originalValues, items, formValues]);
+
   const statusTag = useMemo(() => {
     if (saving) return { text: t("form.saving"), color: "var(--text-muted)" };
     if (manualSaveStatus === "saved") return { text: t("form.saved"), color: "var(--success)" };
@@ -79,6 +90,19 @@ export function DataEntryForm({
       )}
       {statusConfig.status === "SIGNED" && (
         <Alert message={t("form.signedAlert")} type="success" style={{ marginBottom: 16 }} />
+      )}
+      {statusConfig.isDoubleEntry && (
+        <Alert
+          message="双录模式 — 请独立录入所有字段"
+          description={
+            discrepancyCount > 0
+              ? `${discrepancyCount} 项与首录不一致，请确认后保存`
+              : "所有请输入与首录一致"
+          }
+          type={discrepancyCount > 0 ? "warning" : "info"}
+          showIcon
+          style={{ marginBottom: 16 }}
+        />
       )}
 
       <Form

@@ -9,9 +9,9 @@ This ledger is conservative: `needs replacement` means a plausible replacement r
 | Ledger status | Count |
 |---|---:|
 | `blocked` | 2 |
-| `deleted` | 1 |
-| `covered` | 3 |
-| `needs replacement` | 45 |
+| `deleted` | 4 |
+| `covered` | 0 |
+| `needs replacement` | 44 |
 
 ## Rows
 
@@ -37,10 +37,10 @@ This ledger is conservative: `needs replacement` means a plausible replacement r
 | needs replacement | jsp-view | web/src/main/webapp/WEB-INF/jsp/managestudy/viewStudySubjectAudit.jsp | /WEB-INF/jsp/managestudy/viewStudySubjectAudit.jsp | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
 | needs replacement | jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/viewRuleSetAudits.jsp | /WEB-INF/jsp/submit/viewRuleSetAudits.jsp | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
 | blocked | jsp-view | web/src/main/webapp/WEB-INF/jsp/techadmin/index.jsp | /WEB-INF/jsp/techadmin/index.jsp | /app/admin or formal retirement | Decide whether this shell is replaced by SPA admin navigation or retired before deleting route/JSP. |
-| covered | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditDatabaseServlet.java | /AuditDatabase | `GET /api/v1/audit/database-changelog` | Field parity and sysadmin permission parity are covered by module tests; delete after route registration, JSP reference, and SPA navigation cleanup proof. |
+| deleted | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditDatabaseServlet.java | /AuditDatabase | `GET /api/v1/audit/database-changelog` | Deleted after route registration, JSP reference, and SPA navigation cleanup proof. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditLogStudyServlet.java | /AuditLogStudy | /api/v1/audit plus /app/admin/audit-log | Compare legacy audit filters, columns, entity links, and SecureController permissions before route removal. |
-| covered | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditLogUserServlet.java | /AuditLogUser | `GET /api/v1/audit/users/{userId}/events` | User summary, audit row fields, change map, entity IDs, and sysadmin permission parity are covered by module tests; delete after route registration, JSP reference, and SPA navigation cleanup proof. |
-| covered | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditUserActivityServlet.java | /AuditUserActivity | `GET /api/v1/audit/user-logins` | Field, filter, pagination, sort default, and sysadmin permission parity are covered by module tests; delete after route registration, JSP reference, and SPA navigation cleanup proof. |
+| deleted | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditLogUserServlet.java | /AuditLogUser | `GET /api/v1/audit/users/{userId}/events` | Deleted after route registration, JSP reference, and SPA navigation cleanup proof. |
+| deleted | legacy-servlet | web/src/main/java/org/researchedc/control/admin/AuditUserActivityServlet.java | /AuditUserActivity | `GET /api/v1/audit/user-logins` | Deleted after route registration, JSP reference, and SPA navigation cleanup proof. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/SystemStatusServlet.java | /SystemStatus | /api/v1/dashboard/status, /api/v1/dashboard/health, and legacy /auth/api/v1/system endpoints | Move required system/config/filesystem/database fields to module-owned API or formally retire sensitive diagnostics. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/ViewAllJobsServlet.java | /ViewAllJobs | /app/admin/jobs | Inventory Quartz job fields/actions, add read-only module API, and prove empty/error state parity. |
 | needs replacement | legacy-servlet | web/src/main/java/org/researchedc/control/admin/ViewJobServlet.java | /ViewJob | /app/admin/jobs | Inventory Quartz job fields/actions, add read-only module API, and prove empty/error state parity. |

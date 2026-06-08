@@ -111,7 +111,7 @@ public class SelectItemsServlet extends SecureController {
         IItemFormMetadataDAO imfdao = this.itemFormMetadataDao;
         IStudyEventDefinitionDAO seddao = this.studyEventDefinitionDao;
 
-        HashMap events = (HashMap) session.getAttribute(CreateDatasetServlet.EVENTS_FOR_CREATE_DATASET);
+        HashMap events = (HashMap) session.getAttribute(DatasetUtil.EVENTS_FOR_CREATE_DATASET);
         if (events == null) {
             events = new HashMap();
         }

@@ -39,8 +39,7 @@ public class LogFilterOther extends LogFilterBase {
     public int getLogFacilityCode(String loggerName) {
         int logFacilityCode = -1;
 
-        if ((loggerName.contains(".login")) || (loggerName.contains("core.OpenClinicaPasswordEncoder"))
- || (loggerName.contains("domain.user")))
+        if ((loggerName.contains(".login")) || (loggerName.contains("domain.user")))
             {
             logFacilityCode = SYSLOG_FACILITY_AUTH;
             }

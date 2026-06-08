@@ -21,7 +21,7 @@ import org.researchedc.bean.submit.DisplayEventCRFBean;
 import org.researchedc.bean.submit.SubjectGroupMapBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.control.submit.SubmitDataServlet;
+import org.researchedc.control.submit.SubmitDataHelper;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -74,7 +74,7 @@ Locale locale;
             return;
         }
 
-        if (SubmitDataServlet.mayViewData(ub, currentRole)) {
+        if (SubmitDataHelper.mayViewData(ub, currentRole)) {
             return;
         }
 

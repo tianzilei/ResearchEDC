@@ -10,7 +10,7 @@ import org.researchedc.bean.extract.odm.FullReportBean;
 import org.researchedc.bean.odmbeans.ODMBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
-import org.researchedc.control.submit.SubmitDataServlet;
+import org.researchedc.control.submit.SubmitDataHelper;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.logic.odmExport.AdminDataCollector;
@@ -34,7 +34,7 @@ public class DownloadStudyMetadataServlet extends SecureController {
         if (ub.isSysAdmin()) {
             return;
         }
-        if (SubmitDataServlet.mayViewData(ub, currentRole)) {
+        if (SubmitDataHelper.mayViewData(ub, currentRole)) {
             return;
         }
         addPageMessage(respage.getString("no_have_correct_privilege_current_study") + respage.getString("change_study_contact_sysadmin"));

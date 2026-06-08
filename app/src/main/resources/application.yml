@@ -82,7 +82,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus,env,beans,conditions
+        include: health,info,metrics,prometheus,env,beans,conditions,loggers
       base-path: /actuator
   endpoint:
     health:

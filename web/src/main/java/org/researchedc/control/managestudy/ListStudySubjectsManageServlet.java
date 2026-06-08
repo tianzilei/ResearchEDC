@@ -69,4 +69,5 @@ public class ListStudySubjectsManageServlet extends ListStudySubjectServlet {
     protected String getBaseURL() {
         return "ListStudySubjects";
     }
+
 }

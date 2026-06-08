@@ -9,6 +9,8 @@ public class UserDTO {
     private String lastName;
     private String email;
     private String phone;
+    private String institutionalAffiliation;
+    private String userType;
     private Boolean enabled;
     private Integer activeStudyId;
     private LocalDateTime dateCreated;
@@ -25,6 +27,10 @@ public class UserDTO {
     public void setEmail(String v) { this.email = v; }
     public String getPhone() { return phone; }
     public void setPhone(String v) { this.phone = v; }
+    public String getInstitutionalAffiliation() { return institutionalAffiliation; }
+    public void setInstitutionalAffiliation(String v) { this.institutionalAffiliation = v; }
+    public String getUserType() { return userType; }
+    public void setUserType(String v) { this.userType = v; }
     public Boolean getEnabled() { return enabled; }
     public void setEnabled(Boolean v) { this.enabled = v; }
     public Integer getActiveStudyId() { return activeStudyId; }

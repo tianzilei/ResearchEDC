@@ -206,7 +206,7 @@ public class AdministrativeEditingServlet extends DataEntryServlet {
         Role r = currentRole.getRole();
         session.setAttribute("mayProcessUploading", "true");
 
-        if (!SubmitDataServlet.maySubmitData(ub, currentRole)) {
+        if (!SubmitDataHelper.maySubmitData(ub, currentRole)) {
             session.setAttribute("mayProcessUploading", "false");
             String exceptionName = resexception.getString("no_permission_validation");
             String noAccessMessage = respage.getString("not_perform_administrative_editing_CRF");

@@ -1,269 +1,34 @@
 /*
- * OpenClinica is distributed under the
- * GNU Lesser General Public License (GNU LGPL).
-
- * For details see: http://www.openclinica.org/license
- * copyright 2003-2005 Akaza Research
+ * Minimal stub for EditStudyUserRoleServlet — retains only getLink() still referenced by UserAccountTable.
+ * Full implementation deleted in Phase 1 study/subject/event slice.
  */
 package org.researchedc.control.admin;
 
-import org.researchedc.bean.core.Role;
-import org.researchedc.bean.core.TermType;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.control.core.SecureController;
-import org.researchedc.control.form.FormProcessor;
-import org.researchedc.control.form.Validator;
-import org.researchedc.dao.spi.IUserAccountDAO;
-import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.view.Page;
-import org.researchedc.web.InsufficientPermissionException;
-
-import java.util.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @author ssachs
- *
- * Servlet for creating a user account.
+ * Stub retaining the link-generation helper used by UserAccountTable.
  */
-public class EditStudyUserRoleServlet extends SecureController {
-    public static final String INPUT_ROLE = "role";
+public class EditStudyUserRoleServlet {
 
-    public static final String PATH = "EditStudyUserRole";
-    public static final String ARG_STUDY_ID = "studyId";
-    public static final String ARG_USER_NAME = "userName";
+    private static final String PATH = "EditStudyUserRole";
+    private static final String ARG_STUDY_ID = "studyId";
+    private static final String ARG_USER_NAME = "name";
 
+    private EditStudyUserRoleServlet() {
+        // Utility stub — not instantiable
+    }
+
+    /**
+     * Generates the edit-role link for the given study user role and user.
+     *
+     * @param s    the study user role bean
+     * @param user the user account bean
+     * @return a relative URL string for the edit-role action
+     */
     public static String getLink(StudyUserRoleBean s, UserAccountBean user) {
         int studyId = s.getStudyId();
         return PATH + "?" + ARG_STUDY_ID + "=" + studyId + "&" + ARG_USER_NAME + "=" + user.getName();
-    }
-
-    @Override
-    protected void mayProceed() throws InsufficientPermissionException {
-        if (!ub.isSysAdmin()) {
-            addPageMessage(respage.getString("no_have_correct_privilege_current_study") + respage.getString("change_study_contact_sysadmin"));
-            throw new InsufficientPermissionException(Page.MENU_SERVLET, resexception.getString("you_may_not_perform_administrative_functions"), "1");
-        }
-
-        return;
-    }
-
-    @Override
-    protected void processRequest() throws Exception {
-        IUserAccountDAO udao = this.userAccountDao;
-
-        FormProcessor fp = new FormProcessor(request);
-
-        int studyId = fp.getInt(ARG_STUDY_ID);
-        String uName = fp.getString(ARG_USER_NAME);
-        StudyUserRoleBean studyUserRole = udao.findRoleByUserNameAndStudyId(uName, studyId);
-
-        UserAccountBean user = (UserAccountBean) udao.findByUserName(uName);
-        
-        techAdminProtect(user);
-        
-        IStudyDAO sdao = this.studyDao;
-        StudyBean sb = (StudyBean) sdao.findByPK(studyUserRole.getStudyId());
-        if (sb != null) {
-            studyUserRole.setStudyName(sb.getName());
-        }
-
-        if (!studyUserRole.isActive()) {
-            String message = respage.getString("the_user_has_no_role_in_study");
-            addPageMessage(message);
-            forwardPage(Page.LIST_USER_ACCOUNTS_SERVLET);
-        } else {
-            Map roleMap = new LinkedHashMap();
-            for (Iterator it = getRoles().iterator(); it.hasNext();) {
-                Role role = (Role) it.next();
-                roleMap.put(role.getId(), role.getDescription());
-            }
-
-            roleMap = new LinkedHashMap();
-            ResourceBundle resterm = org.researchedc.i18n.util.ResourceBundleProvider.getTermsBundle();
-            StudyBean study = (StudyBean) sdao.findByPK(studyUserRole.getStudyId());
-            if (study.getParentStudyId() == 0) {
-                for (Iterator it = getRoles().iterator(); it.hasNext();) {
-                    Role role = (Role) it.next();
-                    switch (role.getId()) {
-                        case 2: roleMap.put(role.getId(), resterm.getString("Study_Coordinator").trim());
-                            break;
-                        case 3: roleMap.put(role.getId(), resterm.getString("Study_Director").trim());
-                            break;
-                        case 4: roleMap.put(role.getId(), resterm.getString("Investigator").trim());
-                            break;
-                        case 5: roleMap.put(role.getId(), resterm.getString("Data_Entry_Person").trim());
-                            break;
-                        case 6: roleMap.put(role.getId(), resterm.getString("Monitor").trim());
-                            break;
-                    default:
-                        // logger.info("No role matched when setting role description");
-                    }
-                }
-            } else {
-                for (Iterator it = getRoles().iterator(); it.hasNext();) {
-                    Role role = (Role) it.next();
-                    switch (role.getId()) {
-//                        case 2: roleMap.put(role.getId(), resterm.getString("site_Study_Coordinator").trim());
-//                            break;
-//                        case 3: roleMap.put(role.getId(), resterm.getString("site_Study_Director").trim());
-//                            break;
-                        case 4: roleMap.put(role.getId(), resterm.getString("site_investigator").trim());
-                            break;
-                        case 5: roleMap.put(role.getId(), resterm.getString("site_Data_Entry_Person").trim());
-                            break;
-                        case 6: roleMap.put(role.getId(), resterm.getString("site_monitor").trim());
-                            break;
-                        case 7: roleMap.put(role.getId(), resterm.getString("site_Data_Entry_Person2").trim());
-                        break;
-                    default:
-                        // logger.info("No role matched when setting role description");
-                    }
-                }
-            }
-
-            if (study.getParentStudyId() > 0) {
-                roleMap.remove(Role.COORDINATOR.getId());
-                roleMap.remove(Role.STUDYDIRECTOR.getId());
-            }
-
-            // send the user to the right place..
-            if (!fp.isSubmitted()) {
-                request.setAttribute("userName", uName);
-                request.setAttribute("studyUserRole", studyUserRole);
-                request.setAttribute("roles", roleMap);
-                request.setAttribute("chosenRoleId", Integer.valueOf(studyUserRole.getRole().getId()));
-                forwardPage(Page.EDIT_STUDY_USER_ROLE);
-            }
-
-            // process the form
-            else {
-                Validator v = new Validator(request);
-                v.addValidation(INPUT_ROLE, Validator.IS_VALID_TERM, TermType.ROLE);
-                HashMap errors = v.validate();
-
-                if (errors.isEmpty()) {
-                    int roleId = fp.getInt(INPUT_ROLE);
-                    Role r = Role.get(roleId);
-                    studyUserRole.setRoleName(r.getName());
-                    studyUserRole.setUpdater(ub);
-                    udao.updateStudyUserRole(studyUserRole, uName);
-
-                    String message = respage.getString("the_user_in_study_has_been_updated");
-                    addPageMessage(message);
-
-                    forwardPage(Page.LIST_USER_ACCOUNTS_SERVLET);
-                } else {
-                    String message = respage.getString("the_role_choosen_was_invalid_choose_another");
-                    addPageMessage(message);
-
-                    request.setAttribute("userName", uName);
-                    request.setAttribute("studyUserRole", studyUserRole);
-                    request.setAttribute("chosenRoleId", Integer.valueOf(fp.getInt(INPUT_ROLE)));
-                    request.setAttribute("roles", roleMap);
-                    forwardPage(Page.EDIT_STUDY_USER_ROLE);
-                }
-            }
-        }
-    }
-
-    // public void processRequest(HttpServletRequest request,
-    // HttpServletResponse response)
-    // throws OpenClinicaException {
-    // session = request.getSession();
-    // session.setMaxInactiveInterval(60 * 60 * 3);
-    // logger.setLevel(Level.ALL);
-    // UserAccountBean ub = (UserAccountBean) session.getAttribute("userBean");
-    // try {
-    // String userName = request.getRemoteUser();
-    //
-    // sm = new SessionManager(ub, userName);
-    // ub = sm.getUserBean();
-    // if (logger.isLoggable(Level.INFO)) {
-    // logger.info("user bean from DB" + ub.getName());
-    // }
-    //
-    // SQLFactory factory = SQLFactory.getInstance();
-    // IUserAccountDAO udao = this.userAccountDao;
-    //
-    // FormProcessor fp = new FormProcessor(request);
-    //
-    // int studyId = fp.getInt(ARG_STUDY_ID);
-    // String uName = fp.getString(ARG_USER_NAME);
-    // StudyUserRoleBean studyUserRole =
-    // udao.findRoleByUserNameAndStudyId(uName, studyId);
-    //
-    // IStudyDAO sdao = this.studyDao;
-    // StudyBean sb = (StudyBean) sdao.findByPK(studyUserRole.getStudyId());
-    // if (sb != null) {
-    // studyUserRole.setStudyName(sb.getName());
-    // }
-    //
-    // if (!studyUserRole.isActive()) {
-    // String message = "The user has no role in the specified study. You may
-    // not use this feature to add the user to a new study.";
-    // request.setAttribute("message", message);
-    // forwardPage(Page.LIST_USER_ACCOUNTS_SERVLET, request, response);
-    // }
-    // else {
-    // // send the user to the right place..
-    // if (!fp.isSubmitted()) {
-    // request.setAttribute("userName", uName);
-    // request.setAttribute("studyUserRole", studyUserRole);
-    // request.setAttribute("roles", getRoles());
-    // request.setAttribute("chosenRoleId", new
-    // Integer(studyUserRole.getRole().getId()));
-    // forwardPage(Page.EDIT_STUDY_USER_ROLE, request, response);
-    // }
-    //
-    // // process the form
-    // else {
-    // Validator v = new Validator(request);
-    // v.addValidation(INPUT_ROLE, Validator.IS_VALID_TERM, TermType.ROLE);
-    // HashMap errors = v.validate();
-    //
-    // if (errors.isEmpty()) {
-    // int roleId = fp.getInt(INPUT_ROLE);
-    // Role r = Role.get(roleId);
-    // studyUserRole.setRoleName(r.getName());
-    // udao.updateStudyUserRole(studyUserRole, uName);
-    //
-    // String message = "The user's role in the study has been updated.";
-    // request.setAttribute("message", message);
-    // forwardPage(Page.LIST_USER_ACCOUNTS_SERVLET, request, response);
-    // }
-    // else {
-    // String message = "The role chosen was invalid. Please choose another
-    // one.";
-    // request.setAttribute("message", message);
-    //
-    // request.setAttribute("userName", uName);
-    // request.setAttribute("studyUserRole", studyUserRole);
-    // request.setAttribute("chosenRoleId", new Integer(fp.getInt(INPUT_ROLE)));
-    // request.setAttribute("roles", getRoles());
-    // forwardPage(Page.EDIT_STUDY_USER_ROLE, request, response);
-    // }
-    // }
-    // }
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // logger.warn("OpenClinicaException::
-    // OpenClinica.control.createUserAccount: " + e.getMessage());
-    //
-    // forwardPage(Page.ERROR, request, response);
-    // }
-    // }
-
-    private ArrayList getRoles() {
-        ArrayList roles = Role.toArrayList();
-        roles.remove(Role.ADMIN);
-        return roles;
-    }
-
-    @Override
-    protected String getAdminServlet() {
-        return SecureController.ADMIN_SERVLET_CODE;
     }
 }

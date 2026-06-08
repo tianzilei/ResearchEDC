@@ -25,10 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 /**
- * Replaces applicationContext-web-beans.xml.
- *
- * <p>Migrates the legacy XML bean definitions to Java Config. Currently contains
- * the {@code sdvUtil} bean which requires {@code dataSource} injection.</p>
+ * Legacy web beans migrated from XML to Java Config.
  */
 @Configuration
 public class WebBeansConfig {

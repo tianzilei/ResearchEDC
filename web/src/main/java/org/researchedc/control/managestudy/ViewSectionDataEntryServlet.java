@@ -6,6 +6,7 @@
  * copyright 2003-2005 Akaza Research
  */
 package org.researchedc.control.managestudy;
+import org.researchedc.control.submit.SubmitDataHelper;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.ISectionDAO;
 import org.researchedc.dao.spi.IItemGroupDAO;
@@ -125,7 +126,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
         if (ub.isSysAdmin()) {
             return;
         }
-        if (SubmitDataServlet.mayViewData(ub, currentRole)) {
+        if (SubmitDataHelper.mayViewData(ub, currentRole)) {
             return;
         }
 
@@ -327,7 +328,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
             request.setAttribute("resolvedNum", resolvedNum + "");
             request.setAttribute("notAppNum", notAppNum + "");
 
-            DisplayTableOfContentsBean displayBean = TableOfContentsServlet.getDisplayBean(ecb, getDataSource(), currentStudy, this.studySubjectDao,
+            DisplayTableOfContentsBean displayBean = TableOfContentsHelper.getDisplayBean(ecb, getDataSource(), currentStudy, this.studySubjectDao,
                     this.studyEventDao, this.sectionDao, this.itemGroupDao, this.studyEventDefinitionDao, this.crfVersionDao, this.crfDao, this.studyDao,
                     this.eventDefinitionCrfDao);
             // Make sure that the interviewDate in the eventCRF is properly
@@ -368,7 +369,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(ViewSectionDataEntr
                 return;
             }
         } else if (crfVersionId > 0) {// for viewing blank CRF
-            DisplayTableOfContentsBean displayBean = ViewTableOfContentServlet.getDisplayBean(crfVersionId, this.sectionDao, this.crfVersionDao, this.crfDao);
+            DisplayTableOfContentsBean displayBean = TableOfContentsHelper.getDisplayBean(crfVersionId, this.sectionDao, this.crfVersionDao, this.crfDao);
             request.setAttribute("toc", displayBean);
             ArrayList sections = displayBean.getSections();
 
