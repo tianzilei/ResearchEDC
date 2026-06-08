@@ -35,7 +35,7 @@ public class UserAccountBean extends AuditableEntityBean {
     private String passwd;
     private String firstName;
     private String lastName;
-    private String email;
+    private String email; // retained for backward compatibility; email delivery retired
     private String institutionalAffiliation;
     private Date lastVisitDate;
     private Date passwdTimestamp;

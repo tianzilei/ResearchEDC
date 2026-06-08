@@ -56,7 +56,6 @@ interface StudyFormValues {
   facilityContactName?: string;
   facilityContactDegree?: string;
   facilityContactPhone?: string;
-  facilityContactEmail?: string;
 }
 
 interface StepDef {
@@ -99,7 +98,7 @@ const STEPS: StepDef[] = [
     title: "联系方式",
     fields: [
       "facilityContactName", "facilityContactDegree",
-      "facilityContactPhone", "facilityContactEmail",
+      "facilityContactPhone",
     ],
   },
   {
@@ -273,7 +272,6 @@ function buildReviewSections(values: StudyFormValues) {
         reviewRow("联系人姓名", values.facilityContactName),
         reviewRow("学位/职称", values.facilityContactDegree),
         reviewRow("电话", values.facilityContactPhone),
-        reviewRow("邮箱", values.facilityContactEmail),
       ],
     },
   ];
@@ -441,9 +439,6 @@ function StepContact() {
         <Form.Item name="facilityContactPhone" label="电话">
           <Input placeholder="+86 10-1234-5678" />
         </Form.Item>
-        <Form.Item name="facilityContactEmail" label="邮箱">
-          <Input placeholder="contact@hospital.cn" />
-        </Form.Item>
       </div>
     </>
   );
@@ -574,7 +569,6 @@ export default function StudyWizard() {
         facilityContactName: vals.facilityContactName,
         facilityContactDegree: vals.facilityContactDegree,
         facilityContactPhone: vals.facilityContactPhone,
-        facilityContactEmail: vals.facilityContactEmail,
         typeId: 1,
         statusId: 1,
       };

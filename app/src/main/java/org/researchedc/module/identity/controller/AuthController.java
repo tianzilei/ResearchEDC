@@ -79,14 +79,11 @@ public class AuthController {
                 .distinct()
                 .toList();
 
-        String email = user.getEmail() != null ? user.getEmail() : "";
-
         LoginResponse response = new LoginResponse(
                 "",
                 user.getUserName(),
                 user.getFirstName(),
                 user.getLastName(),
-                email,
                 roles
         );
 
@@ -121,7 +118,6 @@ public class AuthController {
                 user.getUserName(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getEmail() != null ? user.getEmail() : "",
                 user.getEnabled(),
                 roles,
                 studyRoles

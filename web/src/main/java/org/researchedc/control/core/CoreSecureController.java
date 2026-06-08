@@ -267,7 +267,7 @@ public abstract class CoreSecureController extends HttpServlet {
             int pwdChangeRequired = Integer.valueOf(SQLInitServlet.getField("change_passwd_required")).intValue();
             if (pwdChangeRequired == 1) {
                 request.setAttribute("mustChangePass", "yes");
-                forwardPage(Page.RESET_PASSWORD, request, response);
+                // Password change enforcement retired — SPA handles password changes via /app/profile
             }
         }
     }

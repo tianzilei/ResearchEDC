@@ -153,7 +153,6 @@ public class StudyApplicationService {
         r.setFacilityContactName(cmd.getFacilityContactName());
         r.setFacilityContactDegree(cmd.getFacilityContactDegree());
         r.setFacilityContactPhone(cmd.getFacilityContactPhone());
-        r.setFacilityContactEmail(cmd.getFacilityContactEmail());
         r.setProtocolType(cmd.getProtocolType());
         r.setProtocolDescription(cmd.getProtocolDescription());
         r.setPhase(cmd.getPhase());
@@ -197,7 +196,6 @@ public class StudyApplicationService {
         r.setFacilityContactName(cmd.getFacilityContactName());
         r.setFacilityContactDegree(cmd.getFacilityContactDegree());
         r.setFacilityContactPhone(cmd.getFacilityContactPhone());
-        r.setFacilityContactEmail(cmd.getFacilityContactEmail());
         r.setProtocolType(cmd.getProtocolType());
         r.setProtocolDescription(cmd.getProtocolDescription());
         r.setPhase(cmd.getPhase());

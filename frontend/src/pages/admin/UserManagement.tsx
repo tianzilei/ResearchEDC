@@ -9,7 +9,6 @@ interface UserDTO {
   userName: string;
   firstName: string;
   lastName: string;
-  email: string;
   phone: string | null;
   enabled: boolean;
   activeStudyId: number | null;
@@ -55,7 +54,6 @@ export default function UserManagement() {
           userName: vals.userName,
           firstName: vals.firstName,
           lastName: vals.lastName,
-          email: vals.email,
           phone: vals.phone ?? null,
           institutionalAffiliation: vals.affiliation ?? null,
           statusId: 1,
@@ -107,7 +105,6 @@ export default function UserManagement() {
       render: (text: string) => <strong>{text}</strong>,
     },
     { title: "姓名", key: "name", render: (_: any, r: UserDTO) => `${r.firstName} ${r.lastName}` },
-    { title: "邮箱", dataIndex: "email", key: "email" },
     { title: "电话", dataIndex: "phone", key: "phone", render: (v: string | null) => v ?? "-" },
     {
       title: "状态", dataIndex: "enabled", key: "enabled",
@@ -153,9 +150,6 @@ export default function UserManagement() {
           </Form.Item>
           <Form.Item name="lastName" label="姓" rules={[{ required: true }]}>
             <Input placeholder="例如 Smith" />
-          </Form.Item>
-          <Form.Item name="email" label="邮箱" rules={[{ required: true, type: "email" }]}>
-            <Input placeholder="例如 john@example.com" />
           </Form.Item>
           <Form.Item name="phone" label="电话">
             <Input placeholder="例如 +86-138-0000-0000" />

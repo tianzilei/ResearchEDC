@@ -7,7 +7,6 @@ public class UserDTO {
     private String userName;
     private String firstName;
     private String lastName;
-    private String email;
     private String phone;
     private String institutionalAffiliation;
     private String userType;
@@ -23,8 +22,6 @@ public class UserDTO {
     public void setFirstName(String v) { this.firstName = v; }
     public String getLastName() { return lastName; }
     public void setLastName(String v) { this.lastName = v; }
-    public String getEmail() { return email; }
-    public void setEmail(String v) { this.email = v; }
     public String getPhone() { return phone; }
     public void setPhone(String v) { this.phone = v; }
     public String getInstitutionalAffiliation() { return institutionalAffiliation; }

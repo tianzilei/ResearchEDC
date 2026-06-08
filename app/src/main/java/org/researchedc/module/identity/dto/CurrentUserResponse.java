@@ -7,7 +7,6 @@ public record CurrentUserResponse(
     String username,
     String firstName,
     String lastName,
-    String email,
     Boolean enabled,
     List<String> roles,
     List<StudyRoleInfo> studyRoles

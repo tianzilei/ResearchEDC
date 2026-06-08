@@ -6,7 +6,6 @@ import org.hibernate.SessionFactory;
 import org.researchedc.dao.QueryStore;
 import org.researchedc.dao.hibernate.*;
 import org.researchedc.dao.spi.IRuleSetRuleAuditDAO;
-import org.researchedc.dao.spi.RuleActionPropertyDomainDao;
 import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.researchedc.dao.spi.RuleSetAuditDomainDao;
 import org.researchedc.dao.spi.RuleSetDomainDao;
@@ -93,11 +92,6 @@ public class HibernateConfig {
     }
 
     @Bean
-    public RuleActionPropertyDomainDao ruleActionPropertyDao() {
-        return new RuleActionPropertyDao();
-    }
-
-    @Bean
     public IRuleSetRuleDAO ruleSetRuleDao() {
         return new RuleSetRuleDao();
     }
@@ -117,28 +111,13 @@ public class HibernateConfig {
     }
 
     @Bean
-    public ResponseSetDomainDao responseSetDao() {
-        return new ResponseSetDao();
-    }
-
-    @Bean
     public SCDItemMetadataDomainDao scdItemMetadataDao() {
         return new SCDItemMetadataDao();
-    }
-
-    @Bean
-    public MeasurementUnitDao measurementUnitDao() {
-        return new MeasurementUnitDao();
     }
 
     // ──────────────────────────────────────────────────────────────────────
     //  Event / CRF DAOs
     // ──────────────────────────────────────────────────────────────────────
-
-    @Bean
-    public EventDefinitionCrfTagDao eventDefinitionCrfTagDao() {
-        return new EventDefinitionCrfTagDao();
-    }
 
     // ──────────────────────────────────────────────────────────────────────
     //  Study / Subject DAOs
@@ -152,11 +131,6 @@ public class HibernateConfig {
     // ──────────────────────────────────────────────────────────────────────
     //  User / Auth DAOs
     // ──────────────────────────────────────────────────────────────────────
-
-    @Bean
-    public AuthoritiesDao authoritiesDao() {
-        return new AuthoritiesDao();
-    }
 
     // ──────────────────────────────────────────────────────────────────────
     //  Audit / DN DAOs

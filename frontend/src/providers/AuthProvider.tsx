@@ -12,7 +12,6 @@ export interface UserInfo {
   username: string;
   firstName: string;
   lastName: string;
-  email: string;
   enabled: boolean;
   roles: string[];
 }
@@ -22,7 +21,6 @@ interface MeResponse {
   username: string;
   firstName: string;
   lastName: string;
-  email: string;
   enabled: boolean;
   roles: string[];
   studyRoles: { studyId: number; roleName: string }[];
@@ -64,7 +62,6 @@ async function fetchCurrentUser(): Promise<UserInfo | null> {
       username: data.username,
       firstName: data.firstName,
       lastName: data.lastName,
-      email: data.email,
       enabled: data.enabled,
       roles: data.roles,
     };
