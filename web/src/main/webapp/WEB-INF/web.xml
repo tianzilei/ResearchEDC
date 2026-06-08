@@ -191,12 +191,6 @@
         <servlet-class>org.researchedc.control.MainMenuServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>LogoutServlet</servlet-name>
-        <display-name>LogoutServlet</display-name>
-        <description>The log out Servlet</description>
-        <servlet-class>org.researchedc.control.login.LogoutServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>RequestPasswordServlet</servlet-name>
         <display-name>RequestPasswordServlet</display-name>
         <servlet-class>org.researchedc.control.login.RequestPasswordServlet</servlet-class>
@@ -783,10 +777,6 @@
     <servlet-mapping>
         <servlet-name>ResetPasswordServlet</servlet-name>
         <url-pattern>/ResetPassword</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>LogoutServlet</servlet-name>
-        <url-pattern>/Logout</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ListUserAccountsServlet</servlet-name>
