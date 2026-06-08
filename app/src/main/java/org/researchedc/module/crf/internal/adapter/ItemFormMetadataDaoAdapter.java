@@ -11,24 +11,31 @@ import javax.sql.DataSource;
 
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
+import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.dao.spi.IItemFormMetadataDAO;
-import org.researchedc.dao.submit.ItemFormMetadataDAO;
+import org.researchedc.domain.crfdata.InstantOnChangePairContainer;
+import org.researchedc.domain.datamap.ItemFormMetadata;
+import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.module.crf.entity.ItemFormMetadataEntity;
 import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("itemFormMetadataDAO")
 @Primary
 @Transactional(readOnly = true)
-public class ItemFormMetadataDaoAdapter extends ItemFormMetadataDAO<String, ArrayList> implements IItemFormMetadataDAO {
+public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
 
     private final ItemFormMetadataRepository repository;
+    private final DataSource dataSource;
 
     public ItemFormMetadataDaoAdapter(ItemFormMetadataRepository repository, DataSource dataSource) {
-        super(dataSource);
         this.repository = repository;
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -125,6 +132,334 @@ public class ItemFormMetadataDaoAdapter extends ItemFormMetadataDAO<String, Arra
     @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
         return new ArrayList();
+    }
+
+    // ── Stub overrides for inherited methods with zero callers ──────────
+
+    @Override
+    public int findCountAllHiddenByCRFVersionId(int crfVersionId) {
+        // No callers — method was used by legacy CRF workflow only
+        return 0;
+    }
+
+    @Override
+    public int findCountAllHiddenButShownByEventCRFId(int eventCrfId) {
+        // No callers — method was used by legacy CRF workflow only
+        return 0;
+    }
+
+    @Override
+    public ItemFormMetadataBean findByItemIdAndCRFVersionIdNotInIGM(int itemId, int crfVersionId) {
+        // No callers — returns empty bean
+        return new ItemFormMetadataBean();
+    }
+
+    // ── Simple JPA native query methods ─────────────────────────────────
+
+    private static final Logger log = LoggerFactory.getLogger(ItemFormMetadataDaoAdapter.class);
+
+    @Override
+    public int findMaxId() {
+        String sql = "SELECT COALESCE(MAX(ifm.item_form_metadata_id), 0) FROM item_form_metadata ifm";
+        Integer result = getJdbcTemplate().queryForObject(sql, Integer.class);
+        return result != null ? result : 0;
+    }
+
+    @Override
+    public ArrayList<ItemFormMetadataBean> findAllByCRFVersionIdAndResponseTypeId(int crfVersionId, int responseTypeId) {
+        // Native SQL from item_form_metadata_dao.xml: findAllByCRFVersionIdAndResponseTypeId
+        String sql = "SELECT m.*, rs.response_type_id, rs.label, rs.options_text, rs.options_values "
+            + "FROM item_form_metadata m, response_set rs "
+            + "WHERE m.crf_version_id = ? AND m.response_set_id = rs.response_set_id AND rs.response_type_id = ?";
+        return findAllBySql(sql, crfVersionId, responseTypeId);
+    }
+
+    @Override
+    public ArrayList<ItemFormMetadataBean> findAllItemsRequiredAndShownByCrfVersionId(int crfVersionId) {
+        // Native SQL from item_form_metadata_dao.xml: findAllItemsRequiredAndShownByCrfVersionId
+        String sql = "SELECT * FROM item_form_metadata WHERE crf_version_id = ? AND required = true AND show_item = true";
+        return findAllBySql(sql, crfVersionId);
+    }
+
+    @Override
+    public ArrayList<ItemFormMetadataBean> findAllItemsRequiredAndHiddenByCrfVersionId(int crfVersionId) {
+        // Native SQL from item_form_metadata_dao.xml: findAllItemsRequiredAndHiddenByCrfVersionId
+        String sql = "SELECT * FROM item_form_metadata WHERE crf_version_id = ? AND required = true AND show_item = false";
+        return findAllBySql(sql, crfVersionId);
+    }
+
+    @Override
+    public ArrayList<ItemFormMetadataBean> findAllByCRFIdItemIdAndHasValidations(int crfId, int itemId) {
+        // Native SQL from item_form_metadata_dao.xml: findAllByCRFIdItemIdAndHasValidations
+        String sql = "SELECT m.*, rs.response_type_id, rs.label, rs.options_text, rs.options_values "
+            + "FROM item_form_metadata m, response_set rs "
+            + "WHERE m.crf_version_id IN (SELECT crf_version_id FROM crf_version WHERE crf_id = ?) "
+            + "AND m.response_set_id = rs.response_set_id "
+            + "AND m.item_id = ? "
+            + "AND m.regexp != ''";
+        return findAllBySql(sql, crfId, itemId);
+    }
+
+    @Override
+    public ArrayList<ItemFormMetadataBean> findAllByItemId(int itemId) {
+        // Native SQL from item_form_metadata_dao.xml: findAllByItemId — 6-table join
+        String sql = "SELECT DISTINCT m.*, rs.response_type_id, rs.label, rs.options_text, "
+            + "rs.options_values, cv.name AS cvname, "
+            + "ig.name AS group_label, igm.repeat_max, sec.title AS section_name "
+            + "FROM item_form_metadata m, response_set rs, crf_version cv, "
+            + "item_group_metadata igm, item_group ig, section sec "
+            + "WHERE m.item_id = ? "
+            + "AND m.response_set_id = rs.response_set_id "
+            + "AND cv.crf_version_id = m.crf_version_id "
+            + "AND igm.item_id = m.item_id "
+            + "AND ig.item_group_id = igm.item_group_id "
+            + "AND sec.section_id = m.section_id";
+        return findAllByItemIdSql(sql, itemId);
+    }
+
+    @Override
+    public ArrayList<ItemFormMetadataBean> findAllByItemIdAndHasValidations(int itemId) {
+        // Native SQL from item_form_metadata_dao.xml: findAllByItemIdAndHasValidations
+        String sql = "SELECT DISTINCT m.*, rs.response_type_id, rs.label, rs.options_text, "
+            + "rs.options_values, cv.name AS cvname, "
+            + "ig.name AS group_label, igm.repeat_max, sec.title AS section_name "
+            + "FROM item_form_metadata m, response_set rs, crf_version cv, "
+            + "item_group_metadata igm, item_group ig, section sec "
+            + "WHERE m.item_id = ? "
+            + "AND m.response_set_id = rs.response_set_id "
+            + "AND cv.crf_version_id = m.crf_version_id "
+            + "AND igm.item_id = m.item_id "
+            + "AND ig.item_group_id = igm.item_group_id "
+            + "AND sec.section_id = m.section_id "
+            + "AND m.regexp != ''";
+        return findAllByItemIdSql(sql, itemId);
+    }
+
+    @Override
+    public ArrayList<ItemFormMetadataBean> findSCDItemsBySectionId(Integer sectionId) {
+        // Native SQL from item_form_metadata_dao.xml: findSCDItemsBySectionId
+        String sql = "SELECT ifm.* FROM item_form_metadata ifm "
+            + "WHERE ifm.section_id = ? "
+            + "AND EXISTS (SELECT s.scd_item_form_metadata_id FROM scd_item_metadata s "
+            + "WHERE s.scd_item_form_metadata_id = ifm.item_form_metadata_id)";
+        return findAllBySql(sql, sectionId);
+    }
+
+    @Override
+    public boolean instantTypeExistsInSection(int sectionId) {
+        // Native SQL from item_form_metadata_dao.xml: instantTypeExistsInSection
+        String sql = "SELECT ifm.item_form_metadata_id FROM item_form_metadata ifm, response_set rs "
+            + "WHERE rs.response_type_id = 10 AND ifm.section_id = ? "
+            + "AND ifm.response_set_id = rs.response_set_id LIMIT 1";
+        List<Integer> results = getJdbcTemplate().queryForList(sql, Integer.class, sectionId);
+        return !results.isEmpty() && results.get(0) > 0;
+    }
+
+    @Override
+    public Map<Integer, List<InstantOnChangePairContainer>> sectionInstantMapInSameSection(int crfVersionId) {
+        // Stub — blocked on Phase 1 P8 removing DataEntryServlet callers.
+        // This is the most complex inherited method (10 joins, 5 params).
+        // TODO: implement with JPA native query after Phase 1 P8 data entry servlet deletion.
+        return new HashMap<>();
+    }
+
+    @Override
+    public ArrayList<ItemFormMetadataBean> findByMultiplePKs(ArrayList ints) throws OpenClinicaException {
+        ArrayList<ItemFormMetadataBean> answer = new ArrayList<>();
+        for (Object pk : ints) {
+            int id = (pk instanceof Number n) ? n.intValue() : Integer.parseInt(pk.toString());
+            answer.add((ItemFormMetadataBean) findByPK(id));
+        }
+        return answer;
+    }
+
+    @Override
+    public ResponseSetBean findResponseSetByPK(int id) {
+        String sql = "SELECT rs.*, rt.* FROM response_set rs, response_type rt "
+            + "WHERE rs.response_type_id = rt.response_type_id AND rs.response_set_id = ?";
+        List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, id);
+        if (!rows.isEmpty()) {
+            HashMap hm = new HashMap();
+            hm.putAll(rows.get(0));
+            return responseSetFromRow(hm);
+        }
+        return new ResponseSetBean();
+    }
+
+    // ── Default method overrides (replaces Hibernate ItemFormMetadataDao) ──
+
+    @Override
+    public ItemFormMetadata findByItemCrfVersion(Integer itemId, Integer crfVersionId) {
+        return null;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public java.util.List<ItemFormMetadata> findAllByCrfVersion(int crfVersionId) {
+        return new java.util.ArrayList<>();
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public ItemFormMetadata saveOrUpdate(ItemFormMetadata entity) {
+        if (entity.getItemFormMetadataId() > 0) {
+            updateItemFormMetadata(entity);
+        } else {
+            insertItemFormMetadata(entity);
+        }
+        return entity;
+    }
+
+    private void insertItemFormMetadata(ItemFormMetadata e) {
+        Number newId = getJdbcTemplate().queryForObject(
+            "SELECT nextval('item_form_metadata_item_form_metadata_id_seq')",
+            Number.class);
+        long id = newId != null ? newId.longValue() : 0L;
+        String sql = """
+            INSERT INTO item_form_metadata (
+                item_form_metadata_id, item_id, response_set_id, section_id,
+                crf_version_id, header, subheader, parent_id, parent_label,
+                column_number, page_number_label, question_number_label,
+                left_item_text, right_item_text, decision_condition_id,
+                regexp, regexp_error_msg, ordinal, required,
+                default_value, response_layout, width_decimal, show_item
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """;
+        getJdbcTemplate().update(sql,
+            id,
+            e.getItem() != null ? e.getItem().getItemId() : 0,
+            e.getResponseSet() != null ? e.getResponseSet().getResponseSetId() : 0,
+            e.getSection() != null ? e.getSection().getSectionId() : 0,
+            e.getCrfVersionId(),
+            e.getHeader(), e.getSubheader(), e.getParentId(), e.getParentLabel(),
+            e.getColumnNumber(), e.getPageNumberLabel(), e.getQuestionNumberLabel(),
+            e.getLeftItemText(), e.getRightItemText(), e.getDecisionConditionId(),
+            e.getRegexp(), e.getRegexpErrorMsg(), e.getOrdinal(), e.getRequired(),
+            e.getDefaultValue(), e.getResponseLayout(), e.getWidthDecimal(), e.getShowItem());
+        // Set the auto-generated ID back on the entity so callers see it
+        e.setItemFormMetadataId((int) id);
+    }
+
+    private void updateItemFormMetadata(ItemFormMetadata e) {
+        String sql = """
+            UPDATE item_form_metadata SET
+                item_id = ?, response_set_id = ?, section_id = ?,
+                crf_version_id = ?, header = ?, subheader = ?, parent_id = ?,
+                parent_label = ?, column_number = ?, page_number_label = ?,
+                question_number_label = ?, left_item_text = ?, right_item_text = ?,
+                decision_condition_id = ?, regexp = ?, regexp_error_msg = ?,
+                ordinal = ?, required = ?, default_value = ?,
+                response_layout = ?, width_decimal = ?, show_item = ?
+            WHERE item_form_metadata_id = ?
+            """;
+        getJdbcTemplate().update(sql,
+            e.getItem() != null ? e.getItem().getItemId() : 0,
+            e.getResponseSet() != null ? e.getResponseSet().getResponseSetId() : 0,
+            e.getSection() != null ? e.getSection().getSectionId() : 0,
+            e.getCrfVersionId(),
+            e.getHeader(), e.getSubheader(), e.getParentId(), e.getParentLabel(),
+            e.getColumnNumber(), e.getPageNumberLabel(), e.getQuestionNumberLabel(),
+            e.getLeftItemText(), e.getRightItemText(), e.getDecisionConditionId(),
+            e.getRegexp(), e.getRegexpErrorMsg(), e.getOrdinal(), e.getRequired(),
+            e.getDefaultValue(), e.getResponseLayout(), e.getWidthDecimal(), e.getShowItem(),
+            e.getItemFormMetadataId());
+    }
+
+    // ── JdbcTemplate-backed native SQL helpers ──────────────────────────
+
+    private JdbcTemplate getJdbcTemplate() {
+        return new JdbcTemplate(dataSource);
+    }
+
+    private ItemFormMetadataBean ifmBeanFromRow(HashMap hm) {
+        ItemFormMetadataBean answer = new ItemFormMetadataBean();
+        answer.setId(getInt(hm, "item_form_metadata_id"));
+        answer.setItemId(getInt(hm, "item_id"));
+        answer.setCrfVersionId(getInt(hm, "crf_version_id"));
+        answer.setHeader(getString(hm, "header"));
+        answer.setSubHeader(getString(hm, "subheader"));
+        answer.setParentId(getInt(hm, "parent_id"));
+        answer.setParentLabel(getString(hm, "parent_label"));
+        answer.setColumnNumber(getInt(hm, "column_number"));
+        answer.setPageNumberLabel(getString(hm, "page_number_label"));
+        answer.setQuestionNumberLabel(getString(hm, "question_number_label"));
+        answer.setLeftItemText(getString(hm, "left_item_text"));
+        answer.setRightItemText(getString(hm, "right_item_text"));
+        answer.setSectionId(getInt(hm, "section_id"));
+        answer.setDescisionConditionId(getInt(hm, "decision_condition_id"));
+        answer.setResponseSetId(getInt(hm, "response_set_id"));
+        answer.setRegexp(getString(hm, "regexp"));
+        answer.setRegexpErrorMsg(getString(hm, "regexp_error_msg"));
+        answer.setOrdinal(getInt(hm, "ordinal"));
+        answer.setRequired(getBoolean(hm, "required"));
+        answer.setDefaultValue(getString(hm, "default_value"));
+        answer.setResponseLayout(getString(hm, "response_layout"));
+        answer.setWidthDecimal(getString(hm, "width_decimal"));
+        answer.setShowItem(getBoolean(hm, "show_item"));
+        ResponseSetBean rsb = new ResponseSetBean();
+        rsb.setId(getInt(hm, "response_set_id"));
+        rsb.setLabel(getString(hm, "label"));
+        rsb.setResponseTypeId(getInt(hm, "response_type_id"));
+        rsb.setOptions(getString(hm, "options_text"), getString(hm, "options_values"));
+        answer.setResponseSet(rsb);
+        return answer;
+    }
+
+    private ResponseSetBean responseSetFromRow(HashMap hm) {
+        ResponseSetBean rsb = new ResponseSetBean();
+        rsb.setId(getInt(hm, "response_set_id"));
+        rsb.setLabel(getString(hm, "label"));
+        rsb.setResponseTypeId(getInt(hm, "response_type_id"));
+        rsb.setOptions(getString(hm, "options_text"), getString(hm, "options_values"));
+        return rsb;
+    }
+
+    private int getInt(HashMap row, String column) {
+        Object val = row.get(column);
+        return val instanceof Number n ? n.intValue() : 0;
+    }
+
+    private boolean getBoolean(HashMap row, String column) {
+        Object val = row.get(column);
+        return val instanceof Boolean b ? b : false;
+    }
+
+    private String getString(HashMap row, String column) {
+        Object val = row.get(column);
+        return val != null ? val.toString() : "";
+    }
+
+    /**
+     * Execute a native SQL query and convert rows to ItemFormMetadataBean list.
+     */
+    private ArrayList<ItemFormMetadataBean> findAllBySql(String sql, Object... params) {
+        List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, params);
+        ArrayList<ItemFormMetadataBean> beans = new ArrayList<>();
+        for (Map<String, Object> row : rows) {
+            HashMap hm = new HashMap();
+            hm.putAll(row);
+            beans.add(ifmBeanFromRow(hm));
+        }
+        return beans;
+    }
+
+    /**
+     * Execute the 6-table findAllByItemId SQL variant and convert rows.
+     */
+    private ArrayList<ItemFormMetadataBean> findAllByItemIdSql(String sql, int itemId) {
+        List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, itemId);
+        ArrayList<ItemFormMetadataBean> beans = new ArrayList<>();
+        for (Map<String, Object> row : rows) {
+            HashMap hm = new HashMap();
+            hm.putAll(row);
+            ItemFormMetadataBean bean = ifmBeanFromRow(hm);
+            if (row.get("cvname") != null) bean.setCrfVersionName((String) row.get("cvname"));
+            if (row.get("group_label") != null) bean.setGroupLabel((String) row.get("group_label"));
+            if (row.get("section_name") != null) bean.setSectionName((String) row.get("section_name"));
+            if (row.get("repeat_max") != null) bean.setRepeatMax(((Number) row.get("repeat_max")).intValue());
+            beans.add(bean);
+        }
+        return beans;
     }
 
     private void apply(ItemFormMetadataBean bean, ItemFormMetadataEntity entity) {

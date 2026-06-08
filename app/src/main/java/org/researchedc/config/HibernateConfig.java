@@ -112,31 +112,6 @@ public class HibernateConfig {
     // ──────────────────────────────────────────────────────────────────────
 
     @Bean
-    public CrfVersionMediaDao crfVersionMediaDao() {
-        return new CrfVersionMediaDao();
-    }
-
-    @Bean
-    public SectionDao sectionDao() {
-        return new SectionDao();
-    }
-
-    @Bean
-    public ItemReferenceTypeDao itemReferenceTypeDao() {
-        return new ItemReferenceTypeDao();
-    }
-
-    @Bean
-    public ItemDataTypeDao itemDataTypeDao() {
-        return new ItemDataTypeDao();
-    }
-
-    @Bean
-    public ItemFormMetadataDao itemFormMetadataDao() {
-        return new ItemFormMetadataDao();
-    }
-
-    @Bean
     public ItemGroupMetadataDao itemGroupMetadataDao() {
         return new ItemGroupMetadataDao();
     }
@@ -144,16 +119,6 @@ public class HibernateConfig {
     @Bean
     public ResponseSetDomainDao responseSetDao() {
         return new ResponseSetDao();
-    }
-
-    @Bean
-    public ResponseTypeDao responseTypeDao() {
-        return new ResponseTypeDao();
-    }
-
-    @Bean
-    public VersioningMapDao versioningMapDao() {
-        return new VersioningMapDao();
     }
 
     @Bean
@@ -171,31 +136,6 @@ public class HibernateConfig {
     // ──────────────────────────────────────────────────────────────────────
 
     @Bean
-    public EventCrfFlagDao eventCrfFlagDao() {
-        return new EventCrfFlagDao();
-    }
-
-    @Bean
-    public EventCrfFlagWorkflowDao eventCrfFlagWorkflowDao() {
-        return new EventCrfFlagWorkflowDao();
-    }
-
-    @Bean
-    public ItemDataFlagDao itemDataFlagDao() {
-        return new ItemDataFlagDao();
-    }
-
-    @Bean
-    public ItemDataFlagWorkflowDao itemDataFlagWorkflowDao() {
-        return new ItemDataFlagWorkflowDao();
-    }
-
-    @Bean
-    public EventDefinitionCrfItemTagDao eventDefinitionCrfItemTagDao() {
-        return new EventDefinitionCrfItemTagDao();
-    }
-
-    @Bean
     public EventDefinitionCrfTagDao eventDefinitionCrfTagDao() {
         return new EventDefinitionCrfTagDao();
     }
@@ -205,28 +145,13 @@ public class HibernateConfig {
     // ──────────────────────────────────────────────────────────────────────
 
     @Bean
-    public StudyUserRoleDao studyUserRoleDao() {
-        return new StudyUserRoleDao();
-    }
-
-    @Bean
     public StudyParameterValueDao studyParameterValueDao() {
         return new StudyParameterValueDao();
-    }
-
-    @Bean
-    public StudyModuleStatusDao studyModuleStatusDao() {
-        return new StudyModuleStatusDao();
     }
 
     // ──────────────────────────────────────────────────────────────────────
     //  User / Auth DAOs
     // ──────────────────────────────────────────────────────────────────────
-
-    @Bean
-    public UserTypeDao userTypeDao() {
-        return new UserTypeDao();
-    }
 
     @Bean
     public AuthoritiesDao authoritiesDao() {
