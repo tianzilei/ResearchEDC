@@ -32,23 +32,6 @@ public enum Page {
                 MENU("/WEB-INF/jsp/menu.jsp", "Welcome to OpenClinica"),
                 MENU_SERVLET("/MainMenu", "Welcome to OpenClinica Main Servlet"),
 
-    // YW 06-25-2007 <<
-    /**
-     * Page for reset password when password is expired.
-     */
-                RESET_PASSWORD("/WEB-INF/jsp/login/resetPassword.jsp", "Reset your expired password"),
-
-    // YW >>
-
-    /**
-     * Page for user to request password
-     */
-                REQUEST_PWD("/WEB-INF/jsp/login/requestPassword.jsp","Request passwod form"),
-    /**
-     * Page for user to confirm inputs of requesting password
-     */
-   REQUEST_PWD_CONFIRM ("/WEB-INF/jsp/login/requestPasswordConfirm.jsp", "Request passwod Confirm"),
-
     /**
      * Page for creating a user account.
      */

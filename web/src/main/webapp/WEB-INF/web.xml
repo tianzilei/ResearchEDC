@@ -191,16 +191,6 @@
         <servlet-class>org.researchedc.control.MainMenuServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>RequestPasswordServlet</servlet-name>
-        <display-name>RequestPasswordServlet</display-name>
-        <servlet-class>org.researchedc.control.login.RequestPasswordServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ResetPasswordServlet</servlet-name>
-        <display-name>ResetPassword</display-name>
-        <servlet-class>org.researchedc.control.login.ResetPasswordServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ViewUserAccountServlet</servlet-name>
         <display-name>ViewUserAccount</display-name>
         <servlet-class>org.researchedc.control.admin.ViewUserAccountServlet</servlet-class>
@@ -769,14 +759,6 @@
     <servlet-mapping>
         <servlet-name>ManageStudyServlet</servlet-name>
         <url-pattern>/ManageStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RequestPasswordServlet</servlet-name>
-        <url-pattern>/RequestPassword</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ResetPasswordServlet</servlet-name>
-        <url-pattern>/ResetPassword</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ListUserAccountsServlet</servlet-name>

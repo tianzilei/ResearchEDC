@@ -142,15 +142,15 @@ System.out.println("is ub a ldapuser??"+ub.isLdapUser());
 	                // YW 06-25-2007 << add the feature that if password is expired,
 	                // have to go through /ResetPassword page
 	                session.setAttribute("passwordExpired", "yes");
-	                if (pwdChangeRequired == 1) {
-	                    request.setAttribute("mustChangePass", "yes");
-	                    addPageMessage(respage.getString("your_password_has_expired_must_change"));
-	                } else {
-	                    request.setAttribute("mustChangePass", "no");
-	                    addPageMessage(respage.getString("password_expired") + " " + respage.getString("if_you_do_not_want_change_leave_blank"));
-	                }
-	                forwardPage(Page.RESET_PASSWORD);
-	                // YW >>
+                if (pwdChangeRequired == 1) {
+                    request.setAttribute("mustChangePass", "yes");
+                    addPageMessage(respage.getString("your_password_has_expired_must_change"));
+                } else {
+                    request.setAttribute("mustChangePass", "no");
+                    addPageMessage(respage.getString("password_expired") + " " + respage.getString("if_you_do_not_want_change_leave_blank"));
+                }
+                // Password change enforcement retired — SPA handles password changes via /app/profile
+                // YW >>
 	            }
             }
 //            else {

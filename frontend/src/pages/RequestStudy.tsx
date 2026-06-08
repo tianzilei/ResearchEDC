@@ -17,7 +17,7 @@ export default function RequestStudy() {
   const handleSubmit = async (values: Record<string, unknown>) => {
     try {
       await apiClient.post("/api/v1/legacy/request-study", values);
-      message.success("Study access request submitted. You will receive an email when approved.");
+      message.success("Study access request submitted. An administrator will review your request.");
       navigate("/login");
     } catch {
       message.error("Failed to submit request. Please try again.");

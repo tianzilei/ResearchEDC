@@ -20,7 +20,6 @@ public class UpdateStudyRequest {
     private String facilityContactName;
     private String facilityContactDegree;
     private String facilityContactPhone;
-    private String facilityContactEmail;
     private String protocolType;
     private String protocolDescription;
     private String phase;
@@ -77,8 +76,6 @@ public class UpdateStudyRequest {
     public void setFacilityContactDegree(String v) { this.facilityContactDegree = v; }
     public String getFacilityContactPhone() { return facilityContactPhone; }
     public void setFacilityContactPhone(String v) { this.facilityContactPhone = v; }
-    public String getFacilityContactEmail() { return facilityContactEmail; }
-    public void setFacilityContactEmail(String v) { this.facilityContactEmail = v; }
     public String getProtocolType() { return protocolType; }
     public void setProtocolType(String v) { this.protocolType = v; }
     public String getProtocolDescription() { return protocolDescription; }

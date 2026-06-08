@@ -42,7 +42,6 @@
 
 <c:set var="firstName" value="" />
 <c:set var="lastName" value="" />
-<c:set var="email" value="" />
 <c:set var="institutionalAffiliation" value="" />
 <c:set var="userTypeId" value="${0}" />
 <c:set var="resetPassword" value="${0}" />
@@ -54,9 +53,6 @@
     </c:if>
     <c:if test='${presetValue.key == "lastName"}'>
         <c:set var="lastName" value="${presetValue.value}" />
-    </c:if>
-    <c:if test='${presetValue.key == "email"}'>
-        <c:set var="email" value="${presetValue.value}" />
     </c:if>
     <c:if test='${presetValue.key == "institutionalAffiliation"}'>
         <c:set var="institutionalAffiliation" value="${presetValue.value}" />
@@ -161,24 +157,6 @@
                 </tr>
                 <tr>
                     <td colspan="2"><jsp:include page="../showMessage.jsp"><jsp:param name="key" value="lastName" /></jsp:include>
-                </tr>
-            </table>
-        </td>
-    </tr>
-
-
-    <tr valign="top">
-        <td class="table_header_column"><fmt:message key="email" bundle="${resword}"/>:</td>
-        <td valign="top">
-            <table border="0" cellpadding="0" cellspacing="0">
-                <tr>
-                    <td valign="top"><div class="formfieldM_BG">
-                        <input type="text" name="email" value="<c:out value="${email}"/>" size="20" class="formfieldM"/>
-                    </div></td>
-                    <td>(<fmt:message key="username@institution" bundle="${resword}"/>) *</td>
-                </tr>
-                <tr>
-                    <td colspan="2"><jsp:include page="../showMessage.jsp"><jsp:param name="key" value="email" /></jsp:include></td>
                 </tr>
             </table>
         </td>

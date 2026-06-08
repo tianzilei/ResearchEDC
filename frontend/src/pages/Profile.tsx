@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/providers/AuthProvider";
 import { apiClient } from "@/api/client";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 interface StudyRole {
   studyUserRoleId: number;
@@ -29,7 +29,6 @@ interface UserProfile {
   userName: string;
   firstName: string;
   lastName: string;
-  email: string;
   phone: string;
   institutionalAffiliation: string;
   userType: string;
@@ -40,7 +39,6 @@ interface UserProfile {
 interface ProfileFormValues {
   firstName: string;
   lastName: string;
-  email: string;
   phone: string;
   institution: string;
 }
@@ -102,7 +100,6 @@ export default function Profile() {
     editForm.setFieldsValue({
       firstName: profile.firstName,
       lastName: profile.lastName,
-      email: profile.email,
       phone: profile.phone ?? "",
       institution: profile.institutionalAffiliation ?? "",
     });
@@ -178,7 +175,6 @@ export default function Profile() {
             <Title level={4} style={{ margin: 0 }}>
               {profile?.firstName} {profile?.lastName}
             </Title>
-            <Text type="secondary">{profile?.email}</Text>
             <div style={{ marginTop: 4 }}>
               <Tag>{profile?.userType ?? "用户"}</Tag>
             </div>
@@ -209,16 +205,6 @@ export default function Profile() {
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              name="email"
-              label="邮箱"
-              rules={[
-                { required: true, message: "请输入邮箱" },
-                { type: "email", message: "请输入有效的邮箱地址" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
             <Form.Item name="phone" label="电话" rules={[{ max: 255 }]}>
               <Input />
             </Form.Item>
@@ -237,7 +223,6 @@ export default function Profile() {
             <Descriptions.Item label="用户名">{profile?.userName ?? "-"}</Descriptions.Item>
             <Descriptions.Item label="名">{profile?.firstName ?? "-"}</Descriptions.Item>
             <Descriptions.Item label="姓">{profile?.lastName ?? "-"}</Descriptions.Item>
-            <Descriptions.Item label="邮箱">{profile?.email ?? "-"}</Descriptions.Item>
             <Descriptions.Item label="电话">{profile?.phone ?? "-"}</Descriptions.Item>
             <Descriptions.Item label="机构">
               {profile?.institutionalAffiliation ?? "-"}

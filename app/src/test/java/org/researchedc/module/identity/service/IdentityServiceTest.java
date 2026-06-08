@@ -134,7 +134,6 @@ class IdentityServiceTest {
         request.setUserName("newuser");
         request.setFirstName("New");
         request.setLastName("User");
-        request.setEmail("new@example.com");
 
         when(userAccountRepository.findByUserName("newuser"))
                 .thenReturn(Optional.empty());

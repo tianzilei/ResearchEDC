@@ -92,7 +92,6 @@ public class IdentityService {
         entity.setUserName(request.getUserName());
         entity.setFirstName(request.getFirstName());
         entity.setLastName(request.getLastName());
-        entity.setEmail(request.getEmail());
         entity.setPhone(request.getPhone());
         entity.setInstitutionalAffiliation(request.getInstitutionalAffiliation());
         entity.setStatusId(request.getStatusId());
@@ -139,9 +138,6 @@ public class IdentityService {
         }
         if (request.getLastName() != null) {
             entity.setLastName(request.getLastName());
-        }
-        if (request.getEmail() != null) {
-            entity.setEmail(request.getEmail());
         }
         if (request.getPhone() != null) {
             entity.setPhone(request.getPhone());
@@ -190,7 +186,6 @@ public class IdentityService {
         dto.setUserName(e.getUserName());
         dto.setFirstName(e.getFirstName());
         dto.setLastName(e.getLastName());
-        dto.setEmail(e.getEmail());
         dto.setPhone(e.getPhone());
         dto.setInstitutionalAffiliation(e.getInstitutionalAffiliation());
         if (e.getUserTypeId() != null) {

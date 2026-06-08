@@ -333,7 +333,7 @@ public abstract class SecureController extends HttpServlet {
             if (pwdChangeRequired == 1) {
             	addPageMessage(respage.getString("welcome") + " " + ub.getFirstName() + " " + ub.getLastName() + ". " + respage.getString("password_set"));
                 request.setAttribute("mustChangePass", "yes");
-                forwardPage(Page.RESET_PASSWORD);
+                // Password change enforcement retired — SPA handles password changes via /app/profile
             }
         }
     }

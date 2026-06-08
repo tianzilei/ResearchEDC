@@ -84,7 +84,7 @@ export default function AppLayout() {
   const userMenuItems: MenuProps["items"] = [
     {
       key: "profile",
-      label: user?.email ?? (`${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() || user?.username),
+      label: (`${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() || user?.username),
       disabled: true,
     },
     { type: "divider" },

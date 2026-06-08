@@ -62,7 +62,7 @@ public class StudyBean extends AuditableEntityBean {
     private String facilityContactName = "";
     private String facilityContactDegree = "";
     private String facilityContactPhone = "";
-    private String facilityContactEmail = "";
+    private String facilityContactEmail = ""; // retained for backward compatibility; email delivery retired
     private String protocolType = "";
     private String protocolDescription = "";
     private Date protocolDateVerification;
