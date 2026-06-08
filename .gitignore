@@ -134,7 +134,6 @@ test-results/
 
 # Generated properties (produced by entrypoint.sh at container start)
 app/src/main/resources/datainfo.properties
-app/src/main/resources/enterprise.properties
 app/src/main/resources/extract.properties
 
 # Python / Questionnaire Service

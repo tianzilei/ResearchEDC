@@ -13,9 +13,6 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -36,7 +33,6 @@ import org.researchedc.bean.managestudy.StudyGroupClassBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.control.SpringServletAccess;
 import org.researchedc.core.CRFLocker;
-import org.researchedc.core.EmailEngine;
 import org.researchedc.core.SessionManager;
 import org.researchedc.dao.core.AuditableEntityDAO;
 import org.researchedc.dao.core.CoreResources;
@@ -80,9 +76,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 /**
@@ -961,12 +954,12 @@ public abstract class CoreSecureController extends HttpServlet {
     }
 
     public Boolean sendEmail(String to, String subject, String body, Boolean htmlEmail, Boolean sendMessage, HttpServletRequest request) throws Exception {
-        return sendEmail(to, EmailEngine.getAdminEmail(), subject, body, htmlEmail, respage.getString("your_message_sent_succesfully"),
+        return sendEmail(to, "", subject, body, htmlEmail, respage.getString("your_message_sent_succesfully"),
                 respage.getString("mail_cannot_be_sent_to_admin"), sendMessage, request);
     }
 
     public Boolean sendEmail(String to, String subject, String body, Boolean htmlEmail, HttpServletRequest request) throws Exception {
-        return sendEmail(to, EmailEngine.getAdminEmail(), subject, body, htmlEmail, respage.getString("your_message_sent_succesfully"),
+        return sendEmail(to, "", subject, body, htmlEmail, respage.getString("your_message_sent_succesfully"),
                 respage.getString("mail_cannot_be_sent_to_admin"), true, request);
     }
 
@@ -977,57 +970,11 @@ public abstract class CoreSecureController extends HttpServlet {
 
     public Boolean sendEmail(String to, String from, String subject, String body, Boolean htmlEmail, String successMessage, String failMessage,
                              Boolean sendMessage, HttpServletRequest request) throws Exception {
-        Boolean messageSent = true;
-        try {
-            JavaMailSenderImpl mailSender = (JavaMailSenderImpl) SpringServletAccess.getApplicationContext(getServletContext()).getBean("mailSender");
-
-            //@pgawade 09-Feb-2012 #issue 13201 - setting the "mail.smtp.localhost" property to localhost when java API is not able to
-            //retrieve the host name
-            Properties javaMailProperties = mailSender.getJavaMailProperties();
-            if(null != javaMailProperties){
-                if (javaMailProperties.get("mail.smtp.localhost") == null || ((String)javaMailProperties.get("mail.smtp.localhost")).equalsIgnoreCase("") ){
-                    javaMailProperties.put("mail.smtp.localhost", "localhost");
-                }
-            }
-
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, htmlEmail);
-            helper.setFrom(from);
-            helper.setTo(processMultipleImailAddresses(to.trim()));
-            helper.setSubject(subject);
-            helper.setText(body, true);
-
-            mailSender.send(mimeMessage);
-            if (successMessage != null && sendMessage) {
-                addPageMessage(successMessage, request);
-            }
-            LOGGER.debug("Email sent successfully on {}", new Date());
-        } catch (MailException me) {
-            me.printStackTrace();
-            if (failMessage != null && sendMessage) {
-                addPageMessage(failMessage, request);
-            }
-            LOGGER.debug("Email could not be sent on {} due to: {}", new Date(), me.toString());
-            messageSent = false;
+        if (sendMessage) {
+            addPageMessage("Email delivery is disabled.", request);
         }
-        return messageSent;
-    }
-
-    private InternetAddress[] processMultipleImailAddresses(String to) throws MessagingException {
-        ArrayList<String> recipientsArray = new ArrayList<String>();
-        StringTokenizer st = new StringTokenizer(to, ",");
-        while (st.hasMoreTokens()) {
-            recipientsArray.add(st.nextToken());
-        }
-
-        int sizeTo = recipientsArray.size();
-        InternetAddress[] addressTo = new InternetAddress[sizeTo];
-        for (int i = 0; i < sizeTo; i++) {
-            addressTo[i] = new InternetAddress(recipientsArray.get(i).toString());
-        }
-        return addressTo;
-
+        LOGGER.debug("Email delivery disabled; skipped message to {} with subject {}", to, subject);
+        return false;
     }
 
     public void unlockCRFsForUser(int userId) {

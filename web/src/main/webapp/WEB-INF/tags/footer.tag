@@ -11,9 +11,7 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <a href="javascript:reportBug()"><fmt:message key="openclinica_feedback" bundle="${resword}"/></a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <a href="Contact"><fmt:message key="contact" bundle="${resword}"/></a>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <a href="Enterprise"><fmt:message key="openclinica_enterprise" bundle="${resword}"/></a>
+    <a href="${pageContext.request.contextPath}/app/contact"><fmt:message key="contact" bundle="${resword}"/></a>
      <span class="version">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<fmt:message key="Version_release" bundle="${licensing}"/>&nbsp;</span>

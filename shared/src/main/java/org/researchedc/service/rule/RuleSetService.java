@@ -83,14 +83,12 @@ import org.researchedc.logic.rulerunner.MessageContainer;
 import org.researchedc.logic.rulerunner.RuleRunner;
 import org.researchedc.logic.rulerunner.RuleSetBulkRuleRunner;
 import org.researchedc.patterns.ocobserver.StudyEventChangeDetails;
-import org.researchedc.service.BulkEmailSenderService;
 import org.researchedc.service.crfdata.BeanPropertyService;
 import org.researchedc.service.crfdata.DynamicsMetadataService;
 import org.researchedc.service.rule.expression.ExpressionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -103,8 +101,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     private RuleSetAuditDomainDao ruleSetAuditDao;
     private RuleDomainDao ruleDao;
     private IRuleSetRuleDAO ruleSetRuleDao;
-    private JavaMailSenderImpl mailSender;
-    private BulkEmailSenderService bulkEmailSenderService;
+    private Object mailSender;
 
     // Jdbc based DAOs
     @Autowired
@@ -1100,11 +1097,11 @@ public class RuleSetService implements RuleSetServiceInterface {
         this.ruleSetAuditDao = ruleSetAuditDao;
     }
 
-    public JavaMailSenderImpl getMailSender() {
+    public Object getMailSender() {
         return mailSender;
     }
 
-    public void setMailSender(JavaMailSenderImpl mailSender) {
+    public void setMailSender(Object mailSender) {
         this.mailSender = mailSender;
     }
 

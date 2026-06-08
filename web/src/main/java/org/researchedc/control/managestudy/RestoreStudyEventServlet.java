@@ -22,7 +22,6 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.core.EmailEngine;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -249,7 +248,7 @@ public class RestoreStudyEventServlet extends SecureController {
         // to study director
         sendEmail(ub.getEmail().trim(), respage.getString("restore_event_to_study"), emailBody, false);
         // to admin
-        sendEmail(EmailEngine.getAdminEmail(), respage.getString("restore_event_to_study"), emailBody, false, false);
+        sendEmail("", respage.getString("restore_event_to_study"), emailBody, false, false);
         logger.info("Sending email done..");
     }
 

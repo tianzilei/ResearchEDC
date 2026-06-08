@@ -193,12 +193,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Jakarta Mail -->
-        <dependency>
-            <groupId>jakarta.mail</groupId>
-            <artifactId>jakarta.mail-api</artifactId>
-        </dependency>
-
         <!-- Castor -->
         <dependency>
             <groupId>org.codehaus.castor</groupId>

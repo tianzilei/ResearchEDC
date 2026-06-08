@@ -24,7 +24,6 @@ import org.researchedc.domain.rule.expression.ExpressionBean;
 import org.researchedc.domain.rule.expression.ExpressionObjectWrapper;
 import org.researchedc.exception.OpenClinicaSystemException;
 import org.researchedc.logic.expressionTree.OpenClinicaExpressionParser;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +38,7 @@ import javax.sql.DataSource;
 
 public class CrfBulkRuleRunner extends RuleRunner {
 
-    public CrfBulkRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, JavaMailSenderImpl mailSender) {
+    public CrfBulkRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, Object mailSender) {
         super(ds, requestURLMinusServletPath, contextPath, mailSender);
     }
 

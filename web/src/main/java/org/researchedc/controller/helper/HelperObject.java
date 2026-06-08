@@ -11,7 +11,6 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.core.OpenClinicaMailSender;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -36,7 +35,6 @@ public class HelperObject {
     UserAccountBean userAccountBean;
     ResourceBundle resterms;
     String urlBase;
-    OpenClinicaMailSender openClinicaMailSender;
     EventCRFDao eventCrfDao;
     IStudyEventDAO studyEventDao;
     IStudySubjectDAO studySubjectDao;
@@ -126,14 +124,6 @@ public class HelperObject {
 
     public void setUrlBase(String urlBase) {
         this.urlBase = urlBase;
-    }
-
-    public OpenClinicaMailSender getOpenClinicaMailSender() {
-        return openClinicaMailSender;
-    }
-
-    public void setOpenClinicaMailSender(OpenClinicaMailSender openClinicaMailSender) {
-        this.openClinicaMailSender = openClinicaMailSender;
     }
 
     public List<EventCRFBean> getEventCrfListToMigrate() {

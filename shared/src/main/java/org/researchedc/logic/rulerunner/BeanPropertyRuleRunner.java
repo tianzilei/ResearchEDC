@@ -24,30 +24,29 @@ import org.researchedc.patterns.ocobserver.StudyEventChangeDetails;
 import org.researchedc.service.crfdata.BeanPropertyService;
 import org.researchedc.service.rule.expression.ExpressionService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
- * 
+ *
  * @author jnyayapathi
  *
  */
 public class BeanPropertyRuleRunner extends RuleRunner{
 
-	public BeanPropertyRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, JavaMailSenderImpl mailSender) {
+	public BeanPropertyRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, Object mailSender) {
 		super(ds, contextPath, contextPath, mailSender);
 		// TODO Auto-generated constructor stub
 	}
 
 	public void runRules(List<RuleSetBean> ruleSets, DataSource ds,
                          BeanPropertyService beanPropertyService, IStudyEventDAO studyEventDaoHib, IStudyEventDefinitionDAO studyEventDefDaoHib,
-                         StudyEventChangeDetails changeDetails,Integer userId , JavaMailSenderImpl mailSender) 
+                         StudyEventChangeDetails changeDetails,Integer userId , Object mailSender)
 	{
-        for (RuleSetBean ruleSet : ruleSets) 
+        for (RuleSetBean ruleSet : ruleSets)
         {
             List<ExpressionBean> expressions = ruleSet.getExpressions();
             for (ExpressionBean expressionBean : expressions) {
                 ruleSet.setTarget(expressionBean);
-                
+
                 StudyEvent studyEvent = studyEventDaoHib.findByStudyEventId(
                         Integer.valueOf(getExpressionService().getStudyEventDefenitionOrdninalCurated(ruleSet.getTarget().getValue())));
 
@@ -55,10 +54,10 @@ public class BeanPropertyRuleRunner extends RuleRunner{
                 int studySubjectBeanId = studyEvent.getStudySubject().getStudySubjectId();
 
                 List<RuleSetRuleBean> ruleSetRules = ruleSet.getRuleSetRules();
-                for (RuleSetRuleBean ruleSetRule : ruleSetRules) 
+                for (RuleSetRuleBean ruleSetRule : ruleSetRules)
                 {
                     Object result = null;
-                    
+
                     if(ruleSetRule.getStatus()==Status.AVAILABLE)
                     {
 	                    RuleBean rule = ruleSetRule.getRuleBean();
@@ -79,12 +78,12 @@ public class BeanPropertyRuleRunner extends RuleRunner{
                             logger.debug( "Rule Expression Evaluation Result: " + result);
 	                        // Actions
 	                        List<RuleActionBean> actionListBasedOnRuleExecutionResult = ruleSetRule.getActions(result.toString());
-	
+
 	                        for (RuleActionBean ruleActionBean: actionListBasedOnRuleExecutionResult){
 	                            // ActionProcessor ap =ActionProcessorFacade.getActionProcessor(ruleActionBean.getActionType(), ds, null, null,ruleSet, null, ruleActionBean.getRuleSetRule());
-	                        	if (ruleActionBean instanceof EventActionBean){
-	                        		beanPropertyService.runAction(ruleActionBean,eow,userId,changeDetails.getRunningInTransaction());
-	                        	}                	
+		if (ruleActionBean instanceof EventActionBean){
+			beanPropertyService.runAction(ruleActionBean,eow,userId,changeDetails.getRunningInTransaction());
+		}
 	                        }
 	                    }catch (OpenClinicaSystemException osa) {
 	                   // 	osa.printStackTrace();
@@ -98,45 +97,45 @@ public class BeanPropertyRuleRunner extends RuleRunner{
             }
         }
     }
-	
+
 	public boolean checkTargetMatchOld(Integer eventOrdinal, RuleSetBean ruleSet,StudyEventChangeDetails changeDetails)
 	{
 		Boolean result = true;
-    	String ruleOrdinal = null;
-    	String targetOID = ruleSet.getTarget().getValue().substring(0,ruleSet.getTarget().getValue().indexOf("."));
-    	String targetProperty = ruleSet.getTarget().getValue().substring(ruleSet.getTarget().getValue().indexOf("."));
+	String ruleOrdinal = null;
+	String targetOID = ruleSet.getTarget().getValue().substring(0,ruleSet.getTarget().getValue().indexOf("."));
+	String targetProperty = ruleSet.getTarget().getValue().substring(ruleSet.getTarget().getValue().indexOf("."));
 
-    	//Compare Target rule property (STATUS or STARTDATE) to what has been changed in event.
-    	//Don't run rule if there isn't a match.
-    	if (targetProperty.equals(ExpressionService.STARTDATE) && !changeDetails.getStartDateChanged()) result = false;
-    	else if (targetProperty.equals(ExpressionService.STATUS) && !changeDetails.getStatusChanged()) result = false;
-    	
-    	//For repeating study events, run rule if ordinals match or "ALL" is specified.
-    	//No brackets implies "ALL" or that the it is not a repeating event, in which case rule should run.
-    	if (targetOID.contains("["))
-    	{
-    		int leftBracketIndex = targetOID.indexOf("[");
-    		int rightBracketIndex = targetOID.indexOf("]");
-    		ruleOrdinal =  targetOID.substring(leftBracketIndex + 1,rightBracketIndex);
-    	
-	    	if (!(ruleOrdinal.equals("ALL") || Integer.valueOf(ruleOrdinal) == eventOrdinal)) result = false;
-    	}
+	//Compare Target rule property (STATUS or STARTDATE) to what has been changed in event.
+	//Don't run rule if there isn't a match.
+	if (targetProperty.equals(ExpressionService.STARTDATE) && !changeDetails.getStartDateChanged()) result = false;
+	else if (targetProperty.equals(ExpressionService.STATUS) && !changeDetails.getStatusChanged()) result = false;
+
+	//For repeating study events, run rule if ordinals match or "ALL" is specified.
+	//No brackets implies "ALL" or that the it is not a repeating event, in which case rule should run.
+	if (targetOID.contains("["))
+	{
+		int leftBracketIndex = targetOID.indexOf("[");
+		int rightBracketIndex = targetOID.indexOf("]");
+		ruleOrdinal =  targetOID.substring(leftBracketIndex + 1,rightBracketIndex);
+
+		if (!(ruleOrdinal.equals("ALL") || Integer.valueOf(ruleOrdinal) == eventOrdinal)) result = false;
+	}
 		return result;
 	}
 
 	public boolean checkTargetMatch(RuleSetBean ruleSet,StudyEventChangeDetails changeDetails)
 	{
 		Boolean result = true;
-    	String targetProperty = ruleSet.getTarget().getValue().substring(ruleSet.getTarget().getValue().indexOf("."));
+	String targetProperty = ruleSet.getTarget().getValue().substring(ruleSet.getTarget().getValue().indexOf("."));
 
-    	//Compare Target rule property (STATUS or STARTDATE) to what has been changed in event.
-    	//Don't run rule if there isn't a match.
+	//Compare Target rule property (STATUS or STARTDATE) to what has been changed in event.
+	//Don't run rule if there isn't a match.
 
-    	if (targetProperty.equals(ExpressionService.STARTDATE+".A.B") && !changeDetails.getStartDateChanged()){
-    		result = false;
-    	}else if (targetProperty.equals(ExpressionService.STATUS+".A.B") && !changeDetails.getStatusChanged()){ 
-    		result = false;
-    	}
+	if (targetProperty.equals(ExpressionService.STARTDATE+".A.B") && !changeDetails.getStartDateChanged()){
+		result = false;
+	}else if (targetProperty.equals(ExpressionService.STATUS+".A.B") && !changeDetails.getStatusChanged()){
+		result = false;
+	}
 		return result;
 	}
 

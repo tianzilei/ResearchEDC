@@ -130,7 +130,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 
@@ -5232,7 +5231,7 @@ String tempKey = idb.getItemId()+","+idb.getOrdinal();
             ruleSetService != null ? ruleSetService : (RuleSetServiceInterface) SpringServletAccess.getApplicationContext(getServletContext()).getBean(
                     "ruleSetService");
         ruleSetService.setContextPath(getContextPath(request));
-        ruleSetService.setMailSender((JavaMailSenderImpl) SpringServletAccess.getApplicationContext(getServletContext()).getBean("mailSender"));
+        ruleSetService.setMailSender(null);
         ruleSetService.setRequestURLMinusServletPath(getRequestURLMinusServletPath(request));
         return ruleSetService;
     }
@@ -5246,7 +5245,7 @@ String tempKey = idb.getItemId()+","+idb.getOrdinal();
             ruleSetService != null ? ruleSetService : (RuleSetServiceInterface) SpringServletAccess.getApplicationContext(getServletContext()).getBean(
                     "ruleSetServicePerRequest");
         ruleSetService.setContextPath(getContextPath(request));
-        ruleSetService.setMailSender((JavaMailSenderImpl) SpringServletAccess.getApplicationContext(getServletContext()).getBean("mailSender"));
+        ruleSetService.setMailSender(null);
         ruleSetService.setRequestURLMinusServletPath(getRequestURLMinusServletPath(request));
         return ruleSetService;
     }

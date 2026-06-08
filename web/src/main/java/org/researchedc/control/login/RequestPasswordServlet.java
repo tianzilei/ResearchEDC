@@ -13,7 +13,6 @@ import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
-import org.researchedc.core.EmailEngine;
 import org.researchedc.core.SecurityManager;
 import org.researchedc.core.SessionManager;
 import org.researchedc.core.form.StringUtil;
@@ -167,7 +166,7 @@ public class RequestPasswordServlet extends SecureController {
         email.append(SQLInitServlet.getField("sysURL"));
 
         String emailBody = email.toString();
-        sendEmail(ubDB.getEmail().trim(), EmailEngine.getAdminEmail(), restext.getString("your_openclinica_password"), emailBody, true, respage
+        sendEmail(ubDB.getEmail().trim(), "", restext.getString("your_openclinica_password"), emailBody, true, respage
                 .getString("your_password_reset_new_password_emailed"), respage.getString("your_password_not_send_due_mail_server_problem"), true);
 
         session.removeAttribute("challengeQuestions");

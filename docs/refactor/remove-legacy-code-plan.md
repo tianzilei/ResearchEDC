@@ -1,22 +1,22 @@
 # Remove Legacy Code Plan
 
-**Last updated:** 2026-06-08
-**Status:** Legacy removal is **not complete**. This plan tracks the remaining deletion work after `legacy-core/` consolidation, DAO SPI widening, and 5 Phase 1 deletion slices. SPA migration coverage mapping added 2026-06-08.
+**Last updated:** 2026-06-09
+**Status:** Legacy removal is **not complete**. This plan tracks the remaining deletion work after `legacy-core/` consolidation, DAO SPI widening, and 6 Phase 1 deletion slices. SPA migration coverage mapping added 2026-06-08.
 
 ## Current Baseline
 
-These counts come from the current repository tree (updated 2026-06-08 after Phase 1 deletion slices, Phase 4 dead code cleanup, and Phase 5 dependency cleanup):
+These counts come from the current repository tree (updated 2026-06-09 after Phase 1 login auxiliary, Enterprise, and mail-delivery cleanup):
 
 | Surface | Count (before) | Count (after) | Meaning |
 |---------|----------------|---------------|---------|
-| `shared/src/main/java/org/researchedc` | 793 | 718 | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities (-75) |
+| `shared/src/main/java/org/researchedc` | 793 | 713 | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities (-80) |
 | `shared/src/main/java/org/researchedc/dao` | 186 | 175 | DAO SPI interfaces plus legacy DAO implementations (-11 old DataSource-constructor DAOs) |
-| `web/src/main/java` | 480 | 354 | Legacy servlet/Spring MVC/JSP helper surface (-126) |
-| `web/src/main/webapp/**/*.jsp` | 416 | 213 | JSP views and fragments (-203) |
-| `SecureController`/`CoreSecureController` subclasses | 186 | 94 | Legacy servlet workflows still present (-92) |
-| `ws/src/main/java` | 75 | 29 | SOAP endpoints, validators, adapters, SOAP support (-46) |
+| `web/src/main/java` | 480 | 263 | Legacy servlet/Spring MVC/JSP helper surface (-217) |
+| `web/src/main/webapp/**/*.jsp` | 416 | 175 | JSP views and fragments (-241) |
+| `SecureController`/`CoreSecureController` subclasses | 186 | 87 | Legacy servlet workflows still present (-99) |
+| `ws/` | 75 | 0 | SOAP module directory is absent in the current tree (-75) |
 
-### Phase 1 Deletion Summary (5 slices completed)
+### Phase 1 Deletion Summary (6 slices completed)
 
 | Slice | Servlets Deleted | JSPs Deleted | web.xml Lines Removed |
 |-------|-----------------|--------------|----------------------|
@@ -25,11 +25,12 @@ These counts come from the current repository tree (updated 2026-06-08 after Pha
 | Study/Subject/Event | 48 | 76+ | 430 |
 | Export/Dataset/Filter | 9 | ~40 | 77 |
 | Data Entry/Discrepancy | 19 | 17 | ~50 |
-| **TOTAL** | **~114** | **~190** | **~633** |
+| Login Auxiliary/Enterprise/Mail Delivery | 6 | 11 | 55 |
+| **TOTAL** | **~120** | **~201** | **~688** |
 
-**Result:** 331 files changed, 64,569 lines deleted. shared+app+ws BUILD SUCCESS.
+**Result:** Phase 1 deletion slices have removed the largest low-risk JSP/servlet surfaces. Current Enterprise and mail-delivery code paths are retired; shared+app+web BUILD SUCCESS.
 
-**Remaining Phase 1 work:** ~243 JSPs and ~91 SecureController subclasses remain, blocked by data entry, import, login, and OpenRosa workflows that require SPA replacements before deletion.
+**Remaining Phase 1 work:** ~175 JSPs and ~87 SecureController subclasses remain, blocked by data entry, import, password/admin-user, study-management fallbacks, and OpenRosa workflows that require SPA or module-owned replacements before deletion.
 
 Completed work should be described precisely:
 
@@ -230,8 +231,8 @@ These are the legacy artifacts that have **no SPA replacement** and are blocking
 |----------|------|-------------------|-------------------------|
 | **Data Entry** | ~66 | ~26 | Full CRF rendering (sections, items, repeating groups), double data entry mode, discrepancy note workflow, rule execution during data entry, CRF print view, file upload/download on CRFs |
 | **Import** | 8 | 7 | Step-by-step import wizard (upload → validate → map → commit), rule XML import, import job scheduling |
-| **Login Auxiliary** | 11 | 5 | Change active study, enterprise landing, request new account, request study access, contact form |
-| **Profile/Password** | 6 | 5 | Update profile (name/email/affiliation/password), forgot password flow, admin password policy config |
+| **Login Auxiliary** | 0 | 0 | Completed on 2026-06-09: legacy ChangeStudy, Enterprise, RequestAccount, RequestStudy, Contact, and UpdateProfile JSP/servlet paths deleted; old routes now redirect to SPA where retained. |
+| **Profile/Password** | 5 | 3 | Login, logout, forgot-password, reset-password, and admin password policy/user-account JSPs remain; email field removal is tracked separately. |
 | **OpenRosa** | 0 | 0* | Spring MVC controller with legacy shared dependencies — needs modulith migration |
 | **Layout/Common** | 60 | — | Shared JSP fragments (headers, footers, sidebars, table renderers, navigation) — delete last |
 
@@ -241,8 +242,8 @@ These are the legacy artifacts that have **no SPA replacement** and are blocking
 
 Based on risk, effort, and dependency chain:
 
-1. **Profile/Password** (low effort, 6 JSPs, 5 servlets) — Smallest blocking surface. SPA already has `/app/profile`. Add forgot-password flow, profile editing, password policy config pages.
-2. **Login Auxiliary** (low effort, 11 JSPs, 5 servlets) — Change study, enterprise page, request account/study. SPA already has `/app/login`.
+1. **Password and admin-user cleanup** (low effort, 5 login JSPs, 3 login servlets plus admin user pages) — Keep Spring Security behavior intact while retiring forgot/reset password JSPs and password policy screens.
+2. **Email field removal** — Execute `docs/refactor/phase-1-email-field-removal-plan.md`: remove user-account and study-contact email fields only after compatibility review.
 3. **Entity Action completeness** — Extend `EntityAction` page to handle all entity types, removing legacy `/legacy/Remove*`/`/legacy/Restore*` fallbacks.
 4. **Subject Detail fallbacks** — Replace `/legacy/SignStudySubject` (e-signature), `/legacy/ReassignStudySubject`, `/legacy/CreateNewStudyEvent` with SPA-native components.
 5. **Rule editing** — Wire orphaned `RuleSetDetail.tsx` route; add rule creation/editing form.

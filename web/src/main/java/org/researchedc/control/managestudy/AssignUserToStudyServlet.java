@@ -14,7 +14,6 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.core.EmailEngine;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
@@ -315,8 +314,8 @@ public class AssignUserToStudyServlet extends SecureController {
         }
 //        boolean emailSent = sendEmail(u.getEmail().trim(), respage.getString("new_user_added_to_study"), body, false);
 //        if (emailSent) {
-//            sendEmail(ub.getEmail().trim(), EmailEngine.getAdminEmail(), respage.getString("new_user_added_to_study"), body, false,"","", false);
-//            sendEmail(EmailEngine.getAdminEmail(), EmailEngine.getAdminEmail(), respage.getString("new_user_added_to_study"), body, false,"","", false);
+//            sendEmail(ub.getEmail().trim(), "", respage.getString("new_user_added_to_study"), body, false,"","", false);
+//            sendEmail("", "", respage.getString("new_user_added_to_study"), body, false,"","", false);
 //        }
 
         return body;

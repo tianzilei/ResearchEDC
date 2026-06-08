@@ -19,7 +19,6 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.core.EmailEngine;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -221,7 +220,7 @@ public class RemoveEventCRFServlet extends SecureController {
         // to study director
 
         sendEmail(ub.getEmail().trim(), respage.getString("remove_event_CRF_from_event"), emailBody, false);
- //       sendEmail(EmailEngine.getAdminEmail(), respage.getString("remove_event_CRF_from_event"), emailBody, false);
+ //       sendEmail("", respage.getString("remove_event_CRF_from_event"), emailBody, false);
         logger.info("Sending email done..");
     }
 

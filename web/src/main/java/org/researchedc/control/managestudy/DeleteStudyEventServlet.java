@@ -12,7 +12,6 @@ import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormProcessor;
-import org.researchedc.core.EmailEngine;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -120,7 +119,7 @@ public class DeleteStudyEventServlet extends SecureController{
         logger.info("Sending email...");
         // to study director
         sendEmail(ub.getEmail().trim(), respage.getString("remove_event_from_study"), emailBody, false);
-        sendEmail(EmailEngine.getAdminEmail(), respage.getString("remove_event_from_study"), emailBody, false, false);
+        sendEmail("", respage.getString("remove_event_from_study"), emailBody, false, false);
         logger.info("Sending email done..");
     }
     

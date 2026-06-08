@@ -40,8 +40,6 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.service.ProcessingFunction;
 import org.researchedc.bean.service.ProcessingResultType;
-import org.researchedc.core.EmailEngine;
-import org.researchedc.core.OpenClinicaMailSender;
 import org.researchedc.core.util.XMLFileFilter;
 import org.researchedc.dao.spi.IAuditEventDAO;
 import org.researchedc.dao.core.CoreResources;
@@ -92,7 +90,6 @@ public class XsltTransformJob extends QuartzJobBean {
     public static final String XSLT_PATH="XSLT_PATH";
     public static final String EP_BEAN = "epBean";
 
-    private OpenClinicaMailSender mailSender;
     private GenerateExtractFileService generateFileService;
     private OdmFileCreation odmFileCreation;
     private IStudyDAO studyDao;
@@ -305,7 +302,7 @@ public class XsltTransformJob extends QuartzJobBean {
             String subject = "";
             String jobName = dataMap.getString(XsltTriggerService.JOB_NAME);
             StringBuffer emailBuffer = new StringBuffer("");
-            emailBuffer.append("<p>" + pageMessages.getString("email_header_1") + " " + EmailEngine.getAdminEmail() + " "
+            emailBuffer.append("<p>" + pageMessages.getString("email_header_1") + " " + "" + " "
                 + pageMessages.getString("email_header_2") + " Job Execution " + pageMessages.getString("email_header_3") + "</p>");
             emailBuffer.append("<P>Dataset: " + datasetBean.getName() + "</P>");
             emailBuffer.append("<P>Study: " + currentStudy.getName() + "</P>");
@@ -497,7 +494,6 @@ public class XsltTransformJob extends QuartzJobBean {
             }
             // email the message to the user
             emailBuffer.append("<p>" + pageMessages.getString("html_email_body_5") + "</p>");
-            try {
 
                 // @pgawade 19-April-2011 Log the event into audit_event table
                 if (null != dataMap.get("job_type") && ((String) dataMap.get("job_type")).equalsIgnoreCase("exportJob")) {
@@ -512,16 +508,6 @@ public class XsltTransformJob extends QuartzJobBean {
                             + " dataset on the View Datasets page.";
                     auditEventDAO.createRowForExtractDataJobSuccess(triggerBean, actionMsg);
                 }
-                mailSender.sendEmail(alertEmail, EmailEngine.getAdminEmail(), subject, emailBuffer.toString(), true);
-
-            } catch (OpenClinicaSystemException ose) {
-                // Do Nothing, In the future we might want to have an email
-                // status added to system.
-                logger.info("exception sending mail: " + ose.getMessage());
-                logger.error("exception sending mail: " + ose.getMessage());
-            }
-
-            logger.info("just sent email to " + alertEmail + ", from " + EmailEngine.getAdminEmail());
             if(successMsg==null) {
                 successMsg =" ";
             }
@@ -613,7 +599,6 @@ public class XsltTransformJob extends QuartzJobBean {
         try {
             ApplicationContext ctx = (ApplicationContext) scheduler.getContext().get("applicationContext");
 
-            mailSender = ctx.getBean(OpenClinicaMailSender.class);
             auditEventDAO = ctx.getBean(IAuditEventDAO.class);
             datasetDao = ctx.getBean(DatasetDao.class);
             userAccountDao = ctx.getBean(IUserAccountDAO.class);
@@ -896,20 +881,7 @@ public class XsltTransformJob extends QuartzJobBean {
     }
 
     private void sendErrorEmail(String message, JobExecutionContext context, String target) {
-        String subject = "Warning: " + message;
-        String emailBody = "An exception was thrown while running an extract job on your server, please see the logs for more details.";
-        try {
-            ApplicationContext appContext = (ApplicationContext) context.getScheduler().getContext().get("applicationContext");
-            mailSender = (OpenClinicaMailSender) appContext.getBean("openClinicaMailSender");
-
-            mailSender.sendEmail(target, EmailEngine.getAdminEmail(), subject, emailBody, false);
-            logger.info("sending an email to " + target + " from " + EmailEngine.getAdminEmail());
-        } catch (SchedulerException se) {
-            logger.warn("Error sending email", se);
-        } catch (OpenClinicaSystemException ose) {
-            logger.warn("Error sending email", ose);
-        }
-
+        logger.warn("Email delivery disabled; extract job warning for {}: {}", target, message);
     }
 
     // Utility method to format upto 3 decimals.

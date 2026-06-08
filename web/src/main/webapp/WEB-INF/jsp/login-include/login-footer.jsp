@@ -23,7 +23,7 @@
                 |
                 <a href="javascript:openDocWindow('https://openclinica.com/openclinica-privacy-policy/may-2018/')"><fmt:message key="privacy" bundle="${resword}"/></a>
                 |
-                 <a href="${pageContext.request.contextPath}/Contact"><fmt:message key="contact" bundle="${resword}"/></a>
+                 <a href="${pageContext.request.contextPath}/app/contact"><fmt:message key="contact" bundle="${resword}"/></a>
                 </td>
                 <td class="footer_bottom" >
 				<fmt:message key="footer.license.1" bundle="${licensing}"/>
@@ -63,24 +63,6 @@
 	</tr>
 </table>
 
-<script type="text/javascript">
-        jQuery(document).ready(function() {
-            jQuery('#cancel').click(function() {
-                jQuery.unblockUI();
-                return false;
-            });
-
-            jQuery('#Contact').click(function() {
-                jQuery.blockUI({ message: jQuery('#contactForm'), css:{left: "200px", top:"180px" } });
-            });
-        });
-
-    </script>
-
-
-        <div id="contactForm" style="display:none;">
-
-        </div>
         <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/favicon.ico">
 
 </body>

@@ -24,7 +24,6 @@ import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
-import org.researchedc.core.EmailEngine;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -261,7 +260,6 @@ public class CreateOneDiscrepancyNoteServlet extends SecureController {
                     dn = getNoteInfo(dn);
 
                     // generate message here
-                    EmailEngine em = new EmailEngine(EmailEngine.getSMTPHost());
                     IUserAccountDAO userAccountDAO = this.userAccountDao;
                     IItemDAO itemDAO = this.itemDao;
                     IItemDataDAO iddao = this.itemDataDao;
@@ -330,7 +328,7 @@ public class CreateOneDiscrepancyNoteServlet extends SecureController {
                      */
 
                     String emailBodyString = message.toString();
-                    sendEmail(alertEmail.trim(), EmailEngine.getAdminEmail(), MessageFormat.format(respage.getString("mailDNSubject"),study.getName(), dn.getEntityName()), emailBodyString, true, null,
+                    sendEmail(alertEmail.trim(), "", MessageFormat.format(respage.getString("mailDNSubject"),study.getName(), dn.getEntityName()), emailBodyString, true, null,
                             null, true);
                 }
 
