@@ -112,16 +112,6 @@ public class HibernateConfig {
     // ──────────────────────────────────────────────────────────────────────
 
     @Bean
-    public CrfDao crfDao() {
-        return new CrfDao();
-    }
-
-    @Bean
-    public CrfVersionDao crfVersionDao() {
-        return new CrfVersionDao();
-    }
-
-    @Bean
     public CrfVersionMediaDao crfVersionMediaDao() {
         return new CrfVersionMediaDao();
     }
@@ -129,21 +119,6 @@ public class HibernateConfig {
     @Bean
     public SectionDao sectionDao() {
         return new SectionDao();
-    }
-
-    @Bean
-    public ItemGroupDao itemGroupDao() {
-        return new ItemGroupDao();
-    }
-
-    @Bean
-    public ItemDao itemDao() {
-        return new ItemDao();
-    }
-
-    @Bean
-    public ItemDataDao itemDataDao() {
-        return new ItemDataDao();
     }
 
     @Bean
@@ -196,16 +171,6 @@ public class HibernateConfig {
     // ──────────────────────────────────────────────────────────────────────
 
     @Bean
-    public EventCrfDao eventCrfDao() {
-        return new EventCrfDao();
-    }
-
-    @Bean
-    public EventDefinitionCrfDao eventDefinitionCrfDao() {
-        return new EventDefinitionCrfDao();
-    }
-
-    @Bean
     public EventCrfFlagDao eventCrfFlagDao() {
         return new EventCrfFlagDao();
     }
@@ -240,26 +205,6 @@ public class HibernateConfig {
     // ──────────────────────────────────────────────────────────────────────
 
     @Bean
-    public StudyDao studyDaoDomain() {
-        return new StudyDao();
-    }
-
-    @Bean
-    public StudySubjectDao studySubjectDaoDomain() {
-        return new StudySubjectDao();
-    }
-
-    @Bean
-    public StudyEventDefinitionDao studyEventDefDaoDomain() {
-        return new StudyEventDefinitionDao();
-    }
-
-    @Bean
-    public StudyEventDao studyEventDaoDomain() {
-        return new StudyEventDao();
-    }
-
-    @Bean
     public StudyUserRoleDao studyUserRoleDao() {
         return new StudyUserRoleDao();
     }
@@ -277,11 +222,6 @@ public class HibernateConfig {
     // ──────────────────────────────────────────────────────────────────────
     //  User / Auth DAOs
     // ──────────────────────────────────────────────────────────────────────
-
-    @Bean
-    public UserAccountDao userDaoDomain() {
-        return new UserAccountDao();
-    }
 
     @Bean
     public UserTypeDao userTypeDao() {

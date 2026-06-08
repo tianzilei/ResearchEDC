@@ -20,12 +20,8 @@ public class DaoRegistrar implements BeanDefinitionRegistryPostProcessor {
         "AbstractDomainDao", "EntityDAO", "AuditableEntityDAO",
         "DatabaseChangeLogDao", "QueryDAO",
         "CoreResources",
-        "ItemFormMetadataDAO", "ItemGroupMetadataDAO", "SectionDAO", "DatasetDAO", "FilterDAO", "StudyGroupClassDAO", "StudyGroupDAO", "ArchivedDatasetFileDAO",
+        "ItemFormMetadataDAO", "SectionDAO", "DatasetDAO", "FilterDAO", "StudyGroupClassDAO", "StudyGroupDAO", "ArchivedDatasetFileDAO",
         "RuleDAO", "RuleSetDAO", "DiscrepancyNoteDAO",
-        "StudyDAO", "SubjectDAO", "StudySubjectDAO", "UserAccountDAO",
-        "StudyEventDAO", "StudyEventDefinitionDAO", "EventCRFDAO",
-        "ItemDAO", "ItemDataDAO", "ItemGroupDAO",
-        "CRFDAO", "CRFVersionDAO", "EventDefinitionCRFDAO"
     };
 
     @Override
