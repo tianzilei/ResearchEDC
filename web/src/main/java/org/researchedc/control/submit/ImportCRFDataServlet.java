@@ -412,7 +412,7 @@ public class ImportCRFDataServlet extends SecureController {
                 session.setAttribute("summaryStats", ssBean);
                 // will have to set hard edit checks here as well
                 session.setAttribute("subjectData", odmContainer.getCrfDataPostImportContainer().getSubjectData());
-                forwardPage(Page.VERIFY_IMPORT_SERVLET);
+                forwardPage(Page.IMPORT_CRF_DATA);
             }
             // }
         }

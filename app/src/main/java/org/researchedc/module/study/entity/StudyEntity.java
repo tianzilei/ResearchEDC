@@ -85,7 +85,7 @@ public class StudyEntity {
     private String facilityContactPhone;
 
     @Column(name = "facility_contact_email", length = 255)
-    private String facilityContactEmail;
+    private String facilityContactEmail; // compatibility field; email delivery retired
 
     @Column(name = "protocol_type", length = 30)
     private String protocolType;

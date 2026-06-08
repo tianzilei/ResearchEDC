@@ -113,7 +113,6 @@ public class ImportSpringJob extends QuartzJobBean {
      * variables to be pulled out of the JobDataMap. Note that these are stored in binary format in the database.
      */
     public static final String DIRECTORY = "filePathDir";
-    public static final String EMAIL = "contactEmail";
     public static final String USER_ID = "user_id";
     public static final String STUDY_NAME = "study_name";
     public static final String STUDY_OID = "study_oid";
@@ -159,7 +158,6 @@ public class ImportSpringJob extends QuartzJobBean {
         SimpleTrigger trigger = (SimpleTrigger) context.getTrigger();
         TriggerBean triggerBean = new TriggerBean();
         triggerBean.setFullName(trigger.getKey().getName());
-        String contactEmail = dataMap.getString(EMAIL);
         logger.debug("=== starting to run trigger " + trigger.getKey().getName() + " ===");
         try {
             ApplicationContext appContext = (ApplicationContext) context.getScheduler().getContext().get("applicationContext");
@@ -283,13 +281,6 @@ public class ImportSpringJob extends QuartzJobBean {
         // Locale locale = new Locale("en-US");
         dataService = this.dataService != null ? dataService : new ImportCRFDataService(dataSource, locale);
         return dataService;
-    }
-
-    private String generateMsg(String msg, String contactEmail) {
-        // @pgawade 07-Sept-2012: fix for https://issuetracker.openclinica.com/view.php?id=13261#c57418
-        String returnMe = respage.getString("html_email_header_1") + " " + contactEmail + respage.getString("your_job_ran_success_html") + "  "
-                + respage.getString("please_review_the_data_html") + msg;
-        return returnMe;
     }
 
     /*

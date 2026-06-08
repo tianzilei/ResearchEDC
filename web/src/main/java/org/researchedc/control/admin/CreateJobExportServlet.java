@@ -54,7 +54,6 @@ public class CreateJobExportServlet extends SecureController {
     public static final String FORMAT_ID = "formatId";
     public static final String DATASET_ID = "dsId";
     public static final String DATE_START_JOB = "job";
-    public static final String EMAIL = "contactEmail";
     public static final String JOB_NAME = "jobName";
     public static final String JOB_DESC = "jobDesc";
     public static final String USER_ID = "user_id";
@@ -112,7 +111,6 @@ public class CreateJobExportServlet extends SecureController {
         request.setAttribute(JOB_NAME, fp2.getString(JOB_NAME));
         request.setAttribute(JOB_DESC, fp2.getString(JOB_DESC));
         request.setAttribute("extractProperties", CoreResources.getExtractProperties());
-        request.setAttribute(EMAIL, fp2.getString(EMAIL));
         request.setAttribute(FORMAT_ID, fp2.getInt(FORMAT_ID));
         request.setAttribute(PERIOD, fp2.getString(PERIOD));
         request.setAttribute(DATASET_ID, fp2.getInt(DATASET_ID));
@@ -171,7 +169,6 @@ public class CreateJobExportServlet extends SecureController {
                 CoreResources cr =  new CoreResources();
                 int datasetId = fp.getInt(DATASET_ID);
                 String period = fp.getString(PERIOD);
-                String email = fp.getString(EMAIL);
                 String jobName = fp.getString(JOB_NAME);
                 String jobDesc = fp.getString(JOB_DESC);
                 Date startDateTime = fp.getDateTime(DATE_START_JOB);
@@ -248,7 +245,6 @@ public class CreateJobExportServlet extends SecureController {
                 trigger.setStartTime(startDateTime);
                 trigger.setName(jobName);// + datasetId);
                 trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT);
-                trigger.getJobDataMap().put(XsltTriggerService.EMAIL, email);
                 trigger.getJobDataMap().put(XsltTriggerService.PERIOD, period);
                 trigger.getJobDataMap().put(XsltTriggerService.EXPORT_FORMAT, epBean.getFiledescription());
                 trigger.getJobDataMap().put(XsltTriggerService.EXPORT_FORMAT_ID, exportFormatId);
@@ -293,7 +289,6 @@ public class CreateJobExportServlet extends SecureController {
         v.addValidation(JOB_NAME, Validator.NO_LEADING_OR_TRAILING_SPACES);
         // need to be unique too
         v.addValidation(JOB_DESC, Validator.NO_BLANKS);
-        v.addValidation(EMAIL, Validator.IS_A_EMAIL);
         v.addValidation(PERIOD, Validator.NO_BLANKS);
         v.addValidation(DATE_START_JOB + "Date", Validator.IS_A_DATE);
         // v.addValidation(DATE_START_JOB + "Date", new Date(), Validator.DATE_IS_AFTER_OR_EQUAL);

@@ -75,10 +75,6 @@
 		<td class="table_cell"><c:out value="${user.lastName}" />&nbsp;</td>
 	</tr>
 	<tr>
-		<td class="table_header_column"><fmt:message key="email" bundle="${resword}"/>:</td>
-		<td class="table_cell"><c:out value="${user.email}" />&nbsp;</td>
-	</tr>
-	<tr>
 		<td class="table_header_column"><fmt:message key="phone" bundle="${resword}"/>:</td>
 		<td class="table_cell"><c:out value="${user.phone}" />&nbsp;</td>
 	</tr>

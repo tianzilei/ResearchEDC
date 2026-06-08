@@ -41,8 +41,6 @@ public class EditUserAccountServlet extends SecureController {
 
     public static final String INPUT_LAST_NAME = "lastName";
 
-    public static final String INPUT_EMAIL = "email";
-
     public static final String INPUT_INSTITUTION = "institutionalAffiliation";
 
     public static final String INPUT_RESET_PASSWORD = "resetPassword";
@@ -132,10 +130,6 @@ public class EditUserAccountServlet extends SecureController {
             v.addValidation(INPUT_FIRST_NAME, Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 50);
             v.addValidation(INPUT_LAST_NAME, Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 50);
 
-            v.addValidation(INPUT_EMAIL, Validator.NO_BLANKS);
-            v.addValidation(INPUT_EMAIL, Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 120);
-            v.addValidation(INPUT_EMAIL, Validator.IS_A_EMAIL);
-
             v.addValidation(INPUT_INSTITUTION, Validator.NO_BLANKS);
             v.addValidation(INPUT_INSTITUTION, Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 255);
 
@@ -174,7 +168,7 @@ public class EditUserAccountServlet extends SecureController {
             } else if (button.equals(resword.getString("confirm"))) {
                 user.setFirstName(fp.getString(INPUT_FIRST_NAME));
                 user.setLastName(fp.getString(INPUT_LAST_NAME));
-                user.setEmail(fp.getString(INPUT_EMAIL));
+                user.setEmail(""); // compatibility field; email delivery retired
                 user.setInstitutionalAffiliation(fp.getString(INPUT_INSTITUTION));
                 user.setUpdater(ub);
                 user.setRunWebservices(fp.getBoolean(INPUT_RUN_WEBSERVICES));
@@ -206,12 +200,6 @@ public class EditUserAccountServlet extends SecureController {
                     udao.update(user);
                     if ("no".equalsIgnoreCase(fp.getString(INPUT_DISPLAY_PWD))) {
                         logger.info("displayPwd is no");
-                        try {
-                            sendResetPasswordEmail(user, password);
-                        } catch (Exception e) {
-                            addPageMessage(respage.getString("there_was_an_error_sending_reset_email_try_reset"));
-                        }
-                    } else {
                         addPageMessage(respage.getString("new_user_password") + ":<br/> " + password + "<br/>"
                             + respage.getString("please_write_down_the_password_and_provide"));
                     }
@@ -265,7 +253,6 @@ public class EditUserAccountServlet extends SecureController {
     private void loadPresetValuesFromBean(FormProcessor fp, UserAccountBean user) {
         fp.addPresetValue(INPUT_FIRST_NAME, user.getFirstName());
         fp.addPresetValue(INPUT_LAST_NAME, user.getLastName());
-        fp.addPresetValue(INPUT_EMAIL, user.getEmail());
         fp.addPresetValue(INPUT_INSTITUTION, user.getInstitutionalAffiliation());
         int userTypeId = UserType.USER.getId();
         if (user.isTechAdmin()) {
@@ -288,7 +275,7 @@ public class EditUserAccountServlet extends SecureController {
     private void loadPresetValuesFromForm(FormProcessor fp) {
         fp.clearPresetValues();
 
-        String textFields[] = { ARG_USERID, INPUT_FIRST_NAME, INPUT_LAST_NAME, INPUT_EMAIL, INPUT_INSTITUTION, INPUT_DISPLAY_PWD };
+        String textFields[] = { ARG_USERID, INPUT_FIRST_NAME, INPUT_LAST_NAME, INPUT_INSTITUTION, INPUT_DISPLAY_PWD };
         fp.setCurrentStringValuesAsPreset(textFields);
 
         String ddlbFields[] = { INPUT_USER_TYPE, INPUT_RESET_PASSWORD, INPUT_RUN_WEBSERVICES };
@@ -308,19 +295,7 @@ public class EditUserAccountServlet extends SecureController {
         return types;
     }
 
-    private void sendResetPasswordEmail(UserAccountBean user, String password) throws Exception {
-        logger.info("Sending password reset notification to " + user.getName());
 
-        String body = resword.getString("dear") + " " + user.getFirstName() + " " + user.getLastName() + ",<br/>\n";
-        body += restext.getString("your_password_has_been_reset_on_openclinica") + ":<br/><br/>\n\n";
-        body += resword.getString("user_name") + ": " + user.getName() + "<br/>\n";
-        body += resword.getString("password") + ": " + password + "<br/><br/>\n\n";
-        body += restext.getString("please_test_your_login_information_and_let") + "<br/>\n";
-        body += "<a href='" + SQLInitServlet.getField("sysURL") + "'>" + SQLInitServlet.getField("sysURL") + "</a><br/>\n";
-        body += restext.getString("openclinica_system_administrator");
-
-        sendEmail(user.getEmail().trim(), restext.getString("your_openclinica_account_password_reset"), body, false);
-    }
 
     @Override
     protected String getAdminServlet() {

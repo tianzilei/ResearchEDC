@@ -299,11 +299,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>MarkEventCRFCompleteServlet</servlet-name>
-        <display-name>MarkEventCRFComplete</display-name>
-        <servlet-class>org.researchedc.control.submit.MarkEventCRFCompleteServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>InitialDataEntryServlet</servlet-name>
         <display-name>InitialDataEntry</display-name>
         <servlet-class>org.researchedc.control.submit.InitialDataEntryServlet</servlet-class>
@@ -330,11 +325,6 @@
         <servlet-name>ListStudySubjectsManageServlet</servlet-name>
         <display-name>ListStudySubject</display-name>
         <servlet-class>org.researchedc.control.managestudy.ListStudySubjectsManageServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ListStudySubjectsSubmitServlet</servlet-name>
-        <display-name>ListStudySubjectsSubmit</display-name>
-        <servlet-class>org.researchedc.control.submit.ListStudySubjectsSubmitServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>RemoveStudyEventServlet</servlet-name>
@@ -464,12 +454,6 @@
         <display-name>CreateDiscrepancyNote</display-name>
         <servlet-class>org.researchedc.control.submit.CreateDiscrepancyNoteServlet</servlet-class>
     </servlet>
-
-    <servlet>
-        <servlet-name>CreateOneDiscrepancyNoteServlet</servlet-name>
-        <display-name>CreateOneDiscrepancyNote</display-name>
-        <servlet-class>org.researchedc.control.submit.CreateOneDiscrepancyNoteServlet</servlet-class>
-    </servlet>
     <servlet>
         <servlet-name>DownloadStudyMetadataServlet</servlet-name>
         <display-name>DownloadStudyMetadata</display-name>
@@ -507,78 +491,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>VerifyImportedCRFDataServlet</servlet-name>
-        <display-name>VerifyImportedCRFData</display-name>
-        <servlet-class>org.researchedc.control.submit.VerifyImportedCRFDataServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>ImportRuleServlet</servlet-name>
-        <display-name>ImportRule</display-name>
-        <servlet-class>org.researchedc.control.submit.ImportRuleServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>ViewRuleSetServlet</servlet-name>
-        <display-name>ViewRuleSet</display-name>
-        <servlet-class>org.researchedc.control.submit.ViewRuleSetServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>ViewRuleAssignmentNewServlet</servlet-name>
-        <display-name>ViewRuleAssignmentNew</display-name>
-        <servlet-class>org.researchedc.control.submit.ViewRuleAssignmentNewServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>DownloadRuleSetXmlServlet</servlet-name>
-        <display-name>DownloadRuleSetXml</display-name>
-        <servlet-class>org.researchedc.control.submit.DownloadRuleSetXmlServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>ViewRuleAssignmentServlet</servlet-name>
-        <display-name>ViewRuleAssignment</display-name>
-        <servlet-class>org.researchedc.control.submit.ViewRuleAssignmentServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>RunRuleServlet</servlet-name>
-        <display-name>RunRule</display-name>
-        <servlet-class>org.researchedc.control.submit.RunRuleServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>RunRuleSetServlet</servlet-name>
-        <display-name>RunRuleSet</display-name>
-        <servlet-class>org.researchedc.control.submit.RunRuleSetServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>RemoveRuleSetServlet</servlet-name>
-        <display-name>RemoveRuleSet</display-name>
-        <servlet-class>org.researchedc.control.submit.RemoveRuleSetServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>RestoreRuleSetServlet</servlet-name>
-        <display-name>RestoreRuleSet</display-name>
-        <servlet-class>org.researchedc.control.submit.RestoreRuleSetServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>UpdateRuleSetRuleServlet</servlet-name>
-        <display-name>UpdateRuleSetRule</display-name>
-        <servlet-class>org.researchedc.control.submit.UpdateRuleSetRuleServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>VerifyImportedRuleServlet</servlet-name>
-        <display-name>VerifyImportedRule</display-name>
-        <servlet-class>org.researchedc.control.submit.VerifyImportedRuleServlet</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>ExecuteCrossEditCheckServlet</servlet-name>
         <display-name>ExecuteCrossEditCheck</display-name>
         <servlet-class>org.researchedc.control.rule.ExecuteCrossEditCheckServlet</servlet-class>
@@ -588,12 +500,6 @@
         <servlet-name>UpdateStudyServletNew</servlet-name>
         <display-name>UpdateStudyNew</display-name>
         <servlet-class>org.researchedc.control.managestudy.UpdateStudyServletNew</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>MatchPasswordServlet</servlet-name>
-        <display-name>MatchPasswordServlet</display-name>
-        <servlet-class>org.researchedc.control.submit.MatchPasswordServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -647,71 +553,6 @@
     <servlet-mapping>
         <servlet-name>ExecuteCrossEditCheckServlet</servlet-name>
         <url-pattern>/ExecuteCrossEditCheck</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>VerifyImportedRuleServlet</servlet-name>
-        <url-pattern>/VerifyImportedRule</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>TestRuleServlet</servlet-name>
-        <url-pattern>/TestRule</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ImportRuleServlet</servlet-name>
-        <url-pattern>/ImportRule</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ViewRuleSetServlet</servlet-name>
-        <url-pattern>/ViewRuleSet</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ViewRuleAssignmentServlet</servlet-name>
-        <url-pattern>/ViewRuleAssignmentNew</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>DownloadRuleSetXmlServlet</servlet-name>
-        <url-pattern>/DownloadRuleSetXml</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ViewRuleAssignmentNewServlet</servlet-name>
-        <url-pattern>/ViewRuleAssignment</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RunRuleServlet</servlet-name>
-        <url-pattern>/RunRule</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>UpdateRuleSetRuleServlet</servlet-name>
-        <url-pattern>/UpdateRuleSetRule</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RemoveRuleSetServlet</servlet-name>
-        <url-pattern>/RemoveRuleSet</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RestoreRuleSetServlet</servlet-name>
-        <url-pattern>/RestoreRuleSet</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>RunRuleSetServlet</servlet-name>
-        <url-pattern>/RunRuleSet</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>VerifyImportedCRFDataServlet</servlet-name>
-        <url-pattern>/VerifyImportedCRFData</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -808,11 +649,6 @@
         <servlet-name>AdminSystemServlet</servlet-name>
         <url-pattern>/AdminSystem</url-pattern>
     </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>MarkEventCRFCompleteServlet</servlet-name>
-        <url-pattern>/MarkEventCRFComplete</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InitialDataEntryServlet</servlet-name>
         <url-pattern>/InitialDataEntry</url-pattern>
@@ -877,11 +713,6 @@
     <servlet-mapping>
         <servlet-name>RemoveEventCRFServlet</servlet-name>
         <url-pattern>/RemoveEventCRF</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ListStudySubjectsSubmitServlet</servlet-name>
-        <url-pattern>/ListStudySubjectsSubmit</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SetUserRoleServlet</servlet-name>
@@ -955,11 +786,6 @@
         <servlet-name>CreateDiscrepancyNoteServlet</servlet-name>
         <url-pattern>/CreateDiscrepancyNote</url-pattern>
     </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>CreateOneDiscrepancyNoteServlet</servlet-name>
-        <url-pattern>/CreateOneDiscrepancyNote</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DownloadStudyMetadataServlet</servlet-name>
         <url-pattern>/DownloadStudyMetadata</url-pattern>
@@ -980,10 +806,7 @@
         <servlet-name>ListEventsForSubjectServlet</servlet-name>
         <url-pattern>/ListEventsForSubject</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>MatchPasswordServlet</servlet-name>
-        <url-pattern>/MatchPassword</url-pattern>
-    </servlet-mapping>
+
 
     <servlet-mapping>
         <servlet-name>ConfigurePasswordRequirementsServlet</servlet-name>

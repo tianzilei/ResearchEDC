@@ -410,16 +410,7 @@ function handleUserSource() {
     <tr valign="top" class="passwordRow">
 	  <td class="formlabel"><fmt:message key="user_password_generated" bundle="${resword}"/>:</td>
 	  	<td>
-	  	<c:choose>
-         <c:when test="${notifyPassword eq 'email'}">
-            <input type="radio" id="displayPwd0" checked name="displayPwd" value="no"><fmt:message key="send_user_password_via_email" bundle="${resword}"/>
-            <br><input type="radio" id="displayPwd1" name="displayPwd" value="yes"><fmt:message key="show_user_password_to_admin" bundle="${resword}"/>
-         </c:when>
-         <c:otherwise>
-            <%--<input type="radio" id="displayPwd0" name="displayPwd" value="no"><fmt:message key="send_user_password_via_email" bundle="${resword}"/>--%>
-            <br><input type="radio" checked id="displayPwd1" checked name="displayPwd" value="yes"><fmt:message key="show_user_password_to_admin" bundle="${resword}"/>
-         </c:otherwise>
-       </c:choose>
+            <input type="radio" checked id="displayPwd1" checked name="displayPwd" value="yes"><fmt:message key="show_user_password_to_admin" bundle="${resword}"/>
       </td>
 	</tr>
 </table>

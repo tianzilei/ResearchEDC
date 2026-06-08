@@ -46,7 +46,6 @@
 <jsp:useBean scope='request' id='hours' class='java.lang.String'/>
 <jsp:useBean scope='request' id='minutes' class='java.lang.String'/>
 <jsp:useBean scope='request' id='study_name' class='java.lang.String'/>
-<jsp:useBean scope='request' id='contactEmail' class='java.lang.String'/>
 
 <h1><span class="title_manage"><fmt:message key="update_scheduled_job" bundle="${resword}"/>: <fmt:message key="import_data" bundle="${resword}"/></span></h1>
 <p>
@@ -200,15 +199,6 @@
 
 	<tr>
 		<td colspan="2" align="left"><fmt:message key="the_freq_you_select_it_to_run" bundle="${resword}"/></td>
-	</tr>
-
-	<tr>
-		<td class="text">
-			<b><fmt:message key="contact_email" bundle="${resword}"/>:</b></td>
-		<td class="text">
-			<input type="text" name="contactEmail" size="90" value="<c:out value="${contactEmail}"/>" />
-			<br><jsp:include page="../showMessage.jsp"><jsp:param name="key" value="contactEmail"/></jsp:include>
-		</td>
 	</tr>
 
 	<tr>

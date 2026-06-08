@@ -219,15 +219,6 @@
 	</tr>
 
 	<tr>
-		<td class="text">
-			<b><fmt:message key="contact_email" bundle="${resword}"/>:</b></td>
-		<td class="text">
-			<input type="text" name="contactEmail" size="90"/>
-			<br><jsp:include page="../showMessage.jsp"><jsp:param name="key" value="contactEmail"/></jsp:include>
-		</td>
-	</tr>
-
-	<tr>
 		<td align="left">
 		  <input type="submit" name="btnSubmit" value="<fmt:message key="save" bundle="${resword}"/>" class="button_xlong"/>
 		</td>

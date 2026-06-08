@@ -43,7 +43,6 @@ public class CreateJobImportServlet extends SecureController {
     private static String IMPORT_TRIGGER = "importTrigger";
 
     public static final String DATE_START_JOB = "job";
-    public static final String EMAIL = "contactEmail";
     public static final String JOB_NAME = "jobName";
     public static final String JOB_DESC = "jobDesc";
     public static final String USER_ID = "user_id";
@@ -115,7 +114,6 @@ public class CreateJobImportServlet extends SecureController {
 
         request.setAttribute(JOB_NAME, fp2.getString(JOB_NAME));
         request.setAttribute(JOB_DESC, fp2.getString(JOB_DESC));
-        request.setAttribute(EMAIL, fp2.getString(EMAIL));
         request.setAttribute(HOURS, Integer.valueOf(fp2.getInt(HOURS)).toString());
         request.setAttribute(MINUTES, Integer.valueOf(fp2.getInt(MINUTES)).toString());
 

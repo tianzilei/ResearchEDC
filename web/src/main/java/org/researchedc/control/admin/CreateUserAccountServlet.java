@@ -58,7 +58,6 @@ public class CreateUserAccountServlet extends SecureController {
     public static final String INPUT_USERNAME = "userName";
     public static final String INPUT_FIRST_NAME = "firstName";
     public static final String INPUT_LAST_NAME = "lastName";
-    public static final String INPUT_EMAIL = "email";
     public static final String INPUT_INSTITUTION = "institutionalAffiliation";
     public static final String INPUT_STUDY = "activeStudy";
     public static final String INPUT_ROLE = "role";
@@ -180,7 +179,7 @@ public class CreateUserAccountServlet extends SecureController {
         request.setAttribute("ldapEnabled", isLdapEnabled());
         request.setAttribute("activeStudy", activeStudy);
         if (!fp.isSubmitted() || changeRoles) {
-            String textFields[] = { INPUT_USER_SOURCE, INPUT_USERNAME, INPUT_FIRST_NAME, INPUT_LAST_NAME, INPUT_EMAIL,
+            String textFields[] = { INPUT_USER_SOURCE, INPUT_USERNAME, INPUT_FIRST_NAME, INPUT_LAST_NAME,
                     INPUT_INSTITUTION, INPUT_DISPLAY_PWD };
             fp.setCurrentStringValuesAsPreset(textFields);
 
@@ -212,10 +211,6 @@ public class CreateUserAccountServlet extends SecureController {
             v.addValidation(INPUT_FIRST_NAME, Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 50);
             v.addValidation(INPUT_LAST_NAME, Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 50);
 
-            v.addValidation(INPUT_EMAIL, Validator.NO_BLANKS);
-            v.addValidation(INPUT_EMAIL, Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 120);
-            v.addValidation(INPUT_EMAIL, Validator.IS_A_EMAIL);
-
             v.addValidation(INPUT_INSTITUTION, Validator.NO_BLANKS);
             v.addValidation(INPUT_INSTITUTION, Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 255);
 
@@ -229,7 +224,7 @@ public class CreateUserAccountServlet extends SecureController {
                 createdUserAccountBean.setName(fp.getString(INPUT_USERNAME));
                 createdUserAccountBean.setFirstName(fp.getString(INPUT_FIRST_NAME));
                 createdUserAccountBean.setLastName(fp.getString(INPUT_LAST_NAME));
-                createdUserAccountBean.setEmail(fp.getString(INPUT_EMAIL));
+                createdUserAccountBean.setEmail(""); // compatibility field; email delivery retired
                 createdUserAccountBean.setInstitutionalAffiliation(fp.getString(INPUT_INSTITUTION));
 
                 boolean isLdap = fp.getString(INPUT_USER_SOURCE).equals("ldap");
@@ -299,7 +294,7 @@ public class CreateUserAccountServlet extends SecureController {
                     forwardPage(Page.LIST_USER_ACCOUNTS_SERVLET);
                 }
             } else {
-                String textFields[] = { INPUT_USERNAME, INPUT_FIRST_NAME, INPUT_LAST_NAME, INPUT_EMAIL, INPUT_INSTITUTION, INPUT_DISPLAY_PWD,INPUT_USER_SOURCE };
+                String textFields[] = { INPUT_USERNAME, INPUT_FIRST_NAME, INPUT_LAST_NAME, INPUT_INSTITUTION, INPUT_DISPLAY_PWD,INPUT_USER_SOURCE };
                 fp.setCurrentStringValuesAsPreset(textFields);
 
                 String ddlbFields[] = { INPUT_STUDY, INPUT_ROLE, INPUT_TYPE, INPUT_RUN_WEBSERVICES };
@@ -341,7 +336,6 @@ public class CreateUserAccountServlet extends SecureController {
                 map.put("userName", ldapUser.getUsername());
                 map.put("firstName", ldapUser.getFirstName());
                 map.put("lastName", ldapUser.getLastName());
-                map.put("email", ldapUser.getEmail());
                 map.put("institutionalAffiliation", ldapUser.getOrganization());
             }
         }
