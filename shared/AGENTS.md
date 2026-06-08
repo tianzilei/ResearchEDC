@@ -1,7 +1,7 @@
 # shared/ - Shared Domain Logic & Data Access
 
-**Module:** Legacy domain logic, data access, entities, and business services  
-**Files:** ~770 Java files  
+**Module:** Legacy domain logic, data access, entities, and business services
+**Files:** 713 Java files
 **Package:** `org.researchedc.*`
 
 > Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
@@ -16,9 +16,9 @@ shared/src/main/java/org/researchedc/
 │                 #             service, odmbeans, submit, masking)
 ├── config/       # CoreResourcesConfig.java — resource bundle accessor
 ├── core/         # Core utilities — formatters, file access, resource helpers (7 files)
-├── dao/          # Data access layer — 169 files
+├── dao/          # Data access layer — 175 files
 │   ├── hibernate/ # AbstractDomainDao subclasses (67 files, JPA-based)
-│   ├── spi/       # DAO SPI interfaces (29 files)
+│   ├── spi/       # DAO SPI interfaces (66 files)
 │   ├── managestudy/ # Study/subject DAOs
 │   ├── submit/      # Data entry DAOs
 │   └── ...          # rule, admin, extract, core, cache, ws, login, logic, service
@@ -29,11 +29,11 @@ shared/src/main/java/org/researchedc/
 ├── log/          # Logging utilities (13 files)
 ├── logic/        # Business logic — 57 files (rule engine, ODM export, scoring, masking)
 ├── patterns/     # Observer pattern infrastructure (9 files)
-├── service/      # Business services — 60 files (managestudy, extract, crfdata, rule, pmanage, user, subject)
+├── service/      # Business services — 50 files (managestudy, extract, crfdata, rule, pmanage, user, subject)
 └── validator/    # Validation logic (6 files)
 
 shared/src/main/resources/
-├── migration/    # Liquibase schema migrations (193 XML files)
+├── migration/    # Liquibase schema migrations (208 XML files)
 └── *.properties  # i18n resource bundles (22 files)
 ```
 
@@ -42,12 +42,12 @@ shared/src/main/resources/
 | Area | Files | Description |
 |------|-------|-------------|
 | **DAO (Hibernate)** | 67 | `AbstractDomainDao` subclasses — JPA-based CRUD for all legacy entities |
-| **DAO (SPI)** | 29 | Interface definitions for dependency injection (`IStudyDAO`, `ISubjectDAO`, etc.) |
+| **DAO (SPI)** | 66 | Interface definitions for dependency injection (`IStudyDAO`, `ISubjectDAO`, etc.) |
 | **Domain Entities** | 166 | Hibernate `@Entity` classes mapping to database tables (`datamap/` has 62) |
 | **DTO Beans** | 253 | `EntityBean` subclasses — data transfer objects for legacy servlets |
-| **Business Services** | 60 | `@Service` classes — study, subject, event, CRF, extract, rule, CRF data operations |
+| **Business Services** | 50 | `@Service` classes — study, subject, event, CRF, extract, rule, CRF data operations |
 | **Rule Engine** | 57 | Expression parsing, validation actions, rule runner, scoring functions |
-| **Liquibase Migrations** | 193 | Versioned schema changes from OpenClinica 3.x through 3.18 |
+| **Liquibase Migrations** | 208 | Versioned schema changes from OpenClinica 3.x through 3.18 |
 | **Quartz Jobs** | 9 | Scheduled tasks (data import, export, cleanup) |
 
 ## CONVENTIONS
@@ -75,10 +75,10 @@ test methods awaiting reactivation.
 |--------|--------|
 | Package rename | ✅ `org.akaza.openclinica` → `org.researchedc` |
 | Annotations | ✅ `@Repository`/`@Service` applied to all DAOs and services |
-| SPI interfaces | ✅ 29 interfaces for DI (replaces direct DAO class references) |
-| Liquibase migrations | ✅ ~193 XML files, versioned from 3.x through 3.18 |
+| SPI interfaces | ✅ 66 interfaces for DI (replaces direct DAO class references) |
+| Liquibase migrations | ✅ 208 XML files, versioned from 3.x through 3.18 |
 | Strangulation target | 🔶 Active — new code goes to `app/module/` |
-| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 182 DAO/SPI/implementation files still exist. Deletion is blocked until module-owned repositories/services fully replace the SPI implementations and legacy web/ws workflows no longer need the DAO behavior. |
+| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 175 DAO/SPI/implementation files still exist. Deletion is blocked until module-owned repositories/services fully replace the SPI implementations and legacy web workflows no longer need the DAO behavior. |
 
 ## ANTI-PATTERNS
 

@@ -1,7 +1,7 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-08 (Legacy code removal is **not complete**. Phase B schema ownership and Phase C SPI widening are complete, Phase 1 has 5 deletion slices done, but `shared/`, `web/`, and `ws/` still contain substantial legacy code. See `docs/refactor/remove-legacy-code-plan.md` for the current deletion plan and SPA migration coverage.)
-> **Scope:** All remaining legacy code in `shared/`, `web/`, `ws/`
+> **Last updated:** 2026-06-09 (Legacy code removal is **not complete**. Phase B schema ownership and Phase C SPI widening are complete, Phase 1 has 6 deletion slices done, `shared/` and `web/` still contain substantial legacy code, and `ws/` is absent from the current tree. See `docs/refactor/remove-legacy-code-plan.md` for the current deletion plan and SPA migration coverage.)
+> **Scope:** All remaining legacy code in `shared/` and `web/`; keep SOAP compatibility audits only if `ws/` reappears
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
 ---
@@ -21,15 +21,15 @@
 | 5 | `datacapture` | Bridge to `item_data`/`response_set` | `/api/v1/data-capture` |
 | — | `identity` | Bridge to `user_account`/`study_user_role` | `/api/v1/identity` |
 
-### Remaining legacy code baseline (2026-06-08, after Phase 1 deletions + Phase 4-5 cleanup)
+### Remaining legacy code baseline (2026-06-09, after Phase 1 login auxiliary, Enterprise, and mail-delivery cleanup)
 
 ```
-shared/   718 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
+shared/   713 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
           175 files under shared/src/main/java/org/researchedc/dao (-75 shared, -11 dao from Phase 4+5 cleanup)
-web/      354 Java files → control/ servlets, controller/ Spring MVC, view helpers, filters (-126 from Phase 1 slices)
-          213 JSP pages (-203 from Phase 1 slices)
-           94 SecureController/CoreSecureController subclass matches (-92 from Phase 1 slices)
-ws/        29 Java files → SOAP endpoints + validators + adapters + logic + client (-46 from Phase 5 dependency cleanup)
+web/      263 Java files → control/ servlets, controller/ Spring MVC, view helpers, filters (-126 from Phase 1 slices)
+          175 JSP pages (-203 from Phase 1 slices)
+           87 SecureController/CoreSecureController subclass matches (-92 from Phase 1 slices)
+ws/         0 Java files → SOAP module absent in current tree
 ```
 
 Important distinction: `legacy-core/` removal was a module consolidation into `shared/`; it was not full legacy code removal.
@@ -153,7 +153,7 @@ Next work is no longer Phase B. Continue with the legacy route/workflow inventor
 
 **WebBeansConfig:** 0 `new XxxDAO()` calls remain. All DAO beans use `LegacyDaoFactory` or `@Primary` adapters. Only `new ArchivedDatasetFileDAO` was the last concrete construction, now replaced with `LegacyDaoFactory.archivedDatasetFileDao()`.
 
-**Build verification:** `mvn clean compile` ✅ | `mvn test -pl app -am` 369/369 ✅ | `ModulithVerificationTest` ✅
+**Build verification:** `mvn clean compile` ✅ | `mvn test -pl app -am` 295/295 in latest Phase 1 Enterprise/mail removal slice ✅ | `ModulithVerificationTest` ✅
 
 The table ownership declarations below are derived from the actual JPA entities in each module.
 
@@ -172,7 +172,7 @@ Each Modulith module owns specific database tables. These declarations define th
 | **datacapture** | `item_data`, `response_set`, `item_group` | `ItemDataEntity`, `ResponseSetEntity`, `ItemGroupEntity` | `ItemDataRepository`, `ResponseSetRepository`, `ItemGroupRepository` | `/api/v1/data-capture` |
 | **identity** | `user_account`, `study_user_role` | `UserAccountEntity`, `RoleEntity` | `UserAccountRepository`, `RoleRepository` | `/api/v1/identity` |
 | **crf** | `crf`, `crf_version`, `item`, `section`, `item_form_metadata` | (LegacyCrfAdapter pattern) | None (anti-corruption only) | `/api/v1/crfs` |
-| **notification** | (event-driven, no owned tables) | — | — | (event-driven) |
+| **openrosa** | OpenRosa REST/XML compatibility API | controller/service DTOs | no owned tables | `/api/v1/openrosa` |
 | **legacy** | (gateway only, no owned tables) | — | — | `/api/v1/legacy/*` |
 
 **Key constraint:** Modules with SHARED tables share them with legacy `core/domain/*` entities. These tables must not be altered by the module without coordinating with legacy code. The module writes to these tables via JPA Repository; legacy code reads/writes via `EntityDAO` subclasses. Both paths are in use until legacy DAOs are deleted.
@@ -271,7 +271,7 @@ Modules communicate via:
 >
 > **Next steps for DAO deletion:**
 > 1. Replace concrete DAO typed fields/parameters in legacy services and helpers with module-owned service ports.
-> 2. Move remaining DAO-heavy web/ws workflows behind Modulith APIs.
+> 2. Move remaining DAO-heavy web workflows behind Modulith APIs.
 > 3. Only then can the legacy DAO `.java` files be assessed for safe deletion.
 
 ### C0: Already Deleted (Safe Cleanup)
@@ -406,7 +406,7 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 ## Phase G: JSP Strangulation (Infrastructure Built ✅ — Deletion NOT Complete)
 
 ### G1: Current State
-419 JSP pages across 6 functional areas. React SPA now replaces or provides:
+175 JSP pages across the remaining legacy functional areas. React SPA now replaces or provides:
 - ✅ Dashboard
 - ✅ CRF list/preview
 - ✅ Data export
@@ -441,7 +441,7 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 
 ### G3: Page Migration Roadmap
 
-SPA replacement coverage exists for major workflows, but physical JSP/servlet deletion is not complete. Current repository still contains 213 JSP files and 94 `SecureController`/`CoreSecureController` subclass matches. Treat the list below as replacement coverage, not deletion proof.
+SPA replacement coverage exists for major workflows, but physical JSP/servlet deletion is not complete. Current repository still contains 175 JSP files and 87 `SecureController`/`CoreSecureController` subclass matches. Treat the list below as replacement coverage, not deletion proof.
 
 #### Confirmed Coverage (JSP files physically deleted in Phase 1 slices)
 
@@ -466,8 +466,8 @@ SPA replacement coverage exists for major workflows, but physical JSP/servlet de
 | Area | Remaining JSPs | Blocked By |
 |------|---------------|------------|
 | `submit/` (data entry) | ~60 | Full CRF rendering (sections, repeating groups, discrepancy notes, rule execution), double data entry mode, file attachments, CRF print |
-| `login/` (auxiliary) | ~11 | Change study, enterprise landing, request account, contact form (login page itself IS SPA-native) |
-| `login/` (profile) | 4 | Update profile, forgot password, reset password flows |
+| `login/` (auxiliary) | 0 | Deleted on 2026-06-09: ChangeStudy, Enterprise, RequestAccount, RequestStudy, Contact, and UpdateProfile auxiliary paths |
+| `login/` (profile/password) | 5 | Login, logout, forgot/reset password, password policy/user account JSPs; email-field removal tracked separately |
 | `submit/` (import) | 8 | Step-by-step import wizard with validation preview, rule import |
 | `include/` (remaining) | ~60 | Shared fragments used by all remaining JSP pages |
 
@@ -518,11 +518,11 @@ Available at `GET/PUT /api/v1/studies/:id/feature-flags` (JSONB on `study` table
 |-------|-------------|-----------------|--------------|
 | A1-A5 | Write operations | ✅ COMPLETE | None |
 | B1-B3 | Schema ownership | ✅ COMPLETE | 12 bidirectional sync triggers, 27 entities remapped, 24 adapters |
-| C1-C4 | Legacy code deletion | 🔶 In progress, not complete | **0 direct legacy constructor matches, 0 `DaoProvider.getDao()` calls, 24/24 DAO families SPI-widened. Physical deletion remains blocked by web/ws workflows, DAO implementation replacement proof, and shared bean/service/domain caller cleanup.** |
+| C1-C4 | Legacy code deletion | 🔶 In progress, not complete | **0 direct legacy constructor matches, 0 `DaoProvider.getDao()` calls, 24/24 DAO families SPI-widened. Physical deletion remains blocked by web workflows, DAO implementation replacement proof, and shared bean/service/domain caller cleanup.** |
 | D1-D2 | Config migration | ✅ Complete | 11 XML → Java Config, dead XML stubs cleanup (2026-05-23) |
 | E1-E2 | Auth unification | ✅ Complete | Dual SecurityFilterChain (JWT API + OIDC web) |
-| F1-F2 | SOAP adapters | ✅ Infrastructure built | 3 adapters created; study/study-subject adapters are SPI-backed, UserAccountAdapter remains a concrete containment wrapper, and no `DaoProvider.getDao()` calls remain |
-| G1-G3 | JSP strangulation | 🔶 Replacement coverage in progress; deletion not complete | 419 JSP files still present; 189 SecureController/CoreSecureController subclass matches remain |
+| F1-F2 | SOAP retirement | ✅ Current tree retired | `ws/` is absent; keep compatibility audit only if SOAP endpoints reappear |
+| G1-G3 | JSP strangulation | 🔶 Replacement coverage in progress; deletion not complete | 175 JSP files and 87 SecureController/CoreSecureController subclass matches remain |
 | H1 | Data migration | ✅ COMPLETE | Phase A complete |
 | **S1** | **Contract tests** | **✅ COMPLETE** | **41 MockMvc tests for 8 legacy-gateway controllers** |
 | **S2** | **Service tests** | **✅ COMPLETE** | **47 new tests + 25 frontend + 31 questionnaire** |
@@ -547,13 +547,13 @@ Available at `GET/PUT /api/v1/studies/:id/feature-flags` (JSONB on `study` table
 | Dependency | Used In | Usage | Removal Strategy |
 |------------|---------|-------|-----------------|
 | **JMesa** 2.5.2 | `legacy-core`, `web` | JSP table rendering (menu.jsp, viewAllSubjectSDV, ViewNotesFilterCriteria) | Remove with JSP strangulation (Phase G) |
-| **Castor** 1.4.1 | `legacy-core`, `web`, `ws` | ODM XML export in MetaDataReportBean, rule handlers (OidHandler, EmailHandler) | Remove with SOAP retirement + export migration |
+| **Castor** 1.4.1 | `shared`, `web` | ODM XML export in MetaDataReportBean, rule handlers (OidHandler, EmailHandler) | Remove with export/import migration; SOAP is already absent |
 | **OpenClinica ODM** 2.2 | `legacy-core` | Internal ODM data model (bean/odmbeans/) | Remove with export/import module migration |
-| **Sitemesh** | `web`, `ws` | JSP page decoration (sitemesh.xml config) | Remove with JSP strangulation |
-| **Rome/RSS** | `web`, `ws` | RSS feed URL display on legacy dashboard | Low impact, remove with JSP |
+| **Sitemesh** | `web` | JSP page decoration (sitemesh.xml config) | Remove with JSP strangulation |
+| **Rome/RSS** | `web` | RSS feed URL display on legacy dashboard | Low impact, remove with JSP |
 | **MVEL** | `legacy-core` | Expression language — only commented-out import | Safe to remove (verify no runtime reflection) |
 | **Commons BeanUtils / Validator / Digester3** | All modules | General utility libraries | Low risk, replace incrementally |
-| **Apache POI / JExcel** | `legacy-core`, `web`, `ws` | Excel export for legacy reporting | Remove with export module migration |
+| **Apache POI / JExcel** | `shared`, `web` | Excel export for legacy reporting | Remove with export module migration |
 
 ---
 

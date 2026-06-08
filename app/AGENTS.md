@@ -1,7 +1,7 @@
 # app/ - Spring Boot Modular Monolith Entry Point
 
 **Module:** Application entry point, configuration, and Modulith modules  
-**Files:** ~250 Java files (module/) + config classes, 17 Modulith modules
+**Files:** 374 Java files total, including 354 under `module/`; 17 Modulith modules
 
 > Entry point: `OpenClinicaApplication.java` — Spring Boot WAR packaging.  
 > Config classes in `org.researchedc.config.*` handle Hibernate, security (Spring Security form login + CSRF), scheduling, and OpenAPI.
@@ -19,6 +19,7 @@ app/src/main/java/org/researchedc/
 └── module/                       # 17 Spring Modulith modules
     ├── audit/                    # Audit logging (event-driven, independent table)
     ├── crf/                      # CRF metadata (includes LegacyCrfAdapter)
+    ├── dashboard/                # Dashboard bootstrap, tasks, status, recent activity
     ├── datacapture/              # Data collection (item_data / response_set)
     ├── dataset/                  # Dataset management (gateway only)
     ├── discrepancynote/          # Discrepancy note management (gateway only)
@@ -27,7 +28,7 @@ app/src/main/java/org/researchedc/
     ├── filter/                   # Filter management (gateway only)
     ├── identity/                 # User account / study_user_role
     ├── legacy/                   # Legacy DAO REST gateway
-    ├── notification/             # Event-driven email notifications
+    ├── openrosa/                 # OpenRosa REST/XML compatibility API
     ├── randomization/            # 3 randomization algorithms, REST API
     ├── rule/                     # Rule engine (gateway only)
     ├── study/                    # Study management (CQRS pattern)

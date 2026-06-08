@@ -1,7 +1,7 @@
 # frontend/ - React 19 SPA
 
-**Module:** Modern single-page application frontend  
-**Files:** ~94 TypeScript/TSX files (src), ~109 total (excluding node_modules)  
+**Module:** Modern single-page application frontend
+**Files:** 102 TypeScript/TSX files under `src/` (excluding node_modules)
 
 > React 19 + TypeScript 5.8 strict + Vite 6 + Ant Design 5. Serves at `/app/*` path behind Nginx.
 > Build output goes to `frontend/dist/` (Vite `outDir: "dist"`), served by Nginx in production.
