@@ -45,7 +45,7 @@ public class ConfigureServlet extends SecureController {
         if (!fp.isSubmitted()) {
             loadPresetValuesFromBean(fp);
             setPresetValues(fp.getPresetValues());
-            forwardPage(Page.CONFIGURATION);
+            forwardPage(Page.ADMIN_SYSTEM);
         } else {
             Validator v = new Validator(request);
             v.addValidation("lockcount", Validator.IS_AN_INTEGER);
@@ -59,7 +59,7 @@ public class ConfigureServlet extends SecureController {
 
                 setPresetValues(fp.getPresetValues());
                 setInputMessages(errors);
-                forwardPage(Page.CONFIGURATION);
+                forwardPage(Page.ADMIN_SYSTEM);
 
             } else {
 
