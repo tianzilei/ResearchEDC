@@ -26,7 +26,7 @@ public class OidcSessionBridgeSuccessHandler implements AuthenticationSuccessHan
     private final SavedRequestAwareAuthenticationSuccessHandler delegate = new SavedRequestAwareAuthenticationSuccessHandler();
 
     public OidcSessionBridgeSuccessHandler() {
-        delegate.setDefaultTargetUrl("/MainMenu");
+        delegate.setDefaultTargetUrl("/app/dashboard");
     }
 
     @Override
