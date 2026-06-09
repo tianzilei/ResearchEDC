@@ -23,7 +23,6 @@ import org.researchedc.bean.core.TermType;
 import org.researchedc.bean.core.UserType;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.bean.login.UserDTO;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.control.SpringServletAccess;

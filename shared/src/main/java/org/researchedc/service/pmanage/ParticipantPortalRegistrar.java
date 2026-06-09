@@ -5,7 +5,7 @@ import java.net.URL;
 
 import jakarta.servlet.http.HttpSession;
 
-import org.researchedc.bean.login.ParticipantDTO;
+
 import org.researchedc.dao.core.CoreResources;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -119,22 +119,6 @@ public class ParticipantPortalRegistrar {
         return registerStudy(studyOid, null, null);
     }
 
-    public String sendEmailThruMandrillViaOcui(ParticipantDTO participantDTO, String hostname) {
-    	String host = hostname.substring(0,hostname.indexOf("/app/oauth2"));
-       	String pManageUrl =host + "/app/rest/oc/email";
-
-        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setReadTimeout(PARTICIPATE_READ_TIMEOUT);
-        RestTemplate rest = new RestTemplate(requestFactory);
-
-        try {
-            ParticipantDTO response = rest.postForObject(pManageUrl, participantDTO, ParticipantDTO.class);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            logger.error(ExceptionUtils.getStackTrace(e));
-        }
-        return "";
-    }
 
     public String registerStudy(String studyOid, String hostName, String studyName) {
         String ocUrl = CoreResources.getField("sysURL.base") + "rest2/openrosa/" + studyOid;
