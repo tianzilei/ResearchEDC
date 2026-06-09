@@ -82,37 +82,4 @@ public class RandomizationRegistrar {
         logger.debug("Email delivery disabled; skipped randomization email to {}", user == null ? null : user.getName());
     }
 
-        public String randomizeStudy(String studyOid, String studyName,UserAccountBean userAccount) {
-            
-            String ocUrl = CoreResources.getField("sysURL.base") + "rest2/openrosa/" + studyOid;
-            String randomizationUrl = CoreResources.getField("moduleManager") + "/app/rest/oc/se_randomizations";
-            SeRandomizationDTO seRandomizationDTO = new SeRandomizationDTO();
-            seRandomizationDTO.setStudyOid(studyOid);
-            seRandomizationDTO.setInstanceUrl(ocUrl);
-            seRandomizationDTO.setOcUser_username(userAccount.getName());
-            seRandomizationDTO.setOcUser_name(userAccount.getFirstName());
-            seRandomizationDTO.setOcUser_lastname(userAccount.getLastName());
-            seRandomizationDTO.setOcUser_emailAddress(userAccount.getEmail());
-            seRandomizationDTO.setStudyName(studyName);
-            seRandomizationDTO.setOpenClinicaVersion(CoreResources.getField("OpenClinica.version"));
-
-        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setReadTimeout(RANDOMIZATION_READ_TIMEOUT);
-        RestTemplate rest = new RestTemplate(requestFactory);
-
-        try {
-            SeRandomizationDTO response = rest.postForObject(randomizationUrl, seRandomizationDTO, SeRandomizationDTO.class);
-            if (response != null && response.getStatus() != null)
-                return response.getStatus();
-
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            logger.error(ExceptionUtils.getStackTrace(e));
-            System.out.println(e.getMessage());
-            System.out.println(ExceptionUtils.getStackTrace(e));
-
-        }
-        return "";
-    }
-
 }

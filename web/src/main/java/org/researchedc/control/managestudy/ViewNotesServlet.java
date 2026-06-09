@@ -6,7 +6,7 @@ package org.researchedc.control.managestudy;
 
 /**
  * Stub retaining session attribute keys used by DataEntryServlet, AdministrativeEditingServlet,
- * UpdateStudyEventServlet, ViewSectionDataEntryServlet, and ViewSectionDataEntryRESTUrlServlet.
+ * ViewSectionDataEntryServlet, and ViewSectionDataEntryRESTUrlServlet.
  */
 public class ViewNotesServlet {
 

@@ -13,7 +13,6 @@ public class SeRandomizationDTO {
     private String ocUser_username;
     private String ocUser_name;
     private String ocUser_lastname;
-    private String ocUser_emailAddress;
     private String studyName;
     private String OpenClinicaVersion;
     
@@ -34,13 +33,6 @@ public class SeRandomizationDTO {
     
     
     
-    public String getOcUser_emailAddress() {
-        return ocUser_emailAddress;
-    }
-    public void setOcUser_emailAddress(String ocUser_emailAddress) {
-        this.ocUser_emailAddress = ocUser_emailAddress;
-    }
- 
     
     
     public String getOcUser_username() {

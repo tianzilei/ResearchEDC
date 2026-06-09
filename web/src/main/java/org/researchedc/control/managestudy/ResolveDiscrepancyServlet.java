@@ -146,8 +146,8 @@ private static final String INPUT_NOTE_ID = "noteId";
             IStudyEventDAO sedao = this.studyEventDao;
             StudyEventBean seb = (StudyEventBean) sedao.findByPK(id);
             request.setAttribute(TableOfContentsHelper.INPUT_EVENT_ID, String.valueOf(id));
-            request.setAttribute(UpdateStudyEventServlet.EVENT_ID, String.valueOf(id));
-            request.setAttribute(UpdateStudyEventServlet.STUDY_SUBJECT_ID, String.valueOf(seb.getStudySubjectId()));
+            request.setAttribute("event_id", String.valueOf(id));
+            request.setAttribute("ss_id", String.valueOf(seb.getStudySubjectId()));
         }
 
         // this is for item data

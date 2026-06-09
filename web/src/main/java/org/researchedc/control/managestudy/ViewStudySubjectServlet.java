@@ -1,5 +1,5 @@
 /*
- * Minimal stub for ViewStudySubjectServlet — retains only static methods still referenced by UpdateStudyEventServlet and ListStudySubjectServlet.
+ * Minimal stub for ViewStudySubjectServlet — retains only static methods still referenced by ListStudySubjectServlet.
  * Full implementation deleted in Phase 1 study/subject/event slice.
  */
 package org.researchedc.control.managestudy;
