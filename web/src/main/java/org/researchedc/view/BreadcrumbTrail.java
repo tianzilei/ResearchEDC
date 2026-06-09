@@ -197,19 +197,8 @@ public class BreadcrumbTrail {
             // LIST_USER_ACCOUNTS branch removed — JSPs deleted in phase-1-login-profile
 
             // CRF_VERSION, VIEW_CRF, REMOVE_CRF, RESTORE_CRF, REMOVE_CRF_VERSION,
-            // RESTORE_CRF_VERSION, UPDATE_CRF branches removed — JSPs deleted in Phase 1
+            // RESTORE_CRF_VERSION, UPDATE_CRF, VIEW_SUBJECT, UPDATE_SUBJECT branches removed — JSPs deleted in Phase 1
 
-            else if (jspPage.equals(Page.VIEW_SUBJECT)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "AdminSystem", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("administer_subjects"), "ListSubject", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("view_subject"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.UPDATE_SUBJECT)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "AdminSystem", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("administer_subjects"), "ListSubject", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("update_subject"), "#", Status.PENDING));
-            }
             // VIEW_USER_ACCOUNT branch removed — JSPs deleted in phase-1-login-profile
             // EDIT_ACCOUNT branch removed — JSPs deleted in phase-1-login-profile
             // EDIT_ACCOUNT_CONFIRM branch removed — JSPs deleted in phase-1-login-profile

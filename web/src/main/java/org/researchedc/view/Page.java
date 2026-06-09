@@ -192,7 +192,7 @@ public enum Page {
 
     LIST_USER_IN_STUDY_SERVLET ("/ListStudyUser", "list users in a study"),
 
-    VIEW_SUBJECT ("/WEB-INF/jsp/" + "admin/viewSubject.jsp", "View Subject"),
+    // VIEW_SUBJECT removed — phase-1-group-c
 
     // TODO do we need both versions here??? tbh
     LIST_STUDY_SUBJECT ("/WEB-INF/jsp/" + "managestudy/listStudySubject.jsp", "list subjects in a study"),
@@ -208,8 +208,8 @@ public enum Page {
     RESTORE_EVENT_CRF ("/WEB-INF/jsp/" + "managestudy/restoreEventCRF.jsp", "Restore CRF to event"),
     // DELETE_EVENT_CRF removed — phase-1-group-b
 
-    UPDATE_SUBJECT ("/WEB-INF/jsp/" + "admin/updateSubject.jsp", "update a subject"),
-    UPDATE_SUBJECT_SERVLET ("/UpdateSubject", "update a subject"),
+    // UPDATE_SUBJECT removed — phase-1-group-c
+    // UPDATE_SUBJECT_SERVLET removed — phase-1-group-c
     // SET_USER_ROLE removed — JSP deleted in phase-1-login-profile
     /**
      * Page for listing subjects.
