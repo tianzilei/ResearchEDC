@@ -96,12 +96,8 @@ private static final String INPUT_NOTE_ID = "noteId";
          * Page.TABLE_OF_CONTENTS_SERVLET; //
          * TableOfContents?action=ae&ecid=51&submitted=1&editInterview=1&interviewer=abc&interviewDate=12/04/2003 }
          */else if ("studyevent".equalsIgnoreCase(entityType)) {
-            if (ub.isSysAdmin() || ub.isTechAdmin()) {
-                return Page.UPDATE_STUDY_EVENT_SERVLET;
-            } else {
-                return Page.ENTER_DATA_FOR_STUDY_EVENT_SERVLET;
-            }
-            // UpdateStudyEvent?event_id=12&ss_id=12
+            // UPDATE_STUDY_EVENT_SERVLET and ENTER_DATA_FOR_STUDY_EVENT_SERVLET removed — both routes dead (404)
+            return Page.MANAGE_STUDY_SERVLET;
         } else if ("itemdata".equalsIgnoreCase(entityType) || "eventcrf".equalsIgnoreCase(entityType)) {
 
             if (currentRole.getRole().equals(Role.MONITOR)) {

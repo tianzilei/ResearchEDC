@@ -219,9 +219,7 @@ public enum Page {
 
     VIEW_SECTION_DATA_ENTRY_SERVLET ("/ViewSectionDataEntry", "View Section Data Entry Servlet"),
     EXPORT_DATA_CUSTOM ("", "Dataset Export"),
-    UPDATE_STUDY_EVENT ("/WEB-INF/jsp/managestudy/updateStudyEvent.jsp", "Upate Study Event"),
-    UPDATE_STUDY_EVENT_SERVLET ("/UpdateStudyEvent", "Upate Study Event"),
-    UPDATE_STUDY_EVENT_SIGNED ("/WEB-INF/jsp/managestudy/updateStudyEventSigned.jsp", "Upate Study Event"),
+    // UPDATE_STUDY_EVENT, UPDATE_STUDY_EVENT_SERVLET, UPDATE_STUDY_EVENT_SIGNED removed — UpdateStudyEventServlet + JSPs deleted in Phase 1
     // VIEW_STUDY_EVENTS, VIEW_STUDY_EVENTS_PRINT removed — ViewStudyEventsServlet + JSPs deleted in Phase 1
 
     // DELETE_CRF_VERSION removed — phase-1-group-b
