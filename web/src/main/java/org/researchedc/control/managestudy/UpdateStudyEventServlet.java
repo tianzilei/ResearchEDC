@@ -672,8 +672,7 @@ public static final String EVENT_ID = "event_id";
 
     }
 
-    
-    
+    private ArrayList getUncompletedCRFs(ArrayList eventDefinitionCRFs, ArrayList eventCRFs) {
         int i;
         HashMap completed = new HashMap();
         HashMap startedButIncompleted = new HashMap();
@@ -802,3 +801,4 @@ public static final String EVENT_ID = "event_id";
 
     }
     
+}
