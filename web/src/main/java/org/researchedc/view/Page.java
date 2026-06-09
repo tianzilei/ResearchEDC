@@ -166,7 +166,7 @@ public enum Page {
     UPDATE_JOB_IMPORT ("/WEB-INF/jsp/" + "admin/updateImportJob.jsp", "Update Import Job"),
     VIEW_IMPORT_JOB ("/WEB-INF/jsp/" + "admin/viewImportJobs.jsp", "View Import Jobs"),
     VIEW_IMPORT_JOB_SERVLET ("/ViewImportJob", "View Import Jobs"),
-    ADMIN_SYSTEM_SERVLET ("/AdminSystem", "Administer System Servlet"),
+    
     MANAGE_STUDY_SERVLET ("/ManageStudy", "Manage Study Servlet"),
 
     CREATE_NEW_STUDY_EVENT ("/WEB-INF/jsp/" + "submit/createNewStudyEvent.jsp", "Create a New Study Event"),
