@@ -373,7 +373,18 @@ def write_markdown(items: list[Artifact], path: Path, csv_name: str) -> None:
     by_class = Counter(item.classification for item in items)
     by_phase = Counter(item.phase_slice for item in items)
 
-    admin_candidates = [item for item in items if item.phase_slice == "phase-1-admin-read-only"]
+    phase_priority = [
+        "phase-1-admin-read-only",
+        "phase-1-login-profile",
+        "phase-1-admin-write",
+        "phase-1-crf-metadata",
+        "phase-1-study-subject-event",
+        "phase-1-export-dataset-filter",
+        "phase-1-import-export-compatibility",
+        "phase-1-data-entry-discrepancy",
+    ]
+    recommended_phase = next((phase for phase in phase_priority if by_phase.get(phase, 0)), "phase-0-inventory-and-gates")
+    phase_candidates = [item for item in items if item.phase_slice == recommended_phase]
     unknown_items = [item for item in items if item.classification == "unknown"]
 
     lines: list[str] = []
@@ -406,7 +417,7 @@ def write_markdown(items: list[Artifact], path: Path, csv_name: str) -> None:
     lines.append("")
     lines.append("## First Phase 1 Candidate Slice")
     lines.append("")
-    lines.append("Recommended slice: `phase-1-admin-read-only`.")
+    lines.append(f"Recommended slice: `{recommended_phase}`.")
     lines.append("")
     lines.append("Deletion proof required before removing any candidate artifact:")
     lines.append("")
@@ -420,7 +431,7 @@ def write_markdown(items: list[Artifact], path: Path, csv_name: str) -> None:
     lines.append("")
     lines.append("| Type | Path | Symbol | Route/mapping |")
     lines.append("|---|---|---|---|")
-    for item in admin_candidates[:80]:
+    for item in phase_candidates[:80]:
         lines.append(
             "| "
             + " | ".join(
@@ -429,8 +440,8 @@ def write_markdown(items: list[Artifact], path: Path, csv_name: str) -> None:
             )
             + " |"
         )
-    if len(admin_candidates) > 80:
-        lines.append(f"| ... | ... | ... | {len(admin_candidates) - 80} more candidates in CSV |")
+    if len(phase_candidates) > 80:
+        lines.append(f"| ... | ... | ... | {len(phase_candidates) - 80} more candidates in CSV |")
     lines.append("")
     lines.append("## Unknown Items")
     lines.append("")

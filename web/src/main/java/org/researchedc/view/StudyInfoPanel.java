@@ -201,108 +201,9 @@ public class StudyInfoPanel {
             // tbh
             this.setStudyInfoShown(true);
             this.setOrderedData(false);
-            // try to avoid errors, tbh
-            if (page.equals(Page.CREATE_DATASET_1)) {
-                this.reset();
-                // this.setData("Number of Steps", "5");
-            } else if (page.equals(Page.CREATE_DATASET_2) || page.equals(Page.CREATE_DATASET_EVENT_ATTR) || page.equals(Page.CREATE_DATASET_SUB_ATTR)
-                || page.equals(Page.CREATE_DATASET_CRF_ATTR) || page.equals(Page.CREATE_DATASET_GROUP_ATTR) || page.equals(Page.CREATE_DATASET_VIEW_SELECTED)) {
-                HashMap eventlist = (HashMap) request.getAttribute("eventlist");
-                ArrayList displayData = generateEventTree(eventlist, true);
-
-                this.reset();
-                this.setUserOrderedData(displayData);
-                this.setStudyInfoShown(false);
-                this.setOrderedData(true);
-                this.setCreateDataset(true);
-                this.setSubmitDataModule(false);
-                this.setExtractData(false);
-
-            } else if (page.equals(Page.CREATE_DATASET_3)) {
-                this.reset();
-                this.setStudyInfoShown(false);
-                this.setOrderedData(false);
-                this.setCreateDataset(true);
-                this.setSubmitDataModule(false);
-                this.setExtractData(false);
-
-                DatasetBean dsb = (DatasetBean) session.getAttribute("newDataset");
-                int ev_count = dsb.getItemIds().size();
-
-                this.setData(resword.getString("items_selected"), Integer.valueOf(ev_count).toString());
-
-            } else if (page.equals(Page.CREATE_DATASET_4)) {
-                this.reset();
-                this.setStudyInfoShown(false);
-                this.setOrderedData(false);
-                this.setCreateDataset(true);
-                this.setSubmitDataModule(false);
-                this.setExtractData(false);
-                this.removeData(resword.getString("beginning_date"));
-                this.removeData(resword.getString("ending_date"));
-                DatasetBean dsb = (DatasetBean) session.getAttribute("newDataset");
-                int ev_count = dsb.getItemIds().size();
-                this.setData(resword.getString("items_selected"), Integer.valueOf(ev_count).toString());
-
-                if ("01/01/1900".equals(english_sdf.format(dsb.getDateStart()))) {
-                    this.setData(resword.getString("beginning_date"), resword.getString("not_specified"));
-                } else {
-                    this.setData(resword.getString("beginning_date"), local_sdf.format(dsb.getDateStart()));
-                }
-                if ("12/31/2100".equals(english_sdf.format(dsb.getDateEnd()))) {
-                    this.setData(resword.getString("ending_date"), resword.getString("not_specified"));
-                } else {
-                    this.setData(resword.getString("ending_date"), local_sdf.format(dsb.getDateEnd()));
-                }
-                FilterBean fb = (FilterBean) session.getAttribute("newFilter");
-                if (fb != null) {
-                    this.setData("Added Filter", fb.getName());
-                }
-            } else if (page.equals(Page.APPLY_FILTER)) {
-                DatasetBean dsb = (DatasetBean) session.getAttribute("newDataset");
-                this.setData(resword.getString("beginning_date"), local_sdf.format(dsb.getDateStart()));
-                this.setData(resword.getString("ending_date"), local_sdf.format(dsb.getDateEnd()));
-
-            } else if (page.equals(Page.CONFIRM_DATASET)) {
-                this.reset();
-                this.setStudyInfoShown(false);
-                this.setOrderedData(false);
-                this.setCreateDataset(true);
-                this.setSubmitDataModule(false);
-                this.setExtractData(false);
-                DatasetBean dsb = (DatasetBean) session.getAttribute("newDataset");
-                this.setData(resword.getString("dataset_name"), dsb.getName());
-                this.setData(resword.getString("dataset_description"), dsb.getDescription());
-                int ev_count = dsb.getItemIds().size();
-                this.setData(resword.getString("items_selected"), Integer.valueOf(ev_count).toString());
-
-                if ("01/01/1900".equals(english_sdf.format(dsb.getDateStart()))) {
-                    this.setData(resword.getString("beginning_date"), resword.getString("not_specified"));
-                } else {
-                    this.setData(resword.getString("beginning_date"), local_sdf.format(dsb.getDateStart()));
-                }
-                if ("12/31/2100".equals(english_sdf.format(dsb.getDateEnd()))) {
-                    this.setData(resword.getString("ending_date"), resword.getString("not_specified"));
-                } else {
-                    this.setData(resword.getString("ending_date"), local_sdf.format(dsb.getDateEnd()));
-                }
-                FilterBean fb = (FilterBean) session.getAttribute("newFilter");
-                if (fb != null) {
-                    this.setData(resword.getString("added_filter"), fb.getName());
-                }
-            } else if (page.equals(Page.CREATE_FILTER_SCREEN_3_1)) {
-                CRFVersionBean cvBean = (CRFVersionBean) session.getAttribute("cvBean");
-                this.setData(resword.getString("CRF_version_selected"), cvBean.getName());
-            } else if (page.equals(Page.CREATE_FILTER_SCREEN_3_2)) {
-                SectionBean secBean = (SectionBean) session.getAttribute("secBean");
-                this.setData(resword.getString("section_selected"), secBean.getName());
-                Collection metadatas = (Collection) request.getAttribute("metadatas");
-                this.setData(resword.getString("number_of_questions"), Integer.valueOf(metadatas.size()).toString());
-            } else if (page.equals(Page.CREATE_FILTER_SCREEN_4)) {
-
-            } else if (page.equals(Page.CREATE_FILTER_SCREEN_5)) {
-                // blank here to prevent data reset, tbh
-            } else if (page.equals(Page.ADMIN_SYSTEM)) {
+            // CREATE_DATASET_1-4, APPLY_FILTER, CONFIRM_DATASET,
+            // CREATE_FILTER_SCREEN_3_1/3_2/4/5 branches removed — extract servlets deleted in Phase 1
+            if (page.equals(Page.ADMIN_SYSTEM)) {
                 // blank here , info set in servlet itself
             }
             // VIEW_STUDY_SUBJECT branch removed — JSPs deleted in Phase 1
@@ -345,44 +246,7 @@ public class StudyInfoPanel {
                 this.setCreateDataset(false);
                 this.setIconInfoShown(true);
 
-            } else if (page.equals(Page.EDIT_DATASET)) {
-                this.reset();
-
-                // HashMap eventlist = (HashMap)
-                // request.getAttribute("eventlist");
-                HashMap eventlist = (LinkedHashMap) session.getAttribute("eventsForCreateDataset");
-                ArrayList displayData = generateEventTree(eventlist, true);
-
-                this.setCreateDataset(true);
-                this.setOrderedData(true);
-                this.setUserOrderedData(displayData);
-                this.setStudyInfoShown(true);
-                this.setSubmitDataModule(false);
-                this.setExtractData(false);
-
-                DatasetBean dsb = (DatasetBean) request.getAttribute("dataset");
-                this.setData(resword.getString("dataset_name"), dsb.getName());
-                this.setData(resword.getString("date_created"), local_sdf.format(dsb.getCreatedDate()));
-                this.setData(resword.getString("dataset_owner"), dsb.getOwner().getName());
-                this.setData(resword.getString("date_last_run"), local_sdf.format(dsb.getDateLastRun()));
-
-            } else if (page.equals(Page.EXPORT_DATASETS)) {
-
-                this.setCreateDataset(false);
-
-            } else if (page.equals(Page.GENERATE_DATASET_HTML)) {
-                DatasetBean db = (DatasetBean) request.getAttribute("dataset");
-                ExtractBean exbean = (ExtractBean) request.getAttribute("extractBean");
-                this.reset();
-                ArrayList displayData = new ArrayList();
-
-                displayData = generateDatasetTree(exbean, db);
-                this.setUserOrderedData(displayData);
-                this.setStudyInfoShown(false);
-                this.setOrderedData(true);
-                this.setExtractData(true);
-                this.setSubmitDataModule(false);
-                this.setCreateDataset(false);
+            // EDIT_DATASET, EXPORT_DATASETS, GENERATE_DATASET_HTML branches removed — extract servlets deleted in Phase 1
 
             } else if (page.equals(Page.LIST_STUDY_SUBJECT)) {
                 this.reset();

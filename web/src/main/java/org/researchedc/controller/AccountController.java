@@ -2,7 +2,6 @@ package org.researchedc.controller;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -20,14 +19,11 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.control.SpringServletAccess;
-import org.researchedc.dao.spi.AuditUserLoginDao;
 import org.researchedc.dao.spi.AuthoritiesDao;
 import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
-import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
-import org.researchedc.domain.technicaladmin.LoginStatus;
 import org.researchedc.domain.user.AuthoritiesBean;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.service.pmanage.ParticipantPortalRegistrar;
@@ -82,7 +78,6 @@ public class AccountController {
     UserDTO uDTO;
     AuthoritiesDao authoritiesDao;
     ParticipantPortalRegistrar participantPortalRegistrar;
-    private AuditUserLoginDao auditUserLoginDao;
 
     /**
      * @api {post} /pages/accounts/login Retrieve a user account
@@ -117,78 +112,6 @@ public class AccountController {
      *                    }
      */
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<HashMap> getAccountByUserName(@RequestBody HashMap<String, String> requestMap) throws Exception {
-
-        String userName = (requestMap.get("username")).trim();
-        String password = (requestMap.get("password")).trim();
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userName, password);
-
-        try {
-            authentication = authenticationManager.authenticate(authentication);
-        } catch (Exception bce) {
-            return new ResponseEntity<HashMap>(new HashMap(), org.springframework.http.HttpStatus.UNAUTHORIZED);
-        }
-
-        ResourceBundleProvider.updateLocale(Locale.of("en_US"));
-        IUserAccountDAO userAccountDAO = this.userAccountDao;
-        IStudyDAO studyDAO = this.studyDao;
-        HashMap<String, Object> userDTO = new HashMap<String, Object>();
-
-        UserAccountBean userAccountBean = (UserAccountBean) userAccountDAO.findByUserName(userName);
-        if (null != userAccountBean) {
-            userDTO.put("username", userName);
-            userDTO.put("password", userAccountBean.getPasswd());
-            userDTO.put("firstName", userAccountBean.getFirstName());
-            userDTO.put("lastName", userAccountBean.getLastName());
-            userDTO.put("apiKey", userAccountBean.getApiKey());
-
-            ArrayList<HashMap<String, String>> rolesDTO = new ArrayList<>();
-            for (StudyUserRoleBean role : (List<StudyUserRoleBean>) userAccountBean.getRoles()) {
-                if (role.getStatus().isAvailable()) {
-                    HashMap<String, String> map = new HashMap<String, String>();
-                    map.put("roleName", role.getRoleName());
-                    map.put("studyOID", ((StudyBean) studyDAO.findByPK(role.getStudyId())).getOid());
-                    rolesDTO.add(map);
-                }
-            }
-            userDTO.put("roles", rolesDTO);
-        } else {
-            return new ResponseEntity<HashMap>(new HashMap(), org.springframework.http.HttpStatus.UNAUTHORIZED);
-
-        }
-        return new ResponseEntity<HashMap>(userDTO, org.springframework.http.HttpStatus.OK);
-    }
-
-    /**
-     * @api {get} /pages/accounts/study/:studyOid/crc/:crcUserName Retrieve a user account - crc
-     * @apiName getAccount1
-     * @apiPermission Module participate - enabled & admin
-     * @apiVersion 3.8.0
-     * @apiParam {String} studyOid Study Oid.
-     * @apiParam {String} crcUserName CRC Username .
-     * @apiGroup User Account
-     * @apiDescription Retrieves the crc user account with the given crcUserName and studyOid
-     * @apiParamExample {json} Request-Example:
-     *                  {
-     *                  "studyOid": " S_BL101",
-     *                  "crcUserName": "crc_user"
-     *                  }
-     * @apiSuccessExample {json} Success-Response:
-     *                    HTTP/1.1 200 OK
-     *                    {
-     *                    "lName": "Jackson",
-     *                    "mobile": "",
-     *                    "accessCode": "",
-     *                    "apiKey": "6e8b69f6fb774e899f9a6c349c5adace",
-     *                    "password": "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8",
-     *                    "email": "abc@yahoo.com",
-     *                    "userName": "crc_user",
-     *                    "studySubjectId": null,
-     *                    "fName": "joe"
-     *                    }
-     */
 
     @RequestMapping(value = "/study/{studyOid}/crc/{crcUserName}", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getAccount1(@PathVariable("studyOid") String studyOid, @PathVariable("crcUserName") String crcUserName) throws Exception {
@@ -1013,40 +936,6 @@ public class AccountController {
             uDTO = buildUserDTO(uBean);
             return new ResponseEntity<UserDTO>(uDTO, org.springframework.http.HttpStatus.OK);
         }
-    }
-
-    @RequestMapping(value = "/auditcrc", method = RequestMethod.POST)
-    public ResponseEntity<HashMap> auditcrc(@RequestBody HashMap<String, String> requestMap) throws Exception {
-        HashMap map = new HashMap();
-
-        String crcUserName = requestMap.get("crcUserName");
-        String studyOid = requestMap.get("studyOid");
-        String studySubjectId = requestMap.get("studySubjectId");
-
-        StudyBean parentStudy = getParentStudy(studyOid);
-        StudySubjectBean studySubjectBean = getStudySubject(studySubjectId, parentStudy);
-
-        // build UserName
-        HashMap<String, String> mapValues = buildParticipantUserName(studySubjectBean);
-        String pUserName = mapValues.get("pUserName"); // Participant User Name
-        AuditUserLoginBean auditUserLogin = new AuditUserLoginBean();
-        UserAccountBean userAccount = getUserAccount(crcUserName);
-
-        auditUserLogin.setUserName(userAccount.getName());
-        auditUserLogin.setLoginStatus(LoginStatus.ACCESS_CODE_VIEWED);
-        auditUserLogin.setLoginAttemptDate(new Date());
-        auditUserLogin.setUserAccountId(userAccount != null ? userAccount.getId() : null);
-        auditUserLogin.setDetails(pUserName);
-
-        getAuditUserLoginDao().save(auditUserLogin);
-
-        return new ResponseEntity<HashMap>(map, org.springframework.http.HttpStatus.OK);
-    }
-
-    public AuditUserLoginDao getAuditUserLoginDao() {
-        auditUserLoginDao = this.auditUserLoginDao != null ? auditUserLoginDao
-                : (AuditUserLoginDao) SpringServletAccess.getApplicationContext(context).getBean("auditUserLoginDao");
-        return auditUserLoginDao;
     }
 
     public Boolean isApiKeyExist(String uuid) {

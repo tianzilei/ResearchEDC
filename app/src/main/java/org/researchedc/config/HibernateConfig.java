@@ -129,16 +129,6 @@ public class HibernateConfig {
     }
 
     @Bean
-    public DiscrepancyNoteDao discrepancyNoteDao() {
-        return new DiscrepancyNoteDao();
-    }
-
-    @Bean
-    public DiscrepancyNoteTypeDao discrepancyNoteTypeDao() {
-        return new DiscrepancyNoteTypeDao();
-    }
-
-    @Bean
     public ResolutionStatusDao resolutionStatusDao() {
         return new ResolutionStatusDao();
     }

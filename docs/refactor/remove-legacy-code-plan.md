@@ -1,36 +1,36 @@
 # Remove Legacy Code Plan
 
-**Last updated:** 2026-06-09
-**Status:** Legacy removal is **not complete**. This plan tracks the remaining deletion work after `legacy-core/` consolidation, DAO SPI widening, and 6 Phase 1 deletion slices. SPA migration coverage mapping added 2026-06-08.
+**Last updated:** 2026-06-10
+**Status:** Legacy removal is **not complete**. This plan tracks the remaining deletion work after `legacy-core/` consolidation, DAO SPI widening, and 7 Phase 1 deletion slices. SPA migration coverage mapping added 2026-06-08.
 
 ## Current Baseline
 
-These counts come from the current repository tree (updated 2026-06-09 after Phase 1 login auxiliary, Enterprise, and mail-delivery cleanup):
+These counts come from the current repository tree (updated 2026-06-10 after Phase 1 P8-P10 cleanup, CRF adapter containment, and admin read-only closure):
 
 | Surface | Count (before) | Count (after) | Meaning |
 |---------|----------------|---------------|---------|
-| `shared/src/main/java/org/researchedc` | 793 | 713 | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities (-80) |
-| `shared/src/main/java/org/researchedc/dao` | 186 | 175 | DAO SPI interfaces plus legacy DAO implementations (-11 old DataSource-constructor DAOs) |
-| `web/src/main/java` | 480 | 263 | Legacy servlet/Spring MVC/JSP helper surface (-217) |
-| `web/src/main/webapp/**/*.jsp` | 416 | 175 | JSP views and fragments (-241) |
-| `SecureController`/`CoreSecureController` subclasses | 186 | 87 | Legacy servlet workflows still present (-99) |
+| `shared/src/main/java/org/researchedc` | 793 | 663 | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities (-130) |
+| `shared/src/main/java/org/researchedc/dao` | 186 | 126 | DAO SPI interfaces plus legacy DAO implementations (-60) |
+| `web/src/main/java` | 480 | 239 | Legacy servlet/Spring MVC/JSP helper surface (-241) |
+| `web/src/main/webapp/**/*.jsp` | 416 | 121 | JSP views and fragments (-295) |
+| `SecureController`/`CoreSecureController` subclasses | 186 | 68 | Legacy servlet workflows still present (-118) |
 | `ws/` | 75 | 0 | SOAP module directory is absent in the current tree (-75) |
 
-### Phase 1 Deletion Summary (6 slices completed)
+### Phase 1 Deletion Summary (7 slices completed)
 
 | Slice | Servlets Deleted | JSPs Deleted | web.xml Lines Removed |
 |-------|-----------------|--------------|----------------------|
-| Admin Read-Only | ~25 | ~30 | ~50 |
+| Admin Read-Only | ~26 | ~31 | ~50 |
 | CRF Metadata | 13 | 27 | 26 |
 | Study/Subject/Event | 48 | 76+ | 430 |
 | Export/Dataset/Filter | 9 | ~40 | 77 |
 | Data Entry/Discrepancy | 19 | 17 | ~50 |
 | Login Auxiliary/Enterprise/Mail Delivery | 6 | 11 | 55 |
-| **TOTAL** | **~120** | **~201** | **~688** |
+| **TOTAL** | **~121** | **~202** | **~688** |
 
 **Result:** Phase 1 deletion slices have removed the largest low-risk JSP/servlet surfaces. Current Enterprise and mail-delivery code paths are retired; shared+app+web BUILD SUCCESS.
 
-**Remaining Phase 1 work:** ~175 JSPs and ~87 SecureController subclasses remain, blocked by data entry, import, password/admin-user, study-management fallbacks, and OpenRosa workflows that require SPA or module-owned replacements before deletion.
+**Remaining Phase 1 work:** 121 JSPs and 68 SecureController subclasses remain, blocked by data entry, import, password/admin-user, study-management fallbacks, and OpenRosa workflows that require SPA or module-owned replacements before deletion.
 
 Completed work should be described precisely:
 
@@ -78,22 +78,22 @@ Completed on 2026-06-07:
 Completed on 2026-06-07 after Phase B validation:
 
 - `scripts/ci/generate-legacy-inventory.py` generates CSV and Markdown inventories for legacy servlets, JSPs, Spring MVC routes, SOAP endpoints, DAO files, Quartz jobs, and shared services.
-- `docs/refactor/legacy-workflow-inventory.csv` initially recorded 963 artifacts. The regenerated 2026-06-09 inventory now records 515 active artifacts after Phase 1 deletion slices and SOAP module retirement.
-- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 377 `replace`, 99 `keep compatibility`, and 39 `unknown` artifacts.
+- `docs/refactor/legacy-workflow-inventory.csv` initially recorded 963 artifacts. The regenerated 2026-06-10 inventory now records 392 active artifacts after Phase 1 deletion slices, admin read-only closure, and SOAP module retirement.
+- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 276 `replace`, 86 `keep compatibility`, and 30 `unknown` artifacts.
 - `scripts/ci/generate-legacy-report.sh` now includes the workflow inventory artifacts in the generated legacy report.
-- The first low-risk Phase 1 vertical slice is selected: `phase-1-admin-read-only`, documented in `docs/refactor/phase-1-admin-read-only-slice.md`.
-- `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows: 1 `deleted`, 3 `covered`, 45 `needs replacement`, and 2 `blocked`.
+- The first low-risk Phase 1 vertical slice, `phase-1-admin-read-only`, is now closed; no active artifacts remain in the generated inventory.
+- `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows; all rows are now covered/deleted or formally retired, and the generated inventory has no active `phase-1-admin-read-only` artifacts.
 
 Remaining Phase 0 work:
 
-- Reduce the 39 `unknown` inventory rows by assigning owners/categories in follow-up slice ledgers.
+- Reduce the 30 `unknown` inventory rows by assigning owners/categories in follow-up slice ledgers.
 - Add per-workflow owner metadata once the first slice ledger is created.
 
 Current next action:
 
-1. Continue audit rows: compare legacy JSP/servlet filters and fields against `/api/v1/audit` and `/app/admin/audit-log`; move rows from `needs replacement` to `covered` only with permission and output parity proof.
-2. For system/log/job rows, add or identify module-owned backend APIs before deleting JSP/servlet paths.
-3. Delete only rows marked `covered` or `retire`, one workflow at a time, after route, permission, audit/status/log, and reference parity are proven.
+1. Continue with `phase-1-login-profile` (5 active artifacts): prove Spring Security/session parity for the remaining login JSP route and delete only after `/app/login` and `/api/v1/auth/login` cover behavior.
+2. Classify the 30 remaining `unknown` rows, especially admin/layout fragments and orphan legacy servlets, before deleting them.
+3. Keep larger CRF, study/subject/event, import/export, and data-entry slices gated by workflow-specific parity tests.
 
 ## Phase B PostgreSQL Validation
 

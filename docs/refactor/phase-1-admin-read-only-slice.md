@@ -1,6 +1,6 @@
 # Phase 1 Admin Read-Only Slice
 
-**Status:** first route deletion committed in progress.  
+**Status:** complete; generated inventory has no active `phase-1-admin-read-only` artifacts.  
 **Inventory source:** `docs/refactor/legacy-workflow-inventory.csv` (`phase_slice=phase-1-admin-read-only`).  
 **Slice ledger:** `docs/refactor/phase-1-admin-read-only-ledger.csv` and `docs/refactor/phase-1-admin-read-only-ledger.md`.
 
@@ -30,21 +30,18 @@ No file in this slice may be deleted until all checks are true for that file's w
 
 ## Ledger Result
 
-The initial ledger started with 51 rows. After removing `ReportController` and 3 audit servlets, it tracks 47 active rows plus 4 deleted routes:
+The ledger started with 51 rows. After the admin read-only deletion slices, all rows are covered/deleted or formally retired, and the generated active inventory has 0 `phase-1-admin-read-only` rows:
 
 | Status | Count | Meaning |
 |---|---:|---|
 | `covered` | 0 | All covered rows have been deleted. |
-| `needs replacement` | 44 | A frontend route or partial API exists, but backend field/permission/audit parity is not fully proven. |
-| `blocked` | 2 | Product/route retirement decision is needed before implementation. |
-| `deleted` | 4 | Legacy routes removed after replacement and reference proof. |
+| `needs replacement` | 0 | No active admin read-only replacement rows remain. |
+| `blocked` | 0 | Tech admin shell was formally retired. |
+| `deleted` | 51 | Legacy routes/JSPs removed or retired after replacement and reference proof. |
 
-## First Execution Tasks
+## Result
 
-1. Complete: `ReportController` `/healthcheck` was removed after replacement APIs were added and reference checks found no production callers.
-2. For audit rows, compare legacy JSP/servlet fields and filters against `/api/v1/audit` and `/app/admin/audit-log`.
-3. For system/log/job rows, add or identify module-owned backend APIs before deleting JSP/servlet paths.
-4. Delete only rows marked `covered` or `retire`, one workflow at a time, after route, permission, output parity, and reference checks pass.
+`phase-1-admin-read-only` is closed. The remaining active inventory now recommends `phase-1-login-profile` as the next small deletion slice.
 
 ## Replacement Progress
 

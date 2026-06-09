@@ -36,23 +36,13 @@ public class LegacyServletConfig {
                     "/ImportCRFInfo");
 
             // ── Export servlets ─────────────────────────────────
-            registerServlet(servletContext, "CreateJobExport",
-                    "org.researchedc.control.admin.CreateJobExportServlet",
-                    "/CreateJobExport");
             registerServlet(servletContext, "CreateJobImport",
                     "org.researchedc.control.admin.CreateJobImportServlet",
                     "/CreateJobImport");
             registerServlet(servletContext, "ViewImportJob",
                     "org.researchedc.control.admin.ViewImportJobServlet",
                     "/ViewImportJob");
-            registerServlet(servletContext, "ShowFile",
-                    "org.researchedc.control.extract.ShowFileServlet",
-                    "/ShowFile");
-            registerServlet(servletContext, "ChooseDownloadFormat",
-                    "org.researchedc.control.extract.ChooseDownloadFormat",
-                    "/ChooseDownloadFormat");
-
-
+            // ShowFile, ChooseDownloadFormat removed — extract servlets deleted in Phase 1
 
             log.info("Legacy import/export servlets registered");
         };
