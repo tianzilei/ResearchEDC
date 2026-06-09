@@ -244,13 +244,7 @@ public class BreadcrumbTrail {
 
             }
 
-            // VIEW_EVENT_CRF_CONTENT, VIEW_STUDY_EVENTS branches removed — JSPs deleted in Phase 1
-
-            else if (jspPage.equals(Page.DELETE_CRF_VERSION)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_CRFs"), "ListCRF", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("delete_CRF_version"), "#", Status.PENDING));
-            }
+            // VIEW_EVENT_CRF_CONTENT, VIEW_STUDY_EVENTS, DELETE_CRF_VERSION branches removed — JSPs deleted in Phase 1
 
             // All extract/dataset/filter breadcrumb branches removed — JSPs deleted in Phase 1
 

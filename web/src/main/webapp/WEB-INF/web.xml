@@ -251,27 +251,6 @@
         <servlet-class>org.researchedc.control.submit.AdministrativeEditingServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>UpdateStudyEventServlet</servlet-name>
-        <display-name>UpdateStudyEvent</display-name>
-        <servlet-class>org.researchedc.control.managestudy.UpdateStudyEventServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewStudyEventsServlet</servlet-name>
-        <display-name>ViewStudyEvents</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewStudyEventsServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DeleteCRFVersionServlet</servlet-name>
-        <display-name>DeleteCRFVersion</display-name>
-        <servlet-class>org.researchedc.control.admin.DeleteCRFVersionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DeleteEventCRFServlet</servlet-name>
-        <display-name>DeleteEventCRF</display-name>
-        <servlet-class>org.researchedc.control.admin.DeleteEventCRFServlet</servlet-class>
-    </servlet>
-    <!-- ViewItemDetail, SelectItems, ViewSelected, EditSelected removed — extract servlets deleted in Phase 1 -->
-    <servlet>
         <servlet-name>CreateDiscrepancyNoteServlet</servlet-name>
         <display-name>CreateDiscrepancyNote</display-name>
         <servlet-class>org.researchedc.control.submit.CreateDiscrepancyNoteServlet</servlet-class>
@@ -474,22 +453,6 @@
     <servlet-mapping>
         <servlet-name>AdministrativeEditingServlet</servlet-name>
         <url-pattern>/AdministrativeEditing</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateStudyEventServlet</servlet-name>
-        <url-pattern>/UpdateStudyEvent</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewStudyEventsServlet</servlet-name>
-        <url-pattern>/ViewStudyEvents</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteCRFVersionServlet</servlet-name>
-        <url-pattern>/DeleteCRFVersion</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteEventCRFServlet</servlet-name>
-        <url-pattern>/DeleteEventCRF</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ViewItemDetailServlet</servlet-name>
