@@ -15,7 +15,6 @@ public class XsltTriggerService {
     }
 
     public static final String DATASET_ID = "dsId";
-    public static final String EMAIL = "contactEmail";
     public static final String USER_ID = "user_id";
     public static final String XSL_FILE_PATH = "xslFilePath";
     public static final String XML_FILE_PATH = "xmlFilePath";
@@ -69,7 +68,6 @@ public class XsltTriggerService {
         jobDataMap.put(STUDY_ID, userAccountBean.getActiveStudyId());
         jobDataMap.put(LOCALE, locale);
         jobDataMap.put(DATASET_ID, datasetId);
-        jobDataMap.put(EMAIL, userAccountBean.getEmail());
         jobDataMap.put(ZIPPED,epBean.getZipFormat());
         jobDataMap.put(DELETE_OLD,epBean.getDeleteOld());
         jobDataMap.put(SUCCESS_MESSAGE,epBean.getSuccessMessage());
