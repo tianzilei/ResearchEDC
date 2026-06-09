@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   Card, Table, Button, Space, Typography, Modal, Form, Input, Select, DatePicker, message, List, Spin,
 } from "antd";
@@ -216,9 +216,16 @@ export default function EventList() {
       key: "actions",
       render: (_: unknown, record: StudyEventDTO) =>
         record.statusId < 7 ? (
-          <Button size="small" onClick={() => handleComplete(record.id)}>
-            Complete
-          </Button>
+          <Space>
+            <Button size="small" onClick={() => handleComplete(record.id)}>
+              Complete
+            </Button>
+            <Link to={`/app/actions/study-event/remove/${record.id}`}>
+              <Button size="small" danger type="text">
+                Remove
+              </Button>
+            </Link>
+          </Space>
         ) : null,
     },
   ];

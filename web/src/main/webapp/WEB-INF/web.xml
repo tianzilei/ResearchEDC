@@ -128,34 +128,16 @@
         <description>FormServlet</description>
         <servlet-class>org.researchedc.view.form.FormServlet</servlet-class>
     </servlet>
-
-
-
-
-    <servlet>
-        <servlet-name>InitUpdateStudyServlet</servlet-name>
-        <display-name>InitUpdateStudy</display-name>
-        <servlet-class>org.researchedc.control.managestudy.InitUpdateStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>InitUpdateEventDefinitionServlet</servlet-name>
-        <display-name>InitUpdateEventDefinition</display-name>
-        <servlet-class>org.researchedc.control.managestudy.InitUpdateEventDefinitionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveCRFFromDefinitionServlet</servlet-name>
-        <display-name>RemoveCRFFromDefinition</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RemoveCRFFromDefinitionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RestoreCRFFromDefinitionServlet</servlet-name>
-        <display-name>RestoreCRFFromDefinition</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RestoreCRFFromDefinitionServlet</servlet-class>
-    </servlet>
+<!-- phase-1-run-29: RemoveCRFFromDefinitionServlet + RestoreCRFFromDefinitionServlet removed (0 external consumers) -->
     <servlet>
         <servlet-name>ManageStudyServlet</servlet-name>
         <display-name>ManageStudy</display-name>
         <servlet-class>org.researchedc.control.managestudy.ManageStudyServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateNewStudyEventServlet</servlet-name>
+        <display-name>CreateNewStudyEvent</display-name>
+        <servlet-class>org.researchedc.control.submit.CreateNewStudyEventServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -181,32 +163,10 @@
         <display-name>ListStudySubject</display-name>
         <servlet-class>org.researchedc.control.submit.ListStudySubjectsServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ListStudySubjectsManageServlet</servlet-name>
-        <display-name>ListStudySubject</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ListStudySubjectsManageServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveStudyEventServlet</servlet-name>
-        <display-name>RemoveStudyEvent</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RemoveStudyEventServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DeleteStudyEventServlet</servlet-name>
-        <display-name>DeleteStudyEvent</display-name>
-        <servlet-class>org.researchedc.control.managestudy.DeleteStudyEventServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RemoveEventCRFServlet</servlet-name>
-        <display-name>RemoveEventCRF</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RemoveEventCRFServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RestoreEventCRFServlet</servlet-name>
-        <display-name>RestoreEventCRF</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RestoreEventCRFServlet</servlet-class>
-    </servlet>
-    <!-- ApplyFilter, CreateFiltersOne-Two-Three removed — extract servlets deleted in Phase 1 -->
+    <!-- phase-1-run-42: ListStudySubjectsManageServlet registration removed — extends stub parent, 0 external callers -->
+    <!-- phase-1-run-35: RemoveStudyEventServlet registration removed — SPA EventList now handles -->
+<!-- phase-1-run-37: RemoveEventCRFServlet registration removed — SPA EntityAction now handles -->
+<!-- ApplyFilter, CreateFiltersOne-Two-Three removed — extract servlets deleted in Phase 1 -->
 
 
     <servlet>
@@ -219,12 +179,7 @@
         <display-name>ViewSectionDataEntryRESTUrlServlet</display-name>
         <servlet-class>org.researchedc.control.managestudy.ViewSectionDataEntryRESTUrlServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ViewSectionDataEntryByIdServlet</servlet-name>
-        <display-name>ViewSectionDataEntryById</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewSectionDataEntryByIdServlet</servlet-class>
-    </servlet>
-
+<!-- phase-1-run-40: ViewSectionDataEntryByIdServlet removed — 0 refs, bypassed security, OID lookup superseded by SPA CRF routes -->
 <!-- phase-1-groups-f+g: ChangeDefinitionOrdinalServlet + ChangeDefinitionCRFOrdinalServlet removed -->
     <servlet>
         <servlet-name>AdministrativeEditingServlet</servlet-name>
@@ -236,11 +191,7 @@
         <display-name>CreateDiscrepancyNote</display-name>
         <servlet-class>org.researchedc.control.submit.CreateDiscrepancyNoteServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>DownloadStudyMetadataServlet</servlet-name>
-        <display-name>DownloadStudyMetadata</display-name>
-        <servlet-class>org.researchedc.control.admin.DownloadStudyMetadataServlet</servlet-class>
-    </servlet>
+    <!-- phase-1-login-profile: DownloadVersionSpreadSheetServlet removed (0 callers, 2026-06-10) -->
 
     <servlet>
         <servlet-name>DownloadAttachedFileServlet</servlet-name>
@@ -268,11 +219,7 @@
         <servlet-class>org.researchedc.control.submit.ImportCRFDataServlet</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>ExecuteCrossEditCheckServlet</servlet-name>
-        <display-name>ExecuteCrossEditCheck</display-name>
-        <servlet-class>org.researchedc.control.rule.ExecuteCrossEditCheckServlet</servlet-class>
-    </servlet>
+    <!-- phase-1-run-42: ExecuteCrossEditCheckServlet removed (0 callers, dead code) -->
 
     <servlet>
         <servlet-name>UpdateStudyServletNew</servlet-name>
@@ -301,10 +248,7 @@
 
 
 
-    <servlet-mapping>
-        <servlet-name>ExecuteCrossEditCheckServlet</servlet-name>
-        <url-pattern>/ExecuteCrossEditCheck</url-pattern>
-    </servlet-mapping>
+    <!-- phase-1-run-42: ExecuteCrossEditCheckServlet mapping removed -->
 
     <servlet-mapping>
         <servlet-name>ImportCRFDataServlet</servlet-name>
@@ -315,44 +259,14 @@
 
 
 
-    <servlet-mapping>
-        <servlet-name>ApplyFilterServlet</servlet-name>
-        <url-pattern>/ApplyFilter</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CreateFiltersOneServlet</servlet-name>
-        <url-pattern>/CreateFiltersOne</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CreateFiltersTwoServlet</servlet-name>
-        <url-pattern>/CreateFiltersTwo</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AccessFileServlet</servlet-name>
-        <url-pattern>/AccessFile</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ShowFileServlet</servlet-name>
-        <url-pattern>/ShowFile</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CreateFiltersThreeServlet</servlet-name>
-        <url-pattern>/CreateFiltersThree</url-pattern>
-    </servlet-mapping>
+<!-- phase-1-stale-mappings: ApplyFilter, CreateFiltersOne-Two-Three, AccessFile, ShowFile mappings removed -->
+
     <servlet-mapping>
         <servlet-name>ManageStudyServlet</servlet-name>
         <url-pattern>/ManageStudy</url-pattern>
     </servlet-mapping>
 <!-- phase-1-login-profile: 5 user-account servlet-mappings removed -->
-    <servlet-mapping>
-        <servlet-name>InitUpdateStudyServlet</servlet-name>
-        <url-pattern>/InitUpdateStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>InitUpdateEventDefinitionServlet</servlet-name>
-        <url-pattern>/InitUpdateEventDefinition</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
+<servlet-mapping>
         <servlet-name>InitialDataEntryServlet</servlet-name>
         <url-pattern>/InitialDataEntry</url-pattern>
     </servlet-mapping>
@@ -369,38 +283,14 @@
         <servlet-name>CreateNewStudyEventServlet</servlet-name>
         <url-pattern>/CreateNewStudyEvent</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveCRFFromDefinitionServlet</servlet-name>
-        <url-pattern>/RemoveCRFFromDefinition</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreCRFFromDefinitionServlet</servlet-name>
-        <url-pattern>/RestoreCRFFromDefinition</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListStudySubjectsManageServlet</servlet-name>
-        <url-pattern>/ListStudySubject</url-pattern>
-    </servlet-mapping>
+<!-- phase-1-run-29: RemoveCRFFromDefinition + RestoreCRFFromDefinition mappings removed -->
+    <!-- phase-1-run-42: ListStudySubjectsManageServlet mapping removed -->
     <servlet-mapping>
         <servlet-name>ListStudySubjectsServlet</servlet-name>
         <url-pattern>/ListStudySubjects</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveStudyEventServlet</servlet-name>
-        <url-pattern>/RemoveStudyEvent</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RestoreStudyEventServlet</servlet-name>
-        <url-pattern>/RestoreStudyEvent</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteStudyEventServlet</servlet-name>
-        <url-pattern>/DeleteStudyEvent</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RemoveEventCRFServlet</servlet-name>
-        <url-pattern>/RemoveEventCRF</url-pattern>
-    </servlet-mapping>
+<!-- phase-1-run-35: RemoveStudyEventServlet mapping removed — SPA EventList now handles -->
+<!-- phase-1-run-37: RemoveEventCRFServlet mapping removed — SPA EntityAction now handles -->
     <!--  Export Excel -->
     <servlet-mapping>
         <servlet-name>ViewSectionDataEntryServlet</servlet-name>
@@ -410,11 +300,7 @@
         <servlet-name>ViewSectionDataEntryRESTUrlServlet</servlet-name>
         <url-pattern>/ViewSectionDataEntryRESTUrlServlet</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewSectionDataEntryByIdServlet</servlet-name>
-        <url-pattern>/ViewSectionDataEntryById</url-pattern>
-    </servlet-mapping>
-<!-- phase-1-groups-f+g: ChangeDefinitionOrdinal + ChangeDefinitionCRFOrdinal mappings removed -->
+<!-- phase-1-run-40: ViewSectionDataEntryByIdServlet mapping removed --><!-- phase-1-groups-f+g: ChangeDefinitionOrdinal + ChangeDefinitionCRFOrdinal mappings removed -->
 
     <servlet-mapping>
         <servlet-name>CheckCRFLocked</servlet-name>
@@ -424,34 +310,12 @@
         <servlet-name>AdministrativeEditingServlet</servlet-name>
         <url-pattern>/AdministrativeEditing</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewItemDetailServlet</servlet-name>
-        <url-pattern>/ViewItemDetail</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SelectItemsServlet</servlet-name>
-        <url-pattern>/SelectItems</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewSelectedServlet</servlet-name>
-        <url-pattern>/ViewSelected</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditSelectedServlet</servlet-name>
-        <url-pattern>/EditSelected</url-pattern>
-    </servlet-mapping>
+<!-- phase-1-stale-mappings: ViewItemDetail, SelectItems, ViewSelected, EditSelected mappings removed -->
     <servlet-mapping>
         <servlet-name>CreateDiscrepancyNoteServlet</servlet-name>
         <url-pattern>/CreateDiscrepancyNote</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DownloadStudyMetadataServlet</servlet-name>
-        <url-pattern>/DownloadStudyMetadata</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DownloadVersionSpreadSheetServlet</servlet-name>
-        <url-pattern>/DownloadVersionSpreadSheet</url-pattern>
-    </servlet-mapping>
+    <!-- phase-1-login-profile: DownloadVersionSpreadSheet mapping removed (2026-06-10) -->
     <servlet-mapping>
         <servlet-name>DownloadAttachedFileServlet</servlet-name>
         <url-pattern>/DownloadAttachedFile</url-pattern>
@@ -469,11 +333,6 @@
 <!-- phase-1-admin-write: ConfigureServlet mapping removed -->
 
     <servlet-mapping>
-        <servlet-name>ChooseDownloadFormat</servlet-name>
-        <url-pattern>/ChooseDownloadFormat</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>UploadFileServlet</servlet-name>
         <url-pattern>/UploadFile</url-pattern>
     </servlet-mapping>
@@ -481,14 +340,6 @@
 
 
 
-    <servlet>
-        <servlet-name>urlRewriterServlet</servlet-name>
-        <servlet-class>org.researchedc.control.urlRewrite.UrlRewriteServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>urlRewriterServlet</servlet-name>
-        <url-pattern>/ClinicalData/html/view/*</url-pattern>
-    </servlet-mapping>
+<!-- phase-1-run-40: UrlRewriteServlet removed — 0 refs, OID-to-section URL rewriting orphaned (no /ClinicalData/html/view/* callers) -->
 
 </web-app>

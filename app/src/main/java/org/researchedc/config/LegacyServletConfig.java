@@ -31,18 +31,9 @@ public class LegacyServletConfig {
             registerServlet(servletContext, "ImportCRFData",
                     "org.researchedc.control.submit.ImportCRFDataServlet",
                     "/ImportCRFData");
-            registerServlet(servletContext, "ImportCRFInfo",
-                    "org.researchedc.control.submit.ImportCRFInfo",
-                    "/ImportCRFInfo");
-
-            // ── Export servlets ─────────────────────────────────
-            registerServlet(servletContext, "CreateJobImport",
-                    "org.researchedc.control.admin.CreateJobImportServlet",
-                    "/CreateJobImport");
-            registerServlet(servletContext, "ViewImportJob",
-                    "org.researchedc.control.admin.ViewImportJobServlet",
-                    "/ViewImportJob");
-            // ShowFile, ChooseDownloadFormat removed — extract servlets deleted in Phase 1
+            // ImportCRFInfo removed — ImportCRFInfo.java is a POJO, not a servlet
+            // CreateJobImport removed — CreateJobImportServlet.java does not exist
+            // ViewImportJob removed — ViewImportJobServlet.java does not exist
 
             log.info("Legacy import/export servlets registered");
         };

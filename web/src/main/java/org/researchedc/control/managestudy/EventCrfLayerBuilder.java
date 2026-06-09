@@ -205,6 +205,7 @@ public class EventCrfLayerBuilder {
                     administrativeEditing(html, eventCrfBean, reswords.getString("edit"));
                     html.tdEnd().trEnd(0);
                 }
+                /* phase-1-run-37: RemoveEventCRFServlet deleted, use SPA /app/actions/event-crf/remove/:id
                 if(currentRole.isDirector() || currentUser.isSysAdmin()) {
                     html.tr(0).valign("top").close();
                     html.td(0).styleClass(table_cell_left).close();
@@ -213,6 +214,7 @@ public class EventCrfLayerBuilder {
                     removeEventCrf(html, eventCrfBean, studySubject, reswords.getString("remove"));
                     html.tdEnd().trEnd(0);
                 }
+                */
             }
             if (currentStudy.getStatus() == Status.AVAILABLE && currentUser.isSysAdmin()) {
                 html.tr(0).valign("top").close();
@@ -237,6 +239,7 @@ public class EventCrfLayerBuilder {
                 viewEventCrfContentLink(html, studySubject, eventCrfBean, getStudyEvent(), reswords.getString("print"));
                 html.tdEnd().trEnd(0);
             }
+            /* phase-1-run-37: RemoveEventCRFServlet deleted, use SPA /app/actions/event-crf/remove/:id
             if (currentStudy.getStatus() == Status.AVAILABLE && (currentRole.isDirector() || currentUser.isSysAdmin())) {
                 html.tr(0).valign("top").close();
                 html.td(0).styleClass(table_cell_left).close();
@@ -245,6 +248,7 @@ public class EventCrfLayerBuilder {
                 removeEventCrf(html, eventCrfBean, studySubject, reswords.getString("remove"));
                 html.tdEnd().trEnd(0);
             }
+            */
         } else if (eventCrfStatus == DataEntryStage.UNCOMPLETED) {
             if (getStudyEvent() != null && !currentRole.isMonitor() && currentStudy.getStatus() == Status.AVAILABLE) {
                 if (! hiddenCrf()) {
@@ -293,15 +297,7 @@ public class EventCrfLayerBuilder {
                 printDataEntry(html, eventCrfBean, reswords.getString("print"));
                 html.tdEnd().trEnd(0);
             }
-            if (studySubject.getStatus() != Status.DELETED && studySubject.getStatus() != Status.AUTO_DELETED
-                && (currentRole.isDirector() || currentUser.isSysAdmin())) {
-                html.tr(0).valign("top").close();
-                html.td(0).styleClass(table_cell_left).close();
-                restoreEventCrf(html, eventCrfBean, studySubject);
-                html.nbsp().nbsp();
-                restoreEventCrf(html, eventCrfBean, studySubject, "Restore");
-                html.tdEnd().trEnd(0);
-            }
+            // RestoreEventCRF block removed — phase-1-run-31 (RestoreEventCRFServlet deleted in Run #27)
         } else {
             if (!currentRole.isMonitor() && currentStudy.getStatus() == Status.AVAILABLE) {
                 if (eventCrfStatus == DataEntryStage.INITIAL_DATA_ENTRY_COMPLETE || eventCrfStatus == DataEntryStage.DOUBLE_DATA_ENTRY) {
@@ -338,6 +334,7 @@ public class EventCrfLayerBuilder {
                 printDataEntry(html, eventCrfBean, reswords.getString("print"));
                 html.tdEnd().trEnd(0);
               }
+            /* phase-1-run-37: RemoveEventCRFServlet deleted, use SPA /app/actions/event-crf/remove/:id
             if (currentStudy.getStatus() == Status.AVAILABLE && (currentRole.isDirector() || currentUser.isSysAdmin())) {
                 html.tr(0).valign("top").close();
                 html.td(0).styleClass(table_cell_left).close();
@@ -346,6 +343,7 @@ public class EventCrfLayerBuilder {
                 removeEventCrf(html, eventCrfBean, studySubject, reswords.getString("remove"));
                 html.tdEnd().trEnd(0);
             }
+            */
             if (currentStudy.getStatus() == Status.AVAILABLE && currentUser.isSysAdmin()) {
                 html.tr(0).valign("top").close();
                 html.td(0).styleClass(table_cell_left).close();
@@ -529,19 +527,7 @@ public class EventCrfLayerBuilder {
         builder.aEnd();
     }
 
-    private void restoreEventCrf(HtmlBuilder builder, EventCRFBean eventCrf, StudySubjectBean studySubject) {
-        String href = "RestoreEventCRF?action=confirm&id=" + eventCrf.getId() + "&studySubId=" + studySubject.getId();
-        builder.a().href(href).close();
-        builder.img().src("images/bt_Restore.gif").border("0").align("left").close();
-        builder.aEnd();
-    }
-
-    private void restoreEventCrf(HtmlBuilder builder, EventCRFBean eventCrf, StudySubjectBean studySubject, String link) {
-        String href = "RestoreEventCRF?action=confirm&id=" + eventCrf.getId() + "&studySubId=" + studySubject.getId();
-        builder.a().href(href).close();
-        builder.append(link);
-        builder.aEnd();
-    }
+    // restoreEventCrf removed — phase-1-run-31 (RestoreEventCRFServlet deleted in Run #27)
 
     private void deleteEventCrf(HtmlBuilder builder, EventCRFBean eventCrf, StudySubjectBean studySubject) {
         String href = "DeleteEventCRF?action=confirm&ssId=" + studySubject.getId() + "&ecId=" + eventCrf.getId();

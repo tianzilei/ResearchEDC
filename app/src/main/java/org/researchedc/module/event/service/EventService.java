@@ -65,6 +65,13 @@ public class EventService {
             .toList();
     }
 
+    public EventCrfDTO getEventCrf(Integer crfId) {
+        EventCrfEntity entity = eventCrfRepository.findById(crfId)
+            .orElseThrow(() -> new java.util.NoSuchElementException(
+                "EventCrf not found: " + crfId));
+        return toCrfDto(entity);
+    }
+
     public long countPendingCrfs() {
         return eventCrfRepository.countByDateCompletedIsNull();
     }
@@ -142,6 +149,42 @@ public class EventService {
                 null, AuditEventType.UPDATE, "StudyEvent",
                 entity.getStudyEventId().longValue(), "Event #" + entity.getStudyEventId(),
                 null, null, userId, "Event completed (status=7)", "event");
+    }
+
+    @Transactional
+    public void removeStudyEvent(Integer eventId, Integer userId) {
+        StudyEventEntity entity = studyEventRepository.findById(eventId)
+            .orElseThrow(() -> new java.util.NoSuchElementException(
+                "StudyEvent not found: " + eventId));
+
+        entity.setStatusId(5);
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(userId);
+
+        studyEventRepository.save(entity);
+
+        auditService.recordAudit(
+                null, AuditEventType.DELETE, "StudyEvent",
+                entity.getStudyEventId().longValue(), "Event #" + entity.getStudyEventId(),
+                null, null, userId, "Event removed (status=5)", "event");
+    }
+
+    @Transactional
+    public void removeEventCrf(Integer crfId, Integer userId) {
+        EventCrfEntity entity = eventCrfRepository.findById(crfId)
+            .orElseThrow(() -> new java.util.NoSuchElementException(
+                "EventCrf not found: " + crfId));
+
+        entity.setStatusId(5);
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(userId);
+
+        eventCrfRepository.save(entity);
+
+        auditService.recordAudit(
+                null, AuditEventType.DELETE, "EventCrf",
+                entity.getEventCrfId().longValue(), "EventCrf #" + entity.getEventCrfId(),
+                null, null, userId, "Event CRF removed (status=5)", "event");
     }
 
     private StudyEventDTO toEventDto(StudyEventEntity e) {

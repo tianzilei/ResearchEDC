@@ -17,7 +17,7 @@ interface ImportType {
 
 const IMPORT_TYPES: ImportType[] = [
   { key: "crf-data", label: "CRF 数据", jsp: "ImportCRFData", desc: "从 ODM XML 文件导入 CRF 数据", accept: ".xml" },
-  { key: "crf-def", label: "CRF 定义", jsp: "ImportCRFInfo", desc: "导入 CRF 定义和元数据", accept: ".xml,.xls,.xlsx" },
+  { key: "crf-def", label: "CRF 定义", jsp: "ImportCRFData", desc: "上传 Excel/XML 文件导入 CRF 定义和元数据", accept: ".xml,.xls,.xlsx" },
 ];
 
 export default function ImportManager() {
@@ -123,11 +123,8 @@ export default function ImportManager() {
         </Space>
       </Card>
 
-      <Card title="导入任务">
-        <Empty description="导入任务通过旧版 Quartz 调度系统管理。">
-          <Button onClick={() => window.open("/ViewImportJob", "_blank")}>
-            查看导入任务
-          </Button>
+      <Card title="导入说明">
+        <Empty description="导入为即时处理，无需 Quartz 作业调度。选择导入类型并上传文件即可完成导入。">
         </Empty>
       </Card>
 
