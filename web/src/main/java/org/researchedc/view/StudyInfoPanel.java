@@ -208,24 +208,9 @@ public class StudyInfoPanel {
             }
             // VIEW_STUDY_SUBJECT branch removed — JSPs deleted in Phase 1
 
-            if (page.equals(Page.ENTER_DATA_FOR_STUDY_EVENT) || page.equals(Page.ENTER_DATA_FOR_STUDY_EVENT_SERVLET)) {
+            // ENTER_DATA_FOR_STUDY_EVENT branch removed — servlet + JSP deleted, not in web.xml
 
-                StudyBean study = (StudyBean) session.getAttribute("study");
-                StudySubjectBean studySubject = (StudySubjectBean) request.getAttribute("studySubject");
-                ArrayList beans = (ArrayList) request.getAttribute("beans");
-                EventCRFBean ecb = (EventCRFBean) request.getAttribute("eventCRF");
-                this.reset();
-                addStudyEventTree(study, studySubject, beans, ecb, true);
-
-                this.setStudyInfoShown(false);
-                this.setOrderedData(true);
-                this.setSubmitDataModule(true);
-                this.setExtractData(false);
-                this.setCreateDataset(false);
-                this.setIconInfoShown(false);
-
-            } else if (page.equals(Page.INTERVIEWER) || page.equals(Page.TABLE_OF_CONTENTS) || page.equals(Page.TABLE_OF_CONTENTS_SERVLET)
-                || page.equals(Page.INITIAL_DATA_ENTRY) || page.equals(Page.INITIAL_DATA_ENTRY_SERVLET) || page.equals(Page.DOUBLE_DATA_ENTRY)
+            if (page.equals(Page.INTERVIEWER) || page.equals(Page.INITIAL_DATA_ENTRY) || page.equals(Page.INITIAL_DATA_ENTRY_SERVLET) || page.equals(Page.DOUBLE_DATA_ENTRY)
                 || page.equals(Page.DOUBLE_DATA_ENTRY_SERVLET) || page.equals(Page.ADMIN_EDIT) || page.equals(Page.ADMIN_EDIT_SERVLET)) {
                 /*
                  * pages designed to also follow the above format; check to see

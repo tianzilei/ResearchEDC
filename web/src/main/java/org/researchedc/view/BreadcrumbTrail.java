@@ -107,47 +107,8 @@ public class BreadcrumbTrail {
                     trail = advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("add_new_study_event"), "CreateNewStudyEvent", Status.PENDING), 3);
                     closeRestOfTrail(3);
                 }
-            } else if (jspPage.equals(Page.ENTER_DATA_FOR_STUDY_EVENT)) {
-                int ordinal;
-                if (containsServlet("AddNewSubject")) {
-                    ordinal = 4;
-                    trail =
-                        advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("study_event_overview"), "EnterDataForStudyEvent"
-                            + generateURLString(request), Status.PENDING), ordinal);
-                } else if (containsServlet("CreateNewStudyEvent")) {
-                    ordinal = 2;
-                    trail =
-                        advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("study_event_overview"), "EnterDataForStudyEvent"
-                            + generateURLString(request), Status.PENDING), ordinal);
-                } else {
-                    ordinal = 1;
-                    trail = new ArrayList();
-                    trail.add(new BreadcrumbBean(resworkflow.getString("submit_data"), "ListStudySubjectsSubmit", Status.AVAILABLE));
-                    trail.add(new BreadcrumbBean(resworkflow.getString("study_event_overview"), "EnterDataForStudyEvent" + generateURLString(request),
-                            Status.PENDING));
-                    trail.add(new BreadcrumbBean(resworkflow.getString("event_CRF_data_submission"), "TableOfContents", Status.UNAVAILABLE));
-                    trail.add(new BreadcrumbBean(resworkflow.getString("data_entry"), "InitialDataEntry", Status.UNAVAILABLE));
-                    trail.add(new BreadcrumbBean(resworkflow.getString("mark_event_CRF_complete"), "MarkEventCRFComplete", Status.UNAVAILABLE));
-                }
-                closeRestOfTrail(ordinal);
-            } else if (jspPage.equals(Page.TABLE_OF_CONTENTS)) {
-                int ordinal;
-                if (containsServlet("EnterDataForStudyEvent")) {
-                    ordinal = trail.size() - 3;
-                    trail =
-                        advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("event_CRF_data_submission"), "TableOfContents"
-                            + this.generateURLString(request), Status.PENDING), ordinal);
-                    closeRestOfTrail(ordinal);
-                } else {
-                    ordinal = 1;
-                    trail = new ArrayList();
-                    trail.add(new BreadcrumbBean(resworkflow.getString("submit_data"), "ListStudySubjectsSubmit", Status.AVAILABLE));
-                    trail.add(new BreadcrumbBean(resworkflow.getString("event_CRF_data_submission"), "TableOfContents" + generateURLString(request),
-                            Status.PENDING));
-                    trail.add(new BreadcrumbBean(resworkflow.getString("data_entry"), "InitialDataEntry", Status.UNAVAILABLE));
-                    trail.add(new BreadcrumbBean(resworkflow.getString("mark_event_CRF_omplete"), "MarkEventCRFComplete", Status.UNAVAILABLE));
-                }
-                closeRestOfTrail(ordinal);
+            // ENTER_DATA_FOR_STUDY_EVENT branch removed — servlet + JSP deleted, not in web.xml
+            // TABLE_OF_CONTENTS branch removed — servlet + JSP deleted, not in web.xml
             } else if (jspPage.equals(Page.INITIAL_DATA_ENTRY)) {
                 int ordinal = trail.size() - 2;
                 trail =
