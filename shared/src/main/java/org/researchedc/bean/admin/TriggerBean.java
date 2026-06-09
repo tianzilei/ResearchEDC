@@ -20,7 +20,6 @@ public class TriggerBean extends EntityBean {
     private String cdisc;
     private String spss;
     private String exportFormat;
-    private String contactEmail;
 	private String periodToRun;
 	private String datasetName;
 	private String studyName;
@@ -103,14 +102,6 @@ public class TriggerBean extends EntityBean {
 
     public void setSpss(String spss) {
         this.spss = spss;
-    }
-
-    public String getContactEmail() {
-        return contactEmail;
-    }
-
-    public void setContactEmail(String contactEmail) {
-        this.contactEmail = contactEmail;
     }
 
     public DatasetBean getDataset() {

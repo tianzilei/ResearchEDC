@@ -74,7 +74,6 @@ public class XsltTransformJob extends QuartzJobBean {
     private static final Logger logger = LoggerFactory.getLogger(XsltTransformJob.class);
 
     public static final String DATASET_ID = "dsId";
-    public static final String EMAIL = "contactEmail";
     public static final String USER_ID = "user_id";
     public static final String XSL_FILE_PATH = "xslFilePath";
     public static final String XML_FILE_PATH = "xmlFilePath";
@@ -130,8 +129,6 @@ public class XsltTransformJob extends QuartzJobBean {
             ResourceBundleProvider.updateLocale(locale);
             pageMessages = ResourceBundleProvider.getPageMessagesBundle();
         }
-        // get the file information from the job
-        String alertEmail = dataMap.getString(EMAIL);
         java.io.InputStream in = null;
         FileOutputStream endFileStream = null;
         UserAccountBean userBean = null;
@@ -518,27 +515,22 @@ public class XsltTransformJob extends QuartzJobBean {
             logger.info("Job was cancelled by the user");
             exceptions = true;
         } catch (TransformerConfigurationException e) {
-            sendErrorEmail(e.getMessage(), context, alertEmail);
             postErrorMessage(e.getMessage(), context);
             logger.error("Error executing extract", e);
             exceptions = true;
         } catch (FileNotFoundException e) {
-            sendErrorEmail(e.getMessage(), context, alertEmail);
             postErrorMessage(e.getMessage(), context);
             logger.error("Error executing extract", e);
             exceptions = true;
         } catch (TransformerFactoryConfigurationError e) {
-            sendErrorEmail(e.getMessage(), context, alertEmail);
             postErrorMessage(e.getMessage(), context);
             logger.error("Error executing extract", e);
             exceptions = true;
         } catch (TransformerException e) {
-            sendErrorEmail(e.getMessage(), context, alertEmail);
             postErrorMessage(e.getMessage(), context);
             logger.error("Error executing extract", e);
             exceptions = true;
         } catch (Exception ee) {
-            sendErrorEmail(ee.getMessage(), context, alertEmail);
             postErrorMessage(ee.getMessage(), context);
             logger.error("Error executing extract", ee);
             exceptions = true;
@@ -878,10 +870,6 @@ public class XsltTransformJob extends QuartzJobBean {
 
         fbFinal = (ArchivedDatasetFileBean) archivedDatasetFileDao.create(fbInitial);
         return fbFinal;
-    }
-
-    private void sendErrorEmail(String message, JobExecutionContext context, String target) {
-        logger.warn("Email delivery disabled; extract job warning for {}: {}", target, message);
     }
 
     // Utility method to format upto 3 decimals.
