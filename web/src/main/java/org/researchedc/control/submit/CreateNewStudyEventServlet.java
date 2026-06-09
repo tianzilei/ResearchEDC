@@ -21,14 +21,11 @@ import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.FormProcessor;
 import org.researchedc.control.form.Validator;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.i18n.core.LocaleResolver;
-import org.researchedc.service.rule.RuleSetService;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 
@@ -517,7 +514,6 @@ public class CreateNewStudyEventServlet extends SecureController {
                 studyEvent.setSampleOrdinal(sed.getMaxSampleOrdinal(definition, studySubject) + 1);
 
                 studyEvent = (StudyEventBean) sed.create(studyEvent);
-               // getRuleSetService().runRulesInBeanProperty(createRuleSet(studySubject,definition),currentStudy,ub,request,studySubject);
 
                 
                 if (!studyEvent.isActive()) {
