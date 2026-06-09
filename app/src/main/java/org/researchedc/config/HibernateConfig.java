@@ -13,7 +13,6 @@ import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.SCDItemMetadataDomainDao;
 import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.spi.OpenClinicaVersionDao;
-import org.researchedc.dao.spi.PasswordRequirements;
 import org.researchedc.dao.spi.ResponseSetDomainDao;
 import org.researchedc.dao.spi.UsageStatsServiceDao;
 import org.researchedc.dao.managestudy.ViewNotesDaoImpl;
@@ -133,10 +132,7 @@ public class HibernateConfig {
 
     // ConfigurationDao replaced by @Primary ConfigurationDaoAdapter
 
-    @Bean
-    public PasswordRequirements passwordRequirements(org.researchedc.dao.spi.ConfigurationDao configurationDao) {
-        return new PasswordRequirementsDao(configurationDao);
-    }
+    // PasswordRequirements @Bean removed — 0 consumers after admin servlet deletions
 
     // TagDao deleted - no consumers; EventDefinitionCrfTagDaoAdapter serves tagging
 
