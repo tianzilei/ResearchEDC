@@ -138,31 +138,6 @@
 
 
     <servlet>
-        <servlet-name>ViewImportJobServlet</servlet-name>
-        <display-name>ViewImportJobServlet</display-name>
-        <description>ViewImportJobServlet</description>
-        <servlet-class>org.researchedc.control.admin.ViewImportJobServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>PauseJobServlet</servlet-name>
-        <display-name>PauseJobServlet</display-name>
-        <description>PauseJobServlet</description>
-        <servlet-class>org.researchedc.control.admin.PauseJobServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CreateJobImportServlet</servlet-name>
-        <display-name>CreateJobImportServlet</display-name>
-        <description>CreateJobImportServlet</description>
-        <servlet-class>org.researchedc.control.admin.CreateJobImportServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UpdateJobImportServlet</servlet-name>
-        <display-name>UpdateJobImportServlet</display-name>
-        <description>UpdateJobImportServlet</description>
-        <servlet-class>org.researchedc.control.admin.UpdateJobImportServlet</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>InitUpdateStudyServlet</servlet-name>
         <display-name>InitUpdateStudy</display-name>
         <servlet-class>org.researchedc.control.managestudy.InitUpdateStudyServlet</servlet-class>
@@ -363,25 +338,8 @@
 
 
 
-    <servlet-mapping>
-        <servlet-name>ViewImportJobServlet</servlet-name>
-        <url-pattern>/ViewImportJob</url-pattern>
-    </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>PauseJobServlet</servlet-name>
-        <url-pattern>/PauseJob</url-pattern>
-    </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>CreateJobImportServlet</servlet-name>
-        <url-pattern>/CreateJobImport</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>UpdateJobImportServlet</servlet-name>
-        <url-pattern>/UpdateJobImport</url-pattern>
-    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ExecuteCrossEditCheckServlet</servlet-name>
