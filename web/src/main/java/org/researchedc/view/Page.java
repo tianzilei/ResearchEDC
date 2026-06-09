@@ -60,7 +60,7 @@ public enum Page {
     LIST_STUDY_SUBJECTS ("/WEB-INF/jsp/managestudy/findSubjects.jsp", "List Study Subjects"),
     LIST_STUDY_SUBJECTS_SERVLET("/ListStudySubjects", "List Study Subjects"),
     UPDATE_STUDY_NEW ("/WEB-INF/jsp/managestudy/updateStudyNew.jsp", "Update a Study"),
-    UPDATE_SUB_STUDY("/WEB-INF/jsp/managestudy/updateSubStudy.jsp", "Update a sub Study"),
+    // UPDATE_SUB_STUDY removed — servlet deleted in phase-1-group-e
 
     // EDIT_STUDY_USER_ROLE removed — JSP deleted in Phase 1
 

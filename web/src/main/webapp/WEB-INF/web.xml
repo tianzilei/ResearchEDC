@@ -143,11 +143,6 @@
         <servlet-class>org.researchedc.control.managestudy.InitUpdateStudyServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>InitUpdateSubStudyServlet</servlet-name>
-        <display-name>InitUpdateSubStudy</display-name>
-        <servlet-class>org.researchedc.control.managestudy.InitUpdateSubStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>InitUpdateEventDefinitionServlet</servlet-name>
         <display-name>InitUpdateEventDefinition</display-name>
         <servlet-class>org.researchedc.control.managestudy.InitUpdateEventDefinitionServlet</servlet-class>
@@ -366,10 +361,6 @@
     <servlet-mapping>
         <servlet-name>InitUpdateStudyServlet</servlet-name>
         <url-pattern>/InitUpdateStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>InitUpdateSubStudyServlet</servlet-name>
-        <url-pattern>/InitUpdateSubStudy</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InitUpdateEventDefinitionServlet</servlet-name>
