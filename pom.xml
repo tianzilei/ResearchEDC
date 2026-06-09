@@ -56,7 +56,6 @@
 		<openpdf.version>2.0.2</openpdf.version>
 		<castor.version>1.4.1</castor.version>
 		<postgresql.version>42.7.3</postgresql.version>
-		<rome.version>1.18.0</rome.version>
 		<servlet-api.version>4.0.1</servlet-api.version>
 		<jakarta-servlet.version>6.0.0</jakarta-servlet.version>
 		<jakarta-servlet-jsp.version>3.1.1</jakarta-servlet-jsp.version>
@@ -231,16 +230,6 @@
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
 				<version>${postgresql.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.rometools</groupId>
-				<artifactId>rome</artifactId>
-				<version>${rome.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.rometools</groupId>
-				<artifactId>rome-fetcher</artifactId>
-				<version>${rome.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.servlet</groupId>

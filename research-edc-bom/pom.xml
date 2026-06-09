@@ -55,7 +55,6 @@
         <openpdf.version>2.0.2</openpdf.version>
 
         <!-- Web -->
-        <rome.version>1.18.0</rome.version>
         <servlet-api.version>4.0.1</servlet-api.version>
 
         <!-- Jakarta EE -->
@@ -341,16 +340,6 @@
             <!-- ============================================== -->
             <!-- Web / Servlets                                  -->
             <!-- ============================================== -->
-            <dependency>
-                <groupId>com.rometools</groupId>
-                <artifactId>rome</artifactId>
-                <version>${rome.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.rometools</groupId>
-                <artifactId>rome-fetcher</artifactId>
-                <version>${rome.version}</version>
-            </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>

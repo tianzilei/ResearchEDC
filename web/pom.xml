@@ -19,37 +19,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Saxon -->
-        <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>Saxon-HE</artifactId>
-            <version>12.4</version>
-        </dependency>
-
-        <!-- Rome RSS/Atom -->
-        <dependency>
-            <groupId>com.rometools</groupId>
-            <artifactId>rome-fetcher</artifactId>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jdom</groupId>
-                    <artifactId>jdom</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.rometools</groupId>
-            <artifactId>rome</artifactId>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jdom</groupId>
-                    <artifactId>jdom</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- Mockrunner for tests -->
         <dependency>
             <groupId>com.mockrunner</groupId>

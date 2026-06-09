@@ -22,6 +22,7 @@ interface FormFieldProps {
   value?: any;
   onChange?: (value: any) => void;
   disabled?: boolean;
+  hasError?: boolean;
 }
 
 const typeMap: Record<string, string> = {
@@ -36,7 +37,7 @@ const typeMap: Record<string, string> = {
   "group": "text",
 };
 
-export function FormField({ item, value, onChange, disabled }: FormFieldProps) {
+export function FormField({ item, value, onChange, disabled, hasError }: FormFieldProps) {
   const type = typeMap[item.dataType?.toLowerCase()] ?? "text";
   const isRequired = item.required;
 
@@ -81,6 +82,7 @@ export function FormField({ item, value, onChange, disabled }: FormFieldProps) {
       label={<Space>{item.name} {item.units && <Typography.Text type="secondary">({item.units})</Typography.Text>}</Space>}
       required={isRequired}
       validateTrigger="onBlur"
+      validateStatus={hasError ? "error" : undefined}
       rules={[
         { required: isRequired, message: `${item.name} is required` },
         item.regexp ? {
