@@ -497,7 +497,6 @@ public enum Page {
     VIEW_SINGLE_NOTE ("/WEB-INF/jsp/managestudy/viewNote.jsp", "View Single Note"),
 
     LIST_EVENTS_FOR_SUBJECT ("/WEB-INF/jsp/submit/listEventsForSubject.jsp", "List Events For Subject"),
-    LIST_EVENTS_FOR_SUBJECTS ("/WEB-INF/jsp/managestudy/listEventsForSubjects.jsp", "List Events For Subject"),
     INITIAL_DATA_ENTRY_NW ("/WEB-INF/jsp/submit/initialDataEntryNw.jsp", "Data Entry"),
     VIEW_SECTION_DATA_ENTRY_PRINT_GROUPS ("/WEB-INF/jsp/managestudy/viewGroupSectionsPrint.jsp",
             "Print View for Group Tables"),

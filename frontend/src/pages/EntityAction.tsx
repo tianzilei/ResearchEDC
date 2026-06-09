@@ -25,7 +25,7 @@ const ENTITY_CONFIG: Record<string, { label: string; fetchUrl: (id: number) => s
   "study-user-role": { label: "Study User Role", fetchUrl: () => "", apiPath: "", backLink: "/app/admin" },
   "crf": { label: "CRF", fetchUrl: (id) => `/api/legacy/crfs/${id}`, apiPath: "/api/legacy/crfs", backLink: "/app/admin/crf-library" },
   "crf-version": { label: "CRF Version", fetchUrl: () => "", apiPath: "/api/legacy/crfs/versions", backLink: "/app/admin/crf-library" },
-  "rule": { label: "Rule", fetchUrl: () => "", apiPath: "/api/legacy/rules", backLink: "/app/studies" },
+  "rule": { label: "Rule", fetchUrl: (id) => `/api/legacy/rules/${id}`, apiPath: "/api/legacy/rules", backLink: "/app/studies" },
 };
 
 function parseEntityInfo(entity: string, id: number, data: any): EntityInfo | null {
