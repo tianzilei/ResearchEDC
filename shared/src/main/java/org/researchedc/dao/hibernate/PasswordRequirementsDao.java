@@ -23,7 +23,7 @@ public class PasswordRequirementsDao implements PasswordRequirements {
 	    PWD_EXPIRATION_DAYS = "pwd.expiration.days";
 
 	private final Logger logger = LoggerFactory.getLogger(getClass().getName());
-	private final ConfigurationDao configurationDao;
+	private final org.researchedc.dao.spi.ConfigurationDao configurationDao;
 
     private final List<String>
 		boolConfigKeys = asList(
@@ -37,7 +37,7 @@ public class PasswordRequirementsDao implements PasswordRequirements {
 				PWD_EXPIRATION_DAYS,
 				PWD_CHANGE_REQUIRED); // PWD_CHANGE_REQUIRED is in the 'int' list for\backwards compatibility reasons
 
-	public PasswordRequirementsDao(ConfigurationDao configurationDao) {
+	public PasswordRequirementsDao(org.researchedc.dao.spi.ConfigurationDao configurationDao) {
 		this.configurationDao = configurationDao;
 	}
 
