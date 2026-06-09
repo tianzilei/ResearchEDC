@@ -117,13 +117,8 @@
         <servlet-class>org.researchedc.control.submit.CheckCRFLocked</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>ConfigureServlet</servlet-name>
-        <description>ConfigureServlet</description>
-        <servlet-class>org.researchedc.control.admin.ConfigureServlet</servlet-class>
-    </servlet>
-
-<!-- phase-1-login-profile: ConfigurePasswordRequirementsServlet definition removed -->
+<!-- phase-1-login-profile: ConfigurePasswordRequirementsServlet removed -->
+<!-- phase-1-admin-write: ConfigureServlet removed -->
 
 
 
@@ -230,16 +225,7 @@
         <servlet-class>org.researchedc.control.managestudy.ViewSectionDataEntryByIdServlet</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>ChangeDefinitionOrdinalServlet</servlet-name>
-        <display-name>ChangeDefinitionOrdinal</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ChangeDefinitionOrdinalServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ChangeDefinitionCRFOrdinalServlet</servlet-name>
-        <display-name>ChangeDefinitionCRFOrdinal</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ChangeDefinitionCRFOrdinalServlet</servlet-class>
-    </servlet>
+<!-- phase-1-groups-f+g: ChangeDefinitionOrdinalServlet + ChangeDefinitionCRFOrdinalServlet removed -->
     <servlet>
         <servlet-name>AdministrativeEditingServlet</servlet-name>
         <display-name>AdministrativeEditing</display-name>
@@ -428,15 +414,8 @@
         <servlet-name>ViewSectionDataEntryByIdServlet</servlet-name>
         <url-pattern>/ViewSectionDataEntryById</url-pattern>
     </servlet-mapping>
+<!-- phase-1-groups-f+g: ChangeDefinitionOrdinal + ChangeDefinitionCRFOrdinal mappings removed -->
 
-    <servlet-mapping>
-        <servlet-name>ChangeDefinitionOrdinalServlet</servlet-name>
-        <url-pattern>/ChangeDefinitionOrdinal</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ChangeDefinitionCRFOrdinalServlet</servlet-name>
-        <url-pattern>/ChangeDefinitionCRFOrdinal</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CheckCRFLocked</servlet-name>
         <url-pattern>/CheckCRFLocked</url-pattern>
@@ -487,10 +466,8 @@
     </servlet-mapping>
 
 
-    <servlet-mapping>
-        <servlet-name>ConfigureServlet</servlet-name>
-        <url-pattern>/Configure</url-pattern>
-    </servlet-mapping>
+<!-- phase-1-admin-write: ConfigureServlet mapping removed -->
+
     <servlet-mapping>
         <servlet-name>ChooseDownloadFormat</servlet-name>
         <url-pattern>/ChooseDownloadFormat</url-pattern>
