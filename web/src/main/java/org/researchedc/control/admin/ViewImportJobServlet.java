@@ -8,7 +8,6 @@ import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.researchedc.web.bean.EntityBeanTable;
 import org.researchedc.web.bean.TriggerRow;
-import org.researchedc.web.job.ExampleSpringJob;
 import org.quartz.JobDataMap;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
@@ -94,7 +93,7 @@ public class ViewImportJobServlet extends SecureController {
 
             if (trigger.getJobDataMap().size() > 0) {
                 dataMap = trigger.getJobDataMap();
-                triggerBean.setStudyName(dataMap.getString(ExampleSpringJob.STUDY_NAME));
+                triggerBean.setStudyName(dataMap.getString("study_name"));
                 String oid = dataMap.getString("study_oid");
                
             }

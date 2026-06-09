@@ -152,16 +152,7 @@ public class HibernateConfig {
         return new OpenClinicaVersionDAO();
     }
 
-    // ──────────────────────────────────────────────────────────────────────
-    //  Special: databaseChangeLogDao (uses SessionFactory, not AbstractDomainDao)
-    // ──────────────────────────────────────────────────────────────────────
-
-    @Bean
-    public DatabaseChangeLogDao databaseChangeLogDao(SessionFactory sessionFactory) {
-        DatabaseChangeLogDao dao = new DatabaseChangeLogDao();
-        dao.setSessionFactory(sessionFactory);
-        return dao;
-    }
+    // DatabaseChangeLogDao replaced by @Primary DatabaseChangeLogDaoAdapter
 
     // ──────────────────────────────────────────────────────────────────────
     //  Special: viewNotesDao (uses dataSource + queryStore, not JPA)
