@@ -247,8 +247,10 @@
 						        		   <tr valign="top"><td class="table_cell_left"><a href="">
         								   <img src="images/bt_Lock.gif" border="0" align="left"></a>&nbsp;&nbsp; <a href="">Lock</a></td></tr>
 		        						   -->
+				        				   <%-- phase-1-run-37: RemoveEventCRF removed, use SPA /app/actions/event-crf/remove/:id
 				        				   <tr valign="top"><td class="table_cell_left"><a href="RemoveEventCRF?action=confirm&id=<c:out value="${eventCrfId}"/>&studySubjectId=<c:out value="${subjectId}"/>">
 						        		   <img src="images/bt_Remove.gif" border="0" align="left"></a>&nbsp;&nbsp; <a href="RemoveEventCRF?action=confirm&id=<c:out value="${eventCrfId}"/>&studySubjectId=<c:out value="${subjectId}"/>"><fmt:message key="remove" bundle="${resword}"/></a></td></tr>
+						        		   --%>
 	    							    </c:if>
                                         <c:if test="${userBean.sysAdmin && (study.status.available)}">
 			        					   <tr valign="top"><td class="table_cell_left">
@@ -265,7 +267,9 @@
 								  
 									<tr valign="top"><td class="table_cell_left"><a href="ViewEventCRFContent?id=<c:out value="${subjectId}"/>&ecId=<c:out value="${eventCrfId}"/>&eventId=<c:out value="${eventId}"/>"><img src="images/bt_Print.gif" border="0" align="left"></a>&nbsp;&nbsp; <a href="ViewEventCRFContent?id=<c:out value="${subjectId}"/>&ecId=<c:out value="${eventCrfId}"/>&eventId=<c:out value="${eventId}"/>"><fmt:message key="print" bundle="${resword}"/></a></td></tr>
 							        <c:if test="${(userRole.director || userBean.sysAdmin) && (study.status.available)}">
+							          <%-- phase-1-run-37: RemoveEventCRF removed, use SPA /app/actions/event-crf/remove/:id
 							          <tr valign="top"><td class="table_cell_left"><a href="RemoveEventCRF?action=confirm&id=<c:out value="${eventCrfId}"/>&studySubjectId=<c:out value="${subjectId}"/>"><img src="images/bt_Remove.gif" border="0" align="left"></a>&nbsp;&nbsp; <a href="RemoveEventCRF?action=confirm&id=<c:out value="${eventCrfId}"/>&studySubjectId=<c:out value="${subjectId}"/>"><fmt:message key="remove" bundle="${resword}"/></a></td></tr>
+							          --%>
 						 	        </c:if>
 						 	    </c:when>
 						 	    <c:when test="${crfStatus ==no_startedi18n }">
@@ -333,8 +337,10 @@
 									<fmt:message key="print" bundle="${resword}"/></a></td></tr>
 								  
 								   <c:if test="${(userRole.director || userBean.sysAdmin) && (study.status.available)}">
+									<%-- phase-1-run-37: RemoveEventCRF removed, use SPA /app/actions/event-crf/remove/:id
 									<tr valign="top"><td class="table_cell_left"><a href="RemoveEventCRF?action=confirm&id=<c:out value="${eventCrfId}"/>&studySubjectId=<c:out value="${subjectId}"/>">
 									<img src="images/bt_Remove.gif" border="0" align="left"></a>&nbsp;&nbsp; <a href="RemoveEventCRF?action=confirm&id=<c:out value="${eventCrfId}"/>&studySubjectId=<c:out value="${subjectId}"/>"><fmt:message key="remove" bundle="${resword}"/></a></td></tr>
+								   --%>
 								   </c:if>
 								   
 								   <c:if test="${userBean.sysAdmin && (study.status.available)}">

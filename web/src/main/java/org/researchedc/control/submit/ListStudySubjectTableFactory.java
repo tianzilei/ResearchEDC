@@ -1106,9 +1106,7 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
                     eventDiv.td(0).styleClass("table_cell").close();
                     updateStudyEventLinkBuilder(eventDiv, studySubject.getId(), studyEventId, edit);
                     eventDiv.tdEnd().trEnd(0);
-                    eventDiv.tr(0).valign("top").close();
-                    eventDiv.td(0).styleClass("table_cell").close();
-                    removeStudyEventLinkBuilder(eventDiv, studySubject.getId(), studyEventId, remove);
+                    // removeStudyEventLinkBuilder removed — phase-1-run-35 (RemoveStudyEventServlet deleted)
                     eventDiv.tdEnd().trEnd(0);
                 }
             } else if (eventStatus == SubjectEventStatus.LOCKED) {
@@ -1118,9 +1116,7 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
                     enterDataForStudyEventLinkBuilder(eventDiv, studyEventId, view);
                     eventDiv.tdEnd().trEnd(0);
                     if (studyBean.getStatus() == Status.AVAILABLE) {
-                        eventDiv.tr(0).valign("top").close();
-                        eventDiv.td(0).styleClass("table_cell").close();
-                        removeStudyEventLinkBuilder(eventDiv, studySubject.getId(), studyEventId, remove);
+                        // removeStudyEventLinkBuilder removed — phase-1-run-35 (RemoveStudyEventServlet deleted)
                         eventDiv.tdEnd().trEnd(0);
                     }
                 }
@@ -1134,9 +1130,7 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
                     eventDiv.td(0).styleClass("table_cell_left").close();
                     updateStudyEventLinkBuilder(eventDiv, studySubject.getId(), studyEventId, edit);
                     eventDiv.tdEnd().trEnd(0);
-                    eventDiv.tr(0).valign("top").close();
-                    eventDiv.td(0).styleClass("table_cell_left").close();
-                    removeStudyEventLinkBuilder(eventDiv, studySubject.getId(), studyEventId, remove);
+                    // removeStudyEventLinkBuilder removed — phase-1-run-35 (RemoveStudyEventServlet deleted)
                     eventDiv.tdEnd().trEnd(0);
                 }
             }
@@ -1237,7 +1231,7 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
                     eventDiv.tdEnd().trEnd(0);
                     eventDiv.tr(0).valign("top").close();
                     eventDiv.td(0).styleClass("table_cell_left").close();
-                    removeStudyEventLinkBuilder(eventDiv, studySubject.getId(), studyEventId, remove);
+                    // phase-1-run-35: SPA EventList now handles event removal — removeStudyEventLinkBuilder commented out
                     eventDiv.tdEnd().trEnd(0);
                 }
             }
@@ -1251,8 +1245,8 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
                     eventDiv.tdEnd().trEnd(0);
                     if (studyBean.getStatus() == Status.AVAILABLE) {
                         eventDiv.tr(0).valign("top").close();
-                        eventDiv.td(0).styleClass("table_cell_left").close();
-                        removeStudyEventLinkBuilder(eventDiv, studySubject.getId(), studyEventId, remove);
+                        eventDiv.td(0).styleClass("table_cell").close();
+                        // phase-1-run-35: SPA EventList now handles event removal — removeStudyEventLinkBuilder commented out
                         eventDiv.tdEnd().trEnd(0);
                     }
                 }
@@ -1266,9 +1260,7 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
                     eventDiv.td(0).styleClass("table_cell_left").close();
                     updateStudyEventLinkBuilder(eventDiv, studySubject.getId(), studyEventId, edit);
                     eventDiv.tdEnd().trEnd(0);
-                    eventDiv.tr(0).valign("top").close();
-                    eventDiv.td(0).styleClass("table_cell_left").close();
-                    removeStudyEventLinkBuilder(eventDiv, studySubject.getId(), studyEventId, remove);
+                    // removeStudyEventLinkBuilder removed — phase-1-run-35 (RemoveStudyEventServlet deleted)
                     eventDiv.tdEnd().trEnd(0);
                 }
             }
@@ -1298,6 +1290,7 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
 
     }
 
+    // phase-1-run-35: removeStudyEventLinkBuilder calls commented out (SPA EventList now handles event removal)
     private void removeStudyEventLinkBuilder(HtmlBuilder builder, Integer studySubjectId, String studyEventId, String remove) {
         String href1 = "RemoveStudyEvent?action=confirm&id=" + studyEventId + "&studySubId=" + studySubjectId;
         builder.a().href(href1);

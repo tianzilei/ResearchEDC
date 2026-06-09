@@ -11,6 +11,7 @@ import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.event.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,6 +55,11 @@ public class EventController {
         return ResponseEntity.ok(eventService.listEventCrfs(id));
     }
 
+    @GetMapping("/crfs/{crfId}")
+    public ResponseEntity<EventCrfDTO> getEventCrf(@PathVariable Integer crfId) {
+        return ResponseEntity.ok(eventService.getEventCrf(crfId));
+    }
+
     @PostMapping
     public ResponseEntity<StudyEventDTO> scheduleEvent(
             @Valid @RequestBody ScheduleEventRequest request) {
@@ -75,6 +81,28 @@ public class EventController {
     public ResponseEntity<Void> completeEvent(@PathVariable Integer id) {
         Integer userId = currentUserUtils.getCurrentUserId();
         eventService.completeEvent(id, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeStudyEvent(@PathVariable Integer id) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        eventService.removeStudyEvent(id, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/crfs/{crfId}")
+    public ResponseEntity<Void> removeEventCrfById(@PathVariable Integer crfId) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        eventService.removeEventCrf(crfId, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{eventId}/crfs/{crfId}")
+    public ResponseEntity<Void> removeEventCrf(@PathVariable Integer eventId,
+                                                @PathVariable Integer crfId) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        eventService.removeEventCrf(crfId, userId);
         return ResponseEntity.ok().build();
     }
 }

@@ -55,7 +55,7 @@ public enum Page {
     /**
      * Page for update a study.
      */
-    UPDATE_STUDY1("/WEB-INF/jsp/managestudy/updateStudy1.jsp", "Update a Study first section"),
+    // UPDATE_STUDY1 removed — phase-1-run-29 (InitUpdateStudyServlet + updateStudy1.jsp deleted, 0 consumers)
 
     LIST_STUDY_SUBJECTS ("/WEB-INF/jsp/managestudy/findSubjects.jsp", "List Study Subjects"),
     LIST_STUDY_SUBJECTS_SERVLET("/ListStudySubjects", "List Study Subjects"),
@@ -85,7 +85,7 @@ public enum Page {
     /**
      * Page for updating a study event definition.
      */
-   UPDATE_EVENT_DEFINITION1 ("/WEB-INF/jsp/managestudy/updateEventDefinition1.jsp", "Update Event Definition"),
+   // UPDATE_EVENT_DEFINITION1 removed — phase-1-run-29 (InitUpdateEventDefinitionServlet + updateEventDefinition1.jsp deleted, 0 consumers)
     UPDATE_EVENT_DEFINITION2 ("/WEB-INF/jsp/managestudy/updateEventDefinition2.jsp", "Update Event Definition"),
 
 
@@ -198,12 +198,12 @@ public enum Page {
 
     UPDATE_STUDY_SUBJECT_SERVLET ("/UpdateStudySubject", "update Subject in a study"),
 
-    REMOVE_STUDY_EVENT ("/WEB-INF/jsp/" + "managestudy/removeStudyEvent.jsp", "Remove Event from a study"),
-    RESTORE_STUDY_EVENT ("/WEB-INF/jsp/" + "managestudy/restoreStudyEvent.jsp", "Restore Event to a study"),
-    DELETE_STUDY_EVENT ("/WEB-INF/jsp/" + "managestudy/deleteStudyEvent.jsp", "Delete Event from a study"),
+    // REMOVE_STUDY_EVENT removed — phase-1-run-35 (RemoveStudyEventServlet + JSP deleted, SPA EventList now handles)
+    // RESTORE_STUDY_EVENT removed — phase-1-run-27 (RestoreStudyEventServlet + JSP deleted, 0 consumers)
+    // DELETE_STUDY_EVENT removed — phase-1-run-29 (DeleteStudyEventServlet + deleteStudyEvent.jsp deleted, 0 consumers)
 
-    REMOVE_EVENT_CRF ("/WEB-INF/jsp/" + "managestudy/removeEventCRF.jsp", "Remove CRF from event"),
-    RESTORE_EVENT_CRF ("/WEB-INF/jsp/" + "managestudy/restoreEventCRF.jsp", "Restore CRF to event"),
+    // REMOVE_EVENT_CRF removed — phase-1-run-37 (RemoveEventCRFServlet + JSP deleted, SPA EntityAction now handles)
+    // RESTORE_EVENT_CRF removed — phase-1-run-31 (RestoreEventCRFServlet deleted in Run #27; JSP orphaned and deleted)
     // DELETE_EVENT_CRF removed — phase-1-group-b
 
     // UPDATE_SUBJECT removed — phase-1-group-c
