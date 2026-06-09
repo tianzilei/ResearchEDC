@@ -306,8 +306,6 @@
         <display-name>DownloadStudyMetadata</display-name>
         <servlet-class>org.researchedc.control.admin.DownloadStudyMetadataServlet</servlet-class>
     </servlet>
-    <servlet>
-
 
     <servlet>
         <servlet-name>DownloadAttachedFileServlet</servlet-name>
