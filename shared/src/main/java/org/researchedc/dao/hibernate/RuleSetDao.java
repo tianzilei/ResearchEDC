@@ -119,13 +119,6 @@ public class RuleSetDao extends AbstractDomainDao<RuleSetBean> implements RuleSe
         return (ArrayList<RuleSetBean>) q.list();
     }
 
-    public RuleSetBean findByExpression(RuleSetBean ruleSet) {
-        String query = "from " + getDomainClassName() + " ruleSet  where ruleSet.originalTarget.value = :value AND ruleSet.originalTarget.context = :context ";
-        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
-        q.setParameter("value", ruleSet.getTarget().getValue());
-        q.setParameter("context", ruleSet.getTarget().getContext());
-        return (RuleSetBean) q.uniqueResult();
-    }
 
     public RuleSetBean findByExpressionAndStudy(RuleSetBean ruleSet, Integer studyId) {
         String query = "from " + getDomainClassName() + " ruleSet  where ruleSet.originalTarget.value = :value " +
@@ -146,12 +139,7 @@ public class RuleSetDao extends AbstractDomainDao<RuleSetBean> implements RuleSe
         return (Long) q.uniqueResult();
     }
 
-    public ArrayList<RuleSetBean> findAllByStudyEventDef(StudyEventDefinitionBean sed){
-    	String query = "from " + getDomainClassName() + " ruleSet  where ruleSet.studyEventDefinitionId = :studyEventDefId  ";
-        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
-        q.setParameter("studyEventDefId", sed.getId());
-        return (ArrayList<RuleSetBean>) q.list();
-    }
+    
     public ArrayList<RuleSetBean> findAllEventActions(StudyBean currentStudy){
     	String query = "from " + getDomainClassName() + " ruleSet  where ruleSet.originalTarget.value LIKE '%.STARTDATE%' or ruleSet.originalTarget.value LIKE '%.STATUS%' and ruleSet.studyId = :studyId ";
         org.hibernate.query.Query q = getCurrentSession().createQuery(query);
@@ -159,20 +147,4 @@ public class RuleSetDao extends AbstractDomainDao<RuleSetBean> implements RuleSe
         return (ArrayList<RuleSetBean>) q.list();
     }
 
-    @Transactional
-    public ArrayList<RuleSetBean> findAllRunOnSchedules(Boolean shedule){
-    	String query = "from " + getDomainClassName() + " ruleSet  where ruleSet.runSchedule = :shedule";
-        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
-        q.setParameter("shedule", shedule);
-        return (ArrayList<RuleSetBean>) q.list();
-    }
-
-    
-    @Transactional
-    public ArrayList<RuleSetBean> findAllByStudyEventDefIdWhereItemIsNull(Integer studyEventDefId){
-    	String query = "from " + getDomainClassName() + " ruleSet  where ruleSet.studyEventDefinitionId = :studyEventDefId  and ruleSet.itemId is null";
-        org.hibernate.query.Query q = getCurrentSession().createQuery(query);
-        q.setParameter("studyEventDefId", studyEventDefId);
-        return (ArrayList<RuleSetBean>) q.list();
-    }
 }
