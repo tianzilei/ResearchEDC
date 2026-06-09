@@ -1,6 +1,6 @@
 # Legacy Workflow Inventory
 
-Generated: 2026-06-09 19:22:07 UTC
+Generated: 2026-06-09 19:34:15 UTC
 
 Full CSV inventory: `legacy-workflow-inventory.csv`
 
@@ -11,7 +11,7 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 | `dao-implementation` | 48 |
 | `dao-spi` | 55 |
 | `dao-support` | 6 |
-| `jsp-view` | 103 |
+| `jsp-view` | 101 |
 | `legacy-servlet` | 53 |
 | `scheduled-job` | 2 |
 | `shared-service` | 42 |
@@ -22,7 +22,7 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 | Classification | Count |
 |---|---:|
 | `keep compatibility` | 76 |
-| `replace` | 228 |
+| `replace` | 226 |
 | `unknown` | 22 |
 
 ## Summary By Phase Slice
@@ -33,7 +33,7 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 | `phase-1-admin-write` | 4 |
 | `phase-1-crf-metadata` | 27 |
 | `phase-1-data-entry-discrepancy` | 36 |
-| `phase-1-export-dataset-filter` | 5 |
+| `phase-1-export-dataset-filter` | 3 |
 | `phase-1-import-export-compatibility` | 21 |
 | `phase-1-study-subject-event` | 60 |
 | `phase-3-dao-implementation-deletion` | 109 |
