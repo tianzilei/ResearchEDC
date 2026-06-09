@@ -304,43 +304,10 @@ public class StudyInfoPanel {
                 // blank here to prevent data reset, tbh
             } else if (page.equals(Page.ADMIN_SYSTEM)) {
                 // blank here , info set in servlet itself
-            } else if (page.equals(Page.VIEW_STUDY_SUBJECT) || page.equals(Page.LIST_EVENTS_FOR_SUBJECT)) {
-                // special case, unlocks study name, subject name, and
-                // visits
-                // TODO set all this up, tbh
-                /*
-                 * set up the side info panel to create the following upon entry
-                 * from the ViewStudyServlet Study X Subject Y StudyEventDef Z1
-                 * StudyEventDef Z2 <status-tag> CRF A1 <status-tag> CRF A2 Z1
-                 * should be collapsible/expandible, etc.
-                 *
-                 * We can pull things from the session and the request:
-                 */
-                /*
-                 * StudyBean study = (StudyBean) request.getAttribute("study");
-                 * StudySubjectBean studySubject = (StudySubjectBean)
-                 * request.getAttribute("studySub"); EntityBeanTable table =
-                 * (EntityBeanTable) request.getAttribute("table"); EventCRFBean
-                 * ecb = (EventCRFBean)request.getAttribute("eventCRF");
-                 * this.reset(); ArrayList rows = table.getRows(); ArrayList
-                 * beans = DisplayStudyEventBean.generateBeansFromRows(rows);
-                 *
-                 *
-                 * addStudyEventTree(study, studySubject, beans, ecb);
-                 */
-                // this.setIconInfoShown(false);
-                // this.setManageSubject(true);
-                this.reset();
-                this.setStudyInfoShown(true);
-                this.setOrderedData(true);
-                this.setExtractData(false);
-                this.setSubmitDataModule(false);
-                this.setCreateDataset(false);
-                this.setIconInfoShown(false);
-                this.setManageSubject(true);
-                request.setAttribute("showDDEIcon", Boolean.TRUE);
+            }
+            // VIEW_STUDY_SUBJECT branch removed — JSPs deleted in Phase 1
 
-            } else if (page.equals(Page.ENTER_DATA_FOR_STUDY_EVENT) || page.equals(Page.ENTER_DATA_FOR_STUDY_EVENT_SERVLET)) {
+            if (page.equals(Page.ENTER_DATA_FOR_STUDY_EVENT) || page.equals(Page.ENTER_DATA_FOR_STUDY_EVENT_SERVLET)) {
 
                 StudyBean study = (StudyBean) session.getAttribute("study");
                 StudySubjectBean studySubject = (StudySubjectBean) request.getAttribute("studySubject");
@@ -417,7 +384,7 @@ public class StudyInfoPanel {
                 this.setSubmitDataModule(false);
                 this.setCreateDataset(false);
 
-            } else if (page.equals(Page.LIST_STUDY_SUBJECT) || page.equals(Page.LIST_STUDY_SUBJECTS)) {
+            } else if (page.equals(Page.LIST_STUDY_SUBJECT)) {
                 this.reset();
                 this.setStudyInfoShown(true);
                 this.setOrderedData(true);
@@ -439,28 +406,18 @@ public class StudyInfoPanel {
                 this.setCreateDataset(false);
                 this.setIconInfoShown(true);
                 this.setManageSubject(false);
-            } else if (page.equals(Page.CREATE_SUBJECT_GROUP_CLASS) || page.equals(Page.CREATE_SUBJECT_GROUP_CLASS_CONFIRM)
-                || page.equals(Page.UPDATE_SUBJECT_GROUP_CLASS) || page.equals(Page.UPDATE_SUBJECT_GROUP_CLASS_CONFIRM)) {
-
-                this.reset();
-                this.setStudyInfoShown(true);
-                this.setOrderedData(true);
-                this.setExtractData(false);
-                this.setSubmitDataModule(false);
-                this.setCreateDataset(false);
-                this.setIconInfoShown(true);
-                this.setManageSubject(false);
-            } else {
-                // automatically reset if we don't know what's happening
-                this.reset();
-                this.setStudyInfoShown(true);
-                this.setOrderedData(true);
-                this.setExtractData(false);
-                this.setSubmitDataModule(false);
-                this.setCreateDataset(false);
-                this.setIconInfoShown(true);
-                this.setManageSubject(false);
             }
+            // CREATE_SUBJECT_GROUP_CLASS branches removed — JSPs deleted in Phase 1
+
+            // automatically reset if we don't know what's happening
+            this.reset();
+            this.setStudyInfoShown(true);
+            this.setOrderedData(true);
+            this.setExtractData(false);
+            this.setSubmitDataModule(false);
+            this.setCreateDataset(false);
+            this.setIconInfoShown(true);
+            this.setManageSubject(false);
         } catch (Exception e) {
             this.reset();
         }

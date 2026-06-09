@@ -700,35 +700,6 @@ public abstract class CoreSecureController extends HttpServlet {
 
             // response.sendRedirect(request.getContextPath()+jspPage.getFileName());
         } catch (Exception se) {
-            /*if ("View Notes".equals(jspPage.getTitle())) {
-                String viewNotesURL = jspPage.getFileName();
-                if (viewNotesURL != null && viewNotesURL.contains("listNotes_p_=")) {
-                    String[] ps = viewNotesURL.split("listNotes_p_=");
-                    String t = ps[1].split("&")[0];
-                    int p = t.length() > 0 ? Integer.valueOf(t).intValue() : -1;
-                    if (p > 1) {
-                        viewNotesURL = viewNotesURL.replace("listNotes_p_=" + p, "listNotes_p_=" + (p - 1));
-                        //forwardPage(Page.setNewPage(viewNotesURL, "View Notes"), request, response);
-                        try {
-							getServletContext().getRequestDispatcher(viewNotesURL).forward(request, response);
-						} catch (ServletException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-                    } else if (p <= 0) {
-                        try {
-							forwardPage(Page.VIEW_DISCREPANCY_NOTES_IN_STUDY, request, response);
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-                    }
-                }
-            }
-         */
             LOGGER.error(se.getMessage(),se);
         }
         finally {

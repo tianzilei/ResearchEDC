@@ -1,7 +1,8 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Form, Button, Space, Typography, Alert } from "antd";
 import { FormField, type FormItemConfig } from "@/components/form-engine/FormField";
 import { useAutoSave } from "@/hooks/useAutoSave";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { isFieldDisabled, type FormStatusConfig, type FormRecordStatus } from "@/components/form-engine/FormStatus";
 import { useTranslation } from "react-i18next";
 
@@ -15,6 +16,7 @@ interface DataEntryFormProps {
   crfVersionId?: number;
   onSave?: (values: Record<string, string>, status: FormRecordStatus) => Promise<void>;
   enableAutoSave?: boolean;
+  saveErrorItemIds?: Set<number>;
 }
 
 export function DataEntryForm({
@@ -23,6 +25,7 @@ export function DataEntryForm({
   statusConfig,
   onSave,
   enableAutoSave = true,
+  saveErrorItemIds,
 }: DataEntryFormProps) {
   const { t } = useTranslation();
   const [form] = Form.useForm();
@@ -48,17 +51,38 @@ export function DataEntryForm({
     }
   }, [onSave, statusConfig.status]);
 
-  void useAutoSave({
+  const { isDirty } = useAutoSave({
     data: formValues,
     onSave: doSave,
     delay: 3000,
     enabled: enableAutoSave && !!onSave,
   });
 
+  useUnsavedChanges(isDirty);
+
   const handleManualSave = useCallback(async () => {
+    try {
+      await form.validateFields();
+    } catch {
+      return;
+    }
     const values = form.getFieldsValue();
     await doSave(values);
   }, [form, doSave]);
+
+  // Ctrl+S / Cmd+S keyboard shortcut
+  const handleManualSaveRef = useRef(handleManualSave);
+  handleManualSaveRef.current = handleManualSave;
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        handleManualSaveRef.current();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
   const fieldsDisabled = useMemo(() => isFieldDisabled(statusConfig), [statusConfig]);
 
@@ -93,11 +117,11 @@ export function DataEntryForm({
       )}
       {statusConfig.isDoubleEntry && (
         <Alert
-          message="双录模式 — 请独立录入所有字段"
+          message={t("dde.modeAlert")}
           description={
             discrepancyCount > 0
-              ? `${discrepancyCount} 项与首录不一致，请确认后保存`
-              : "所有请输入与首录一致"
+              ? t("dde.discrepancy", { count: discrepancyCount })
+              : t("dde.noDiscrepancy")
           }
           type={discrepancyCount > 0 ? "warning" : "info"}
           showIcon
@@ -121,6 +145,7 @@ export function DataEntryForm({
               value={formValues[item.name]}
               onChange={handleFieldChange(item.name)}
               disabled={fieldsDisabled}
+              hasError={saveErrorItemIds?.has(item.itemId) ?? false}
             />
           ))}
       </Form>

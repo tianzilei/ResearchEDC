@@ -24,16 +24,22 @@ export function useAutoSave<T>({
   const statusRef = useRef<AutoSaveState["status"]>("idle");
   const lastSavedRef = useRef<Date | null>(null);
   const errorRef = useRef<string | null>(null);
+  const savedDataRef = useRef<T>(data);
 
   dataRef.current = data;
 
+  const isDirty =
+    JSON.stringify(data) !== JSON.stringify(savedDataRef.current);
+
   const save = useCallback(async () => {
     statusRef.current = "saving";
+    const snapshot = dataRef.current;
     try {
-      await onSave(dataRef.current);
+      await onSave(snapshot);
       statusRef.current = "saved";
       lastSavedRef.current = new Date();
       errorRef.current = null;
+      savedDataRef.current = snapshot;
     } catch (e: unknown) {
       statusRef.current = "error";
       errorRef.current = e instanceof Error ? e.message : "Save failed";
@@ -47,16 +53,18 @@ export function useAutoSave<T>({
       clearTimeout(timerRef.current);
     }
 
-    timerRef.current = setTimeout(() => {
-      void save();
-    }, delay);
+    if (isDirty) {
+      timerRef.current = setTimeout(() => {
+        void save();
+      }, delay);
+    }
 
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
     };
-  }, [data, delay, enabled, save]);
+  }, [data, delay, enabled, save, isDirty]);
 
   const flush = useCallback(async () => {
     if (timerRef.current) {
@@ -72,5 +80,5 @@ export function useAutoSave<T>({
     error: errorRef.current,
   }), []);
 
-  return { flush, getState };
+  return { flush, getState, isDirty };
 }

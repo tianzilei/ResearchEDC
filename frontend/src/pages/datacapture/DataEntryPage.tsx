@@ -1,46 +1,17 @@
-import { useCallback, useMemo, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import {
-  Breadcrumb,
-  Card,
-  Tabs,
-  Typography,
-  Space,
-  Button,
-  Spin,
-  Result,
-} from "antd";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Button, Spin, Result } from "antd";
 
-import { DataEntryForm } from "@/components/form-engine/DataEntryForm";
+import { DataEntryHeader } from "@/components/form-engine/DataEntryHeader";
+import { SectionTabs } from "@/components/form-engine/SectionTabs";
 import type { FormItemConfig } from "@/components/form-engine/FormField";
-import type { FormStatusConfig, FormRecordStatus } from "@/components/form-engine/FormStatus";
+import type { FormStatusConfig } from "@/components/form-engine/FormStatus";
 import { useCrfVersion, useEventCrfData, useCrfSectionItems } from "@/hooks/useCrf";
 import { useEventCrfs, useCompleteEvent } from "@/hooks/useEvents";
-import { apiClient } from "@/api/client";
-import { useQueryClient } from "@tanstack/react-query";
-import DiscrepancyNotes from "@/components/DiscrepancyNotes";
 import type { ItemDTO } from "@/types/crf";
+import { useBatchSaveItems } from "@/hooks/useDataCapture";
 import type { SaveItemDataRequest } from "@/types/datacapture";
-
-const { Title, Text } = Typography;
-
-const STATUS_MAP: Record<number, FormRecordStatus> = {
-  1: "INITIAL",
-  2: "DRAFT",
-  3: "SUBMITTED",
-  4: "LOCKED",
-  5: "FROZEN",
-  6: "SIGNED",
-};
-
-const STATUS_CLASSES: Record<string, string> = {
-  INITIAL: "status-default",
-  DRAFT: "status-info",
-  SUBMITTED: "status-success",
-  LOCKED: "status-warning",
-  FROZEN: "status-default",
-  SIGNED: "status-success",
-};
+import { deriveRecordStatus } from "@/utils/crfStatus";
 
 function itemToFormConfig(item: ItemDTO): FormItemConfig {
   return {
@@ -60,7 +31,6 @@ function itemToFormConfig(item: ItemDTO): FormItemConfig {
 
 export default function DataEntryPage() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { subjectId, eventId, eventCrfId } = useParams<{
     subjectId: string;
     eventId: string;
@@ -73,9 +43,32 @@ export default function DataEntryPage() {
   const { data: eventCrfs, isLoading: loadingCrfs } = useEventCrfs(parsedEventId);
   const { data: itemData, isLoading: loadingData } = useEventCrfData(parsedEventCrfId);
   const completeEventMutation = useCompleteEvent();
+  const batchSaveMutation = useBatchSaveItems(parsedEventCrfId);
 
   const [activeTab, setActiveTab] = useState<string>("0");
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [saveResult, setSaveResult] = useState<{ type: "success" | "error" } | null>(null);
+  const [saveErrorItemIds, setSaveErrorItemIds] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    if (batchSaveMutation.isSuccess) {
+      setSaveResult({ type: "success" });
+      setSaveErrorItemIds(new Set());
+      const timer = setTimeout(() => setSaveResult(null), 2000);
+      return () => clearTimeout(timer);
+    }
+    if (batchSaveMutation.isError) {
+      setSaveResult({ type: "error" });
+      const timer = setTimeout(() => setSaveResult(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [batchSaveMutation.isSuccess, batchSaveMutation.isError]);
+
+  const saveStatus = useMemo((): "idle" | "saving" | "saved" | "error" => {
+    if (batchSaveMutation.isPending) return "saving";
+    if (saveResult?.type === "success") return "saved";
+    if (saveResult?.type === "error") return "error";
+    return "idle";
+  }, [batchSaveMutation.isPending, saveResult]);
 
   const eventCrf = eventCrfs?.find((ec) => ec.eventCrfId === parsedEventCrfId);
   const crfVersionId = eventCrf?.crfVersionId;
@@ -92,7 +85,7 @@ export default function DataEntryPage() {
   );
 
   const statusId = eventCrf?.statusId ?? 1;
-  const recordStatus: FormRecordStatus = STATUS_MAP[statusId] ?? "INITIAL";
+  const recordStatus = deriveRecordStatus(statusId);
 
   const statusConfig: FormStatusConfig = useMemo(
     () => ({
@@ -116,36 +109,29 @@ export default function DataEntryPage() {
   const handleSave = useCallback(
     async (values: Record<string, string>) => {
       if (!parsedEventCrfId) return;
-      setSaveStatus("saving");
+
+      const items: SaveItemDataRequest[] = Object.entries(values)
+        .filter(([key]) => key.startsWith("item_"))
+        .map(([key, value]) => ({
+          eventCrfId: parsedEventCrfId,
+          itemId: Number(key.replace("item_", "")),
+          value,
+        }));
+
+      if (items.length === 0) return;
+
+      const itemIds = new Set(items.map((item) => item.itemId));
 
       try {
-        const items: SaveItemDataRequest[] = Object.entries(values)
-          .filter(([key]) => key.startsWith("item_"))
-          .map(([key, value]) => ({
-            eventCrfId: parsedEventCrfId,
-            itemId: Number(key.replace("item_", "")),
-            value,
-          }));
-
-        if (items.length === 0) {
-          setSaveStatus("idle");
-          return;
-        }
-
-        await apiClient.post("/api/v1/data-capture/items/batch", {
+        await batchSaveMutation.mutateAsync({
           eventCrfId: parsedEventCrfId,
           items,
         });
-
-        setSaveStatus("saved");
-        queryClient.invalidateQueries({ queryKey: ["event-crf-data", parsedEventCrfId] });
-        setTimeout(() => setSaveStatus("idle"), 2000);
       } catch {
-        setSaveStatus("error");
-        setTimeout(() => setSaveStatus("idle"), 3000);
+        setSaveErrorItemIds(itemIds);
       }
     },
-    [parsedEventCrfId, queryClient],
+    [parsedEventCrfId, batchSaveMutation],
   );
 
   const handleCompleteEvent = useCallback(async () => {
@@ -192,66 +178,6 @@ export default function DataEntryPage() {
     );
   }
 
-  const saveIndicator = () => {
-    if (saveStatus === "saving")
-      return { text: "Saving...", color: "var(--text-muted)" };
-    if (saveStatus === "saved")
-      return { text: "Saved", color: "var(--success)" };
-    if (saveStatus === "error")
-      return { text: "Save failed", color: "var(--danger)" };
-    return null;
-  };
-
-  const indicator = saveIndicator();
-
-  const sectionTabItems = sections.map((section, idx) => ({
-    key: String(idx),
-    label: section.title || section.label || `Section ${idx + 1}`,
-    children: loadingSectionItems ? (
-      <div style={{ padding: 40, textAlign: "center" }}>
-        <Spin />
-      </div>
-    ) : (
-      <div style={{ padding: 16 }}>
-        <DataEntryForm
-          items={formItems}
-          initialValues={initialFormValues}
-          statusConfig={statusConfig}
-          onSave={handleSave}
-          enableAutoSave={true}
-        />
-      </div>
-    ),
-  }));
-
-  const tabItems = [
-    ...sectionTabItems,
-    {
-      key: "notes",
-      label: "Notes",
-      children: parsedEventCrfId ? (
-        <div style={{ padding: 16 }}>
-          <DiscrepancyNotes
-            eventCrfId={parsedEventCrfId}
-            studyId={0}
-            entityId={parsedEventCrfId}
-          />
-        </div>
-      ) : null,
-    },
-    {
-      key: "attachments",
-      label: "Attachments",
-      children: (
-        <div style={{ padding: 24, textAlign: "center" }}>
-          <Button onClick={() => window.open(`/DownloadAttachedFile?eventCrfId=${parsedEventCrfId}`, "_blank")}>
-            View Attachments
-          </Button>
-        </div>
-      ),
-    },
-  ];
-
   const canComplete =
     recordStatus !== "LOCKED" &&
     recordStatus !== "FROZEN" &&
@@ -259,67 +185,31 @@ export default function DataEntryPage() {
 
   return (
     <div>
-      <Breadcrumb
-        items={[
-          { title: <Link to="/app/subjects">Subjects</Link> },
-          { title: <Link to={`/app/subjects/${subjectId}`}>Subject #{Number(subjectId)}</Link> },
-          { title: <Link to={`/app/subjects/${subjectId}/events`}>Events</Link> },
-          { title: crfVersion.name },
-        ]}
-        style={{ marginBottom: 16 }}
+      <DataEntryHeader
+        crfName={crfVersion.name}
+        sectionsCount={sections.length}
+        recordStatus={recordStatus}
+        saveStatus={saveStatus}
+        canComplete={canComplete}
+        isCompleting={completeEventMutation.isPending}
+        parsedEventCrfId={parsedEventCrfId}
+        parsedSubjectId={subjectId}
+        onComplete={handleCompleteEvent}
+        onBack={handleBack}
       />
 
-      <Card
-        style={{ marginBottom: 16, borderRadius: 6 }}
-        styles={{ body: { padding: "16px 24px" } }}
-      >
-        <Space style={{ width: "100%", justifyContent: "space-between" }} align="center">
-          <Space>
-            <div>
-              <Title level={4} style={{ margin: 0 }}>
-                {crfVersion.name}
-              </Title>
-              <Text type="secondary">
-                {sections.length} section{sections.length !== 1 ? "s" : ""}
-              </Text>
-            </div>
-            <span className={`status ${STATUS_CLASSES[recordStatus]}`}>{recordStatus}</span>
-          </Space>
-          <Space>
-            {indicator && (
-              <Text style={{ color: indicator.color, fontSize: 13 }}>
-                {indicator.text}
-              </Text>
-            )}
-            {canComplete && (
-              <Button
-                type="primary"
-                onClick={handleCompleteEvent}
-                loading={completeEventMutation.isPending}
-              >
-                Complete Event
-              </Button>
-            )}
-            <Button onClick={() => window.open(`/AdministrativeEditing?eventCrfId=${parsedEventCrfId}`, "_blank")}>
-              Admin Edit
-            </Button>
-
-            <Button onClick={handleBack}>
-              Back
-            </Button>
-          </Space>
-        </Space>
-      </Card>
-
-      <Card style={{ borderRadius: 6 }} styles={{ body: { padding: 0 } }}>
-        <Tabs
-          activeKey={activeTab}
-          onChange={setActiveTab}
-          tabPosition="left"
-          style={{ minHeight: 400 }}
-          items={tabItems}
-        />
-      </Card>
+      <SectionTabs
+        sections={sections}
+        activeSectionIdx={activeSectionIdx}
+        onTabChange={setActiveTab}
+        loadingSectionItems={loadingSectionItems}
+        formItems={formItems}
+        initialFormValues={initialFormValues}
+        statusConfig={statusConfig}
+        onSave={handleSave}
+        parsedEventCrfId={parsedEventCrfId}
+        saveErrorItemIds={saveErrorItemIds}
+      />
     </div>
   );
 }

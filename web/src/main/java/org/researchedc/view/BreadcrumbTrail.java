@@ -78,30 +78,17 @@ public class BreadcrumbTrail {
         try {
             // ArrayList newTrail = new ArrayList();
             if (jspPage.equals(Page.CREATE_DATASET_1)) {
-                // when a user first steps onto the trail,
-                // it is created new for them;
-                // further on down the trail,
-                // we update the statuses and collect URL variables
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("extract_datasets"), "ExtractDatasetsMain", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("create_dataset_instructions"), "CreateDataset" + this.generateURLString(request),
-                        Status.PENDING));// 0
-                trail.add(new BreadcrumbBean(resworkflow.getString("select_items_event"), "CreateDataset", Status.UNAVAILABLE));// 1
-                trail.add(new BreadcrumbBean(resworkflow.getString("define_temporal_scope"), "CreateDataset", Status.UNAVAILABLE));// 2
-                // trail.add(
-                // new BreadcrumbBean("Select Filter",
-                // "ApplyFilter",
-                // Status.UNAVAILABLE));//3
-                trail.add(new BreadcrumbBean(resworkflow.getString("specify_dataset_properties"), "CreateDataset", Status.UNAVAILABLE));// 3
-                trail.add(new BreadcrumbBean(resworkflow.getString("confirm_dataset_properties"), "CreateDataset", Status.UNAVAILABLE));// 4
-                trail.add(new BreadcrumbBean(resworkflow.getString("generate_dataset"), "CreateDataset", Status.UNAVAILABLE));// 5, 6
-                // items
-                // total
+                        Status.PENDING));
+                trail.add(new BreadcrumbBean(resworkflow.getString("select_items_event"), "CreateDataset", Status.UNAVAILABLE));
+                trail.add(new BreadcrumbBean(resworkflow.getString("define_temporal_scope"), "CreateDataset", Status.UNAVAILABLE));
+                trail.add(new BreadcrumbBean(resworkflow.getString("specify_dataset_properties"), "CreateDataset", Status.UNAVAILABLE));
+                trail.add(new BreadcrumbBean(resworkflow.getString("confirm_dataset_properties"), "CreateDataset", Status.UNAVAILABLE));
+                trail.add(new BreadcrumbBean(resworkflow.getString("generate_dataset"), "CreateDataset", Status.UNAVAILABLE));
 
             } else if (jspPage.equals(Page.CREATE_DATASET_2)) {
-                // BreadcrumbBean bcb = (BreadcrumbBean)trail.remove(0);
-                // bcb.setStatus(Status.AVAILABLE);
-                // trail.add(0, bcb);
                 openBreadcrumbs(2);
                 BreadcrumbBean bcb2 = (BreadcrumbBean) trail.remove(2);
                 bcb2.setStatus(Status.PENDING);
@@ -116,9 +103,6 @@ public class BreadcrumbTrail {
                     ((BreadcrumbBean) trail.get(2)).setUrl("CreateDataset" + this.generateURLString(request));
                     closeRestOfTrail(2);
                 } else {
-                    // BreadcrumbBean bcb = (BreadcrumbBean)trail.remove(1);
-                    // bcb.setStatus(Status.AVAILABLE);
-                    // trail.add(1, bcb);
                     openBreadcrumbs(3);
                     BreadcrumbBean bcb2 = (BreadcrumbBean) trail.remove(3);
                     bcb2.setStatus(Status.PENDING);
@@ -127,10 +111,6 @@ public class BreadcrumbTrail {
                     closeRestOfTrail(3);
                 }
             } else if (jspPage.equals(Page.CREATE_DATASET_APPLY_FILTER) || jspPage.equals(Page.APPLY_FILTER)) {
-                // CREATE_DATASET_APPLY_FILTER might be bogus, tbh
-                // BreadcrumbBean bcb = (BreadcrumbBean)trail.remove(2);
-                // bcb.setStatus(Status.AVAILABLE);
-                // trail.add(2, bcb);
                 openBreadcrumbs(4);
                 BreadcrumbBean bcb2 = (BreadcrumbBean) trail.remove(4);
                 bcb2.setStatus(Status.PENDING);
@@ -138,9 +118,6 @@ public class BreadcrumbTrail {
                 trail.add(4, bcb2);
                 closeRestOfTrail(4);
             } else if (jspPage.equals(Page.CREATE_DATASET_4)) {
-                // BreadcrumbBean bcb = (BreadcrumbBean)trail.remove(3);
-                // bcb.setStatus(Status.AVAILABLE);
-                // trail.add(3, bcb);
                 openBreadcrumbs(4);
                 BreadcrumbBean bcb2 = (BreadcrumbBean) trail.remove(4);
                 bcb2.setStatus(Status.PENDING);
@@ -148,9 +125,6 @@ public class BreadcrumbTrail {
                 trail.add(4, bcb2);
                 closeRestOfTrail(4);
             } else if (jspPage.equals(Page.CONFIRM_DATASET)) {
-                // BreadcrumbBean bcb = (BreadcrumbBean)trail.remove(4);
-                // bcb.setStatus(Status.AVAILABLE);
-                // trail.add(4, bcb);
                 openBreadcrumbs(5);
                 BreadcrumbBean bcb2 = (BreadcrumbBean) trail.remove(5);
                 bcb2.setStatus(Status.PENDING);
@@ -158,10 +132,6 @@ public class BreadcrumbTrail {
                 trail.add(5, bcb2);
                 closeRestOfTrail(5);
             } else if (jspPage.equals(Page.EXPORT_DATASETS) && trail.size() == 7) {
-                // i.e. you have the end of the trail here with create dataset
-                // BreadcrumbBean bcb = (BreadcrumbBean)trail.remove(5);
-                // bcb.setStatus(Status.AVAILABLE);
-                // trail.add(5, bcb);
                 openBreadcrumbs(6);
                 BreadcrumbBean bcb2 = (BreadcrumbBean) trail.remove(6);
                 bcb2.setStatus(Status.PENDING);
@@ -202,44 +172,13 @@ public class BreadcrumbTrail {
                             Status.PENDING), 5);
                 closeRestOfTrail(5);
             }
-            /*
-             * else if (jspPage.equals(Page.CREATE_FILTER_SCREEN_2) ||
-             * jspPage.equals(Page.CREATE_FILTER_SCREEN_3) ||
-             * jspPage.equals(Page.CREATE_FILTER_SCREEN_3_1) ||
-             * jspPage.equals(Page.CREATE_FILTER_SCREEN_3_2)) { trail = new
-             * ArrayList(); trail.add(new BreadcrumbBean("Extract Datasets",
-             * "ExtractDatasetsMain", Status.AVAILABLE)); trail.add( new
-             * BreadcrumbBean("Select Study Events", "CreateFiltersTwo"+
-             * this.generateURLString(request), Status.PENDING)); trail.add( new
-             * BreadcrumbBean("Specify Dataset Metadata", "CreateFiltersThree",
-             * Status.UNAVAILABLE)); trail.add( new BreadcrumbBean("Export",
-             * "ExportDataset", Status.UNAVAILABLE)); } else if
-             * (jspPage.equals(Page.CREATE_FILTER_SCREEN_4)) {
-             *
-             * trail = this.advanceTrail(trail, new BreadcrumbBean("Specify
-             * Dataset Metadata", "CreateFiltersThree"+
-             * this.generateURLString(request), Status.PENDING),2);
-             * closeRestOfTrail(2); }
-             */
-            else if (jspPage.equals(Page.VIEW_STUDY_SUBJECT)) {
+
+            // VIEW_STUDY_SUBJECT branch removed — JSP deleted in Phase 1 slice
+
+            else if (jspPage.equals(Page.UPDATE_STUDY_EVENT)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_subjects"), "ListStudySubject", Status.AVAILABLE));
-                if (request.getAttribute("id") != null) {
-                    trail.add(new BreadcrumbBean(resworkflow.getString("view_study_subject"), "ViewStudySubject?id=" + (String) request.getAttribute("id"),
-                            Status.AVAILABLE));
-                } else {
-                    trail.add(new BreadcrumbBean(resworkflow.getString("view_study_subject"), "ViewStudySubject" + this.generateURLString(request),
-                            Status.AVAILABLE));
-                }
-            } else if (jspPage.equals(Page.UPDATE_STUDY_EVENT)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_subjects"), "ListStudySubject", Status.AVAILABLE));
-                // trail.add(new
-                // BreadcrumbBean(resworkflow.getString("view_study_subject"),
-                // "ViewStudySubject" + this.generateURLString(request),
-                // Status.AVAILABLE));
                 if (request.getAttribute("id") != null) {
                     trail.add(new BreadcrumbBean(resworkflow.getString("view_study_subject"), "ViewStudySubject?module=manage&id="
                         + (String) request.getAttribute("id"), Status.AVAILABLE));
@@ -321,73 +260,12 @@ public class BreadcrumbTrail {
                     advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("data_entry"), "InitialDataEntry" + this.generateURLString(request),
                             Status.PENDING), ordinal);
                 closeRestOfTrail(ordinal);
-            } else if (jspPage.equals(Page.CREATE_STUDY1)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("study_description"), "#", Status.PENDING));
-                trail.add(new BreadcrumbBean(resworkflow.getString("study_status"), "#", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("study_design"), "#", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("conditions_and_eligibility"), "#", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("facility_information"), "#", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("related_information"), "#", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("confirm_and_submit"), "#", Status.UNAVAILABLE));
             }
 
-            else if (jspPage.equals(Page.CREATE_STUDY2)) {
-                advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("study_status"), "#", Status.PENDING), 1);
-                closeRestOfTrail(1);
-            } else if (jspPage.equals(Page.CREATE_STUDY3) || jspPage.equals(Page.CREATE_STUDY4)) {
-                advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("study_design"), "#", Status.PENDING), 2);
-                closeRestOfTrail(2);
-                // closeBreadcrumb(1);
-            } else if (jspPage.equals(Page.CREATE_STUDY5)) {
-                advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("conditions_and_eligibility"), "#", Status.PENDING), 3);
-                closeRestOfTrail(3);
-                // closeBreadcrumb(2);
-            } else if (jspPage.equals(Page.CREATE_STUDY6)) {
-                advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("facility_information"), "#", Status.PENDING), 4);
-                closeRestOfTrail(4);
-                // closeBreadcrumb(3);
+            // CREATE_STUDY1-8 + STUDY_CREATE_CONFIRM branches removed — JSPs deleted in Phase 1 slice
+            // UPDATE_STUDY1-8 + STUDY_UPDATE_CONFIRM branches removed — JSPs deleted in Phase 1 slice
 
-            } else if (jspPage.equals(Page.CREATE_STUDY7)) {
-                advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("related_information"), "#", Status.PENDING), 5);
-                closeRestOfTrail(5);
-                // closeBreadcrumb(4);
-            } else if (jspPage.equals(Page.STUDY_CREATE_CONFIRM)) {
-                advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("confirm_and_submit"), "#", Status.PENDING), 6);
-                closeRestOfTrail(6);
-                // closeBreadcrumb(5);
-            } else if (jspPage.equals(Page.UPDATE_STUDY1)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("study_description"), "#", Status.PENDING));
-                trail.add(new BreadcrumbBean(resworkflow.getString("study_status"), "#", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("study_design"), "#", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("conditions_and_eligibility"), "#", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("facility_information"), "#", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("related_information"), "#", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("confirm_and_submit"), "#", Status.UNAVAILABLE));
-            }
-
-            else if (jspPage.equals(Page.UPDATE_STUDY2)) {
-                advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("study_status"), "#", Status.PENDING), 1);
-                closeRestOfTrail(1);
-            } else if (jspPage.equals(Page.UPDATE_STUDY3) || jspPage.equals(Page.CREATE_STUDY4)) {
-                advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("study_design"), "#", Status.PENDING), 2);
-                closeRestOfTrail(2);
-            } else if (jspPage.equals(Page.UPDATE_STUDY5)) {
-                advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("conditions_and_eligibility"), "#", Status.PENDING), 3);
-                closeRestOfTrail(3);
-
-            } else if (jspPage.equals(Page.UPDATE_STUDY6)) {
-                advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("facility_information"), "#", Status.PENDING), 4);
-                closeRestOfTrail(4);
-
-            } else if (jspPage.equals(Page.UPDATE_STUDY7)) {
-                advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("related_information"), "#", Status.PENDING), 5);
-                closeRestOfTrail(5);
-            } else if (jspPage.equals(Page.STUDY_UPDATE_CONFIRM)) {
-                advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("confirm_and_submit"), "#", Status.PENDING), 6);
-                closeRestOfTrail(6);
-            } else if (jspPage.equals(Page.ADMIN_SYSTEM) || jspPage.equals(Page.TECH_ADMIN_SYSTEM)) {
+            else if (jspPage.equals(Page.ADMIN_SYSTEM) || jspPage.equals(Page.TECH_ADMIN_SYSTEM)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "#", Status.PENDING));
             } else if (jspPage.equals(Page.MANAGE_STUDY)) {
@@ -396,35 +274,20 @@ public class BreadcrumbTrail {
             } else if (jspPage.equals(Page.MANAGE_STUDY_BODY)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.LIST_USER_IN_STUDY)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_users"), "ListStudyUser", Status.PENDING));
+            }
 
-            } else if (jspPage.equals(Page.LIST_STUDY_SUBJECT)) {
+            // LIST_USER_IN_STUDY branch removed — JSP deleted in Phase 1 slice
+
+            else if (jspPage.equals(Page.LIST_STUDY_SUBJECT)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_subjects"), "ListStudySubject", Status.PENDING));
-            } else if (jspPage.equals(Page.SITE_LIST)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_sites"), "ListSite", Status.PENDING));
-            } else if (jspPage.equals(Page.STUDY_EVENT_DEFINITION_LIST)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_event_definitions"), "ListEventDefinition", Status.PENDING));
             }
 
-            else if (jspPage.equals(Page.SUBJECT_GROUP_CLASS_LIST)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_groups"), "ListSubjectGroupClass", Status.PENDING));
-            } else if (jspPage.equals(Page.CREATE_SUBJECT_GROUP_CLASS)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_groups"), "ListSubjectGroupClass", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("create_subject_group_class"), "CreateSubjectGroupClass", Status.PENDING));
-            } else if (jspPage.equals(Page.CRF_LIST)) {
+            // SITE_LIST, STUDY_EVENT_DEFINITION_LIST branches removed — JSPs deleted in Phase 1 slice
+            // SUBJECT_GROUP_CLASS_LIST, CREATE_SUBJECT_GROUP_CLASS branches removed — JSPs deleted in Phase 1 slice
+
+            else if (jspPage.equals(Page.CRF_LIST)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_CRFs"), "ListCRF", Status.PENDING));
             } else if (jspPage.equals(Page.SUBJECT_LIST)) {
@@ -435,11 +298,11 @@ public class BreadcrumbTrail {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "AdminSystem", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("administer_users"), "ListUserAccounts", Status.PENDING));
-            } else if (jspPage.equals(Page.STUDY_LIST)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "AdminSystem", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("administer_studies"), "ListStudy", Status.PENDING));
-            } else if (jspPage.equals(Page.CREATE_CRF)) {
+            }
+
+            // STUDY_LIST branch removed — JSP deleted in Phase 1 slice
+
+            else if (jspPage.equals(Page.CREATE_CRF)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_CRFs"), "ListCRF", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("create_a_new_CRF"), "CreateCRF", Status.PENDING));
@@ -448,35 +311,8 @@ public class BreadcrumbTrail {
             else if (jspPage.equals(Page.CREATE_CRF_VERSION)) {
                 trail = new ArrayList();
 
-                // trail.add(new
-                // BreadcrumbBean(resworkflow.getString("enter_version_name"),
-                // "#", Status.PENDING));
-                // trail.add(new
-                // BreadcrumbBean(resworkflow.getString("check_version"), "#",
-                // Status.UNAVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("upload_spreadsheet"), "#", Status.PENDING));
                 trail.add(new BreadcrumbBean(resworkflow.getString("validate_spreadsheet"), "#", Status.UNAVAILABLE));
-                // trail.add(new
-                // BreadcrumbBean(resworkflow.getString("review_new_items"),
-                // "#", Status.UNAVAILABLE));
-                // trail.add(new
-                // BreadcrumbBean(resworkflow.getString("review_SQL_generated"),
-                // "#", Status.UNAVAILABLE));
-
-                /*
-                 * MERGED from the following, may need to update i18n'ed text
-                 * above:
-                 *
-                 * trail.add(new BreadcrumbBean("Upload Spreadsheet", "#",
-                 * Status.PENDING)); // trail.add(new BreadcrumbBean("Check
-                 * Version", "#", Status.UNAVAILABLE)); //trail.add(new
-                 * BreadcrumbBean("Upload Spreadsheet", "#",
-                 * Status.UNAVAILABLE)); trail.add(new BreadcrumbBean("Review
-                 * Spreadsheet", "#", Status.UNAVAILABLE)); //trail.add(new
-                 * BreadcrumbBean("Review New Items", "#", Status.UNAVAILABLE));
-                 * //trail.add(new BreadcrumbBean("Review SQL Generated", "#",
-                 * Status.UNAVAILABLE)); >>>>>>> .r9766
-                 */
 
             } else if (jspPage.equals(Page.CREATE_CRF_VERSION_NODELETE) || jspPage.equals(Page.REMOVE_CRF_VERSION_DEF)
                 || jspPage.equals(Page.REMOVE_CRF_VERSION_CONFIRM)) {
@@ -500,11 +336,11 @@ public class BreadcrumbTrail {
             } else if (jspPage.equals(Page.CREATE_CRF_VERSION_DONE) || jspPage.equals(Page.CREATE_CRF_VERSION_ERROR)) {
                 advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("review_SQL_generated"), "#", Status.PENDING), 5);
                 closeRestOfTrail(5);
-            } else if (jspPage.equals(Page.VIEW_CRF_VERSION)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_CRFs"), "ListCRF", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("view_CRF_version"), "ViewCRFVersion", Status.PENDING));
-            } else if (jspPage.equals(Page.VIEW_CRF)) {
+            }
+
+            // VIEW_CRF_VERSION branch removed — JSP deleted in Phase 1
+
+            else if (jspPage.equals(Page.VIEW_CRF)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_CRFs"), "ListCRF", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("view_CRF_version"), "ViewCRF", Status.PENDING));
@@ -579,86 +415,17 @@ public class BreadcrumbTrail {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("administer_users"), "ListUserAccounts", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("create_user_account"), "CreateUserAccount", Status.PENDING));
-            } else if (jspPage.equals(Page.REASSIGN_STUDY_SUBJECT)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_subjects"), "ListStudySubject", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("reassign_study_subject"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.DEFINE_STUDY_EVENT1)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_event_definitions"), "ListEventDefinition", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("create_study_event_definition"), "#", Status.PENDING));
+            }
 
-            } else if (jspPage.equals(Page.UPDATE_EVENT_DEFINITION1)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_event_definitions"), "ListEventDefinition", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("update_study_event_definition"), "#", Status.PENDING));
+            // REASSIGN_STUDY_SUBJECT, DEFINE_STUDY_EVENT1, UPDATE_EVENT_DEFINITION1,
+            // VIEW_EVENT_DEFINITION, CREATE_SUB_STUDY, VIEW_SITE branches removed — JSPs deleted in Phase 1
+            // SET_USER_ROLE_IN_STUDY, STUDY_USER_LIST branches removed — JSPs deleted
+            // LOCK_DEFINITION, UNLOCK_DEFINITION branches removed — JSPs deleted
+            // VIEW_USER_IN_STUDY, REMOVE_USER_ROLE_IN_STUDY branches removed — JSPs deleted
+            // REMOVE_DEFINITION, RESTORE_DEFINITION branches removed — JSPs deleted
+            // REMOVE_SITE, RESTORE_SITE branches removed — JSPs deleted
 
-            } else if (jspPage.equals(Page.VIEW_EVENT_DEFINITION)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_event_definitions"), "ListEventDefinition", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("view_event_definition"), "#", Status.PENDING));
-
-            } else if (jspPage.equals(Page.CREATE_SUB_STUDY)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_sites"), "ListSite", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("create_new_site"), "#", Status.PENDING));
-
-            } else if (jspPage.equals(Page.VIEW_SITE)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_sites"), "ListSite", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("view_site"), "#", Status.PENDING));
-
-            } else if (jspPage.equals(Page.SET_USER_ROLE_IN_STUDY)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_users"), "ListStudyUser", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("set_user_role"), "#", Status.PENDING));
-
-            } else if (jspPage.equals(Page.STUDY_USER_LIST)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_users"), "ListStudyUser", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("assign_new_users_to_study"), "#", Status.PENDING));
-
-            } else if (jspPage.equals(Page.LOCK_DEFINITION)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_event_definitions"), "ListEventDefinition", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("lock_event_definition"), "#", Status.PENDING));
-
-            } else if (jspPage.equals(Page.UNLOCK_DEFINITION)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_event_definitions"), "ListEventDefinition", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("unlock_event_definition"), "#", Status.PENDING));
-
-            } else if (jspPage.equals(Page.VIEW_USER_IN_STUDY)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_users"), "ListStudyUser", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("view_user_details"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.REMOVE_USER_ROLE_IN_STUDY)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_users"), "ListStudyUser", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("remove_user_role"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.REMOVE_DEFINITION)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_event_definitions"), "ListEventDefinition", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("remove_event_definition"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.RESTORE_DEFINITION)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_event_definitions"), "ListEventDefinition", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("restore_event_definition"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.VIEW_STUDY)) {
+            else if (jspPage.equals(Page.VIEW_STUDY)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "AdminSystem", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("administer_studies"), "ListStudy", Status.AVAILABLE));
@@ -679,41 +446,28 @@ public class BreadcrumbTrail {
                 trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "AdminSystem", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("administer_studies"), "ListStudy", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("restore_a_study"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.REMOVE_SITE)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_sites"), "ListSite", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("remove_a_site"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.RESTORE_SITE)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_sites"), "ListSite", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("restore_a_site"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.MENU)) {
+            }
+
+            // REMOVE_SITE, RESTORE_SITE branches removed — JSPs deleted in Phase 1
+
+            else if (jspPage.equals(Page.MENU)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("home"), "MainMenu", Status.PENDING));
 
-            } else if (jspPage.equals(Page.VIEW_TABLE_OF_CONTENT)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_CRFs"), "ListCRF", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("view_CRF_version_data_entry"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.VIEW_SECTION_DATA_ENTRY) || jspPage.equals(Page.VIEW_SECTION_DATA_ENTRY_SERVLET)) {
+            }
+
+            // VIEW_TABLE_OF_CONTENT branch removed — JSP deleted in Phase 1
+
+            else if (jspPage.equals(Page.VIEW_SECTION_DATA_ENTRY) || jspPage.equals(Page.VIEW_SECTION_DATA_ENTRY_SERVLET)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_CRFs"), "ListCRF", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("view_CRF_version_section_data"), "#", Status.PENDING));
 
-            } else if (jspPage.equals(Page.VIEW_EVENT_CRF_CONTENT)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_subjects"), "ListStudySubject", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("view_study_subject"), "ViewStudySubject" + this.generateURLString(request),
-                        Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("view_event_CRF_data"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.VIEW_STUDY_EVENTS)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("view_events"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.DELETE_CRF_VERSION)) {
+            }
+
+            // VIEW_EVENT_CRF_CONTENT, VIEW_STUDY_EVENTS branches removed — JSPs deleted in Phase 1
+
+            else if (jspPage.equals(Page.DELETE_CRF_VERSION)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("manage_CRFs"), "ListCRF", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("delete_CRF_version"), "#", Status.PENDING));
