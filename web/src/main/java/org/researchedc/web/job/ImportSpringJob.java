@@ -117,6 +117,7 @@ public class ImportSpringJob extends QuartzJobBean {
     public static final String STUDY_NAME = "study_name";
     public static final String STUDY_OID = "study_oid";
     public static final String DEST_DIR = "Event_CRF_Data";
+    public static final String LOCALE = "locale";
 
     // below is the directory where we copy the files to, our target
     private static final String IMPORT_DIR = SQLInitServlet.getField("filePath") + DIR_PATH + File.separator; // +
@@ -177,7 +178,7 @@ public class ImportSpringJob extends QuartzJobBean {
             String directory = dataMap.getString(DIRECTORY);
             String studyName = dataMap.getString(STUDY_NAME);
             String studyOid = dataMap.getString(STUDY_OID);
-            String localeStr = dataMap.getString(ExampleSpringJob.LOCALE);
+            String localeStr = dataMap.getString(LOCALE);
             if (localeStr != null) {
                 locale = Locale.of(localeStr);
                 ResourceBundleProvider.updateLocale(locale);

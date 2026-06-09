@@ -82,7 +82,6 @@ public class XsltTriggerService {
         jobDataMap.put(COUNT,cnt);
         jobDataMap.put(XSLT_PATH,xsltPath);
         // jobDataMap.put(DIRECTORY, directory);
-        // jobDataMap.put(ExampleSpringJob.LOCALE, locale);
         jobDataMap.put(EP_BEAN, epBean);
 
         trigger.setJobDataMap(jobDataMap);

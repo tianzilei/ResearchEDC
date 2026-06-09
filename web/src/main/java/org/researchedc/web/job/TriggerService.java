@@ -35,6 +35,10 @@ public class TriggerService {
     public static final String CDISC = "cdisc";
     public static final String SPSS = "spss";
     public static final String DATASET_ID = "dsId";
+    public static final String CDISC12 = "cdisc12";
+    public static final String CDISC13 = "cdisc13";
+    public static final String CDISC13OC = "cdisc13oc";
+    public static final String LOCALE = "locale";
     public static final String DATE_START_JOB = "job";
     public static final String JOB_NAME = "jobName";
     public static final String JOB_DESC = "jobDesc";
@@ -56,9 +60,9 @@ public class TriggerService {
         String spss = fp.getString(SPSS);
         String tab = fp.getString(TAB);
         String cdisc = fp.getString(CDISC);
-        String cdisc12 = fp.getString(ExampleSpringJob.CDISC12);
-        String cdisc13 = fp.getString(ExampleSpringJob.CDISC13);
-        String cdisc13oc = fp.getString(ExampleSpringJob.CDISC13OC);
+        String cdisc12 = fp.getString(CDISC12);
+        String cdisc13 = fp.getString(CDISC13);
+        String cdisc13oc = fp.getString(CDISC13OC);
         BigInteger interval = new BigInteger("0");
         if ("monthly".equalsIgnoreCase(period)) {
             interval = new BigInteger("2419200000"); // how many
@@ -98,16 +102,16 @@ public class TriggerService {
         jobDataMap.put("contactEmail", "");
         jobDataMap.put(TAB, tab);
         jobDataMap.put(CDISC, cdisc);
-        jobDataMap.put(ExampleSpringJob.CDISC12, cdisc12);
-        jobDataMap.put(ExampleSpringJob.LOCALE, locale);
+        jobDataMap.put(CDISC12, cdisc12);
+        jobDataMap.put(LOCALE, locale);
         // System.out.println("found 1.2: " +
-        // jobDataMap.get(ExampleSpringJob.CDISC12));
-        jobDataMap.put(ExampleSpringJob.CDISC13, cdisc13);
+        // jobDataMap.get(CDISC12));
+        jobDataMap.put(CDISC13, cdisc13);
         // System.out.println("found 1.3: " +
-        // jobDataMap.get(ExampleSpringJob.CDISC13));
-        jobDataMap.put(ExampleSpringJob.CDISC13OC, cdisc13oc);
+        // jobDataMap.get(CDISC13));
+        jobDataMap.put(CDISC13OC, cdisc13oc);
         // System.out.println("found 1.3oc: " +
-        // jobDataMap.get(ExampleSpringJob.CDISC13OC));
+        // jobDataMap.get(CDISC13OC));
         jobDataMap.put(SPSS, spss);
         jobDataMap.put(USER_ID, userAccount.getId());
         jobDataMap.put(STUDY_ID, study.getId());
@@ -159,7 +163,7 @@ public class TriggerService {
         jobDataMap.put(STUDY_NAME, study.getName());
         jobDataMap.put(STUDY_OID, study.getOid());
         jobDataMap.put(DIRECTORY, directory);
-        jobDataMap.put(ExampleSpringJob.LOCALE, locale);
+        jobDataMap.put(LOCALE, locale);
         jobDataMap.put("hours", hours);
         jobDataMap.put("minutes", minutes);
 
@@ -180,9 +184,9 @@ public class TriggerService {
 
         String tab = fp.getString(TAB);
         String cdisc = fp.getString(CDISC);
-        String cdisc12 = fp.getString(ExampleSpringJob.CDISC12);
-        String cdisc13 = fp.getString(ExampleSpringJob.CDISC13);
-        String cdisc13oc = fp.getString(ExampleSpringJob.CDISC13OC);
+        String cdisc12 = fp.getString(CDISC12);
+        String cdisc13 = fp.getString(CDISC13);
+        String cdisc13oc = fp.getString(CDISC13OC);
         String spss = fp.getString(SPSS);
         Date jobDate = fp.getDateTime(DATE_START_JOB);
         HashMap errors = v.validate();
