@@ -123,11 +123,7 @@
         <servlet-class>org.researchedc.control.admin.ConfigureServlet</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>ConfigurePasswordRequirementsServlet</servlet-name>
-        <description>ConfigurePasswordRequirementsServlet</description>
-        <servlet-class>org.researchedc.control.admin.ConfigurePasswordRequirementsServlet</servlet-class>
-    </servlet>
+<!-- phase-1-login-profile: ConfigurePasswordRequirementsServlet definition removed -->
 
 
 
@@ -167,41 +163,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>ViewUserAccountServlet</servlet-name>
-        <display-name>ViewUserAccount</display-name>
-        <servlet-class>org.researchedc.control.admin.ViewUserAccountServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CreateNewStudyEventServlet</servlet-name>
-        <display-name>CreateNewStudyEvent</display-name>
-        <servlet-class>org.researchedc.control.submit.CreateNewStudyEventServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CreateUserAccountServlet</servlet-name>
-        <display-name>CreateUserAccount</display-name>
-        <servlet-class>org.researchedc.control.admin.CreateUserAccountServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>EditUserAccountServlet</servlet-name>
-        <display-name>EditUserAccount</display-name>
-        <servlet-class>org.researchedc.control.admin.EditUserAccountServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ListUserAccountsServlet</servlet-name>
-        <display-name>ListUserAccounts</display-name>
-        <servlet-class>org.researchedc.control.admin.ListUserAccountsServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DeleteStudyUserRoleServlet</servlet-name>
-        <display-name>DeleteStudyUserRole</display-name>
-        <servlet-class>org.researchedc.control.admin.DeleteStudyUserRoleServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DeleteUserServlet</servlet-name>
-        <display-name>DeleteUser</display-name>
-        <servlet-class>org.researchedc.control.admin.DeleteUserServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>InitUpdateStudyServlet</servlet-name>
         <display-name>InitUpdateStudy</display-name>
         <servlet-class>org.researchedc.control.managestudy.InitUpdateStudyServlet</servlet-class>
@@ -210,11 +171,6 @@
         <servlet-name>InitUpdateSubStudyServlet</servlet-name>
         <display-name>InitUpdateSubStudy</display-name>
         <servlet-class>org.researchedc.control.managestudy.InitUpdateSubStudyServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AssignUserToStudyServlet</servlet-name>
-        <display-name>AssignUserToStudy</display-name>
-        <servlet-class>org.researchedc.control.managestudy.AssignUserToStudyServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InitUpdateEventDefinitionServlet</servlet-name>
@@ -271,11 +227,6 @@
         <servlet-class>org.researchedc.control.managestudy.RemoveStudyEventServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>RestoreStudyEventServlet</servlet-name>
-        <display-name>RestoreStudyEvent</display-name>
-        <servlet-class>org.researchedc.control.managestudy.RestoreStudyEventServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>DeleteStudyEventServlet</servlet-name>
         <display-name>DeleteStudyEvent</display-name>
         <servlet-class>org.researchedc.control.managestudy.DeleteStudyEventServlet</servlet-class>
@@ -293,11 +244,6 @@
     <!-- ApplyFilter, CreateFiltersOne-Two-Three removed — extract servlets deleted in Phase 1 -->
 
 
-    <servlet>
-        <servlet-name>SetUserRoleServlet</servlet-name>
-        <display-name>SetUserRole</display-name>
-        <servlet-class>org.researchedc.control.admin.SetUserRoleServlet</servlet-class>
-    </servlet>
     <servlet>
         <servlet-name>ViewSectionDataEntryServlet</servlet-name>
         <display-name>ViewSectionDataEntry</display-name>
@@ -361,10 +307,8 @@
         <servlet-class>org.researchedc.control.admin.DownloadStudyMetadataServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>DownloadVersionSpreadSheetServlet</servlet-name>
-        <display-name>DownloadVersionSpreadSheet</display-name>
-        <servlet-class>org.researchedc.control.admin.DownloadVersionSpreadSheetServlet</servlet-class>
-    </servlet>
+
+
     <servlet>
         <servlet-name>DownloadAttachedFileServlet</servlet-name>
         <display-name>DownloadAttachedFile</display-name>
@@ -483,30 +427,7 @@
         <servlet-name>ManageStudyServlet</servlet-name>
         <url-pattern>/ManageStudy</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListUserAccountsServlet</servlet-name>
-        <url-pattern>/ListUserAccounts</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteStudyUserRoleServlet</servlet-name>
-        <url-pattern>/DeleteStudyUserRole</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteUserServlet</servlet-name>
-        <url-pattern>/DeleteUser</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewUserAccountServlet</servlet-name>
-        <url-pattern>/ViewUserAccount</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CreateUserAccountServlet</servlet-name>
-        <url-pattern>/CreateUserAccount</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditUserAccountServlet</servlet-name>
-        <url-pattern>/EditUserAccount</url-pattern>
-    </servlet-mapping>
+<!-- phase-1-login-profile: 5 user-account servlet-mappings removed -->
     <servlet-mapping>
         <servlet-name>InitUpdateStudyServlet</servlet-name>
         <url-pattern>/InitUpdateStudy</url-pattern>
@@ -514,10 +435,6 @@
     <servlet-mapping>
         <servlet-name>InitUpdateSubStudyServlet</servlet-name>
         <url-pattern>/InitUpdateSubStudy</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AssignUserToStudyServlet</servlet-name>
-        <url-pattern>/AssignUserToStudy</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InitUpdateEventDefinitionServlet</servlet-name>
@@ -572,12 +489,6 @@
         <servlet-name>RemoveEventCRFServlet</servlet-name>
         <url-pattern>/RemoveEventCRF</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SetUserRoleServlet</servlet-name>
-        <url-pattern>/SetUserRole</url-pattern>
-    </servlet-mapping>
-
-
     <!--  Export Excel -->
     <servlet-mapping>
         <servlet-name>ViewSectionDataEntryServlet</servlet-name>
@@ -666,10 +577,6 @@
     </servlet-mapping>
 
 
-    <servlet-mapping>
-        <servlet-name>ConfigurePasswordRequirementsServlet</servlet-name>
-        <url-pattern>/ConfigurePasswordRequirements</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ConfigureServlet</servlet-name>
         <url-pattern>/Configure</url-pattern>

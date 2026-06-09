@@ -1,0 +1,71 @@
+# Phase 1: login-profile Deletion Ledger
+
+**Slice:** User account management + password policy JSPs/servlets
+**Date:** 2026-06-10
+**Status:** In progress
+
+## Artifacts to Delete
+
+### JSP Files (8)
+DELETE,web/src/main/webapp/WEB-INF/jsp/admin/configurationPasswordRequirements.jsp,Password policy config JSP,Replace,/app/admin/password-policy (SPA PasswordPolicy component)
+DELETE,web/src/main/webapp/WEB-INF/jsp/admin/createuseraccount.jsp,Create user account JSP,Replace,/app/admin/users (SPA UserManagement component)
+DELETE,web/src/main/webapp/WEB-INF/jsp/admin/edituseraccount.jsp,Edit user account JSP,Replace,/app/admin/users (SPA UserManagement component)
+DELETE,web/src/main/webapp/WEB-INF/jsp/admin/edituseraccountconfirm.jsp,Edit user confirm JSP,Replace,/app/admin/users (SPA UserManagement component)
+DELETE,web/src/main/webapp/WEB-INF/jsp/admin/listuseraccounts.jsp,List user accounts JSP,Replace,/app/admin/users (SPA UserManagement component)
+DELETE,web/src/main/webapp/WEB-INF/jsp/admin/viewuseraccount.jsp,View user account JSP,Replace,/app/admin/users (SPA UserManagement component)
+DELETE,web/src/main/webapp/WEB-INF/jsp/admin/setUserRole.jsp,Set user role JSP,Replace,/app/admin/users (SPA UserManagement component)
+DELETE,web/src/main/webapp/WEB-INF/jsp/admin/showUserAccountRow.jsp,User account row fragment,Replace,Embedded in UserManagement
+
+### SecureController Subclasses (9)
+DELETE,web/src/main/java/org/researchedc/control/admin/ConfigurePasswordRequirementsServlet.java,Password policy servlet,Replace,/app/admin/password-policy
+DELETE,web/src/main/java/org/researchedc/control/admin/CreateUserAccountServlet.java,Create user servlet,Replace,POST /api/v1/identity/users
+DELETE,web/src/main/java/org/researchedc/control/admin/EditUserAccountServlet.java,Edit user + reset password servlet,Replace,PUT /api/v1/identity/users/{id}/profile + PUT /password
+DELETE,web/src/main/java/org/researchedc/control/admin/ListUserAccountsServlet.java,List users servlet,Replace,GET /api/v1/identity/users
+DELETE,web/src/main/java/org/researchedc/control/admin/ViewUserAccountServlet.java,View user servlet,Replace,GET /api/v1/identity/users/by-username
+DELETE,web/src/main/java/org/researchedc/control/admin/DeleteUserServlet.java,Delete user servlet,Replace,SPA UserManagement (delete via identity API)
+DELETE,web/src/main/java/org/researchedc/control/admin/SetUserRoleServlet.java,Set user role servlet,Replace,POST /api/v1/identity/roles/assign
+DELETE,web/src/main/java/org/researchedc/control/admin/DeleteStudyUserRoleServlet.java,Delete study user role servlet,Replace,SPA StudyUserRoleEditor
+DELETE,web/src/main/java/org/researchedc/control/managestudy/AssignUserToStudyServlet.java,Assign user to study servlet,Replace,SPA StudyUserRoleEditor (/app/admin/studies/:studyId/users)
+
+### Stub (1)
+DELETE,web/src/main/java/org/researchedc/control/admin/EditStudyUserRoleServlet.java,Reduced stub (dead code),Retire,No runtime path - orphan
+
+### View Helpers (2)
+DELETE,web/src/main/java/org/researchedc/view/UserAccountTable.java,User account table renderer,Retire,Only used by deleted servlets
+DELETE,web/src/main/java/org/researchedc/web/bean/UserAccountRow.java,User account row bean,Retire,Only used by deleted servlets
+
+### Helper (1)
+DELETE,web/src/main/java/org/researchedc/control/login/PasswordValidator.java,Password validation helper,Retire,Only used by EditUserAccountServlet
+
+### web.xml Entries (9 servlet + 9 mapping = 18 lines)
+DELETE,web/src/main/webapp/WEB-INF/web.xml,ConfigurePasswordRequirementsServlet registration,Delete,lines 127-129 + 670-671
+DELETE,web/src/main/webapp/WEB-INF/web.xml,ViewUserAccountServlet registration,Delete,lines 170-172 + 499-500
+DELETE,web/src/main/webapp/WEB-INF/web.xml,CreateUserAccountServlet registration,Delete,lines 180-182 + 503-504
+DELETE,web/src/main/webapp/WEB-INF/web.xml,EditUserAccountServlet registration,Delete,lines 185-187 + 507-508
+DELETE,web/src/main/webapp/WEB-INF/web.xml,ListUserAccountsServlet registration,Delete,lines 190-192 + 487-488
+DELETE,web/src/main/webapp/WEB-INF/web.xml,DeleteStudyUserRoleServlet registration,Delete,lines 195-197 + 491-492
+DELETE,web/src/main/webapp/WEB-INF/web.xml,DeleteUserServlet registration,Delete,lines 200-202 + 495-496
+DELETE,web/src/main/webapp/WEB-INF/web.xml,AssignUserToStudyServlet registration,Delete,lines 215-217 + 519-520
+DELETE,web/src/main/webapp/WEB-INF/web.xml,SetUserRoleServlet registration,Delete,lines 297-299 + 576-577
+
+### Page.java Constants (9)
+COMMENT,web/src/main/java/org/researchedc/view/Page.java,CREATE_ACCOUNT,Comment,Used by BreadcrumbTrail
+COMMENT,web/src/main/java/org/researchedc/view/Page.java,EDIT_ACCOUNT,Comment,Used by BreadcrumbTrail
+COMMENT,web/src/main/java/org/researchedc/view/Page.java,EDIT_ACCOUNT_CONFIRM,Comment,Used by BreadcrumbTrail
+COMMENT,web/src/main/java/org/researchedc/view/Page.java,LIST_USER_ACCOUNTS,Comment,Used by BreadcrumbTrail
+COMMENT,web/src/main/java/org/researchedc/view/Page.java,LIST_USER_ACCOUNTS_SERVLET,Comment,Used by ConfigureServlet + BreadcrumbTrail
+COMMENT,web/src/main/java/org/researchedc/view/Page.java,VIEW_USER_ACCOUNT,Comment,Used by BreadcrumbTrail
+COMMENT,web/src/main/java/org/researchedc/view/Page.java,VIEW_USER_ACCOUNT_SERVLET,Comment,No external consumers
+COMMENT,web/src/main/java/org/researchedc/view/Page.java,CONFIGURATION_PASSWORD_REQUIREMENTS,Comment,No external consumers
+COMMENT,web/src/main/java/org/researchedc/view/Page.java,SET_USER_ROLE,Comment,Used by BreadcrumbTrail
+
+### BreadcrumbTrail Cleanup (6 branches)
+MODIFY,web/src/main/java/org/researchedc/view/BreadcrumbTrail.java,Remove CREATE_ACCOUNT branch,Modify,~line 237
+MODIFY,web/src/main/java/org/researchedc/view/BreadcrumbTrail.java,Remove EDIT_ACCOUNT branch,Modify,~line 223
+MODIFY,web/src/main/java/org/researchedc/view/BreadcrumbTrail.java,Remove EDIT_ACCOUNT_CONFIRM branch,Modify,~line 231
+MODIFY,web/src/main/java/org/researchedc/view/BreadcrumbTrail.java,Remove LIST_USER_ACCOUNTS branch,Modify,~line 197
+MODIFY,web/src/main/java/org/researchedc/view/BreadcrumbTrail.java,Remove VIEW_USER_ACCOUNT branch,Modify,~line 216
+MODIFY,web/src/main/java/org/researchedc/view/BreadcrumbTrail.java,Remove SET_USER_ROLE branch,Modify,~line 253
+
+### ConfigureServlet Fix (1 line)
+MODIFY,web/src/main/java/org/researchedc/control/admin/ConfigureServlet.java,Remove LIST_USER_ACCOUNTS_SERVLET forward,Modify,line 75
