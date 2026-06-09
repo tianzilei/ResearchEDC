@@ -1,6 +1,6 @@
 # Legacy Workflow Inventory
 
-Generated: 2026-06-09 19:38:57 UTC
+Generated: 2026-06-09 19:44:57 UTC
 
 Full CSV inventory: `legacy-workflow-inventory.csv`
 
@@ -12,7 +12,7 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 | `dao-spi` | 55 |
 | `dao-support` | 6 |
 | `jsp-view` | 100 |
-| `legacy-servlet` | 53 |
+| `legacy-servlet` | 50 |
 | `scheduled-job` | 2 |
 | `shared-service` | 42 |
 | `spring-mvc-route` | 17 |
@@ -23,13 +23,13 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 |---|---:|
 | `keep compatibility` | 76 |
 | `replace` | 226 |
-| `unknown` | 21 |
+| `unknown` | 18 |
 
 ## Summary By Phase Slice
 
 | Phase slice | Count |
 |---|---:|
-| `phase-0-inventory-and-gates` | 19 |
+| `phase-0-inventory-and-gates` | 16 |
 | `phase-1-admin-write` | 4 |
 | `phase-1-crf-metadata` | 27 |
 | `phase-1-data-entry-discrepancy` | 36 |
@@ -80,10 +80,7 @@ These require manual owner/category assignment before deletion work:
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/include/workflow.jsp | workflow.jsp | /WEB-INF/jsp/include/workflow.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/menu.jsp | menu.jsp | /WEB-INF/jsp/menu.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/showMessage.jsp | showMessage.jsp | /WEB-INF/jsp/showMessage.jsp |
-| legacy-servlet | web/src/main/java/org/researchedc/control/MainMenuServlet.java | org.researchedc.control.MainMenuServlet | /MainMenu |
-| legacy-servlet | web/src/main/java/org/researchedc/control/admin/AdminSystemServlet.java | org.researchedc.control.admin.AdminSystemServlet | /AdminSystem |
 | legacy-servlet | web/src/main/java/org/researchedc/control/admin/DeleteUserServlet.java | org.researchedc.control.admin.DeleteUserServlet | /DeleteUser |
-| legacy-servlet | web/src/main/java/org/researchedc/control/admin/UnLockUserServlet.java | org.researchedc.control.admin.UnLockUserServlet | /UnLockUser |
 | legacy-servlet | web/src/main/java/org/researchedc/control/rule/ExecuteCrossEditCheckServlet.java | org.researchedc.control.rule.ExecuteCrossEditCheckServlet | /ExecuteCrossEditCheck |
 | scheduled-job | shared/src/main/java/org/researchedc/job/XsltTransformJob.java | org.researchedc.job.XsltTransformJob | (quartz/job class) |
 | scheduled-job | web/src/main/java/org/researchedc/web/job/ImportSpringJob.java | org.researchedc.web.job.ImportSpringJob | (quartz/job class) |
