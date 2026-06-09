@@ -36,7 +36,7 @@ public class ListUserAccountsServlet extends SecureController {
     protected void mayProceed() throws InsufficientPermissionException {
         if (!ub.isSysAdmin()) {
             addPageMessage(respage.getString("you_may_not_perform_administrative_functions"));
-            throw new InsufficientPermissionException(Page.ADMIN_SYSTEM_SERVLET, respage.getString("you_may_not_perform_administrative_functions"), "1");
+            throw new InsufficientPermissionException(Page.ADMIN_SYSTEM, respage.getString("you_may_not_perform_administrative_functions"), "1");
         }
 
         return;
