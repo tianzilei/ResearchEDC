@@ -112,11 +112,6 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
-        <servlet-name>ChooseDownloadFormat</servlet-name>
-        <description>ChooseDownloadFormat</description>
-        <servlet-class>org.researchedc.control.extract.ChooseDownloadFormat</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>CheckCRFLocked</servlet-name>
         <description>CheckCRFLocked</description>
         <servlet-class>org.researchedc.control.submit.CheckCRFLocked</servlet-class>
@@ -159,24 +154,11 @@
         <servlet-class>org.researchedc.control.admin.PauseJobServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>CreateJobExportServlet</servlet-name>
-        <display-name>CreateJobExportServlet</display-name>
-        <description>CreateJobExportServlet</description>
-        <servlet-class>org.researchedc.control.admin.CreateJobExportServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>CreateJobImportServlet</servlet-name>
         <display-name>CreateJobImportServlet</display-name>
         <description>CreateJobImportServlet</description>
         <servlet-class>org.researchedc.control.admin.CreateJobImportServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>UpdateJobExportServlet</servlet-name>
-        <display-name>UpdateJobExportServlet</display-name>
-        <description>UpdateJobExportServlet</description>
-        <servlet-class>org.researchedc.control.admin.UpdateJobExportServlet</servlet-class>
-    </servlet>
-
     <servlet>
         <servlet-name>UpdateJobImportServlet</servlet-name>
         <display-name>UpdateJobImportServlet</display-name>
@@ -266,28 +248,6 @@
         <servlet-class>org.researchedc.control.managestudy.AddCRFToDefinitionServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ViewEventDefinitionReadOnlyServlet</servlet-name>
-        <display-name>ViewEventDefinitionReadOnly</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ViewEventDefinitionReadOnlyServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>CreateXformCRFVersionServlet</servlet-name>
-        <display-name>CreateXformCRFVersion</display-name>
-        <servlet-class>org.researchedc.control.admin.CreateXformCRFVersionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>InitCreateCRFVersionServlet</servlet-name>
-        <display-name>InitCreateCRFVersion</display-name>
-        <servlet-class>org.researchedc.control.admin.InitCreateCRFVersionServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>InitUpdateCRFServlet</servlet-name>
-        <display-name>InitUpdateCRF</display-name>
-        <servlet-class>org.researchedc.control.admin.InitUpdateCRFServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>AdminSystemServlet</servlet-name>
         <display-name>AdminSystem</display-name>
         <servlet-class>org.researchedc.control.admin.AdminSystemServlet</servlet-class>
@@ -351,26 +311,7 @@
         <display-name>RestoreEventCRF</display-name>
         <servlet-class>org.researchedc.control.managestudy.RestoreEventCRFServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ApplyFilterServlet</servlet-name>
-        <display-name>ApplyFilter</display-name>
-        <servlet-class>org.researchedc.control.extract.ApplyFilterServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CreateFiltersOneServlet</servlet-name>
-        <display-name>CreateFiltersOne</display-name>
-        <servlet-class>org.researchedc.control.extract.CreateFiltersOneServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CreateFiltersTwoServlet</servlet-name>
-        <display-name>CreateFiltersTwo</display-name>
-        <servlet-class>org.researchedc.control.extract.CreateFiltersTwoServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CreateFiltersThreeServlet</servlet-name>
-        <display-name>CreateFiltersThree</display-name>
-        <servlet-class>org.researchedc.control.extract.CreateFiltersThreeServlet</servlet-class>
-    </servlet>
+    <!-- ApplyFilter, CreateFiltersOne-Two-Three removed — extract servlets deleted in Phase 1 -->
 
 
     <servlet>
@@ -429,26 +370,7 @@
         <display-name>DeleteEventCRF</display-name>
         <servlet-class>org.researchedc.control.admin.DeleteEventCRFServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ViewItemDetailServlet</servlet-name>
-        <display-name>ViewItemDetail</display-name>
-        <servlet-class>org.researchedc.control.extract.ViewItemDetailServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>SelectItemsServlet</servlet-name>
-        <display-name>SelectItems</display-name>
-        <servlet-class>org.researchedc.control.extract.SelectItemsServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewSelectedServlet</servlet-name>
-        <display-name>ViewSelected</display-name>
-        <servlet-class>org.researchedc.control.extract.ViewSelectedServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>EditSelectedServlet</servlet-name>
-        <display-name>EditSelected</display-name>
-        <servlet-class>org.researchedc.control.extract.EditSelectedServlet</servlet-class>
-    </servlet>
+    <!-- ViewItemDetail, SelectItems, ViewSelected, EditSelected removed — extract servlets deleted in Phase 1 -->
     <servlet>
         <servlet-name>CreateDiscrepancyNoteServlet</servlet-name>
         <display-name>CreateDiscrepancyNote</display-name>
@@ -531,18 +453,8 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>CreateJobExportServlet</servlet-name>
-        <url-pattern>/CreateJobExport</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>CreateJobImportServlet</servlet-name>
         <url-pattern>/CreateJobImport</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>UpdateJobExportServlet</servlet-name>
-        <url-pattern>/UpdateJobExport</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -673,22 +585,6 @@
     <servlet-mapping>
         <servlet-name>RestoreCRFFromDefinitionServlet</servlet-name>
         <url-pattern>/RestoreCRFFromDefinition</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AddCRFToDefinitionServlet</servlet-name>
-        <url-pattern>/AddCRFToDefinition</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CreateXformCRFVersionServlet</servlet-name>
-        <url-pattern>/CreateXformCRFVersion</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>InitCreateCRFVersionServlet</servlet-name>
-        <url-pattern>/InitCreateCRFVersion</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>InitUpdateCRFServlet</servlet-name>
-        <url-pattern>/InitUpdateCRF</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ListStudySubjectsManageServlet</servlet-name>

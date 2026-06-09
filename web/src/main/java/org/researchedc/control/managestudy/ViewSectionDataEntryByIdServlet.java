@@ -14,7 +14,6 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -54,7 +53,8 @@ private static final long serialVersionUID = 1L;
         StudyBean  currentStudy = (StudyBean) studyDao.findByPK(1);
         ICrfVersionDAO crfVersionDao = this.crfVersionDao;
         if (request.getParameter("id") == null) {
-            forwardPage(Page.LOGIN, request, response);
+            response.sendRedirect(request.getContextPath() + "/app/login");
+            return;
         }
         request.setAttribute("study", currentStudy);
         CRFVersionBean crfVersion = crfVersionDao.findByOid(request.getParameter("id"));
@@ -63,7 +63,8 @@ private static final long serialVersionUID = 1L;
             request.setAttribute("crfId", String.valueOf(crfVersion.getCrfId()));
             super.processRequest(request, response);
         } else {
-            forwardPage(Page.LOGIN, request, response);
+            response.sendRedirect(request.getContextPath() + "/app/login");
+            return;
         }
     }
 }
