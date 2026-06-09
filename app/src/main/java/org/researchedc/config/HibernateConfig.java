@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import org.hibernate.SessionFactory;
 import org.researchedc.dao.QueryStore;
 import org.researchedc.dao.hibernate.*;
+import org.researchedc.dao.spi.ConfigurationDao;
 import org.researchedc.dao.spi.IRuleSetRuleAuditDAO;
 import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.researchedc.dao.spi.RuleSetAuditDomainDao;
@@ -93,10 +94,8 @@ public class HibernateConfig {
     //  CRF / Item DAOs
     // ──────────────────────────────────────────────────────────────────────
 
-    @Bean
-    public ItemGroupMetadataDao itemGroupMetadataDao() {
-        return new ItemGroupMetadataDao();
-    }
+    // ItemGroupMetadataDao @Bean removed - no consumers inject concrete type;
+    // IItemGroupMetadataDAO consumers go through @Primary ItemGroupMetadataDaoAdapter
 
     // SCDItemMetadataDao replaced by @Primary SCDItemMetadataDaoAdapter
 
@@ -118,10 +117,7 @@ public class HibernateConfig {
     //  Audit / DN DAOs
     // ──────────────────────────────────────────────────────────────────────
 
-    @Bean
-    public AuditUserLoginDao auditUserLoginDao() {
-        return new AuditUserLoginDao();
-    }
+    // AuditUserLoginDao replaced by @Primary AuditUserLoginDaoAdapter
 
     // ──────────────────────────────────────────────────────────────────────
     //  Dynamics / Flag DAOs
@@ -135,25 +131,16 @@ public class HibernateConfig {
     //  Misc / Config / Tag DAOs
     // ──────────────────────────────────────────────────────────────────────
 
-    @Bean
-    public ConfigurationDao configurationDao() {
-        return new ConfigurationDao();
-    }
+    // ConfigurationDao replaced by @Primary ConfigurationDaoAdapter
 
     @Bean
-    public PasswordRequirements passwordRequirements(ConfigurationDao configurationDao) {
+    public PasswordRequirements passwordRequirements(org.researchedc.dao.spi.ConfigurationDao configurationDao) {
         return new PasswordRequirementsDao(configurationDao);
     }
 
-    @Bean
-    public TagDao tagDao() {
-        return new TagDao();
-    }
+    // TagDao deleted - no consumers; EventDefinitionCrfTagDaoAdapter serves tagging
 
-    @Bean
-    public IdtViewDao idtViewDao() {
-        return new IdtViewDao();
-    }
+    // IdtViewDao @Bean removed - zero consumers; impl + SPI deleted
 
     @Bean
     public UsageStatsServiceDao usageStatsServiceDAO() {
