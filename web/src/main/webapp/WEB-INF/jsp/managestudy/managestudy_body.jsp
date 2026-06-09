@@ -46,8 +46,7 @@
     <ul>
         <li><a href="ListStudySubjects">Subjects</a></li>
         <li><a href="ListSubjectGroupClass">Groups</a></li>
-        <li><a href="ViewStudyEvents?module=manage">Events</a></li>
-        <li><a href="ListDiscNotesSubjectServlet?module=manage">Notes & Discrepancies</a></li>
+        <!-- ViewStudyEvents link removed — servlet + JSPs deleted in Phase 1 -->        <li><a href="ListDiscNotesSubjectServlet?module=manage">Notes & Discrepancies</a></li>
         <li><a href="ViewRuleAssignment">Rules</a></li>
         <li><a href="ListStudyUser">Users</a></li>
         <li><a href="ListSite">Sites</a></li>

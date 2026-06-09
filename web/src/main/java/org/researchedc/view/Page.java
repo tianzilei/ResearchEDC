@@ -222,9 +222,7 @@ public enum Page {
     UPDATE_STUDY_EVENT ("/WEB-INF/jsp/managestudy/updateStudyEvent.jsp", "Upate Study Event"),
     UPDATE_STUDY_EVENT_SERVLET ("/UpdateStudyEvent", "Upate Study Event"),
     UPDATE_STUDY_EVENT_SIGNED ("/WEB-INF/jsp/managestudy/updateStudyEventSigned.jsp", "Upate Study Event"),
-    VIEW_STUDY_EVENTS ("/WEB-INF/jsp/managestudy/viewStudyEvents.jsp", "View Study Events"),
-
-    VIEW_STUDY_EVENTS_PRINT ("/WEB-INF/jsp/managestudy/viewStudyEventsPrint.jsp", "View Study Events"),
+    // VIEW_STUDY_EVENTS, VIEW_STUDY_EVENTS_PRINT removed — ViewStudyEventsServlet + JSPs deleted in Phase 1
 
     // DELETE_CRF_VERSION removed — phase-1-group-b
 
