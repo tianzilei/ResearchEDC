@@ -1,6 +1,6 @@
 # Legacy Workflow Inventory
 
-Generated: 2026-06-09 19:44:57 UTC
+Generated: 2026-06-09 19:57:44 UTC
 
 Full CSV inventory: `legacy-workflow-inventory.csv`
 
