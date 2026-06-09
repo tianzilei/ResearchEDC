@@ -948,12 +948,13 @@ public class ListEventsForSubjectTableFactory extends AbstractTableFactory {
 
         if (eventSysStatus.getId() == Status.AVAILABLE.getId() || eventSysStatus == Status.SIGNED) {
 
-            if (eventStatus == SubjectEventStatus.NOT_SCHEDULED && currentRole.getRole() != Role.MONITOR && !studyBean.getStatus().isFrozen()) {
-                eventDiv.tr(0).valign("top").close();
-                eventDiv.td(0).styleClass("table_cell_left").close();
-                createNewStudyEventLinkBuilder(eventDiv, studySubject.getId(), sed, schedule);
-                eventDiv.tdEnd().trEnd(0);
-            }
+            // phase-1-run-48: createNewStudyEventLinkBuilder commented out — SPA SubjectDetail now handles event creation
+            // if (eventStatus == SubjectEventStatus.NOT_SCHEDULED && currentRole.getRole() != Role.MONITOR && !studyBean.getStatus().isFrozen()) {
+            //     eventDiv.tr(0).valign("top").close();
+            //     eventDiv.td(0).styleClass("table_cell_left").close();
+            //     createNewStudyEventLinkBuilder(eventDiv, studySubject.getId(), sed, schedule);
+            //     eventDiv.tdEnd().trEnd(0);
+            // }
 
             else if (eventStatus == SubjectEventStatus.COMPLETED) {
                 eventDiv.tr(0).valign("top").close();
@@ -1039,15 +1040,15 @@ public class ListEventsForSubjectTableFactory extends AbstractTableFactory {
 
     }
 
-    private void createNewStudyEventLinkBuilder(HtmlBuilder builder, Integer studySubjectId, StudyEventDefinitionBean sed, String schedule) {
-        String href1 = "CreateNewStudyEvent?studySubjectId=" + studySubjectId + "&studyEventDefinition=" + sed.getId();
-        builder.a().href(href1);
-        builder.close();
-        builder.img().src("images/bt_Schedule.gif").border("0").align("left").close().aEnd();
-        builder.nbsp().nbsp().a().href(href1);
-        builder.close().append(schedule).aEnd();
-
-    }
+    // phase-1-run-48: createNewStudyEventLinkBuilder commented out — SPA SubjectDetail now handles event creation
+    // private void createNewStudyEventLinkBuilder(HtmlBuilder builder, Integer studySubjectId, StudyEventDefinitionBean sed, String schedule) {
+    //     String href1 = "CreateNewStudyEvent?studySubjectId=" + studySubjectId + "&studyEventDefinition=" + sed.getId();
+    //     builder.a().href(href1);
+    //     builder.close();
+    //     builder.img().src("images/bt_Schedule.gif").border("0").align("left").close().aEnd();
+    //     builder.nbsp().nbsp().a().href(href1);
+    //     builder.close().append(schedule).aEnd();
+    // }
 
     private void enterDataForStudyEventLinkBuilder(HtmlBuilder builder, String studyEventId, String view) {
         String href1 = "EnterDataForStudyEvent?eventId=" + studyEventId;
