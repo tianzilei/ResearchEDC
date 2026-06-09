@@ -119,28 +119,8 @@ public class HibernateConfig {
     // ──────────────────────────────────────────────────────────────────────
 
     @Bean
-    public AuditLogEventDao auditLogEventDaoDomain() {
-        return new AuditLogEventDao();
-    }
-
-    @Bean
     public AuditUserLoginDao auditUserLoginDao() {
         return new AuditUserLoginDao();
-    }
-
-    @Bean
-    public ResolutionStatusDao resolutionStatusDao() {
-        return new ResolutionStatusDao();
-    }
-
-    @Bean
-    public DnItemDataMapDao dnItemDataMapDao() {
-        return new DnItemDataMapDao();
-    }
-
-    @Bean
-    public CompletionStatusDao completionStatusDao() {
-        return new CompletionStatusDao();
     }
 
     // ──────────────────────────────────────────────────────────────────────
