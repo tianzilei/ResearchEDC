@@ -29,27 +29,27 @@ public enum Page {
     /**
      * Page for creating a user account.
      */
-    CREATE_ACCOUNT("/WEB-INF/jsp/admin/createuseraccount.jsp", "Create an account"),
+    // CREATE_ACCOUNT removed — JSP deleted in phase-1-login-profile
 
     /**
      * Page for editing a user account, and confirmation page.
      */
-    EDIT_ACCOUNT("/WEB-INF/jsp/admin/edituseraccount.jsp", "Edit an account"),
-     EDIT_ACCOUNT_CONFIRM ("/WEB-INF/jsp/admin/edituseraccountconfirm.jsp", "Edit an account"),
+    // EDIT_ACCOUNT removed — JSP deleted in phase-1-login-profile
+    // EDIT_ACCOUNT_CONFIRM removed — JSP deleted in phase-1-login-profile
 
     /**
      * Page for viewing all user accounts (for admin)
      */
-    LIST_USER_ACCOUNTS ("/WEB-INF/jsp/admin/listuseraccounts.jsp", "List user accounts"),
-    LIST_USER_ACCOUNTS_SERVLET ("/ListUserAccounts", "List user accounts"),
+    // LIST_USER_ACCOUNTS removed — JSP deleted in phase-1-login-profile
+    // LIST_USER_ACCOUNTS_SERVLET removed — JSP deleted in phase-1-login-profile
 
     /**
      * Page for viewing a single user account (for admin)
      */
-     VIEW_USER_ACCOUNT("/WEB-INF/jsp/admin/viewuseraccount.jsp", "View user account"),
- VIEW_USER_ACCOUNT_SERVLET ("/ViewUserAccount", "View user account servlet"),
+     // VIEW_USER_ACCOUNT removed — JSP deleted in phase-1-login-profile
+ // VIEW_USER_ACCOUNT_SERVLET removed — JSP deleted in phase-1-login-profile
 
-   CONFIGURATION_PASSWORD_REQUIREMENTS("/WEB-INF/jsp/admin/configurationPasswordRequirements.jsp", "Configuration"),
+// CONFIGURATION_PASSWORD_REQUIREMENTS removed — JSP deleted in phase-1-login-profile
 
 
     /**
@@ -210,7 +210,7 @@ public enum Page {
 
     UPDATE_SUBJECT ("/WEB-INF/jsp/" + "admin/updateSubject.jsp", "update a subject"),
     UPDATE_SUBJECT_SERVLET ("/UpdateSubject", "update a subject"),
-    SET_USER_ROLE ("/WEB-INF/jsp/" + "admin/setUserRole.jsp", "set a study user role for a user"),
+    // SET_USER_ROLE removed — JSP deleted in phase-1-login-profile
     /**
      * Page for listing subjects.
      */

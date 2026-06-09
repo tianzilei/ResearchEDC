@@ -72,7 +72,7 @@ public class ConfigureServlet extends SecureController {
                 getConfigurationDao().saveOrUpdate(userLockSwitch);
                 getConfigurationDao().saveOrUpdate(userLockAllowedFailedConsecutiveLoginAttempts);
                 addPageMessage(respage.getString("lockout_changes_have_been_saved"));
-                forwardPage(Page.LIST_USER_ACCOUNTS_SERVLET);
+                forwardPage(Page.ADMIN_SYSTEM); // was LIST_USER_ACCOUNTS_SERVLET — removed in phase-1-login-profile
             }
         }
 

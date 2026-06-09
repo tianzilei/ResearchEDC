@@ -8,7 +8,6 @@
 package org.researchedc.web.domain;
 
 import org.researchedc.domain.MutableDomainObject;
-import org.researchedc.web.bean.UserAccountRow;
 
 import java.util.ArrayList;
 import java.util.Date;

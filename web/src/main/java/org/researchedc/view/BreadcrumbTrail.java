@@ -194,11 +194,7 @@ public class BreadcrumbTrail {
 
             // CRF_LIST branch removed — JSP deleted in Phase 1
 
-            else if (jspPage.equals(Page.LIST_USER_ACCOUNTS)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "AdminSystem", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("administer_users"), "ListUserAccounts", Status.PENDING));
-            }
+            // LIST_USER_ACCOUNTS branch removed — JSPs deleted in phase-1-login-profile
 
             // CRF_VERSION, VIEW_CRF, REMOVE_CRF, RESTORE_CRF, REMOVE_CRF_VERSION,
             // RESTORE_CRF_VERSION, UPDATE_CRF branches removed — JSPs deleted in Phase 1
@@ -213,32 +209,11 @@ public class BreadcrumbTrail {
                 trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "AdminSystem", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("administer_subjects"), "ListSubject", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("update_subject"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.VIEW_USER_ACCOUNT)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "AdminSystem", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("administer_users"), "ListUserAccounts", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("view_user_account"), "ViewUserAccount" + generateURLString(request), Status.PENDING));
             }
-
-            else if (jspPage.equals(Page.EDIT_ACCOUNT)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("administer_system"), "AdminSystem", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("administer_users"), "ListUserAccounts", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("edit_user_account"), "EditUserAccount" + generateURLString(request), Status.PENDING));
-                trail.add(new BreadcrumbBean(resworkflow.getString("confirm_user_account_details"), "EditUserAccount", Status.UNAVAILABLE));
-            }
-
-            else if (jspPage.equals(Page.EDIT_ACCOUNT_CONFIRM)) {
-                trail =
-                    advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("confirm_user_account_details"), "EditUserAccount"
-                        + generateURLString(request), Status.PENDING), 3);
-            }
-
-            else if (jspPage.equals(Page.CREATE_ACCOUNT)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("administer_users"), "ListUserAccounts", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("create_user_account"), "CreateUserAccount", Status.PENDING));
-            }
+            // VIEW_USER_ACCOUNT branch removed — JSPs deleted in phase-1-login-profile
+            // EDIT_ACCOUNT branch removed — JSPs deleted in phase-1-login-profile
+            // EDIT_ACCOUNT_CONFIRM branch removed — JSPs deleted in phase-1-login-profile
+            // CREATE_ACCOUNT branch removed — JSPs deleted in phase-1-login-profile
 
             // REASSIGN_STUDY_SUBJECT, DEFINE_STUDY_EVENT1, UPDATE_EVENT_DEFINITION1,
             // VIEW_EVENT_DEFINITION, CREATE_SUB_STUDY, VIEW_SITE branches removed — JSPs deleted in Phase 1
@@ -250,16 +225,11 @@ public class BreadcrumbTrail {
 
             // VIEW_STUDY, REMOVE_STUDY, RESTORE_STUDY, UPDATE_SUBJECT, REMOVE_SUBJECT, RESTORE_SUBJECT branches removed — JSPs deleted in Phase 1
 
-            else if (jspPage.equals(Page.SET_USER_ROLE)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "AdminSystem", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("administer_users"), "ListUserAccounts", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("set_user_role"), "#", Status.PENDING));
-            }
+            // SET_USER_ROLE branch removed — JSPs deleted in phase-1-login-profile
 
             // REMOVE_SITE, RESTORE_SITE branches removed — JSPs deleted in Phase 1
 
-            else if (jspPage.equals(Page.MENU)) {
+            if (jspPage.equals(Page.MENU)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("home"), "MainMenu", Status.PENDING));
 
