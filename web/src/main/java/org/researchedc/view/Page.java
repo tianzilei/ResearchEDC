@@ -49,7 +49,6 @@ public enum Page {
      VIEW_USER_ACCOUNT("/WEB-INF/jsp/admin/viewuseraccount.jsp", "View user account"),
  VIEW_USER_ACCOUNT_SERVLET ("/ViewUserAccount", "View user account servlet"),
 
-    CONFIGURATION ("/WEB-INF/jsp/admin/configuration.jsp", "Configuration"),
    CONFIGURATION_PASSWORD_REQUIREMENTS("/WEB-INF/jsp/admin/configurationPasswordRequirements.jsp", "Configuration"),
 
 
