@@ -89,9 +89,7 @@ public enum Page {
     UPDATE_EVENT_DEFINITION2 ("/WEB-INF/jsp/managestudy/updateEventDefinition2.jsp", "Update Event Definition"),
 
 
-    VIEW_EVENT_DEFINITION_READONLY ("/WEB-INF/jsp/managestudy/viewEventDefinitionReadOnly.jsp", "View Event Definition"),
-    VIEW_EVENT_DEFINITION_NOSIDEBAR ("/WEB-INF/jsp/managestudy/viewEventDefinitionNoSidebar.jsp", "View Event Definition"),
-    VIEW_EVENT_DEFINITION_SERVLET ("/ViewEventDefinition", "View Event Definition Servlet"),
+    // VIEW_EVENT_DEFINITION_READONLY, VIEW_EVENT_DEFINITION_NOSIDEBAR, VIEW_EVENT_DEFINITION_SERVLET removed — servlets deleted in Phase 1 Groups F+G
 
     /**
      * Page for listing seds
