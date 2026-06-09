@@ -99,7 +99,6 @@ public class TriggerService {
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put(DATASET_ID, datasetId);
         jobDataMap.put(PERIOD, period);
-        jobDataMap.put("contactEmail", "");
         jobDataMap.put(TAB, tab);
         jobDataMap.put(CDISC, cdisc);
         jobDataMap.put(CDISC12, cdisc12);
@@ -158,7 +157,6 @@ public class TriggerService {
         // set job data map
         JobDataMap jobDataMap = new JobDataMap();
 
-        jobDataMap.put("contactEmail", "");
         jobDataMap.put(USER_ID, userAccount.getId());
         jobDataMap.put(STUDY_NAME, study.getName());
         jobDataMap.put(STUDY_OID, study.getOid());
@@ -176,7 +174,6 @@ public class TriggerService {
         v.addValidation(JOB_NAME, Validator.NO_BLANKS);
         // need to be unique too
         v.addValidation(JOB_DESC, Validator.NO_BLANKS);
-        v.addValidation("contactEmail", Validator.IS_A_EMAIL);
         v.addValidation(PERIOD, Validator.NO_BLANKS);
         v.addValidation(DATE_START_JOB + "Date", Validator.IS_A_DATE);
         // v.addValidation(DATE_START_JOB + "Date", new Date(), Validator.DATE_IS_AFTER_OR_EQUAL);
@@ -355,9 +352,6 @@ public class TriggerService {
         v.addValidation(JOB_NAME, Validator.NO_LEADING_OR_TRAILING_SPACES);
         // need to be unique too
         v.addValidation(JOB_DESC, Validator.NO_BLANKS);
-        if (!"".equals(fp.getString("contactEmail"))) {
-            v.addValidation("contactEmail", Validator.IS_A_EMAIL);
-        }
         // << tbh we are now allowing email to be optional
         // v.addValidation(PERIOD, Validator.NO_BLANKS);
         // v.addValidation(DIRECTORY, Validator.NO_BLANKS);
