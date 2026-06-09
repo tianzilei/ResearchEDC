@@ -78,7 +78,7 @@ private static final String INPUT_NOTE_ID = "noteId";
 
         if ("subject".equalsIgnoreCase(entityType)) {
             if (ub.isSysAdmin() || ub.isTechAdmin()) {
-                return Page.UPDATE_SUBJECT_SERVLET;
+                return Page.VIEW_STUDY_SUBJECT_SERVLET; // was UPDATE_SUBJECT_SERVLET — phase-1-group-c
             } else {
                 return Page.VIEW_STUDY_SUBJECT_SERVLET;
             }
