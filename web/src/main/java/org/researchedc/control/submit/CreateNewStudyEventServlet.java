@@ -15,7 +15,6 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.control.SpringServletAccess;
 import org.researchedc.control.core.SecureController;
 import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormDiscrepancyNotes;
@@ -733,23 +732,4 @@ public class CreateNewStudyEventServlet extends SecureController {
     private String getInputEndHalf() {
         return fp.getString(INPUT_ENDDATE_PREFIX + "Half");
     }
-    // YW >>
-    private List<RuleSetBean> createRuleSet(StudySubjectBean ssub,
-			StudyEventDefinitionBean sed) {
-    	
-    	return getRuleSetDao().findAllByStudyEventDef(sed);
-    	
-    	
-	}
-    private RuleSetService getRuleSetService() {
-        return (RuleSetService) SpringServletAccess.getApplicationContext(context).getBean("ruleSetService");
-    }
-
-    
-    private RuleSetDomainDao getRuleSetDao() {
-       return SpringServletAccess.getApplicationContext(context).getBean(RuleSetDomainDao.class);
-        
-    }
-
-
 }
