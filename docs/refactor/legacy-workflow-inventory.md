@@ -1,6 +1,6 @@
 # Legacy Workflow Inventory
 
-Generated: 2026-06-09 19:34:15 UTC
+Generated: 2026-06-09 19:38:57 UTC
 
 Full CSV inventory: `legacy-workflow-inventory.csv`
 
@@ -11,7 +11,7 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 | `dao-implementation` | 48 |
 | `dao-spi` | 55 |
 | `dao-support` | 6 |
-| `jsp-view` | 101 |
+| `jsp-view` | 100 |
 | `legacy-servlet` | 53 |
 | `scheduled-job` | 2 |
 | `shared-service` | 42 |
@@ -23,13 +23,13 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 |---|---:|
 | `keep compatibility` | 76 |
 | `replace` | 226 |
-| `unknown` | 22 |
+| `unknown` | 21 |
 
 ## Summary By Phase Slice
 
 | Phase slice | Count |
 |---|---:|
-| `phase-0-inventory-and-gates` | 20 |
+| `phase-0-inventory-and-gates` | 19 |
 | `phase-1-admin-write` | 4 |
 | `phase-1-crf-metadata` | 27 |
 | `phase-1-data-entry-discrepancy` | 36 |
@@ -66,7 +66,6 @@ These require manual owner/category assignment before deletion work:
 
 | Type | Path | Symbol | Route/mapping |
 |---|---|---|---|
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/admin/configuration.jsp | configuration.jsp | /WEB-INF/jsp/admin/configuration.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/include/alertbox.jsp | alertbox.jsp | /WEB-INF/jsp/include/alertbox.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/include/showDateTimeInput.jsp | showDateTimeInput.jsp | /WEB-INF/jsp/include/showDateTimeInput.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/include/showHiddenInput.jsp | showHiddenInput.jsp | /WEB-INF/jsp/include/showHiddenInput.jsp |
