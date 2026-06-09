@@ -295,7 +295,6 @@ public enum Page {
      * Page for creating crf data imports
      */
     IMPORT_CRF_DATA ("/WEB-INF/jsp/submit/import.jsp", "Import CRF Data"),
-    VERIFY_IMPORT_SERVLET ("/VerifyImportedCRFData", "Verify Imported CRF Data Servlet"),
 
     /**
      * Page for creating crf version.
@@ -392,8 +391,6 @@ public enum Page {
     TECH_ADMIN_SYSTEM ("/WEB-INF/jsp/" + "techadmin/index.jsp", "Technical Administrator Menu"),
     ADMIN_SYSTEM_SERVLET ("/AdminSystem", "Administer System Servlet"),
     MANAGE_STUDY_SERVLET ("/ManageStudy", "Manage Study Servlet"),
-
-    SUBMIT_DATA ("/WEB-INF/jsp/" + "submit/index.jsp", "Submit Data Menu"),
 
     CREATE_NEW_STUDY_EVENT ("/WEB-INF/jsp/" + "submit/createNewStudyEvent.jsp", "Create a New Study Event"),
     CREATE_NEW_STUDY_EVENT_SERVLET ("/CreateNewStudyEvent", "Create a New Study Event"),
