@@ -21,11 +21,7 @@ public interface RuleSetDomainDao {
             StudyBean currentStudy, StudyEventDefinitionBean sed);
     ArrayList<RuleSetBean> findAllByStudy(StudyBean currentStudy);
     ArrayList<RuleSetBean> findByCrf(CRFBean crfBean, StudyBean currentStudy);
-    RuleSetBean findByExpression(RuleSetBean ruleSet);
     RuleSetBean findByExpressionAndStudy(RuleSetBean ruleSet, Integer studyId);
     Long getCountByStudy(StudyBean currentStudy);
-    ArrayList<RuleSetBean> findAllByStudyEventDef(StudyEventDefinitionBean sed);
     ArrayList<RuleSetBean> findAllEventActions(StudyBean currentStudy);
-    ArrayList<RuleSetBean> findAllRunOnSchedules(Boolean schedule);
-    ArrayList<RuleSetBean> findAllByStudyEventDefIdWhereItemIsNull(Integer studyEventDefId);
 }
