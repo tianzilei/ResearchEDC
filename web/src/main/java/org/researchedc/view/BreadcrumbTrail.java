@@ -79,20 +79,9 @@ public class BreadcrumbTrail {
             // ArrayList newTrail = new ArrayList();
 
             // VIEW_STUDY_SUBJECT branch removed — JSP deleted in Phase 1 slice
+            // UPDATE_STUDY_EVENT branch removed — UpdateStudyEventServlet + JSP deleted in Phase 1
 
-            if (jspPage.equals(Page.UPDATE_STUDY_EVENT)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_subjects"), "ListStudySubject", Status.AVAILABLE));
-                if (request.getAttribute("id") != null) {
-                    trail.add(new BreadcrumbBean(resworkflow.getString("view_study_subject"), "ViewStudySubject?module=manage&id="
-                        + (String) request.getAttribute("id"), Status.AVAILABLE));
-                } else {
-                    trail.add(new BreadcrumbBean(resworkflow.getString("view_study_subject"), "ViewStudySubject" + this.generateURLString(request),
-                            Status.AVAILABLE));
-                }
-                trail.add(new BreadcrumbBean(resworkflow.getString("update_study_event"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.INSTRUCTIONS_ENROLL_SUBJECT)) {
+            if (jspPage.equals(Page.INSTRUCTIONS_ENROLL_SUBJECT)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("submit_data"), "ListStudySubjectsSubmit", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("enroll_subject_instructions"), "AddNewSubject?instr=1", Status.PENDING));
