@@ -38,11 +38,6 @@ public enum Page {
     CREATE_ACCOUNT("/WEB-INF/jsp/admin/createuseraccount.jsp", "Create an account"),
 
     /**
-     * Page for creating a user account.
-     */
-    TEST_OBJECT("/WEB-INF/jsp/admin/createtestObject.jsp", "Create an account"),
-
-    /**
      * Page for editing a user account, and confirmation page.
      */
     EDIT_ACCOUNT("/WEB-INF/jsp/admin/edituseraccount.jsp", "Edit an account"),
@@ -77,12 +72,6 @@ public enum Page {
     UPDATE_SUB_STUDY("/WEB-INF/jsp/managestudy/updateSubStudy.jsp", "Update a sub Study"),
 
     VIEW_STUDY("/WEB-INF/jsp/admin/viewStudy.jsp", "View study"),
-    VIEW_FULL_STUDY("/WEB-INF/jsp/admin/viewFullStudy.jsp", "View full study"),
-
-    /**
-     * Page for confirming an existing study.
-     */
-    STUDY_UPDATE_CONFIRM ("/WEB-INF/jsp/managestudy/studyUpdateConfirm.jsp", "Confirm a Study"),
 
     /**
      * Page for editing a study user role.
@@ -116,21 +105,10 @@ public enum Page {
 
 
     /**
-     * Page for defining a study event.
-     */
-    DEFINE_STUDY_EVENT1 ("/WEB-INF/jsp/managestudy/defineStudyEvent1.jsp", "Define Study Event"),
-    DEFINE_STUDY_EVENT2 ("/WEB-INF/jsp/managestudy/defineStudyEvent2.jsp", "Define Study Event"),
-    DEFINE_STUDY_EVENT3 ("/WEB-INF/jsp/managestudy/defineStudyEvent3.jsp", "Define Study Event"),
-    DEFINE_STUDY_EVENT4 ("/WEB-INF/jsp/managestudy/defineStudyEvent4.jsp", "Define Study Event"),
-    DEFINE_STUDY_EVENT_CONFIRM("/WEB-INF/jsp/managestudy/defineStudyEventConfirm.jsp", "Define Study Event Confirm"),
-
-    /**
      * Page for updating a study event definition.
      */
    UPDATE_EVENT_DEFINITION1 ("/WEB-INF/jsp/managestudy/updateEventDefinition1.jsp", "Update Event Definition"),
     UPDATE_EVENT_DEFINITION2 ("/WEB-INF/jsp/managestudy/updateEventDefinition2.jsp", "Update Event Definition"),
-    UPDATE_EVENT_DEFINITION_CONFIRM ("/WEB-INF/jsp/managestudy/updateEventDefinitionConfirm.jsp",
-            "Update Event Definition Confirm"),
 
     /**
      * Page for viewing definition
@@ -140,23 +118,6 @@ public enum Page {
     VIEW_EVENT_DEFINITION_NOSIDEBAR ("/WEB-INF/jsp/managestudy/viewEventDefinitionNoSidebar.jsp", "View Event Definition"),
     VIEW_EVENT_DEFINITION_SERVLET ("/ViewEventDefinition", "View Event Definition Servlet"),
 
-    /**
-     * Page for removing definition
-     */
-    REMOVE_DEFINITION("/WEB-INF/jsp/managestudy/removeDefinition.jsp", "Remove Event Definition"),
-    /**
-     * Page for removing definition
-     */
-    RESTORE_DEFINITION("/WEB-INF/jsp/managestudy/restoreDefinition.jsp", "Restore Event Definition"),
-
-    /**
-     * Page for locking definition
-     */
-    LOCK_DEFINITION ("/WEB-INF/jsp/managestudy/lockDefinition.jsp", "Lock Event Definition"),
-    /**
-     * Page for unlocking definition
-     */
-    UNLOCK_DEFINITION ("/WEB-INF/jsp/managestudy/unlockDefinition.jsp", "Unlock Event Definition"),
     /**
      * Page for listing seds
      */
@@ -179,29 +140,10 @@ public enum Page {
     VIEW_CRF ("/WEB-INF/jsp/admin/viewCRF.jsp", "View a CRF"),
 
     /**
-     * Page for creating crf.
-     */
-    BATCH_CRF_MIGRATION ("/WEB-INF/jsp/admin/batchCRFMigration.jsp", "batch CRF Migration"),
-
-    /**
-     * Page for creating crf.
-     */
-     CREATE_CRF ("/WEB-INF/jsp/admin/createCRF.jsp", "Create a new CRF"),
-
-    /**
      * Page for updating crf.
      */
     UPDATE_CRF ("/WEB-INF/jsp/admin/updateCRF.jsp", "Update a CRF"),
-    UPDATE_CRF_CONFIRM ("/WEB-INF/jsp/admin/updateCRFConfirm.jsp", "Update a CRF Confirm"),
 
-    /**
-     * Page for creating crf confirm.
-     */
-    CREATE_CRF_CONFIRM ("/WEB-INF/jsp/admin/createCRFConfirm.jsp", "Create a new CRF Confirm"),
-
-    /**
-     * Page for creating crf version.
-     */
     CREATE_CRF_VERSION ("/WEB-INF/jsp/admin/createCRFVersion.jsp", "Create a new CRF Version"),
     UPLOAD_CRF_VERSION ("/WEB-INF/jsp/admin/uploadCRFVersionFile.jsp", "Upload a new CRF Version"),
 
@@ -239,7 +181,6 @@ public enum Page {
      * Page for view all datasets, tbh
      */
     VIEW_DATASETS ("/WEB-INF/jsp/extract/viewDatasets.jsp", "View Datasets"),
-    VIEW_EMPTY_DATASETS ("/WEB-INF/jsp/extract/viewEmptyDatasets.jsp", "View Datasets"),
     VIEW_DATASET_DETAILS ("/WEB-INF/jsp/extract/viewDatasetDetails.jsp", "View Dataset Details"),
 
     EXPORT_DATASETS ("/WEB-INF/jsp/extract/exportDatasets.jsp", "Export Dataset"),
@@ -260,16 +201,10 @@ public enum Page {
     // CREATE_DATASET_DISC_ATTR = new
     // Page("/WEB-INF/jsp/extract/selectDiscrepancyAttributes.jsp","Create
     // Dataset and select discrepancy Attribute"),
-    CREATE_DATASET_SELECT_ITEMS ("/WEB-INF/jsp/extract/selectItems.jsp", "Create Dataset and select Items"),
-
-   // CREATE_DATASET_APPLY_FILTER_SERVLET ("CreateDatasetApplyFilter", "Create Dataset Apply Filter"),
     CREATE_DATASET_APPLY_FILTER ("/WEB-INF/jsp/extract/createDatasetApplyFilter.jsp", "Create Dataset Apply Filter"),
 
     CREATE_DATASET_VIEW_SELECTED ("/WEB-INF/jsp/extract/viewSelected.jsp", "View Selected Items"),
     CREATE_DATASET_VIEW_SELECTED_HTML ("/WEB-INF/jsp/extract/viewSelectedHtml.jsp", "View Selected Items in a static way"),
-    REMOVE_DATASET ("/WEB-INF/jsp/extract/removeDataset.jsp", "Remove Dataset"),
-    RESTORE_DATASET ("/WEB-INF/jsp/extract/restoreDataset.jsp", "Restore Dataset"),
-
     ITEM_DETAIL ("/WEB-INF/jsp/extract/itemDetail.jsp", "Remove Dataset"),
     /**
      * Pages for create and show all filters, tbh
@@ -283,12 +218,9 @@ public enum Page {
     CREATE_FILTER_SCREEN_3_2 ("/WEB-INF/jsp/extract/createFilterScreen3_2.jsp", "Create Filter Screen Three Point Two"),
     CREATE_FILTER_SCREEN_4 ("/WEB-INF/jsp/extract/createFilterScreen4.jsp", "Create Filter Screen Four"),
     CREATE_FILTER_SCREEN_5 ("/WEB-INF/jsp/extract/createFilterScreen5.jsp", "Create Filter Screen Five"),
-    CREATE_FILTER_CONFIRM ("/WEB-INF/jsp/extract/createFilterConfirm.jsp", "Create Filter Confirm"),
     VIEW_FILTER_DETAILS ("/WEB-INF/jsp/extract/viewFilterDetails.jsp", "View Filter Details"),
     EDIT_FILTER ("/WEB-INF/jsp/extract/editFilter.jsp", "Edit Filter"),
     EDIT_DATASET ("/WEB-INF/jsp/extract/editDataset.jsp", "Edit Dataset"),
-    VALIDATE_EDIT_FILTER ("/WEB-INF/jsp/extract/validateEditFilter.jsp", "Validate Edited Filter"),
-    REMOVE_FILTER ("/WEB-INF/jsp/extract/removeFilter.jsp", "Remove Filter"),
     /**
      * Page to show errors
      */
@@ -377,11 +309,7 @@ public enum Page {
     VIEW_SECTION_DATA_ENTRY_PRINT ("/WEB-INF/jsp/managestudy/viewSectionDataEntryHtml.jsp", "View Section Data Entry Html"),
 
     VIEW_SECTION_DATA_ENTRY_SERVLET ("/ViewSectionDataEntry", "View Section Data Entry Servlet"),
-
-    VIEW_TABLE_OF_CONTENT ("/WEB-INF/jsp/managestudy/viewTableOfContents.jsp", "View Table Of Contents"),
-
     EXPORT_DATA_CUSTOM ("", "Dataset Export"),
-    VIEW_EVENT_CRF_CONTENT ("/WEB-INF/jsp/managestudy/viewEventCRFContent.jsp", "View Event CRF Content"),
     UPDATE_STUDY_EVENT ("/WEB-INF/jsp/managestudy/updateStudyEvent.jsp", "Upate Study Event"),
     UPDATE_STUDY_EVENT_SERVLET ("/UpdateStudyEvent", "Upate Study Event"),
     UPDATE_STUDY_EVENT_SIGNED ("/WEB-INF/jsp/managestudy/updateStudyEventSigned.jsp", "Upate Study Event"),
@@ -400,10 +328,6 @@ public enum Page {
 
     LIST_EVENTS_FOR_SUBJECT ("/WEB-INF/jsp/submit/listEventsForSubject.jsp", "List Events For Subject"),
     INITIAL_DATA_ENTRY_NW ("/WEB-INF/jsp/submit/initialDataEntryNw.jsp", "Data Entry"),
-    VIEW_SECTION_DATA_ENTRY_PRINT_GROUPS ("/WEB-INF/jsp/managestudy/viewGroupSectionsPrint.jsp",
-            "Print View for Group Tables"),
-    LIST_SUBJECT_DISC_NOTE ("/WEB-INF/jsp/managestudy/listSubjectDiscNote.jsp", "List Disc Notes By Subject"),
-    LIST_DNOTES_FOR_CRF ("/WEB-INF/jsp/submit/listDNotesForCRF.jsp", "List Disc Notes By Subject and CRF"),
     CHOOSE_DOWNLOAD_FORMAT ("/WEB-INF/jsp/submit/chooseDownloadFormat.jsp", "Choose download format"),
 
     FILE_UPLOAD ("/WEB-INF/jsp/submit/uploadFile.jsp", "Form For File Uploading"),

@@ -300,13 +300,7 @@ public class BreadcrumbTrail {
                 trail.add(new BreadcrumbBean(resworkflow.getString("administer_users"), "ListUserAccounts", Status.PENDING));
             }
 
-            // STUDY_LIST branch removed — JSP deleted in Phase 1 slice
-
-            else if (jspPage.equals(Page.CREATE_CRF)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_CRFs"), "ListCRF", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("create_a_new_CRF"), "CreateCRF", Status.PENDING));
-            }
+            // CREATE_CRF branch removed — JSP deleted in Phase 1 slice
 
             else if (jspPage.equals(Page.CREATE_CRF_VERSION)) {
                 trail = new ArrayList();
