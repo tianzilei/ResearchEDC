@@ -167,12 +167,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>MainMenuServlet</servlet-name>
-        <display-name>MainMenuServlet</display-name>
-        <description>The Main Servlet</description>
-        <servlet-class>org.researchedc.control.MainMenuServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ViewUserAccountServlet</servlet-name>
         <display-name>ViewUserAccount</display-name>
         <servlet-class>org.researchedc.control.admin.ViewUserAccountServlet</servlet-class>
@@ -208,11 +202,6 @@
         <servlet-class>org.researchedc.control.admin.DeleteUserServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>UnLockUserServlet</servlet-name>
-        <display-name>UnLockUser</display-name>
-        <servlet-class>org.researchedc.control.admin.UnLockUserServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>InitUpdateStudyServlet</servlet-name>
         <display-name>InitUpdateStudy</display-name>
         <servlet-class>org.researchedc.control.managestudy.InitUpdateStudyServlet</servlet-class>
@@ -241,16 +230,6 @@
         <servlet-name>RestoreCRFFromDefinitionServlet</servlet-name>
         <display-name>RestoreCRFFromDefinition</display-name>
         <servlet-class>org.researchedc.control.managestudy.RestoreCRFFromDefinitionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AddCRFToDefinitionServlet</servlet-name>
-        <display-name>AddCRFToDefinition</display-name>
-        <servlet-class>org.researchedc.control.managestudy.AddCRFToDefinitionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AdminSystemServlet</servlet-name>
-        <display-name>AdminSystem</display-name>
-        <servlet-class>org.researchedc.control.admin.AdminSystemServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ManageStudyServlet</servlet-name>
@@ -477,15 +456,6 @@
 
 
     <servlet-mapping>
-        <servlet-name>FormServlet</servlet-name>
-        <url-pattern>/form</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>MainMenuServlet</servlet-name>
-        <url-pattern>/MainMenu</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ApplyFilterServlet</servlet-name>
         <url-pattern>/ApplyFilter</url-pattern>
     </servlet-mapping>
@@ -526,10 +496,6 @@
         <url-pattern>/DeleteUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>UnLockUserServlet</servlet-name>
-        <url-pattern>/UnLockUser</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ViewUserAccountServlet</servlet-name>
         <url-pattern>/ViewUserAccount</url-pattern>
     </servlet-mapping>
@@ -556,10 +522,6 @@
     <servlet-mapping>
         <servlet-name>InitUpdateEventDefinitionServlet</servlet-name>
         <url-pattern>/InitUpdateEventDefinition</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminSystemServlet</servlet-name>
-        <url-pattern>/AdminSystem</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InitialDataEntryServlet</servlet-name>
