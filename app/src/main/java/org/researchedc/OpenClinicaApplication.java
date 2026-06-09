@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.researchedc.service.JobTriggerService;
 
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -38,10 +37,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         @ComponentScan.Filter(
             type = FilterType.REGEX,
             pattern = "org\\.researchedc\\.job\\..*"
-        ),
-        @ComponentScan.Filter(
-            type = FilterType.ASSIGNABLE_TYPE,
-            value = JobTriggerService.class
         )
     }
 )
