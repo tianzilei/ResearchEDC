@@ -162,10 +162,10 @@ public enum Page {
 
     // CREATE_JOB_EXPORT removed — JSP deleted in Phase 1
     // UPDATE_JOB_EXPORT removed — JSP deleted in Phase 1
-    CREATE_JOB_IMPORT ("/WEB-INF/jsp/" + "admin/createImportJob.jsp", "Create Import Job"),
-    UPDATE_JOB_IMPORT ("/WEB-INF/jsp/" + "admin/updateImportJob.jsp", "Update Import Job"),
-    VIEW_IMPORT_JOB ("/WEB-INF/jsp/" + "admin/viewImportJobs.jsp", "View Import Jobs"),
-    VIEW_IMPORT_JOB_SERVLET ("/ViewImportJob", "View Import Jobs"),
+    // CREATE_JOB_IMPORT removed — JSP deleted in Phase 1
+    // UPDATE_JOB_IMPORT removed — JSP deleted in Phase 1
+    // VIEW_IMPORT_JOB removed — JSP deleted in Phase 1
+    // VIEW_IMPORT_JOB_SERVLET removed — JSP deleted in Phase 1
     
     MANAGE_STUDY_SERVLET ("/ManageStudy", "Manage Study Servlet"),
 
