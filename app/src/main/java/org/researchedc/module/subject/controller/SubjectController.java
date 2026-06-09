@@ -11,6 +11,7 @@ import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.subject.service.SubjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,6 +72,13 @@ public class SubjectController {
             @Valid @RequestBody ReassignStudySubjectRequest request) {
         Integer userId = currentUserUtils.getCurrentUserId();
         subjectService.reassignStudySubject(id, request.getStudyId(), userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeSubject(@PathVariable Integer id) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        subjectService.removeSubject(id, userId);
         return ResponseEntity.ok().build();
     }
 }

@@ -16,8 +16,8 @@ interface EntityInfo {
 const ENTITY_CONFIG: Record<string, { label: string; fetchUrl: (id: number) => string; apiPath: string; backLink: string }> = {
   "study": { label: "Study", fetchUrl: (id) => `/api/v1/studies/${id}`, apiPath: "/api/v1/studies", backLink: "/app/studies" },
   "site": { label: "Site", fetchUrl: (id) => `/api/v1/studies/${id}`, apiPath: "/api/v1/studies", backLink: "/app/studies" },
-  "subject": { label: "Subject", fetchUrl: (id) => `/api/v1/subjects/${id}`, apiPath: "", backLink: "/app/subjects" },
-  "study-subject": { label: "Study Subject", fetchUrl: (id) => `/api/v1/subjects/${id}`, apiPath: "", backLink: "/app/subjects" },
+  "subject": { label: "Subject", fetchUrl: (id) => `/api/v1/subjects/${id}`, apiPath: "/api/v1/subjects", backLink: "/app/subjects" },
+  "study-subject": { label: "Study Subject", fetchUrl: (id) => `/api/v1/subjects/${id}`, apiPath: "/api/v1/subjects", backLink: "/app/subjects" },
   "study-event": { label: "Study Event", fetchUrl: (id) => `/api/v1/events/${id}`, apiPath: "/api/v1/events", backLink: "/app/events" },
   "event-crf": { label: "Event CRF", fetchUrl: (id) => `/api/v1/events/crfs/${id}`, apiPath: "/api/v1/events/crfs", backLink: "/app/events" },
   "event-definition": { label: "Event Definition", fetchUrl: () => "", apiPath: "", backLink: "/app/studies" },

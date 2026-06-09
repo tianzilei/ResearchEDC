@@ -114,6 +114,34 @@ public class SubjectService {
         auditService.recordAudit(newStudyId, AuditEventType.UPDATE, "StudySubject", entity.getStudySubjectId().longValue(), entity.getLabel(), "studyId=" + oldStudyId, "studyId=" + newStudyId, updaterId, "Reassigned subject from study " + oldStudyId + " to study " + newStudyId, "subject");
     }
 
+    @Transactional
+    public void removeSubject(Integer id, Integer userId) {
+        // Try SubjectEntity first (subject deletion)
+        SubjectEntity subject = subjectRepository.findById(id).orElse(null);
+        if (subject != null) {
+            subject.setStatusId(5);
+            subject.setDateUpdated(LocalDateTime.now());
+            subject.setUpdateId(userId);
+            subjectRepository.save(subject);
+            auditService.recordAudit(null, AuditEventType.DELETE, "Subject",
+                    subject.getSubjectId().longValue(), subject.getUniqueIdentifier(),
+                    null, null, userId, "Subject removed (status=5)", "subject");
+            return;
+        }
+
+        // Try StudySubjectEntity (study-subject deletion)
+        StudySubjectEntity studySubject = studySubjectRepository.findById(id)
+                .orElseThrow(() -> new java.util.NoSuchElementException(
+                        "Subject or StudySubject not found: " + id));
+        studySubject.setStatusId(5);
+        studySubject.setDateUpdated(LocalDateTime.now());
+        studySubject.setUpdateId(userId);
+        studySubjectRepository.save(studySubject);
+        auditService.recordAudit(studySubject.getStudyId(), AuditEventType.DELETE, "StudySubject",
+                studySubject.getStudySubjectId().longValue(), studySubject.getLabel(),
+                null, null, userId, "StudySubject removed (status=5)", "subject");
+    }
+
     private SubjectDTO toSubjectDto(SubjectEntity e) {
         SubjectDTO dto = new SubjectDTO();
         dto.setSubjectId(e.getSubjectId());
