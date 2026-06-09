@@ -13,7 +13,6 @@ import org.researchedc.bean.login.StudyDTO;
 import org.researchedc.bean.login.EventDefinitionDTO;
 import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.bean.login.UserDTO;
 import org.researchedc.bean.login.UserRole;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;

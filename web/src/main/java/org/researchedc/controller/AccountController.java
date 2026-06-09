@@ -508,7 +508,6 @@ public class AccountController {
         uDTO.setUserName(userAccountBean.getName());
         uDTO.setAccessCode(userAccountBean.getAccessCode());
         uDTO.setPassword(userAccountBean.getPasswd());
-        uDTO.setEmail(userAccountBean.getEmail());
         return uDTO;
     }
 
@@ -872,7 +871,6 @@ public class AccountController {
                 String studySubjectId = ssdao.findByOid(studySubjectOid).getLabel();
 
                 uDTO.setfName(uBean.getFirstName());
-                uDTO.setEmail(uBean.getEmail());
                 uDTO.setMobile(uBean.getPhone());
                 uDTO.setAccessCode(uBean.getAccessCode());
                 uDTO.setUserName(uBean.getName());
