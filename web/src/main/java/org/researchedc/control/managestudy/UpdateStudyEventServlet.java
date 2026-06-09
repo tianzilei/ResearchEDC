@@ -46,7 +46,6 @@ import org.researchedc.core.SecurityManager;
 import org.researchedc.core.form.StringUtil;
 import org.researchedc.dao.spi.ICrfDAO;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
@@ -57,9 +56,7 @@ import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.service.DiscrepancyNoteUtil;
-import org.researchedc.service.rule.RuleSetService;
 import org.researchedc.view.Page;
 import org.researchedc.web.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -494,7 +491,6 @@ public static final String EVENT_ID = "event_id";
                 AddNewSubjectServlet.saveFieldNotes(INPUT_STARTDATE_PREFIX, fdn, dndao, studyEvent.getId(), "studyEvent", currentStudy);
                 AddNewSubjectServlet.saveFieldNotes(INPUT_ENDDATE_PREFIX, fdn, dndao, studyEvent.getId(), "studyEvent", currentStudy);
 
-         //       getRuleSetService().runRulesInBeanProperty(createRuleSet(ssub,sed),currentStudy,ub,request,ssub);
                 
                 addPageMessage(respage.getString("study_event_updated"));
                 request.setAttribute("id", Integer.valueOf(studySubjectId).toString());
@@ -678,20 +674,6 @@ public static final String EVENT_ID = "event_id";
 
     
     
-    private List<RuleSetBean> createRuleSet(StudySubjectBean ssub,
-			StudyEventDefinitionBean sed) {
-    	
-    	return getRuleSetDao().findAllByStudyEventDef(sed);
-    	
-    	
-	}
-    
-    private RuleSetDomainDao getRuleSetDao() {
-       return SpringServletAccess.getApplicationContext(context).getBean(RuleSetDomainDao.class);
-        
-    }
-
-	private ArrayList getUncompletedCRFs(ArrayList eventDefinitionCRFs, ArrayList eventCRFs) {
         int i;
         HashMap completed = new HashMap();
         HashMap startedButIncompleted = new HashMap();
@@ -820,8 +802,3 @@ public static final String EVENT_ID = "event_id";
 
     }
     
-    private RuleSetService getRuleSetService() {
-        return (RuleSetService) SpringServletAccess.getApplicationContext(context).getBean("ruleSetService");
-    }
-
-}
