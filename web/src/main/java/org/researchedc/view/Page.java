@@ -172,11 +172,11 @@ public enum Page {
     INSTRUCTIONS_ENROLL_SUBJECT ("/WEB-INF/jsp/" + "submit/instructionsEnrollSubject.jsp", "Enroll New Subject - Instructions"),
     ADD_NEW_SUBJECT ("/WEB-INF/jsp/" + "submit/addNewSubject.jsp", "Enroll New Subject"),
 
-    ENTER_DATA_FOR_STUDY_EVENT ("/WEB-INF/jsp/" + "submit/enterDataForStudyEvent.jsp", "Enter Data for a Study Event"),
-    ENTER_DATA_FOR_STUDY_EVENT_SERVLET ("/EnterDataForStudyEvent", "Enter Data for a Study Event"),
+    // ENTER_DATA_FOR_STUDY_EVENT removed — servlet + JSP deleted, not in web.xml
+    // ENTER_DATA_FOR_STUDY_EVENT_SERVLET removed — servlet + JSP deleted, not in web.xml
 
-    TABLE_OF_CONTENTS ("/WEB-INF/jsp/" + "submit/tableOfContents.jsp", "Event CRF Data Submission"),
-    TABLE_OF_CONTENTS_SERVLET ("/TableOfContents", "Event CRF Data Submission"),
+    // TABLE_OF_CONTENTS removed — servlet + JSP deleted, not in web.xml
+    TABLE_OF_CONTENTS_SERVLET ("/TableOfContents", "Event CRF Data Submission"), // retained for TableOfContentsHelper
     INTERVIEWER ("/WEB-INF/jsp/" + "submit/interviewer.jsp", "Event CRF Interview Info Submission"),
 
     INITIAL_DATA_ENTRY ("/WEB-INF/jsp/" + "submit/initialDataEntry.jsp", "Initial Data Entry"),

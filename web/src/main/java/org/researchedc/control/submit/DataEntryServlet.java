@@ -2039,7 +2039,8 @@ public abstract class DataEntryServlet extends CoreSecureController {
                                 session.removeAttribute("to_create_crf");
 
                                 request.setAttribute("eventId", Integer.valueOf(ecb.getStudyEventId()).toString());
-                                forwardPage(Page.ENTER_DATA_FOR_STUDY_EVENT_SERVLET, request, response);
+                                // ENTER_DATA_FOR_STUDY_EVENT_SERVLET dead (servlet + JSP deleted, not in web.xml) — fallback to ListStudySubjects
+                                forwardPage(Page.LIST_STUDY_SUBJECTS_SERVLET, request, response);
                             } else {
                                 // use clicked 'save'
                                 addPageMessage(respage.getString("data_saved_continue_entering_edit_later"), request);
@@ -2071,7 +2072,8 @@ public abstract class DataEntryServlet extends CoreSecureController {
                                         }
                                     }
                                     session.removeAttribute(instantAtt);
-                                    forwardPage(Page.ENTER_DATA_FOR_STUDY_EVENT_SERVLET, request, response);
+                                    // ENTER_DATA_FOR_STUDY_EVENT_SERVLET dead (servlet + JSP deleted, not in web.xml) — fallback to ListStudySubjects
+                                    forwardPage(Page.LIST_STUDY_SUBJECTS_SERVLET, request, response);
                                     return;
 
                                 }
