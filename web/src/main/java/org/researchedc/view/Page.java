@@ -121,7 +121,7 @@ public enum Page {
     // CREATE_CRF_VERSION, UPLOAD_CRF_VERSION, REMOVE_CRF, RESTORE_CRF,
     // REMOVE_CRF_VERSION, RESTORE_CRF_VERSION removed — JSPs deleted in Phase 1
 
-    CREATE_XFORM_CRF_VERSION_SERVLET ("/WEB-INF/jsp/admin/createXformCRFVersion.jsp", "Create a new Xform CRF Version"),
+    // CREATE_XFORM_CRF_VERSION_SERVLET removed — phase-1-group-b
 
     /**
      * Page for creating crf data imports
@@ -206,7 +206,7 @@ public enum Page {
 
     REMOVE_EVENT_CRF ("/WEB-INF/jsp/" + "managestudy/removeEventCRF.jsp", "Remove CRF from event"),
     RESTORE_EVENT_CRF ("/WEB-INF/jsp/" + "managestudy/restoreEventCRF.jsp", "Restore CRF to event"),
-    DELETE_EVENT_CRF ("/WEB-INF/jsp/" + "admin/deleteEventCRF.jsp", "Delete CRF from event"),
+    // DELETE_EVENT_CRF removed — phase-1-group-b
 
     UPDATE_SUBJECT ("/WEB-INF/jsp/" + "admin/updateSubject.jsp", "update a subject"),
     UPDATE_SUBJECT_SERVLET ("/UpdateSubject", "update a subject"),
@@ -228,7 +228,7 @@ public enum Page {
 
     VIEW_STUDY_EVENTS_PRINT ("/WEB-INF/jsp/managestudy/viewStudyEventsPrint.jsp", "View Study Events"),
 
-    DELETE_CRF_VERSION ("/WEB-INF/jsp/admin/deleteCRFVersion.jsp", "delete CRF Version"),
+    // DELETE_CRF_VERSION removed — phase-1-group-b
 
     ADD_DISCREPANCY_NOTE ("/WEB-INF/jsp/submit/addDiscrepancyNote.jsp", "Add Discrepancy Note"),
     ADD_DISCREPANCY_NOTE_DONE ("/WEB-INF/jsp/submit/addDiscrepancyNoteDone.jsp", "Add Discrepancy Note Done"),
