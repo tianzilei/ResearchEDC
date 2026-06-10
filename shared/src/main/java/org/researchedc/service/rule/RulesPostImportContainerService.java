@@ -373,9 +373,7 @@ public class RulesPostImportContainerService {
                ruleSetBeanWrapper.error(createError("OCRERR_0050"));
 
 
-        if (ruleActionBean instanceof org.researchedc.domain.rule.action.EmailActionBean)
-			isUploadedRuleSupportedForEventAction(ruleSetBeanWrapper);
-
+        // EmailActionBean removed — email delivery retired, action processor stubbed
 		if (ruleActionBean instanceof DiscrepancyNoteActionBean)
 			isUploadedRuleSupportedForEventAction(ruleSetBeanWrapper);
 
