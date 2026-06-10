@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-09 (Legacy code removal is **not complete**. Phase B schema ownership and Phase C SPI widening are complete, Phase 1 has 6 deletion slices done, `shared/` and `web/` still contain substantial legacy code, and `ws/` is absent from the current tree. See `docs/refactor/remove-legacy-code-plan.md` for the current deletion plan and SPA migration coverage.)
+> **Last updated:** 2026-06-10 (Legacy code removal is **not complete**. Phase B schema ownership and Phase C SPI widening are complete, repeated Phase 1 deletion slices through phase-1-run-58 have reduced the surface substantially, and `ws/` is absent from the current tree. See `docs/refactor/remove-legacy-code-plan.md` for the current deletion plan and SPA migration coverage.)
 > **Scope:** All remaining legacy code in `shared/` and `web/`; keep SOAP compatibility audits only if `ws/` reappears
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -21,15 +21,16 @@
 | 5 | `datacapture` | Bridge to `item_data`/`response_set` | `/api/v1/data-capture` |
 | — | `identity` | Bridge to `user_account`/`study_user_role` | `/api/v1/identity` |
 
-### Remaining legacy code baseline (2026-06-09, after Phase 1 login auxiliary, Enterprise, and mail-delivery cleanup)
+### Remaining legacy code baseline (2026-06-10, after phase-1-run-58 and regenerated legacy inventory)
 
 ```
-shared/   713 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
-          175 files under shared/src/main/java/org/researchedc/dao (-75 shared, -11 dao from Phase 4+5 cleanup)
-web/      263 Java files → control/ servlets, controller/ Spring MVC, view helpers, filters (-126 from Phase 1 slices)
-          175 JSP pages (-203 from Phase 1 slices)
-           87 SecureController/CoreSecureController subclass matches (-92 from Phase 1 slices)
+shared/   543 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
+          100 files under shared/src/main/java/org/researchedc/dao
+web/      152 Java files → remaining control/ servlets, controller/ Spring MVC, view helpers, filters
+           60 JSP pages
+            9 active legacy-servlet inventory artifacts
 ws/         0 Java files → SOAP module absent in current tree
+inventory 216 active artifacts → 147 replace, 62 keep compatibility, 7 unknown
 ```
 
 Important distinction: `legacy-core/` removal was a module consolidation into `shared/`; it was not full legacy code removal.
@@ -406,7 +407,7 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 ## Phase G: JSP Strangulation (Infrastructure Built ✅ — Deletion NOT Complete)
 
 ### G1: Current State
-175 JSP pages across the remaining legacy functional areas. React SPA now replaces or provides:
+60 JSP pages remain across the legacy functional areas. React SPA now replaces or provides:
 - ✅ Dashboard
 - ✅ CRF list/preview
 - ✅ Data export
@@ -441,7 +442,7 @@ Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stu
 
 ### G3: Page Migration Roadmap
 
-SPA replacement coverage exists for major workflows, but physical JSP/servlet deletion is not complete. Current repository still contains 175 JSP files and 87 `SecureController`/`CoreSecureController` subclass matches. Treat the list below as replacement coverage, not deletion proof.
+SPA replacement coverage exists for major workflows, but physical JSP/servlet deletion is not complete. Current repository still contains 60 JSP files, 9 active legacy-servlet inventory artifacts, and 15 legacy Spring MVC route artifacts. Treat the list below as replacement coverage, not deletion proof.
 
 #### Confirmed Coverage (JSP files physically deleted in Phase 1 slices)
 
@@ -465,11 +466,11 @@ SPA replacement coverage exists for major workflows, but physical JSP/servlet de
 
 | Area | Remaining JSPs | Blocked By |
 |------|---------------|------------|
-| `submit/` (data entry) | ~60 | Full CRF rendering (sections, repeating groups, discrepancy notes, rule execution), double data entry mode, file attachments, CRF print |
+| `submit/` / CRF rendering | 30 data-entry/discrepancy artifacts plus 13 CRF-metadata candidates | Full CRF rendering (sections, repeating groups, discrepancy notes, rule execution), double data entry mode, file attachments, CRF print |
 | `login/` (auxiliary) | 0 | Deleted on 2026-06-09: ChangeStudy, Enterprise, RequestAccount, RequestStudy, Contact, and UpdateProfile auxiliary paths |
-| `login/` (profile/password) | 5 | Login, logout, forgot/reset password, password policy/user account JSPs; email-field removal tracked separately |
-| `submit/` (import) | 8 | Step-by-step import wizard with validation preview, rule import |
-| `include/` (remaining) | ~60 | Shared fragments used by all remaining JSP pages |
+| `login/` (profile/password) | 0 active `phase-1-login-profile` artifacts | Listed ledger is historical; account-like compatibility routes are tracked under study/subject/event where still active |
+| `submit/` (import/export compatibility) | 11 artifacts | Step-by-step import wizard with validation preview, rule import, ODM/OpenRosa/export compatibility |
+| `include/` / layout unknowns | 7 unknown artifacts | Assign owner/category before deletion; delete only after all include references are gone |
 
 #### Known SPA → Legacy Fallbacks (SPA pages still open legacy JSPs)
 
@@ -522,7 +523,7 @@ Available at `GET/PUT /api/v1/studies/:id/feature-flags` (JSONB on `study` table
 | D1-D2 | Config migration | ✅ Complete | 11 XML → Java Config, dead XML stubs cleanup (2026-05-23) |
 | E1-E2 | Auth unification | ✅ Complete | Dual SecurityFilterChain (JWT API + OIDC web) |
 | F1-F2 | SOAP retirement | ✅ Current tree retired | `ws/` is absent; keep compatibility audit only if SOAP endpoints reappear |
-| G1-G3 | JSP strangulation | 🔶 Replacement coverage in progress; deletion not complete | 175 JSP files and 87 SecureController/CoreSecureController subclass matches remain |
+| G1-G3 | JSP strangulation | 🔶 Replacement coverage in progress; deletion not complete | 60 JSP files, 9 legacy-servlet inventory artifacts, and 15 legacy Spring MVC route artifacts remain |
 | H1 | Data migration | ✅ COMPLETE | Phase A complete |
 | **S1** | **Contract tests** | **✅ COMPLETE** | **41 MockMvc tests for 8 legacy-gateway controllers** |
 | **S2** | **Service tests** | **✅ COMPLETE** | **47 new tests + 25 frontend + 31 questionnaire** |

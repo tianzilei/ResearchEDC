@@ -2,7 +2,9 @@
 
 **Slice:** User account management + password policy JSPs/servlets
 **Date:** 2026-06-10
-**Status:** In progress
+**Status:** Closed for listed JSP/SecureController artifacts; remaining account-like Spring MVC compatibility routes are tracked by the regenerated inventory under `phase-1-study-subject-event`.
+
+This ledger is now historical. The active inventory regenerated on 2026-06-10 no longer contains a `phase-1-login-profile` slice. Do not use this file as the source of truth for new deletion work; use `docs/refactor/legacy-workflow-inventory.csv`.
 
 ## Artifacts to Delete
 
