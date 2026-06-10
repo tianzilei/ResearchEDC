@@ -2,8 +2,6 @@
 <!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN" "http://castor.org/mapping.dtd">
 <mapping>
 
-    <field-handler name="emailHandler" class="org.researchedc.bean.rule.EmailHandler"/>
-    <field-handler name="emailHandler1" class="org.researchedc.bean.rule.EmailHandler"/>
 
     <class name="org.researchedc.domain.rule.RulesPostImportContainer">
         <map-to xml="RuleImport"/>
@@ -94,8 +92,6 @@
             <bind-xml name="Message" node="element"/>
         </field>
      </class>
-     <class name="org.researchedc.domain.rule.action.EmailActionBean">
-        <map-to xml="EmailAction" />
         <field name="ExpressionEvaluatesTo"
                type="java.lang.Boolean">
             <bind-xml name="IfExpressionEvaluates" node="attribute"/>
@@ -109,7 +105,7 @@
             <bind-xml name="Message" node="element"/>
         </field>
         <field name="To"
-               type="java.lang.String" handler="emailHandler">
+               type="java.lang.String" >
             <bind-xml name="To" node="element"/>
         </field>
      </class>
@@ -121,7 +117,7 @@
             <bind-xml name="IfExpressionEvaluates" node="attribute"/>
        </field>
         <field name="To"
-               type="java.lang.String" handler="emailHandler1">
+               type="java.lang.String" >
             <bind-xml name="To" node="element"/>
         </field>
         <field name="Subject"
