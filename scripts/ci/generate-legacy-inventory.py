@@ -193,12 +193,33 @@ def classify(artifact_type: str, path: str, symbol: str, route_or_mapping: str) 
             "Prove study/subject/event management parity, permissions, audit, and route removal before deleting.",
             "Study/subject/event workflow.",
         )
-    if artifact_type == "jsp-view" and "/includes/" in path:
+    if artifact_type == "jsp-view" and "menu.jsp" in path:
         return (
-            "unknown",
-            "phase-1-layout-fragments",
-            "Map include/tag/template references and delete only after all JSP callers are gone.",
-            "JSP include/layout surface.",
+            "keep compatibility",
+            "phase-1-layout-common",
+            "Main landing page and permission-error redirect target (Page.MENU/MENU_SERVLET used by 10+ servlets); redirect to SPA /app/dashboard before deletion.",
+            "Main menu page; includes sideAlert.jsp and sideInfo.jsp.",
+        )
+    if artifact_type == "jsp-view" and "/include/" in path:
+        if any(f in path for f in ("sideAlert.jsp", "sideInfo.jsp")):
+            return (
+                "keep compatibility",
+                "phase-1-layout-common",
+                "Shared sidebar panel; delete last after ALL JSP pages are migrated. Used by menu.jsp, index.jsp, data-entry, and import JSPs.",
+                "Sidebar layout fragment used across data-entry, study, and import workflows.",
+            )
+        if "workflow.jsp" in path:
+            return (
+                "replace",
+                "phase-1-study-subject-event",
+                "Breadcrumb workflow box; delete when managestudy/index.jsp (sole consumer) is migrated.",
+                "Workflow breadcrumb display included only by index.jsp.",
+            )
+        return (
+            "replace",
+            "phase-1-layout-common",
+            "Layout fragment; delete after all referring JSPs are migrated.",
+            "Popup/message JS initialization included by shared headers.",
         )
 
     return (

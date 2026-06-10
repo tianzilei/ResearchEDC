@@ -1,7 +1,7 @@
 # ResearchEDC
 
 - Version: 0.1
-- Last updated: 2026-06-09
+- Last updated: 2026-06-10
 - License: GNU LGPL
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x.
@@ -18,8 +18,8 @@ ResearchEDC is currently a modular monolith with legacy compatibility layers:
 |------|----------|---------|
 | Spring Boot app | `app/` | Application entry point, security/config, Spring Modulith modules |
 | Modulith modules | `app/src/main/java/org/researchedc/module/` | Study, subject, event, data capture, CRF, export, audit, randomization, identity, dashboard, and supporting modules |
-| Shared legacy core | `shared/` | Legacy beans, DAOs, services, rules, jobs, Hibernate entities, Liquibase migrations |
-| Legacy web UI | `web/` | JSP/SecureController workflows kept for compatibility during strangulation |
+| Shared legacy core | `shared/` | Remaining legacy beans, DAOs, services, rules, jobs, Hibernate entities, Liquibase migrations |
+| Legacy web UI | `web/` | Remaining JSP/SecureController workflows kept for compatibility during strangulation |
 | SOAP services | retired | `ws/` is absent from the current tree; keep compatibility audits in the legacy-removal plan |
 | React SPA | `frontend/` | New `/app/*` application shell and migrated workflows |
 | Questionnaire service | `questionnaire-service/` | Python FastAPI service for questionnaire templates, assignments, responses, scoring, and exports |
@@ -54,11 +54,13 @@ Current legacy removal baseline:
 
 | Surface | Current Count | Removal Gate |
 |---------|---------------|--------------|
-| `web/` Java | 263 files | Routes migrated to SPA/module APIs, servlet registrations removed |
-| JSP pages | 175 files | No direct navigation or include dependency remains |
+| `shared/src/main/java/org/researchedc` | 543 Java files | Shared beans/services/DAO/domain callers replaced or proven unused |
+| `shared/dao` | 100 Java files | SPI implementations replaced by module-owned repositories/services |
+| `web/` Java | 152 files | Routes migrated to SPA/module APIs, servlet registrations removed |
+| JSP pages | 60 files | No direct navigation or include dependency remains |
+| Legacy servlet inventory | 9 artifacts | Workflow migrated or deleted |
+| Active legacy workflow inventory | 216 artifacts | Every artifact has owner category, replacement proof, or compatibility gate |
 | `ws/` Java | 0 files | SOAP module is absent; keep compatibility audit if endpoints reappear |
-| `shared/dao` | 175 files | SPI implementations replaced by module-owned repositories/services |
-| SecureController subclasses | 87 matches | Workflow migrated or deleted |
 
 For detailed handoff notes, see [AGENTS.md](./AGENTS.md), [.sisyphus/LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md), and [docs/refactor/remove-legacy-code-plan.md](./docs/refactor/remove-legacy-code-plan.md).
 

@@ -1,20 +1,21 @@
 # Remove Legacy Code Plan
 
 **Last updated:** 2026-06-10
-**Status:** Legacy removal is **not complete**. This plan tracks the remaining deletion work after `legacy-core/` consolidation, DAO SPI widening, and 7 Phase 1 deletion slices. SPA migration coverage mapping added 2026-06-08.
+**Status:** Legacy removal is **not complete**. This plan tracks the remaining deletion work after `legacy-core/` consolidation, DAO SPI widening, and repeated Phase 1 deletion slices through phase-1-run-58. SPA migration coverage mapping added 2026-06-08.
 
 ## Current Baseline
 
-These counts come from the current repository tree (updated 2026-06-10 after Phase 1 P8-P10 cleanup, CRF adapter containment, and admin read-only closure):
+These counts come from the current repository tree and regenerated inventory (updated 2026-06-10 after phase-1-run-58 and `docs/refactor/legacy-workflow-inventory.{csv,md}` regeneration):
 
 | Surface | Count (before) | Count (after) | Meaning |
 |---------|----------------|---------------|---------|
-| `shared/src/main/java/org/researchedc` | 793 | 663 | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities (-130) |
-| `shared/src/main/java/org/researchedc/dao` | 186 | 126 | DAO SPI interfaces plus legacy DAO implementations (-60) |
-| `web/src/main/java` | 480 | 239 | Legacy servlet/Spring MVC/JSP helper surface (-241) |
-| `web/src/main/webapp/**/*.jsp` | 416 | 121 | JSP views and fragments (-295) |
-| `SecureController`/`CoreSecureController` subclasses | 186 | 68 | Legacy servlet workflows still present (-118) |
+| `shared/src/main/java/org/researchedc` | 793 | 543 | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities (-250) |
+| `shared/src/main/java/org/researchedc/dao` | 186 | 100 | DAO SPI interfaces plus legacy DAO implementations/support (-86) |
+| `web/src/main/java` | 480 | 152 | Legacy servlet/Spring MVC/JSP helper surface (-328) |
+| `web/src/main/webapp/**/*.jsp` | 416 | 60 | JSP views and fragments (-356) |
+| Legacy servlet inventory artifacts | 186 | 9 | Remaining active servlet workflow artifacts in generated inventory (-177) |
 | `ws/` | 75 | 0 | SOAP module directory is absent in the current tree (-75) |
+| Active legacy workflow inventory | 963 | 216 | Generated artifacts across JSP, servlet, Spring MVC, DAO, and shared service surfaces (-747) |
 
 ### Phase 1 Deletion Summary (7 slices completed)
 
@@ -30,7 +31,7 @@ These counts come from the current repository tree (updated 2026-06-10 after Pha
 
 **Result:** Phase 1 deletion slices have removed the largest low-risk JSP/servlet surfaces. Current Enterprise and mail-delivery code paths are retired; shared+app+web BUILD SUCCESS.
 
-**Remaining Phase 1 work:** 121 JSPs and 68 SecureController subclasses remain, blocked by data entry, import, password/admin-user, study-management fallbacks, and OpenRosa workflows that require SPA or module-owned replacements before deletion.
+**Remaining Phase 1 work:** 60 JSP files, 9 legacy servlet inventory artifacts, and 15 legacy Spring MVC route artifacts remain. They are blocked mainly by data entry, import/export compatibility, study/subject/event fallbacks, and OpenRosa-style controller dependencies that require SPA or module-owned replacements before deletion.
 
 Completed work should be described precisely:
 
@@ -78,22 +79,24 @@ Completed on 2026-06-07:
 Completed on 2026-06-07 after Phase B validation:
 
 - `scripts/ci/generate-legacy-inventory.py` generates CSV and Markdown inventories for legacy servlets, JSPs, Spring MVC routes, SOAP endpoints, DAO files, Quartz jobs, and shared services.
-- `docs/refactor/legacy-workflow-inventory.csv` initially recorded 963 artifacts. The regenerated 2026-06-10 inventory now records 392 active artifacts after Phase 1 deletion slices, admin read-only closure, and SOAP module retirement.
-- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 276 `replace`, 86 `keep compatibility`, and 30 `unknown` artifacts.
+- `docs/refactor/legacy-workflow-inventory.csv` initially recorded 963 artifacts. The regenerated 2026-06-10 inventory now records 216 active artifacts after Phase 1 deletion slices, admin read-only closure, SOAP module retirement, and follow-up JSP/shared cleanup.
+- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 147 `replace`, 62 `keep compatibility`, and 7 `unknown` artifacts.
 - `scripts/ci/generate-legacy-report.sh` now includes the workflow inventory artifacts in the generated legacy report.
 - The first low-risk Phase 1 vertical slice, `phase-1-admin-read-only`, is now closed; no active artifacts remain in the generated inventory.
 - `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows; all rows are now covered/deleted or formally retired, and the generated inventory has no active `phase-1-admin-read-only` artifacts.
 
 Remaining Phase 0 work:
 
-- Reduce the 30 `unknown` inventory rows by assigning owners/categories in follow-up slice ledgers.
-- Add per-workflow owner metadata once the first slice ledger is created.
+- ✅ All 7 `unknown` rows classified on 2026-06-10; 0 unknown artifacts remain in the regenerated inventory.
+- ✅ `scripts/ci/generate-legacy-inventory.py` updated to classify layout fragments (`include/` JSPs) and `menu.jsp` automatically.
+- ⬜ Add per-workflow owner metadata once the first slice ledger is created.
 
 Current next action:
 
-1. Continue with `phase-1-login-profile` (5 active artifacts): prove Spring Security/session parity for the remaining login JSP route and delete only after `/app/login` and `/api/v1/auth/login` cover behavior.
-2. Classify the 30 remaining `unknown` rows, especially admin/layout fragments and orphan legacy servlets, before deleting them.
-3. Keep larger CRF, study/subject/event, import/export, and data-entry slices gated by workflow-specific parity tests.
+1. ✅ Phase 0 classification gap is closed — 7 unknown JSP/layout rows now classified (6 `phase-1-layout-common`, 1 `phase-1-study-subject-event`).
+2. Open a `phase-1-crf-metadata` ledger from the regenerated inventory, but split the 13 candidate artifacts into: true CRF metadata, data-entry rendering dependencies, and compatibility-sensitive print/import fragments.
+3. Treat `CheckCRFLocked` and the `showItemInput*`/`generate*` fragments as blocked until current JSP include references are removed or replaced by SPA/module data-entry behavior.
+4. Keep larger study/subject/event, import/export, and data-entry slices gated by workflow-specific parity tests.
 
 ## Phase B PostgreSQL Validation
 
@@ -242,15 +245,16 @@ These are the legacy artifacts that have **no SPA replacement** and are blocking
 
 Based on risk, effort, and dependency chain:
 
-1. **Password and admin-user cleanup** (low effort, 5 login JSPs, 3 login servlets plus admin user pages) — Keep Spring Security behavior intact while retiring forgot/reset password JSPs and password policy screens.
-2. **Email field removal** — Execute `docs/refactor/phase-1-email-field-removal-plan.md`: remove user-account and study-contact email fields only after compatibility review.
-3. **Entity Action completeness** — Extend `EntityAction` page to handle all entity types, removing legacy `/legacy/Remove*`/`/legacy/Restore*` fallbacks.
-4. **Subject Detail fallbacks** — Replace `/legacy/SignStudySubject` (e-signature), `/legacy/ReassignStudySubject`, `/legacy/CreateNewStudyEvent` with SPA-native components.
-5. **Rule editing** — Wire orphaned `RuleSetDetail.tsx` route; add rule creation/editing form.
-6. **Import** (moderate effort, 8 JSPs, 7 servlets) — SPA `ImportManager` exists but is basic. Build step-by-step import wizard with validation preview.
-7. **OpenRosa migration** (moderate effort, 0 JSPs) — Extract `OpenRosaSubmissionController` and its pform helpers into a Modulith module with module-owned DAO access.
-8. **Data Entry** (high effort, ~66 JSPs, ~26 servlets) — The critical path. SPA `DataEntryPage` exists but is thin. Requires: full CRF section/item/group rendering, double data entry mode, discrepancy notes inline, rule execution UI, CRF print/export, file attachments.
-9. **Layout/Common** — Delete only after ALL JSP pages are migrated.
+1. **Inventory and plan closure** — Keep `legacy-workflow-inventory.{csv,md}` and handoff docs aligned with the current tree; classify the 7 `unknown` layout/JSP rows.
+2. **CRF metadata boundary ledger** — Work from the 13 `phase-1-crf-metadata` artifacts, separating removable CRF view pieces from active data-entry rendering includes before deleting anything.
+3. **Email field removal** — Execute `docs/refactor/phase-1-email-field-removal-plan.md`: remove user-account and study-contact email fields only after compatibility review.
+4. **Entity Action completeness** — Extend `EntityAction` page to handle all entity types, removing legacy `/legacy/Remove*`/`/legacy/Restore*` fallbacks.
+5. **Subject Detail fallbacks** — Replace `/legacy/SignStudySubject` (e-signature), `/legacy/ReassignStudySubject`, `/legacy/CreateNewStudyEvent` with SPA-native components.
+6. **Rule editing** — Wire orphaned `RuleSetDetail.tsx` route; add rule creation/editing form.
+7. **Import** (moderate effort, 11 compatibility artifacts in inventory) — SPA `ImportManager` exists but is basic. Build step-by-step import wizard with validation preview.
+8. **OpenRosa migration** (moderate effort, 0 JSPs) — Extract `OpenRosaSubmissionController` and its pform helpers into a Modulith module with module-owned DAO access.
+9. **Data Entry** (high effort, 30 data-entry/discrepancy artifacts plus CRF-rendering dependencies) — The critical path. SPA `DataEntryPage` exists but is thin. Requires: full CRF section/item/group rendering, double data entry mode, discrepancy notes inline, rule execution UI, CRF print/export, file attachments.
+10. **Layout/Common** — Delete only after ALL JSP pages are migrated.
 
 #### Feature Flag System (available for gated rollout)
 
