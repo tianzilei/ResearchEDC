@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.researchedc.module.subject.dto.CreateSubjectRequest;
 import org.researchedc.module.subject.dto.EnrollSubjectRequest;
 import org.researchedc.module.subject.dto.ReassignStudySubjectRequest;
+import org.researchedc.module.subject.dto.SignSubjectRequest;
 import org.researchedc.module.subject.dto.StudySubjectDTO;
 import org.researchedc.module.subject.dto.SubjectDTO;
 import org.researchedc.config.CurrentUserUtils;
@@ -67,7 +68,15 @@ public class SubjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
-    @PutMapping("/api/v1/study-subjects/{id}/reassign")
+    @PostMapping("/{id}/sign")
+    public ResponseEntity<Void> signStudySubject(@PathVariable Integer id,
+            @Valid @RequestBody SignSubjectRequest request) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        subjectService.signStudySubject(id, request.getReason(), userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}/reassign")
     public ResponseEntity<Void> reassignStudySubject(@PathVariable Integer id,
             @Valid @RequestBody ReassignStudySubjectRequest request) {
         Integer userId = currentUserUtils.getCurrentUserId();
