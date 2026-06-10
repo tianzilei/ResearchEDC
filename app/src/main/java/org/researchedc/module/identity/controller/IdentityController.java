@@ -14,7 +14,9 @@ import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.identity.service.IdentityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -72,6 +74,25 @@ public class IdentityController {
     @GetMapping("/roles/by-study")
     public ResponseEntity<List<RoleDTO>> getStudyRoles(@RequestParam Integer studyId) {
         return ResponseEntity.ok(identityService.getStudyRoles(studyId));
+    }
+
+    @GetMapping("/roles/{id}")
+    public ResponseEntity<RoleDTO> getRole(@PathVariable Integer id) {
+        return ResponseEntity.ok(identityService.getRole(id));
+    }
+
+    @DeleteMapping("/roles/{id}")
+    public ResponseEntity<Void> removeRole(@PathVariable Integer id) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        identityService.removeRole(id, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/roles/{id}")
+    public ResponseEntity<Void> restoreRole(@PathVariable Integer id) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        identityService.restoreRole(id, userId);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/users/{id}/profile")

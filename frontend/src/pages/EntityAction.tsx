@@ -20,11 +20,11 @@ const ENTITY_CONFIG: Record<string, { label: string; fetchUrl: (id: number) => s
   "study-subject": { label: "Study Subject", fetchUrl: (id) => `/api/v1/subjects/${id}`, apiPath: "/api/v1/subjects", backLink: "/app/subjects" },
   "study-event": { label: "Study Event", fetchUrl: (id) => `/api/v1/events/${id}`, apiPath: "/api/v1/events", backLink: "/app/events" },
   "event-crf": { label: "Event CRF", fetchUrl: (id) => `/api/v1/events/crfs/${id}`, apiPath: "/api/v1/events/crfs", backLink: "/app/events" },
-  "event-definition": { label: "Event Definition", fetchUrl: () => "", apiPath: "", backLink: "/app/studies" },
-  "subject-group-class": { label: "Subject Group Class", fetchUrl: () => "", apiPath: "", backLink: "/app/admin" },
-  "study-user-role": { label: "Study User Role", fetchUrl: () => "", apiPath: "", backLink: "/app/admin" },
+  "event-definition": { label: "Event Definition", fetchUrl: (id) => `/api/v1/events/definitions/${id}`, apiPath: "/api/v1/events/definitions", backLink: "/app/studies" },
+  "subject-group-class": { label: "Subject Group Class", fetchUrl: (id) => `/api/v1/subject-groups/classes/${id}`, apiPath: "/api/v1/subject-groups/classes", backLink: "/app/admin" },
+  "study-user-role": { label: "Study User Role", fetchUrl: (id) => `/api/v1/identity/roles/${id}`, apiPath: "/api/v1/identity/roles", backLink: "/app/admin" },
   "crf": { label: "CRF", fetchUrl: (id) => `/api/legacy/crfs/${id}`, apiPath: "/api/legacy/crfs", backLink: "/app/admin/crf-library" },
-  "crf-version": { label: "CRF Version", fetchUrl: () => "", apiPath: "/api/legacy/crfs/versions", backLink: "/app/admin/crf-library" },
+  "crf-version": { label: "CRF Version", fetchUrl: (id) => `/api/legacy/crfs/versions/${id}`, apiPath: "/api/legacy/crfs/versions", backLink: "/app/admin/crf-library" },
   "rule": { label: "Rule", fetchUrl: (id) => `/api/legacy/rules/${id}`, apiPath: "/api/legacy/rules", backLink: "/app/studies" },
 };
 
@@ -37,6 +37,12 @@ function parseEntityInfo(entity: string, id: number, data: any): EntityInfo | nu
       return { id, name: data.uniqueIdentifier ?? `Subject #${id}` };
     case "study-event":
       return { id, name: data.label ?? `Event #${id}`, status: String(data.statusId ?? "") };
+    case "event-definition":
+      return { id, name: data.name ?? `Definition #${id}`, status: data.statusId != null ? String(data.statusId) : undefined };
+    case "subject-group-class":
+      return { id, name: data.name ?? `Class #${id}`, status: data.statusId != null ? String(data.statusId) : undefined };
+    case "study-user-role":
+      return { id, name: data.roleName ?? `Role #${id}`, status: data.statusId != null ? String(data.statusId) : undefined };
     case "crf": case "crf-version":
       return { id, name: data.name ?? `#${id}`, status: data.status };
     case "rule":

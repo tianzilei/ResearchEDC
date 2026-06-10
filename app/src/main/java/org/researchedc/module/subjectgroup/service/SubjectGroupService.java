@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.researchedc.module.audit.enums.AuditEventType;
+import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.subjectgroup.entity.StudyGroupClassEntity;
 import org.researchedc.module.subjectgroup.entity.StudyGroupEntity;
 import org.researchedc.module.subjectgroup.repository.StudyGroupClassRepository;
@@ -17,11 +19,14 @@ public class SubjectGroupService {
 
     private final StudyGroupClassRepository classRepository;
     private final StudyGroupRepository groupRepository;
+    private final AuditService auditService;
 
     public SubjectGroupService(StudyGroupClassRepository classRepository,
-                               StudyGroupRepository groupRepository) {
+                               StudyGroupRepository groupRepository,
+                               AuditService auditService) {
         this.classRepository = classRepository;
         this.groupRepository = groupRepository;
+        this.auditService = auditService;
     }
 
     public List<StudyGroupClassEntity> listClassesByStudy(Integer studyId) {
@@ -58,6 +63,38 @@ public class SubjectGroupService {
         entity.setSubjectAssignment(subjectAssignment);
         entity.setDateUpdated(LocalDateTime.now());
         return classRepository.save(entity);
+    }
+
+    @Transactional
+    public StudyGroupClassEntity removeClass(Integer id, Integer userId) {
+        StudyGroupClassEntity entity = classRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Study group class not found: " + id));
+        entity.setStatusId(5);
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(userId);
+        StudyGroupClassEntity saved = classRepository.save(entity);
+
+        auditService.recordAudit(
+                saved.getStudyId(), AuditEventType.DELETE, "StudyGroupClass",
+                saved.getStudyGroupClassId().longValue(), saved.getName(),
+                null, null, userId, "Class removed (status=5)", "subjectgroup");
+        return saved;
+    }
+
+    @Transactional
+    public StudyGroupClassEntity restoreClass(Integer id, Integer userId) {
+        StudyGroupClassEntity entity = classRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Study group class not found: " + id));
+        entity.setStatusId(1);
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(userId);
+        StudyGroupClassEntity saved = classRepository.save(entity);
+
+        auditService.recordAudit(
+                saved.getStudyId(), AuditEventType.UPDATE, "StudyGroupClass",
+                saved.getStudyGroupClassId().longValue(), saved.getName(),
+                null, null, userId, "Class restored (status=1)", "subjectgroup");
+        return saved;
     }
 
     @Transactional

@@ -187,6 +187,49 @@ public class EventService {
                 null, null, userId, "Event CRF removed (status=5)", "event");
     }
 
+    public EventDefinitionDTO getEventDefinition(Integer id) {
+        StudyEventDefinitionEntity entity = eventDefinitionRepository.findById(id)
+            .orElseThrow(() -> new java.util.NoSuchElementException(
+                "EventDefinition not found: " + id));
+        return toDefDto(entity);
+    }
+
+    @Transactional
+    public void removeEventDefinition(Integer id, Integer userId) {
+        StudyEventDefinitionEntity entity = eventDefinitionRepository.findById(id)
+            .orElseThrow(() -> new java.util.NoSuchElementException(
+                "EventDefinition not found: " + id));
+
+        entity.setStatusId(5);
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(userId);
+
+        eventDefinitionRepository.save(entity);
+
+        auditService.recordAudit(
+                null, AuditEventType.DELETE, "EventDefinition",
+                entity.getStudyEventDefinitionId().longValue(), entity.getName(),
+                null, null, userId, "Definition removed (status=5)", "event");
+    }
+
+    @Transactional
+    public void restoreEventDefinition(Integer id, Integer userId) {
+        StudyEventDefinitionEntity entity = eventDefinitionRepository.findById(id)
+            .orElseThrow(() -> new java.util.NoSuchElementException(
+                "EventDefinition not found: " + id));
+
+        entity.setStatusId(1);
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(userId);
+
+        eventDefinitionRepository.save(entity);
+
+        auditService.recordAudit(
+                null, AuditEventType.UPDATE, "EventDefinition",
+                entity.getStudyEventDefinitionId().longValue(), entity.getName(),
+                null, null, userId, "Definition restored (status=1)", "event");
+    }
+
     private StudyEventDTO toEventDto(StudyEventEntity e) {
         StudyEventDTO dto = new StudyEventDTO();
         dto.setStudyEventId(e.getStudyEventId());

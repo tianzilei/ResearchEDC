@@ -1,5 +1,5 @@
 @org.springframework.modulith.ApplicationModule(
   displayName = "SubjectGroup",
-  allowedDependencies = {}
+  allowedDependencies = {"audit::service", "audit::enums"}
 )
 package org.researchedc.module.subjectgroup;

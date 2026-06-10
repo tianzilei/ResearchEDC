@@ -78,6 +78,39 @@ public class IdentityService {
             .toList();
     }
 
+    public RoleDTO getRole(Integer id) {
+        RoleEntity entity = roleRepository.findById(Long.valueOf(id))
+            .orElseThrow(() -> new NoSuchElementException(
+                "Role not found: " + id));
+        return toRoleDto(entity);
+    }
+
+    @Transactional
+    public void removeRole(Integer id, Integer userId) {
+        RoleEntity entity = roleRepository.findById(Long.valueOf(id))
+            .orElseThrow(() -> new NoSuchElementException(
+                "Role not found: " + id));
+        entity.setStatusId(5);
+        roleRepository.save(entity);
+        auditService.recordAudit(
+                entity.getStudyId(), AuditEventType.DELETE, "StudyUserRole",
+                entity.getStudyUserRoleId(), entity.getRoleName(),
+                null, null, userId, "Role removed (soft-delete)", "identity");
+    }
+
+    @Transactional
+    public void restoreRole(Integer id, Integer userId) {
+        RoleEntity entity = roleRepository.findById(Long.valueOf(id))
+            .orElseThrow(() -> new NoSuchElementException(
+                "Role not found: " + id));
+        entity.setStatusId(1);
+        roleRepository.save(entity);
+        auditService.recordAudit(
+                entity.getStudyId(), AuditEventType.UPDATE, "StudyUserRole",
+                entity.getStudyUserRoleId(), entity.getRoleName(),
+                null, null, userId, "Role restored", "identity");
+    }
+
     @Transactional
     public UserDTO createUser(CreateUserRequest request, Integer ownerId) {
         if (request.getUserName() == null || request.getUserName().isBlank()) {

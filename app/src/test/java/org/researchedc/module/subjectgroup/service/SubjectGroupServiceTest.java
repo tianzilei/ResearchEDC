@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.subjectgroup.entity.StudyGroupClassEntity;
 import org.researchedc.module.subjectgroup.entity.StudyGroupEntity;
 import org.researchedc.module.subjectgroup.repository.StudyGroupClassRepository;
@@ -23,12 +24,13 @@ class SubjectGroupServiceTest {
 
     @Mock private StudyGroupClassRepository classRepository;
     @Mock private StudyGroupRepository groupRepository;
+    @Mock private AuditService auditService;
 
     private SubjectGroupService service;
 
     @BeforeEach
     void setUp() {
-        service = new SubjectGroupService(classRepository, groupRepository);
+        service = new SubjectGroupService(classRepository, groupRepository, auditService);
     }
 
     // --- listClassesByStudy ---
