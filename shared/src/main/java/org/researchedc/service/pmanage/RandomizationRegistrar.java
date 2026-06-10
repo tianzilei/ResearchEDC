@@ -6,9 +6,7 @@ import java.util.concurrent.TimeUnit;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
-import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.core.CoreResources;
-import org.researchedc.exception.OpenClinicaSystemException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,9 +75,5 @@ public class RandomizationRegistrar {
         return seRandomizationDTO;
     }
 
-
-    public void sendEmail(Object mailSender, UserAccountBean user, String emailSubject, String message) throws OpenClinicaSystemException {
-        logger.debug("Email delivery disabled; skipped randomization email to {}", user == null ? null : user.getName());
-    }
 
 }

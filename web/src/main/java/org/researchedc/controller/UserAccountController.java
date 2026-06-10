@@ -91,7 +91,6 @@ public class UserAccountController {
 	 * @apiParam {String} fName First Name
 	 * @apiParam {String} lName Last Name
 	 * @apiParam {String} institution Institution
-	 * @apiParam {String} email Email Address
 	 * @apiParam {String} study_name Study Name
 	 * @apiParam {String} role_name Role Name
 	 * @apiParam {String} user_type User Type
@@ -105,7 +104,6 @@ public class UserAccountController {
 	 *                  "fName": "Jimmy",
 	 *                  "lName": "Sander",
 	 *                  "institution": "OC",
-	 *                  "email": "abcde@yahoo.com",
 	 *                  "study_name": "Baseline Study 101",
 	 *                  "role_name": "Data Manager",
 	 *                  "user_type": "user",

@@ -210,10 +210,6 @@ public interface RuleSetServiceInterface {
 
     public void setRuleSetAuditDao(RuleSetAuditDomainDao ruleSetAuditDao);
 
-    public Object getMailSender();
-
-    public void setMailSender(Object mailSender);
-
     /**
      * Return true if there is at least one rule should be run for a phase.
      *

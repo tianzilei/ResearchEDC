@@ -35,8 +35,8 @@ public class DataEntryRuleRunner extends RuleRunner {
     
     EventCRFBean ecb;
 
-    public DataEntryRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, Object mailSender, EventCRFBean ecb) {
-        super(ds, requestURLMinusServletPath, contextPath, mailSender);
+    public DataEntryRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, EventCRFBean ecb) {
+        super(ds, requestURLMinusServletPath, contextPath);
         this.ecb = ecb;
     }
 
@@ -189,8 +189,7 @@ public class DataEntryRuleRunner extends RuleRunner {
                 
                 RuleActionBean rab =
                     ap.execute(RuleRunnerMode.DATA_ENTRY, executionMode, ruleActionContainer.getRuleAction(), itemData,
-                            DiscrepancyNoteBean.ITEM_DATA, currentStudy, ub, prepareEmailContents(ruleActionContainer.getRuleSetBean(), ruleActionContainer
-                                    .getRuleAction().getRuleSetRule(), currentStudy, ruleActionContainer.getRuleAction()));
+                            DiscrepancyNoteBean.ITEM_DATA, currentStudy, ub, null);
                 if (rab != null) {
                     if(rab instanceof ShowActionBean) {
                         messageContainer.add(getExpressionService().getGroupOidOrdinal(ruleActionContainer.getRuleSetBean().getTarget().getValue()), rab);
