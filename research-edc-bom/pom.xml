@@ -50,8 +50,7 @@
         <joda-time.version>2.12.7</joda-time.version>
 
         <!-- Document generation -->
-        <poi.version>5.2.5</poi.version>
-        <openpdf.version>2.0.2</openpdf.version>
+		<poi.version>5.2.5</poi.version>
 
         <!-- Web -->
         <servlet-api.version>4.0.1</servlet-api.version>
@@ -87,14 +86,8 @@
         <!-- OpenClinica ODM -->
         <openclinica-odm.version>2.2</openclinica-odm.version>
 
-        <!-- Metrics -->
-        <dropwizard-metrics.version>3.1.5</dropwizard-metrics.version>
-
-        <!-- Byte code -->
-        <byte-buddy.version>1.14.12</byte-buddy.version>
-
-        <!-- Validation -->
-        <antlr.version>2.7.6</antlr.version>
+		<!-- Byte code -->
+		<byte-buddy.version>1.14.12</byte-buddy.version>
 
 
         <!-- Testing -->
@@ -194,11 +187,6 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-oxm</artifactId>
                 <version>${spring.version}</version>
             </dependency>
 
@@ -324,11 +312,6 @@
                 <artifactId>poi</artifactId>
                 <version>${poi.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.github.librepdf</groupId>
-                <artifactId>openpdf</artifactId>
-                <version>${openpdf.version}</version>
-            </dependency>
 
             <!-- ============================================== -->
             <!-- Web / Servlets                                  -->
@@ -411,11 +394,6 @@
                 <version>${logback.version}</version>
             </dependency>
             <dependency>
-                <groupId>ch.qos.logback.access</groupId>
-                <artifactId>common</artifactId>
-                <version>2.0.1</version>
-            </dependency>
-            <dependency>
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>janino</artifactId>
                 <version>${janino.version}</version>
@@ -463,25 +441,6 @@
             </dependency>
 
             <!-- ============================================== -->
-            <!-- Metrics (Dropwizard)                             -->
-            <!-- ============================================== -->
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-core</artifactId>
-                <version>${dropwizard-metrics.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-jvm</artifactId>
-                <version>${dropwizard-metrics.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-healthchecks</artifactId>
-                <version>${dropwizard-metrics.version}</version>
-            </dependency>
-
-            <!-- ============================================== -->
             <!-- Byte code manipulation                          -->
             <!-- ============================================== -->
             <dependency>
@@ -495,14 +454,6 @@
                 <version>${byte-buddy.version}</version>
             </dependency>
 
-            <!-- ============================================== -->
-            <!-- Parsing                                          -->
-            <!-- ============================================== -->
-            <dependency>
-                <groupId>antlr</groupId>
-                <artifactId>antlr</artifactId>
-                <version>${antlr.version}</version>
-            </dependency>
 
             <!-- ============================================== -->
             <!-- OpenAPI / Swagger                                -->

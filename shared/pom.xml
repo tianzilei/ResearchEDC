@@ -38,6 +38,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Apache Commons Digester (legacy v2 API, used by DAODigester) -->
+        <dependency>
+            <groupId>commons-digester</groupId>
+            <artifactId>commons-digester</artifactId>
+            <version>2.1</version>
+        </dependency>
+
         <!-- Apache HttpClient (updated from commons-httpclient) -->
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
@@ -82,12 +89,6 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-        </dependency>
-
-        <!-- iText (updated to OpenPDF for licensing) -->
-        <dependency>
-            <groupId>com.github.librepdf</groupId>
-            <artifactId>openpdf</artifactId>
         </dependency>
 
         <!-- Apache Commons BeanUtils -->
@@ -159,12 +160,6 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-        </dependency>
-
-        <!-- JDOM -->
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom2</artifactId>
         </dependency>
 
         <!-- Jakarta JSTL -->
