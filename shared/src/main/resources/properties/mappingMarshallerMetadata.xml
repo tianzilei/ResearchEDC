@@ -2,9 +2,6 @@
 <!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN" "http://castor.org/mapping.dtd">
 <mapping>
 
-    <field-handler name="emailHandler" class="org.researchedc.bean.rule.EmailHandler"/>
-    <field-handler name="emailHandler1" class="org.researchedc.bean.rule.EmailHandler"/>
-
     <class name="org.researchedc.domain.rule.RulesPostImportContainer">
         <map-to xml="Rules" ns-prefix="OpenClinicaRules" ns-uri="http://www.openclinica.org/ns/rules/v3.1"/>
         
@@ -99,35 +96,8 @@
             	</class>
             </bind-xml>
         </field>
-     </class>
-     <class name="org.researchedc.domain.rule.action.EmailActionBean">
-        <map-to xml="EmailAction" ns-prefix="OpenClinicaRules"/>
-        <field name="ExpressionEvaluatesTo"
-               type="java.lang.Boolean">
-            <bind-xml name="IfExpressionEvaluates" node="attribute"/>
-       </field>
-       <field name="RuleActionRun"
-               type="org.researchedc.domain.rule.action.RuleActionRunBean">
-               <bind-xml name="Run"/>
-       </field>
-        <field name="Message"
-               type="java.lang.String">
-            <bind-xml name="Message" node="element">
-            	<class name="java.lang.String">
-            		<map-to ns-prefix="OpenClinicaRules"/>
-            	</class>
-            </bind-xml>
-        </field>
-        <field name="To"
-               type="java.lang.String" handler="emailHandler" >
-            <bind-xml name="To" node="element">
-            	<class name="java.lang.String">
-            		<map-to ns-prefix="OpenClinicaRules"/>
-            	</class>
-            </bind-xml>
-        </field>
-     </class>
-     <class name="org.researchedc.domain.rule.action.NotificationActionBean">
+      </class>
+      <class name="org.researchedc.domain.rule.action.NotificationActionBean">
         <map-to xml="NotificationAction" ns-prefix="OpenClinicaRules"/>
         <field name="ExpressionEvaluatesTo"
                type="java.lang.Boolean">
