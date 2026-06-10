@@ -767,6 +767,7 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
 
                 url.append(viewStudySubjectLinkBuilder(studySubjectBean));
                 if (getCurrentRole().getRole() != Role.MONITOR) {
+                    /* phase-1-run-60: RemoveStudySubjectServlet deleted, use SPA /app/actions/study-subject/remove/:id
                     if (getStudyBean().getStatus() == Status.AVAILABLE
                             && !(studySubjectBean.getStatus() == Status.DELETED || studySubjectBean.getStatus() == Status.AUTO_DELETED)
                             && getCurrentRole().getRole() != Role.RESEARCHASSISTANT && getCurrentRole().getRole() != Role.RESEARCHASSISTANT2) {
@@ -786,6 +787,7 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
                             && studySubjectBean.getStatus() != Status.DELETED && isSignable) {
                         url.append(signStudySubjectLinkBuilder(studySubjectBean));
                     }
+                    */
 
                     try {
                         if (getStudyBean().getStatus() == Status.AVAILABLE
