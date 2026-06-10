@@ -1222,7 +1222,7 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
             //     eventDiv.tdEnd().trEnd(0);
             // }
 
-            else if (eventStatus == SubjectEventStatus.COMPLETED) {
+            if (eventStatus == SubjectEventStatus.COMPLETED) {
                 eventDiv.tr(0).valign("top").close();
                 eventDiv.td(0).styleClass("table_cell_left").close();
                 enterDataForStudyEventLinkBuilder(eventDiv, studyEventId, view);

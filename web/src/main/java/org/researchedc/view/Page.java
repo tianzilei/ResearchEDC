@@ -167,7 +167,7 @@ public enum Page {
     
     MANAGE_STUDY_SERVLET ("/ManageStudy", "Manage Study Servlet"),
 
-    CREATE_NEW_STUDY_EVENT ("/WEB-INF/jsp/" + "submit/createNewStudyEvent.jsp", "Create a New Study Event"),
+    // CREATE_NEW_STUDY_EVENT removed — phase-1-run-48 (CreateNewStudyEventServlet + JSP deleted, SPA SubjectDetail now handles)
 
     INSTRUCTIONS_ENROLL_SUBJECT ("/WEB-INF/jsp/" + "submit/instructionsEnrollSubject.jsp", "Enroll New Subject - Instructions"),
     ADD_NEW_SUBJECT ("/WEB-INF/jsp/" + "submit/addNewSubject.jsp", "Enroll New Subject"),
