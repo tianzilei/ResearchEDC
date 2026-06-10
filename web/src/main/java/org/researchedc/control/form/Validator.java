@@ -161,13 +161,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * <li> addValidation(fieldname, Validator.CHECK_SAME, fieldname2)
  * <li> e.g. addValidation( password , Validator.CHECK_SAME,  confirmPassword );
  * </ul>
- * <li> IS_A_EMAIL   test that one field is in proper e-mail format, ie
- * "username@institution.domain". Note that this format is specified as
- * Validator.EMAIL.getDescription() (EMAIL is a static
- * ValidationRegularExpression object)
- * <ul>
- * <li> addValidation(fieldname, Validator.IS_A_EMAIL);
- * </ul>
  * <li> IS_A_PHONE_NUMBER - test that one field is in proper phone number
  * format, ie "123-456-7890". Note that this format is specified as
  * Validator.PHONE_NUMBER.getDescription() (PHONE_NUMBER is a static
@@ -516,7 +509,7 @@ public class Validator {
     // }
 
     /*
-     * use for: NO_BLANKS, IS_A_NUMBER, IS_A_DATE, IS_A_EMAIL, IS_AN_INTEGER,
+     * use for: NO_BLANKS, IS_A_NUMBER, IS_A_DATE, IS_AN_INTEGER,
      * IS_A_PASSWORD, IS_A_USERNAME, IS_A_PHONE_NUMBER, IS_DATE_TIME,
      * NO_BLANKS_SET DATE_IN_PAST
      */
