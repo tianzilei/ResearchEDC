@@ -86,7 +86,8 @@ public class BreadcrumbTrail {
                 trail.add(new BreadcrumbBean(resworkflow.getString("submit_data"), "ListStudySubjectsSubmit", Status.AVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("enroll_subject_instructions"), "AddNewSubject?instr=1", Status.PENDING));
                 trail.add(new BreadcrumbBean(resworkflow.getString("enroll_subject"), "AddNewSubject", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("add_new_study_event"), "CreateNewStudyEvent", Status.UNAVAILABLE));
+                // phase-1-run-48: CreateNewStudyEvent breadcrumb removed — SPA SubjectDetail now handles event creation
+                // trail.add(new BreadcrumbBean(resworkflow.getString("add_new_study_event"), "CreateNewStudyEvent", Status.UNAVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("study_event_overview"), "EnterDataForStudyEvent", Status.UNAVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("event_CRF_data_submission"), "TableOfContents", Status.UNAVAILABLE));
                 trail.add(new BreadcrumbBean(resworkflow.getString("data_entry"), "InitialDataEntry", Status.UNAVAILABLE));
@@ -94,19 +95,20 @@ public class BreadcrumbTrail {
             } else if (jspPage.equals(Page.ADD_NEW_SUBJECT)) {
                 trail = advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("enroll_subject"), "AddNewSubject", Status.PENDING), 2);
                 closeRestOfTrail(2);
-            } else if (jspPage.equals(Page.CREATE_NEW_STUDY_EVENT)) {
-                if (!containsServlet("AddNewSubject")) {
-                    trail = new ArrayList();
-                    trail.add(new BreadcrumbBean(resworkflow.getString("submit_data"), "ListStudySubjectsSubmit", Status.AVAILABLE));
-                    trail.add(new BreadcrumbBean(resworkflow.getString("add_new_study_event"), "CreateNewStudyEvent", Status.PENDING));
-                    trail.add(new BreadcrumbBean(resworkflow.getString("study_event_overview"), "EnterDataForStudyEvent", Status.UNAVAILABLE));
-                    trail.add(new BreadcrumbBean(resworkflow.getString("event_CRF_data_submission"), "TableOfContents", Status.UNAVAILABLE));
-                    trail.add(new BreadcrumbBean(resworkflow.getString("data_entry"), "InitialDataEntry", Status.UNAVAILABLE));
-                    trail.add(new BreadcrumbBean(resworkflow.getString("mark_event_CRF_complete"), "MarkEventCRFComplete", Status.UNAVAILABLE));
-                } else {
-                    trail = advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("add_new_study_event"), "CreateNewStudyEvent", Status.PENDING), 3);
-                    closeRestOfTrail(3);
-                }
+            // phase-1-run-48: CREATE_NEW_STUDY_EVENT branch removed — SPA SubjectDetail now handles event creation
+            // } else if (jspPage.equals(Page.CREATE_NEW_STUDY_EVENT)) {
+            //     if (!containsServlet("AddNewSubject")) {
+            //         trail = new ArrayList();
+            //         trail.add(new BreadcrumbBean(resworkflow.getString("submit_data"), "ListStudySubjectsSubmit", Status.AVAILABLE));
+            //         trail.add(new BreadcrumbBean(resworkflow.getString("add_new_study_event"), "CreateNewStudyEvent", Status.PENDING));
+            //         trail.add(new BreadcrumbBean(resworkflow.getString("study_event_overview"), "EnterDataForStudyEvent", Status.UNAVAILABLE));
+            //         trail.add(new BreadcrumbBean(resworkflow.getString("event_CRF_data_submission"), "TableOfContents", Status.UNAVAILABLE));
+            //         trail.add(new BreadcrumbBean(resworkflow.getString("data_entry"), "InitialDataEntry", Status.UNAVAILABLE));
+            //         trail.add(new BreadcrumbBean(resworkflow.getString("mark_event_CRF_complete"), "MarkEventCRFComplete", Status.UNAVAILABLE));
+            //     } else {
+            //         trail = advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("add_new_study_event"), "CreateNewStudyEvent", Status.PENDING), 3);
+            //         closeRestOfTrail(3);
+            //     }
             // ENTER_DATA_FOR_STUDY_EVENT branch removed — servlet + JSP deleted, not in web.xml
             // TABLE_OF_CONTENTS branch removed — servlet + JSP deleted, not in web.xml
             } else if (jspPage.equals(Page.INITIAL_DATA_ENTRY)) {
