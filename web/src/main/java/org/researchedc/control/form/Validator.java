@@ -384,7 +384,7 @@ public class Validator {
         return new ValidatorRegularExpression(resformat.getString("date_time_format"), resformat.getString("date_time_regexp"));
     }
 
-    public static final ValidatorRegularExpression EMAIL = new ValidatorRegularExpression("username@institution.domain", ".+@.+\\..*");
+    // EMAIL removed — email delivery retired (0 active callers, run-66)
 
     // public static final ValidatorRegularExpression PHONE_NUMBER = new
     // ValidatorRegularExpression(
@@ -406,7 +406,7 @@ public class Validator {
     public static final int IS_DATE_TIME = 21;
     public static final int CHECK_SAME = 5;// this is for matching passwords,
     // e.g.
-    public static final int IS_A_EMAIL = 6;
+    // IS_A_EMAIL removed — email delivery retired (0 active callers, run-66)
     public static final int LENGTH_NUMERIC_COMPARISON = 7;
     public static final int ENTITY_EXISTS = 8; // for checking if a primary key
     // is valid
@@ -761,9 +761,6 @@ public class Validator {
             case CHECK_SAME:
                 errorMessage = resexception.getString("anwer_not_match");
                 break;
-            case IS_A_EMAIL:
-                errorMessage = resexception.getString("input_not_valid_email") + EMAIL.getDescription() + " " + resexception.getString("format3") + ".";
-                break;
             case IS_A_PHONE_NUMBER:
                 errorMessage =
                     resexception.getString("input_not_valid_phone") + getPhoneRegEx().getDescription() + " " + resexception.getString("format4") + ".";
@@ -963,11 +960,6 @@ public class Validator {
             String compareField = v.getString(0);
 
             if (!isSame(fieldName, compareField)) {
-                addError(fieldName, v);
-            }
-            break;
-        case IS_A_EMAIL:
-            if (!isEmail(fieldName)) {
                 addError(fieldName, v);
             }
             break;
@@ -1451,10 +1443,7 @@ public class Validator {
 
         return value1.equals(value2);
     }
-
-    protected boolean isEmail(String fieldName) {
-        return matchesRegex(fieldName, EMAIL);
-    }
+    // isEmail removed — email delivery retired (0 active callers, run-66)
 
     protected boolean isPhoneNumber(String fieldName) {
         return matchesRegex(fieldName, getPhoneRegEx());
