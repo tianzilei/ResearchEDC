@@ -216,6 +216,7 @@ public class EventCrfLayerBuilder {
                 }
                 */
             }
+            /* phase-1-run-60: DeleteEventCRFServlet deleted, use SPA /app/actions/event-crf/remove/:id
             if (currentStudy.getStatus() == Status.AVAILABLE && currentUser.isSysAdmin()) {
                 html.tr(0).valign("top").close();
                 html.td(0).styleClass(table_cell_left).close();
@@ -224,6 +225,7 @@ public class EventCrfLayerBuilder {
                 deleteEventCrf(html, eventCrfBean, studySubject, reswords.getString("delete"));
                 html.tdEnd().trEnd(0);
             }
+            */
         } else if (eventCrfStatus == DataEntryStage.LOCKED) {
             if (! hiddenCrf()) {
                 html.tr(0).valign("top").close();
@@ -344,6 +346,7 @@ public class EventCrfLayerBuilder {
                 html.tdEnd().trEnd(0);
             }
             */
+            /* phase-1-run-60: DeleteEventCRFServlet deleted, use SPA /app/actions/event-crf/remove/:id
             if (currentStudy.getStatus() == Status.AVAILABLE && currentUser.isSysAdmin()) {
                 html.tr(0).valign("top").close();
                 html.td(0).styleClass(table_cell_left).close();
@@ -352,6 +355,7 @@ public class EventCrfLayerBuilder {
                 deleteEventCrf(html, eventCrfBean, studySubject, reswords.getString("delete"));
                 html.tdEnd().trEnd(0);
             }
+            */
         }
         html.tableEnd(0);
         html.tdEnd().trEnd(0).tableEnd(0);
