@@ -233,17 +233,7 @@ public class StudyInfoPanel {
 
             // EDIT_DATASET, EXPORT_DATASETS, GENERATE_DATASET_HTML branches removed — extract servlets deleted in Phase 1
 
-            } else if (page.equals(Page.LIST_STUDY_SUBJECT)) {
-                this.reset();
-                this.setStudyInfoShown(true);
-                this.setOrderedData(true);
-                this.setExtractData(false);
-                this.setSubmitDataModule(false);
-                this.setCreateDataset(false);
-                this.setIconInfoShown(false);
-                this.setManageSubject(true);
-                // don't want to show DDE icon key for subject matrix page
-                request.setAttribute("showDDEIcon", Boolean.FALSE);
+            // LIST_STUDY_SUBJECT branch removed — phase-1-run-55: servlet + JSP deleted (orphaned, 0 active callers)
 
             } else if (page.equals(Page.VIEW_SECTION_DATA_ENTRY) || page.equals(Page.VIEW_SECTION_DATA_ENTRY_SERVLET)) {
 
