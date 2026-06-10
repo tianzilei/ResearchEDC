@@ -1,6 +1,6 @@
 # Legacy Workflow Inventory
 
-Generated: 2026-06-09 19:57:44 UTC
+Generated: 2026-06-10 01:10:28 UTC
 
 Full CSV inventory: `legacy-workflow-inventory.csv`
 
@@ -8,40 +8,38 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 
 | Artifact type | Count |
 |---|---:|
-| `dao-implementation` | 48 |
-| `dao-spi` | 55 |
-| `dao-support` | 6 |
-| `jsp-view` | 100 |
-| `legacy-servlet` | 50 |
-| `scheduled-job` | 2 |
-| `shared-service` | 42 |
-| `spring-mvc-route` | 17 |
+| `dao-implementation` | 44 |
+| `dao-spi` | 51 |
+| `dao-support` | 5 |
+| `jsp-view` | 65 |
+| `legacy-servlet` | 12 |
+| `shared-service` | 32 |
+| `spring-mvc-route` | 15 |
 
 ## Summary By Classification
 
 | Classification | Count |
 |---|---:|
-| `keep compatibility` | 76 |
-| `replace` | 226 |
-| `unknown` | 18 |
+| `keep compatibility` | 62 |
+| `replace` | 153 |
+| `unknown` | 9 |
 
 ## Summary By Phase Slice
 
 | Phase slice | Count |
 |---|---:|
-| `phase-0-inventory-and-gates` | 16 |
-| `phase-1-admin-write` | 4 |
-| `phase-1-crf-metadata` | 27 |
-| `phase-1-data-entry-discrepancy` | 36 |
-| `phase-1-export-dataset-filter` | 3 |
-| `phase-1-import-export-compatibility` | 21 |
-| `phase-1-study-subject-event` | 60 |
-| `phase-3-dao-implementation-deletion` | 109 |
-| `phase-4-shared-service-deletion` | 44 |
+| `phase-0-inventory-and-gates` | 9 |
+| `phase-1-crf-metadata` | 13 |
+| `phase-1-data-entry-discrepancy` | 32 |
+| `phase-1-export-dataset-filter` | 1 |
+| `phase-1-import-export-compatibility` | 11 |
+| `phase-1-study-subject-event` | 26 |
+| `phase-3-dao-implementation-deletion` | 100 |
+| `phase-4-shared-service-deletion` | 32 |
 
 ## First Phase 1 Candidate Slice
 
-Recommended slice: `phase-1-admin-write`.
+Recommended slice: `phase-1-crf-metadata`.
 
 Deletion proof required before removing any candidate artifact:
 
@@ -55,10 +53,19 @@ Candidate artifacts:
 
 | Type | Path | Symbol | Route/mapping |
 |---|---|---|---|
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/admin/configurationPasswordRequirements.jsp | configurationPasswordRequirements.jsp | /WEB-INF/jsp/admin/configurationPasswordRequirements.jsp |
-| legacy-servlet | web/src/main/java/org/researchedc/control/admin/ConfigurePasswordRequirementsServlet.java | org.researchedc.control.admin.ConfigurePasswordRequirementsServlet | /ConfigurePasswordRequirements |
-| legacy-servlet | web/src/main/java/org/researchedc/control/admin/ConfigureServlet.java | org.researchedc.control.admin.ConfigureServlet | /Configure |
-| legacy-servlet | web/src/main/java/org/researchedc/control/admin/PauseJobServlet.java | org.researchedc.control.admin.PauseJobServlet | /PauseJob |
+| jsp-view | web/src/main/webapp/WEB-INF/jsp/managestudy/viewSectionDataEntry.jsp | viewSectionDataEntry.jsp | /WEB-INF/jsp/managestudy/viewSectionDataEntry.jsp |
+| jsp-view | web/src/main/webapp/WEB-INF/jsp/managestudy/viewSectionDataEntryHtml.jsp | viewSectionDataEntryHtml.jsp | /WEB-INF/jsp/managestudy/viewSectionDataEntryHtml.jsp |
+| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/eventCrfLayer.jsp | eventCrfLayer.jsp | /WEB-INF/jsp/submit/eventCrfLayer.jsp |
+| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/generateGroupItemTxt.jsp | generateGroupItemTxt.jsp | /WEB-INF/jsp/submit/generateGroupItemTxt.jsp |
+| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/generateLeftItemTxt.jsp | generateLeftItemTxt.jsp | /WEB-INF/jsp/submit/generateLeftItemTxt.jsp |
+| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showFixedItemInput.jsp | showFixedItemInput.jsp | /WEB-INF/jsp/submit/showFixedItemInput.jsp |
+| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showGroupItemInput.jsp | showGroupItemInput.jsp | /WEB-INF/jsp/submit/showGroupItemInput.jsp |
+| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showGroupItemInputMonitor.jsp | showGroupItemInputMonitor.jsp | /WEB-INF/jsp/submit/showGroupItemInputMonitor.jsp |
+| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showItemInput.jsp | showItemInput.jsp | /WEB-INF/jsp/submit/showItemInput.jsp |
+| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showItemInputMonitor.jsp | showItemInputMonitor.jsp | /WEB-INF/jsp/submit/showItemInputMonitor.jsp |
+| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showItemInputToolTipsJS.jsp | showItemInputToolTipsJS.jsp | /WEB-INF/jsp/submit/showItemInputToolTipsJS.jsp |
+| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showSection.jsp | showSection.jsp | /WEB-INF/jsp/submit/showSection.jsp |
+| legacy-servlet | web/src/main/java/org/researchedc/control/submit/CheckCRFLocked.java | org.researchedc.control.submit.CheckCRFLocked | /CheckCRFLocked |
 
 ## Unknown Items
 
@@ -66,23 +73,14 @@ These require manual owner/category assignment before deletion work:
 
 | Type | Path | Symbol | Route/mapping |
 |---|---|---|---|
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/include/alertbox.jsp | alertbox.jsp | /WEB-INF/jsp/include/alertbox.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/include/showDateTimeInput.jsp | showDateTimeInput.jsp | /WEB-INF/jsp/include/showDateTimeInput.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/include/showHiddenInput.jsp | showHiddenInput.jsp | /WEB-INF/jsp/include/showHiddenInput.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/include/showPageMessages.jsp | showPageMessages.jsp | /WEB-INF/jsp/include/showPageMessages.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/include/showPopUp.jsp | showPopUp.jsp | /WEB-INF/jsp/include/showPopUp.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/include/showPopUp2.jsp | showPopUp2.jsp | /WEB-INF/jsp/include/showPopUp2.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/include/showSideMessage.jsp | showSideMessage.jsp | /WEB-INF/jsp/include/showSideMessage.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/include/showTable.jsp | showTable.jsp | /WEB-INF/jsp/include/showTable.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/include/showTableWithTab.jsp | showTableWithTab.jsp | /WEB-INF/jsp/include/showTableWithTab.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/include/sideAlert.jsp | sideAlert.jsp | /WEB-INF/jsp/include/sideAlert.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/include/sideInfo.jsp | sideInfo.jsp | /WEB-INF/jsp/include/sideInfo.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/include/workflow.jsp | workflow.jsp | /WEB-INF/jsp/include/workflow.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/menu.jsp | menu.jsp | /WEB-INF/jsp/menu.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/showMessage.jsp | showMessage.jsp | /WEB-INF/jsp/showMessage.jsp |
-| legacy-servlet | web/src/main/java/org/researchedc/control/admin/DeleteUserServlet.java | org.researchedc.control.admin.DeleteUserServlet | /DeleteUser |
-| legacy-servlet | web/src/main/java/org/researchedc/control/rule/ExecuteCrossEditCheckServlet.java | org.researchedc.control.rule.ExecuteCrossEditCheckServlet | /ExecuteCrossEditCheck |
-| scheduled-job | shared/src/main/java/org/researchedc/job/XsltTransformJob.java | org.researchedc.job.XsltTransformJob | (quartz/job class) |
-| scheduled-job | web/src/main/java/org/researchedc/web/job/ImportSpringJob.java | org.researchedc.web.job.ImportSpringJob | (quartz/job class) |
 
 _Generated by `scripts/ci/generate-legacy-inventory.py`._
