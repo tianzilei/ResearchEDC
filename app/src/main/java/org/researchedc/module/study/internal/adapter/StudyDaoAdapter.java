@@ -109,7 +109,6 @@ public class StudyDaoAdapter implements IStudyDAO {
         entity.setFacilityContactName((String) hm.get("facility_contact_name"));
         entity.setFacilityContactDegree((String) hm.get("facility_contact_degree"));
         entity.setFacilityContactPhone((String) hm.get("facility_contact_phone"));
-        entity.setFacilityContactEmail((String) hm.get("facility_contact_email"));
         entity.setProtocolType((String) hm.get("protocol_type"));
         entity.setProtocolDescription((String) hm.get("protocol_description"));
         entity.setProtocolDateVerification(toLocalDateTime((Date) hm.get("protocol_date_verification")));
@@ -330,7 +329,6 @@ public class StudyDaoAdapter implements IStudyDAO {
         entity.setFacilityContactName(bean.getFacilityContactName());
         entity.setFacilityContactDegree(bean.getFacilityContactDegree());
         entity.setFacilityContactPhone(bean.getFacilityContactPhone());
-        entity.setFacilityContactEmail(bean.getFacilityContactEmail());
         entity.setProtocolType(bean.getProtocolType());
         entity.setProtocolDescription(bean.getProtocolDescription());
         entity.setProtocolDateVerification(toLocalDateTime(bean.getProtocolDateVerification()));
@@ -401,7 +399,6 @@ public class StudyDaoAdapter implements IStudyDAO {
         bean.setFacilityContactName(entity.getFacilityContactName());
         bean.setFacilityContactDegree(entity.getFacilityContactDegree());
         bean.setFacilityContactPhone(entity.getFacilityContactPhone());
-        bean.setFacilityContactEmail(entity.getFacilityContactEmail());
         bean.setProtocolType(entity.getProtocolType());
         bean.setProtocolDescription(entity.getProtocolDescription());
         bean.setProtocolDateVerification(toDate(entity.getProtocolDateVerification()));

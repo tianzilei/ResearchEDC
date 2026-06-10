@@ -363,7 +363,6 @@ public class UserAccountDaoAdapter implements IUserAccountDAO {
         entity.setUserName((String) hm.get("user_name"));
         entity.setFirstName((String) hm.get("first_name"));
         entity.setLastName((String) hm.get("last_name"));
-        entity.setEmail((String) hm.get("email"));
         entity.setPhone((String) hm.get("phone"));
         entity.setInstitutionalAffiliation((String) hm.get("institutional_affiliation"));
         entity.setUserTypeId((Integer) hm.get("user_type_id"));
@@ -439,7 +438,6 @@ public class UserAccountDaoAdapter implements IUserAccountDAO {
         entity.setUserName(bean.getName());
         entity.setFirstName(bean.getFirstName());
         entity.setLastName(bean.getLastName());
-        entity.setEmail(bean.getEmail());
         entity.setPhone(bean.getPhone());
         entity.setInstitutionalAffiliation(bean.getInstitutionalAffiliation());
         entity.setUserTypeId(UserType.USER.getId());
@@ -469,7 +467,6 @@ public class UserAccountDaoAdapter implements IUserAccountDAO {
         bean.setName(entity.getUserName());
         bean.setFirstName(entity.getFirstName());
         bean.setLastName(entity.getLastName());
-        bean.setEmail(entity.getEmail());
         bean.setPhone(entity.getPhone());
         bean.setInstitutionalAffiliation(entity.getInstitutionalAffiliation());
         if (entity.getUserTypeId() != null) {

@@ -946,30 +946,6 @@ public abstract class SecureController extends HttpServlet {
         }
     }
 
-    public Boolean sendEmail(String to, String subject, String body, Boolean htmlEmail, Boolean sendMessage) throws Exception {
-        return sendEmail(to, "", subject, body, htmlEmail, respage.getString("your_message_sent_succesfully"),
-                respage.getString("mail_cannot_be_sent_to_admin"), sendMessage);
-    }
-
-    public Boolean sendEmail(String to, String subject, String body, Boolean htmlEmail) throws Exception {
-        return sendEmail(to, "", subject, body, htmlEmail, respage.getString("your_message_sent_succesfully"),
-                respage.getString("mail_cannot_be_sent_to_admin"), true);
-    }
-
-    public Boolean sendEmail(String to, String from, String subject, String body, Boolean htmlEmail) throws Exception {
-        return sendEmail(to, from, subject, body, htmlEmail, respage.getString("your_message_sent_succesfully"),
-                respage.getString("mail_cannot_be_sent_to_admin"), true);
-    }
-
-    public Boolean sendEmail(String to, String from, String subject, String body, Boolean htmlEmail, String successMessage, String failMessage,
-            Boolean sendMessage) throws Exception {
-        if (sendMessage) {
-            addPageMessage("Email delivery is disabled.");
-        }
-        logger.debug("Email delivery disabled; skipped message to {} with subject {}", to, subject);
-        return false;
-    }
-
     public void dowloadFile(File f, String contentType) throws Exception {
 
         response.setHeader("Content-disposition", "attachment; filename=\"" + f.getName() + "\";");

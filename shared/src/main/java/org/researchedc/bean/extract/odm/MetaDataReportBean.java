@@ -855,9 +855,6 @@ public class MetaDataReportBean extends OdmXmlReportBean {
             temp = study.getFacilityContactPhone();
             facility.append(temp != null && temp.length() > 0 ? currentIndent + indent + indent + "<OpenClinica:FacilityContactPhone>"
                 + StringEscapeUtils.escapeXml(temp) + "</OpenClinica:FacilityContactPhone>" + nls : "");
-            temp = study.getFacilityContactEmail();
-            facility.append(temp != null && temp.length() > 0 ? currentIndent + indent + indent + "<OpenClinica:FacilityContactEmail>"
-                + StringEscapeUtils.escapeXml(temp) + "</OpenClinica:FacilityContactEmail>" + nls : "");
             if (facility.length() > 0) {
                 xml.append(currentIndent + indent + "<OpenClinica:FacilityInformation>");
                 xml.append(nls);

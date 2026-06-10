@@ -95,7 +95,7 @@ public class SessionManager {
                 userName = "";
             }
             ub = (UserAccountBean) getUserAccountDao().findByUserName(userName);
-            logger.debug("User  : {} , email address : {} Logged In ", ub.getName(), ub.getEmail());
+            logger.debug("User  : {} Logged In ", ub.getName());
 
         } else {
             ub = userFromSession;

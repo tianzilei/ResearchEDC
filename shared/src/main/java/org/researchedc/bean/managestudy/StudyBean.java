@@ -62,7 +62,6 @@ public class StudyBean extends AuditableEntityBean {
     private String facilityContactName = "";
     private String facilityContactDegree = "";
     private String facilityContactPhone = "";
-    private String facilityContactEmail = ""; // retained for backward compatibility; email delivery retired
     private String protocolType = "";
     private String protocolDescription = "";
     private Date protocolDateVerification;
@@ -434,21 +433,6 @@ public class StudyBean extends AuditableEntityBean {
      */
     public void setFacilityContactDegree(String facilityContactDegree) {
         this.facilityContactDegree = facilityContactDegree;
-    }
-
-    /**
-     * @return Returns the facilityContactEmail.
-     */
-    public String getFacilityContactEmail() {
-        return facilityContactEmail;
-    }
-
-    /**
-     * @param facilityContactEmail
-     *            The facilityContactEmail to set.
-     */
-    public void setFacilityContactEmail(String facilityContactEmail) {
-        this.facilityContactEmail = facilityContactEmail;
     }
 
     /**
