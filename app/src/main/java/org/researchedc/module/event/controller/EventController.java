@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -37,6 +38,25 @@ public class EventController {
     public ResponseEntity<List<EventDefinitionDTO>> listDefinitions(
             @RequestParam Integer studyId) {
         return ResponseEntity.ok(eventService.listEventDefinitions(studyId));
+    }
+
+    @GetMapping("/definitions/{id}")
+    public ResponseEntity<EventDefinitionDTO> getEventDefinition(@PathVariable Integer id) {
+        return ResponseEntity.ok(eventService.getEventDefinition(id));
+    }
+
+    @DeleteMapping("/definitions/{id}")
+    public ResponseEntity<Void> removeEventDefinition(@PathVariable Integer id) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        eventService.removeEventDefinition(id, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/definitions/{id}")
+    public ResponseEntity<Void> restoreEventDefinition(@PathVariable Integer id) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        eventService.restoreEventDefinition(id, userId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/by-subject")

@@ -51,7 +51,7 @@
     color: #4D4D4D;
 }
 
-/*See: chooseDownloadFormat.jsp */
+/*chooseDownloadFormat.jsp removed in phase-1-run-61 — styles retained for compatibility */
 #downloadDiv {
     margin:5px;
     padding: 0.5em;

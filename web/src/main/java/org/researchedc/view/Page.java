@@ -232,7 +232,7 @@ public enum Page {
 
     // LIST_EVENTS_FOR_SUBJECT removed — phase-1-run-55: servlet + JSP deleted (orphaned, 0 active callers)
     INITIAL_DATA_ENTRY_NW ("/WEB-INF/jsp/submit/initialDataEntryNw.jsp", "Data Entry"),
-    CHOOSE_DOWNLOAD_FORMAT ("/WEB-INF/jsp/submit/chooseDownloadFormat.jsp", "Choose download format"),
+    // CHOOSE_DOWNLOAD_FORMAT removed — phase-1-run-61: JSP deleted (orphaned, 0 active references)
 
     FILE_UPLOAD ("/WEB-INF/jsp/submit/uploadFile.jsp", "Form For File Uploading"),
     //UPLOAD_FILE_SERVLET ("/UploadFile", "Upload File"),
