@@ -78,9 +78,7 @@ public class StringUtil {
 
     }
 
-    public static boolean isEmail(String s) {
-        return Pattern.matches("[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*@[A-Za-z]+(\\.[A-Za-z]+)*", s) ? true : false;
-    }
+    // isEmail removed — email delivery retired (0 active callers, run-66)
 
     public static String join(String glue, ArrayList a) {
         String answer = "";
