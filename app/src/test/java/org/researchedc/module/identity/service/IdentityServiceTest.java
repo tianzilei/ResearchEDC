@@ -45,7 +45,6 @@ class IdentityServiceTest {
         e.setUserName(userName);
         e.setFirstName("John");
         e.setLastName("Doe");
-        e.setEmail("john@example.com");
         e.setEnabled(true);
         return e;
     }
