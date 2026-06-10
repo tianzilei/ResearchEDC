@@ -406,7 +406,7 @@
 </td>
 <td><input type="submit" name="submitEnroll" value="<fmt:message key="save_and_add_next_subject" bundle="${restext}"/>" class="button_long"></td>
 <td><input type="submit" name="submitDone" value="<fmt:message key="save_and_finish" bundle="${restext}"/>" class="button_long"></td>
-<td><input type="button" onclick="confirmCancel('ListStudySubjects');"  name="cancel" value="   <fmt:message key="cancel" bundle="${resword}"/>   " class="button_medium"/></td>
+<td><input type="button" onclick="confirmCancel('app/subjects');"  name="cancel" value="   <fmt:message key="cancel" bundle="${resword}"/>   " class="button_medium"/></td>
 </tr>
 </table>
 </form>

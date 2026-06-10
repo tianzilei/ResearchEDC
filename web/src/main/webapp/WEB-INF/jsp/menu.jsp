@@ -147,7 +147,8 @@
         });
     });
     </script>
-    <form  action="${pageContext.request.contextPath}/ListStudySubjects">
+    <%-- phase-1-run-57: redirect to SPA subject list instead of legacy ListStudySubjects --%>
+    <form  action="${pageContext.request.contextPath}/app/subjects">
         <input type="hidden" name="module" value="admin">
         ${findSubjectsHtml}
     </form>
