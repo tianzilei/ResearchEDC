@@ -170,6 +170,24 @@ public class EventService {
     }
 
     @Transactional
+    public void restoreStudyEvent(Integer eventId, Integer userId) {
+        StudyEventEntity entity = studyEventRepository.findById(eventId)
+            .orElseThrow(() -> new java.util.NoSuchElementException(
+                "StudyEvent not found: " + eventId));
+
+        entity.setStatusId(1);
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(userId);
+
+        studyEventRepository.save(entity);
+
+        auditService.recordAudit(
+                null, AuditEventType.UPDATE, "StudyEvent",
+                entity.getStudyEventId().longValue(), "Event #" + entity.getStudyEventId(),
+                null, null, userId, "Event restored (status=1)", "event");
+    }
+
+    @Transactional
     public void removeEventCrf(Integer crfId, Integer userId) {
         EventCrfEntity entity = eventCrfRepository.findById(crfId)
             .orElseThrow(() -> new java.util.NoSuchElementException(
@@ -185,6 +203,24 @@ public class EventService {
                 null, AuditEventType.DELETE, "EventCrf",
                 entity.getEventCrfId().longValue(), "EventCrf #" + entity.getEventCrfId(),
                 null, null, userId, "Event CRF removed (status=5)", "event");
+    }
+
+    @Transactional
+    public void restoreEventCrf(Integer crfId, Integer userId) {
+        EventCrfEntity entity = eventCrfRepository.findById(crfId)
+            .orElseThrow(() -> new java.util.NoSuchElementException(
+                "EventCrf not found: " + crfId));
+
+        entity.setStatusId(1);
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(userId);
+
+        eventCrfRepository.save(entity);
+
+        auditService.recordAudit(
+                null, AuditEventType.UPDATE, "EventCrf",
+                entity.getEventCrfId().longValue(), "EventCrf #" + entity.getEventCrfId(),
+                null, null, userId, "Event CRF restored (status=1)", "event");
     }
 
     public EventDefinitionDTO getEventDefinition(Integer id) {

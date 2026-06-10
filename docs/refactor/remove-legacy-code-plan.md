@@ -1,7 +1,7 @@
 # Remove Legacy Code Plan
 
-**Last updated:** 2026-06-10
-**Status:** Legacy removal is **not complete**. This plan tracks the remaining deletion work after `legacy-core/` consolidation, DAO SPI widening, and repeated Phase 1 deletion slices through phase-1-run-58. SPA migration coverage mapping added 2026-06-08. CRF metadata boundary ledger opened and inventory reconciled on 2026-06-10.
+**Last updated:** 2026-06-11
+**Status:** Legacy removal is **not complete**. This plan tracks the remaining deletion work after `legacy-core/` consolidation, DAO SPI widening, and repeated Phase 1 deletion slices through phase-1-run-58. SPA migration coverage mapping added 2026-06-08. CRF metadata boundary ledger opened and inventory reconciled on 2026-06-10. EntityAction subject/event remove/restore gaps closed on 2026-06-11.
 
 ## Current Baseline
 
@@ -218,11 +218,11 @@ SPA route definitions live in `frontend/src/router/index.tsx` (React Router 7, `
 
 > **Note:** `RuleSetDetail.tsx` was listed here but is already wired as `studies/:studyId/rules/:ruleSetId` (router line 96) with full rule CRUD (create/add/remove modals, 380 lines). The plan document was outdated.
 
-#### SPA → Legacy Fallbacks (SPA pages that still open legacy JSPs)
+#### SPA Action Fallbacks
 
-| SPA Page | Fallback Target | Workflow Missing |
+| SPA Page | Action Target | Coverage Status |
 |----------|----------------|-----------------|
-| `EntityAction` | `/legacy/Remove*` / `/legacy/Restore*` | Remove/restore for unsupported entity types |
+| `EntityAction` | `/app/actions/*` to module REST | Study-subject, study-event, and event-CRF remove/restore now covered; keep remaining unsupported entity types gated |
 
 > **Note:** `SignStudySubject`, `ReassignStudySubject`, and `CreateNewStudyEvent` fallbacks were previously listed here.
 > - `SignStudySubject` — resolved in run-63: `POST /api/v1/subjects/{id}/sign` endpoint added (commit `c5af47499`)
@@ -249,7 +249,7 @@ Based on risk, effort, and dependency chain:
 1. **CRF metadata boundary ledger** — Opened from the stale 13-row candidate list; regenerated active inventory now has 11 blocked `phase-1-crf-metadata` artifacts.
 2. **Inventory and plan hygiene** — Keep `legacy-workflow-inventory.{csv,md}` and handoff docs aligned with the current tree; Phase 0 unknown classification is currently closed at 0 unknown artifacts.
 3. **Email field removal** — Product-facing request/contact and email-field paths retired; see `docs/refactor/phase-1-email-field-removal-slice.md`. Compatibility schema/ODM fields remain until contract review.
-4. **Entity Action completeness** — Extend `EntityAction` page to handle all entity types, removing legacy `/legacy/Remove*`/`/legacy/Restore*` fallbacks.
+4. **Entity Action completeness** — 2026-06-11 slice covered study-subject, study-event, and event-CRF remove/restore through module REST endpoints; see `docs/refactor/phase-1-entity-action-slice.md`. Keep this open only for remaining unsupported entity types.
 5. **Subject Detail fallbacks** — Replace `/legacy/SignStudySubject` (e-signature), `/legacy/ReassignStudySubject`, `/legacy/CreateNewStudyEvent` with SPA-native components.
 6. **Rule editing** — Wire orphaned `RuleSetDetail.tsx` route; add rule creation/editing form.
 7. **Import** (moderate effort, 10 compatibility artifacts in inventory) — SPA `ImportManager` exists but is basic. Build step-by-step import wizard with validation preview.

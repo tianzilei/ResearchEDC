@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class SubjectService {
+    private static final int STATUS_AVAILABLE = 1;
+    private static final int STATUS_REMOVED = 5;
 
     private final SubjectRepository subjectRepository;
     private final StudySubjectRepository studySubjectRepository;
@@ -129,30 +131,54 @@ public class SubjectService {
 
     @Transactional
     public void removeSubject(Integer id, Integer userId) {
-        // Try SubjectEntity first (subject deletion)
-        SubjectEntity subject = subjectRepository.findById(id).orElse(null);
-        if (subject != null) {
-            subject.setStatusId(5);
-            subject.setDateUpdated(LocalDateTime.now());
-            subject.setUpdateId(userId);
-            subjectRepository.save(subject);
-            auditService.recordAudit(null, AuditEventType.DELETE, "Subject",
-                    subject.getSubjectId().longValue(), subject.getUniqueIdentifier(),
-                    null, null, userId, "Subject removed (status=5)", "subject");
-            return;
-        }
+        SubjectEntity subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new java.util.NoSuchElementException("Subject not found: " + id));
+        subject.setStatusId(STATUS_REMOVED);
+        subject.setDateUpdated(LocalDateTime.now());
+        subject.setUpdateId(userId);
+        subjectRepository.save(subject);
+        auditService.recordAudit(null, AuditEventType.DELETE, "Subject",
+                subject.getSubjectId().longValue(), subject.getUniqueIdentifier(),
+                null, null, userId, "Subject removed (status=5)", "subject");
+    }
 
-        // Try StudySubjectEntity (study-subject deletion)
+    @Transactional
+    public void restoreSubject(Integer id, Integer userId) {
+        SubjectEntity subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new java.util.NoSuchElementException("Subject not found: " + id));
+        subject.setStatusId(STATUS_AVAILABLE);
+        subject.setDateUpdated(LocalDateTime.now());
+        subject.setUpdateId(userId);
+        subjectRepository.save(subject);
+        auditService.recordAudit(null, AuditEventType.UPDATE, "Subject",
+                subject.getSubjectId().longValue(), subject.getUniqueIdentifier(),
+                null, null, userId, "Subject restored (status=1)", "subject");
+    }
+
+    @Transactional
+    public void removeStudySubject(Integer id, Integer userId) {
         StudySubjectEntity studySubject = studySubjectRepository.findById(id)
-                .orElseThrow(() -> new java.util.NoSuchElementException(
-                        "Subject or StudySubject not found: " + id));
-        studySubject.setStatusId(5);
+                .orElseThrow(() -> new java.util.NoSuchElementException("StudySubject not found: " + id));
+        studySubject.setStatusId(STATUS_REMOVED);
         studySubject.setDateUpdated(LocalDateTime.now());
         studySubject.setUpdateId(userId);
         studySubjectRepository.save(studySubject);
         auditService.recordAudit(studySubject.getStudyId(), AuditEventType.DELETE, "StudySubject",
                 studySubject.getStudySubjectId().longValue(), studySubject.getLabel(),
                 null, null, userId, "StudySubject removed (status=5)", "subject");
+    }
+
+    @Transactional
+    public void restoreStudySubject(Integer id, Integer userId) {
+        StudySubjectEntity studySubject = studySubjectRepository.findById(id)
+                .orElseThrow(() -> new java.util.NoSuchElementException("StudySubject not found: " + id));
+        studySubject.setStatusId(STATUS_AVAILABLE);
+        studySubject.setDateUpdated(LocalDateTime.now());
+        studySubject.setUpdateId(userId);
+        studySubjectRepository.save(studySubject);
+        auditService.recordAudit(studySubject.getStudyId(), AuditEventType.UPDATE, "StudySubject",
+                studySubject.getStudySubjectId().longValue(), studySubject.getLabel(),
+                null, null, userId, "StudySubject restored (status=1)", "subject");
     }
 
     private SubjectDTO toSubjectDto(SubjectEntity e) {

@@ -111,10 +111,24 @@ public class EventController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> restoreStudyEvent(@PathVariable Integer id) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        eventService.restoreStudyEvent(id, userId);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/crfs/{crfId}")
     public ResponseEntity<Void> removeEventCrfById(@PathVariable Integer crfId) {
         Integer userId = currentUserUtils.getCurrentUserId();
         eventService.removeEventCrf(crfId, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/crfs/{crfId}")
+    public ResponseEntity<Void> restoreEventCrfById(@PathVariable Integer crfId) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        eventService.restoreEventCrf(crfId, userId);
         return ResponseEntity.ok().build();
     }
 
