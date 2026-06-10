@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-//import com.ecyrd.speed4j.StopWatch;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
