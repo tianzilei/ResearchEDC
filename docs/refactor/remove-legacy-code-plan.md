@@ -213,18 +213,21 @@ SPA route definitions live in `frontend/src/router/index.tsx` (React Router 7, `
 
 | Component File | What It Does | Action Needed |
 |---------------|-------------|---------------|
-| `pages/rules/RuleSetDetail.tsx` | Rule set detail/edit page | Wire as route `studies/:studyId/rules/:ruleSetId` |
 | `components/questionnaire-builder/QuestionnaireBuilder.tsx` | Visual questionnaire builder | Wire as route `questionnaires/builder` |
 | `components/DiscrepancyNotes.tsx` | Discrepancy note CRUD component | Either give dedicated page route or keep inline only |
+
+> **Note:** `RuleSetDetail.tsx` was listed here but is already wired as `studies/:studyId/rules/:ruleSetId` (router line 96) with full rule CRUD (create/add/remove modals, 380 lines). The plan document was outdated.
 
 #### SPA → Legacy Fallbacks (SPA pages that still open legacy JSPs)
 
 | SPA Page | Fallback Target | Workflow Missing |
 |----------|----------------|-----------------|
-| `SubjectDetail` | `/legacy/SignStudySubject` | E-signature capture |
-| `SubjectDetail` | `/legacy/ReassignStudySubject` | Subject reassignment |
-| `SubjectDetail` | `/legacy/CreateNewStudyEvent` | Study event creation wizard |
 | `EntityAction` | `/legacy/Remove*` / `/legacy/Restore*` | Remove/restore for unsupported entity types |
+
+> **Note:** `SignStudySubject`, `ReassignStudySubject`, and `CreateNewStudyEvent` fallbacks were previously listed here.
+> - `SignStudySubject` — resolved in run-63: `POST /api/v1/subjects/{id}/sign` endpoint added (commit `c5af47499`)
+> - `ReassignStudySubject` — resolved in run-63: reassign path fixed (`/{id}/reassign`, commit `c5af47499`)
+> - `CreateNewStudyEvent` — resolved in run-48: servlet deleted, SPA SubjectDetail handles event creation via `scheduleEvent` mutation
 
 #### Blocking Workflows: Remaining Legacy JSPs/Servlets by Category
 
