@@ -38,8 +38,8 @@ import javax.sql.DataSource;
 
 public class CrfBulkRuleRunner extends RuleRunner {
 
-    public CrfBulkRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, Object mailSender) {
-        super(ds, requestURLMinusServletPath, contextPath, mailSender);
+    public CrfBulkRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath) {
+        super(ds, requestURLMinusServletPath, contextPath);
     }
 
     /**
@@ -149,7 +149,7 @@ public class CrfBulkRuleRunner extends RuleRunner {
                                             getStudyEventDefinitionDao(), getStudyParameterValueDao(), getUserAccountDao(), getDiscrepancyNoteDao());
                                 RuleActionBean rab =
                                     ap.execute(RuleRunnerMode.RULSET_BULK, executionMode, ruleAction, itemData, DiscrepancyNoteBean.ITEM_DATA, currentStudy,
-                                            ub, prepareEmailContents(ruleSet, ruleSetRule, currentStudy, ruleAction));
+                                            ub, null);
                                 if (rab != null) {
                                     actionBeansToShow.add(ruleAction);
                                 }
@@ -253,8 +253,7 @@ public class CrfBulkRuleRunner extends RuleRunner {
                             getUserAccountDao(), getDiscrepancyNoteDao());
                 RuleActionBean rab = null;
                 ap.execute(RuleRunnerMode.RULSET_BULK, executionMode, ruleActionContainer.getRuleAction(), ruleActionContainer.getItemDataBean(),
-                        DiscrepancyNoteBean.ITEM_DATA, currentStudy, ub, prepareEmailContents(ruleActionContainer.getRuleSetBean(), ruleActionContainer
-                                .getRuleAction().getRuleSetRule(), currentStudy, ruleActionContainer.getRuleAction()));
+                        DiscrepancyNoteBean.ITEM_DATA, currentStudy, ub, null);
                 if (rab != null) {
                     Key k =
                         new Key(ruleActionContainer.getRuleSetBean(), ruleActionContainer.getRuleAction().getExpressionEvaluatesTo().toString(),

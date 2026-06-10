@@ -32,14 +32,14 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  */
 public class BeanPropertyRuleRunner extends RuleRunner{
 
-	public BeanPropertyRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, Object mailSender) {
-		super(ds, contextPath, contextPath, mailSender);
+	public BeanPropertyRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath) {
+		super(ds, requestURLMinusServletPath, contextPath);
 		// TODO Auto-generated constructor stub
 	}
 
 	public void runRules(List<RuleSetBean> ruleSets, DataSource ds,
                          BeanPropertyService beanPropertyService, IStudyEventDAO studyEventDaoHib, IStudyEventDefinitionDAO studyEventDefDaoHib,
-                         StudyEventChangeDetails changeDetails,Integer userId , Object mailSender)
+                         StudyEventChangeDetails changeDetails,Integer userId)
 	{
         for (RuleSetBean ruleSet : ruleSets)
         {

@@ -175,7 +175,6 @@ public class AccountController {
      *                    "mobile": "jLGQwxkuVpPBLJCtnLdrAw==",
      *                    "accessCode": "yfzqpvDpiJftIZgNDphvxg==",
      *                    "password": "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8",
-     *                    "email": "XzJadh3l3V7uUoPCggbSoIfoNW8IQU3qsvrtHfJH7J0=",
      *                    "userName": "S_BL101.SS_SUBA101",
      *                    "studySubjectId": null,
      *                    "fName": "07hQGfwT6LRXk0rLLYwkviwNdOEycnj4lOjrNMBdesk="
@@ -250,7 +249,6 @@ public class AccountController {
      *                    "mobile": "JTaa7WGRdH5dGs42XyTrgA==",
      *                    "accessCode": "5s02UFpiMBijWuzaxSOojg==",
      *                    "password": "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8",
-     *                    "email": "XzJadh3l3V7uUoPCggbSoIfoNW8IQU3qsvrtHfJH7J0=",
      *                    "userName": "S_BL101.SS_SUB100",
      *                    "studySubjectId": null,
      *                    "fName": "pdyGCN1CdAKIGOUEERz/yQ=="
@@ -304,7 +302,6 @@ public class AccountController {
      * @apiParam {String} mobile Mobile Phone
      * @apiParam {String} accessCode Access Code
      * @apiParam {String} crcUserName CRC UserName
-     * @apiParam {String} email Email Address
      *
      * @apiGroup User Account
      * @apiDescription Creates a participant user account
@@ -316,14 +313,12 @@ public class AccountController {
      *                  "lName": "Keegan",
      *                  "mobile": "617 865 4567",
      *                  "accessCode": "5s02UFpiMBijWuzaxSOojg==",
-     *                  "crcUserName": "crc_user",
-     *                  "email": "abc@yahoo.com"
+     *                  "crcUserName": "crc_user"
      *                  }
      * @apiSuccessExample {json} Success-Response:
      *                    HTTP/1.1 200 OK
      *                    {
      *                    "studySubjectId": null,
-     *                    "email": "abc@yahoo.com",
      *                    "accessCode": "5s02UFpiMBijWuzaxSOojg==",
      *                    "password": "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8",
      *                    "userName": "S_BL101.SS_SUB100",
@@ -344,7 +339,6 @@ public class AccountController {
      * @apiParam {String} mobile Mobile Phone
      * @apiParam {String} accessCode Access Code
      * @apiParam {String} crcUserName CRC UserName
-     * @apiParam {String} email Email Address
      *
      * @apiGroup User Account
      * @apiDescription Updates a participant user account
@@ -356,14 +350,12 @@ public class AccountController {
      *                  "lName": "Keegan",
      *                  "mobile": "617 865 4567",
      *                  "accessCode": "5s02UFpiMBijWuzaxSOojg==",
-     *                  "crcUserName": "crc_user",
-     *                  "email": "abc@yahoo.com"
+     *                  "crcUserName": "crc_user"
      *                  }
      * @apiSuccessExample {json} Success-Response:
      *                    HTTP/1.1 200 OK
      *                    {
      *                    "studySubjectId": null,
-     *                    "email": "abc@yahoo.com",
      *                    "accessCode": "5s02UFpiMBijWuzaxSOojg==",
      *                    "password": "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8",
      *                    "userName": "S_BL101.SS_SUB100",

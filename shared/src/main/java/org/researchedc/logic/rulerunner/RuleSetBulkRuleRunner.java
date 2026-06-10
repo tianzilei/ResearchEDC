@@ -31,8 +31,8 @@ import javax.sql.DataSource;
 
 public class RuleSetBulkRuleRunner extends RuleRunner {
 
-    public RuleSetBulkRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath, Object mailSender) {
-        super(ds, requestURLMinusServletPath, contextPath, mailSender);
+    public RuleSetBulkRuleRunner(DataSource ds, String requestURLMinusServletPath, String contextPath) {
+        super(ds, requestURLMinusServletPath, contextPath);
     }
 
     private List<RuleSetBasedViewContainer> populateForRuleSetBasedView(List<RuleSetBasedViewContainer> theList, RuleSetBean ruleSet, RuleBean rule,
@@ -110,7 +110,7 @@ public class RuleSetBulkRuleRunner extends RuleRunner {
                                             getStudyEventDefinitionDao(), getStudyParameterValueDao(), getUserAccountDao(), getDiscrepancyNoteDao());
                                 RuleActionBean rab =
                                     ap.execute(RuleRunnerMode.RULSET_BULK, ExecutionMode.SAVE, ruleAction, itemData, DiscrepancyNoteBean.ITEM_DATA,
-                                            currentStudy, ub, prepareEmailContents(ruleSet, ruleSetRule, currentStudy, ruleAction));
+                                            currentStudy, ub, null);
                                 if (rab != null) {
                                     ruleSetBasedView = populateForRuleSetBasedView(ruleSetBasedView, ruleSet, rule, result, ruleAction);
                                 }
@@ -215,8 +215,7 @@ public class RuleSetBulkRuleRunner extends RuleRunner {
                             DiscrepancyNoteBean.ITEM_DATA,
                             currentStudy,
                             ub,
-                            prepareEmailContents(ruleActionContainer.getRuleSetBean(), ruleActionContainer.getRuleAction().getRuleSetRule(), currentStudy,
-                                    ruleActionContainer.getRuleAction()));
+                            null);
 				System.out.println(" Action Trigger: " + ap.toString());
 
                 if (rab != null) {

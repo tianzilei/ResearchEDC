@@ -5233,7 +5233,6 @@ String tempKey = idb.getItemId()+","+idb.getOrdinal();
             ruleSetService != null ? ruleSetService : (RuleSetServiceInterface) SpringServletAccess.getApplicationContext(getServletContext()).getBean(
                     "ruleSetService");
         ruleSetService.setContextPath(getContextPath(request));
-        ruleSetService.setMailSender(null);
         ruleSetService.setRequestURLMinusServletPath(getRequestURLMinusServletPath(request));
         return ruleSetService;
     }
@@ -5247,7 +5246,6 @@ String tempKey = idb.getItemId()+","+idb.getOrdinal();
             ruleSetService != null ? ruleSetService : (RuleSetServiceInterface) SpringServletAccess.getApplicationContext(getServletContext()).getBean(
                     "ruleSetServicePerRequest");
         ruleSetService.setContextPath(getContextPath(request));
-        ruleSetService.setMailSender(null);
         ruleSetService.setRequestURLMinusServletPath(getRequestURLMinusServletPath(request));
         return ruleSetService;
     }
