@@ -111,12 +111,6 @@
             <version>1.4</version>
         </dependency>
 
-        <!-- Apache Commons Validator -->
-        <dependency>
-            <groupId>commons-validator</groupId>
-            <artifactId>commons-validator</artifactId>
-        </dependency>
-
         <!-- JSON processing -->
         <dependency>
             <groupId>org.json</groupId>
@@ -146,13 +140,6 @@
                     <groupId>commons-collections</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <!-- Speed4j -->
-        <dependency>
-            <groupId>com.ecyrd.speed4j</groupId>
-            <artifactId>speed4j</artifactId>
-            <version>0.18</version>
         </dependency>
 
         <!-- Apache Commons FileUpload -->
