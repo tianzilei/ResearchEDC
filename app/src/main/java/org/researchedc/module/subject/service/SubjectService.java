@@ -115,6 +115,19 @@ public class SubjectService {
     }
 
     @Transactional
+    public void signStudySubject(Integer studySubjectId, String reason, Integer updaterId) {
+        StudySubjectEntity entity = studySubjectRepository.findById(studySubjectId)
+                .orElseThrow(() -> new java.util.NoSuchElementException("StudySubject not found: " + studySubjectId));
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(updaterId);
+        studySubjectRepository.save(entity);
+        auditService.recordAudit(entity.getStudyId(), AuditEventType.UPDATE, "StudySubject",
+                entity.getStudySubjectId().longValue(), entity.getLabel(),
+                null, null, updaterId,
+                "E-signature applied (reason: " + (reason != null ? reason : "not specified") + ")", "subject");
+    }
+
+    @Transactional
     public void removeSubject(Integer id, Integer userId) {
         // Try SubjectEntity first (subject deletion)
         SubjectEntity subject = subjectRepository.findById(id).orElse(null);
