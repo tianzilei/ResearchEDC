@@ -103,7 +103,7 @@
 					<tr valign="top">
 					 <td class="table_cell" align="right" colspan="3">
 					   <c:if test="${subsCount>0}">
-					    <a href="ListStudySubjects"><fmt:message key="show_all" bundle="${resword}"/></a>
+					    <a href="app/subjects"><fmt:message key="show_all" bundle="${resword}"/></a><!-- phase-1-run-57: SPA redirect -->
 					   </c:if>
 					     <c:if test="${study.status.available}">
                              | <a href="AddNewSubject"><fmt:message key="add_new" bundle="${resword}"/></a>
