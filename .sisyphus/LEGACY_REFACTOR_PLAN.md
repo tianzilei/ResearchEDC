@@ -472,20 +472,17 @@ SPA replacement coverage exists for major workflows, but physical JSP/servlet de
 | `submit/` (import/export compatibility) | 10 artifacts | Step-by-step import wizard with validation preview, rule import, ODM/OpenRosa/export compatibility |
 | `include/` / layout common | 6 classified artifacts | Delete only after all include references are gone |
 
-#### Known SPA → Legacy Fallbacks (SPA pages still open legacy JSPs)
+#### SPA Action / Compatibility Gaps
 
-| SPA Page | Legacy Fallback | Missing Feature |
-|----------|----------------|-----------------|
-| `SubjectDetail.tsx` | `/legacy/SignStudySubject` | E-signature capture |
-| `SubjectDetail.tsx` | `/legacy/ReassignStudySubject` | Subject reassignment |
-| `SubjectDetail.tsx` | `/legacy/CreateNewStudyEvent` | Study event scheduling wizard |
-| `EntityAction.tsx` | `/app/actions/*` to module REST | Study-subject, study-event, and event-CRF remove/restore covered on 2026-06-11; remaining unsupported entity types still gated |
+| Area | Current Status | Next Action |
+|------|----------------|-------------|
+| `EntityAction.tsx` | Study-subject, study-event, and event-CRF remove/restore covered on 2026-06-11 via module REST | Reopen only for concrete unsupported entity types found by inventory or route testing |
+| Import/export compatibility | SPA `ImportManager` exists but legacy import/export artifacts remain | Prove upload -> validate -> map -> commit parity, rule XML import, import job scheduling, and ODM/OpenRosa/export contracts |
 
 #### Orphan SPA Components (built but not wired to routes)
 
 | Component | Action Needed |
 |-----------|--------------|
-| `pages/rules/RuleSetDetail.tsx` | Wire as route `studies/:studyId/rules/:ruleSetId` |
 | `components/questionnaire-builder/QuestionnaireBuilder.tsx` | Wire as route `questionnaires/builder` |
 
 #### Feature Flag System

@@ -93,10 +93,10 @@ Remaining Phase 0 work:
 
 Current next action:
 
-1. Done: Opened `docs/refactor/phase-1-crf-metadata-ledger.csv` and `docs/refactor/phase-1-crf-metadata-slice.md`; split the stale 13-row candidate list into CRF section viewer, active data-entry rendering, and orphaned/deleted fragments.
-2. Done: Regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}`; active inventory is now 208 artifacts and `phase-1-crf-metadata` is narrowed from 13 to 11 active artifacts.
-3. Treat `CheckCRFLocked` and the `showItemInput*`/`generate*` fragments as blocked until current JSP include references are removed or replaced by SPA/module data-entry behavior.
-4. Keep larger study/subject/event, import/export, and data-entry slices gated by workflow-specific parity tests.
+1. Done: Closed the common `EntityAction` remove/restore gaps for study-subject, study-event, and event-CRF actions; see `docs/refactor/phase-1-entity-action-slice.md`.
+2. Next executable slice: import/export compatibility. Build or document the upload -> validate -> map -> commit parity path for the 10 import/export artifacts before deleting more legacy import JSP/servlet code.
+3. Parallel investigation: OpenRosa/Spring MVC compatibility routes. Classify which routes are public compatibility contracts versus module-owned migration candidates.
+4. Keep CRF metadata/data-entry rendering (`CheckCRFLocked`, `showItemInput*`, `generate*`, section/item/group JSP fragments) blocked until the SPA data-entry renderer proves section, repeating group, discrepancy note, rule execution, print/export, and file attachment parity.
 
 ## Phase B PostgreSQL Validation
 
@@ -246,16 +246,12 @@ These are the legacy artifacts that have **no SPA replacement** and are blocking
 
 Based on risk, effort, and dependency chain:
 
-1. **CRF metadata boundary ledger** — Opened from the stale 13-row candidate list; regenerated active inventory now has 11 blocked `phase-1-crf-metadata` artifacts.
-2. **Inventory and plan hygiene** — Keep `legacy-workflow-inventory.{csv,md}` and handoff docs aligned with the current tree; Phase 0 unknown classification is currently closed at 0 unknown artifacts.
-3. **Email field removal** — Product-facing request/contact and email-field paths retired; see `docs/refactor/phase-1-email-field-removal-slice.md`. Compatibility schema/ODM fields remain until contract review.
-4. **Entity Action completeness** — 2026-06-11 slice covered study-subject, study-event, and event-CRF remove/restore through module REST endpoints; see `docs/refactor/phase-1-entity-action-slice.md`. Keep this open only for remaining unsupported entity types.
-5. **Subject Detail fallbacks** — Replace `/legacy/SignStudySubject` (e-signature), `/legacy/ReassignStudySubject`, `/legacy/CreateNewStudyEvent` with SPA-native components.
-6. **Rule editing** — Wire orphaned `RuleSetDetail.tsx` route; add rule creation/editing form.
-7. **Import** (moderate effort, 10 compatibility artifacts in inventory) — SPA `ImportManager` exists but is basic. Build step-by-step import wizard with validation preview.
-8. **OpenRosa migration** — Extract Spring MVC/OpenRosa-style compatibility controllers and pform helpers into Modulith modules with module-owned DAO access or formal compatibility gates.
-9. **Data Entry** (high effort, 30 data-entry/discrepancy artifacts plus CRF-rendering dependencies) — The critical path. SPA `DataEntryPage` exists but is thin. Requires: full CRF section/item/group rendering, double data entry mode, discrepancy notes inline, rule execution UI, CRF print/export, file attachments.
-10. **Layout/Common** — Delete only after ALL JSP pages are migrated.
+1. **Import/export compatibility** — Next executable slice. SPA `ImportManager` exists but is basic; prove upload -> validate -> map -> commit parity, rule XML import behavior, import job scheduling, and ODM/OpenRosa/export contract coverage before deleting the 10 compatibility artifacts.
+2. **OpenRosa/Spring MVC compatibility classification** — Separate public compatibility contracts from routes that can move behind module-owned services/adapters.
+3. **CRF metadata/data-entry renderer** — Keep `CheckCRFLocked`, `showItemInput*`, `generate*`, section/item/group JSP fragments, and discrepancy/data-entry JSPs blocked until SPA `DataEntryPage` proves full CRF rendering, double data entry, discrepancy notes, rule execution, print/export, and file attachments.
+4. **Inventory and plan hygiene** — Keep `legacy-workflow-inventory.{csv,md}` and handoff docs aligned with each committed slice; Phase 0 unknown classification is currently closed at 0 unknown artifacts.
+5. **Entity Action residuals** — Common study-subject, study-event, and event-CRF remove/restore is covered by the 2026-06-11 slice. Only reopen for concrete unsupported entity types found by inventory or route testing.
+6. **Layout/Common** — Delete only after all JSP pages and include references are migrated.
 
 #### Feature Flag System (available for gated rollout)
 
