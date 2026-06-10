@@ -135,11 +135,7 @@ public class BreadcrumbTrail {
 
             // LIST_USER_IN_STUDY branch removed — JSP deleted in Phase 1 slice
 
-            else if (jspPage.equals(Page.LIST_STUDY_SUBJECT)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "ManageStudy", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_subjects"), "ListStudySubject", Status.PENDING));
-            }
+            // LIST_STUDY_SUBJECT branch removed — phase-1-run-55: servlet + JSP deleted (orphaned, 0 active callers)
 
             // SITE_LIST, STUDY_EVENT_DEFINITION_LIST branches removed — JSPs deleted in Phase 1 slice
             // SUBJECT_GROUP_CLASS_LIST, CREATE_SUBJECT_GROUP_CLASS branches removed — JSPs deleted in Phase 1 slice

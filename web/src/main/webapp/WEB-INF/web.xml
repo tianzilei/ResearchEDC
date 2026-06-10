@@ -204,12 +204,7 @@
         <display-name>ResolveDiscrepancy</display-name>
         <servlet-class>org.researchedc.control.managestudy.ResolveDiscrepancyServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ListEventsForSubjectServlet</servlet-name>
-        <display-name>ListEventsForSubject</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ListEventsForSubjectServlet</servlet-class>
-    </servlet>
-
+<!-- phase-1-run-55: ListEventsForSubjectServlet removed (orphaned, 0 active callers, all navigation paths broken/dead) -->
 
 
 
@@ -321,10 +316,7 @@
         <servlet-name>ResolveDiscrepancyServlet</servlet-name>
         <url-pattern>/ResolveDiscrepancy</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListEventsForSubjectServlet</servlet-name>
-        <url-pattern>/ListEventsForSubject</url-pattern>
-    </servlet-mapping>
+<!-- phase-1-run-55: ListEventsForSubjectServlet mapping removed -->
 
 
 <!-- phase-1-admin-write: ConfigureServlet mapping removed -->

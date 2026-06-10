@@ -193,7 +193,7 @@ public enum Page {
     // VIEW_SUBJECT removed — phase-1-group-c
 
     // TODO do we need both versions here??? tbh
-    LIST_STUDY_SUBJECT ("/WEB-INF/jsp/" + "managestudy/listStudySubject.jsp", "list subjects in a study"),
+    // LIST_STUDY_SUBJECT removed — phase-1-run-55: servlet deleted (orphaned), JSP deleted below
     VIEW_STUDY_SUBJECT_SERVLET ("/ViewStudySubject", "View Subject in a study Servlet"),
 
     UPDATE_STUDY_SUBJECT_SERVLET ("/UpdateStudySubject", "update Subject in a study"),
@@ -230,7 +230,7 @@ public enum Page {
 
     VIEW_DISCREPANCY_NOTES_IN_STUDY_SERVLET ("/ViewNotes", "View Discrepancy Notes in Study"),
 
-    LIST_EVENTS_FOR_SUBJECT ("/WEB-INF/jsp/submit/listEventsForSubject.jsp", "List Events For Subject"),
+    // LIST_EVENTS_FOR_SUBJECT removed — phase-1-run-55: servlet + JSP deleted (orphaned, 0 active callers)
     INITIAL_DATA_ENTRY_NW ("/WEB-INF/jsp/submit/initialDataEntryNw.jsp", "Data Entry"),
     CHOOSE_DOWNLOAD_FORMAT ("/WEB-INF/jsp/submit/chooseDownloadFormat.jsp", "Choose download format"),
 
