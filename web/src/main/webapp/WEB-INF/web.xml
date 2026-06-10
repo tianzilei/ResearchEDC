@@ -222,11 +222,7 @@
 
     <!-- phase-1-run-42: ExecuteCrossEditCheckServlet removed (0 callers, dead code) -->
 
-    <servlet>
-        <servlet-name>UpdateStudyServletNew</servlet-name>
-        <display-name>UpdateStudyNew</display-name>
-        <servlet-class>org.researchedc.control.managestudy.UpdateStudyServletNew</servlet-class>
-    </servlet>
+<!-- phase-1-run-54: UpdateStudyServletNew removed (dead code, JSP deleted in 9c613e40c, 0 callers) -->
 
     <servlet>
         <servlet-name>UploadFileServlet</servlet-name>
@@ -238,10 +234,7 @@
 
 
 
-    <servlet-mapping>
-        <servlet-name>UpdateStudyServletNew</servlet-name>
-        <url-pattern>/UpdateStudyNew</url-pattern>
-    </servlet-mapping>
+<!-- phase-1-run-54: UpdateStudyServletNew mapping removed -->
 
 
 
