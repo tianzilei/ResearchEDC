@@ -73,7 +73,6 @@ public class AccountController {
     public static final String FORM_CONTEXT = "ecid";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-    public static final String INPUT_EMAIL = "";
     public static final String INPUT_INSTITUTION = "PFORM";
     UserDTO uDTO;
     AuthoritiesDao authoritiesDao;
@@ -387,7 +386,6 @@ public class AccountController {
         String mobile = map.get("mobile");
         String accessCode = map.get("accessCode");
         String crcUserName = map.get("crcUserName");
-        String email = map.get("email");
 
         ResourceBundleProvider.updateLocale(Locale.of("en_US"));
 
@@ -405,7 +403,7 @@ public class AccountController {
             return new ResponseEntity<UserDTO>(uDTO, org.springframework.http.HttpStatus.NOT_ACCEPTABLE);
         if (isFistNameInValid(fName))
             return new ResponseEntity<UserDTO>(uDTO, org.springframework.http.HttpStatus.NOT_ACCEPTABLE);
-        if (isPhoneFieldIsNull(mobile) && isEmailIsNull(email))
+        if (isPhoneFieldIsNull(mobile))
             return new ResponseEntity<UserDTO>(uDTO, org.springframework.http.HttpStatus.NOT_ACCEPTABLE);
         if (isAccessCodeIsNull(accessCode))
             return new ResponseEntity<UserDTO>(uDTO, org.springframework.http.HttpStatus.NOT_ACCEPTABLE);
@@ -428,7 +426,7 @@ public class AccountController {
             return new ResponseEntity<UserDTO>(uDTO, org.springframework.http.HttpStatus.NOT_ACCEPTABLE);
 
         // Participant user account create (if does not exist in user table) or Update(if exist in user table)
-        uBean = buildUserAccount(oid, studySubjectOid, fName, lName, mobile, accessCode, ownerUserAccount, pUserName, email);
+        uBean = buildUserAccount(oid, studySubjectOid, fName, lName, mobile, accessCode, ownerUserAccount, pUserName);
         UserAccountBean participantUserAccountBean = getUserAccount(pUserName);
         if (!participantUserAccountBean.isActive()) {
             createUserAccount(uBean);
@@ -512,14 +510,13 @@ public class AccountController {
     }
 
     private UserAccountBean buildUserAccount(String studyOid, String studySubjectOid, String fName, String lName, String mobile, String accessCode,
-            UserAccountBean ownerUserAccount, String pUserName, String email) throws Exception {
+            UserAccountBean ownerUserAccount, String pUserName) throws Exception {
 
         UserAccountBean createdUserAccountBean = new UserAccountBean();
 
         createdUserAccountBean.setName(pUserName);
         createdUserAccountBean.setFirstName(fName);
         createdUserAccountBean.setLastName(lName);
-        createdUserAccountBean.setEmail(INPUT_EMAIL);
         createdUserAccountBean.setInstitutionalAffiliation(INPUT_INSTITUTION);
         createdUserAccountBean.setLastVisitDate(null);
         createdUserAccountBean.setActiveStudyId(getStudy(studyOid).getId());
@@ -531,7 +528,6 @@ public class AccountController {
         createdUserAccountBean.setPhone(mobile);
         createdUserAccountBean.setAccessCode(accessCode);
         createdUserAccountBean.setPasswd("5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8");
-        createdUserAccountBean.setEmail(email);
 
         // Since 3.8, openclinica participate needs to be able to use api from openclinica using api_key
         // Copied from UserAccountController.java
@@ -697,14 +693,6 @@ public class AccountController {
         UserAccountBean ownerUserAccount = getUserAccount(crcUserName);
         if (!ownerUserAccount.isActive()) {
             logger.info("***  CRC user acount does not Exist in the User Table ***");
-            return true;
-        }
-        return false;
-    }
-
-    private Boolean isEmailIsNull(String email) {
-        if (email.length() == 0) {
-            logger.info("***Email Address is a Required field and can't be null ***");
             return true;
         }
         return false;
@@ -899,7 +887,6 @@ public class AccountController {
         String mobile = map.get("mobile");
         String accessCode = map.get("accessCode");
         String crcUserName = map.get("crcUserName");
-        String email = map.get("email");
 
         ResourceBundleProvider.updateLocale(Locale.of("en_US"));
 
@@ -915,7 +902,7 @@ public class AccountController {
         Integer pStudyId = Integer.valueOf(mapValues.get("pStudyId"));
 
         // Participant user account create (if does not exist in user table) or Update(if exist in user table)
-        uBean = buildUserAccount(oid, studySubjectOid, fName, lName, mobile, accessCode, ownerUserAccount, pUserName, email);
+        uBean = buildUserAccount(oid, studySubjectOid, fName, lName, mobile, accessCode, ownerUserAccount, pUserName);
         UserAccountBean participantUserAccountBean = getUserAccount(pUserName);
         if (!participantUserAccountBean.isActive()) {
             createUserAccount(uBean);

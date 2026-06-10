@@ -64,7 +64,6 @@ public class OidcSessionBridgeSuccessHandler implements AuthenticationSuccessHan
             ub.setName(username);
             ub.setFirstName(oidcUser.getGivenName() != null ? oidcUser.getGivenName() : username);
             ub.setLastName(oidcUser.getFamilyName() != null ? oidcUser.getFamilyName() : "User");
-            ub.setEmail(oidcUser.getEmail() != null ? oidcUser.getEmail() : username + "@researchedc.org");
             ub.setEnabled(true);
             ub.setStatus(Status.AVAILABLE);
             ub.setPasswd("");

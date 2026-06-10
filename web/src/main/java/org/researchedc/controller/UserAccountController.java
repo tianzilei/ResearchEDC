@@ -136,7 +136,6 @@ public class UserAccountController {
 		String fName = map.get("fName");
 		String lName = map.get("lName");
 		String institution = map.get("institution");
-		String email = map.get("email");
 		String studyName = map.get("study_name");
 		String roleName = map.get("role_name");
 		String userType = map.get("user_type");
@@ -146,7 +145,6 @@ public class UserAccountController {
 		request.setAttribute("fName", fName);
 		request.setAttribute("lName", lName);
 		request.setAttribute("institution", institution);
-		request.setAttribute("email", email);
 		request.setAttribute("study_name", studyName);
 		request.setAttribute("role_name", roleName);
 
@@ -224,7 +222,7 @@ public class UserAccountController {
 		}
 		// build UserName
 
-		uBean = buildUserAccount(username, fName, lName, password, institution, study, ownerUserAccount, email, passwordHash, Boolean.valueOf(authorizeSoap), role, uType);
+		uBean = buildUserAccount(username, fName, lName, password, institution, study, ownerUserAccount, passwordHash, Boolean.valueOf(authorizeSoap), role, uType);
 		HashMap<String, Object> userDTO = null;
 		UserAccountBean uaBean = getUserAccount(uBean.getName());
 		if (!uaBean.isActive()) {
@@ -246,16 +244,15 @@ public class UserAccountController {
 		return new ResponseEntity<HashMap>(userDTO, org.springframework.http.HttpStatus.OK);
 	}
 
-	private UserAccountBean buildUserAccount(String username, String fName, String lName, String password, String institution, StudyBean study, UserAccountBean ownerUserAccount, String email,
+	private UserAccountBean buildUserAccount(String username, String fName, String lName, String password, String institution, StudyBean study, UserAccountBean ownerUserAccount,
 			String passwordHash, Boolean authorizeSoap, Role roleName, UserType userType) throws Exception {
 
 		UserAccountBean createdUserAccountBean = new UserAccountBean();
 
 		createdUserAccountBean.setName(username);
 		createdUserAccountBean.setFirstName(fName);
-		createdUserAccountBean.setLastName(lName);
-		createdUserAccountBean.setEmail(username);
-		createdUserAccountBean.setInstitutionalAffiliation(institution);
+        createdUserAccountBean.setLastName(lName);
+        createdUserAccountBean.setInstitutionalAffiliation(institution);
 		createdUserAccountBean.setLastVisitDate(null);
 		createdUserAccountBean.setActiveStudyId(study.getId());
 		createdUserAccountBean.setPasswdTimestamp(null);
@@ -265,9 +262,8 @@ public class UserAccountController {
 		createdUserAccountBean.setRunWebservices(false);
 		createdUserAccountBean.setPhone("");
 		createdUserAccountBean.setAccessCode("");
-		createdUserAccountBean.setPasswd(password);
-		createdUserAccountBean.setEmail(email);
-		createdUserAccountBean.setEnableApiKey(true);
+        createdUserAccountBean.setPasswd(password);
+        createdUserAccountBean.setEnableApiKey(true);
 		createdUserAccountBean.setPasswd(passwordHash);
 		createdUserAccountBean.setRunWebservices(authorizeSoap);
 
@@ -405,10 +401,6 @@ public class UserAccountController {
 		v.addValidation("fName", Validator.NO_BLANKS);
 		v.addValidation("fName", Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 50);
 		v.addValidation("lName", Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 50);
-
-		v.addValidation("email", Validator.NO_BLANKS);
-		v.addValidation("email", Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 120);
-		v.addValidation("email", Validator.IS_A_EMAIL);
 
 		v.addValidation("institution", Validator.NO_BLANKS);
 		v.addValidation("institution", Validator.LENGTH_NUMERIC_COMPARISON, NumericComparisonOperator.LESS_THAN_OR_EQUAL_TO, 255);

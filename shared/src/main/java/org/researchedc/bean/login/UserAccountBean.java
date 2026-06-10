@@ -35,7 +35,6 @@ public class UserAccountBean extends AuditableEntityBean {
     private String passwd;
     private String firstName;
     private String lastName;
-    private String email; // retained for backward compatibility; email delivery retired
     private String institutionalAffiliation;
     private Date lastVisitDate;
     private Date passwdTimestamp;
@@ -105,7 +104,6 @@ public class UserAccountBean extends AuditableEntityBean {
         passwd = "";
         firstName = "";
         lastName = "";
-        email = "";
         institutionalAffiliation = "";
         lastVisitDate = new Date(0);
         passwdTimestamp = new Date(0);
@@ -126,21 +124,6 @@ public class UserAccountBean extends AuditableEntityBean {
         accessCode="";
         enableApiKey=false;
         apiKey="";
-    }
-
-    /**
-     * @return Returns the email.
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email
-     *            The email to set.
-     */
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     /**

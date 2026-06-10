@@ -139,8 +139,6 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
 
     public static final String PRESET_USER_ACCOUNT_ID = "preUserAccountId";
 
-    public static final String EMAIL_USER_ACCOUNT = "sendEmail";
-
     public static final String WHICH_RES_STATUSES = "whichResStatus";
     
     public static final String EVENT_CRF_ID = "eventCRFId";
@@ -793,82 +791,6 @@ public class CreateDiscrepancyNoteServlet extends SecureController {
 
                     logger.debug("found resolution status: " + note.getResolutionStatusId());
 
-                    String email = fp.getString(EMAIL_USER_ACCOUNT);
-
-                    logger.debug("found email: " + email);
-                    if (note.getAssignedUserId() > 0 && "1".equals(email.trim()) && DiscrepancyNoteType.QUERY.getId() == note.getDiscrepancyNoteTypeId()) {
-
-                    	logger.debug("++++++ found our way here: " + note.getDiscrepancyNoteTypeId() + " id number and " + note.getDisType().getName());
-                       // generate email for user here
-                        StringBuffer message = new StringBuffer();
-
-                        // generate message here
-                        IUserAccountDAO userAccountDAO = this.userAccountDao;
-                        IItemDAO itemDAO = this.itemDao;
-                        IItemDataDAO iddao = this.itemDataDao;
-                        ItemBean item = new ItemBean();
-                        ItemDataBean itemData = new ItemDataBean();
-                        SectionBean section = new SectionBean();
-
-                        IStudyDAO studyDAO = this.studyDao;
-                        UserAccountBean assignedUser = (UserAccountBean) userAccountDAO.findByPK(note.getAssignedUserId());
-                        String alertEmail = assignedUser.getEmail();
-                        message.append(MessageFormat.format(respage.getString("mailDNHeader"), assignedUser.getFirstName(),assignedUser.getLastName()));
-                        message.append("<A HREF='" + SQLInitServlet.getField("sysURL.base")
-                                + "ViewNotes?module=submit&listNotes_f_discrepancyNoteBean.user=" + assignedUser.getName()
-                                + "&listNotes_f_entityName=" + note.getEntityName()
-                                + "'>" + SQLInitServlet.getField("sysURL.base") + "</A><BR/>");
-                        message.append(respage.getString("you_received_this_from"));
-                        StudyBean study = (StudyBean) studyDAO.findByPK(note.getStudyId());
-                        ISectionDAO sectionDAO = this.sectionDao;
-
-                        if ("itemData".equalsIgnoreCase(entityType)) {
-                            itemData = (ItemDataBean) iddao.findByPK(note.getEntityId());
-                            item = (ItemBean) itemDAO.findByPK(itemData.getItemId());
-                            if (sectionId > 0) {
-                                section = (SectionBean) sectionDAO.findByPK(sectionId);
-                            } else {
-                                //Todo section should be initialized when sectionId = 0
-                            }
-                        }
-
-                        message.append(respage.getString("email_body_separator"));
-                        message.append(respage.getString("disc_note_info"));
-                        message.append(respage.getString("email_body_separator"));
-                        message.append(MessageFormat.format(respage.getString("mailDNParameters1"), note.getDescription(), note.getDetailedNotes(), ub.getName()));
-                        message.append(respage.getString("email_body_separator"));
-                        message.append(respage.getString("entity_information"));
-                        message.append(respage.getString("email_body_separator"));
-                        message.append(MessageFormat.format(respage.getString("mailDNParameters2"), study.getName(), note.getSubjectName()));
-
-                        if (!("studySub".equalsIgnoreCase(entityType)
-                                || "subject".equalsIgnoreCase(entityType))) {
-                            message.append(MessageFormat.format(respage.getString("mailDNParameters3"), note.getEventName()));
-                            if (!"studyEvent".equalsIgnoreCase(note.getEntityType())) {
-                                message.append(MessageFormat.format(respage.getString("mailDNParameters4"), note.getCrfName()));
-                                if (!"eventCrf".equalsIgnoreCase(note.getEntityType())) {
-                                    if (sectionId > 0) {
-                                        message.append(MessageFormat.format(respage.getString("mailDNParameters5"), section.getName()));
-                                    }
-                                    message.append(MessageFormat.format(respage.getString("mailDNParameters6"), item.getName()));
-                                }
-                            }
-                        }
-
-                        message.append(respage.getString("email_body_separator"));
-                        message.append(MessageFormat.format(respage.getString("mailDNThanks"), study.getName()));
-                        message.append(respage.getString("email_body_separator"));
-                        message.append(respage.getString("disclaimer"));
-                        message.append(respage.getString("email_body_separator"));
-                        message.append(respage.getString("email_footer"));
-
-                        String emailBodyString = message.toString();
-                        sendEmail(alertEmail.trim(), "", MessageFormat.format(respage.getString("mailDNSubject"),study.getName(), note.getEntityName()), emailBodyString, true, null,
-                                null, true);
-
-                    } else {
-                    	logger.debug("did not send email, but did save DN");
-                    }
                     // addPageMessage(
                     // "Your discrepancy note has been saved into database.");
                     addPageMessage(respage.getString("note_saved_into_db"));

@@ -922,30 +922,6 @@ public abstract class CoreSecureController extends HttpServlet {
         }
     }
 
-    public Boolean sendEmail(String to, String subject, String body, Boolean htmlEmail, Boolean sendMessage, HttpServletRequest request) throws Exception {
-        return sendEmail(to, "", subject, body, htmlEmail, respage.getString("your_message_sent_succesfully"),
-                respage.getString("mail_cannot_be_sent_to_admin"), sendMessage, request);
-    }
-
-    public Boolean sendEmail(String to, String subject, String body, Boolean htmlEmail, HttpServletRequest request) throws Exception {
-        return sendEmail(to, "", subject, body, htmlEmail, respage.getString("your_message_sent_succesfully"),
-                respage.getString("mail_cannot_be_sent_to_admin"), true, request);
-    }
-
-    public Boolean sendEmail(String to, String from, String subject, String body, Boolean htmlEmail, HttpServletRequest request) throws Exception {
-        return sendEmail(to, from, subject, body, htmlEmail, respage.getString("your_message_sent_succesfully"),
-                respage.getString("mail_cannot_be_sent_to_admin"), true, request);
-    }
-
-    public Boolean sendEmail(String to, String from, String subject, String body, Boolean htmlEmail, String successMessage, String failMessage,
-                             Boolean sendMessage, HttpServletRequest request) throws Exception {
-        if (sendMessage) {
-            addPageMessage("Email delivery is disabled.", request);
-        }
-        LOGGER.debug("Email delivery disabled; skipped message to {} with subject {}", to, subject);
-        return false;
-    }
-
     public void unlockCRFsForUser(int userId) {
         crfLocker.unlockAllForUser(userId);
         
