@@ -342,8 +342,7 @@ function setElements(typeId, user1, user2,filter1,nw,ud,rs,cl,na) {
 		<span id="user2" style="display:block">
 	</c:otherwise>
 	</c:choose>
-	<div class="dnBoxCol1 dnBoxText"><fmt:message key="email_assigned_user" bundle="${resword}"/>:</div>
-	<div class="dnBoxCol2 dnBoxText"><input name="sendEmail" value="1" type="checkbox"/></div>	
+	<%-- sendEmail checkbox removed — email delivery retired, 0 backend consumers (run-68) --%>
 	</span>
 	
 	<c:set var= "noteEntityType" value="${discrepancyNote.entityType}"/>
