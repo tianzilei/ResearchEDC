@@ -2,7 +2,7 @@ package org.researchedc.module.crf.internal.adapter;
 
 import org.researchedc.dao.spi.ItemDataTypeDao;
 import org.researchedc.domain.datamap.ItemDataType;
-import org.researchedc.module.crf.repository.ItemDataTypeRepository;
+import org.researchedc.module.crf.internal.adapter.repository.ItemDataTypeRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 

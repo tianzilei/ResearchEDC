@@ -1,4 +1,4 @@
-package org.researchedc.module.crf.repository;
+package org.researchedc.module.crf.internal.adapter.repository;
 
 import org.researchedc.domain.datamap.VersioningMap;
 import org.researchedc.domain.datamap.VersioningMapId;

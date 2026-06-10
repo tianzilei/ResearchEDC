@@ -43,15 +43,15 @@ class AuditUserEventAdapterTest {
         event.setEntityId(99);
         event.setReasonForChange("updated");
         event.setActionMessage("user_updated");
-        event.setColumnName("email");
-        event.setOldValue("old@example.test");
-        event.setNewValue("new@example.test");
+        event.setColumnName("phone");
+        event.setOldValue("old-phone");
+        event.setNewValue("new-phone");
         event.setStudyId(11);
         event.setStudyName("Main Study");
         event.setSubjectId(12);
         event.setSubjectName("SUBJ-001");
         HashMap<String, Object> changes = new HashMap<>();
-        changes.put("email", "new@example.test");
+        changes.put("phone", "new-phone");
         event.setChanges(changes);
         when(userAccountDao.findByPK(7)).thenReturn(user);
         when(auditEventDao.findAllByUserId(7)).thenReturn(new ArrayList<>(java.util.List.of(event)));
@@ -71,13 +71,13 @@ class AuditUserEventAdapterTest {
         assertEquals("updated", dto.reasonForChangeKey());
         assertEquals("user_updated", dto.actionMessage());
         assertEquals("user_updated", dto.actionMessageKey());
-        assertEquals("email", dto.columnName());
-        assertEquals("old@example.test", dto.oldValue());
-        assertEquals("new@example.test", dto.newValue());
+        assertEquals("phone", dto.columnName());
+        assertEquals("old-phone", dto.oldValue());
+        assertEquals("new-phone", dto.newValue());
         assertEquals(11, dto.studyId());
         assertEquals("Main Study", dto.studyName());
         assertEquals(12, dto.subjectId());
         assertEquals("SUBJ-001", dto.subjectName());
-        assertEquals("new@example.test", dto.changes().get("email"));
+        assertEquals("new-phone", dto.changes().get("phone"));
     }
 }

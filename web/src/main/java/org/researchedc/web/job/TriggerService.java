@@ -352,7 +352,6 @@ public class TriggerService {
         v.addValidation(JOB_NAME, Validator.NO_LEADING_OR_TRAILING_SPACES);
         // need to be unique too
         v.addValidation(JOB_DESC, Validator.NO_BLANKS);
-        // << tbh we are now allowing email to be optional
         // v.addValidation(PERIOD, Validator.NO_BLANKS);
         // v.addValidation(DIRECTORY, Validator.NO_BLANKS);
         // v.addValidation(DATE_START_JOB + "Date", Validator.IS_A_DATE);

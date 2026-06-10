@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.researchedc.dao.spi.CrfVersionMediaDao;
 import org.researchedc.domain.datamap.CrfVersionMedia;
-import org.researchedc.module.crf.repository.CrfVersionMediaRepository;
+import org.researchedc.module.crf.internal.adapter.repository.CrfVersionMediaRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 

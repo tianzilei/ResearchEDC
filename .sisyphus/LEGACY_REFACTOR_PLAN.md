@@ -21,16 +21,16 @@
 | 5 | `datacapture` | Bridge to `item_data`/`response_set` | `/api/v1/data-capture` |
 | — | `identity` | Bridge to `user_account`/`study_user_role` | `/api/v1/identity` |
 
-### Remaining legacy code baseline (2026-06-10, after phase-1-run-58 and regenerated legacy inventory)
+### Remaining legacy code baseline (2026-06-10, after CRF metadata boundary reconciliation)
 
 ```
 shared/   543 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
           100 files under shared/src/main/java/org/researchedc/dao
 web/      152 Java files → remaining control/ servlets, controller/ Spring MVC, view helpers, filters
-           60 JSP pages
+           52 JSP pages
             9 active legacy-servlet inventory artifacts
 ws/         0 Java files → SOAP module absent in current tree
-inventory 216 active artifacts → 147 replace, 62 keep compatibility, 7 unknown
+inventory 208 active artifacts -> 144 replace, 64 keep compatibility, 0 unknown
 ```
 
 Important distinction: `legacy-core/` removal was a module consolidation into `shared/`; it was not full legacy code removal.
@@ -466,11 +466,11 @@ SPA replacement coverage exists for major workflows, but physical JSP/servlet de
 
 | Area | Remaining JSPs | Blocked By |
 |------|---------------|------------|
-| `submit/` / CRF rendering | 30 data-entry/discrepancy artifacts plus 13 CRF-metadata candidates | Full CRF rendering (sections, repeating groups, discrepancy notes, rule execution), double data entry mode, file attachments, CRF print |
-| `login/` (auxiliary) | 0 | Deleted on 2026-06-09: ChangeStudy, Enterprise, RequestAccount, RequestStudy, Contact, and UpdateProfile auxiliary paths |
+| `submit/` / CRF rendering | 26 data-entry/discrepancy artifacts plus 11 CRF-metadata candidates | Full CRF rendering (sections, repeating groups, discrepancy notes, rule execution), double data entry mode, file attachments, CRF print |
+| `login/` (auxiliary) | 0 | Deleted on 2026-06-09; stale RequestAccount/RequestStudy/Contact redirects and SPA request page removed on 2026-06-10. |
 | `login/` (profile/password) | 0 active `phase-1-login-profile` artifacts | Listed ledger is historical; account-like compatibility routes are tracked under study/subject/event where still active |
-| `submit/` (import/export compatibility) | 11 artifacts | Step-by-step import wizard with validation preview, rule import, ODM/OpenRosa/export compatibility |
-| `include/` / layout unknowns | 7 unknown artifacts | Assign owner/category before deletion; delete only after all include references are gone |
+| `submit/` (import/export compatibility) | 10 artifacts | Step-by-step import wizard with validation preview, rule import, ODM/OpenRosa/export compatibility |
+| `include/` / layout common | 6 classified artifacts | Delete only after all include references are gone |
 
 #### Known SPA → Legacy Fallbacks (SPA pages still open legacy JSPs)
 

@@ -1,7 +1,7 @@
 # Phase 1 Follow-up: Email Field Removal
 
 **Created:** 2026-06-09
-**Status:** Planned
+**Status:** Product-facing request/contact and email-field paths retired on 2026-06-10; compatibility mappings remain.
 **Scope:** Remove email-dependent user account and study-contact fields after mail delivery and Enterprise surfaces are removed.
 
 ## Goal
