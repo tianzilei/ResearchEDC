@@ -15,7 +15,6 @@ import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.spi.OpenClinicaVersionDao;
 import org.researchedc.dao.spi.ResponseSetDomainDao;
 import org.researchedc.dao.spi.UsageStatsServiceDao;
-import org.researchedc.dao.managestudy.ViewNotesDaoImpl;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -150,15 +149,4 @@ public class HibernateConfig {
 
     // DatabaseChangeLogDao replaced by @Primary DatabaseChangeLogDaoAdapter
 
-    // ──────────────────────────────────────────────────────────────────────
-    //  Special: viewNotesDao (uses dataSource + queryStore, not JPA)
-    // ──────────────────────────────────────────────────────────────────────
-
-    @Bean
-    public ViewNotesDaoImpl viewNotesDao(DataSource dataSource, QueryStore queryStore) {
-        ViewNotesDaoImpl dao = new ViewNotesDaoImpl();
-        dao.setDataSource(dataSource);
-        dao.setQueryStore(queryStore);
-        return dao;
-    }
 }
