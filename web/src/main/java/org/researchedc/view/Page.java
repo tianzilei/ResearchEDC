@@ -67,7 +67,7 @@ public enum Page {
     /**
      * Page for view all users of a study and its sites.
      */
-    STUDY_USER_LIST ("/WEB-INF/jsp/managestudy/studyUserList.jsp", "View Study Users"),
+    // STUDY_USER_LIST removed — JSP deleted in Phase 1, studyUserList.jsp no longer exists
 
     /**
      * Page for view all studies.
@@ -86,7 +86,7 @@ public enum Page {
      * Page for updating a study event definition.
      */
    // UPDATE_EVENT_DEFINITION1 removed — phase-1-run-29 (InitUpdateEventDefinitionServlet + updateEventDefinition1.jsp deleted, 0 consumers)
-    UPDATE_EVENT_DEFINITION2 ("/WEB-INF/jsp/managestudy/updateEventDefinition2.jsp", "Update Event Definition"),
+    // UPDATE_EVENT_DEFINITION2 removed — JSP deleted in Phase 1, updateEventDefinition2.jsp no longer exists
 
 
     // VIEW_EVENT_DEFINITION_READONLY, VIEW_EVENT_DEFINITION_NOSIDEBAR, VIEW_EVENT_DEFINITION_SERVLET removed — servlets deleted in Phase 1 Groups F+G
@@ -94,7 +94,7 @@ public enum Page {
     /**
      * Page for listing seds
      */
-    STUDY_EVENT_DEFINITION_LIST ("/WEB-INF/jsp/managestudy/studyEventDefinitionList.jsp", "List all CRFs"),
+    // STUDY_EVENT_DEFINITION_LIST removed — JSP deleted in Phase 1, studyEventDefinitionList.jsp no longer exists
 
     /**
      * Page for view all seds.
