@@ -634,16 +634,14 @@ public class StudyInfoPanel {
                         displayData.add(new StudyInfoPanelLine("CRF", "<a href='SelectItems?crfId=" + crf.getId() + "&defId=" + sed.getId() + "'>"
                             + crf.getName() + "</a>", false, false));
                     } else {
-                        displayData.add(new StudyInfoPanelLine("CRF", "<a href='ViewRuleAssignment?ruleAssignments_f_crfName=" + crf.getName() + "'>"
-                            + crf.getName() + "</a>", false, false));
+                        displayData.add(new StudyInfoPanelLine("CRF", crf.getName(), false, false));
                     }
                 } else {
                     if (isExtractData) {
                         displayData.add(new StudyInfoPanelLine("CRF", "<a href='SelectItems?crfId=" + crf.getId() + "&defId=" + sed.getId() + "'>"
                             + crf.getName() + "</a>", false, true));
                     } else {
-                        displayData.add(new StudyInfoPanelLine("CRF", "<a href='ViewRuleAssignment?ruleAssignments_f_studyEventDefinitionName=" + sed.getName()
-                            + "&ruleAssignments_f_crfName=" + crf.getName() + "'>" + crf.getName() + "</a>", false, true));
+                        displayData.add(new StudyInfoPanelLine("CRF", crf.getName(), false, true));
                     }
 
                 }
