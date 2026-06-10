@@ -19,14 +19,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Mockrunner for tests -->
-        <dependency>
-            <groupId>com.mockrunner</groupId>
-            <artifactId>mockrunner-servlet</artifactId>
-            <version>2.0.6</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Jakarta Transaction API -->
         <dependency>
             <groupId>jakarta.transaction</groupId>
@@ -70,12 +62,6 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-        </dependency>
-
-        <!-- OpenPDF -->
-        <dependency>
-            <groupId>com.github.librepdf</groupId>
-            <artifactId>openpdf</artifactId>
         </dependency>
 
         <!-- JMesa -->

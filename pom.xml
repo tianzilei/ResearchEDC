@@ -52,7 +52,6 @@
 		<commons-math3.version>3.6.1</commons-math3.version>
 		<joda-time.version>2.12.7</joda-time.version>
 		<poi.version>5.2.5</poi.version>
-		<openpdf.version>2.0.2</openpdf.version>
 		<castor.version>1.4.1</castor.version>
 		<postgresql.version>42.7.3</postgresql.version>
 		<servlet-api.version>4.0.1</servlet-api.version>
@@ -139,21 +138,6 @@
 				<version>1.4.1</version>
 			</dependency>
 
-			<dependency>
-				<groupId>io.dropwizard.metrics</groupId>
-				<artifactId>metrics-core</artifactId>
-				<version>3.1.5</version>
-			</dependency>
-			<dependency>
-				<groupId>io.dropwizard.metrics</groupId>
-				<artifactId>metrics-jvm</artifactId>
-				<version>3.1.5</version>
-			</dependency>
-			<dependency>
-				<groupId>io.dropwizard.metrics</groupId>
-				<artifactId>metrics-healthchecks</artifactId>
-				<version>3.1.5</version>
-			</dependency>
 			<!-- === Shared cross-module dependencies (project BOM) === -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -199,11 +183,6 @@
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi</artifactId>
 				<version>${poi.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.github.librepdf</groupId>
-				<artifactId>openpdf</artifactId>
-				<version>${openpdf.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.castor</groupId>
@@ -360,14 +339,6 @@
 			<artifactId>logback-classic</artifactId>
 			<version>1.5.7</version>
 		</dependency>
-		<!-- @pgawade 22-Nov-2010 Added the logback access; it will be needed to
-			get the web application usage pattern data -->
-		<dependency>
-			<groupId>ch.qos.logback.access</groupId>
-			<artifactId>common</artifactId>
-			<version>2.0.1</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.codehaus.janino</groupId>
 			<artifactId>janino</artifactId>
@@ -458,12 +429,6 @@
 			<version>${spring.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-oxm</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-
 		<!-- HIBERNATE -->
 		<dependency>
 			<groupId>jakarta.validation</groupId>
@@ -510,32 +475,10 @@
 			<artifactId>liquibase-core</artifactId>
 			<version>4.3.5</version>
 		</dependency>
-		<!-- Explicitly defining dependencies versions for Maven 3 -->
-		<dependency>
-			<groupId>antlr</groupId>
-			<artifactId>antlr</artifactId>
-			<version>2.7.6</version>
-		</dependency>
 		<dependency>
 			<groupId>org.codehaus.castor</groupId>
 			<artifactId>castor-core</artifactId>
 		</dependency>
-
-		<dependency>
-	<groupId>io.dropwizard.metrics</groupId>
-	<artifactId>metrics-core</artifactId>
-	<version>3.1.5</version>
-</dependency>
-<dependency>
-	<groupId>io.dropwizard.metrics</groupId>
-	<artifactId>metrics-healthchecks</artifactId>
-	<version>3.1.5</version>
-</dependency>
-<dependency>
-	<groupId>io.dropwizard.metrics</groupId>
-	<artifactId>metrics-jvm</artifactId>
-	<version>3.1.5</version>
-</dependency>
 
 		<!-- JDOM 1.x for backward compatibility -->
 		<dependency>
