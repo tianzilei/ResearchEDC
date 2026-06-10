@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -88,6 +89,29 @@ public class SubjectController {
     public ResponseEntity<Void> removeSubject(@PathVariable Integer id) {
         Integer userId = currentUserUtils.getCurrentUserId();
         subjectService.removeSubject(id, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> restoreSubject(@PathVariable Integer id) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        subjectService.restoreSubject(id, userId);
+        return ResponseEntity.ok().build();
+    }
+
+
+    @DeleteMapping("/enrollment/{id}")
+    public ResponseEntity<Void> removeStudySubject(@PathVariable Integer id) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        subjectService.removeStudySubject(id, userId);
+        return ResponseEntity.ok().build();
+    }
+
+
+    @PatchMapping("/enrollment/{id}")
+    public ResponseEntity<Void> restoreStudySubject(@PathVariable Integer id) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        subjectService.restoreStudySubject(id, userId);
         return ResponseEntity.ok().build();
     }
 }

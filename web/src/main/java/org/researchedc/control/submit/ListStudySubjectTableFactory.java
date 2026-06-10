@@ -871,8 +871,7 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
     private String removeStudySubjectLinkBuilder(StudySubjectBean studySubject) {
         HtmlBuilder actionLink = new HtmlBuilder();
         actionLink.a().href(
-                "RemoveStudySubject?action=confirm&id=" + studySubject.getId() + "&subjectId=" + studySubject.getSubjectId() + "&studyId="
-                        + studySubject.getStudyId());
+                "/app/actions/study-subject/remove/" + studySubject.getId());
         actionLink.append("onMouseDown=\"javascript:setImage('bt_Remove1','images/bt_Remove_d.gif');\"");
         actionLink.append("onMouseUp=\"javascript:setImage('bt_Remove1','images/bt_Remove.gif');\"").close();
         actionLink.img().name("bt_Remove1").src("images/bt_Remove.gif").border("0").alt(resword.getString("remove")).title(resword.getString("remove"))
@@ -909,8 +908,7 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
     private String restoreStudySubjectLinkBuilder(StudySubjectBean studySubject) {
         HtmlBuilder actionLink = new HtmlBuilder();
         actionLink.a().href(
-                "RestoreStudySubject?action=confirm&id=" + studySubject.getId() + "&subjectId=" + studySubject.getSubjectId() + "&studyId="
-                        + studySubject.getStudyId());
+                "/app/actions/study-subject/restore/" + studySubject.getId());
         actionLink.append("onMouseDown=\"javascript:setImage('bt_Restor3','images/bt_Restore_d.gif');\"");
         actionLink.append("onMouseUp=\"javascript:setImage('bt_Restor3','images/bt_Restore_d.gif');\"").close();
         actionLink.img().name("bt_Restore1").src("images/bt_Restore.gif").border("0").alt(resword.getString("restore")).title(resword.getString("restore"))
@@ -1297,7 +1295,7 @@ public class ListStudySubjectTableFactory extends AbstractTableFactory {
 
     // phase-1-run-35: removeStudyEventLinkBuilder calls commented out (SPA EventList now handles event removal)
     private void removeStudyEventLinkBuilder(HtmlBuilder builder, Integer studySubjectId, String studyEventId, String remove) {
-        String href1 = "RemoveStudyEvent?action=confirm&id=" + studyEventId + "&studySubId=" + studySubjectId;
+        String href1 = "/app/actions/study-event/remove/" + studyEventId;
         builder.a().href(href1);
         builder.close();
         builder.img().src("images/bt_Remove.gif").border("0").align("left").close().aEnd();

@@ -518,14 +518,14 @@ public class EventCrfLayerBuilder {
     }
 
     private void removeEventCrf(HtmlBuilder builder, EventCRFBean eventCrf, StudySubjectBean studySubject) {
-        String href = "RemoveEventCRF?action=confirm&id=" + eventCrf.getId() + "&studySubId=" + studySubject.getId();
+        String href = "/app/actions/event-crf/remove/" + eventCrf.getId();
         builder.a().href(href).close();
         builder.img().src("images/bt_Remove.gif").border("0").align("left").close();
         builder.aEnd();
     }
 
     private void removeEventCrf(HtmlBuilder builder, EventCRFBean eventCrf, StudySubjectBean studySubject, String link) {
-        String href = "RemoveEventCRF?action=confirm&id=" + eventCrf.getId() + "&studySubId=" + studySubject.getId();
+        String href = "/app/actions/event-crf/remove/" + eventCrf.getId();
         builder.a().href(href).close();
         builder.append(link);
         builder.aEnd();

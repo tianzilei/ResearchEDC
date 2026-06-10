@@ -6,6 +6,25 @@
 
 ---
 
+## 2026-06-11 - Entity action remove/restore slice
+
+- **Modules:** `app`, `frontend`, `web`, `docs`
+- **Reason:** Continue `remove-legacy-code-plan.md` by closing common remove/restore action gaps that could still point at retired legacy servlet names.
+
+### Slice Result
+
+- Added explicit restore endpoints for subjects, study events, and event CRFs.
+- Added explicit remove/restore endpoints for study-subject enrollment IDs.
+- Split subject removal from study-subject removal in `SubjectService` to avoid ambiguous ID fallback behavior.
+- Updated `EntityAction` to use `/api/v1/subjects/enrollment/{id}` for study-subject actions.
+- Repointed remaining Java helper-generated study-subject, study-event, and event-CRF action links to `/app/actions/...` routes.
+- Added focused service tests for subject, study-subject, study-event, and event-CRF remove/restore status transitions and audit calls.
+
+### Verification
+
+- `mvn -pl app -am compile -DskipTests` passed.
+- `mvn test -pl app -am -Dtest=SubjectServiceTest,EventServiceTest -Dsurefire.failIfNoSpecifiedTests=false` passed 35/35.
+
 ## 2026-06-10 - Email field removal product-surface slice
 
 - **Modules:** `app`, `frontend`, `web`, `docs`

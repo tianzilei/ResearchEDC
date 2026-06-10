@@ -479,7 +479,7 @@ SPA replacement coverage exists for major workflows, but physical JSP/servlet de
 | `SubjectDetail.tsx` | `/legacy/SignStudySubject` | E-signature capture |
 | `SubjectDetail.tsx` | `/legacy/ReassignStudySubject` | Subject reassignment |
 | `SubjectDetail.tsx` | `/legacy/CreateNewStudyEvent` | Study event scheduling wizard |
-| `EntityAction.tsx` | `/legacy/Remove*` / `/legacy/Restore*` | Remove/restore for unsupported entity types |
+| `EntityAction.tsx` | `/app/actions/*` to module REST | Study-subject, study-event, and event-CRF remove/restore covered on 2026-06-11; remaining unsupported entity types still gated |
 
 #### Orphan SPA Components (built but not wired to routes)
 

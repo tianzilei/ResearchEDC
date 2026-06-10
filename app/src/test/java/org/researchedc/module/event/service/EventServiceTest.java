@@ -214,4 +214,65 @@ class EventServiceTest {
         assertThrows(NoSuchElementException.class,
                 () -> service.completeEvent(99, 1));
     }
+    @Test
+    void removeStudyEvent_setsRemovedStatusAndAudits() {
+        StudyEventEntity existing = createEvent(1, 100, 1);
+        when(studyEventRepository.findById(1)).thenReturn(Optional.of(existing));
+
+        service.removeStudyEvent(1, 42);
+
+        assertEquals(5, existing.getStatusId());
+        assertNotNull(existing.getDateUpdated());
+        assertEquals(42, existing.getUpdateId());
+        verify(studyEventRepository).save(existing);
+        verify(auditService).recordAudit(isNull(), any(), eq("StudyEvent"), eq(1L), eq("Event #1"),
+                isNull(), isNull(), eq(42), eq("Event removed (status=5)"), eq("event"));
+    }
+
+    @Test
+    void restoreStudyEvent_setsAvailableStatusAndAudits() {
+        StudyEventEntity existing = createEvent(1, 100, 1);
+        existing.setStatusId(5);
+        when(studyEventRepository.findById(1)).thenReturn(Optional.of(existing));
+
+        service.restoreStudyEvent(1, 42);
+
+        assertEquals(1, existing.getStatusId());
+        assertNotNull(existing.getDateUpdated());
+        assertEquals(42, existing.getUpdateId());
+        verify(studyEventRepository).save(existing);
+        verify(auditService).recordAudit(isNull(), any(), eq("StudyEvent"), eq(1L), eq("Event #1"),
+                isNull(), isNull(), eq(42), eq("Event restored (status=1)"), eq("event"));
+    }
+
+    @Test
+    void removeEventCrf_setsRemovedStatusAndAudits() {
+        EventCrfEntity existing = createCrf(2, 1, 5);
+        when(eventCrfRepository.findById(2)).thenReturn(Optional.of(existing));
+
+        service.removeEventCrf(2, 42);
+
+        assertEquals(5, existing.getStatusId());
+        assertNotNull(existing.getDateUpdated());
+        assertEquals(42, existing.getUpdateId());
+        verify(eventCrfRepository).save(existing);
+        verify(auditService).recordAudit(isNull(), any(), eq("EventCrf"), eq(2L), eq("EventCrf #2"),
+                isNull(), isNull(), eq(42), eq("Event CRF removed (status=5)"), eq("event"));
+    }
+
+    @Test
+    void restoreEventCrf_setsAvailableStatusAndAudits() {
+        EventCrfEntity existing = createCrf(2, 1, 5);
+        existing.setStatusId(5);
+        when(eventCrfRepository.findById(2)).thenReturn(Optional.of(existing));
+
+        service.restoreEventCrf(2, 42);
+
+        assertEquals(1, existing.getStatusId());
+        assertNotNull(existing.getDateUpdated());
+        assertEquals(42, existing.getUpdateId());
+        verify(eventCrfRepository).save(existing);
+        verify(auditService).recordAudit(isNull(), any(), eq("EventCrf"), eq(2L), eq("EventCrf #2"),
+                isNull(), isNull(), eq(42), eq("Event CRF restored (status=1)"), eq("event"));
+    }
 }

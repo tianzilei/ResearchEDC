@@ -226,4 +226,65 @@ class SubjectServiceTest {
 
         verify(eventService).scheduleEvent(any(), eq(42));
     }
+    @Test
+    void removeSubject_setsRemovedStatusAndAudits() {
+        SubjectEntity subject = createSubject(1, "SUBJ-001");
+        when(subjectRepository.findById(1)).thenReturn(Optional.of(subject));
+
+        service.removeSubject(1, 42);
+
+        assertEquals(5, subject.getStatusId());
+        assertNotNull(subject.getDateUpdated());
+        assertEquals(42, subject.getUpdateId());
+        verify(subjectRepository).save(subject);
+        verify(auditService).recordAudit(isNull(), any(), eq("Subject"), eq(1L), eq("SUBJ-001"),
+                isNull(), isNull(), eq(42), eq("Subject removed (status=5)"), eq("subject"));
+    }
+
+    @Test
+    void restoreSubject_setsAvailableStatusAndAudits() {
+        SubjectEntity subject = createSubject(1, "SUBJ-001");
+        subject.setStatusId(5);
+        when(subjectRepository.findById(1)).thenReturn(Optional.of(subject));
+
+        service.restoreSubject(1, 42);
+
+        assertEquals(1, subject.getStatusId());
+        assertNotNull(subject.getDateUpdated());
+        assertEquals(42, subject.getUpdateId());
+        verify(subjectRepository).save(subject);
+        verify(auditService).recordAudit(isNull(), any(), eq("Subject"), eq(1L), eq("SUBJ-001"),
+                isNull(), isNull(), eq(42), eq("Subject restored (status=1)"), eq("subject"));
+    }
+
+    @Test
+    void removeStudySubject_setsRemovedStatusAndAudits() {
+        StudySubjectEntity studySubject = createStudySubject(7, 5, 1, "SS-001");
+        when(studySubjectRepository.findById(7)).thenReturn(Optional.of(studySubject));
+
+        service.removeStudySubject(7, 42);
+
+        assertEquals(5, studySubject.getStatusId());
+        assertNotNull(studySubject.getDateUpdated());
+        assertEquals(42, studySubject.getUpdateId());
+        verify(studySubjectRepository).save(studySubject);
+        verify(auditService).recordAudit(eq(5), any(), eq("StudySubject"), eq(7L), eq("SS-001"),
+                isNull(), isNull(), eq(42), eq("StudySubject removed (status=5)"), eq("subject"));
+    }
+
+    @Test
+    void restoreStudySubject_setsAvailableStatusAndAudits() {
+        StudySubjectEntity studySubject = createStudySubject(7, 5, 1, "SS-001");
+        studySubject.setStatusId(5);
+        when(studySubjectRepository.findById(7)).thenReturn(Optional.of(studySubject));
+
+        service.restoreStudySubject(7, 42);
+
+        assertEquals(1, studySubject.getStatusId());
+        assertNotNull(studySubject.getDateUpdated());
+        assertEquals(42, studySubject.getUpdateId());
+        verify(studySubjectRepository).save(studySubject);
+        verify(auditService).recordAudit(eq(5), any(), eq("StudySubject"), eq(7L), eq("SS-001"),
+                isNull(), isNull(), eq(42), eq("StudySubject restored (status=1)"), eq("subject"));
+    }
 }
