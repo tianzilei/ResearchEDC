@@ -139,14 +139,14 @@ class AuditControllerTest {
                         "updated",
                         "user_updated",
                         "user_updated",
-                        "email",
+                        "first_name",
                         "old.test",
                         "new.test",
                         11,
                         "Main Study",
                         12,
                         "SUBJ-001",
-                        java.util.Map.of("email", "new.test"),
+                        java.util.Map.of("first_name", "new.test"),
                         java.util.Map.of())));
         when(auditUserEventService.listUserEvents(7)).thenReturn(dto);
 
@@ -174,14 +174,14 @@ class AuditControllerTest {
                 .andExpect(jsonPath("$.events[0].reasonForChangeKey").value("updated"))
                 .andExpect(jsonPath("$.events[0].actionMessage").value("user_updated"))
                 .andExpect(jsonPath("$.events[0].actionMessageKey").value("user_updated"))
-                .andExpect(jsonPath("$.events[0].columnName").value("email"))
+                .andExpect(jsonPath("$.events[0].columnName").value("first_name"))
                 .andExpect(jsonPath("$.events[0].oldValue").value("old.test"))
                 .andExpect(jsonPath("$.events[0].newValue").value("new.test"))
                 .andExpect(jsonPath("$.events[0].studyId").value(11))
                 .andExpect(jsonPath("$.events[0].studyName").value("Main Study"))
                 .andExpect(jsonPath("$.events[0].subjectId").value(12))
                 .andExpect(jsonPath("$.events[0].subjectName").value("SUBJ-001"))
-                .andExpect(jsonPath("$.events[0].changes.email").value("new.test"));
+                .andExpect(jsonPath("$.events[0].changes.first_name").value("new.test"));
     }
 
     @Test
