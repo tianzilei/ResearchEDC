@@ -103,7 +103,8 @@
 						<c:if test="${(eventSysStatus != 'removed' && eventSysStatus != 'auto-removed') && (study.status.available)}">						  
 						<span style="font-weight: normal;">
 
-						<a href="CreateNewStudyEvent?studySubjectId=<c:out value="${subjectId}"/>&studyEventDefinition=<c:out value="${eventDefId}"/>"><fmt:message key="add_another_occurrence" bundle="${resword}"/></a>
+						<%-- phase-1-run-48: CreateNewStudyEventServlet deleted — SPA SubjectDetail now handles event creation --%>
+						<%-- <a href="CreateNewStudyEvent?studySubjectId=<c:out value="${subjectId}"/>&studyEventDefinition=<c:out value="${eventDefId}"/>"><fmt:message key="add_another_occurrence" bundle="${resword}"/></a> --%>
 						</c:if>
 						&nbsp &nbsp &nbsp 
         <!-- skip forward/back links: variables represent Table ID for this event, number of occurrences of repeating event, and number to skip to -->
@@ -412,7 +413,8 @@
 								study.status.available}">
 							<tr><td class="table_cell_left">	
 							
-							<a href="CreateNewStudyEvent?studySubjectId=<c:out value="${subjectId}"/>&studyEventDefinition=<c:out value="${eventDefId}"/>"><fmt:message key="add_another_occurrence" bundle="${resword}"/></a>
+							<%-- phase-1-run-48: CreateNewStudyEventServlet deleted — SPA SubjectDetail now handles event creation --%>
+							<%-- <a href="CreateNewStudyEvent?studySubjectId=<c:out value="${subjectId}"/>&studyEventDefinition=<c:out value="${eventDefId}"/>"><fmt:message key="add_another_occurrence" bundle="${resword}"/></a> --%>
 							
 							</td></tr>
 							</c:if>
@@ -441,14 +443,15 @@
 							    <%--<c:when test="${eventStatus.notScheduled}">--%>
 							    <c:when test="${eventStatus =='not scheduled' || eventStatus == notscheduledi18n}">
 							       <c:if test="${!userRole.monitor && (study.status.available)}">
-    							      <tr valign="top">
+     							      <%-- phase-1-run-48: CreateNewStudyEventServlet deleted — SPA SubjectDetail now handles event creation --%>
+     							      <%-- <tr valign="top">
                                           <td class="table_cell_left">
-	    			    			      <a href="CreateNewStudyEvent?studySubjectId=<c:out value="${subjectId}"/>&studyEventDefinition=<c:out value="${eventDefId}"/>">
-    		    					      <img src="images/bt_Schedule.gif" border="0" align="left"></a>&nbsp;&nbsp;
-	    		    				      <a href="CreateNewStudyEvent?studySubjectId=<c:out value="${subjectId}"/>&studyEventDefinition=<c:out value="${eventDefId}"/>">
-		        	    			      <fmt:message key="schedule" bundle="${resword}"/></a>
-				    		    	      </td>
-                                      </tr>
+ 	    			    			      <a href="CreateNewStudyEvent?studySubjectId=<c:out value="${subjectId}"/>&studyEventDefinition=<c:out value="${eventDefId}"/>">
+     		    					      <img src="images/bt_Schedule.gif" border="0" align="left"></a>&nbsp;&nbsp;
+ 	    		    				      <a href="CreateNewStudyEvent?studySubjectId=<c:out value="${subjectId}"/>&studyEventDefinition=<c:out value="${eventDefId}"/>">
+ 		        	    			      <fmt:message key="schedule" bundle="${resword}"/></a>
+ 				    		    	      </td>
+                                      </tr> --%>
 							      </c:if>
 							   </c:when>
 							   
