@@ -47,7 +47,6 @@ const DatasetBuilder = lazy(() => import("@/pages/export/DatasetBuilder"));
 const FilterBuilder = lazy(() => import("@/pages/export/FilterBuilder"));
 const Profile = lazy(() => import("@/pages/Profile"));
 const ChangeStudy = lazy(() => import("@/pages/ChangeStudy"));
-const RequestStudy = lazy(() => import("@/pages/RequestStudy"));
 
 const QuestionnaireTemplates = lazy(() => import("@/pages/questionnaire/QuestionnaireTemplates"));
 const QuestionnaireVersionEditor = lazy(() => import("@/pages/questionnaire/QuestionnaireVersionEditor"));
@@ -110,7 +109,6 @@ const router = createBrowserRouter([
       { path: "subjects/:subjectId/events/:eventId/crfs/:eventCrfId/entry", element: <DataEntryPage /> },
       { path: "profile", element: <Profile /> },
       { path: "change-study", element: <ChangeStudy /> },
-      { path: "request-study", element: <RequestStudy /> },
       { path: "instructions", element: <Instructions /> },
       { path: "instructions/:topic", element: <Instructions /> },
       { path: "actions/:entity/:action/:id", element: <EntityAction /> },

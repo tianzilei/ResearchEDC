@@ -6,6 +6,55 @@
 
 ---
 
+## 2026-06-10 - Email field removal product-surface slice
+
+- **Modules:** `app`, `frontend`, `web`, `docs`
+- **Reason:** Continue the legacy removal plan after CRF metadata narrowing by retiring stale email-backed request/contact entry points.
+
+### Slice Result
+
+- Deleted the unused SPA `RequestStudy` page and removed the `/app/request-study` route.
+- Removed stale `/RequestAccount`, `/RequestStudy`, and `/Contact` redirect bridges from `WebMvcConfig`.
+- Removed legacy JSP/sidebar/footer/static links into retired request-account/contact flows.
+- Documented compatibility-only email references in `docs/refactor/phase-1-email-field-removal-slice.md`.
+
+### Remaining Compatibility
+
+User-account `email` and study `facility_contact_email` entity fields remain for schema/sync/ODM compatibility. Migration XML, trigger SQL, and historical i18n keys are intentionally retained.
+
+## 2026-06-10 - CRF metadata boundary slice reconciliation
+
+- **Modules:** `docs`, `.sisyphus`
+- **Reason:** Execute the next `remove-legacy-code-plan.md` slice by opening the CRF metadata boundary ledger and reconciling the regenerated active inventory.
+
+### Slice Result
+
+- Added `docs/refactor/phase-1-crf-metadata-slice.md` as the slice summary.
+- Kept `docs/refactor/phase-1-crf-metadata-ledger.csv` as the row-level ledger: 13 original rows, 2 deleted/orphan rows, 11 blocked live dependencies.
+- Regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}`.
+- Active inventory is now 208 artifacts: 144 `replace`, 64 `keep compatibility`, 0 `unknown`.
+- Type summary: 52 JSP views, 9 legacy servlets, 15 Spring MVC routes, 100 DAO files, 32 shared services.
+- `phase-1-crf-metadata` is now 11 active artifacts, down from the stale 13-row candidate list.
+
+### Remaining Blocker
+
+The remaining CRF metadata artifacts are active data-entry/section-view dependencies. `CheckCRFLocked` is still registered in `web.xml` and called by `interviewer.jsp`; `showItemInput*`, `showGroupItemInput*`, `generate*`, and `showSection.jsp` are still included by active data-entry JSPs.
+
+## 2026-06-10 - Legacy removal baseline after phase-3-run-75
+
+- **Commit context:** latest local history reaches `40065c23f` (`phase-3-run-75: remove stale EmailActionBean + EmailHandler XML references`).
+- **Modules:** `shared`, `web`, `docs`, `.sisyphus`
+- **Reason:** Keep the handoff docs aligned after additional Phase 3 cleanup and regenerated legacy inventory.
+
+### Current Baseline
+
+- This baseline is superseded by the CRF metadata boundary slice reconciliation above.
+
+### Current Next Action
+
+1. Continue from the 11 active `phase-1-crf-metadata` artifacts after the CRF boundary ledger reconciliation.
+2. Treat `CheckCRFLocked` and `showItemInput*`/`generate*` fragments as blocked until JSP include references are removed or replaced by SPA/module data-entry behavior.
+
 ## 2026-06-09 - Documentation sync after Enterprise and mail removal
 
 - **Commit:** `7d62e73ad` removed Enterprise and active mail-delivery surfaces; this documentation pass refreshes the current baseline and inventory.
@@ -21,11 +70,10 @@
 
 2. **Legacy inventory refresh:**
    - Regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` with `scripts/ci/generate-legacy-inventory.py`.
-   - Current active inventory: 515 artifacts; 377 `replace`, 99 `keep compatibility`, 39 `unknown`.
+   - This was a historical checkpoint after Enterprise/mail removal; the current baseline is superseded by the 2026-06-10 entry above.
 
-3. **Current baseline:**
-   - `shared/`: 713 Java files; `shared/dao`: 175 files.
-   - `web/`: 263 Java files; 175 JSP files; 87 `SecureController`/`CoreSecureController` subclasses.
+3. **Checkpoint baseline:**
+   - The baseline from this documentation pass is superseded by the 2026-06-10 legacy removal baseline above.
    - `ws/`: absent from the current tree.
    - `frontend/src`: 102 TypeScript/TSX files; `questionnaire-service`: 76 Python files.
 

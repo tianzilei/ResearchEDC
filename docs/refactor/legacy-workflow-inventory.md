@@ -1,6 +1,6 @@
 # Legacy Workflow Inventory
 
-Generated: 2026-06-10 04:30:16 UTC
+Generated: 2026-06-10 10:42:18 UTC
 
 Full CSV inventory: `legacy-workflow-inventory.csv`
 
@@ -11,7 +11,7 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 | `dao-implementation` | 44 |
 | `dao-spi` | 51 |
 | `dao-support` | 5 |
-| `jsp-view` | 60 |
+| `jsp-view` | 52 |
 | `legacy-servlet` | 9 |
 | `shared-service` | 32 |
 | `spring-mvc-route` | 15 |
@@ -20,19 +20,19 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 
 | Classification | Count |
 |---|---:|
-| `keep compatibility` | 65 |
-| `replace` | 151 |
+| `keep compatibility` | 64 |
+| `replace` | 144 |
 
 ## Summary By Phase Slice
 
 | Phase slice | Count |
 |---|---:|
-| `phase-1-crf-metadata` | 13 |
-| `phase-1-data-entry-discrepancy` | 30 |
+| `phase-1-crf-metadata` | 11 |
+| `phase-1-data-entry-discrepancy` | 26 |
 | `phase-1-export-dataset-filter` | 1 |
-| `phase-1-import-export-compatibility` | 11 |
+| `phase-1-import-export-compatibility` | 10 |
 | `phase-1-layout-common` | 6 |
-| `phase-1-study-subject-event` | 23 |
+| `phase-1-study-subject-event` | 22 |
 | `phase-3-dao-implementation-deletion` | 100 |
 | `phase-4-shared-service-deletion` | 32 |
 
@@ -54,10 +54,8 @@ Candidate artifacts:
 |---|---|---|---|
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/managestudy/viewSectionDataEntry.jsp | viewSectionDataEntry.jsp | /WEB-INF/jsp/managestudy/viewSectionDataEntry.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/managestudy/viewSectionDataEntryHtml.jsp | viewSectionDataEntryHtml.jsp | /WEB-INF/jsp/managestudy/viewSectionDataEntryHtml.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/eventCrfLayer.jsp | eventCrfLayer.jsp | /WEB-INF/jsp/submit/eventCrfLayer.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/generateGroupItemTxt.jsp | generateGroupItemTxt.jsp | /WEB-INF/jsp/submit/generateGroupItemTxt.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/generateLeftItemTxt.jsp | generateLeftItemTxt.jsp | /WEB-INF/jsp/submit/generateLeftItemTxt.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showFixedItemInput.jsp | showFixedItemInput.jsp | /WEB-INF/jsp/submit/showFixedItemInput.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showGroupItemInput.jsp | showGroupItemInput.jsp | /WEB-INF/jsp/submit/showGroupItemInput.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showGroupItemInputMonitor.jsp | showGroupItemInputMonitor.jsp | /WEB-INF/jsp/submit/showGroupItemInputMonitor.jsp |
 | jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showItemInput.jsp | showItemInput.jsp | /WEB-INF/jsp/submit/showItemInput.jsp |

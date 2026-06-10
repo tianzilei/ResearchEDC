@@ -150,8 +150,6 @@
     <br><br>
 	<a href="MainMenu"><fmt:message key="login" bundle="${resword}"/></a>	
 	<br><br>
-	<a href="RequestAccount"><fmt:message key="request_an_account" bundle="${resword}"/></a>
-	<br><br>
 	<a href="RequestPassword"><fmt:message key="forgot_password" bundle="${resword}"/></a>
 </c:otherwise>
 </c:choose>
