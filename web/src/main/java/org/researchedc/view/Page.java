@@ -177,7 +177,7 @@ public enum Page {
     TABLE_OF_CONTENTS_SERVLET ("/TableOfContents", "Event CRF Data Submission"), // retained for TableOfContentsHelper
     INTERVIEWER ("/WEB-INF/jsp/" + "submit/interviewer.jsp", "Event CRF Interview Info Submission"),
 
-    INITIAL_DATA_ENTRY ("/WEB-INF/jsp/submit/initialDataEntryNw.jsp", "Initial Data Entry"), // updated to Nw.jsp — initialDataEntry.jsp deleted in phase-4-run-94
+    INITIAL_DATA_ENTRY ("/WEB-INF/jsp/submit/initialDataEntryNw.jsp", "Initial Data Entry"),
     INITIAL_DATA_ENTRY_SERVLET ("/InitialDataEntry", "Initial Data Entry"),
 
     DOUBLE_DATA_ENTRY ("/WEB-INF/jsp/" + "submit/doubleDataEntry.jsp", "Double Data Entry"),
