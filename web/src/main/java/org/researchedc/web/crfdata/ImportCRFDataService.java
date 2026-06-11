@@ -758,7 +758,7 @@ public class ImportCRFDataService {
         return wrappers;
     }
 
-    private ItemDataBean createItemDataBean(ItemBean itemBean, EventCRFBean eventCrfBean, String value, UserAccountBean ub, int ordinal) {
+    public ItemDataBean createItemDataBean(ItemBean itemBean, EventCRFBean eventCrfBean, String value, UserAccountBean ub, int ordinal) {
 
         ItemDataBean itemDataBean = new ItemDataBean();
         itemDataBean.setItemId(itemBean.getId());
@@ -770,6 +770,16 @@ public class ImportCRFDataService {
         itemDataBean.setValue(value);
 
         return itemDataBean;
+    }
+
+    public ItemDataBean prepareItemDataForCommit(
+            ImportItemDataBean importItem, EventCRFBean eventCrf,
+            UserAccountBean ub, int ordinal) {
+        List<ItemBean> items = itemDao.findByOid(importItem.getItemOID());
+        if (items == null || items.isEmpty()) {
+            return null;
+        }
+        return createItemDataBean(items.get(0), eventCrf, importItem.getValue(), ub, ordinal);
     }
 
     private void attachValidator(DisplayItemBean displayItemBean, ImportHelper importHelper, DiscrepancyValidator v, HashMap<String, String> hardv,
