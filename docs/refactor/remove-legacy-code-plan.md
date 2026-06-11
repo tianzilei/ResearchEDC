@@ -1,21 +1,21 @@
 # Remove Legacy Code Plan
 
 **Last updated:** 2026-06-11
-**Status:** Legacy removal is **not complete** but **Phase 1 executable slices are exhausted** (import/export validations done, 2 of 10 artifacts deleted, study/subject/event JSPs all deleted). Remaining work blocked on SPA DataEntryPage parity. Inventory regenerated: 189 artifacts (was 208). Commit `efaa93d43` added 8 validation types to ImportCrfDataAdapter.
+**Status:** Legacy removal is **not complete**. **Phase 1 executable slices exhausted** (SPA DataEntryPage parity blocks remaining 29 JSPs + 15 servlets). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** All remaining work blocked on: (1) SPA DataEntryPage CRF renderer parity → 40+ artifacts, (2) module-owned DAO replacements → 100 files.
 
 ## Current Baseline
 
-These counts come from the current repository tree and regenerated inventory (updated 2026-06-10 after phase-1-run-58 and `docs/refactor/legacy-workflow-inventory.{csv,md}` regeneration):
+These counts come from the current repository tree (updated 2026-06-11 post runs 93-95, Phase 4 dead code scavenging complete):
 
 | Surface | Count (before) | Count (after) | Meaning |
 |---------|----------------|---------------|---------|
-| `shared/src/main/java/org/researchedc` | 793 | 543 | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities (-250) |
+| `shared/src/main/java/org/researchedc` | 793 | 509 | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities (-284) |
 | `shared/src/main/java/org/researchedc/dao` | 186 | 100 | DAO SPI interfaces plus legacy DAO implementations/support (-86) |
-| `web/src/main/java` | 480 | 152 | Legacy servlet/Spring MVC/JSP helper surface (-328) |
-| `web/src/main/webapp/**/*.jsp` | 416 | 52 | JSP views and fragments (-364) |
-| Legacy servlet inventory artifacts | 186 | 9 | Remaining active servlet workflow artifacts in generated inventory (-177) |
+| `web/src/main/java` | 480 | 102 | Legacy servlet/Spring MVC/JSP helper surface (-378) |
+| `web/src/main/webapp/**/*.jsp` | 416 | 29 | JSP views and fragments (-387) |
+| Legacy servlet inventory artifacts | 186 | 6 | Remaining active servlet workflow artifacts (-180) |
 | `ws/` | 75 | 0 | SOAP module directory is absent in the current tree (-75) |
-| Active legacy workflow inventory | 963 | 208 | Generated artifacts across JSP, servlet, Spring MVC, DAO, and shared service surfaces (-755) |
+| Active legacy workflow inventory | 963 | ~140 | Generated artifacts across JSP, servlet, Spring MVC, DAO, and shared service surfaces (-823) |
 
 ### Phase 1 Deletion Summary (7 slices completed)
 
