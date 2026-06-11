@@ -31,11 +31,7 @@
 
 	
 
- <%-- begin standard study info --%>
-        <c:if test="${panel.studyInfoShown}">
-                <c:import url="/WEB-INF/jsp/include/studySideInfo.jsp"/>
-        <br><br>
-        </c:if>
+ <%-- studySideInfo.jsp import removed — phase-1-run-76 (never rendered: menu.jsp unreachable, import.jsp has studyInfoShown=false) --%>
         <c:choose>         
                 <c:when test="${panel.orderedData}">
                         <c:forEach var='line' items="${panel.userOrderedData}">

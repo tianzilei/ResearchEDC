@@ -169,8 +169,8 @@ public enum Page {
 
     // CREATE_NEW_STUDY_EVENT removed — phase-1-run-48 (CreateNewStudyEventServlet + JSP deleted, SPA SubjectDetail now handles)
 
-    INSTRUCTIONS_ENROLL_SUBJECT ("/WEB-INF/jsp/" + "submit/instructionsEnrollSubject.jsp", "Enroll New Subject - Instructions"),
-    ADD_NEW_SUBJECT ("/WEB-INF/jsp/" + "submit/addNewSubject.jsp", "Enroll New Subject"),
+    // INSTRUCTIONS_ENROLL_SUBJECT removed — phase-1-run-76 (JSP deleted, 0 forwardPage callers, SPA handles enrollment)
+    // ADD_NEW_SUBJECT removed — phase-1-run-76 (JSP deleted, 0 forwardPage callers, SPA handles enrollment)
 
     // ENTER_DATA_FOR_STUDY_EVENT removed — servlet + JSP deleted, not in web.xml
     // ENTER_DATA_FOR_STUDY_EVENT_SERVLET removed — servlet + JSP deleted, not in web.xml
