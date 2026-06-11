@@ -47,9 +47,7 @@
         <property name="instructionsBoxSetup" value="OPENINSTRUCTIONS"/>
     </bean>
 
-    <bean name="setUpUserInterceptor" class="org.researchedc.controller.helper.SetUpUserInterceptor">
-    	<property name="dataSource" ref="dataSource"/>
-    </bean>
+    <!-- setUpUserInterceptor bean removed — phase-1-run-78 (orphaned: never wired into any interceptor chain, dead code since OpenClinica v3) -->
 
     <bean name="sdvFactory" class="org.researchedc.web.table.sdv.SubjectIdSDVFactory">
     	<property name="dataSource" ref="dataSource"/>
