@@ -233,6 +233,8 @@ class ImportServiceTest {
                 .thenReturn(true);
         when(importAdapter.getEventCrfBeans(eq(odm), anyInt(), any(Locale.class)))
                 .thenReturn(List.of(mockEventCrf()));
+        when(importAdapter.validateEditChecks(eq(odm), anyInt()))
+                .thenReturn("{\"editChecks\":{\"total\":5,\"withValue\":3,\"blank\":2}}");
     }
 
     @Test

@@ -132,4 +132,38 @@ public class ImportCrfDataAdapter {
                 eventCrfBeans.size(), itemCount, studyId);
         return eventCrfBeans.size();
     }
+
+    public String validateEditChecks(ODMContainer odm, int studyId) {
+        int totalItems = 0;
+        int itemsWithValue = 0;
+        var postImport = odm.getCrfDataPostImportContainer();
+        if (postImport != null && postImport.getSubjectData() != null) {
+            for (var subjectData : postImport.getSubjectData()) {
+                if (subjectData.getStudyEventData() == null) continue;
+                for (var eventData : subjectData.getStudyEventData()) {
+                    if (eventData.getFormData() == null) continue;
+                    for (var formData : eventData.getFormData()) {
+                        if (formData.getItemGroupData() == null) continue;
+                        for (var groupData : formData.getItemGroupData()) {
+                            if (groupData.getItemData() == null) continue;
+                            for (var importItem : groupData.getItemData()) {
+                                totalItems++;
+                                String value = importItem.getValue();
+                                if (value != null && !value.isBlank()) {
+                                    itemsWithValue++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        int blankItems = totalItems - itemsWithValue;
+        String summary = "{\"editChecks\":{\"total\":" + totalItems
+                + ",\"withValue\":" + itemsWithValue
+                + ",\"blank\":" + blankItems + "}}";
+        log.info("Edit check summary for study {}: total={}, withValue={}, blank={}",
+                studyId, totalItems, itemsWithValue, blankItems);
+        return summary;
+    }
 }
