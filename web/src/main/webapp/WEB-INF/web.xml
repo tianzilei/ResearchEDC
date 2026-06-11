@@ -122,12 +122,7 @@
 
 
 
-    <servlet>
-        <servlet-name>FormServlet</servlet-name>
-        <display-name>FormServlet</display-name>
-        <description>FormServlet</description>
-        <servlet-class>org.researchedc.view.form.FormServlet</servlet-class>
-    </servlet>
+<!-- phase-1-run-78: FormServlet removed — no servlet-mapping, 67-line HSSF/POI demo, never reachable -->
 <!-- phase-1-run-29: RemoveCRFFromDefinitionServlet + RestoreCRFFromDefinitionServlet removed (0 external consumers) -->
 <!-- phase-1-run-72/73: ManageStudyServlet removed — /ManageStudy redirects to SPA /app/dashboard -->
 <!-- phase-1-run-48: CreateNewStudyEventServlet removed — SPA SubjectDetail now handles event creation via scheduleEvent mutation
@@ -155,11 +150,12 @@
     </servlet>
 
     <!-- Export Excel -->
-    <servlet>
+    <!-- phase-1-run-79: ListStudySubjectsServlet retired — findSubjects.jsp deleted, SPA handles at /app/subjects -->
+    <!-- <servlet>
         <servlet-name>ListStudySubjectsServlet</servlet-name>
         <display-name>ListStudySubject</display-name>
         <servlet-class>org.researchedc.control.submit.ListStudySubjectsServlet</servlet-class>
-    </servlet>
+    </servlet> -->
     <!-- phase-1-run-42: ListStudySubjectsManageServlet registration removed — extends stub parent, 0 external callers -->
     <!-- phase-1-run-35: RemoveStudyEventServlet registration removed — SPA EventList now handles -->
 <!-- phase-1-run-37: RemoveEventCRFServlet registration removed — SPA EntityAction now handles -->
@@ -270,10 +266,11 @@
     -->
 <!-- phase-1-run-29: RemoveCRFFromDefinition + RestoreCRFFromDefinition mappings removed -->
     <!-- phase-1-run-42: ListStudySubjectsManageServlet mapping removed -->
-    <servlet-mapping>
+    <!-- phase-1-run-79: ListStudySubjectsServlet mapping retired — WebMvcConfig redirects to /app/subjects -->
+    <!-- <servlet-mapping>
         <servlet-name>ListStudySubjectsServlet</servlet-name>
         <url-pattern>/ListStudySubjects</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping> -->
 <!-- phase-1-run-35: RemoveStudyEventServlet mapping removed — SPA EventList now handles -->
 <!-- phase-1-run-37: RemoveEventCRFServlet mapping removed — SPA EntityAction now handles -->
     <!--  Export Excel -->
