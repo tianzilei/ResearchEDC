@@ -318,6 +318,52 @@ public class DataCaptureService {
         return resolved;
     }
 
+    /**
+     * Lists attachment file names for a given event CRF.
+     * Resolves the study OID from the event CRF and scans the study's
+     * attachment directory. Falls back to parent/child study directories.
+     *
+     * @param eventCrfId the event CRF ID to resolve study context from
+     * @return list of file names found in the attachment directories
+     */
+    public List<String> listAttachmentsByEventCrf(int eventCrfId) {
+        String studyOid = getStudyOidByEventCrf(eventCrfId);
+        if (studyOid == null) {
+            return List.of();
+        }
+
+        List<String> files = new ArrayList<>();
+        String rootPath = Utils.getAttachedFileRootPath();
+        File studyDir = new File(rootPath, studyOid);
+        if (studyDir.exists() && studyDir.isDirectory()) {
+            File[] dirFiles = studyDir.listFiles();
+            if (dirFiles != null) {
+                for (File f : dirFiles) {
+                    if (f.isFile()) files.add(f.getName());
+                }
+            }
+        }
+
+        // Also check parent/child study directories
+        StudyBean study = (StudyBean) studyDao.findByOid(studyOid);
+        if (study != null && study.getParentStudyId() > 0) {
+            StudyBean parent = (StudyBean) studyDao.findByPK(study.getParentStudyId());
+            if (parent != null) {
+                File parentDir = new File(rootPath, parent.getOid());
+                if (parentDir.exists() && parentDir.isDirectory()) {
+                    File[] dirFiles = parentDir.listFiles();
+                    if (dirFiles != null) {
+                        for (File f : dirFiles) {
+                            if (f.isFile() && !files.contains(f.getName())) files.add(f.getName());
+                        }
+                    }
+                }
+            }
+        }
+
+        return files;
+    }
+
     private static List<OptionDTO> parseOptions(String optionsText, String optionsValues) {
         List<OptionDTO> options = new ArrayList<>();
         if (optionsText == null || optionsValues == null) {
