@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -468,6 +469,8 @@ public class Validator {
 
     protected HttpServletRequest request;
 
+    protected Map<String, String> fieldValues;
+
     protected ResourceBundle resformat;
 
     //protected Locale format_locale;
@@ -478,6 +481,26 @@ public class Validator {
         this.request = request;
  //        locale=request.getLocale();
        locale = LocaleResolver.getLocale(request);
+        resformat = ResourceBundleProvider.getFormatBundle(locale);
+        restext = ResourceBundleProvider.getTextsBundle(locale);
+        resexception = ResourceBundleProvider.getExceptionsBundle(locale);
+        resword = ResourceBundleProvider.getWordsBundle(locale);
+        lastField = "";
+    }
+
+    /**
+     * Creates a Validator backed by a Map instead of HttpServletRequest.
+     * Used when field values come from a non-HTTP source (e.g., ODM data import).
+     *
+     * @param fieldValues  item OID → value mapping
+     * @param locale       locale for i18n error messages
+     */
+    public Validator(Map<String, String> fieldValues, Locale locale) {
+        validations = new HashMap();
+        errors = new HashMap();
+        this.fieldValues = fieldValues;
+        this.request = null;
+        this.locale = locale;
         resformat = ResourceBundleProvider.getFormatBundle(locale);
         restext = ResourceBundleProvider.getTextsBundle(locale);
         resexception = ResourceBundleProvider.getExceptionsBundle(locale);
@@ -717,9 +740,11 @@ public class Validator {
     }
 
     protected void addError(String fieldName, Validation v) {
-        locale = LocaleResolver.getLocale(request);
-        resexception = ResourceBundleProvider.getExceptionsBundle(locale);
-        resword = ResourceBundleProvider.getWordsBundle(locale);
+        if (fieldValues == null) {
+            locale = LocaleResolver.getLocale(request);
+            resexception = ResourceBundleProvider.getExceptionsBundle(locale);
+            resword = ResourceBundleProvider.getWordsBundle(locale);
+        }
 
         String errorMessage = "";
 
@@ -1177,6 +1202,9 @@ public class Validator {
      * Instead of rewriting the whole Validation do this.
      */
     protected String getFieldValue(String fieldName) {
+        if (fieldValues != null) {
+            return fieldValues.get(fieldName);
+        }
         return request.getParameter(fieldName) == null ? request.getAttribute(fieldName) == null ? null : request.getAttribute(fieldName).toString() : request
                 .getParameter(fieldName);
     }

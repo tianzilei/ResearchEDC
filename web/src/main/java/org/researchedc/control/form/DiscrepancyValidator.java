@@ -11,6 +11,8 @@ package org.researchedc.control.form;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,11 @@ public class DiscrepancyValidator extends Validator {
 
     public DiscrepancyValidator(HttpServletRequest request, FormDiscrepancyNotes notes) {
         super(request);
+        this.notes = notes;
+    }
+
+    public DiscrepancyValidator(Map<String, String> fieldValues, Locale locale, FormDiscrepancyNotes notes) {
+        super(fieldValues, locale);
         this.notes = notes;
     }
 

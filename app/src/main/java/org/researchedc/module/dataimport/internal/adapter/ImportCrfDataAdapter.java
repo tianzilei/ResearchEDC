@@ -6,8 +6,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -17,6 +19,8 @@ import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.crfdata.ODMContainer;
+import org.researchedc.control.form.DiscrepancyValidator;
+import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.web.crfdata.ImportCRFDataService;
@@ -134,8 +138,8 @@ public class ImportCrfDataAdapter {
     }
 
     public String validateEditChecks(ODMContainer odm, int studyId) {
+        Map<String, String> fieldValues = new HashMap<>();
         int totalItems = 0;
-        int itemsWithValue = 0;
         var postImport = odm.getCrfDataPostImportContainer();
         if (postImport != null && postImport.getSubjectData() != null) {
             for (var subjectData : postImport.getSubjectData()) {
@@ -148,22 +152,26 @@ public class ImportCrfDataAdapter {
                             if (groupData.getItemData() == null) continue;
                             for (var importItem : groupData.getItemData()) {
                                 totalItems++;
+                                String oid = importItem.getItemOID();
                                 String value = importItem.getValue();
-                                if (value != null && !value.isBlank()) {
-                                    itemsWithValue++;
-                                }
+                                fieldValues.put(oid, value != null ? value : "");
                             }
                         }
                     }
                 }
             }
         }
-        int blankItems = totalItems - itemsWithValue;
-        String summary = "{\"editChecks\":{\"total\":" + totalItems
-                + ",\"withValue\":" + itemsWithValue
-                + ",\"blank\":" + blankItems + "}}";
-        log.info("Edit check summary for study {}: total={}, withValue={}, blank={}",
-                studyId, totalItems, itemsWithValue, blankItems);
-        return summary;
+        org.researchedc.control.form.FormDiscrepancyNotes notes =
+                new org.researchedc.control.form.FormDiscrepancyNotes();
+        org.researchedc.control.form.DiscrepancyValidator dv =
+                new org.researchedc.control.form.DiscrepancyValidator(fieldValues, Locale.ENGLISH, notes);
+        for (String oid : fieldValues.keySet()) {
+            dv.addValidation(oid, org.researchedc.control.form.Validator.NO_BLANKS);
+        }
+        var errors = dv.validate();
+        int errorCount = errors.size();
+        log.info("Edit check validation for study {}: total={}, errors={}, passed={}",
+                studyId, totalItems, errorCount, totalItems - errorCount);
+        return "{\"total\":" + totalItems + ",\"errors\":" + errorCount + "}";
     }
 }
