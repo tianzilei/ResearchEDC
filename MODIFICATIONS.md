@@ -6,6 +6,48 @@
 
 ---
 
+## 2026-06-11 - Legacy controller + servlet deletion (runs 78-79)
+
+- **Modules:** `web`, `docs`, `app`, `frontend`, `shared`
+- **Reason:** Continue `remove-legacy-code-plan.md`: delete dead legacy controllers/servlets with zero callers, build dataimport module scaffold.
+
+### Run-78a: Delete dead legacy StudyController (`8e150a8dc`)
+- **File:** `web/src/main/java/org/researchedc/controller/StudyController.java` — DELETED (-1177 lines)
+- **Reason:** Zero callers — no Java imports, no XML config, no frontend references.
+
+### Run-78b: Delete orphaned SetUpUserInterceptor + SetUpStudyRole (`b97e6ac28`)
+- **SetUpUserInterceptor.java** (-93): Bean declared but never wired into interceptor chain.
+- **SetUpStudyRole.java** (-197): Only called by deleted interceptor.
+- **pages-servlet.xml** (+1/-3): Removed orphaned bean.
+
+### Run-79a: Fix broken ListStudySubjectsServlet (`2d7122a13`)
+- **WebMvcConfig.java** (+1): Added `/ListStudySubjects` → `/app/subjects` redirect.
+- **ListStudySubjectsServlet.java** (-191): Decommissioned, SPA handles at `/app/subjects`.
+
+### Run-79b: Delete dead forms/servlets + dataimport + attachment hardening (`a71ded4d4`)
+- **FormServlet.java** (-67): HSSF/POI demo, no servlet-mapping, never reachable.
+- **CreateStudyServlet.java** (-23): 0 callers, SPA StudyWizard handles creation.
+- **UserAccountController.java** (-465): 0 callers, SPA uses Modulith Identity module.
+- **ListStudySubjectsServlet** retired in web.xml.
+- **Dataimport module scaffold** (15 files): ImportController, ImportService, ImportJob entity.
+- **DataCaptureService.downloadAttachment()** hardened (+67): path traversal protection.
+- **ImportManager.tsx** improved: upload/validate/commit wizard.
+- **Import migration:** import_job table.
+- **Test:** ImportServiceTest 25/0/0 ✅
+
+### Remaining Controller Inventory
+- **AccountController:** 8 routes, KEEP COMPATIBILITY (Participate Portal external API).
+- **SidebarInit + SidebarEnumConstants:** Used by JSP sidebar, blocked by remaining JSP pages.
+- **web/ controller: 3 files** remain (AccountController, SidebarInit, SidebarEnumConstants).
+
+### Verification
+- `mvn compile` ✅ BUILD SUCCESS
+- `ModulithVerificationTest` ✅ 1/0/0
+- `ImportServiceTest` ✅ 25/0/0
+- `pnpm typecheck` ✅ 0 errors
+
+---
+
 ## 2026-06-11 - Entity action remove/restore slice
 
 - **Modules:** `app`, `frontend`, `web`, `docs`
