@@ -155,8 +155,8 @@ public enum Page {
 
 
     ADMIN_SYSTEM ("/WEB-INF/jsp/" + "admin/index.jsp", "Administer System Menu"),
-    MANAGE_STUDY ("/WEB-INF/jsp/" + "managestudy/index.jsp", "Manage Study Menu"),
-    MANAGE_STUDY_BODY ("/WEB-INF/jsp/" + "managestudy/managestudy_body.jsp", "Manage Study Menu"),
+    // MANAGE_STUDY removed — phase-1-run-75 (ManageStudyServlet + JSP deleted)
+    // MANAGE_STUDY_BODY removed — phase-1-run-75
 
     // CREATE_JOB_EXPORT removed — JSP deleted in Phase 1
     // UPDATE_JOB_EXPORT removed — JSP deleted in Phase 1

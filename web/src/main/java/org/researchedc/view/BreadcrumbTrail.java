@@ -125,13 +125,8 @@ public class BreadcrumbTrail {
             else if (jspPage.equals(Page.ADMIN_SYSTEM)) {
                 trail = new ArrayList();
                 trail.add(new BreadcrumbBean(resworkflow.getString("business_admin"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.MANAGE_STUDY)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "#", Status.PENDING));
-            } else if (jspPage.equals(Page.MANAGE_STUDY_BODY)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("manage_study"), "#", Status.PENDING));
             }
+            // MANAGE_STUDY + MANAGE_STUDY_BODY branches removed — phase-1-run-75 (JSPs deleted, unreachable after ManageStudyServlet removal)
 
             // LIST_USER_IN_STUDY branch removed — JSP deleted in Phase 1 slice
 
