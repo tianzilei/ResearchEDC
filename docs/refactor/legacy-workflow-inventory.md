@@ -14,7 +14,7 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 | `jsp-view` | 52 |
 | `legacy-servlet` | 9 |
 | `shared-service` | 32 |
-| `spring-mvc-route` | 15 |
+| `spring-mvc-route` | 9 |
 
 ## Summary By Classification
 

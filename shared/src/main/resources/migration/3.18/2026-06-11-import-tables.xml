@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="research-edc" id="2026-06-11-create-import-job">
+        <createTable tableName="import_job">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="study_id" type="INT"/>
+            <column name="name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="import_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="file_name" type="VARCHAR(500)"/>
+            <column name="stored_file_path" type="VARCHAR(1000)"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="STAGED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="requested_by" type="INT"/>
+            <column name="requested_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="completed_date" type="TIMESTAMP"/>
+            <column name="error_message" type="VARCHAR(4000)"/>
+            <column name="summary_json" type="VARCHAR(4000)"/>
+            <column name="retry_count" type="INT" defaultValue="0"/>
+        </createTable>
+        <createIndex indexName="idx_import_job_study" tableName="import_job">
+            <column name="study_id"/>
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
