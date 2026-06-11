@@ -40,13 +40,7 @@
     <!-- Scans the classpath of this application for @Components to deploy as beans -->
     <context:component-scan base-package="org.researchedc.controller" />
 
-    <bean class="org.researchedc.controller.SidebarInit" name="sidebarInit">
-        <property name="alertsBoxSetup" value="OPENALERTS" />
-        <property name="enableIconsBoxSetup" value="DISABLEICONS"/>
-        <property name="infoBoxSetup" value="OPENINFO" />
-        <property name="instructionsBoxSetup" value="OPENINSTRUCTIONS"/>
-    </bean>
-
+    <!-- sidebarInit bean removed — phase-4-run-94 (0 Java injections, dead bean) -->
     <!-- setUpUserInterceptor bean removed — phase-1-run-78 (orphaned: never wired into any interceptor chain, dead code since OpenClinica v3) -->
 
     <bean name="sdvFactory" class="org.researchedc.web.table.sdv.SubjectIdSDVFactory">
