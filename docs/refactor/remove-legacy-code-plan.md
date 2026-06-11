@@ -31,7 +31,7 @@ These counts come from the current repository tree (updated 2026-06-11 post runs
 
 **Result:** Phase 1 deletion slices have removed the largest low-risk JSP/servlet surfaces. Current Enterprise and mail-delivery code paths are retired; shared+app+web BUILD SUCCESS.
 
-**Remaining Phase 1 work:** 52 JSP files, 9 legacy servlet inventory artifacts, and 15 legacy Spring MVC route artifacts remain. They are blocked mainly by data entry, import/export compatibility, study/subject/event fallbacks, and OpenRosa-style controller dependencies that require SPA or module-owned replacements before deletion.
+**Remaining Phase 1 work:** 29 JSP files, 6 legacy servlet inventory artifacts, and 9 legacy Spring MVC route artifacts remain. All blocked on SPA DataEntryPage CRF renderer parity. Additional 15 servlets registered in web.xml are all data entry/discrepancy — also blocked on SPA parity.
 
 Completed work should be described precisely:
 
@@ -91,15 +91,15 @@ Remaining Phase 0 work:
 - ✅ `scripts/ci/generate-legacy-inventory.py` updated to classify layout fragments (`include/` JSPs) and `menu.jsp` automatically.
 - ⬜ Add per-workflow owner metadata once the first slice ledger is created.
 
-Current next action (updated 2026-06-11 post-run-91):
+Current next action (updated 2026-06-11 post runs 93-95):
 
 1. ✅ Done: Closed the common `EntityAction` remove/restore gaps for study-subject, study-event, and event-CRF actions.
-2. ✅ Done: Import/export compatibility slice. ImportCrfDataAdapter.validateEditChecks() now covers 8 validation types (NO_BLANKS, 5 data-type, 2 response-set). ImportCRFDataServlet + import.jsp deleted. Remaining 8 artifacts blocked/deferred (7 print JSPs, DownloadAttachedFileServlet).
-3. ✅ Done: OpenRosa/Spring MVC compatibility classification. OpenRosa is active Modulith (18 files, `/api/v1/openrosa`). AccountController (8 routes) is keep-compatibility external API. SidebarInit/SidebarEnumConstants are JSP-blocked.
-4. ⬜ Keep CRF metadata/data-entry rendering blocked until SPA DataEntryPage parity. **This is the primary remaining blocker for Phase 1.**
-5. ⬜ Phase 3 DAO deletion: scoped — all Sort/Filter helpers have 2+ DAO-layer cross-references; no low-hanging fruit. Full Phase 3 blocked on module-owned DAO replacements.
-6. ⬜ Phase 4 shared bean deletion: exhausted — 8 dead DTOs deleted in runs 81-82; no more dead beans found in bean/odmbeans/, bean/extract/, bean/submit/ scans.
-7. ⬜ Phase 5 dependency cleanup: exhausted — 19 dead deps removed; remaining 8 all active.
+2. ✅ Done: Import/export compatibility slice. ImportCrfDataAdapter.validateEditChecks() now covers 8 validation types (NO_BLANKS, 5 data-type, 2 response-set). ImportCRFDataServlet + import.jsp deleted.
+3. ✅ Done: OpenRosa/Spring MVC compatibility classification. OpenRosa is active Modulith (18 files, `/api/v1/openrosa`). AccountController deleted (0 callers). SidebarInit/SidebarEnumConstants deleted (0 injections).
+4. ⬜ Keep CRF metadata/data-entry rendering blocked until SPA DataEntryPage parity. **This is the primary remaining blocker for Phase 1.** 29 JSPs + 15 servlets remain.
+5. ⬜ Phase 3 DAO deletion: 100 DAO files blocked on module-owned DAO replacements.
+6. ✅ Done: Phase 4 shared bean deletion — EXHAUSTED. 73 files (-8570L) across runs 81-95. 0 dead code remaining.
+7. ✅ Done: Phase 5 dependency cleanup — EXHAUSTED. 19 dead deps removed; remaining 8 all active.
 
 ## Phase B PostgreSQL Validation
 
@@ -306,6 +306,8 @@ High-risk DAO groups:
 
 ## Phase 4: Shared Bean/Service/Domain Deletion
 
+**Status: EXHAUSTED (2026-06-11, runs 81-95)**
+
 **Goal:** remove legacy DTOs, services, rule helpers, jobs, and OpenClinica-era utility code that no longer has callers.
 
 - Delete DTO beans after the last servlet/DAO caller is gone; SOAP is already absent in the current tree.
@@ -316,7 +318,21 @@ High-risk DAO groups:
 
 **Exit gate:** `shared/` contains only genuinely shared, modernized code or is split into smaller module-owned packages.
 
+### Phase 4 Progress (2026-06-11, runs 81-95)
+
+**Conclusively exhausted.** All 509 remaining shared Java files have at least one active caller:
+- Runs 81-82: 8 dead DTOs in bean/login/ deleted (-513L)
+- Run 93: XmlSchemaValidationHelper deleted (-175L)
+- Run 94: UserDTO + HideCRFManager ×2 deleted (-418L)
+- Run 95: GenerateClinicalDataService deleted
+- 47 additional dead web/ classes deleted (spreadsheet validators, admin stats, Preview, JAX-RS, job helpers, etc.)
+- Run 95 final scan: **0 dead classes found** across shared/ and web/. Every remaining file has verifiable callers.
+
+No more low-risk Phase 4 deletions possible. Remaining 509 shared files are either: (a) actively used by legacy servlets, (b) referenced by module adapters, (c) Spring infrastructure, or (d) entity/DAO/domain classes gated on Phase 3.
+
 ## Phase 5: Dependency And Build Cleanup
+
+**Status: EXHAUSTED (2026-06-08)**
 
 **Goal:** remove libraries kept only for legacy runtime.
 
