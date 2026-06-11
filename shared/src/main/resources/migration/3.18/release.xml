@@ -84,4 +84,6 @@
     <!-- Spring Security login: passwd column for module_user_account -->
     <include file="migration/3.18/2026-05-25-module-user-account-passwd.xml"/>
     <include file="migration/3.18/2026-06-03-identity-bidirectional-sync-trigger.xml"/>
+    <!-- Data import module: import_job table for async import job tracking -->
+    <include file="migration/3.18/2026-06-11-import-tables.xml"/>
 </databaseChangeLog>

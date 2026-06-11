@@ -1,7 +1,10 @@
 package org.researchedc.module.datacapture.controller;
 
 import java.util.List;
+
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+
 import org.researchedc.module.datacapture.dto.BatchSaveItemsRequest;
 import org.researchedc.module.datacapture.dto.ItemDataDTO;
 import org.researchedc.module.datacapture.dto.ItemGroupDTO;
@@ -62,5 +65,12 @@ public class DataCaptureController {
         Integer userId = currentUserUtils.getCurrentUserId();
         List<ItemDataDTO> dtos = dataCaptureService.batchSaveItems(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+    }
+
+    @GetMapping("/attachments")
+    public void downloadAttachment(@RequestParam String fileName,
+                                    @RequestParam String studyOid,
+                                    HttpServletResponse response) {
+        dataCaptureService.downloadAttachment(fileName, studyOid, response);
     }
 }

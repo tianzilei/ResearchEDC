@@ -1,8 +1,13 @@
 package org.researchedc.module.datacapture.service;
 
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.researchedc.bean.core.Utils;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.datacapture.dto.BatchSaveItemsRequest;
@@ -17,6 +22,8 @@ import org.researchedc.module.datacapture.entity.ResponseSetEntity;
 import org.researchedc.module.datacapture.repository.ItemDataRepository;
 import org.researchedc.module.datacapture.repository.ItemGroupRepository;
 import org.researchedc.module.datacapture.repository.ResponseSetRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -138,6 +145,66 @@ public class DataCaptureService {
         dto.setName(e.getName());
         dto.setOcOid(e.getOcOid());
         return dto;
+    }
+
+    private static final Logger log = LoggerFactory.getLogger(DataCaptureService.class);
+
+    /**
+     * Downloads a file attachment from a study's attachment directory.
+     * Path is resolved as {@code rootPath + studyOid + File.separator + safeFileName}
+     * with canonical-path verification to prevent directory traversal.
+     */
+    public void downloadAttachment(String fileName, String studyOid, HttpServletResponse response) {
+        if (studyOid == null || studyOid.isBlank()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        File file = resolveAttachmentFile(fileName, studyOid);
+        if (file == null || !file.exists() || file.length() <= 0) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        try {
+            response.setContentType("application/download");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
+            response.setHeader("Cache-Control", "max-age=0");
+            response.setContentLengthLong(file.length());
+            try (FileInputStream in = new FileInputStream(file)) {
+                in.transferTo(response.getOutputStream());
+                response.flushBuffer();
+            }
+        } catch (IOException e) {
+            log.warn("Failed to stream attachment: {} (study={})", fileName, studyOid, e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Resolves an attachment file within a study's directory. The resolved path is
+     * {@code rootPath + studyOid + File.separator + safeFileName}, validated via
+     * canonical-path comparison to prevent directory traversal.
+     *
+     * @return the resolved File, or a non-existent file if resolution fails
+     */
+    public File resolveAttachmentFile(String fileName, String studyOid) {
+        if (fileName == null || fileName.isEmpty() || studyOid == null || studyOid.isEmpty()) {
+            return new File("");
+        }
+        String safeName = new File(fileName).getName();
+        String rootPath = Utils.getAttachedFileRootPath();
+        File resolved = new File(rootPath, studyOid + File.separator + safeName);
+        try {
+            String canonical = resolved.getCanonicalPath();
+            String expectedPrefix = new File(rootPath).getCanonicalPath();
+            if (!canonical.startsWith(expectedPrefix)) {
+                log.warn("Path traversal attempt blocked: {} (study={})", fileName, studyOid);
+                return new File("");
+            }
+        } catch (IOException e) {
+            log.warn("Failed to resolve canonical path: {} (study={})", fileName, studyOid);
+            return new File("");
+        }
+        return resolved;
     }
 
     private static List<OptionDTO> parseOptions(String optionsText, String optionsValues) {
