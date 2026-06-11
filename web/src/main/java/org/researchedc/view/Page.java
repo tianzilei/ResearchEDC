@@ -122,10 +122,7 @@ public enum Page {
 
     // CREATE_XFORM_CRF_VERSION_SERVLET removed — phase-1-group-b
 
-    /**
-     * Page for creating crf data imports
-     */
-    IMPORT_CRF_DATA ("/WEB-INF/jsp/submit/import.jsp", "Import CRF Data"),
+    // IMPORT_CRF_DATA removed — import.jsp + ImportCRFDataServlet deleted in run-91
 
     /**
      * Page for confirming crf version.

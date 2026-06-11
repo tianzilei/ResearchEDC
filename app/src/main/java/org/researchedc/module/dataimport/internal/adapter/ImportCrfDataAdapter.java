@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,14 +18,24 @@ import javax.sql.DataSource;
 
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Unmarshaller;
+import org.researchedc.bean.core.ItemDataType;
+import org.researchedc.bean.core.ResponseType;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.submit.EventCRFBean;
+import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.bean.submit.ItemDataBean;
+import org.researchedc.bean.submit.ItemFormMetadataBean;
+import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormDiscrepancyNotes;
+import org.researchedc.control.form.Validator;
 import org.researchedc.dao.core.CoreResources;
+import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.dao.spi.IItemFormMetadataDAO;
+import org.researchedc.dao.spi.ResponseSetDomainDao;
+import org.researchedc.domain.datamap.ResponseSet;
 import org.researchedc.web.crfdata.ImportCRFDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +50,20 @@ public class ImportCrfDataAdapter {
     private final DataSource dataSource;
     private final AutowireCapableBeanFactory beanFactory;
     private final IItemDataDAO itemDataDao;
+    private final IItemDAO itemDao;
+    private final IItemFormMetadataDAO itemFormMetadataDao;
+    private final ResponseSetDomainDao responseSetDomainDao;
 
     public ImportCrfDataAdapter(DataSource dataSource, AutowireCapableBeanFactory beanFactory,
-                                IItemDataDAO itemDataDao) {
+                                IItemDataDAO itemDataDao, IItemDAO itemDao,
+                                IItemFormMetadataDAO itemFormMetadataDao,
+                                ResponseSetDomainDao responseSetDomainDao) {
         this.dataSource = dataSource;
         this.beanFactory = beanFactory;
         this.itemDataDao = itemDataDao;
+        this.itemDao = itemDao;
+        this.itemFormMetadataDao = itemFormMetadataDao;
+        this.responseSetDomainDao = responseSetDomainDao;
     }
 
     public ImportCRFDataService createService(Locale locale) {
@@ -161,13 +182,103 @@ public class ImportCrfDataAdapter {
                 }
             }
         }
-        org.researchedc.control.form.FormDiscrepancyNotes notes =
-                new org.researchedc.control.form.FormDiscrepancyNotes();
-        org.researchedc.control.form.DiscrepancyValidator dv =
-                new org.researchedc.control.form.DiscrepancyValidator(fieldValues, Locale.ENGLISH, notes);
+
+        Map<String, ItemBean> itemCache = new HashMap<>();
         for (String oid : fieldValues.keySet()) {
-            dv.addValidation(oid, org.researchedc.control.form.Validator.NO_BLANKS);
+            try {
+                List<ItemBean> items = itemDao.findByOid(oid);
+                if (items != null && !items.isEmpty()) {
+                    ItemBean item = items.get(0);
+                    itemCache.put(oid, item);
+                    ItemDataType dt = item.getDataType();
+                    if (dt == ItemDataType.DATE) {
+                        String value = fieldValues.get(oid);
+                        if (value != null && !value.isEmpty()) {
+                            try {
+                                SimpleDateFormat isoFmt = new SimpleDateFormat("yyyy-MM-dd");
+                                isoFmt.setLenient(false);
+                                Date parsed = isoFmt.parse(value);
+                                SimpleDateFormat targetFmt = new SimpleDateFormat("MM/dd/yyyy");
+                                targetFmt.setLenient(false);
+                                fieldValues.put(oid, targetFmt.format(parsed));
+                            } catch (ParseException e) {
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.debug("Item lookup skipped for OID {}: {}", oid, e.getMessage());
+            }
         }
+
+        FormDiscrepancyNotes notes = new FormDiscrepancyNotes();
+        DiscrepancyValidator dv = new DiscrepancyValidator(fieldValues, Locale.ENGLISH, notes);
+
+        for (String oid : fieldValues.keySet()) {
+            dv.addValidation(oid, Validator.NO_BLANKS);
+
+            ItemBean item = itemCache.get(oid);
+            if (item != null) {
+                ItemDataType dt = item.getDataType();
+                if (dt != null) {
+                    if (dt == ItemDataType.REAL) {
+                        dv.addValidation(oid, Validator.IS_A_NUMBER);
+                    } else if (dt == ItemDataType.INTEGER) {
+                        dv.addValidation(oid, Validator.IS_AN_INTEGER);
+                    } else if (dt == ItemDataType.DATE) {
+                        dv.addValidation(oid, Validator.IS_A_DATE);
+                    } else if (dt == ItemDataType.PDATE) {
+                        dv.addValidation(oid, Validator.IS_PARTIAL_DATE);
+                    }
+
+                    try {
+                        ArrayList<ItemFormMetadataBean> metas =
+                                itemFormMetadataDao.findAllByItemId(item.getId());
+                        if (metas != null && !metas.isEmpty()) {
+                            String wd = metas.get(0).getWidthDecimal();
+                            if (wd != null && !wd.isEmpty() && !"w(d)".equals(wd)) {
+                                ArrayList<String> params = new ArrayList<>();
+                                params.add(dt.getName());
+                                params.add(wd);
+                                dv.addValidation(oid, Validator.IS_VALID_WIDTH_DECIMAL, params);
+                            }
+
+                            // Response-set validation for controlled-vocabulary items
+                            ResponseSetBean rsb = metas.get(0).getResponseSet();
+                            if (rsb == null) {
+                                List<ResponseSet> domainRsList =
+                                        responseSetDomainDao.findAllByItemId(item.getId());
+                                if (domainRsList != null && !domainRsList.isEmpty()) {
+                                    ResponseSet domainRs = domainRsList.get(0);
+                                    rsb = new ResponseSetBean();
+                                    rsb.setResponseTypeId(
+                                            domainRs.getResponseType().getResponseTypeId());
+                                    rsb.setOptions(domainRs.getOptionsText(),
+                                            domainRs.getOptionsValues());
+                                }
+                            }
+                            if (rsb != null) {
+                                ResponseType rt = rsb.getResponseType();
+                                if (rt == ResponseType.RADIO || rt == ResponseType.SELECT) {
+                                    dv.addValidation(oid,
+                                            Validator.IN_RESPONSE_SET_SINGLE_VALUE, rsb);
+                                } else if (rt == ResponseType.CHECKBOX
+                                        || rt == ResponseType.SELECTMULTI) {
+                                    dv.addValidation(oid,
+                                            Validator.IN_RESPONSE_SET_COMMA_SEPERATED, rsb);
+                                }
+                            }
+                        }
+                    } catch (Exception ex) {
+                        log.debug("Metadata lookup skipped for item {}: {}",
+                                item.getId(), ex.getMessage());
+                    }
+
+
+                }
+            }
+        }
+
         var errors = dv.validate();
         int errorCount = errors.size();
         log.info("Edit check validation for study {}: total={}, errors={}, passed={}",

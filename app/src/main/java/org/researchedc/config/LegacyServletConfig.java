@@ -27,15 +27,7 @@ public class LegacyServletConfig {
             jakarta.servlet.ServletRegistration.Dynamic tr = servletContext.addServlet("testServlet", testServlet);
             if (tr != null) tr.addMapping("/test");
 
-            // ── Import servlets ─────────────────────────────────
-            registerServlet(servletContext, "ImportCRFData",
-                    "org.researchedc.control.submit.ImportCRFDataServlet",
-                    "/ImportCRFData");
-            // ImportCRFInfo removed — ImportCRFInfo.java is a POJO, not a servlet
-            // CreateJobImport removed — CreateJobImportServlet.java does not exist
-            // ViewImportJob removed — ViewImportJobServlet.java does not exist
-
-            log.info("Legacy import/export servlets registered");
+            log.info("Legacy servlet registration complete (import servlets decommissioned)");
         };
     }
 

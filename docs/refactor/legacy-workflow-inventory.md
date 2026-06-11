@@ -1,6 +1,6 @@
 # Legacy Workflow Inventory
 
-Generated: 2026-06-10 10:42:18 UTC
+Generated: 2026-06-11 08:14:25 UTC
 
 Full CSV inventory: `legacy-workflow-inventory.csv`
 
@@ -11,8 +11,8 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 | `dao-implementation` | 44 |
 | `dao-spi` | 51 |
 | `dao-support` | 5 |
-| `jsp-view` | 52 |
-| `legacy-servlet` | 9 |
+| `jsp-view` | 42 |
+| `legacy-servlet` | 6 |
 | `shared-service` | 32 |
 | `spring-mvc-route` | 9 |
 
@@ -20,19 +20,19 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 
 | Classification | Count |
 |---|---:|
-| `keep compatibility` | 64 |
-| `replace` | 144 |
+| `keep compatibility` | 62 |
+| `replace` | 127 |
 
 ## Summary By Phase Slice
 
 | Phase slice | Count |
 |---|---:|
 | `phase-1-crf-metadata` | 11 |
-| `phase-1-data-entry-discrepancy` | 26 |
+| `phase-1-data-entry-discrepancy` | 23 |
 | `phase-1-export-dataset-filter` | 1 |
-| `phase-1-import-export-compatibility` | 10 |
+| `phase-1-import-export-compatibility` | 8 |
 | `phase-1-layout-common` | 6 |
-| `phase-1-study-subject-event` | 22 |
+| `phase-1-study-subject-event` | 8 |
 | `phase-3-dao-implementation-deletion` | 100 |
 | `phase-4-shared-service-deletion` | 32 |
 

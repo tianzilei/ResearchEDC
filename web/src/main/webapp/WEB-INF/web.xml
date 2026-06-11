@@ -201,11 +201,7 @@
 
 
 
-    <servlet>
-        <servlet-name>ImportCRFDataServlet</servlet-name>
-        <display-name>ImportCRFData</display-name>
-        <servlet-class>org.researchedc.control.submit.ImportCRFDataServlet</servlet-class>
-    </servlet>
+    <!-- ImportCRFDataServlet decommissioned — SPA /app/admin/import handles import via REST API -->
 
     <!-- phase-1-run-42: ExecuteCrossEditCheckServlet removed (0 callers, dead code) -->
 
@@ -231,10 +227,7 @@
 
     <!-- phase-1-run-42: ExecuteCrossEditCheckServlet mapping removed -->
 
-    <servlet-mapping>
-        <servlet-name>ImportCRFDataServlet</servlet-name>
-        <url-pattern>/ImportCRFData</url-pattern>
-    </servlet-mapping>
+    <!-- ImportCRFDataServlet mapping decommissioned — SPA /app/admin/import -->
 
 
 
@@ -311,10 +304,7 @@
 
 <!-- phase-1-admin-write: ConfigureServlet mapping removed -->
 
-    <servlet-mapping>
-        <servlet-name>UploadFileServlet</servlet-name>
-        <url-pattern>/UploadFile</url-pattern>
-    </servlet-mapping>
+    <!-- ImportCRFDataServlet mapping decommissioned — /ImportCRFData redirects to SPA /app/admin/import via WebMvcConfig -->
 
 
 
