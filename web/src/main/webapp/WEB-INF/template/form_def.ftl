@@ -1,1 +1,0 @@
-<h2 class='centered text_centered' style='margin-bottom:50px'>${formDefName}</h2>
