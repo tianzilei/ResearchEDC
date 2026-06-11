@@ -57,7 +57,8 @@ public enum Page {
      */
     // UPDATE_STUDY1 removed — phase-1-run-29 (InitUpdateStudyServlet + updateStudy1.jsp deleted, 0 consumers)
 
-    LIST_STUDY_SUBJECTS ("/WEB-INF/jsp/managestudy/findSubjects.jsp", "List Study Subjects"),
+    // phase-1-run-80: LIST_STUDY_SUBJECTS fixed — findSubjects.jsp deleted (run-79), changed to /ListStudySubjects (redirects to SPA /app/subjects via WebMvcConfig)
+    LIST_STUDY_SUBJECTS ("/ListStudySubjects", "List Study Subjects"),
     LIST_STUDY_SUBJECTS_SERVLET("/ListStudySubjects", "List Study Subjects"),
     // UPDATE_STUDY_NEW removed — phase-1-run-54: servlet deleted (dead code, JSP gone, 0 callers)
     // UPDATE_SUB_STUDY removed — servlet deleted in phase-1-group-e
