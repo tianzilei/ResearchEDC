@@ -81,20 +81,8 @@ public class BreadcrumbTrail {
             // VIEW_STUDY_SUBJECT branch removed — JSP deleted in Phase 1 slice
             // UPDATE_STUDY_EVENT branch removed — UpdateStudyEventServlet + JSP deleted in Phase 1
 
-            if (jspPage.equals(Page.INSTRUCTIONS_ENROLL_SUBJECT)) {
-                trail = new ArrayList();
-                trail.add(new BreadcrumbBean(resworkflow.getString("submit_data"), "ListStudySubjectsSubmit", Status.AVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("enroll_subject_instructions"), "AddNewSubject?instr=1", Status.PENDING));
-                trail.add(new BreadcrumbBean(resworkflow.getString("enroll_subject"), "AddNewSubject", Status.UNAVAILABLE));
-                // phase-1-run-48: CreateNewStudyEvent breadcrumb removed — SPA SubjectDetail now handles event creation
-                // trail.add(new BreadcrumbBean(resworkflow.getString("add_new_study_event"), "CreateNewStudyEvent", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("study_event_overview"), "EnterDataForStudyEvent", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("event_CRF_data_submission"), "TableOfContents", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("data_entry"), "InitialDataEntry", Status.UNAVAILABLE));
-                trail.add(new BreadcrumbBean(resworkflow.getString("mark_event_CRF_complete"), "MarkEventCRFComplete", Status.UNAVAILABLE));
-            } else if (jspPage.equals(Page.ADD_NEW_SUBJECT)) {
-                trail = advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("enroll_subject"), "AddNewSubject", Status.PENDING), 2);
-                closeRestOfTrail(2);
+            // INSTRUCTIONS_ENROLL_SUBJECT breadcrumb branch removed — phase-1-run-76 (JSP deleted, SPA handles enrollment)
+            // ADD_NEW_SUBJECT breadcrumb branch removed — phase-1-run-76 (JSP deleted, SPA handles enrollment)
             // phase-1-run-48: CREATE_NEW_STUDY_EVENT branch removed — SPA SubjectDetail now handles event creation
             // } else if (jspPage.equals(Page.CREATE_NEW_STUDY_EVENT)) {
             //     if (!containsServlet("AddNewSubject")) {
@@ -111,7 +99,7 @@ public class BreadcrumbTrail {
             //     }
             // ENTER_DATA_FOR_STUDY_EVENT branch removed — servlet + JSP deleted, not in web.xml
             // TABLE_OF_CONTENTS branch removed — servlet + JSP deleted, not in web.xml
-            } else if (jspPage.equals(Page.INITIAL_DATA_ENTRY)) {
+            if (jspPage.equals(Page.INITIAL_DATA_ENTRY)) {
                 int ordinal = trail.size() - 2;
                 trail =
                     advanceTrail(trail, new BreadcrumbBean(resworkflow.getString("data_entry"), "InitialDataEntry" + this.generateURLString(request),
