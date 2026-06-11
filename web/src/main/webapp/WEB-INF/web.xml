@@ -207,11 +207,7 @@
 
 <!-- phase-1-run-54: UpdateStudyServletNew removed (dead code, JSP deleted in 9c613e40c, 0 callers) -->
 
-    <servlet>
-        <servlet-name>UploadFileServlet</servlet-name>
-        <display-name>UploadFile</display-name>
-        <servlet-class>org.researchedc.control.submit.UploadFileServlet</servlet-class>
-    </servlet>
+    <!-- UploadFileServlet removed — phase-4-run-94: had no servlet-mapping, always 404. JSP refs blocked on SPA DataEntryPage parity. -->
 
 
 
