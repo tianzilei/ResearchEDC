@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -20,6 +22,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.researchedc.bean.submit.EventCRFBean;
+import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.module.dataimport.dto.CreateImportJobRequest;
 import org.researchedc.module.dataimport.dto.ImportJobDTO;
 import org.researchedc.module.dataimport.entity.ImportJob;
@@ -212,9 +216,29 @@ class ImportServiceTest {
                 && j.getCompletedDate() != null));
     }
 
+    private ODMContainer mockOdm() {
+        return mock(ODMContainer.class);
+    }
+
+    private EventCRFBean mockEventCrf() {
+        return mock(EventCRFBean.class);
+    }
+
+    private void stubSuccessfulValidate() {
+        ODMContainer odm = mockOdm();
+        when(importAdapter.parseOdm(any(Path.class))).thenReturn(odm);
+        when(importAdapter.validateMetadata(eq(odm), anyInt(), any(Locale.class)))
+                .thenReturn(Collections.emptyList());
+        when(importAdapter.checkStatusesValid(eq(odm), anyInt(), any(Locale.class)))
+                .thenReturn(true);
+        when(importAdapter.getEventCrfBeans(eq(odm), anyInt(), any(Locale.class)))
+                .thenReturn(List.of(mockEventCrf()));
+    }
+
     @Test
     void validate_happyPath_marksValidated() {
         ImportJob job = createJob(1L, "Job", ImportType.CRF_DATA, ImportJobStatus.STAGED);
+        stubSuccessfulValidate();
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
@@ -223,7 +247,52 @@ class ImportServiceTest {
 
         assertEquals(ImportJobStatus.VALIDATED, result.getStatus());
         assertNotNull(result.getSummaryJson());
+        verify(importAdapter).parseOdm(any(Path.class));
+        verify(importAdapter).validateMetadata(any(), anyInt(), any(Locale.class));
+        verify(importAdapter).checkStatusesValid(any(), anyInt(), any(Locale.class));
+        verify(importAdapter).getEventCrfBeans(any(), anyInt(), any(Locale.class));
         verify(jobRepository, atLeast(2)).save(any());
+    }
+
+    @Test
+    void validate_whenValidationErrors_marksInvalid() {
+        ImportJob job = createJob(1L, "Job", ImportType.CRF_DATA, ImportJobStatus.STAGED);
+        ODMContainer odm = mockOdm();
+        when(importAdapter.parseOdm(any(Path.class))).thenReturn(odm);
+        when(importAdapter.validateMetadata(eq(odm), anyInt(), any(Locale.class)))
+                .thenReturn(List.of("Metadata mismatch"));
+        // checkStatusesValid and getEventCrfBeans should NOT be called when errors exist
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        ImportJobDTO result = service.validate(1L);
+
+        assertEquals(ImportJobStatus.VALIDATED, result.getStatus());
+        assertTrue(result.getSummaryJson().contains("invalid"));
+        verify(importAdapter, never()).checkStatusesValid(any(), anyInt(), any(Locale.class));
+        verify(importAdapter, never()).getEventCrfBeans(any(), anyInt(), any(Locale.class));
+    }
+
+    @Test
+    void validate_whenStatusesInvalid_marksBlocked() {
+        ImportJob job = createJob(1L, "Job", ImportType.CRF_DATA, ImportJobStatus.STAGED);
+        ODMContainer odm = mockOdm();
+        when(importAdapter.parseOdm(any(Path.class))).thenReturn(odm);
+        when(importAdapter.validateMetadata(eq(odm), anyInt(), any(Locale.class)))
+                .thenReturn(Collections.emptyList());
+        when(importAdapter.checkStatusesValid(eq(odm), anyInt(), any(Locale.class)))
+                .thenReturn(false);
+        when(importAdapter.getEventCrfBeans(eq(odm), anyInt(), any(Locale.class)))
+                .thenReturn(Collections.emptyList());
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        ImportJobDTO result = service.validate(1L);
+
+        assertEquals(ImportJobStatus.VALIDATED, result.getStatus());
+        assertTrue(result.getSummaryJson().contains("blocked"));
     }
 
     @Test
@@ -236,6 +305,7 @@ class ImportServiceTest {
     @Test
     void validate_whenRepositoryFails_marksFailed() {
         ImportJob job = createJob(1L, "Job", ImportType.CRF_DATA, ImportJobStatus.STAGED);
+        stubSuccessfulValidate();
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any()))
@@ -250,6 +320,10 @@ class ImportServiceTest {
     @Test
     void commit_happyPath_marksCompleted() {
         ImportJob job = createJob(1L, "Job", ImportType.CRF_DATA, ImportJobStatus.VALIDATED);
+        ODMContainer odm = mockOdm();
+        when(importAdapter.parseOdm(any(Path.class))).thenReturn(odm);
+        when(importAdapter.commitImport(any(), anyInt(), any()))
+                .thenReturn(3);
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
@@ -258,6 +332,10 @@ class ImportServiceTest {
 
         assertEquals(ImportJobStatus.COMPLETED, result.getStatus());
         assertNotNull(result.getCompletedDate());
+        assertTrue(result.getSummaryJson().contains("committed"));
+        assertTrue(result.getSummaryJson().contains("3"));
+        verify(importAdapter).parseOdm(any(Path.class));
+        verify(importAdapter).commitImport(any(), anyInt(), any());
         verify(jobRepository, atLeast(2)).save(any());
     }
 
@@ -377,6 +455,7 @@ class ImportServiceTest {
     @Test
     void fullLifecycle_stagedToCompleted() {
         ImportJob job = createJob(1L, "Lifecycle Job", ImportType.CRF_DATA, ImportJobStatus.STAGED);
+        stubSuccessfulValidate();
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
@@ -387,6 +466,23 @@ class ImportServiceTest {
         ImportJobDTO completed = service.commit(1L);
         assertEquals(ImportJobStatus.COMPLETED, completed.getStatus());
         assertNotNull(completed.getCompletedDate());
+    }
+
+    @Test
+    void fullLifecycle_validateErrorShortCircuits() {
+        ImportJob job = createJob(1L, "Fail Job", ImportType.CRF_DATA, ImportJobStatus.STAGED);
+        ODMContainer odm = mockOdm();
+        when(importAdapter.parseOdm(any(Path.class))).thenReturn(odm);
+        when(importAdapter.validateMetadata(eq(odm), anyInt(), any(Locale.class)))
+                .thenReturn(List.of("Error"));
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        ImportJobDTO result = service.validate(1L);
+        assertEquals(ImportJobStatus.VALIDATED, result.getStatus());
+        assertTrue(result.getSummaryJson().contains("invalid"));
+        verify(importAdapter, never()).checkStatusesValid(any(), anyInt(), any(Locale.class));
     }
 
     @Test

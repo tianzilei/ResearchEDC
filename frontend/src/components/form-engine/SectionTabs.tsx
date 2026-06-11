@@ -76,7 +76,10 @@ export function SectionTabs({
         <div style={{ padding: 24, textAlign: "center" }}>
           <Button
             onClick={() =>
-              window.open(`/DownloadAttachedFile?eventCrfId=${parsedEventCrfId}`, "_blank")
+              window.open(
+                `/api/v1/data-capture/attachments/by-event-crf?eventCrfId=${parsedEventCrfId}&fileName=`,
+                "_blank"
+              )
             }
           >
             {t("entry.viewAttachments")}

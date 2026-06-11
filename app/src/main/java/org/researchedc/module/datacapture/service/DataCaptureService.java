@@ -8,6 +8,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.researchedc.bean.core.Utils;
+import org.researchedc.bean.managestudy.StudyBean;
+import org.researchedc.bean.managestudy.StudySubjectBean;
+import org.researchedc.bean.submit.EventCRFBean;
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.datacapture.dto.BatchSaveItemsRequest;
@@ -35,15 +42,27 @@ public class DataCaptureService {
     private final ResponseSetRepository responseSetRepository;
     private final ItemGroupRepository itemGroupRepository;
     private final AuditService auditService;
+    private final EventCRFDao eventCrfDao;
+    private final IStudyDAO studyDao;
+    private final IStudyEventDAO studyEventDao;
+    private final IStudySubjectDAO studySubjectDao;
 
     public DataCaptureService(ItemDataRepository itemDataRepository,
                                ResponseSetRepository responseSetRepository,
                                ItemGroupRepository itemGroupRepository,
-                               AuditService auditService) {
+                               AuditService auditService,
+                               EventCRFDao eventCrfDao,
+                               IStudyDAO studyDao,
+                               IStudyEventDAO studyEventDao,
+                               IStudySubjectDAO studySubjectDao) {
         this.itemDataRepository = itemDataRepository;
         this.responseSetRepository = responseSetRepository;
         this.itemGroupRepository = itemGroupRepository;
         this.auditService = auditService;
+        this.eventCrfDao = eventCrfDao;
+        this.studyDao = studyDao;
+        this.studyEventDao = studyEventDao;
+        this.studySubjectDao = studySubjectDao;
     }
 
     public List<ItemDataDTO> getItemDataByEventCrf(Integer eventCrfId) {
@@ -175,6 +194,98 @@ public class DataCaptureService {
             }
         } catch (IOException e) {
             log.warn("Failed to stream attachment: {} (study={})", fileName, studyOid, e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Downloads a file attachment by event CRF ID and file name.
+     * Resolves study OID from the event CRF, then delegates to the filesystem-based
+     * {@link #downloadAttachment(String, String, HttpServletResponse)}.
+     * Falls back to parent/child study directories if the file is not found in the
+     * current study's attachment directory (matching legacy DownloadAttachedFileServlet behavior).
+     *
+     * @param eventCrfId the event CRF ID to resolve study context from
+     * @param fileName   the attachment file name (may be just the filename or a full path)
+     * @param response   the servlet response to stream the file into
+     */
+    public void downloadAttachmentByEventCrf(int eventCrfId, String fileName, HttpServletResponse response) {
+        String studyOid = getStudyOidByEventCrf(eventCrfId);
+        if (studyOid == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        // Try current study's directory first
+        File file = resolveAttachmentFile(fileName, studyOid);
+        if (file != null && file.exists() && file.length() > 0) {
+            streamFile(file, response);
+            return;
+        }
+
+        // Fallback: check parent study (for site studies)
+        StudyBean study = (StudyBean) studyDao.findByOid(studyOid);
+        if (study != null && study.getParentStudyId() > 0) {
+            StudyBean parent = (StudyBean) studyDao.findByPK(study.getParentStudyId());
+            if (parent != null) {
+                file = resolveAttachmentFile(fileName, parent.getOid());
+                if (file != null && file.exists() && file.length() > 0) {
+                    streamFile(file, response);
+                    return;
+                }
+            }
+        }
+
+        // Fallback: check child sites (for parent studies)
+        if (study != null) {
+            var children = studyDao.findAllByParent(study.getId());
+            if (children != null) {
+                for (Object child : children) {
+                    StudyBean childStudy = (StudyBean) child;
+                    file = resolveAttachmentFile(fileName, childStudy.getOid());
+                    if (file != null && file.exists() && file.length() > 0) {
+                        streamFile(file, response);
+                        return;
+                    }
+                }
+            }
+        }
+
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    /**
+     * Resolves the study OID for a given event CRF ID by walking the entity chain:
+     * EventCRF → StudySubject → Study.
+     */
+    String getStudyOidByEventCrf(int eventCrfId) {
+        try {
+            EventCRFBean eventCrf = (EventCRFBean) eventCrfDao.findByPK(eventCrfId);
+            if (eventCrf == null) return null;
+
+            StudySubjectBean studySubject = (StudySubjectBean) studySubjectDao.findByPK(eventCrf.getStudySubjectId());
+            if (studySubject == null) return null;
+
+            StudyBean study = (StudyBean) studyDao.findByPK(studySubject.getStudyId());
+            return study != null ? study.getOid() : null;
+        } catch (Exception e) {
+            log.warn("Failed to resolve study OID for eventCrfId={}: {}", eventCrfId, e.getMessage());
+            return null;
+        }
+    }
+
+    private void streamFile(File file, HttpServletResponse response) {
+        try {
+            response.setContentType("application/download");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
+            response.setHeader("Cache-Control", "max-age=0");
+            response.setContentLengthLong(file.length());
+            try (FileInputStream in = new FileInputStream(file)) {
+                in.transferTo(response.getOutputStream());
+                response.flushBuffer();
+            }
+        } catch (IOException e) {
+            log.warn("Failed to stream attachment: {}", file.getAbsolutePath(), e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }

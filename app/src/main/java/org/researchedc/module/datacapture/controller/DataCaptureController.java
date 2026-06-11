@@ -73,4 +73,11 @@ public class DataCaptureController {
                                     HttpServletResponse response) {
         dataCaptureService.downloadAttachment(fileName, studyOid, response);
     }
+
+    @GetMapping("/attachments/by-event-crf")
+    public void downloadAttachmentByEventCrf(@RequestParam int eventCrfId,
+                                              @RequestParam String fileName,
+                                              HttpServletResponse response) {
+        dataCaptureService.downloadAttachmentByEventCrf(eventCrfId, fileName, response);
+    }
 }
