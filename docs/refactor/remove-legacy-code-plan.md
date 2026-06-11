@@ -1,7 +1,7 @@
 # Remove Legacy Code Plan
 
 **Last updated:** 2026-06-11
-**Status:** Legacy removal is **not complete**. This plan tracks the remaining deletion work after `legacy-core/` consolidation, DAO SPI widening, and repeated Phase 1 deletion slices through phase-1-run-58. SPA migration coverage mapping added 2026-06-08. CRF metadata boundary ledger opened and inventory reconciled on 2026-06-10. EntityAction subject/event remove/restore gaps closed on 2026-06-11.
+**Status:** Legacy removal is **not complete** but **Phase 1 executable slices are exhausted** (import/export validations done, 2 of 10 artifacts deleted, study/subject/event JSPs all deleted). Remaining work blocked on SPA DataEntryPage parity. Inventory regenerated: 189 artifacts (was 208). Commit `efaa93d43` added 8 validation types to ImportCrfDataAdapter.
 
 ## Current Baseline
 
@@ -91,12 +91,15 @@ Remaining Phase 0 work:
 - ✅ `scripts/ci/generate-legacy-inventory.py` updated to classify layout fragments (`include/` JSPs) and `menu.jsp` automatically.
 - ⬜ Add per-workflow owner metadata once the first slice ledger is created.
 
-Current next action:
+Current next action (updated 2026-06-11 post-run-91):
 
-1. Done: Closed the common `EntityAction` remove/restore gaps for study-subject, study-event, and event-CRF actions; see `docs/refactor/phase-1-entity-action-slice.md`.
-2. Next executable slice: import/export compatibility. Build or document the upload -> validate -> map -> commit parity path for the 10 import/export artifacts before deleting more legacy import JSP/servlet code.
-3. Parallel investigation: OpenRosa/Spring MVC compatibility routes. Classify which routes are public compatibility contracts versus module-owned migration candidates.
-4. Keep CRF metadata/data-entry rendering (`CheckCRFLocked`, `showItemInput*`, `generate*`, section/item/group JSP fragments) blocked until the SPA data-entry renderer proves section, repeating group, discrepancy note, rule execution, print/export, and file attachment parity.
+1. ✅ Done: Closed the common `EntityAction` remove/restore gaps for study-subject, study-event, and event-CRF actions.
+2. ✅ Done: Import/export compatibility slice. ImportCrfDataAdapter.validateEditChecks() now covers 8 validation types (NO_BLANKS, 5 data-type, 2 response-set). ImportCRFDataServlet + import.jsp deleted. Remaining 8 artifacts blocked/deferred (7 print JSPs, DownloadAttachedFileServlet).
+3. ✅ Done: OpenRosa/Spring MVC compatibility classification. OpenRosa is active Modulith (18 files, `/api/v1/openrosa`). AccountController (8 routes) is keep-compatibility external API. SidebarInit/SidebarEnumConstants are JSP-blocked.
+4. ⬜ Keep CRF metadata/data-entry rendering blocked until SPA DataEntryPage parity. **This is the primary remaining blocker for Phase 1.**
+5. ⬜ Phase 3 DAO deletion: scoped — all Sort/Filter helpers have 2+ DAO-layer cross-references; no low-hanging fruit. Full Phase 3 blocked on module-owned DAO replacements.
+6. ⬜ Phase 4 shared bean deletion: exhausted — 8 dead DTOs deleted in runs 81-82; no more dead beans found in bean/odmbeans/, bean/extract/, bean/submit/ scans.
+7. ⬜ Phase 5 dependency cleanup: exhausted — 19 dead deps removed; remaining 8 all active.
 
 ## Phase B PostgreSQL Validation
 
