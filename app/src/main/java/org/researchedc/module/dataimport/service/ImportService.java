@@ -174,7 +174,10 @@ public class ImportService {
             } else if (eventCrfBeans.isEmpty()) {
                 markValidated(id, "{\"status\":\"validated\",\"eventCrfs\":0}");
             } else {
-                markValidated(id, "{\"status\":\"validated\",\"eventCrfs\":" + eventCrfBeans.size() + "}");
+                String editChecks = importAdapter.validateEditChecks(odm, job.getStudyId());
+                String summary = "{\"status\":\"validated\",\"eventCrfs\":" + eventCrfBeans.size()
+                        + ",\"editChecks\":" + editChecks + "}";
+                markValidated(id, summary);
             }
             return jobRepository.findById(id).map(this::toDTO)
                     .orElseThrow();
