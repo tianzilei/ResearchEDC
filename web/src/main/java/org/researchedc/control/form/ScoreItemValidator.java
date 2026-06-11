@@ -30,6 +30,9 @@ public class ScoreItemValidator extends DiscrepancyValidator {
 
     @Override
     protected String getFieldValue(String fieldName) {
+        if (fieldValues != null) {
+            return fieldValues.get(fieldName);
+        }
         return (String) request.getAttribute(fieldName);
     }
 
