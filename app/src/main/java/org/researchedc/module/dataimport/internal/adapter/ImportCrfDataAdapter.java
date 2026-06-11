@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -14,6 +15,7 @@ import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Unmarshaller;
 import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.bean.submit.EventCRFBean;
+import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IItemDataDAO;
@@ -92,8 +94,42 @@ public class ImportCrfDataAdapter {
         ub.setId(0);
         ub.setName("system");
         List<EventCRFBean> eventCrfBeans = service.fetchEventCRFBeans(odm, ub);
-        log.info("Commit: created/updated {} event CRFs for study {}", 
-                eventCrfBeans != null ? eventCrfBeans.size() : 0, studyId);
-        return eventCrfBeans != null ? eventCrfBeans.size() : 0;
+        if (eventCrfBeans == null || eventCrfBeans.isEmpty()) {
+            return 0;
+        }
+
+        int itemCount = 0;
+        var postImport = odm.getCrfDataPostImportContainer();
+        if (postImport != null && postImport.getSubjectData() != null) {
+            for (var subjectData : postImport.getSubjectData()) {
+                if (subjectData.getStudyEventData() == null) continue;
+                for (var eventData : subjectData.getStudyEventData()) {
+                    if (eventData.getFormData() == null) continue;
+                    for (var formData : eventData.getFormData()) {
+                        if (formData.getItemGroupData() == null) continue;
+                        for (var groupData : formData.getItemGroupData()) {
+                            if (groupData.getItemData() == null) continue;
+                            for (var importItem : groupData.getItemData()) {
+                                try {
+                                    ItemDataBean idb = service.prepareItemDataForCommit(
+                                            importItem, eventCrfBeans.get(0),
+                                            ub, itemCount + 1);
+                                    if (idb != null) {
+                                        itemDataDao.upsert(idb);
+                                        itemCount++;
+                                    }
+                                } catch (Exception e) {
+                                    log.warn("Failed to persist item {}: {}",
+                                            importItem.getItemOID(), e.getMessage());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        log.info("Commit: created/updated {} event CRFs and persisted {} items for study {}",
+                eventCrfBeans.size(), itemCount, studyId);
+        return eventCrfBeans.size();
     }
 }
