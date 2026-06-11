@@ -5,10 +5,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import org.researchedc.bean.submit.EventCRFBean;
+import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.module.dataimport.dto.CreateImportJobRequest;
 import org.researchedc.module.dataimport.dto.ImportJobDTO;
 import org.researchedc.module.dataimport.entity.ImportJob;
@@ -155,7 +159,23 @@ public class ImportService {
                 .orElseThrow(() -> new NoSuchElementException("Import job not found: " + id));
         markValidating(id);
         try {
-            markValidated(id, "{\"status\":\"validated\"}");
+            Path filePath = Path.of(job.getStoredFilePath());
+            ODMContainer odm = importAdapter.parseOdm(filePath);
+            List<String> errors = importAdapter.validateMetadata(odm, job.getStudyId(), Locale.ENGLISH);
+            if (!errors.isEmpty()) {
+                String summary = "{\"status\":\"invalid\",\"errors\":" + errors.size() + "}";
+                markValidated(id, summary);
+                return jobRepository.findById(id).map(this::toDTO).orElseThrow();
+            }
+            boolean statusesValid = importAdapter.checkStatusesValid(odm, job.getStudyId(), Locale.ENGLISH);
+            List<EventCRFBean> eventCrfBeans = importAdapter.getEventCrfBeans(odm, job.getStudyId(), Locale.ENGLISH);
+            if (eventCrfBeans == null || !statusesValid) {
+                markValidated(id, "{\"status\":\"blocked\",\"reason\":\"event_crf_status\"}");
+            } else if (eventCrfBeans.isEmpty()) {
+                markValidated(id, "{\"status\":\"validated\",\"eventCrfs\":0}");
+            } else {
+                markValidated(id, "{\"status\":\"validated\",\"eventCrfs\":" + eventCrfBeans.size() + "}");
+            }
             return jobRepository.findById(id).map(this::toDTO)
                     .orElseThrow();
         } catch (Exception e) {
@@ -169,9 +189,15 @@ public class ImportService {
                 .orElseThrow(() -> new NoSuchElementException("Import job not found: " + id));
         markCommitting(id);
         try {
+            Path filePath = Path.of(job.getStoredFilePath());
+            ODMContainer odm = importAdapter.parseOdm(filePath);
+            int eventCrfCount = importAdapter.commitImport(odm, job.getStudyId(), Locale.ENGLISH);
+            String summary = "{\"status\":\"committed\",\"eventCrfs\":" + eventCrfCount + "}";
+            job.setSummaryJson(summary);
+            jobRepository.save(job);
             markCompleted(id);
-            return jobRepository.findById(id).map(this::toDTO)
-                    .orElseThrow();
+            log.info("Import commit complete: id={}, study={}, eventCrfs={}", id, job.getStudyId(), eventCrfCount);
+            return jobRepository.findById(id).map(this::toDTO).orElseThrow();
         } catch (Exception e) {
             markFailed(id, "Commit failed: " + e.getMessage());
             throw e;

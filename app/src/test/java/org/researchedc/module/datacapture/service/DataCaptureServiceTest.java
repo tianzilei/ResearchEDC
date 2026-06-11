@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.dao.spi.IStudyEventDAO;
+import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.datacapture.dto.BatchSaveItemsRequest;
 import org.researchedc.module.datacapture.dto.ItemDataDTO;
@@ -34,13 +38,18 @@ class DataCaptureServiceTest {
     @Mock private ResponseSetRepository responseSetRepository;
     @Mock private ItemGroupRepository itemGroupRepository;
     @Mock private AuditService auditService;
+    @Mock private EventCRFDao eventCrfDao;
+    @Mock private IStudyDAO studyDao;
+    @Mock private IStudyEventDAO studyEventDao;
+    @Mock private IStudySubjectDAO studySubjectDao;
 
     private DataCaptureService service;
 
     @BeforeEach
     void setUp() {
         service = new DataCaptureService(itemDataRepository,
-                responseSetRepository, itemGroupRepository, auditService);
+                responseSetRepository, itemGroupRepository, auditService,
+                eventCrfDao, studyDao, studyEventDao, studySubjectDao);
     }
 
     private static ItemDataEntity createItemData(Integer id, Integer eventCrfId,
