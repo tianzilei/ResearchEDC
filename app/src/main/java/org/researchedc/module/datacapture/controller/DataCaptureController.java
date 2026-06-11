@@ -80,4 +80,10 @@ public class DataCaptureController {
                                               HttpServletResponse response) {
         dataCaptureService.downloadAttachmentByEventCrf(eventCrfId, fileName, response);
     }
+
+    @GetMapping("/attachments/list-by-event-crf")
+    public ResponseEntity<List<String>> listAttachmentsByEventCrf(
+            @RequestParam int eventCrfId) {
+        return ResponseEntity.ok(dataCaptureService.listAttachmentsByEventCrf(eventCrfId));
+    }
 }
