@@ -129,11 +129,7 @@
         <servlet-class>org.researchedc.view.form.FormServlet</servlet-class>
     </servlet>
 <!-- phase-1-run-29: RemoveCRFFromDefinitionServlet + RestoreCRFFromDefinitionServlet removed (0 external consumers) -->
-    <servlet>
-        <servlet-name>ManageStudyServlet</servlet-name>
-        <display-name>ManageStudy</display-name>
-        <servlet-class>org.researchedc.control.managestudy.ManageStudyServlet</servlet-class>
-    </servlet>
+<!-- phase-1-run-72/73: ManageStudyServlet removed — /ManageStudy redirects to SPA /app/dashboard -->
 <!-- phase-1-run-48: CreateNewStudyEventServlet removed — SPA SubjectDetail now handles event creation via scheduleEvent mutation
     <servlet>
         <servlet-name>CreateNewStudyEventServlet</servlet-name>
@@ -250,10 +246,7 @@
 
 <!-- phase-1-stale-mappings: ApplyFilter, CreateFiltersOne-Two-Three, AccessFile, ShowFile mappings removed -->
 
-    <servlet-mapping>
-        <servlet-name>ManageStudyServlet</servlet-name>
-        <url-pattern>/ManageStudy</url-pattern>
-    </servlet-mapping>
+<!-- phase-1-run-72/73: ManageStudyServlet removed — /ManageStudy redirects to SPA /app/dashboard -->
 <!-- phase-1-login-profile: 5 user-account servlet-mappings removed -->
 <servlet-mapping>
         <servlet-name>InitialDataEntryServlet</servlet-name>

@@ -64,6 +64,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addRedirectViewController("/", "/app/login");
         registry.addRedirectViewController("/ChangeStudy", "/app/change-study");
         registry.addRedirectViewController("/UpdateProfile", "/app/profile");
+        registry.addRedirectViewController("/ManageStudy", "/app/dashboard");
 
         // Legacy OpenRosa → new Modulith module route bridge
         registry.addRedirectViewController("/openrosa", "/api/v1/openrosa");

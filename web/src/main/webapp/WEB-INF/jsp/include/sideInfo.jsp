@@ -85,20 +85,7 @@
 
 		</td>
 	</tr>
-	<c:if test="${panel.iconInfoShown && !panel.manageSubject}">
-
-	 <%-- <c:import url="include/sideIcons.jsp"/> --%>
-
-	</c:if>
-	<c:if test="${iconInfoShown}">
-
-	 	<c:import url="/WEB-INF/jsp/include/sideIconsSubject.jsp"/>
-
-	</c:if>
-  <%-- BWP 3098: show icons by default; added   || closeInfoShowIcons--%>
-    <c:if test="${(!panel.iconInfoShown && panel.manageSubject) || closeInfoShowIcons}">
-	 <c:import url="/WEB-INF/jsp/include/sideIconsSubject.jsp"/>
-	</c:if>
+	<%-- sideIconsSubject.jsp imports removed — phase-1-run-75 (JSP deleted, ManageStudyServlet removed, SPA handles subject actions) --%>
 	
   </table>         
   <c:choose> 
