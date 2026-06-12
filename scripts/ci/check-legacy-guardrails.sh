@@ -36,6 +36,9 @@ fail_if_matches "no new untracked SecureController/CoreSecureController subclass
 retired_import_jobs="$(rg -n 'class\s+(ImportSpringJob|ExampleSpringJob)\b|ImportSpringJob|ExampleSpringJob' app shared web ws -g '*.java' 2>/dev/null || true)"
 fail_if_matches "retired import Quartz jobs must remain absent" "${retired_import_jobs}"
 
+retired_rule_xml_import="$(rg -n 'rulesPostImportContainerService|RulesPostImportContainerService|RuleImport|rules_template' app/src/main frontend/src -g '*.java' -g '*.ts' -g '*.tsx' 2>/dev/null || true)"
+fail_if_matches "retired rule XML import path must remain absent from app/frontend wiring" "${retired_rule_xml_import}"
+
 if [ "${failures}" -gt 0 ]; then
   echo "Legacy guardrails failed: ${failures} issue group(s)."
   exit 1

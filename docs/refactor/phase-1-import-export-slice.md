@@ -67,7 +67,7 @@ All render CRF data in print format — used for regulatory inspection, ODM expo
 | No file attachment download endpoint | `DownloadAttachedFileServlet` blocks deletion | MEDIUM |
 | No print-mode CRF rendering in SPA | 6 print JSPs blocked | LOW (can be deferred) |
 | No import job scheduling in module | Legacy Quartz jobs handle import batch | MEDIUM |
-| No rule XML import path | `RulesPostImportContainerService` is legacy shared service | MEDIUM |
+| Rule XML import path retired | No app/frontend upload route exists; stale `rulesPostImportContainerService` app wiring removed and guardrail added | DONE |
 
 ## The Import Pipeline (Legacy → Target)
 
