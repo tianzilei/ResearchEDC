@@ -60,7 +60,8 @@ Remaining import/export compatibility issues to resolve:
 - Done after commit `ae72d2415`: item persistence failures in `ImportCrfDataAdapter.commitImport()` now fail the commit instead of logging-and-continuing; `scripts/ci/check-import-rollback-postgres.sh` proves failed import-style transactions leave no partial writes against an explicit disposable PostgreSQL database.
 - Done after commit `15c27c51e`: legacy `ImportSpringJob`/`ExampleSpringJob` classes are absent from the current tree; import scheduling is formally retired unless a new module-owned worker is explicitly added, and guardrails now prevent those Quartz jobs from returning.
 - Done in this slice: rule XML import is formally retired in the current tree; no app/frontend upload route exists, the stale Spring bean wiring was removed, and guardrails prevent reintroducing app/frontend XML import wiring.
-- Broaden ODM/OpenRosa/export contract coverage beyond the focused module tests.
+- Done in this slice: OpenRosa submission processing now resolves the CRF version OID from the submitted XForm root when clients omit an explicit form context value, and unit tests cover canonical context propagation plus explicit-value precedence.
+- Broaden representative ODM import and export contract coverage beyond the focused module tests.
 
 ## Next Plan
 
