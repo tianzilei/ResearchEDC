@@ -65,6 +65,7 @@ ws/src/main/resources/datainfo.properties
 .opencode/
 .claude/
 .ai-work/
+mimo/
 
 # Local development files
 *.log
