@@ -9,9 +9,12 @@ import org.researchedc.bean.core.Utils;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.EventCRFBean;
+import org.researchedc.bean.login.StudyUserRoleBean;
+import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudySubjectDAO;
+import org.researchedc.dao.spi.IUserAccountDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -24,13 +27,16 @@ public class AttachmentStorageAdapter {
     private final EventCRFDao eventCrfDao;
     private final IStudyDAO studyDao;
     private final IStudySubjectDAO studySubjectDao;
+    private final IUserAccountDAO userAccountDao;
 
     public AttachmentStorageAdapter(EventCRFDao eventCrfDao,
                                     IStudyDAO studyDao,
-                                    IStudySubjectDAO studySubjectDao) {
+                                    IStudySubjectDAO studySubjectDao,
+                                    IUserAccountDAO userAccountDao) {
         this.eventCrfDao = eventCrfDao;
         this.studyDao = studyDao;
         this.studySubjectDao = studySubjectDao;
+        this.userAccountDao = userAccountDao;
     }
 
     public String getStudyOidByEventCrf(int eventCrfId) {
@@ -50,6 +56,50 @@ public class AttachmentStorageAdapter {
         } catch (Exception e) {
             log.warn("Failed to resolve study OID for eventCrfId={}: {}", eventCrfId, e.getMessage());
             return null;
+        }
+    }
+
+
+    public boolean canViewEventCrfData(int eventCrfId, Integer userId) {
+        if (userId == null) {
+            return false;
+        }
+        try {
+            UserAccountBean user = (UserAccountBean) userAccountDao.findByPK(userId);
+            if (user == null || !user.isActive()) {
+                return false;
+            }
+            if (user.isSysAdmin()) {
+                return true;
+            }
+
+            EventCRFBean eventCrf = (EventCRFBean) eventCrfDao.findByPK(eventCrfId);
+            if (eventCrf == null) {
+                return false;
+            }
+            StudySubjectBean studySubject = (StudySubjectBean) studySubjectDao.findByPK(eventCrf.getStudySubjectId());
+            if (studySubject == null) {
+                return false;
+            }
+            StudyBean study = (StudyBean) studyDao.findByPK(studySubject.getStudyId());
+            if (study == null) {
+                return false;
+            }
+
+            StudyUserRoleBean directRole = user.getRoleByStudy(study.getId());
+            if (directRole != null && directRole.isActive() && !directRole.isInvalid()) {
+                return true;
+            }
+
+            if (study.getParentStudyId() > 0) {
+                StudyUserRoleBean parentRole = user.getRoleByStudy(study.getParentStudyId());
+                return parentRole != null && parentRole.isActive() && !parentRole.isInvalid();
+            }
+            return false;
+        } catch (Exception e) {
+            log.warn("Failed to authorize attachment access: eventCrfId={}, userId={}, error={}",
+                    eventCrfId, userId, e.getMessage());
+            return false;
         }
     }
 

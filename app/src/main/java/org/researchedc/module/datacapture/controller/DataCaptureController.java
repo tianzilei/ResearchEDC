@@ -6,6 +6,7 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
+import org.researchedc.module.datacapture.dto.AttachmentDTO;
 import org.researchedc.module.datacapture.dto.BatchSaveItemsRequest;
 import org.researchedc.module.datacapture.dto.ItemDataDTO;
 import org.researchedc.module.datacapture.dto.ItemGroupDTO;
@@ -83,32 +84,28 @@ public class DataCaptureController {
         return ResponseEntity.ok(dataCaptureService.evaluateRules(eventCrfId));
     }
 
-    @GetMapping("/attachments")
-    public void downloadAttachment(@RequestParam String fileName,
-                                    @RequestParam String studyOid,
-                                    HttpServletResponse response) {
-        dataCaptureService.downloadAttachment(fileName, studyOid, response);
-    }
-
-    @GetMapping("/attachments/by-event-crf")
-    public void downloadAttachmentByEventCrf(@RequestParam int eventCrfId,
-                                              @RequestParam String fileName,
+    @GetMapping("/events/{eventCrfId}/attachments/{attachmentId}")
+    public void downloadAttachmentByEventCrf(@PathVariable int eventCrfId,
+                                              @PathVariable String attachmentId,
                                               HttpServletResponse response) {
-        dataCaptureService.downloadAttachmentByEventCrf(eventCrfId, fileName, response);
+        Integer userId = currentUserUtils.getCurrentUserId();
+        dataCaptureService.downloadAttachmentByEventCrf(eventCrfId, attachmentId, userId, response);
     }
 
-    @GetMapping("/attachments/list-by-event-crf")
-    public ResponseEntity<List<String>> listAttachmentsByEventCrf(
-            @RequestParam int eventCrfId) {
-        return ResponseEntity.ok(dataCaptureService.listAttachmentsByEventCrf(eventCrfId));
+    @GetMapping("/events/{eventCrfId}/attachments")
+    public ResponseEntity<List<AttachmentDTO>> listAttachmentsByEventCrf(
+            @PathVariable int eventCrfId) {
+        Integer userId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(dataCaptureService.listAttachmentsByEventCrf(eventCrfId, userId));
     }
 
-    @PostMapping("/attachments")
+    @PostMapping("/events/{eventCrfId}/attachments")
     public ResponseEntity<Void> uploadAttachment(
-            @RequestParam int eventCrfId,
+            @PathVariable int eventCrfId,
             @RequestParam("file") MultipartFile file) {
         try {
-            dataCaptureService.uploadAttachment(eventCrfId, file);
+            Integer userId = currentUserUtils.getCurrentUserId();
+            dataCaptureService.uploadAttachment(eventCrfId, file, userId);
             return ResponseEntity.ok().build();
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();

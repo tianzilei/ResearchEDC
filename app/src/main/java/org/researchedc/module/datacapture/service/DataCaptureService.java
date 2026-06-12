@@ -4,12 +4,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
+import org.researchedc.module.datacapture.dto.AttachmentDTO;
 import org.researchedc.module.datacapture.dto.BatchSaveItemsRequest;
 import org.researchedc.module.crf.entity.CrfVersionEntity;
 import org.researchedc.module.crf.repository.CrfVersionRepository;
@@ -45,6 +47,7 @@ import org.researchedc.module.datacapture.repository.ItemGroupRepository;
 import org.researchedc.module.datacapture.repository.ResponseSetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -283,48 +286,18 @@ public class DataCaptureService {
 
     private static final Logger log = LoggerFactory.getLogger(DataCaptureService.class);
 
-    /**
-     * Downloads a file attachment from a study's attachment directory.
-     * Path is resolved as {@code rootPath + studyOid + File.separator + safeFileName}
-     * with canonical-path verification to prevent directory traversal.
-     */
-    public void downloadAttachment(String fileName, String studyOid, HttpServletResponse response) {
-        if (studyOid == null || studyOid.isBlank()) {
+    public void downloadAttachmentByEventCrf(int eventCrfId, String attachmentId,
+                                             Integer currentUserId, HttpServletResponse response) {
+        if (!attachmentStorageAdapter.canViewEventCrfData(eventCrfId, currentUserId)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        String fileName = decodeAttachmentId(attachmentId);
+        if (fileName == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        File file = attachmentStorageAdapter.resolveAttachmentFile(fileName, studyOid);
-        if (file == null || !file.exists() || file.length() <= 0) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-        try {
-            response.setContentType("application/download");
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
-            response.setHeader("Cache-Control", "max-age=0");
-            response.setContentLengthLong(file.length());
-            try (FileInputStream in = new FileInputStream(file)) {
-                in.transferTo(response.getOutputStream());
-                response.flushBuffer();
-            }
-        } catch (IOException e) {
-            log.warn("Failed to stream attachment: {} (study={})", fileName, studyOid, e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-    }
 
-    /**
-     * Downloads a file attachment by event CRF ID and file name.
-     * Resolves study OID from the event CRF, then delegates to the filesystem-based
-     * {@link #downloadAttachment(String, String, HttpServletResponse)}.
-     * Falls back to parent/child study directories if the file is not found in the
-     * current study's attachment directory (matching legacy DownloadAttachedFileServlet behavior).
-     *
-     * @param eventCrfId the event CRF ID to resolve study context from
-     * @param fileName   the attachment file name (may be just the filename or a full path)
-     * @param response   the servlet response to stream the file into
-     */
-    public void downloadAttachmentByEventCrf(int eventCrfId, String fileName, HttpServletResponse response) {
         String studyOid = attachmentStorageAdapter.getStudyOidByEventCrf(eventCrfId);
         if (studyOid == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -358,32 +331,30 @@ public class DataCaptureService {
         }
     }
 
-    /**
-     * Resolves an attachment file within a study's directory. The resolved path is
-     * {@code rootPath + studyOid + File.separator + safeFileName}, validated via
-     * canonical-path comparison to prevent directory traversal.
-     *
-     * @return the resolved File, or a non-existent file if resolution fails
-     */
     public File resolveAttachmentFile(String fileName, String studyOid) {
         return attachmentStorageAdapter.resolveAttachmentFile(fileName, studyOid);
     }
 
-    public List<String> listAttachmentsByEventCrf(int eventCrfId) {
+    public List<AttachmentDTO> listAttachmentsByEventCrf(int eventCrfId, Integer currentUserId) {
+        if (!attachmentStorageAdapter.canViewEventCrfData(eventCrfId, currentUserId)) {
+            throw new AccessDeniedException("You do not have access to this event CRF");
+        }
         String studyOid = attachmentStorageAdapter.getStudyOidByEventCrf(eventCrfId);
         if (studyOid == null) {
             return List.of();
         }
 
-        List<String> files = new ArrayList<>();
+        List<AttachmentDTO> files = new ArrayList<>();
+        List<String> seen = new ArrayList<>();
         for (String candidateStudyOid : attachmentStorageAdapter.getCandidateStudyOids(studyOid)) {
             File studyDir = attachmentStorageAdapter.studyDirectory(candidateStudyOid);
             if (studyDir.exists() && studyDir.isDirectory()) {
                 File[] dirFiles = studyDir.listFiles();
                 if (dirFiles != null) {
                     for (File f : dirFiles) {
-                        if (f.isFile() && !files.contains(f.getName())) {
-                            files.add(f.getName());
+                        if (f.isFile() && !seen.contains(f.getName())) {
+                            seen.add(f.getName());
+                            files.add(new AttachmentDTO(encodeAttachmentId(f.getName()), f.getName(), f.length()));
                         }
                     }
                 }
@@ -398,17 +369,49 @@ public class DataCaptureService {
      * creating the directory if it does not exist.
      */
     @Transactional
-    public void uploadAttachment(int eventCrfId, MultipartFile file) throws IOException {
+    public void uploadAttachment(int eventCrfId, MultipartFile file, Integer currentUserId) throws IOException {
+        if (!attachmentStorageAdapter.canViewEventCrfData(eventCrfId, currentUserId)) {
+            throw new AccessDeniedException("You do not have access to this event CRF");
+        }
         String studyOid = attachmentStorageAdapter.getStudyOidByEventCrf(eventCrfId);
         if (studyOid == null || file.isEmpty()) return;
 
-        String safeName = new File(file.getOriginalFilename()).getName();
+        String originalName = file.getOriginalFilename();
+        if (!isSafeAttachmentName(originalName)) {
+            throw new IOException("Invalid attachment file name");
+        }
+        String safeName = new File(originalName).getName();
         File studyDir = attachmentStorageAdapter.studyDirectory(studyOid);
         if (!studyDir.exists()) {
             studyDir.mkdirs();
         }
         File dest = new File(studyDir, safeName);
         file.transferTo(dest);
+    }
+
+    private static String encodeAttachmentId(String fileName) {
+        return Base64.getUrlEncoder().withoutPadding()
+                .encodeToString(fileName.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static String decodeAttachmentId(String attachmentId) {
+        if (attachmentId == null || attachmentId.isBlank()) {
+            return null;
+        }
+        try {
+            String decoded = new String(Base64.getUrlDecoder().decode(attachmentId), StandardCharsets.UTF_8);
+            return isSafeAttachmentName(decoded) ? decoded : null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    private static boolean isSafeAttachmentName(String fileName) {
+        return fileName != null
+                && !fileName.isBlank()
+                && fileName.equals(new File(fileName).getName())
+                && !fileName.contains("/")
+                && !fileName.contains("\\");
     }
 
     private static List<OptionDTO> parseOptions(String optionsText, String optionsValues) {

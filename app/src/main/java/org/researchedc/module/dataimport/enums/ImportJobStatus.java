@@ -4,6 +4,8 @@ public enum ImportJobStatus {
     STAGED,
     VALIDATING,
     VALIDATED,
+    INVALID,
+    BLOCKED,
     COMMITTING,
     COMPLETED,
     FAILED

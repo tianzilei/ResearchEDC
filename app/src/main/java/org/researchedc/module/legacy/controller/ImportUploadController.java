@@ -5,6 +5,7 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.module.dataimport.dto.ImportJobDTO;
 import org.researchedc.module.dataimport.service.ImportService;
 import org.slf4j.Logger;
@@ -45,8 +46,9 @@ public class ImportUploadController {
         }
 
         try {
+            Integer requestedBy = resolveRequestedBy(request);
             ImportJobDTO job = importService.uploadFile(file, importType, studyId,
-                    file.getOriginalFilename(), null);
+                    file.getOriginalFilename(), requestedBy);
 
             String sessionId = request.getSession().getId();
             request.getSession().setAttribute("importFilePath", job.getStoredFilePath());
@@ -68,5 +70,13 @@ public class ImportUploadController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Failed to store file: " + e.getMessage()));
         }
+    }
+
+    private Integer resolveRequestedBy(HttpServletRequest request) {
+        Object userBean = request.getSession().getAttribute("userBean");
+        if (userBean instanceof UserAccountBean user && user.getId() > 0) {
+            return user.getId();
+        }
+        return null;
     }
 }

@@ -48,7 +48,7 @@ export function SectionTabs({
   isAdminEdit,
 }: SectionTabsProps) {
   const { t } = useTranslation();
-  const [attachmentFiles, setAttachmentFiles] = useState<string[]>([]);
+  const [attachmentFiles, setAttachmentFiles] = useState<Array<{ id: string; fileName: string; size: number }>>([]);
   const [loadingAttachments, setLoadingAttachments] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: ruleData, isLoading: loadingRules } = useEventCrfRules(parsedEventCrfId);
@@ -56,7 +56,7 @@ export function SectionTabs({
   const refreshAttachments = () => {
     if (parsedEventCrfId) {
       setLoadingAttachments(true);
-      fetch(`/api/v1/data-capture/attachments/list-by-event-crf?eventCrfId=${parsedEventCrfId}`)
+      fetch(`/api/v1/data-capture/events/${parsedEventCrfId}/attachments`)
         .then((r) => r.json())
         .then(setAttachmentFiles)
         .catch(() => setAttachmentFiles([]))
@@ -73,7 +73,7 @@ export function SectionTabs({
     const formData = new FormData();
     formData.append("file", file);
     try {
-      await fetch(`/api/v1/data-capture/attachments?eventCrfId=${parsedEventCrfId}`, {
+      await fetch(`/api/v1/data-capture/events/${parsedEventCrfId}/attachments`, {
         method: "POST",
         body: formData,
       });
@@ -154,13 +154,13 @@ export function SectionTabs({
             <List
               size="small"
               dataSource={attachmentFiles}
-              renderItem={(fileName: string) => (
+              renderItem={(attachment) => (
                 <List.Item
                   actions={[
                     <Button
                       type="link"
                       icon={<DownloadOutlined />}
-                      href={`/api/v1/data-capture/attachments/by-event-crf?eventCrfId=${parsedEventCrfId}&fileName=${encodeURIComponent(fileName)}`}
+                      href={`/api/v1/data-capture/events/${parsedEventCrfId}/attachments/${encodeURIComponent(attachment.id)}`}
                       target="_blank"
                       key="download"
                     >
@@ -168,7 +168,7 @@ export function SectionTabs({
                     </Button>,
                   ]}
                 >
-                  <Typography.Text>{fileName}</Typography.Text>
+                  <Typography.Text>{attachment.fileName}</Typography.Text>
                 </List.Item>
               )}
             />

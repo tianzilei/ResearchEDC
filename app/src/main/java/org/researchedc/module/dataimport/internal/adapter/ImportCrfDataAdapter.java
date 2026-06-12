@@ -51,6 +51,9 @@ public class ImportCrfDataAdapter {
     public record EventCrfValidationResult(boolean statusesValid, int eventCrfCount) {
     }
 
+    public record CommitResult(int eventCrfCount, int itemCount) {
+    }
+
     private static final Logger log = LoggerFactory.getLogger(ImportCrfDataAdapter.class);
 
     private final DataSource dataSource;
@@ -130,7 +133,7 @@ public class ImportCrfDataAdapter {
         return new EventCrfValidationResult(statusesValid, eventCrfBeans != null ? eventCrfBeans.size() : -1);
     }
 
-    public int commitImport(ParsedOdm parsed, int studyId, Locale locale) {
+    public CommitResult commitImport(ParsedOdm parsed, int studyId, Locale locale) {
         ODMContainer odm = parsed.odm();
         ImportCRFDataService service = createService(locale);
         UserAccountBean ub = new UserAccountBean();
@@ -139,7 +142,7 @@ public class ImportCrfDataAdapter {
         ub.setName("system");
         List<EventCRFBean> eventCrfBeans = service.fetchEventCRFBeans(odm, ub);
         if (eventCrfBeans == null || eventCrfBeans.isEmpty()) {
-            return 0;
+            return new CommitResult(0, 0);
         }
 
         int itemCount = 0;
@@ -174,7 +177,7 @@ public class ImportCrfDataAdapter {
         }
         log.info("Commit: created/updated {} event CRFs and persisted {} items for study {}",
                 eventCrfBeans.size(), itemCount, studyId);
-        return eventCrfBeans.size();
+        return new CommitResult(eventCrfBeans.size(), itemCount);
     }
 
     public String validateEditChecks(ParsedOdm parsed, int studyId) {

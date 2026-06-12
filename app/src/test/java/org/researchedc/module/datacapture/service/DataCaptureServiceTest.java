@@ -4,7 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -33,9 +38,13 @@ import org.researchedc.module.rule.repository.RuleRepository;
 import org.researchedc.module.rule.repository.RuleExpressionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.access.AccessDeniedException;
 
 @ExtendWith(MockitoExtension.class)
 class DataCaptureServiceTest {
@@ -54,6 +63,9 @@ class DataCaptureServiceTest {
     @Mock private RuleSetRuleRepository ruleSetRuleRepository;
     @Mock private RuleRepository ruleRepository;
     @Mock private RuleExpressionRepository ruleExpressionRepository;
+
+    @TempDir
+    Path tempDir;
 
     private DataCaptureService service;
 
@@ -220,6 +232,121 @@ class DataCaptureServiceTest {
 
         assertEquals(2, results.size());
         verify(itemDataRepository, times(2)).save(any(ItemDataEntity.class));
+    }
+
+
+    @Test
+    void listAttachmentsByEventCrf_whenAuthorized_returnsOpaqueAttachmentIds() throws Exception {
+        Path file = tempDir.resolve("lab.pdf");
+        Files.writeString(file, "pdf-data");
+        when(attachmentStorageAdapter.canViewEventCrfData(100, 42)).thenReturn(true);
+        when(attachmentStorageAdapter.getStudyOidByEventCrf(100)).thenReturn("S_STUDY");
+        when(attachmentStorageAdapter.getCandidateStudyOids("S_STUDY")).thenReturn(List.of("S_STUDY"));
+        when(attachmentStorageAdapter.studyDirectory("S_STUDY")).thenReturn(tempDir.toFile());
+
+        var attachments = service.listAttachmentsByEventCrf(100, 42);
+
+        assertEquals(1, attachments.size());
+        assertEquals("lab.pdf", attachments.getFirst().fileName());
+        assertEquals(8L, attachments.getFirst().size());
+        assertEquals(attachmentId("lab.pdf"), attachments.getFirst().id());
+    }
+
+    @Test
+    void listAttachmentsByEventCrf_whenUnauthorized_throwsAccessDenied() {
+        when(attachmentStorageAdapter.canViewEventCrfData(100, 7)).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class,
+                () -> service.listAttachmentsByEventCrf(100, 7));
+    }
+
+    @Test
+    void downloadAttachmentByEventCrf_whenAuthorized_streamsResolvedFile() throws Exception {
+        Path file = tempDir.resolve("lab.pdf");
+        Files.writeString(file, "pdf-data");
+        when(attachmentStorageAdapter.canViewEventCrfData(100, 42)).thenReturn(true);
+        when(attachmentStorageAdapter.getStudyOidByEventCrf(100)).thenReturn("S_STUDY");
+        when(attachmentStorageAdapter.getCandidateStudyOids("S_STUDY")).thenReturn(List.of("S_STUDY"));
+        when(attachmentStorageAdapter.resolveAttachmentFile("lab.pdf", "S_STUDY")).thenReturn(file.toFile());
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        service.downloadAttachmentByEventCrf(100, attachmentId("lab.pdf"), 42, response);
+
+        assertEquals(200, response.getStatus());
+        assertEquals("pdf-data", response.getContentAsString());
+        assertEquals("attachment; filename=\"lab.pdf\"", response.getHeader("Content-Disposition"));
+    }
+
+    @Test
+    void downloadAttachmentByEventCrf_whenUnauthorized_returnsForbidden() {
+        when(attachmentStorageAdapter.canViewEventCrfData(100, 7)).thenReturn(false);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        service.downloadAttachmentByEventCrf(100, attachmentId("lab.pdf"), 7, response);
+
+        assertEquals(403, response.getStatus());
+        verify(attachmentStorageAdapter, never()).getStudyOidByEventCrf(anyInt());
+    }
+
+    @Test
+    void downloadAttachmentByEventCrf_whenAttachmentIdDecodesToTraversal_returnsBadRequest() {
+        when(attachmentStorageAdapter.canViewEventCrfData(100, 42)).thenReturn(true);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        service.downloadAttachmentByEventCrf(100, attachmentId("../secret.txt"), 42, response);
+
+        assertEquals(400, response.getStatus());
+        verify(attachmentStorageAdapter, never()).getStudyOidByEventCrf(anyInt());
+    }
+
+    @Test
+    void downloadAttachmentByEventCrf_whenMissingFile_returnsNotFound() {
+        File missing = tempDir.resolve("missing.pdf").toFile();
+        when(attachmentStorageAdapter.canViewEventCrfData(100, 42)).thenReturn(true);
+        when(attachmentStorageAdapter.getStudyOidByEventCrf(100)).thenReturn("S_STUDY");
+        when(attachmentStorageAdapter.getCandidateStudyOids("S_STUDY")).thenReturn(List.of("S_STUDY"));
+        when(attachmentStorageAdapter.resolveAttachmentFile("missing.pdf", "S_STUDY")).thenReturn(missing);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        service.downloadAttachmentByEventCrf(100, attachmentId("missing.pdf"), 42, response);
+
+        assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    void uploadAttachment_whenUnauthorized_throwsAccessDenied() {
+        MockMultipartFile file = new MockMultipartFile("file", "lab.pdf", "application/pdf", "data".getBytes(StandardCharsets.UTF_8));
+        when(attachmentStorageAdapter.canViewEventCrfData(100, 7)).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class,
+                () -> service.uploadAttachment(100, file, 7));
+    }
+
+    @Test
+    void uploadAttachment_whenFilenameContainsTraversal_rejectsUpload() {
+        MockMultipartFile file = new MockMultipartFile("file", "../lab.pdf", "application/pdf", "data".getBytes(StandardCharsets.UTF_8));
+        when(attachmentStorageAdapter.canViewEventCrfData(100, 42)).thenReturn(true);
+        when(attachmentStorageAdapter.getStudyOidByEventCrf(100)).thenReturn("S_STUDY");
+
+        assertThrows(java.io.IOException.class,
+                () -> service.uploadAttachment(100, file, 42));
+    }
+
+    @Test
+    void uploadAttachment_whenAuthorized_writesToStudyDirectory() throws Exception {
+        MockMultipartFile file = new MockMultipartFile("file", "lab.pdf", "application/pdf", "data".getBytes(StandardCharsets.UTF_8));
+        when(attachmentStorageAdapter.canViewEventCrfData(100, 42)).thenReturn(true);
+        when(attachmentStorageAdapter.getStudyOidByEventCrf(100)).thenReturn("S_STUDY");
+        when(attachmentStorageAdapter.studyDirectory("S_STUDY")).thenReturn(tempDir.toFile());
+
+        service.uploadAttachment(100, file, 42);
+
+        assertEquals("data", Files.readString(tempDir.resolve("lab.pdf")));
+    }
+
+    private static String attachmentId(String fileName) {
+        return Base64.getUrlEncoder().withoutPadding()
+                .encodeToString(fileName.getBytes(StandardCharsets.UTF_8));
     }
 
     @Test

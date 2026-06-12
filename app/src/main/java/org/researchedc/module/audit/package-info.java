@@ -1,5 +1,5 @@
 @org.springframework.modulith.ApplicationModule(
   displayName = "Audit",
-  allowedDependencies = {}
+  allowedDependencies = {"dataimport::event"}
 )
 package org.researchedc.module.audit;
