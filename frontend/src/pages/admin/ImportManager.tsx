@@ -18,6 +18,23 @@ interface ImportTypeInfo {
   accept: string;
 }
 
+interface ImportPreview {
+  status: string;
+  eventCrfs: number;
+  totalItems: number;
+  editCheckErrors: number;
+  errors: string[];
+  warnings: string[];
+}
+
+interface ImportResult {
+  status: string;
+  eventCrfs: number;
+  items: number;
+  warnings: string[];
+  errors: string[];
+}
+
 interface ImportJob {
   id: number;
   studyId: number;
@@ -26,6 +43,7 @@ interface ImportJob {
   fileSize?: number;
   status: string;
   errorMessage?: string;
+  summaryJson?: string;
   requestedDate?: string;
   completedDate?: string;
 }
@@ -41,6 +59,8 @@ const STATUS_MAP: Record<string, { label: string; className: string }> = {
   STAGED: { label: "已暂存", className: "status-default" },
   VALIDATING: { label: "验证中", className: "status-info" },
   VALIDATED: { label: "已验证", className: "status-success" },
+  INVALID: { label: "验证失败", className: "status-danger" },
+  BLOCKED: { label: "已阻止", className: "status-warning" },
   COMMITTING: { label: "提交中", className: "status-info" },
   COMPLETED: { label: "已完成", className: "status-success" },
   FAILED: { label: "失败", className: "status-danger" },
@@ -65,20 +85,28 @@ export default function ImportManager() {
   const [uploadedJob, setUploadedJob] = useState<ImportJob | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [previews, setPreviews] = useState<Record<number, ImportPreview>>({});
 
   const { data: jobs, isLoading: jobsLoading } = useImportJobs(studyId);
 
-  const validateJob = useAppMutation<ImportJob, number>({
-    mutationFn: (id) => apiClient.post<ImportJob>("/api/v1/imports/" + id + "/validate"),
-    onSuccess: () => {
+  const validateJob = useAppMutation<ImportPreview, number>({
+    mutationFn: (id) => apiClient.post<ImportPreview>("/api/v1/imports/" + id + "/validate"),
+    onSuccess: (preview, id) => {
+      setPreviews((current) => ({ ...current, [id]: preview }));
       qc.invalidateQueries({ queryKey: ["imports", studyId] });
-      message.success("验证已启动");
+      if (preview.status === "validated") {
+        message.success("验证完成");
+      } else if (preview.status === "blocked" || preview.status === "invalid") {
+        message.warning("验证完成，请查看问题");
+      } else {
+        message.error("验证失败");
+      }
     },
     onError: () => message.error("验证失败"),
   });
 
-  const commitJob = useAppMutation<ImportJob, number>({
-    mutationFn: (id) => apiClient.post<ImportJob>("/api/v1/imports/" + id + "/commit"),
+  const commitJob = useAppMutation<ImportResult, number>({
+    mutationFn: (id) => apiClient.post<ImportResult>("/api/v1/imports/" + id + "/commit"),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["imports", studyId] });
       message.success("导入提交成功");
@@ -87,6 +115,17 @@ export default function ImportManager() {
   });
 
   const currentImportType = IMPORT_TYPES.find(t => t.key === selectedType);
+
+  const previewFor = useCallback((job: ImportJob): ImportPreview | undefined => {
+    if (previews[job.id]) return previews[job.id];
+    if (!job.summaryJson) return undefined;
+    try {
+      const parsed = JSON.parse(job.summaryJson) as ImportPreview;
+      return parsed.status ? parsed : undefined;
+    } catch {
+      return undefined;
+    }
+  }, [previews]);
 
   const handleUpload = useCallback(async (file: File) => {
     if (!selectedType) { message.warning("请先选择导入类型"); return false; }
@@ -179,7 +218,7 @@ export default function ImportManager() {
     const stagedCount = jobList.filter(j => j.status === "STAGED").length;
     const validatedCount = jobList.filter(j => j.status === "VALIDATED").length;
     const completedCount = jobList.filter(j => j.status === "COMPLETED").length;
-    const failedCount = jobList.filter(j => j.status === "FAILED").length;
+    const failedCount = jobList.filter(j => j.status === "FAILED" || j.status === "INVALID" || j.status === "BLOCKED").length;
 
     const columns = [
       { title: "ID", dataIndex: "id", key: "id", width: 64, render: (v: number) => <span className="number-display">{v}</span> },
@@ -191,6 +230,22 @@ export default function ImportManager() {
           const info = STATUS_MAP[s];
           return <span className={`status ${info?.className ?? "status-default"}`}>{info?.label ?? s}</span>;
         }},
+      { title: "验证摘要", key: "preview", width: 220,
+        render: (_: unknown, record: ImportJob) => {
+          const preview = previewFor(record);
+          if (!preview) return <Text type="secondary">-</Text>;
+          const hasIssues = preview.errors.length > 0 || preview.warnings.length > 0 || preview.editCheckErrors > 0;
+          return (
+            <Space direction="vertical" size={2}>
+              <Text style={{ fontSize: "var(--font-size-xs)" }}>事件 CRF: {preview.eventCrfs} / 条目: {preview.totalItems}</Text>
+              {hasIssues && (
+                <Text type={preview.errors.length > 0 ? "danger" : "warning"} style={{ fontSize: "var(--font-size-xs)" }}>
+                  {preview.errors[0] ?? preview.warnings[0] ?? `${preview.editCheckErrors} 个编辑检查问题`}
+                </Text>
+              )}
+            </Space>
+          );
+        }},
       { title: "创建时间", dataIndex: "requestedDate", key: "requestedDate", width: 160,
         render: (d: string) => (d ? new Date(d).toLocaleString() : "-") },
       { title: "操作", key: "actions", width: 180,
@@ -198,7 +253,7 @@ export default function ImportManager() {
           <Space>
             {record.status === "STAGED" && <Button size="small" onClick={() => validateJob.mutate(record.id)} loading={validateJob.isPending}>验证</Button>}
             {record.status === "VALIDATED" && <Button size="small" type="primary" onClick={() => commitJob.mutate(record.id)} loading={commitJob.isPending}>提交</Button>}
-            {record.status === "FAILED" && record.errorMessage && <Text type="danger" style={{ fontSize: "var(--font-size-xs)" }}>{record.errorMessage}</Text>}
+            {(record.status === "FAILED" || record.status === "INVALID" || record.status === "BLOCKED") && record.errorMessage && <Text type="danger" style={{ fontSize: "var(--font-size-xs)" }}>{record.errorMessage}</Text>}
           </Space>
         )},
     ];

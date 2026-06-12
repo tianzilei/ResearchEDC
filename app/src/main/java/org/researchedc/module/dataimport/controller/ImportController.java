@@ -5,6 +5,8 @@ import java.util.List;
 import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.dataimport.dto.CreateImportJobRequest;
 import org.researchedc.module.dataimport.dto.ImportJobDTO;
+import org.researchedc.module.dataimport.dto.ImportPreviewDTO;
+import org.researchedc.module.dataimport.dto.ImportResultDTO;
 import org.researchedc.module.dataimport.service.ImportService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,26 +52,29 @@ public class ImportController {
     }
 
     @PostMapping("/{id}/validate")
-    public ResponseEntity<ImportJobDTO> validate(@PathVariable Long id) {
+    public ResponseEntity<ImportPreviewDTO> validate(@PathVariable Long id) {
         try {
-            importService.validate(id);
-            return ResponseEntity.ok(importService.getJob(id));
+            return ResponseEntity.ok(importService.validate(id));
         } catch (Exception e) {
             importService.markFailed(id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(importService.getJob(id));
+                    .body(ImportPreviewDTO.failed(e.getMessage()));
         }
     }
 
+    @GetMapping("/{id}/preview")
+    public ResponseEntity<ImportPreviewDTO> preview(@PathVariable Long id) {
+        return ResponseEntity.ok(importService.getPreview(id));
+    }
+
     @PostMapping("/{id}/commit")
-    public ResponseEntity<ImportJobDTO> commit(@PathVariable Long id) {
+    public ResponseEntity<ImportResultDTO> commit(@PathVariable Long id) {
         try {
-            importService.commit(id);
-            return ResponseEntity.ok(importService.getJob(id));
+            return ResponseEntity.ok(importService.commit(id));
         } catch (Exception e) {
             importService.markFailed(id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(importService.getJob(id));
+                    .body(ImportResultDTO.failed(e.getMessage()));
         }
     }
 }

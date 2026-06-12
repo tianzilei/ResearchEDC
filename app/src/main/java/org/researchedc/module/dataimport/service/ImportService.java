@@ -5,24 +5,33 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.researchedc.module.dataimport.dto.CreateImportJobRequest;
 import org.researchedc.module.dataimport.dto.ImportJobDTO;
+import org.researchedc.module.dataimport.dto.ImportPreviewDTO;
+import org.researchedc.module.dataimport.dto.ImportResultDTO;
 import org.researchedc.module.dataimport.entity.ImportJob;
 import org.researchedc.module.dataimport.enums.ImportJobStatus;
 import org.researchedc.module.dataimport.enums.ImportType;
 import org.researchedc.module.dataimport.internal.adapter.ImportCrfDataAdapter;
+import org.researchedc.module.dataimport.internal.adapter.ImportCrfDataAdapter.CommitResult;
 import org.researchedc.module.dataimport.internal.adapter.ImportCrfDataAdapter.EventCrfValidationResult;
 import org.researchedc.module.dataimport.internal.adapter.ImportCrfDataAdapter.ParsedOdm;
+import org.researchedc.module.dataimport.event.ImportCommittedEvent;
 import org.researchedc.module.dataimport.repository.ImportJobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,13 +40,21 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImportService {
 
     private static final Logger log = LoggerFactory.getLogger(ImportService.class);
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final ImportJobRepository jobRepository;
     private final ImportCrfDataAdapter importAdapter;
+    private final ApplicationEventPublisher eventPublisher;
 
     public ImportService(ImportJobRepository jobRepository, ImportCrfDataAdapter importAdapter) {
+        this(jobRepository, importAdapter, null);
+    }
+
+    public ImportService(ImportJobRepository jobRepository, ImportCrfDataAdapter importAdapter,
+                         ApplicationEventPublisher eventPublisher) {
         this.jobRepository = jobRepository;
         this.importAdapter = importAdapter;
+        this.eventPublisher = eventPublisher;
     }
 
     public ImportJobDTO createJob(CreateImportJobRequest request) {
@@ -121,8 +138,12 @@ public class ImportService {
     }
 
     public void markValidated(Long id, String summaryJson) {
+        markPreviewResult(id, ImportJobStatus.VALIDATED, summaryJson);
+    }
+
+    private void markPreviewResult(Long id, ImportJobStatus status, String summaryJson) {
         jobRepository.findById(id).ifPresent(job -> {
-            job.setStatus(ImportJobStatus.VALIDATED);
+            job.setStatus(status);
             job.setSummaryJson(summaryJson);
             jobRepository.save(job);
         });
@@ -154,7 +175,7 @@ public class ImportService {
         });
     }
 
-    public ImportJobDTO validate(Long id) {
+    public ImportPreviewDTO validate(Long id) {
         ImportJob job = jobRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Import job not found: " + id));
         markValidating(id);
@@ -163,47 +184,159 @@ public class ImportService {
             ParsedOdm odm = importAdapter.parseOdm(filePath);
             List<String> errors = importAdapter.validateMetadata(odm, job.getStudyId(), Locale.ENGLISH);
             if (!errors.isEmpty()) {
-                String summary = "{\"status\":\"invalid\",\"errors\":" + errors.size() + "}";
-                markValidated(id, summary);
-                return jobRepository.findById(id).map(this::toDTO).orElseThrow();
+                ImportPreviewDTO preview = ImportPreviewDTO.invalid(errors);
+                markPreviewResult(id, ImportJobStatus.INVALID, serializePreview(preview));
+                return preview;
             }
             EventCrfValidationResult eventCrfs = importAdapter.validateEventCrfs(odm, job.getStudyId(), Locale.ENGLISH);
+            ImportPreviewDTO preview;
+            ImportJobStatus resultStatus;
             if (!eventCrfs.statusesValid() || eventCrfs.eventCrfCount() < 0) {
-                markValidated(id, "{\"status\":\"blocked\",\"reason\":\"event_crf_status\"}");
+                preview = ImportPreviewDTO.blocked("event_crf_status");
+                resultStatus = ImportJobStatus.BLOCKED;
             } else if (eventCrfs.eventCrfCount() == 0) {
-                markValidated(id, "{\"status\":\"validated\",\"eventCrfs\":0}");
+                preview = ImportPreviewDTO.invalid(List.of("No event CRFs were found in the import file."));
+                resultStatus = ImportJobStatus.INVALID;
             } else {
-                String editChecks = importAdapter.validateEditChecks(odm, job.getStudyId());
-                String summary = "{\"status\":\"validated\",\"eventCrfs\":" + eventCrfs.eventCrfCount()
-                        + ",\"editChecks\":" + editChecks + "}";
-                markValidated(id, summary);
+                EditCheckSummary editChecks = parseEditCheckSummary(
+                        importAdapter.validateEditChecks(odm, job.getStudyId()));
+                if (editChecks.errors() > 0) {
+                    preview = ImportPreviewDTO.invalid(List.of(
+                            editChecks.errors() + " edit-check error(s) were found."));
+                    preview.setEventCrfs(eventCrfs.eventCrfCount());
+                    preview.setTotalItems(editChecks.totalItems());
+                    preview.setEditCheckErrors(editChecks.errors());
+                    resultStatus = ImportJobStatus.INVALID;
+                } else {
+                    preview = ImportPreviewDTO.valid(
+                            eventCrfs.eventCrfCount(),
+                            editChecks.totalItems(),
+                            editChecks.errors());
+                    resultStatus = ImportJobStatus.VALIDATED;
+                }
             }
-            return jobRepository.findById(id).map(this::toDTO)
-                    .orElseThrow();
+            markPreviewResult(id, resultStatus, serializePreview(preview));
+            return preview;
         } catch (Exception e) {
             markFailed(id, "Validation failed: " + e.getMessage());
             throw e;
         }
     }
 
-    public ImportJobDTO commit(Long id) {
+    public ImportPreviewDTO getPreview(Long id) {
         ImportJob job = jobRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Import job not found: " + id));
+        if (job.getSummaryJson() == null || job.getSummaryJson().isBlank()) {
+            return ImportPreviewDTO.failed("No validation preview is available for this import job.");
+        }
+        return parsePreview(job.getSummaryJson());
+    }
+
+    public ImportResultDTO commit(Long id) {
+        ImportJob job = jobRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Import job not found: " + id));
+        assertCommitEligible(job);
         markCommitting(id);
         try {
             Path filePath = Path.of(job.getStoredFilePath());
             ParsedOdm odm = importAdapter.parseOdm(filePath);
-            int eventCrfCount = importAdapter.commitImport(odm, job.getStudyId(), Locale.ENGLISH);
-            String summary = "{\"status\":\"committed\",\"eventCrfs\":" + eventCrfCount + "}";
-            job.setSummaryJson(summary);
+            CommitResult commitResult = importAdapter.commitImport(odm, job.getStudyId(), Locale.ENGLISH);
+            ImportResultDTO result = ImportResultDTO.committed(
+                    commitResult.eventCrfCount(), commitResult.itemCount());
+            job.setSummaryJson(serializeResult(result));
             jobRepository.save(job);
+            publishCommitEvent(job, result);
             markCompleted(id);
-            log.info("Import commit complete: id={}, study={}, eventCrfs={}", id, job.getStudyId(), eventCrfCount);
-            return jobRepository.findById(id).map(this::toDTO).orElseThrow();
+            log.info("Import commit complete: id={}, study={}, eventCrfs={}, items={}",
+                    id, job.getStudyId(), commitResult.eventCrfCount(), commitResult.itemCount());
+            return result;
         } catch (Exception e) {
             markFailed(id, "Commit failed: " + e.getMessage());
             throw e;
         }
+    }
+
+    private void assertCommitEligible(ImportJob job) {
+        if (job.getStatus() != ImportJobStatus.VALIDATED) {
+            throw new IllegalStateException(
+                    "Import job must be VALIDATED before commit; current status is " + job.getStatus());
+        }
+        ImportPreviewDTO preview = job.getSummaryJson() == null || job.getSummaryJson().isBlank()
+                ? null
+                : parsePreview(job.getSummaryJson());
+        if (preview == null || !"validated".equals(preview.getStatus())
+                || !preview.getErrors().isEmpty() || preview.getEditCheckErrors() > 0) {
+            throw new IllegalStateException("Import job validation preview is not committable");
+        }
+    }
+
+    private String serializeResult(ImportResultDTO result) {
+        try {
+            return OBJECT_MAPPER.writeValueAsString(result);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Unable to serialize import result", e);
+        }
+    }
+
+    private void publishCommitEvent(ImportJob job, ImportResultDTO result) {
+        if (eventPublisher == null) {
+            return;
+        }
+        eventPublisher.publishEvent(new ImportCommittedEvent(
+                job.getId(),
+                job.getStudyId(),
+                job.getName(),
+                job.getRequestedBy(),
+                result.getEventCrfs(),
+                result.getItems()));
+    }
+
+    private String serializePreview(ImportPreviewDTO preview) {
+        try {
+            return OBJECT_MAPPER.writeValueAsString(preview);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Unable to serialize import preview", e);
+        }
+    }
+
+    private ImportPreviewDTO parsePreview(String summaryJson) {
+        try {
+            return OBJECT_MAPPER.readValue(summaryJson, ImportPreviewDTO.class);
+        } catch (Exception e) {
+            log.warn("Failed to parse import preview summary JSON: {}", e.getMessage());
+            return ImportPreviewDTO.failed("Stored import preview could not be parsed.");
+        }
+    }
+
+    private EditCheckSummary parseEditCheckSummary(String editChecksJson) {
+        if (editChecksJson == null || editChecksJson.isBlank()) {
+            return new EditCheckSummary(0, 0);
+        }
+        try {
+            Map<String, Object> values = OBJECT_MAPPER.readValue(
+                    editChecksJson, new TypeReference<Map<String, Object>>() {});
+            return new EditCheckSummary(asInt(values.get("total")), asInt(values.get("errors")));
+        } catch (Exception e) {
+            log.warn("Failed to parse edit-check summary JSON: {}", e.getMessage());
+            return new EditCheckSummary(0, 0);
+        }
+    }
+
+    private int asInt(Object value) {
+        if (value instanceof Number number) {
+            return number.intValue();
+        }
+        if (value instanceof String stringValue && !stringValue.isBlank()) {
+            try {
+                return Integer.parseInt(stringValue);
+            } catch (NumberFormatException e) {
+                return 0;
+            }
+        }
+        return 0;
+    }
+
+    private record EditCheckSummary(int totalItems, int errors) {
     }
 
     private ImportJobDTO toDTO(ImportJob job) {
