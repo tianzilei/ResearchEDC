@@ -33,6 +33,9 @@ fail_if_matches "no new untracked JSP files" "${new_jsp_files}"
 new_secure_controllers="$(git ls-files --others --exclude-standard 'web/**/*.java' 2>/dev/null | xargs -r rg -n 'extends\s+(SecureController|CoreSecureController)' 2>/dev/null || true)"
 fail_if_matches "no new untracked SecureController/CoreSecureController subclasses" "${new_secure_controllers}"
 
+retired_import_jobs="$(rg -n 'class\s+(ImportSpringJob|ExampleSpringJob)\b|ImportSpringJob|ExampleSpringJob' app shared web ws -g '*.java' 2>/dev/null || true)"
+fail_if_matches "retired import Quartz jobs must remain absent" "${retired_import_jobs}"
+
 if [ "${failures}" -gt 0 ]; then
   echo "Legacy guardrails failed: ${failures} issue group(s)."
   exit 1
