@@ -5,19 +5,12 @@ import javax.sql.DataSource;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.core.CoreResources;
 import org.researchedc.dao.spi.IRuleSetRuleDAO;
-import org.researchedc.dao.spi.RuleDomainDao;
-import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.IItemFormMetadataDAO;
-import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.service.crfdata.InstantOnChangeService;
 import org.researchedc.service.extract.GenerateExtractFileService;
 import org.researchedc.service.extract.OdmFileCreation;
-import org.researchedc.service.rule.RulesPostImportContainerService;
-import org.researchedc.validator.rule.action.EventActionValidator;
-import org.researchedc.validator.rule.action.InsertActionValidator;
-import org.researchedc.validator.rule.action.RandomizeActionValidator;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -74,16 +67,4 @@ public class WebBeansConfig {
                 odmFileCreation);
     }
 
-    @Bean("rulesPostImportContainerService")
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public RulesPostImportContainerService rulesPostImportContainerService(DataSource dataSource,
-            RuleDomainDao ruleDao, RuleSetDomainDao ruleSetDao, IStudyDAO studyDao) {
-        RulesPostImportContainerService service = new RulesPostImportContainerService(dataSource);
-        service.setRuleDao(ruleDao);
-        service.setRuleSetDao(ruleSetDao);
-        service.setInsertActionValidator(new InsertActionValidator(dataSource));
-        service.setEventActionValidator(new EventActionValidator(dataSource, studyDao));
-        service.setRandomizeActionValidator(new RandomizeActionValidator(dataSource));
-        return service;
-    }
 }
