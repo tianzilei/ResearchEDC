@@ -451,4 +451,21 @@ html {
   border-color: var(--text);
 }
 
+/* ── Print styles ── */
+
+@media print {
+  .print-hide {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    color: #000 !important;
+    background: #fff !important;
+  }
+}
+
 /* Loading animations are intentionally disabled by the Mono-Performance style. */

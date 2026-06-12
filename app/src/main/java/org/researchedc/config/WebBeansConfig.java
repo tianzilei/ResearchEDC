@@ -18,7 +18,6 @@ import org.researchedc.service.rule.RulesPostImportContainerService;
 import org.researchedc.validator.rule.action.EventActionValidator;
 import org.researchedc.validator.rule.action.InsertActionValidator;
 import org.researchedc.validator.rule.action.RandomizeActionValidator;
-import org.researchedc.web.table.sdv.SDVUtil;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,17 +28,6 @@ import org.springframework.context.annotation.Scope;
  */
 @Configuration
 public class WebBeansConfig {
-
-    /**
-     * Creates the {@link SDVUtil} bean used by SDV-related servlets and controllers.
-     * Replaces the XML-defined {@code sdvUtil} bean with its {@code dataSource} property.
-     */
-    @Bean("sdvUtil")
-    public SDVUtil sdvUtil(DataSource dataSource) {
-        SDVUtil sdvUtil = new SDVUtil();
-        sdvUtil.setDataSource(dataSource);
-        return sdvUtil;
-    }
 
     @Bean("instantOnChangeService")
     public InstantOnChangeService instantOnChangeService(DataSource dataSource,

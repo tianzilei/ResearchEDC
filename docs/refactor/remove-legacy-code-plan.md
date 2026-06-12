@@ -1,23 +1,28 @@
 # Remove Legacy Code Plan
 
-**Last updated:** 2026-06-11
-**Status:** Legacy removal is **not complete**. **Phase 1 executable slices exhausted** (SPA DataEntryPage parity blocks remaining 29 JSPs + 15 servlets). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** All remaining work blocked on: (1) SPA DataEntryPage CRF renderer parity → 40+ artifacts, (2) module-owned DAO replacements → 100 files.
+**Last updated:** 2026-06-12
+**Status:** Legacy removal is **not complete**. **Phase 1 webapp view/static surface COMPLETE** (0 JSPs, 0 static assets, web.xml 310→40 lines, pages-servlet.xml, TLDs, tags deleted in run 96). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work blocked on: (1) SPA DataEntryPage/import validation parity → 102 web/ Java files, including 6 remaining `SecureController` subclasses and the data-entry/import helper cluster, (2) module-owned DAO replacements → 100 DAO files.
 
 ## Current Baseline
 
-These counts come from the current repository tree (updated 2026-06-11 post runs 93-95, Phase 4 dead code scavenging complete):
+These counts come from the current repository tree (updated 2026-06-12 post run 96):
 
 | Surface | Count (before) | Count (after) | Meaning |
 |---------|----------------|---------------|---------|
 | `shared/src/main/java/org/researchedc` | 793 | 509 | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities (-284) |
 | `shared/src/main/java/org/researchedc/dao` | 186 | 100 | DAO SPI interfaces plus legacy DAO implementations/support (-86) |
-| `web/src/main/java` | 480 | 102 | Legacy servlet/Spring MVC/JSP helper surface (-378) |
-| `web/src/main/webapp/**/*.jsp` | 416 | 29 | JSP views and fragments (-387) |
+| `web/src/main/java` | 480 | 102 | Remaining servlet bases, 6 data-entry/discrepancy servlets, validation/import helpers, table/view helpers, SDV/scheduled-job helpers (-378) |
+| `web/src/main/webapp/**/*.jsp` | 416 | 0 | All JSP views and fragments deleted (-416) |
+| `web/src/main/webapp/**/*.{gif,png,js,css,html,htm}` | ~1400 | 0 | All static assets deleted (-1400) |
+| `web/src/main/webapp/WEB-INF/web.xml` lines | 310 | 40 | Dead servlets/listeners/filters removed (-270) |
+| `web/src/main/webapp/WEB-INF/pages-servlet.xml` | 1 | 0 | Dead Spring MVC dispatcher config deleted |
+| `web/src/main/webapp/WEB-INF/{tags,tld}` | 12 | 0 | Dead TLD and tag files deleted (-12) |
+| `web/src/main/webapp/gwt/` | 1 | 0 | GWT remnants deleted |
 | Legacy servlet inventory artifacts | 186 | 6 | Remaining active servlet workflow artifacts (-180) |
 | `ws/` | 75 | 0 | SOAP module directory is absent in the current tree (-75) |
 | Active legacy workflow inventory | 963 | ~140 | Generated artifacts across JSP, servlet, Spring MVC, DAO, and shared service surfaces (-823) |
 
-### Phase 1 Deletion Summary (7 slices completed)
+### Phase 1 Deletion Summary (8 slices completed)
 
 | Slice | Servlets Deleted | JSPs Deleted | web.xml Lines Removed |
 |-------|-----------------|--------------|----------------------|
@@ -27,11 +32,12 @@ These counts come from the current repository tree (updated 2026-06-11 post runs
 | Export/Dataset/Filter | 9 | ~40 | 77 |
 | Data Entry/Discrepancy | 19 | 17 | ~50 |
 | Login Auxiliary/Enterprise/Mail Delivery | 6 | 11 | 55 |
-| **TOTAL** | **~121** | **~202** | **~688** |
+| Webapp Static Assets/JSPs (run 96) | 0 | 1414 files | 270 |
+| **TOTAL** | **~121** | **~1616** | **~958** |
 
-**Result:** Phase 1 deletion slices have removed the largest low-risk JSP/servlet surfaces. Current Enterprise and mail-delivery code paths are retired; shared+app+web BUILD SUCCESS.
+**Result:** Phase 1 deletion slices have removed all JSP views, static assets, GWT remnants, TLDs, tags, and dead servlet registrations. web.xml reduced from 310→40 lines. All 29 remaining JSPs and ~1400 static assets deleted. Enterprise and mail-delivery code paths are retired. Build/test status must be re-run after the current dirty worktree is stabilized.
 
-**Remaining Phase 1 work:** 29 JSP files, 6 legacy servlet inventory artifacts, and 9 legacy Spring MVC route artifacts remain. All blocked on SPA DataEntryPage CRF renderer parity. Additional 15 servlets registered in web.xml are all data entry/discrepancy — also blocked on SPA parity.
+**Remaining Phase 1 work:** 102 web/ Java files remain. The high-risk active set is 6 production `SecureController`/`CoreSecureController` subclasses plus the data-entry/import validation helpers (`DataEntryServlet`, `Validator`, `ImportCRFDataService`, form builders, discrepancy helpers, file download helpers). These require moving validation/import/rendering logic into app/module code or formally accepting them as compatibility shim code. The lower-risk remainder is table/view/SDV/scheduled-job support that should be deleted only after caller scans prove it is no longer referenced.
 
 Completed work should be described precisely:
 
@@ -91,15 +97,16 @@ Remaining Phase 0 work:
 - ✅ `scripts/ci/generate-legacy-inventory.py` updated to classify layout fragments (`include/` JSPs) and `menu.jsp` automatically.
 - ⬜ Add per-workflow owner metadata once the first slice ledger is created.
 
-Current next action (updated 2026-06-11 post runs 93-95):
+Current next action (updated 2026-06-12 post run 96):
 
 1. ✅ Done: Closed the common `EntityAction` remove/restore gaps for study-subject, study-event, and event-CRF actions.
 2. ✅ Done: Import/export compatibility slice. ImportCrfDataAdapter.validateEditChecks() now covers 8 validation types (NO_BLANKS, 5 data-type, 2 response-set). ImportCRFDataServlet + import.jsp deleted.
 3. ✅ Done: OpenRosa/Spring MVC compatibility classification. OpenRosa is active Modulith (18 files, `/api/v1/openrosa`). AccountController deleted (0 callers). SidebarInit/SidebarEnumConstants deleted (0 injections).
-4. ⬜ Keep CRF metadata/data-entry rendering blocked until SPA DataEntryPage parity. **This is the primary remaining blocker for Phase 1.** 29 JSPs + 15 servlets remain.
-5. ⬜ Phase 3 DAO deletion: 100 DAO files blocked on module-owned DAO replacements.
-6. ✅ Done: Phase 4 shared bean deletion — EXHAUSTED. 73 files (-8570L) across runs 81-95. 0 dead code remaining.
-7. ✅ Done: Phase 5 dependency cleanup — EXHAUSTED. 19 dead deps removed; remaining 8 all active.
+4. ✅ Done: Webapp surface cleanup — 29 JSPs, ~1400 static assets, GWT remnants, TLDs, tags, pages-servlet.xml deleted. web.xml 310→40 lines. SDVUtil bean removed from WebBeansConfig.
+5. ⬜ Move validation/import/rendering logic from `web/` (`control.form.*`, `control.submit.*`, `web.crfdata.*`, `view.form.*`) into app/module-owned services to unblock web/ Java deletion. 102 Java files remain; the immediate deletion gate is the 6 remaining secure servlet subclasses.
+6. ⬜ Phase 3 DAO deletion: 100 DAO files blocked on module-owned DAO replacements.
+7. ✅ Done: Phase 4 shared bean deletion — EXHAUSTED. 73 files (-8570L) across runs 81-95. 0 dead code remaining.
+8. ✅ Done: Phase 5 dependency cleanup — EXHAUSTED. 19 dead deps removed; remaining 8 all active.
 
 ## Phase B PostgreSQL Validation
 

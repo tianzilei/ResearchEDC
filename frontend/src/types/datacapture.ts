@@ -24,6 +24,7 @@ export interface SaveItemDataRequest {
   itemId: number;
   value: string;
   statusId?: number;
+  ordinal?: number;
 }
 
 export interface BatchSaveItemsRequest {
@@ -46,7 +47,28 @@ export interface ResponseSetDTO {
 export interface ItemGroupDTO {
   itemGroupId: number;
   crfId: number;
-  label: string;
-  ordinal: number;
+  name: string;
+  ocOid: string;
   items: number[];
+}
+
+export interface ScdRule {
+  targetItemId: number;
+  controlItemId: number;
+  controlItemName: string;
+  optionValue: string;
+  message: string;
+}
+
+export interface RuleInfo {
+  ruleName: string;
+  ruleDescription: string;
+  expressionValue: string;
+  enabled: boolean;
+}
+
+export interface RuleEvalResponse {
+  eventCrfId: number;
+  ruleSetCount: number;
+  rules: RuleInfo[];
 }

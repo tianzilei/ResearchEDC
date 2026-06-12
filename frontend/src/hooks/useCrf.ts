@@ -1,7 +1,8 @@
+import { useQueries } from "@tanstack/react-query";
 import { useAppQuery, useAppMutation, useQueryClient } from "@/hooks/useQuery";
 import { apiClient } from "@/api/client";
 import type { CrfSummary, CrfVersion, CrfVersionEntity, ItemDTO } from "@/types/crf";
-import type { ItemDataDTO, ResponseSetDTO, ItemGroupDTO } from "@/types/datacapture";
+import type { ItemDataDTO, ResponseSetDTO, ItemGroupDTO, ScdRule, RuleEvalResponse } from "@/types/datacapture";
 
 export function useCrfList() {
   return useAppQuery<CrfSummary[]>({
@@ -58,14 +59,61 @@ export function useResponseSet(responseSetId: number | undefined) {
   });
 }
 
-export function useItemGroups(crfId: number | undefined) {
+export function useItemGroups(crfVersionId: number | undefined) {
   return useAppQuery<ItemGroupDTO[]>({
-    queryKey: ["item-groups", crfId],
+    queryKey: ["item-groups", crfVersionId],
     queryFn: () =>
-      crfId
-        ? apiClient.get<ItemGroupDTO[]>("/api/v1/data-capture/item-groups", { crfId })
+      crfVersionId
+        ? apiClient.get<ItemGroupDTO[]>("/api/v1/data-capture/item-groups", { crfVersionId })
         : Promise.resolve([]),
-    enabled: !!crfId,
+    enabled: !!crfVersionId,
+  });
+}
+
+export function useScdRules(sectionId: number | undefined) {
+  return useAppQuery<ScdRule[]>({
+    queryKey: ["scd-rules", sectionId],
+    queryFn: () =>
+      sectionId
+        ? apiClient.get<ScdRule[]>(`/api/v1/crfs/sections/${sectionId}/scd-rules`)
+        : Promise.resolve([]),
+    enabled: !!sectionId,
+  });
+}
+
+export function useAllSectionItems(crfVersion: CrfVersion | null | undefined, enabled: boolean) {
+  const sections = crfVersion?.sections ?? [];
+  const results = useQueries({
+    queries: sections.map((section) => ({
+      queryKey: ["crf-section-items", crfVersion?.crfVersionId, section.sectionId],
+      queryFn: () =>
+        apiClient.get<ItemDTO[]>(
+          `/api/v1/crfs/versions/${crfVersion!.crfVersionId}/sections/${section.sectionId}/items`,
+        ),
+      enabled: enabled && !!crfVersion && !!(section.sectionId),
+    })),
+    combine: (results) => {
+      const data = new Map<number, ItemDTO[]>();
+      sections.forEach((section, i) => {
+        data.set(section.sectionId, (results[i]?.data as ItemDTO[]) ?? []);
+      });
+      return {
+        data,
+        isLoading: results.some((r) => r.isLoading),
+      };
+    },
+  });
+  return results;
+}
+
+export function useEventCrfRules(eventCrfId: number | undefined) {
+  return useAppQuery<RuleEvalResponse>({
+    queryKey: ["event-crf-rules", eventCrfId],
+    queryFn: () =>
+      eventCrfId
+        ? apiClient.get<RuleEvalResponse>(`/api/v1/data-capture/${eventCrfId}/rules`)
+        : Promise.resolve({ eventCrfId: 0, ruleSetCount: 0, rules: [] }),
+    enabled: !!eventCrfId,
   });
 }
 

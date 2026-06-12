@@ -1,10 +1,11 @@
-import { Button, Card, Empty, List, Spin, Tabs, Typography } from "antd";
-import { DownloadOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { Button, Card, Empty, List, Space, Spin, Tabs, Tag, Typography } from "antd";
+import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
+import { useEffect, useRef, useState } from "react";
 import { DataEntryForm } from "@/components/form-engine/DataEntryForm";
 import type { FormItemConfig } from "@/components/form-engine/FormField";
 import type { FormStatusConfig } from "@/components/form-engine/FormStatus";
 import DiscrepancyNotes from "@/components/DiscrepancyNotes";
+import { useEventCrfRules } from "@/hooks/useCrf";
 import { useTranslation } from "react-i18next";
 
 interface SectionTabsProps {
@@ -19,6 +20,12 @@ interface SectionTabsProps {
   enableAutoSave?: boolean;
   parsedEventCrfId: number | undefined;
   saveErrorItemIds?: Set<number>;
+  groupInstances?: Record<number, number[]>;
+  onAddGroupInstance?: (groupId: number) => void;
+  onRemoveGroupInstance?: (groupId: number, index: number) => void;
+  hiddenItemIds?: Set<number>;
+  itemDnCounts?: Map<number, number>;
+  isAdminEdit?: boolean;
 }
 
 export function SectionTabs({
@@ -33,12 +40,20 @@ export function SectionTabs({
   enableAutoSave = true,
   parsedEventCrfId,
   saveErrorItemIds,
+  groupInstances,
+  onAddGroupInstance,
+  onRemoveGroupInstance,
+  hiddenItemIds,
+  itemDnCounts,
+  isAdminEdit,
 }: SectionTabsProps) {
   const { t } = useTranslation();
   const [attachmentFiles, setAttachmentFiles] = useState<string[]>([]);
   const [loadingAttachments, setLoadingAttachments] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { data: ruleData, isLoading: loadingRules } = useEventCrfRules(parsedEventCrfId);
 
-  useEffect(() => {
+  const refreshAttachments = () => {
     if (parsedEventCrfId) {
       setLoadingAttachments(true);
       fetch(`/api/v1/data-capture/attachments/list-by-event-crf?eventCrfId=${parsedEventCrfId}`)
@@ -47,7 +62,24 @@ export function SectionTabs({
         .catch(() => setAttachmentFiles([]))
         .finally(() => setLoadingAttachments(false));
     }
+  };
+
+  useEffect(() => {
+    refreshAttachments();
   }, [parsedEventCrfId]);
+
+  const handleUploadOk = async (file: File) => {
+    if (!parsedEventCrfId) return;
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      await fetch(`/api/v1/data-capture/attachments?eventCrfId=${parsedEventCrfId}`, {
+        method: "POST",
+        body: formData,
+      });
+      refreshAttachments();
+    } catch {}
+  };
 
   const sectionTabItems = sections.map((section, idx) => ({
     key: String(idx),
@@ -65,6 +97,12 @@ export function SectionTabs({
           onSave={onSave}
           enableAutoSave={enableAutoSave}
           saveErrorItemIds={saveErrorItemIds}
+          groupInstances={groupInstances}
+          onAddGroupInstance={onAddGroupInstance}
+          onRemoveGroupInstance={onRemoveGroupInstance}
+          hiddenItemIds={hiddenItemIds}
+          itemDnCounts={itemDnCounts}
+          isAdminEdit={isAdminEdit}
         />
       </div>
     ),
@@ -90,6 +128,24 @@ export function SectionTabs({
       label: t("entry.attachments"),
       children: parsedEventCrfId ? (
         <div style={{ padding: 16 }}>
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleUploadOk(file);
+              e.target.value = "";
+            }}
+          />
+          <Space style={{ marginBottom: 12 }}>
+            <Button
+              icon={<UploadOutlined />}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {t("entry.uploadAttachment")}
+            </Button>
+          </Space>
           {loadingAttachments ? (
             <Spin />
           ) : attachmentFiles.length === 0 ? (
@@ -113,6 +169,58 @@ export function SectionTabs({
                   ]}
                 >
                   <Typography.Text>{fileName}</Typography.Text>
+                </List.Item>
+              )}
+            />
+          )}
+        </div>
+      ) : (
+        <Empty description={t("entry.noEventCrf")} />
+      ),
+    },
+    {
+      key: "rules",
+      label: t("entry.rules"),
+      children: parsedEventCrfId ? (
+        <div style={{ padding: 16 }}>
+          {loadingRules ? (
+            <Spin />
+          ) : !ruleData || ruleData.rules.length === 0 ? (
+            <Empty description={t("entry.noRules")} />
+          ) : (
+            <List
+              size="small"
+              header={
+                <Typography.Text type="secondary">
+                  {ruleData.ruleSetCount} rule set{ruleData.ruleSetCount !== 1 ? "s" : ""}, {ruleData.rules.length} rule{ruleData.rules.length !== 1 ? "s" : ""}
+                </Typography.Text>
+              }
+              dataSource={ruleData.rules}
+              renderItem={(rule) => (
+                <List.Item
+                  actions={[
+                    <Tag color={rule.enabled ? "green" : "default"} key="status">
+                      {rule.enabled ? "Active" : "Disabled"}
+                    </Tag>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    title={rule.ruleName || "Unnamed Rule"}
+                    description={
+                      <div>
+                        {rule.ruleDescription && (
+                          <Typography.Text type="secondary" style={{ display: "block" }}>
+                            {rule.ruleDescription}
+                          </Typography.Text>
+                        )}
+                        {rule.expressionValue && (
+                          <Typography.Text code style={{ fontSize: 11 }}>
+                            {rule.expressionValue}
+                          </Typography.Text>
+                        )}
+                      </div>
+                    }
+                  />
                 </List.Item>
               )}
             />

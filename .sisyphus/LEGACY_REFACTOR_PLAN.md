@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-10 (Legacy code removal is **not complete**. Phase B schema ownership and Phase C SPI widening are complete, repeated Phase 1 deletion slices through phase-1-run-58 have reduced the surface substantially, and `ws/` is absent from the current tree. See `docs/refactor/remove-legacy-code-plan.md` for the current deletion plan and SPA migration coverage.)
+> **Last updated:** 2026-06-12 (Legacy code removal is **not complete**. Phase B schema ownership and Phase C SPI widening are complete. Phase 1 JSP/static webapp surface is removed in the current worktree: 0 JSPs, 0 static assets, web.xml 40 lines. Remaining blockers are 102 web/ Java files, including 6 secure servlet subclasses and data-entry/import validation helpers, plus 100 DAO files. See `docs/refactor/remove-legacy-code-plan.md`.)
 > **Scope:** All remaining legacy code in `shared/` and `web/`; keep SOAP compatibility audits only if `ws/` reappears
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -21,14 +21,14 @@
 | 5 | `datacapture` | Bridge to `item_data`/`response_set` | `/api/v1/data-capture` |
 | — | `identity` | Bridge to `user_account`/`study_user_role` | `/api/v1/identity` |
 
-### Remaining legacy code baseline (2026-06-10, after CRF metadata boundary reconciliation)
+### Remaining legacy code baseline (2026-06-12, current dirty worktree)
 
 ```
-shared/   543 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
-          100 files under shared/src/main/java/org/researchedc/dao
-web/      152 Java files → remaining control/ servlets, controller/ Spring MVC, view helpers, filters
-           52 JSP pages
-            9 active legacy-servlet inventory artifacts
+shared/   509 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
+          100 Java files under shared/src/main/java/org/researchedc/dao
+web/      102 Java files → servlet bases, 6 secure servlet subclasses, validation/import helpers, table/view/SDV/scheduled-job support
+            0 JSP pages, 0 static webapp assets
+            6 active legacy-servlet inventory artifacts
 ws/         0 Java files → SOAP module absent in current tree
 inventory 208 active artifacts -> 144 replace, 64 keep compatibility, 0 unknown
 ```

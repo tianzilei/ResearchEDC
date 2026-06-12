@@ -18,6 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SCDItemMetadataDaoAdapter implements SCDItemMetadataDomainDao {
 
+    public record ScdRule(Integer scdItemId,
+                          Integer controlItemFormMetadataId,
+                          String controlItemName,
+                          String optionValue,
+                          String message) {
+    }
+
     private final JdbcTemplate jdbc;
 
     private final RowMapper<SCDItemMetadataBean> rowMapper = (rs, rowNum) -> {
@@ -41,6 +48,17 @@ public class SCDItemMetadataDaoAdapter implements SCDItemMetadataDomainDao {
         String sql = "SELECT scd.* FROM scd_item_metadata scd WHERE scd.scd_item_form_metadata_id IN "
                 + "(SELECT ifm.item_form_metadata_id FROM item_form_metadata ifm WHERE ifm.section_id = ?)";
         return new ArrayList<>(jdbc.query(sql, rowMapper, sectionId));
+    }
+
+    public List<ScdRule> findRulesBySectionId(Integer sectionId) {
+        return findAllBySectionId(sectionId).stream()
+                .map(bean -> new ScdRule(
+                        bean.getScdItemFormMetadataId(),
+                        bean.getControlItemFormMetadataId(),
+                        bean.getControlItemName(),
+                        bean.getOptionValue(),
+                        bean.getMessage()))
+                .toList();
     }
 
     @Override

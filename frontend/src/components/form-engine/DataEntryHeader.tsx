@@ -1,4 +1,5 @@
 import { Breadcrumb, Card, Button, Space, Typography } from "antd";
+import { PrinterOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import type { FormRecordStatus } from "@/components/form-engine/FormStatus";
 import { statusClassName } from "@/utils/crfStatus";
@@ -16,10 +17,12 @@ interface DataEntryHeaderProps {
   saveStatus: SaveStatus;
   canComplete: boolean;
   isCompleting: boolean;
-  parsedEventCrfId: number | undefined;
   parsedSubjectId: string | undefined;
   onComplete: () => void;
   onBack: () => void;
+  isAdminEdit?: boolean;
+  onToggleAdminEdit?: () => void;
+  onPrint?: () => void;
 }
 
 export function DataEntryHeader({
@@ -29,10 +32,12 @@ export function DataEntryHeader({
   saveStatus,
   canComplete,
   isCompleting,
-  parsedEventCrfId,
   parsedSubjectId,
   onComplete,
   onBack,
+  isAdminEdit,
+  onToggleAdminEdit,
+  onPrint,
 }: DataEntryHeaderProps) {
   const { t } = useTranslation();
   return (
@@ -74,9 +79,22 @@ export function DataEntryHeader({
                 {t("entry.completeEvent")}
               </Button>
             )}
-            <Button onClick={() => window.open(`/AdministrativeEditing?eventCrfId=${parsedEventCrfId}`, "_blank")}>
-              {t("entry.adminEdit")}
-            </Button>
+            {onToggleAdminEdit && (
+              <Button
+                type={isAdminEdit ? "dashed" : "default"}
+                onClick={onToggleAdminEdit}
+              >
+                {isAdminEdit ? t("entry.exitAdminEdit") : t("entry.adminEdit")}
+              </Button>
+            )}
+            {onPrint && (
+              <Button
+                icon={<PrinterOutlined />}
+                onClick={onPrint}
+              >
+                {t("entry.print")}
+              </Button>
+            )}
             <Button onClick={onBack}>
               {t("entry.back")}
             </Button>

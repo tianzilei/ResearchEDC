@@ -4,35 +4,50 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.researchedc.bean.core.Utils;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.datacapture.dto.BatchSaveItemsRequest;
+import org.researchedc.module.crf.entity.CrfVersionEntity;
+import org.researchedc.module.crf.repository.CrfVersionRepository;
 import org.researchedc.module.datacapture.dto.ItemDataDTO;
 import org.researchedc.module.datacapture.dto.ItemGroupDTO;
 import org.researchedc.module.datacapture.dto.ResponseSetDTO;
 import org.researchedc.module.datacapture.dto.ResponseSetDTO.OptionDTO;
+import org.researchedc.module.datacapture.dto.RuleEvalResponse;
+import org.researchedc.module.datacapture.dto.RuleEvalResponse.RuleInfo;
 import org.researchedc.module.datacapture.dto.SaveItemDataRequest;
+import org.researchedc.module.event.entity.EventCrfEntity;
+import org.researchedc.module.event.entity.StudyEventEntity;
+import org.researchedc.module.event.repository.EventCrfRepository;
+import org.researchedc.module.event.repository.StudyEventRepository;
+import org.researchedc.module.rule.entity.RuleEntity;
+import org.researchedc.module.rule.entity.RuleExpressionEntity;
+import org.researchedc.module.rule.entity.RuleSetEntity;
+import org.researchedc.module.rule.entity.RuleSetRuleEntity;
+import org.researchedc.module.rule.repository.RuleExpressionRepository;
+import org.researchedc.module.rule.repository.RuleRepository;
+import org.researchedc.module.rule.repository.RuleSetRepository;
+import org.researchedc.module.rule.repository.RuleSetRuleRepository;
+import org.researchedc.module.subject.entity.StudySubjectEntity;
+import org.researchedc.module.subject.repository.StudySubjectRepository;
 import org.researchedc.module.datacapture.entity.ItemDataEntity;
 import org.researchedc.module.datacapture.entity.ItemGroupEntity;
+import org.researchedc.module.datacapture.entity.ItemGroupMetadataEntity;
 import org.researchedc.module.datacapture.entity.ResponseSetEntity;
+import org.researchedc.module.datacapture.internal.adapter.AttachmentStorageAdapter;
 import org.researchedc.module.datacapture.repository.ItemDataRepository;
+import org.researchedc.module.datacapture.repository.ItemGroupMetadataRepository;
 import org.researchedc.module.datacapture.repository.ItemGroupRepository;
 import org.researchedc.module.datacapture.repository.ResponseSetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,28 +56,46 @@ public class DataCaptureService {
     private final ItemDataRepository itemDataRepository;
     private final ResponseSetRepository responseSetRepository;
     private final ItemGroupRepository itemGroupRepository;
+    private final ItemGroupMetadataRepository itemGroupMetadataRepository;
     private final AuditService auditService;
-    private final EventCRFDao eventCrfDao;
-    private final IStudyDAO studyDao;
-    private final IStudyEventDAO studyEventDao;
-    private final IStudySubjectDAO studySubjectDao;
+    private final AttachmentStorageAdapter attachmentStorageAdapter;
+    private final EventCrfRepository eventCrfRepository;
+    private final StudyEventRepository studyEventRepository;
+    private final StudySubjectRepository studySubjectRepository;
+    private final CrfVersionRepository crfVersionRepository;
+    private final RuleSetRepository ruleSetRepository;
+    private final RuleSetRuleRepository ruleSetRuleRepository;
+    private final RuleRepository ruleRepository;
+    private final RuleExpressionRepository ruleExpressionRepository;
 
     public DataCaptureService(ItemDataRepository itemDataRepository,
                                ResponseSetRepository responseSetRepository,
                                ItemGroupRepository itemGroupRepository,
+                               ItemGroupMetadataRepository itemGroupMetadataRepository,
                                AuditService auditService,
-                               EventCRFDao eventCrfDao,
-                               IStudyDAO studyDao,
-                               IStudyEventDAO studyEventDao,
-                               IStudySubjectDAO studySubjectDao) {
+                               AttachmentStorageAdapter attachmentStorageAdapter,
+                                EventCrfRepository eventCrfRepository,
+                                StudyEventRepository studyEventRepository,
+                                StudySubjectRepository studySubjectRepository,
+                                CrfVersionRepository crfVersionRepository,
+                                RuleSetRepository ruleSetRepository,
+                                RuleSetRuleRepository ruleSetRuleRepository,
+                                RuleRepository ruleRepository,
+                                RuleExpressionRepository ruleExpressionRepository) {
         this.itemDataRepository = itemDataRepository;
         this.responseSetRepository = responseSetRepository;
         this.itemGroupRepository = itemGroupRepository;
+        this.itemGroupMetadataRepository = itemGroupMetadataRepository;
         this.auditService = auditService;
-        this.eventCrfDao = eventCrfDao;
-        this.studyDao = studyDao;
-        this.studyEventDao = studyEventDao;
-        this.studySubjectDao = studySubjectDao;
+        this.attachmentStorageAdapter = attachmentStorageAdapter;
+        this.eventCrfRepository = eventCrfRepository;
+        this.studyEventRepository = studyEventRepository;
+        this.studySubjectRepository = studySubjectRepository;
+        this.crfVersionRepository = crfVersionRepository;
+        this.ruleSetRepository = ruleSetRepository;
+        this.ruleSetRuleRepository = ruleSetRuleRepository;
+        this.ruleRepository = ruleRepository;
+        this.ruleExpressionRepository = ruleExpressionRepository;
     }
 
     public List<ItemDataDTO> getItemDataByEventCrf(Integer eventCrfId) {
@@ -86,10 +119,33 @@ public class DataCaptureService {
             .toList();
     }
 
+    public List<ItemGroupDTO> getItemGroupsByCrfVersion(Integer crfVersionId) {
+        List<ItemGroupEntity> groups = itemGroupRepository.findOnlyGroupsByCRFVersionIdNative(crfVersionId);
+        return groups.stream()
+            .map(g -> {
+                ItemGroupDTO dto = toItemGroupDto(g);
+                List<Integer> itemIds = itemGroupMetadataRepository
+                    .findByItemGroupIdAndCrfVersionId(g.getItemGroupId(), crfVersionId)
+                    .stream()
+                    .map(ItemGroupMetadataEntity::getItemId)
+                    .distinct()
+                    .toList();
+                dto.setItems(itemIds);
+                return dto;
+            })
+            .toList();
+    }
+
     @Transactional
     public ItemDataDTO saveItemData(SaveItemDataRequest request, Integer userId) {
-        List<ItemDataEntity> existing = itemDataRepository.findByEventCrfIdAndItemId(
-            request.getEventCrfId(), request.getItemId());
+        List<ItemDataEntity> existing;
+        if (request.getOrdinal() != null) {
+            existing = itemDataRepository.findByItemIdAndEventCrfIdAndOrdinal(
+                request.getItemId(), request.getEventCrfId(), request.getOrdinal());
+        } else {
+            existing = itemDataRepository.findByEventCrfIdAndItemId(
+                request.getEventCrfId(), request.getItemId());
+        }
 
         ItemDataEntity entity;
         boolean isUpdate;
@@ -108,6 +164,7 @@ public class DataCaptureService {
             entity.setEventCrfId(request.getEventCrfId());
             entity.setItemId(request.getItemId());
             entity.setValue(request.getValue());
+            entity.setOrdinal(request.getOrdinal());
             entity.setStatusId(request.getStatusId() != null ? request.getStatusId() : 1);
             entity.setDeleted(false);
             entity.setDateCreated(LocalDateTime.now());
@@ -132,6 +189,64 @@ public class DataCaptureService {
             results.add(saveItemData(itemRequest, userId));
         }
         return results;
+    }
+
+    /**
+     * Retrieves applicable RuleSets, rules, and expressions for a given EventCRF
+     * without performing full expression evaluation.
+     */
+    public RuleEvalResponse evaluateRules(int eventCrfId) {
+        EventCrfEntity eventCrf = eventCrfRepository.findById(eventCrfId)
+                .orElseThrow(() -> new java.util.NoSuchElementException(
+                        "EventCRF not found: " + eventCrfId));
+        StudyEventEntity studyEvent = studyEventRepository.findById(eventCrf.getStudyEventId())
+                .orElseThrow(() -> new java.util.NoSuchElementException(
+                        "StudyEvent not found: " + eventCrf.getStudyEventId()));
+        StudySubjectEntity studySubject = studySubjectRepository.findById(eventCrf.getStudySubjectId())
+                .orElseThrow(() -> new java.util.NoSuchElementException(
+                        "StudySubject not found: " + eventCrf.getStudySubjectId()));
+        CrfVersionEntity crfVersion = crfVersionRepository.findById(eventCrf.getCrfVersionId())
+                .orElseThrow(() -> new java.util.NoSuchElementException(
+                        "CrfVersion not found: " + eventCrf.getCrfVersionId()));
+
+        int crfId = crfVersion.getCrfId();
+        int studyId = studySubject.getStudyId();
+        int studyEventDefinitionId = studyEvent.getStudyEventDefinitionId();
+
+        List<RuleSetEntity> ruleSets = ruleSetRepository
+                .findByCrfVersionIdOrCrfIdAndStudyIdAndStudyEventDefinitionId(
+                        eventCrf.getCrfVersionId(), crfId, studyId, studyEventDefinitionId);
+
+        List<RuleInfo> rules = ruleSets.stream()
+                .flatMap(ruleSet -> {
+                    List<RuleSetRuleEntity> mappings = ruleSetRuleRepository
+                            .findByRuleSetId(ruleSet.getRuleSetId());
+                    return mappings.stream()
+                            .map(mapping -> {
+                                RuleEntity rule = ruleRepository.findById(mapping.getRuleId())
+                                        .orElse(null);
+                                if (rule == null) return null;
+                                RuleExpressionEntity expr = rule.getRuleExpressionId() != null
+                                        ? ruleExpressionRepository.findById(rule.getRuleExpressionId())
+                                                .orElse(null)
+                                        : null;
+
+                                RuleInfo info = new RuleInfo();
+                                info.setRuleName(rule.getName());
+                                info.setRuleDescription(rule.getDescription());
+                                info.setExpressionValue(expr != null ? expr.getValue() : null);
+                                info.setEnabled(rule.getEnabled() != null && rule.getEnabled());
+                                return info;
+                            })
+                            .filter(info -> info != null);
+                })
+                .toList();
+
+        RuleEvalResponse response = new RuleEvalResponse();
+        response.setEventCrfId(eventCrfId);
+        response.setRuleSetCount(ruleSets.size());
+        response.setRules(rules);
+        return response;
     }
 
     private ItemDataDTO toItemDataDto(ItemDataEntity e) {
@@ -178,7 +293,7 @@ public class DataCaptureService {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        File file = resolveAttachmentFile(fileName, studyOid);
+        File file = attachmentStorageAdapter.resolveAttachmentFile(fileName, studyOid);
         if (file == null || !file.exists() || file.length() <= 0) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -210,68 +325,21 @@ public class DataCaptureService {
      * @param response   the servlet response to stream the file into
      */
     public void downloadAttachmentByEventCrf(int eventCrfId, String fileName, HttpServletResponse response) {
-        String studyOid = getStudyOidByEventCrf(eventCrfId);
+        String studyOid = attachmentStorageAdapter.getStudyOidByEventCrf(eventCrfId);
         if (studyOid == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        // Try current study's directory first
-        File file = resolveAttachmentFile(fileName, studyOid);
-        if (file != null && file.exists() && file.length() > 0) {
-            streamFile(file, response);
-            return;
-        }
-
-        // Fallback: check parent study (for site studies)
-        StudyBean study = (StudyBean) studyDao.findByOid(studyOid);
-        if (study != null && study.getParentStudyId() > 0) {
-            StudyBean parent = (StudyBean) studyDao.findByPK(study.getParentStudyId());
-            if (parent != null) {
-                file = resolveAttachmentFile(fileName, parent.getOid());
-                if (file != null && file.exists() && file.length() > 0) {
-                    streamFile(file, response);
-                    return;
-                }
-            }
-        }
-
-        // Fallback: check child sites (for parent studies)
-        if (study != null) {
-            var children = studyDao.findAllByParent(study.getId());
-            if (children != null) {
-                for (Object child : children) {
-                    StudyBean childStudy = (StudyBean) child;
-                    file = resolveAttachmentFile(fileName, childStudy.getOid());
-                    if (file != null && file.exists() && file.length() > 0) {
-                        streamFile(file, response);
-                        return;
-                    }
-                }
+        for (String candidateStudyOid : attachmentStorageAdapter.getCandidateStudyOids(studyOid)) {
+            File file = attachmentStorageAdapter.resolveAttachmentFile(fileName, candidateStudyOid);
+            if (file != null && file.exists() && file.length() > 0) {
+                streamFile(file, response);
+                return;
             }
         }
 
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-    }
-
-    /**
-     * Resolves the study OID for a given event CRF ID by walking the entity chain:
-     * EventCRF → StudySubject → Study.
-     */
-    String getStudyOidByEventCrf(int eventCrfId) {
-        try {
-            EventCRFBean eventCrf = (EventCRFBean) eventCrfDao.findByPK(eventCrfId);
-            if (eventCrf == null) return null;
-
-            StudySubjectBean studySubject = (StudySubjectBean) studySubjectDao.findByPK(eventCrf.getStudySubjectId());
-            if (studySubject == null) return null;
-
-            StudyBean study = (StudyBean) studyDao.findByPK(studySubject.getStudyId());
-            return study != null ? study.getOid() : null;
-        } catch (Exception e) {
-            log.warn("Failed to resolve study OID for eventCrfId={}: {}", eventCrfId, e.getMessage());
-            return null;
-        }
     }
 
     private void streamFile(File file, HttpServletResponse response) {
@@ -298,70 +366,49 @@ public class DataCaptureService {
      * @return the resolved File, or a non-existent file if resolution fails
      */
     public File resolveAttachmentFile(String fileName, String studyOid) {
-        if (fileName == null || fileName.isEmpty() || studyOid == null || studyOid.isEmpty()) {
-            return new File("");
-        }
-        String safeName = new File(fileName).getName();
-        String rootPath = Utils.getAttachedFileRootPath();
-        File resolved = new File(rootPath, studyOid + File.separator + safeName);
-        try {
-            String canonical = resolved.getCanonicalPath();
-            String expectedPrefix = new File(rootPath).getCanonicalPath();
-            if (!canonical.startsWith(expectedPrefix)) {
-                log.warn("Path traversal attempt blocked: {} (study={})", fileName, studyOid);
-                return new File("");
-            }
-        } catch (IOException e) {
-            log.warn("Failed to resolve canonical path: {} (study={})", fileName, studyOid);
-            return new File("");
-        }
-        return resolved;
+        return attachmentStorageAdapter.resolveAttachmentFile(fileName, studyOid);
     }
 
-    /**
-     * Lists attachment file names for a given event CRF.
-     * Resolves the study OID from the event CRF and scans the study's
-     * attachment directory. Falls back to parent/child study directories.
-     *
-     * @param eventCrfId the event CRF ID to resolve study context from
-     * @return list of file names found in the attachment directories
-     */
     public List<String> listAttachmentsByEventCrf(int eventCrfId) {
-        String studyOid = getStudyOidByEventCrf(eventCrfId);
+        String studyOid = attachmentStorageAdapter.getStudyOidByEventCrf(eventCrfId);
         if (studyOid == null) {
             return List.of();
         }
 
         List<String> files = new ArrayList<>();
-        String rootPath = Utils.getAttachedFileRootPath();
-        File studyDir = new File(rootPath, studyOid);
-        if (studyDir.exists() && studyDir.isDirectory()) {
-            File[] dirFiles = studyDir.listFiles();
-            if (dirFiles != null) {
-                for (File f : dirFiles) {
-                    if (f.isFile()) files.add(f.getName());
-                }
-            }
-        }
-
-        // Also check parent/child study directories
-        StudyBean study = (StudyBean) studyDao.findByOid(studyOid);
-        if (study != null && study.getParentStudyId() > 0) {
-            StudyBean parent = (StudyBean) studyDao.findByPK(study.getParentStudyId());
-            if (parent != null) {
-                File parentDir = new File(rootPath, parent.getOid());
-                if (parentDir.exists() && parentDir.isDirectory()) {
-                    File[] dirFiles = parentDir.listFiles();
-                    if (dirFiles != null) {
-                        for (File f : dirFiles) {
-                            if (f.isFile() && !files.contains(f.getName())) files.add(f.getName());
+        for (String candidateStudyOid : attachmentStorageAdapter.getCandidateStudyOids(studyOid)) {
+            File studyDir = attachmentStorageAdapter.studyDirectory(candidateStudyOid);
+            if (studyDir.exists() && studyDir.isDirectory()) {
+                File[] dirFiles = studyDir.listFiles();
+                if (dirFiles != null) {
+                    for (File f : dirFiles) {
+                        if (f.isFile() && !files.contains(f.getName())) {
+                            files.add(f.getName());
                         }
                     }
                 }
             }
         }
-
         return files;
+    }
+
+    /**
+     * Uploads a file attachment for an event CRF.
+     * Stores the file in the study's attachment directory,
+     * creating the directory if it does not exist.
+     */
+    @Transactional
+    public void uploadAttachment(int eventCrfId, MultipartFile file) throws IOException {
+        String studyOid = attachmentStorageAdapter.getStudyOidByEventCrf(eventCrfId);
+        if (studyOid == null || file.isEmpty()) return;
+
+        String safeName = new File(file.getOriginalFilename()).getName();
+        File studyDir = attachmentStorageAdapter.studyDirectory(studyOid);
+        if (!studyDir.exists()) {
+            studyDir.mkdirs();
+        }
+        File dest = new File(studyDir, safeName);
+        file.transferTo(dest);
     }
 
     private static List<OptionDTO> parseOptions(String optionsText, String optionsValues) {

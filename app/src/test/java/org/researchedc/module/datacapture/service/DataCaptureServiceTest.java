@@ -9,10 +9,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.datacapture.dto.BatchSaveItemsRequest;
 import org.researchedc.module.datacapture.dto.ItemDataDTO;
@@ -20,11 +16,21 @@ import org.researchedc.module.datacapture.dto.ItemGroupDTO;
 import org.researchedc.module.datacapture.dto.ResponseSetDTO;
 import org.researchedc.module.datacapture.dto.SaveItemDataRequest;
 import org.researchedc.module.datacapture.entity.ItemDataEntity;
+import org.researchedc.module.datacapture.internal.adapter.AttachmentStorageAdapter;
 import org.researchedc.module.datacapture.entity.ItemGroupEntity;
 import org.researchedc.module.datacapture.entity.ResponseSetEntity;
 import org.researchedc.module.datacapture.repository.ItemDataRepository;
+import org.researchedc.module.datacapture.repository.ItemGroupMetadataRepository;
 import org.researchedc.module.datacapture.repository.ItemGroupRepository;
 import org.researchedc.module.datacapture.repository.ResponseSetRepository;
+import org.researchedc.module.event.repository.EventCrfRepository;
+import org.researchedc.module.event.repository.StudyEventRepository;
+import org.researchedc.module.subject.repository.StudySubjectRepository;
+import org.researchedc.module.crf.repository.CrfVersionRepository;
+import org.researchedc.module.rule.repository.RuleSetRepository;
+import org.researchedc.module.rule.repository.RuleSetRuleRepository;
+import org.researchedc.module.rule.repository.RuleRepository;
+import org.researchedc.module.rule.repository.RuleExpressionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,19 +43,28 @@ class DataCaptureServiceTest {
     @Mock private ItemDataRepository itemDataRepository;
     @Mock private ResponseSetRepository responseSetRepository;
     @Mock private ItemGroupRepository itemGroupRepository;
+    @Mock private ItemGroupMetadataRepository itemGroupMetadataRepository;
     @Mock private AuditService auditService;
-    @Mock private EventCRFDao eventCrfDao;
-    @Mock private IStudyDAO studyDao;
-    @Mock private IStudyEventDAO studyEventDao;
-    @Mock private IStudySubjectDAO studySubjectDao;
+    @Mock private AttachmentStorageAdapter attachmentStorageAdapter;
+    @Mock private EventCrfRepository eventCrfRepository;
+    @Mock private StudyEventRepository studyEventRepository;
+    @Mock private StudySubjectRepository studySubjectRepository;
+    @Mock private CrfVersionRepository crfVersionRepository;
+    @Mock private RuleSetRepository ruleSetRepository;
+    @Mock private RuleSetRuleRepository ruleSetRuleRepository;
+    @Mock private RuleRepository ruleRepository;
+    @Mock private RuleExpressionRepository ruleExpressionRepository;
 
     private DataCaptureService service;
 
     @BeforeEach
     void setUp() {
         service = new DataCaptureService(itemDataRepository,
-                responseSetRepository, itemGroupRepository, auditService,
-                eventCrfDao, studyDao, studyEventDao, studySubjectDao);
+                responseSetRepository, itemGroupRepository, itemGroupMetadataRepository, auditService,
+                attachmentStorageAdapter,
+                eventCrfRepository, studyEventRepository, studySubjectRepository,
+                crfVersionRepository, ruleSetRepository, ruleSetRuleRepository,
+                ruleRepository, ruleExpressionRepository);
     }
 
     private static ItemDataEntity createItemData(Integer id, Integer eventCrfId,

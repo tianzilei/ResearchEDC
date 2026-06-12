@@ -22,14 +22,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.module.dataimport.dto.CreateImportJobRequest;
 import org.researchedc.module.dataimport.dto.ImportJobDTO;
 import org.researchedc.module.dataimport.entity.ImportJob;
 import org.researchedc.module.dataimport.enums.ImportJobStatus;
 import org.researchedc.module.dataimport.enums.ImportType;
 import org.researchedc.module.dataimport.internal.adapter.ImportCrfDataAdapter;
+import org.researchedc.module.dataimport.internal.adapter.ImportCrfDataAdapter.EventCrfValidationResult;
+import org.researchedc.module.dataimport.internal.adapter.ImportCrfDataAdapter.ParsedOdm;
 import org.researchedc.module.dataimport.repository.ImportJobRepository;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -216,23 +216,17 @@ class ImportServiceTest {
                 && j.getCompletedDate() != null));
     }
 
-    private ODMContainer mockOdm() {
-        return mock(ODMContainer.class);
-    }
-
-    private EventCRFBean mockEventCrf() {
-        return mock(EventCRFBean.class);
+    private ParsedOdm mockOdm() {
+        return mock(ParsedOdm.class);
     }
 
     private void stubSuccessfulValidate() {
-        ODMContainer odm = mockOdm();
+        ParsedOdm odm = mockOdm();
         when(importAdapter.parseOdm(any(Path.class))).thenReturn(odm);
         when(importAdapter.validateMetadata(eq(odm), anyInt(), any(Locale.class)))
                 .thenReturn(Collections.emptyList());
-        when(importAdapter.checkStatusesValid(eq(odm), anyInt(), any(Locale.class)))
-                .thenReturn(true);
-        when(importAdapter.getEventCrfBeans(eq(odm), anyInt(), any(Locale.class)))
-                .thenReturn(List.of(mockEventCrf()));
+        when(importAdapter.validateEventCrfs(eq(odm), anyInt(), any(Locale.class)))
+                .thenReturn(new EventCrfValidationResult(true, 1));
         when(importAdapter.validateEditChecks(eq(odm), anyInt()))
                 .thenReturn("{\"editChecks\":{\"total\":5,\"withValue\":3,\"blank\":2}}");
     }
@@ -251,15 +245,14 @@ class ImportServiceTest {
         assertNotNull(result.getSummaryJson());
         verify(importAdapter).parseOdm(any(Path.class));
         verify(importAdapter).validateMetadata(any(), anyInt(), any(Locale.class));
-        verify(importAdapter).checkStatusesValid(any(), anyInt(), any(Locale.class));
-        verify(importAdapter).getEventCrfBeans(any(), anyInt(), any(Locale.class));
+        verify(importAdapter).validateEventCrfs(any(), anyInt(), any(Locale.class));
         verify(jobRepository, atLeast(2)).save(any());
     }
 
     @Test
     void validate_whenValidationErrors_marksInvalid() {
         ImportJob job = createJob(1L, "Job", ImportType.CRF_DATA, ImportJobStatus.STAGED);
-        ODMContainer odm = mockOdm();
+        ParsedOdm odm = mockOdm();
         when(importAdapter.parseOdm(any(Path.class))).thenReturn(odm);
         when(importAdapter.validateMetadata(eq(odm), anyInt(), any(Locale.class)))
                 .thenReturn(List.of("Metadata mismatch"));
@@ -272,21 +265,18 @@ class ImportServiceTest {
 
         assertEquals(ImportJobStatus.VALIDATED, result.getStatus());
         assertTrue(result.getSummaryJson().contains("invalid"));
-        verify(importAdapter, never()).checkStatusesValid(any(), anyInt(), any(Locale.class));
-        verify(importAdapter, never()).getEventCrfBeans(any(), anyInt(), any(Locale.class));
+        verify(importAdapter, never()).validateEventCrfs(any(), anyInt(), any(Locale.class));
     }
 
     @Test
     void validate_whenStatusesInvalid_marksBlocked() {
         ImportJob job = createJob(1L, "Job", ImportType.CRF_DATA, ImportJobStatus.STAGED);
-        ODMContainer odm = mockOdm();
+        ParsedOdm odm = mockOdm();
         when(importAdapter.parseOdm(any(Path.class))).thenReturn(odm);
         when(importAdapter.validateMetadata(eq(odm), anyInt(), any(Locale.class)))
                 .thenReturn(Collections.emptyList());
-        when(importAdapter.checkStatusesValid(eq(odm), anyInt(), any(Locale.class)))
-                .thenReturn(false);
-        when(importAdapter.getEventCrfBeans(eq(odm), anyInt(), any(Locale.class)))
-                .thenReturn(Collections.emptyList());
+        when(importAdapter.validateEventCrfs(eq(odm), anyInt(), any(Locale.class)))
+                .thenReturn(new EventCrfValidationResult(false, 0));
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
@@ -322,7 +312,7 @@ class ImportServiceTest {
     @Test
     void commit_happyPath_marksCompleted() {
         ImportJob job = createJob(1L, "Job", ImportType.CRF_DATA, ImportJobStatus.VALIDATED);
-        ODMContainer odm = mockOdm();
+        ParsedOdm odm = mockOdm();
         when(importAdapter.parseOdm(any(Path.class))).thenReturn(odm);
         when(importAdapter.commitImport(any(), anyInt(), any()))
                 .thenReturn(3);
@@ -473,7 +463,7 @@ class ImportServiceTest {
     @Test
     void fullLifecycle_validateErrorShortCircuits() {
         ImportJob job = createJob(1L, "Fail Job", ImportType.CRF_DATA, ImportJobStatus.STAGED);
-        ODMContainer odm = mockOdm();
+        ParsedOdm odm = mockOdm();
         when(importAdapter.parseOdm(any(Path.class))).thenReturn(odm);
         when(importAdapter.validateMetadata(eq(odm), anyInt(), any(Locale.class)))
                 .thenReturn(List.of("Error"));
@@ -484,7 +474,7 @@ class ImportServiceTest {
         ImportJobDTO result = service.validate(1L);
         assertEquals(ImportJobStatus.VALIDATED, result.getStatus());
         assertTrue(result.getSummaryJson().contains("invalid"));
-        verify(importAdapter, never()).checkStatusesValid(any(), anyInt(), any(Locale.class));
+        verify(importAdapter, never()).validateEventCrfs(any(), anyInt(), any(Locale.class));
     }
 
     @Test

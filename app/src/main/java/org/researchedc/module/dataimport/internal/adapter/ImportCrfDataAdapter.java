@@ -45,6 +45,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ImportCrfDataAdapter {
 
+    public record ParsedOdm(ODMContainer odm) {
+    }
+
+    public record EventCrfValidationResult(boolean statusesValid, int eventCrfCount) {
+    }
+
     private static final Logger log = LoggerFactory.getLogger(ImportCrfDataAdapter.class);
 
     private final DataSource dataSource;
@@ -73,7 +79,7 @@ public class ImportCrfDataAdapter {
         return service;
     }
 
-    public ODMContainer parseOdm(Path filePath) {
+    private ODMContainer parseOdmContainer(Path filePath) {
         try {
             String mappingDir = CoreResources.ODM_MAPPING_DIR;
             Mapping mapping = new Mapping();
@@ -89,12 +95,17 @@ public class ImportCrfDataAdapter {
         }
     }
 
-    public List<String> validateMetadata(ODMContainer odm, int studyId, Locale locale) {
+    public ParsedOdm parseOdm(Path filePath) {
+        return new ParsedOdm(parseOdmContainer(filePath));
+    }
+
+    public List<String> validateMetadata(ParsedOdm parsed, int studyId, Locale locale) {
+        ODMContainer odm = parsed.odm();
         ImportCRFDataService service = createService(locale);
         return service.validateStudyMetadata(odm, studyId);
     }
 
-    public boolean checkStatusesValid(ODMContainer odm, int studyId, Locale locale) {
+    private boolean checkStatusesValid(ODMContainer odm, int studyId, Locale locale) {
         ImportCRFDataService service = createService(locale);
         UserAccountBean ub = new UserAccountBean();
         ub.setActiveStudyId(studyId);
@@ -103,7 +114,7 @@ public class ImportCrfDataAdapter {
         return service.eventCRFStatusesValid(odm, ub);
     }
 
-    public List<EventCRFBean> getEventCrfBeans(ODMContainer odm, int studyId, Locale locale) {
+    private List<EventCRFBean> getEventCrfBeans(ODMContainer odm, int studyId, Locale locale) {
         ImportCRFDataService service = createService(locale);
         UserAccountBean ub = new UserAccountBean();
         ub.setActiveStudyId(studyId);
@@ -112,7 +123,15 @@ public class ImportCrfDataAdapter {
         return service.fetchEventCRFBeans(odm, ub);
     }
 
-    public int commitImport(ODMContainer odm, int studyId, Locale locale) {
+    public EventCrfValidationResult validateEventCrfs(ParsedOdm parsed, int studyId, Locale locale) {
+        ODMContainer odm = parsed.odm();
+        boolean statusesValid = checkStatusesValid(odm, studyId, locale);
+        List<EventCRFBean> eventCrfBeans = getEventCrfBeans(odm, studyId, locale);
+        return new EventCrfValidationResult(statusesValid, eventCrfBeans != null ? eventCrfBeans.size() : -1);
+    }
+
+    public int commitImport(ParsedOdm parsed, int studyId, Locale locale) {
+        ODMContainer odm = parsed.odm();
         ImportCRFDataService service = createService(locale);
         UserAccountBean ub = new UserAccountBean();
         ub.setActiveStudyId(studyId);
@@ -158,7 +177,8 @@ public class ImportCrfDataAdapter {
         return eventCrfBeans.size();
     }
 
-    public String validateEditChecks(ODMContainer odm, int studyId) {
+    public String validateEditChecks(ParsedOdm parsed, int studyId) {
+        ODMContainer odm = parsed.odm();
         Map<String, String> fieldValues = new HashMap<>();
         int totalItems = 0;
         var postImport = odm.getCrfDataPostImportContainer();
@@ -197,10 +217,10 @@ public class ImportCrfDataAdapter {
                             try {
                                 SimpleDateFormat isoFmt = new SimpleDateFormat("yyyy-MM-dd");
                                 isoFmt.setLenient(false);
-                                Date parsed = isoFmt.parse(value);
+                                Date parsedDate = isoFmt.parse(value);
                                 SimpleDateFormat targetFmt = new SimpleDateFormat("MM/dd/yyyy");
                                 targetFmt.setLenient(false);
-                                fieldValues.put(oid, targetFmt.format(parsed));
+                                fieldValues.put(oid, targetFmt.format(parsedDate));
                             } catch (ParseException e) {
                             }
                         }

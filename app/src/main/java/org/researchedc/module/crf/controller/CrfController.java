@@ -40,6 +40,11 @@ public class CrfController {
         return ResponseEntity.ok(crfService.getItemsBySection(sectionId, crfVersionId));
     }
 
+    @GetMapping("/sections/{sectionId}/scd-rules")
+    public ResponseEntity<List<Map<String, Object>>> getScdRules(@PathVariable int sectionId) {
+        return ResponseEntity.ok(crfService.getScdRulesBySection(sectionId));
+    }
+
     // ── Phase G: Write endpoints ──────────────────────────────────
 
     @PostMapping
