@@ -35,7 +35,7 @@ Remaining blockers:
 |---|---:|---|
 | Phase 3 DAO implementation deletion | 95 | Blocked by module-owned repository/service replacements for every SPI method and removal of adapter fallback SQL |
 | Phase 4 shared service deletion | 30 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
-| Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; remaining compatibility gaps are rule XML import, import job scheduling, disposable-DB rollback proof, and broader ODM/OpenRosa/export contract coverage |
+| Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; rollback proof added after commit `ae72d2415`; remaining compatibility gaps are rule XML import, import job scheduling, and broader ODM/OpenRosa/export contract coverage |
 
 ## Current Import State
 
@@ -57,7 +57,7 @@ Completed in commit `bc1f24d97`:
 
 Remaining import/export compatibility issues to resolve:
 
-- Add disposable-database proof that failed commits roll back without partial writes.
+- Done after commit `ae72d2415`: item persistence failures in `ImportCrfDataAdapter.commitImport()` now fail the commit instead of logging-and-continuing; `scripts/ci/check-import-rollback-postgres.sh` proves failed import-style transactions leave no partial writes against an explicit disposable PostgreSQL database.
 - Cover rule XML import and import job scheduling behavior or formally retire them.
 - Broaden ODM/OpenRosa/export contract coverage beyond the focused module tests.
 
@@ -123,7 +123,7 @@ Exit gate:
 
 ### 4. Prove Commit And Audit
 
-Status: **audit event/result DTO coverage complete in commit `bc1f24d97`; disposable-database rollback proof remains.**
+Status: **audit event/result DTO coverage complete in commit `bc1f24d97`; failed item persistence now aborts commit and disposable PostgreSQL rollback proof is covered by `scripts/ci/check-import-rollback-postgres.sh`.**
 
 Goal: prove the SPA/API path performs actual data mutation with rollback and audit parity.
 

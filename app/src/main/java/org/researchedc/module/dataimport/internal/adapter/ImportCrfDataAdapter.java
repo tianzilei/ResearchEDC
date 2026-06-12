@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.sql.DataSource;
 
@@ -62,24 +63,37 @@ public class ImportCrfDataAdapter {
     private final IItemDAO itemDao;
     private final IItemFormMetadataDAO itemFormMetadataDao;
     private final ResponseSetDomainDao responseSetDomainDao;
+    private final Function<Locale, ImportCRFDataService> serviceFactory;
 
     public ImportCrfDataAdapter(DataSource dataSource, AutowireCapableBeanFactory beanFactory,
                                 IItemDataDAO itemDataDao, IItemDAO itemDao,
                                 IItemFormMetadataDAO itemFormMetadataDao,
                                 ResponseSetDomainDao responseSetDomainDao) {
+        this(dataSource, beanFactory, itemDataDao, itemDao, itemFormMetadataDao,
+                responseSetDomainDao, locale -> {
+                    log.debug("Creating legacy ImportCRFDataService adapter for locale: {}", locale);
+                    ImportCRFDataService service = new ImportCRFDataService(dataSource, locale);
+                    beanFactory.autowireBean(service);
+                    return service;
+                });
+    }
+
+    ImportCrfDataAdapter(DataSource dataSource, AutowireCapableBeanFactory beanFactory,
+                         IItemDataDAO itemDataDao, IItemDAO itemDao,
+                         IItemFormMetadataDAO itemFormMetadataDao,
+                         ResponseSetDomainDao responseSetDomainDao,
+                         Function<Locale, ImportCRFDataService> serviceFactory) {
         this.dataSource = dataSource;
         this.beanFactory = beanFactory;
         this.itemDataDao = itemDataDao;
         this.itemDao = itemDao;
         this.itemFormMetadataDao = itemFormMetadataDao;
         this.responseSetDomainDao = responseSetDomainDao;
+        this.serviceFactory = serviceFactory;
     }
 
     public ImportCRFDataService createService(Locale locale) {
-        log.debug("Creating legacy ImportCRFDataService adapter for locale: {}", locale);
-        ImportCRFDataService service = new ImportCRFDataService(dataSource, locale);
-        beanFactory.autowireBean(service);
-        return service;
+        return serviceFactory.apply(locale);
     }
 
     private ODMContainer parseOdmContainer(Path filePath) {
@@ -166,8 +180,11 @@ public class ImportCrfDataAdapter {
                                         itemCount++;
                                     }
                                 } catch (Exception e) {
-                                    log.warn("Failed to persist item {}: {}",
-                                            importItem.getItemOID(), e.getMessage());
+                                    throw new IllegalStateException(
+                                            "Failed to persist imported item "
+                                                    + importItem.getItemOID() + ": "
+                                                    + e.getMessage(),
+                                            e);
                                 }
                             }
                         }
