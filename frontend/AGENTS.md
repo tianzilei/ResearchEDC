@@ -20,7 +20,7 @@ frontend/src/
 │   ├── questionnaire-builder/
 │   ├── StudySwitcher.tsx
 │   ├── DiscrepancyNotes.tsx
-│   ├── LegacyFrame.tsx  # iframe wrapper for legacy JSP
+│   ├── LegacyFrame.tsx  # compatibility iframe wrapper; current web/JSP tree is absent
 │   └── SkeletonCard.tsx
 ├── config/              # App configuration
 │   └── index.ts
@@ -67,7 +67,7 @@ The frontend communicates with the backend through:
 - **`client.ts`** — Base `ApiClient` with session-based auth (`credentials: same-origin`), JSON/FormData serialization, CSRF token injection, error handling
 - **`generated.ts`** — TypeScript interfaces matching backend DTOs (manually updated)
 - **REST API** — Backend controllers at `/api/v1/*` return JSON
-- **Legacy bridge** — `LegacyFrame.tsx` wraps JSP pages in iframes for `/legacy/*` path
+- **Legacy bridge** — `LegacyFrame.tsx` remains for compatibility routes, but the current repository has no `web/` JSP tree
 - **Questionnaire service** — Separate Python FastAPI at `/q/*` path (Nginx proxied)
 
 ## ANTI-PATTERNS

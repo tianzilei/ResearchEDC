@@ -6,6 +6,12 @@
 
 ---
 
+## 2026-06-13 - Documentation baseline refresh
+
+- Aligned README and AGENTS handoff docs with the current repository state: `web/` absent, `shared/` at 504 Java files, `shared/dao` at 95 Java files, active legacy inventory at 125 artifacts, and Java module tests at 432/432.
+- Updated local module documentation in `app/AGENTS.md`, `shared/AGENTS.md`, and `frontend/AGENTS.md` to remove stale `web/`/JSP assumptions and currentize file/test counts.
+- Bumped refactor handoff dates in `docs/refactor/remove-legacy-code-plan.md`, `docs/refactor/next-refactor-removal-plan.md`, `.sisyphus/LEGACY_REFACTOR_PLAN.md`, and top-level `AGENTS.md`.
+
 ## 2026-06-11 - Legacy controller + servlet deletion (runs 78-79)
 
 - **Modules:** `web`, `docs`, `app`, `frontend`, `shared`

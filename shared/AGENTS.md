@@ -1,7 +1,7 @@
 # shared/ - Shared Domain Logic & Data Access
 
 **Module:** Legacy domain logic, data access, entities, and business services
-**Files:** 713 Java files
+**Files:** 504 Java files
 **Package:** `org.researchedc.*`
 
 > Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
@@ -16,7 +16,7 @@ shared/src/main/java/org/researchedc/
 │                 #             service, odmbeans, submit, masking)
 ├── config/       # CoreResourcesConfig.java — resource bundle accessor
 ├── core/         # Core utilities — formatters, file access, resource helpers (7 files)
-├── dao/          # Data access layer — 175 files
+├── dao/          # Data access layer — 95 files
 │   ├── hibernate/ # AbstractDomainDao subclasses (67 files, JPA-based)
 │   ├── spi/       # DAO SPI interfaces (66 files)
 │   ├── managestudy/ # Study/subject DAOs
@@ -41,7 +41,7 @@ shared/src/main/resources/
 
 | Area | Files | Description |
 |------|-------|-------------|
-| **DAO (Hibernate)** | 67 | `AbstractDomainDao` subclasses — JPA-based CRUD for all legacy entities |
+| **DAO (Hibernate)** | legacy subset | `AbstractDomainDao` subclasses — JPA-based CRUD for remaining legacy entities |
 | **DAO (SPI)** | 66 | Interface definitions for dependency injection (`IStudyDAO`, `ISubjectDAO`, etc.) |
 | **Domain Entities** | 166 | Hibernate `@Entity` classes mapping to database tables (`datamap/` has 62) |
 | **DTO Beans** | 253 | `EntityBean` subclasses — data transfer objects for legacy servlets |
@@ -62,8 +62,7 @@ shared/src/main/resources/
 ## TESTING
 
 The `shared/` module has no dedicated test directory. Tests for shared functionality exist in:
-- `app/src/test/` — 20 Java test files (Modulith module service tests)
-- `web/src/test/` — 2 unit tests (Mockito-based servlet tests)
+- `app/src/test/` — 55 Java test files covering Modulith module, legacy-bridge, and compatibility paths
 
 Legacy `legacy-core/src/test/` (17 files, DBUnit-based DAO/Service tests) was archived during the
 `legacy-core` → `shared/` consolidation. These tests require PostgreSQL and have commented-out
@@ -78,7 +77,7 @@ test methods awaiting reactivation.
 | SPI interfaces | ✅ 66 interfaces for DI (replaces direct DAO class references) |
 | Liquibase migrations | ✅ 208 XML files, versioned from 3.x through 3.18 |
 | Strangulation target | 🔶 Active — new code goes to `app/module/` |
-| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 175 DAO/SPI/implementation files still exist. Deletion is blocked until module-owned repositories/services fully replace the SPI implementations and legacy web workflows no longer need the DAO behavior. |
+| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 95 DAO/SPI/implementation files still exist. Deletion is blocked until module-owned repositories/services fully replace the SPI implementations and compatibility workflows no longer need the DAO behavior. |
 
 ## ANTI-PATTERNS
 

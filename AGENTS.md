@@ -2,7 +2,7 @@
 
 **Derived from:** OpenClinica v3.x
 **Generated:** 2026-05-25
-**Updated:** 2026-06-12
+**Updated:** 2026-06-13
 **Branch:** master
 
 ## OVERVIEW

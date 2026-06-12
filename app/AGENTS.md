@@ -1,7 +1,7 @@
 # app/ - Spring Boot Modular Monolith Entry Point
 
 **Module:** Application entry point, configuration, and Modulith modules  
-**Files:** 374 Java files total, including 354 under `module/`; 17 Modulith modules
+**Files:** 432 Java files total, including 402 under `module/`; 17 Modulith modules
 
 > Entry point: `OpenClinicaApplication.java` — Spring Boot WAR packaging.  
 > Config classes in `org.researchedc.config.*` handle Hibernate, security (Spring Security form login + CSRF), scheduling, and OpenAPI.
@@ -59,7 +59,7 @@ app/src/main/java/org/researchedc/
 ## TESTING
 
 - **ModulithVerificationTest** — Validates no circular module dependencies (no DB needed)
-- **Module service tests** — 12 test files under `module/*/service/`, use `@SpringBootTest`
+- **Module tests** — 55 Java test files under `app/src/test`, covering service, controller, adapter, and boundary behavior
 - **LegacyGatewayContractTest** — Contract test for `/api/v1/legacy/*` endpoints
 - **TestDataFactory** — Shared test data builder in `testutil/`
 

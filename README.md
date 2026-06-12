@@ -1,7 +1,7 @@
 # ResearchEDC
 
 - Version: 0.1
-- Last updated: 2026-06-10
+- Last updated: 2026-06-13
 - License: GNU LGPL
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x.
@@ -19,7 +19,7 @@ ResearchEDC is currently a modular monolith with legacy compatibility layers:
 | Spring Boot app | `app/` | Application entry point, security/config, Spring Modulith modules |
 | Modulith modules | `app/src/main/java/org/researchedc/module/` | Study, subject, event, data capture, CRF, export, audit, randomization, identity, dashboard, and supporting modules |
 | Shared legacy core | `shared/` | Remaining legacy beans, DAOs, services, rules, jobs, Hibernate entities, Liquibase migrations |
-| Legacy web UI | `web/` | Remaining JSP/SecureController workflows kept for compatibility during strangulation |
+| Legacy web UI | retired | `web/` is absent; needed import/validation compatibility classes were migrated into `app/` |
 | SOAP services | retired | `ws/` is absent from the current tree; keep compatibility audits in the legacy-removal plan |
 | React SPA | `frontend/` | New `/app/*` application shell and migrated workflows |
 | Questionnaire service | `questionnaire-service/` | Python FastAPI service for questionnaire templates, assignments, responses, scoring, and exports |
@@ -39,10 +39,10 @@ The long-running refactor follows a strangler pattern: keep legacy behavior work
 Current high-level status:
 
 - `legacy-core/` has been consolidated into `shared/` with package rename to `org.researchedc`.
-- Legacy code is **not fully removed**. Current baseline still includes `shared/` legacy beans/DAOs/services and `web/` JSP/SecureController workflows. The `ws/` SOAP module is absent from the current tree.
+- Legacy code is **not fully removed**. Current baseline still includes `shared/` legacy beans/DAOs/services. The `web/` JSP/SecureController module and `ws/` SOAP module are absent from the current tree.
 - Spring XML and Ehcache-era configuration have largely been replaced by Java configuration and modern cache/security wiring.
 - Modulith modules exist for study, subject, event, data capture, identity, CRF, export, audit, randomization, dashboard, rule, dataset, filter, subject group, discrepancy note, OpenRosa, and legacy gateway functions.
-- React SPA covers major workflows and keeps remaining JSP pages reachable through the legacy frame path.
+- React SPA covers major workflows. The legacy frame component remains in the SPA for compatibility, but there are no current `web/` JSP views in the repository.
 - Questionnaire service has its own API, data model, scoring engine, and tests.
 - `DaoProvider` has been removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` construction is at 0 active matches across the legacy Java surfaces.
 - Legacy DAO consumer work is mostly complete: `DaoProvider` and direct DAO construction are gone, and the target DAO families have been SPI-widened. The DAO implementation files still remain until module-owned replacements are proven under production workflows.
@@ -54,12 +54,12 @@ Current legacy removal baseline:
 
 | Surface | Current Count | Removal Gate |
 |---------|---------------|--------------|
-| `shared/src/main/java/org/researchedc` | 543 Java files | Shared beans/services/DAO/domain callers replaced or proven unused |
-| `shared/dao` | 100 Java files | SPI implementations replaced by module-owned repositories/services |
-| `web/` Java | 152 files | Routes migrated to SPA/module APIs, servlet registrations removed |
-| JSP pages | 60 files | No direct navigation or include dependency remains |
-| Legacy servlet inventory | 9 artifacts | Workflow migrated or deleted |
-| Active legacy workflow inventory | 216 artifacts | Every artifact has owner category, replacement proof, or compatibility gate |
+| `shared/src/main/java/org/researchedc` | 504 Java files | Shared beans/services/DAO/domain callers replaced or proven unused |
+| `shared/dao` | 95 Java files | SPI implementations replaced by module-owned repositories/services |
+| `web/` Java | 0 files | Directory deleted; needed compatibility classes migrated to `app/` |
+| JSP pages | 0 files | `web/` views deleted |
+| Legacy servlet inventory | 0 artifacts | Servlet workflows migrated, retired, or deleted |
+| Active legacy workflow inventory | 125 artifacts | Every artifact has owner category, replacement proof, or compatibility gate |
 | `ws/` Java | 0 files | SOAP module is absent; keep compatibility audit if endpoints reappear |
 
 For detailed handoff notes, see [AGENTS.md](./AGENTS.md), [.sisyphus/LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md), and [docs/refactor/remove-legacy-code-plan.md](./docs/refactor/remove-legacy-code-plan.md).
@@ -81,7 +81,7 @@ Current baseline from project notes:
 |-------|--------|
 | Backend compile | Passing |
 | Modulith verification | Passing |
-| Java module tests | 295/295 passing in latest Phase 1 Enterprise/mail removal slice |
+| Java module tests | 432/432 passing in latest project handoff |
 | Frontend typecheck | 0 errors |
 | Frontend tests | 25/25 passing |
 | Questionnaire service tests | 39/39 passing |
@@ -97,7 +97,6 @@ Current baseline from project notes:
 - [MODIFICATIONS.md](./MODIFICATIONS.md) — chronological change log
 - [app/AGENTS.md](./app/AGENTS.md) — Spring Boot entry point and Modulith notes
 - [shared/AGENTS.md](./shared/AGENTS.md) — shared legacy domain/data-access notes
-- [web/AGENTS.md](./web/AGENTS.md) — legacy web UI notes
 - [frontend/AGENTS.md](./frontend/AGENTS.md) — React SPA notes
 - [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) — questionnaire service notes
 

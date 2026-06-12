@@ -1,6 +1,6 @@
 # Remove Legacy Code Plan
 
-**Last updated:** 2026-06-12
+**Last updated:** 2026-06-13
 **Status:** Legacy removal is **not complete**. **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 95 DAO files in `shared/dao`; (2) Phase 4 shared service/domain cleanup gated by those DAO replacements and import/export compatibility.
 
 ## Current Baseline
