@@ -12,7 +12,6 @@ import org.researchedc.dao.spi.RuleSetAuditDomainDao;
 import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.SCDItemMetadataDomainDao;
 import org.researchedc.dao.spi.IRuleSetRuleDAO;
-import org.researchedc.dao.spi.OpenClinicaVersionDao;
 import org.researchedc.dao.spi.ResponseSetDomainDao;
 import org.researchedc.dao.spi.UsageStatsServiceDao;
 import jakarta.persistence.EntityManagerFactory;
@@ -140,11 +139,6 @@ public class HibernateConfig {
     @Bean
     public UsageStatsServiceDao usageStatsServiceDAO() {
         return new UsageStatsServiceDAO();
-    }
-
-    @Bean
-    public OpenClinicaVersionDao openClinicaVersionDAO() {
-        return new OpenClinicaVersionDAO();
     }
 
     // DatabaseChangeLogDao replaced by @Primary DatabaseChangeLogDaoAdapter

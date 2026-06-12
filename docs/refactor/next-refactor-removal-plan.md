@@ -1,7 +1,8 @@
 # Next Refactor And Removal Plan
 
 **Created:** 2026-06-11
-**Status source:** current worktree plus `docs/refactor/remove-legacy-code-plan.md` and generated inventory.
+**Updated:** 2026-06-12
+**Status source:** current worktree plus regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}`.
 
 ## Current Status
 
@@ -13,118 +14,107 @@ Completed foundations:
 - Phase B schema ownership is complete.
 - SOAP `ws/` is absent.
 - DAO SPI widening is complete for the 24 main DAO families.
-- Major Phase 1 JSP/servlet deletion slices are closed: admin read-only, CRF metadata cleanup, study/subject/event, export/dataset/filter, data entry/discrepancy, login/profile/enterprise/mail, and entity-action remove/restore gaps.
+- Phase 1 web/JSP/servlet deletion is closed; the `web/` directory is absent.
+- A `dataimport` Modulith module and SPA import wizard already exist.
 
-Current generated legacy inventory:
+Current generated legacy inventory (2026-06-12):
 
 | Surface | Remaining |
 |---|---:|
-| Active legacy workflow artifacts | 208 |
-| JSP views | 52 |
-| Legacy servlets | 9 |
-| Spring MVC route artifacts | 15 |
-| DAO files under `shared/dao` | 100 |
-| Shared services in inventory | 32 |
+| Active legacy workflow artifacts | 125 |
+| JSP views | 0 |
+| Legacy servlets | 0 |
+| Spring MVC route artifacts | 0 |
+| DAO files under `shared/dao` | 95 |
+| Shared services in inventory | 30 |
 | Unknown inventory rows | 0 |
 
-Remaining Phase 1 blockers:
+Remaining blockers:
 
 | Slice | Count | Status |
 |---|---:|---|
-| CRF metadata/data-entry rendering | 11 + related data-entry rows | Blocked by full SPA CRF renderer, repeating groups, rules, discrepancy notes, print, attachments |
-| Data entry/discrepancy | 26 | Blocked by same renderer/workflow parity |
-| Import/export compatibility | 10 | Active next executable slice |
-| Study/subject/event fallbacks | 22 | Needs route-by-route compatibility closure |
-| Layout/common JSPs | 6 | Delete last |
-| Spring MVC/OpenRosa compatibility | 15 routes | Needs public contract classification |
+| Phase 3 DAO implementation deletion | 95 | Blocked by module-owned repository/service replacements for every SPI method and removal of adapter fallback SQL |
+| Phase 4 shared service deletion | 30 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
+| Import/export compatibility hardening | module work | Dataimport module exists; needs tests, structured preview/errors, transactional commit/audit proof, and secure attachment download |
 
-## In-Progress Worktree
+## Current Import State
 
-The current worktree already contains an import/export implementation start:
+The current worktree contains:
 
-- New `app/src/main/java/org/researchedc/module/dataimport/` module.
-- New `ImportJob` entity, repository, DTOs, controller, service, and legacy `ImportCRFDataService` adapter.
-- New Liquibase file `shared/src/main/resources/migration/3.18/2026-06-11-import-tables.xml`, included from `release.xml`.
-- SPA `frontend/src/pages/admin/ImportManager.tsx` rewritten as a multi-step import manager.
-- `ImportUploadController` now creates an import job during upload.
-- `DataCaptureController`/`DataCaptureService` now expose a first attachment download endpoint.
-
-This is not deletion-ready yet. It is an early scaffold and needs contract cleanup, real validation/commit behavior, tests, and security hardening before any legacy import/export artifacts are removed.
+- `app/src/main/java/org/researchedc/module/dataimport/` with `ImportJob`, repository, DTOs, controller, service, and `ImportCrfDataAdapter`.
+- `POST /api/v1/imports/upload`, which uploads and creates one import job.
+- A temporary `/api/legacy/import/upload` bridge that delegates to `ImportService`.
+- SPA `frontend/src/pages/admin/ImportManager.tsx`, which uploads through `/api/v1/imports/upload` and validates/commits existing jobs.
+- `DataCaptureController`/`DataCaptureService` attachment download support that still needs hardening.
 
 Immediate issues to resolve:
 
-- Upload creates an `ImportJob`, then the SPA creates another job from the upload result.
-- SPA sends `storedFile`, but backend `CreateImportJobRequest` expects `storedFilePath`.
-- `POST /api/legacy/import/upload` still uses the legacy namespace and should either become `/api/v1/imports/upload` or be explicitly documented as a temporary bridge.
-- `ImportService.validate()` and `commit()` only change statuses; they do not validate ODM, map data, run edit checks, or commit CRF data.
-- `ImportCrfDataAdapter` exists but is not used by validation/commit.
-- Attachment download accepts a raw file path/name and needs event CRF/item-level permission checks before it can replace `DownloadAttachedFileServlet`.
-- No tests exist yet for the new `dataimport` module or attachment endpoint.
+- No focused tests exist yet for the `dataimport` module or attachment endpoint.
+- The legacy upload bridge passes `requestedBy = null`; either remove the bridge or resolve the session user.
+- `ImportService.validate()` stores compact JSON strings instead of exposing a typed preview/error DTO.
+- `commit()` needs disposable-DB proof for rollback, audit parity, and result statistics.
+- Attachment download accepts raw file path/name input and needs event CRF/item-level permission checks.
 
 ## Next Plan
 
-### 1. Stabilize Import API Contract
+### 1. Add Import Module Tests
 
-Goal: make the new import module compile and expose one coherent upload -> job -> validate -> commit contract.
-
-Actions:
-
-- Move file upload into `ImportController` as `POST /api/v1/imports/upload`.
-- Return a single `ImportJobDTO` from upload.
-- Remove the duplicate SPA `createJob` step or change it into an explicit metadata-confirm step that updates the existing job.
-- Align request/response field names (`storedFilePath`, `fileName`, `fileSize`, `importJobId`).
-- Set `requestedBy` from the authenticated session instead of `null`.
-- Keep `/api/legacy/import/upload` only as a temporary delegating compatibility endpoint if needed.
-
-Exit gate:
-
-- SPA no longer creates duplicate jobs.
-- `ImportManager` can upload one file and show exactly one `STAGED` job.
-- `mvn -pl app -am compile -DskipTests` and `cd frontend && pnpm typecheck` pass.
-
-### 2. Add Import Module Tests
-
-Goal: protect job lifecycle behavior before adding real import parsing.
+Goal: protect the existing upload -> job -> validate -> commit lifecycle before changing behavior.
 
 Actions:
 
-- Add `ImportServiceTest` for create/list/get/validate/commit/failure transitions.
-- Add `ImportControllerTest` or web-layer contract tests for upload/list/validate/commit.
-- Add migration smoke coverage if the existing migration checks do not include `2026-06-11-import-tables.xml`.
-- Run Modulith verification to confirm the new `dataimport` module boundaries are valid.
+- Add `ImportServiceTest` for upload/create/list/get/validate/commit/failure transitions.
+- Add controller contract tests for canonical `/api/v1/imports/upload`, list, validate, and commit.
+- Cover the legacy `/api/legacy/import/upload` bridge if it remains.
+- Add migration smoke coverage if existing migration checks do not include `2026-06-11-import-tables.xml`.
+- Run Modulith verification to confirm `dataimport` boundaries are valid.
 
 Exit gate:
 
 - Targeted import tests pass.
-- `ModulithVerificationTest` passes with the new module.
+- `ModulithVerificationTest` passes with the `dataimport` module.
+- `mvn -pl app -am compile -DskipTests` and `cd frontend && pnpm typecheck` pass.
 
-### 3. Implement Real CRF Data Validation
+### 2. Replace String Summary With Typed Preview
 
-Goal: replace the `ImportCRFDataServlet` validation path enough that `import.jsp` no longer provides unique behavior.
+Goal: make validation output usable by the SPA and testable without parsing ad hoc JSON fragments.
 
 Actions:
 
-- Call the existing `ImportCRFDataService` through `ImportCrfDataAdapter` as a temporary anti-corruption layer.
-- Validate ODM XML schema/version.
-- Validate study metadata/OID correspondence.
-- Validate event CRF status eligibility.
-- Collect validation/edit-check errors into structured `summaryJson` or a typed preview DTO.
-- Add `GET /api/v1/imports/{id}/preview`.
-- Show validation summary and errors in `ImportManager`.
+- Add a typed validation/preview DTO for metadata errors, event CRF status, edit-check results, warnings, and counts.
+- Add `GET /api/v1/imports/{id}/preview` or return the typed preview from validate.
+- Persist preview/result in `summaryJson` only as storage, not as the service/controller contract.
+- Update `ImportManager` to show structured errors and warnings.
 
 Exit gate:
 
-- A representative valid ODM file reaches `VALIDATED`.
-- A representative invalid ODM file reaches `FAILED` or remains staged with structured errors.
+- A representative valid ODM file reaches `VALIDATED` with counts.
+- A representative invalid ODM file exposes structured errors.
 - SPA displays the same decision points as the legacy confirm/verify path.
 
-### 4. Implement Commit And Audit
+### 3. Prove CRF Data Validation Coverage
 
-Goal: make the SPA path perform the actual data mutation currently owned by `ImportCRFDataServlet`.
+Goal: prove the imported ODM path validates the clinical data conditions that still matter.
 
 Actions:
 
-- Wire `commit()` to the legacy service initially, then isolate module-owned pieces for later extraction.
+- Validate ODM XML schema/version.
+- Validate study metadata/OID correspondence.
+- Validate event CRF status eligibility.
+- Preserve existing edit-check coverage in `ImportCrfDataAdapter.validateEditChecks()`.
+- Add tests for blocked status, metadata mismatch, empty event CRF data, and edit-check failures.
+
+Exit gate:
+
+- Valid and invalid representative ODM files produce deterministic preview results.
+- Validation failures do not advance to commit.
+
+### 4. Prove Commit And Audit
+
+Goal: prove the SPA/API path performs actual data mutation with rollback and audit parity.
+
+Actions:
+
 - Preserve transaction boundaries and rollback on partial failure.
 - Record audit events equivalent to the legacy import action.
 - Store result stats: subjects/events/event CRFs/items inserted or updated, warnings, errors.
@@ -137,7 +127,7 @@ Exit gate:
 
 ### 5. Harden Attachment Download
 
-Goal: replace `DownloadAttachedFileServlet` safely.
+Goal: make attachment download safe as app/module compatibility code.
 
 Actions:
 
@@ -149,37 +139,39 @@ Actions:
 
 Exit gate:
 
-- SPA data-entry/file components can download attachments without `DownloadAttachedFileServlet`.
+- SPA data-entry/file components can download attachments without raw path parameters.
 - Security tests cover the high-risk cases.
 
-### 6. Reconcile Inventory And Delete Only Proven Artifacts
+### 6. Phase 3 DAO Replacement Ledger
 
-Goal: remove only artifacts whose replacement path is proven.
-
-Deletion candidates after steps 1-5:
-
-- `web/src/main/java/org/researchedc/control/submit/ImportCRFDataServlet.java`
-- `web/src/main/webapp/WEB-INF/jsp/submit/import.jsp`
-- `web/src/main/java/org/researchedc/control/submit/DownloadAttachedFileServlet.java`
-- `web/src/main/webapp/WEB-INF/jsp/submit/downloadAttachedFile.jsp`
-
-Defer:
-
-- The six print JSPs until SPA print mode or ODM export equivalence is proven.
+Goal: turn the 95 remaining `shared/dao` files into an actionable deletion queue.
 
 Actions:
 
-- Remove servlet registrations/mappings.
-- Delete JSPs only after no includes, forwards, links, or tests reference them.
-- Regenerate `legacy-workflow-inventory.{csv,md}`.
-- Update `phase-1-import-export-ledger.csv` with `covered/deleted/deferred` statuses.
-- Update `remove-legacy-code-plan.md` counts after regeneration.
+- Generate a per-SPI method ledger for the 24 widened DAO families plus minor DAO families.
+- Mark every method as `module-backed`, `fallback-sql`, `legacy-only`, or `unused`.
+- Prioritize high-value fallback SQL removals in CRF/data capture, study event, rule, dataset/filter, and discrepancy-note groups.
+- Delete only implementation/support files with no bean registration, factory method, inheritance dependency, or caller.
 
 Exit gate:
 
-- Generated inventory count drops for the deleted artifacts.
+- A checked-in DAO deletion ledger exists.
+- At least one low-risk DAO implementation/support file is proven removable or explicitly deferred with the blocking SPI methods listed.
+
+### 7. Reconcile Inventory After Each Slice
+
+Actions:
+
+- Regenerate `legacy-workflow-inventory.{csv,md}`.
+- Update `remove-legacy-code-plan.md` counts after regeneration.
+- Update this plan current inventory table after every deletion/replacement slice.
+- Keep `AGENTS.md` and `.sisyphus/LEGACY_REFACTOR_PLAN.md` aligned when the top-level baseline changes.
+
+Exit gate:
+
+- Generated inventory and handoff docs agree on counts and next action.
 - Legacy guardrails pass.
-- Backend compile, Modulith verification, app tests, frontend typecheck/tests pass.
+- Backend compile, Modulith verification, app tests, frontend typecheck/tests pass for code changes.
 
 ## Verification Commands
 
@@ -189,12 +181,12 @@ Run in this order for the next slice:
 git status --short
 mvn -pl app -am compile -DskipTests
 mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false
-mvn test -pl app -am -Dtest='Import*Test,DataCaptureServiceTest'
+mvn test -pl app -am -Dtest="Import*Test,DataCaptureServiceTest"
 cd frontend && pnpm typecheck
 cd frontend && pnpm test --run
 ```
 
-For deletion steps, also run:
+For deletion or baseline updates, also run:
 
 ```bash
 bash scripts/ci/check-legacy-guardrails.sh
@@ -203,16 +195,10 @@ scripts/ci/generate-legacy-inventory.py --output-dir docs/refactor --basename le
 
 ## Recommended Immediate Commit Boundary
 
-First commit should only stabilize the scaffold:
+First commit should add focused tests and any compile/typecheck fixes for the existing import module. Do not delete more compatibility code in that commit.
 
-- API contract cleanup.
-- Duplicate job creation removed.
-- Compile/typecheck fixes.
-- Import service/controller tests for job lifecycle.
-- No legacy servlet/JSP deletion.
+Second commit should replace string summaries with typed preview/result contracts.
 
-Second commit should add real validation/preview.
+Third commit should prove commit/audit behavior and harden attachment download.
 
-Third commit should add commit/audit behavior and attachment download hardening.
-
-Only the fourth commit should delete import/download legacy artifacts, and only if the exit gates above are satisfied.
+Fourth commit should start the Phase 3 DAO deletion ledger and remove only artifacts with proven replacement coverage.

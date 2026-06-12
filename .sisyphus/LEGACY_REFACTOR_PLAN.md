@@ -1,7 +1,7 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-12 (Legacy code removal is **not complete**. Phase B schema ownership and Phase C SPI widening are complete. Phase 1 JSP/static webapp surface is removed in the current worktree: 0 JSPs, 0 static assets, web.xml 40 lines. Remaining blockers are 102 web/ Java files, including 6 secure servlet subclasses and data-entry/import validation helpers, plus 100 DAO files. See `docs/refactor/remove-legacy-code-plan.md`.)
-> **Scope:** All remaining legacy code in `shared/` and `web/`; keep SOAP compatibility audits only if `ws/` reappears
+> **Last updated:** 2026-06-12 (Legacy code removal is **not complete**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 95 DAO files under `shared/dao`, 30 shared-service inventory rows, and import/export compatibility hardening in app/module code. See `docs/refactor/remove-legacy-code-plan.md`.)
+> **Scope:** All remaining legacy code in `shared/` plus app-hosted compatibility classes migrated from `web/`; keep SOAP compatibility audits only if `ws/` reappears
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
 ---
@@ -21,16 +21,14 @@
 | 5 | `datacapture` | Bridge to `item_data`/`response_set` | `/api/v1/data-capture` |
 | — | `identity` | Bridge to `user_account`/`study_user_role` | `/api/v1/identity` |
 
-### Remaining legacy code baseline (2026-06-12, current dirty worktree)
+### Remaining legacy code baseline (2026-06-12, current worktree after regenerated inventory)
 
 ```
-shared/   509 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
-          100 Java files under shared/src/main/java/org/researchedc/dao
-web/      102 Java files → servlet bases, 6 secure servlet subclasses, validation/import helpers, table/view/SDV/scheduled-job support
-            0 JSP pages, 0 static webapp assets
-            6 active legacy-servlet inventory artifacts
+shared/   504 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
+           95 Java files under shared/src/main/java/org/researchedc/dao
+web/        0 files → directory absent; needed import/validation compatibility classes migrated to app/
 ws/         0 Java files → SOAP module absent in current tree
-inventory 208 active artifacts -> 144 replace, 64 keep compatibility, 0 unknown
+inventory 125 active artifacts -> 76 replace, 49 keep compatibility, 0 unknown
 ```
 
 Important distinction: `legacy-core/` removal was a module consolidation into `shared/`; it was not full legacy code removal.

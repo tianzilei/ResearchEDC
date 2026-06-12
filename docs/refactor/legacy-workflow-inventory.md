@@ -1,6 +1,6 @@
 # Legacy Workflow Inventory
 
-Generated: 2026-06-11 08:14:25 UTC
+Generated: 2026-06-12 04:01:53 UTC
 
 Full CSV inventory: `legacy-workflow-inventory.csv`
 
@@ -8,37 +8,28 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 
 | Artifact type | Count |
 |---|---:|
-| `dao-implementation` | 44 |
-| `dao-spi` | 51 |
+| `dao-implementation` | 41 |
+| `dao-spi` | 49 |
 | `dao-support` | 5 |
-| `jsp-view` | 42 |
-| `legacy-servlet` | 6 |
-| `shared-service` | 32 |
-| `spring-mvc-route` | 9 |
+| `shared-service` | 30 |
 
 ## Summary By Classification
 
 | Classification | Count |
 |---|---:|
-| `keep compatibility` | 62 |
-| `replace` | 127 |
+| `keep compatibility` | 49 |
+| `replace` | 76 |
 
 ## Summary By Phase Slice
 
 | Phase slice | Count |
 |---|---:|
-| `phase-1-crf-metadata` | 11 |
-| `phase-1-data-entry-discrepancy` | 23 |
-| `phase-1-export-dataset-filter` | 1 |
-| `phase-1-import-export-compatibility` | 8 |
-| `phase-1-layout-common` | 6 |
-| `phase-1-study-subject-event` | 8 |
-| `phase-3-dao-implementation-deletion` | 100 |
-| `phase-4-shared-service-deletion` | 32 |
+| `phase-3-dao-implementation-deletion` | 95 |
+| `phase-4-shared-service-deletion` | 30 |
 
 ## First Phase 1 Candidate Slice
 
-Recommended slice: `phase-1-crf-metadata`.
+Recommended slice: `phase-0-inventory-and-gates`.
 
 Deletion proof required before removing any candidate artifact:
 
@@ -52,17 +43,6 @@ Candidate artifacts:
 
 | Type | Path | Symbol | Route/mapping |
 |---|---|---|---|
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/managestudy/viewSectionDataEntry.jsp | viewSectionDataEntry.jsp | /WEB-INF/jsp/managestudy/viewSectionDataEntry.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/managestudy/viewSectionDataEntryHtml.jsp | viewSectionDataEntryHtml.jsp | /WEB-INF/jsp/managestudy/viewSectionDataEntryHtml.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/generateGroupItemTxt.jsp | generateGroupItemTxt.jsp | /WEB-INF/jsp/submit/generateGroupItemTxt.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/generateLeftItemTxt.jsp | generateLeftItemTxt.jsp | /WEB-INF/jsp/submit/generateLeftItemTxt.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showGroupItemInput.jsp | showGroupItemInput.jsp | /WEB-INF/jsp/submit/showGroupItemInput.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showGroupItemInputMonitor.jsp | showGroupItemInputMonitor.jsp | /WEB-INF/jsp/submit/showGroupItemInputMonitor.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showItemInput.jsp | showItemInput.jsp | /WEB-INF/jsp/submit/showItemInput.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showItemInputMonitor.jsp | showItemInputMonitor.jsp | /WEB-INF/jsp/submit/showItemInputMonitor.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showItemInputToolTipsJS.jsp | showItemInputToolTipsJS.jsp | /WEB-INF/jsp/submit/showItemInputToolTipsJS.jsp |
-| jsp-view | web/src/main/webapp/WEB-INF/jsp/submit/showSection.jsp | showSection.jsp | /WEB-INF/jsp/submit/showSection.jsp |
-| legacy-servlet | web/src/main/java/org/researchedc/control/submit/CheckCRFLocked.java | org.researchedc.control.submit.CheckCRFLocked | /CheckCRFLocked |
 
 ## Unknown Items
 
