@@ -2,17 +2,17 @@
 
 **Derived from:** OpenClinica v3.x
 **Generated:** 2026-05-25
-**Updated:** 2026-06-10
+**Updated:** 2026-06-12
 **Branch:** master
 
 ## OVERVIEW
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x. Built on Java 21 with Spring Framework 6.1.5, Hibernate ORM 6.4.4, and Liquibase migrations. Multi-module Maven project supporting Oracle and PostgreSQL.
 
-New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface remains substantial but shrinking: `shared/` (543 Java files, including 100 DAO/SPI/support files) and `web/` (21 Java files, 0 JSP files, 0 static assets — webapp gutted in run 96). The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
+New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (509 Java files, including 100 DAO/SPI/support files). `web/` has been **completely removed** — its 9 dead servlet/view files were deleted and 9 needed import/validation classes were migrated to `app/`. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
 
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **Legacy removal ❌ NOT COMPLETE — see `docs/refactor/remove-legacy-code-plan.md`**
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅**
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 ✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
@@ -39,7 +39,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │       ├── filter/          # 过滤器管理 (JPA 实体 + 仓库, 7 文件)
 │       ├── subjectgroup/    # 受试者分组 (JPA 实体 + 仓库, 9 文件)
 │       └── discrepancynote/ # 差异备注管理 (JPA 实体 + 仓库, 7 文件)
-├── shared/                  # 共享领域逻辑与数据访问 — 543 Java files (replaces legacy-core, still legacy-heavy)
+├── shared/                  # 共享领域逻辑与数据访问 — 509 Java files (replaces legacy-core, still legacy-heavy)
 │   ├── bean/                # DTOs (253 文件)
 │   ├── dao/                 # 数据访问层 (100 files, including 51 SPI interfaces)
 │   ├── domain/              # Hibernate 实体 (166 文件)
@@ -48,7 +48,6 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │   └── ...                  # job, exception, validator, i18n, patterns, config
 ├── frontend/                # React 19 + TypeScript SPA (pnpm workspace, 102 src TS/TSX files)
 ├── questionnaire-service/   # Python FastAPI 问卷微服务 (独立部署, 76 Python files)
-├── web/                     # 遗留 Web UI — 21 Java files (import-chain deps of app/), 0 JSP files
 ├── deploy/                  # Bare host reverse proxy / observability configs
 ├── deploy.sh                # Single bare host deploy shell
 ├── pom.xml                  # Maven parent
@@ -94,9 +93,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | Legacy DAOs (JPA) | `shared/.../dao/hibernate/` | AbstractDomainDao 子类 |
 | Legacy DAO SPI interfaces | `shared/.../dao/spi/` | 66 个接口 (IStudyDAO, ISubjectDAO, ...) |
 | Legacy Hibernate entities | `shared/.../domain/datamap/` | ~62 实体, JPA 注解 |
-| Web controllers | `web/.../control/**/*.java` | 21 import-chain dependency files; see `docs/refactor/legacy-workflow-inventory.md` |
-| REST controllers | `web/.../controller/*.java` | Spring @Controller (all deleted in run 96) |
-| JSP pages | `web/.../webapp/WEB-INF/jsp/**/*.jsp` | 0 页面 (all deleted in run 96) |
+| Import/validation classes | `app/.../control/form/` | Validator, DiscrepancyValidator, FormDiscrepancyNotes (migrated from web/) |
 | Liquibase migrations | `shared/.../migration/` | 208 个版本化 schema XML |
 | i18n strings | `shared/.../i18n/*.properties` | 6 种语言 |
 | Bare deploy | `deploy.sh` | single host deployment entry point |
@@ -109,7 +106,6 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 - **Package:** `org.researchedc.*`
 - **Beans:** `*Bean` suffix for legacy DTOs (e.g., `StudyBean`)
 - **DAOs:** `*DAO` suffix, extend `EntityDAO<K extends EntityBean>`; SPI interfaces prefixed with `I`
-- **Servlets:** `*Servlet` suffix, extend `SecureController` or `CoreSecureController`
 - **Modules:** `org.researchedc.module.<name>.*` with `@ApplicationModule`
 - **Module entities:** `@Entity(name = "Module<Name>")` to avoid collision with shared entities
 - **Module FKs:** Plain `Integer`/`Long` columns, NOT JPA `@ManyToOne` (follows randomization pattern)
@@ -150,7 +146,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 ## TESTING ARCHITECTURE
 
 ### Backend Tests
-Tests live in `app/src/test` (20 files), `web/src/test` (2 files):
+Tests live in `app/src/test` (20 files):
 
 | Tier | Base Class | DB Needed | Use Case |
 |------|-----------|-----------|----------|
@@ -212,7 +208,7 @@ python -m pytest app/tests/ -v
 - **Version:** 0.1
 - **legacy-core → shared:** `legacy-core/` was removed on 2026-05-23. Its code was consolidated into `shared/` with `@Repository`/`@Service` annotations and package rename to `org.researchedc`. This was a module consolidation, **not** full legacy code removal.
 - **Frontend TypeScript:** ✅ `pnpm typecheck` — 0 errors (strict mode).
-- **DAO constructor baseline:** `DaoProvider` bridge has been removed. Direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) is now 0 matches across `shared/` and `web/`; `ws/` is absent. All 24 target DAO families are SPI-widened; deletion is gated on module-owned replacement implementations (Phase B).
+- **DAO constructor baseline:** `DaoProvider` bridge has been removed. Direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) is now 0 matches across `shared/`; `ws/` is absent. All 24 target DAO families are SPI-widened; deletion is gated on module-owned replacement implementations (Phase B).
 
 ### Legacy DAO Refactor Handoff (2026-06-05)
 
@@ -263,7 +259,6 @@ python -m pytest app/tests/ -v
 ## SUBMODULE REFERENCES
 
 - [shared/AGENTS.md](./shared/AGENTS.md) — Shared domain logic and data access
-- [web/AGENTS.md](./web/AGENTS.md) — Web UI and controllers
 - [app/AGENTS.md](./app/AGENTS.md) — Spring Boot entry point, config, and Modulith modules
 - [frontend/AGENTS.md](./frontend/AGENTS.md) — React 19 SPA (TypeScript, Vite, Ant Design)
 - [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) — Python FastAPI microservice
