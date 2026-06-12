@@ -9,7 +9,7 @@
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x. Built on Java 21 with Spring Framework 6.1.5, Hibernate ORM 6.4.4, and Liquibase migrations. Multi-module Maven project supporting Oracle and PostgreSQL.
 
-New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (509 Java files, including 100 DAO/SPI/support files). `web/` has been **completely removed** — its 9 dead servlet/view files were deleted and 9 needed import/validation classes were migrated to `app/`. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
+New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (504 Java files, including 95 DAO/SPI/support files). `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and 9 needed import/validation classes were migrated to `app/`. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
 
 
 **当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅**
@@ -39,9 +39,9 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │       ├── filter/          # 过滤器管理 (JPA 实体 + 仓库, 7 文件)
 │       ├── subjectgroup/    # 受试者分组 (JPA 实体 + 仓库, 9 文件)
 │       └── discrepancynote/ # 差异备注管理 (JPA 实体 + 仓库, 7 文件)
-├── shared/                  # 共享领域逻辑与数据访问 — 509 Java files (replaces legacy-core, still legacy-heavy)
+├── shared/                  # 共享领域逻辑与数据访问 — 504 Java files (replaces legacy-core, still legacy-heavy)
 │   ├── bean/                # DTOs (253 文件)
-│   ├── dao/                 # 数据访问层 (100 files, including 51 SPI interfaces)
+│   ├── dao/                 # 数据访问层 (95 files, including 49 SPI interfaces)
 │   ├── domain/              # Hibernate 实体 (166 文件)
 │   ├── service/             # 业务服务 (50 files)
 │   ├── logic/               # 规则引擎 (57 文件)
@@ -89,7 +89,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | **SubjectGroup module** | `app/.../module/subjectgroup/` | 分组类/组 JPA 实体 (gateway only) |
 | **DiscrepancyNote module** | `app/.../module/discrepancynote/` | 差异备注 JPA 实体 (gateway only) |
 | **Shared (legacy) logic** | `shared/src/main/java/org/researchedc/` | DAO/domain/service/bean/logic |
-| Legacy DAOs | `shared/.../dao/` | 100 DAO/SPI/support files; deletion blocked by replacement proof |
+| Legacy DAOs | `shared/.../dao/` | 95 DAO/SPI/support files; deletion blocked by replacement proof |
 | Legacy DAOs (JPA) | `shared/.../dao/hibernate/` | AbstractDomainDao 子类 |
 | Legacy DAO SPI interfaces | `shared/.../dao/spi/` | 66 个接口 (IStudyDAO, ISubjectDAO, ...) |
 | Legacy Hibernate entities | `shared/.../domain/datamap/` | ~62 实体, JPA 注解 |
@@ -236,7 +236,7 @@ python -m pytest app/tests/ -v
   - ✅ **StudyGroupClassDAO → StudyGroupClassDao** — 4 shared/ consumers all SPI-typed
   - ✅ **StudyGroupDAO → StudyGroupDao** — 3 shared/ consumers all SPI-typed
   - ✅ **ArchivedDatasetFileDAO → ArchivedDatasetFileDao** — `58278d68b`; 8 consumer files converted
-- **Remaining work:** DAO `.java` file deletion is blocked on proving module-owned repository paths in production. Legacy DAO files (65+ in `shared/dao/`) are still the fallback for complex SQL queries. HibernateConfig still constructs all legacy DAO beans (harmless, shadowed by `@Primary` adapters). Minor DAO families (`AuditDao`, `IAuditEventDAO`, `IStudyParameterValueDAO`, `SubjectGroupMapDao`) remain without adapters — these are legacy-only data paths. 3 `PasswordRequirementsDao` calls remain in legacy servlets (not in target families).
+- **Remaining work:** DAO `.java` file deletion is blocked on proving module-owned repository paths in production. Legacy DAO files (65+ in `shared/dao/`) are still the fallback for complex SQL queries. HibernateConfig still constructs all legacy DAO beans (harmless, shadowed by `@Primary` adapters). Minor DAO families (`AuditDao`, `IAuditEventDAO`, `IStudyParameterValueDAO`) remain without adapters — these are legacy-only data paths. `PasswordRequirementsDao` remains outside the 24 target families.
 - **Gauntlet commands:**
   - `git status --short`
   - `mvn -pl app -am compile -DskipTests && mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
@@ -264,4 +264,4 @@ python -m pytest app/tests/ -v
 - [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) — Python FastAPI microservice
 - [LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md) — Remaining legacy refactoring roadmap
 - [Remove Legacy Code Plan](./docs/refactor/remove-legacy-code-plan.md) — Explicit deletion plan and measurable gates
-- [Clinical Workflow Hardening Plan](./.sisyphus/plans/clinical-workflow-hardening-plan.md) — Randomization setup, questionnaire import/mobile/fingerprint/temp links, e-signature, MinIO, security, import/export, and backups
+- [Next Refactor And Removal Plan](./docs/refactor/next-refactor-removal-plan.md) — Current legacy-removal status, import hardening, and Phase 3 DAO deletion queue
