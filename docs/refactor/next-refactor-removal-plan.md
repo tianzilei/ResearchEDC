@@ -62,7 +62,8 @@ Remaining import/export compatibility issues to resolve:
 - Done in this slice: rule XML import is formally retired in the current tree; no app/frontend upload route exists, the stale Spring bean wiring was removed, and guardrails prevent reintroducing app/frontend XML import wiring.
 - Done in this slice: OpenRosa submission processing now resolves the CRF version OID from the submitted XForm root when clients omit an explicit form context value, and unit tests cover canonical context propagation plus explicit-value precedence.
 - Done in this slice: export API controller contract coverage now protects create/list/get/cancel/retry JSON behavior, including an ODM_XML job request.
-- Broaden representative ODM import fixture coverage beyond the focused module tests.
+- Done in this slice: ImportCrfDataAdapter now has a representative ODM ClinicalData parse fixture covering study, subject, event, form, group, status, and item values through the checked-in Castor mapping.
+- Broaden deterministic ODM preview validation fixtures for schema/metadata/status failure cases.
 
 ## Next Plan
 
@@ -107,7 +108,7 @@ Exit gate:
 
 ### 3. Prove CRF Data Validation Coverage
 
-Status: **initial focused coverage complete in commit `bc1f24d97`; broader representative ODM fixture coverage remains.**
+Status: **initial focused coverage complete in commit `bc1f24d97`; representative ODM parse fixture added; broader deterministic preview validation fixture coverage remains.**
 
 Goal: prove the imported ODM path validates the clinical data conditions that still matter.
 
