@@ -347,6 +347,35 @@ class ImportServiceTest {
     }
 
     @Test
+    void validate_persistsDeterministicInvalidPreviewJsonForEditCheckFailures() {
+        ImportJob job = createJob(1L, "Job", ImportType.CRF_DATA, ImportJobStatus.STAGED);
+        ParsedOdm odm = mockOdm();
+        when(importAdapter.parseOdm(any(Path.class))).thenReturn(odm);
+        when(importAdapter.validateMetadata(eq(odm), anyInt(), any(Locale.class)))
+                .thenReturn(Collections.emptyList());
+        when(importAdapter.validateEventCrfs(eq(odm), anyInt(), any(Locale.class)))
+                .thenReturn(new EventCrfValidationResult(true, 2));
+        when(importAdapter.validateEditChecks(eq(odm), anyInt()))
+                .thenReturn("{\"total\":9,\"errors\":3}");
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        ImportPreviewDTO result = service.validate(1L);
+
+        assertEquals("invalid", result.getStatus());
+        assertEquals(2, result.getEventCrfs());
+        assertEquals(9, result.getTotalItems());
+        assertEquals(3, result.getEditCheckErrors());
+        assertEquals(List.of("3 edit-check error(s) were found."), result.getErrors());
+        assertTrue(job.getSummaryJson().contains("\"status\":\"invalid\""));
+        assertTrue(job.getSummaryJson().contains("\"eventCrfs\":2"));
+        assertTrue(job.getSummaryJson().contains("\"totalItems\":9"));
+        assertTrue(job.getSummaryJson().contains("\"editCheckErrors\":3"));
+        assertTrue(job.getSummaryJson().contains("3 edit-check error(s) were found."));
+    }
+
+    @Test
     void validate_whenJobNotFound_throwsException() {
         when(jobRepository.findById(99L)).thenReturn(Optional.empty());
 
