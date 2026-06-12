@@ -4,16 +4,20 @@ import { Button, Spin, Result } from "antd";
 
 import { DataEntryHeader } from "@/components/form-engine/DataEntryHeader";
 import { SectionTabs } from "@/components/form-engine/SectionTabs";
+import DataEntryPrintView from "@/components/form-engine/DataEntryPrintView";
 import type { FormItemConfig } from "@/components/form-engine/FormField";
 import type { FormStatusConfig } from "@/components/form-engine/FormStatus";
-import { useCrfVersion, useEventCrfData, useCrfSectionItems } from "@/hooks/useCrf";
+import { useCrfVersion, useEventCrfData, useCrfSectionItems, useItemGroups, useScdRules, useAllSectionItems } from "@/hooks/useCrf";
 import { useEventCrfs, useCompleteEvent } from "@/hooks/useEvents";
+import { useEventCrfNotes } from "@/hooks/useDiscrepancyNotes";
 import type { ItemDTO } from "@/types/crf";
+import type { ItemGroupDTO } from "@/types/datacapture";
 import { useBatchSaveItems } from "@/hooks/useDataCapture";
 import type { SaveItemDataRequest } from "@/types/datacapture";
 import { deriveRecordStatus } from "@/utils/crfStatus";
 
-function itemToFormConfig(item: ItemDTO): FormItemConfig {
+function itemToFormConfig(item: ItemDTO, groupMap: Map<number, { groupId: number; groupLabel: string }>): FormItemConfig {
+  const group = groupMap.get(item.itemId);
   return {
     itemId: item.itemId,
     name: item.name,
@@ -26,7 +30,21 @@ function itemToFormConfig(item: ItemDTO): FormItemConfig {
     defaultValue: item.defaultValue,
     regexp: item.regexp,
     regexpErrorMsg: item.regexpErrorMsg,
+    groupId: group?.groupId,
+    groupLabel: group?.groupLabel,
   };
+}
+
+function buildItemGroupMap(
+  itemGroups: ItemGroupDTO[],
+): Map<number, { groupId: number; groupLabel: string }> {
+  const map = new Map<number, { groupId: number; groupLabel: string }>();
+  for (const g of itemGroups) {
+    for (const itemId of g.items) {
+      map.set(itemId, { groupId: g.itemGroupId, groupLabel: g.name });
+    }
+  }
+  return map;
 }
 
 export default function DataEntryPage() {
@@ -42,12 +60,30 @@ export default function DataEntryPage() {
 
   const { data: eventCrfs, isLoading: loadingCrfs } = useEventCrfs(parsedEventId);
   const { data: itemData, isLoading: loadingData } = useEventCrfData(parsedEventCrfId);
+  const { data: notes = [] } = useEventCrfNotes(parsedEventCrfId);
   const completeEventMutation = useCompleteEvent();
   const batchSaveMutation = useBatchSaveItems(parsedEventCrfId);
 
   const [activeTab, setActiveTab] = useState<string>("0");
   const [saveResult, setSaveResult] = useState<{ type: "success" | "error" } | null>(null);
   const [saveErrorItemIds, setSaveErrorItemIds] = useState<Set<number>>(new Set());
+  const [groupInstances, setGroupInstances] = useState<Record<number, number[]>>({});
+  const [isAdminEdit, setIsAdminEdit] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
+
+  const handleAddGroupInstance = useCallback((groupId: number) => {
+    setGroupInstances(prev => ({
+      ...prev,
+      [groupId]: [...(prev[groupId] ?? [0]), (prev[groupId]?.length ?? 1)],
+    }));
+  }, []);
+
+  const handleRemoveGroupInstance = useCallback((groupId: number, index: number) => {
+    setGroupInstances(prev => ({
+      ...prev,
+      [groupId]: (prev[groupId] ?? []).filter(i => i !== index),
+    }));
+  }, []);
 
   useEffect(() => {
     if (batchSaveMutation.isSuccess) {
@@ -74,6 +110,12 @@ export default function DataEntryPage() {
   const crfVersionId = eventCrf?.crfVersionId;
 
   const { data: crfVersion, isLoading: loadingVersion } = useCrfVersion(crfVersionId);
+  const { data: itemGroups = [], isLoading: loadingGroups } = useItemGroups(crfVersionId);
+
+  const { data: allSectionItems, isLoading: loadingAllItems } = useAllSectionItems(
+    crfVersion,
+    isPrinting,
+  );
 
   const sections = crfVersion?.sections ?? [];
   const activeSectionIdx = Number(activeTab);
@@ -83,6 +125,9 @@ export default function DataEntryPage() {
     crfVersionId,
     activeSection?.sectionId,
   );
+  const { data: scdRules = [] } = useScdRules(activeSection?.sectionId);
+
+  const groupMap = useMemo(() => buildItemGroupMap(itemGroups), [itemGroups]);
 
   const statusId = eventCrf?.statusId ?? 1;
   const recordStatus = deriveRecordStatus(statusId);
@@ -100,11 +145,44 @@ export default function DataEntryPage() {
     const values: Record<string, string> = {};
     for (const item of itemData) {
       if (item.value && !item.deleted) {
-        values[`item_${item.itemId}`] = item.value;
+        const key = item.ordinal != null
+          ? `item_${item.itemId}_${item.ordinal}`
+          : `item_${item.itemId}`;
+        values[key] = item.value;
       }
     }
     return values;
   }, [itemData]);
+
+  const hiddenItemIds = useMemo(() => {
+    const hidden = new Set<number>();
+    for (const rule of scdRules) {
+      if (rule.optionValue) {
+        const controlKey = `item_${rule.controlItemId}`;
+        const controlValue = initialFormValues[controlKey] ?? "";
+        if (controlValue !== rule.optionValue) {
+          hidden.add(rule.targetItemId);
+        }
+      } else {
+        hidden.add(rule.targetItemId);
+      }
+    }
+    return hidden;
+  }, [scdRules, initialFormValues]);
+
+  const itemDnCounts = useMemo(() => {
+    const counts = new Map<number, number>();
+    for (const note of notes) {
+      if (note.resolutionStatus === "Resolved") continue;
+      const itemDataId = note.entityId;
+      const id = itemData?.find(d => d.itemDataId === itemDataId);
+      if (id) {
+        const itemId = id.itemId;
+        counts.set(itemId, (counts.get(itemId) ?? 0) + 1);
+      }
+    }
+    return counts;
+  }, [notes, itemData]);
 
   const handleSave = useCallback(
     async (values: Record<string, string>) => {
@@ -112,11 +190,17 @@ export default function DataEntryPage() {
 
       const items: SaveItemDataRequest[] = Object.entries(values)
         .filter(([key]) => key.startsWith("item_"))
-        .map(([key, value]) => ({
-          eventCrfId: parsedEventCrfId,
-          itemId: Number(key.replace("item_", "")),
-          value,
-        }));
+        .map(([key, value]) => {
+          const parts = key.split("_");
+          const itemId = Number(parts[1]);
+          const ordinal = parts.length > 2 ? Number(parts[2]) : undefined;
+          return {
+            eventCrfId: parsedEventCrfId,
+            itemId,
+            value,
+            ordinal,
+          };
+        });
 
       if (items.length === 0) return;
 
@@ -149,11 +233,19 @@ export default function DataEntryPage() {
   }, [navigate, subjectId]);
 
   const formItems: FormItemConfig[] = useMemo(
-    () => sectionItems.map((item) => itemToFormConfig(item)),
-    [sectionItems],
+    () => sectionItems.map((item) => itemToFormConfig(item, groupMap)),
+    [sectionItems, groupMap],
   );
 
-  const isLoading = loadingCrfs || loadingVersion || loadingData;
+  const handlePrint = useCallback(() => {
+    setIsPrinting(true);
+    setTimeout(() => {
+      window.print();
+      setIsPrinting(false);
+    }, 100);
+  }, []);
+
+  const isLoading = loadingCrfs || loadingVersion || loadingData || loadingGroups;
 
   if (isLoading) {
     return (
@@ -192,24 +284,44 @@ export default function DataEntryPage() {
         saveStatus={saveStatus}
         canComplete={canComplete}
         isCompleting={completeEventMutation.isPending}
-        parsedEventCrfId={parsedEventCrfId}
         parsedSubjectId={subjectId}
         onComplete={handleCompleteEvent}
         onBack={handleBack}
+        isAdminEdit={isAdminEdit}
+        onToggleAdminEdit={() => setIsAdminEdit(e => !e)}
+        onPrint={handlePrint}
       />
 
-      <SectionTabs
-        sections={sections}
-        activeSectionIdx={activeSectionIdx}
-        onTabChange={setActiveTab}
-        loadingSectionItems={loadingSectionItems}
-        formItems={formItems}
-        initialFormValues={initialFormValues}
-        statusConfig={statusConfig}
-        onSave={handleSave}
-        parsedEventCrfId={parsedEventCrfId}
-        saveErrorItemIds={saveErrorItemIds}
-      />
+      {isPrinting && !loadingAllItems && (
+        <DataEntryPrintView
+          crfVersion={crfVersion}
+          allSectionItems={allSectionItems}
+          itemData={itemData ?? []}
+          groupMap={groupMap}
+          hiddenItemIds={hiddenItemIds}
+        />
+      )}
+
+      <div className={isPrinting ? "print-hide" : undefined}>
+        <SectionTabs
+          sections={sections}
+          activeSectionIdx={activeSectionIdx}
+          onTabChange={setActiveTab}
+          loadingSectionItems={loadingSectionItems}
+          formItems={formItems}
+          initialFormValues={initialFormValues}
+          statusConfig={statusConfig}
+          onSave={handleSave}
+          parsedEventCrfId={parsedEventCrfId}
+          saveErrorItemIds={saveErrorItemIds}
+          groupInstances={groupInstances}
+          onAddGroupInstance={handleAddGroupInstance}
+          onRemoveGroupInstance={handleRemoveGroupInstance}
+          hiddenItemIds={hiddenItemIds}
+          itemDnCounts={itemDnCounts}
+          isAdminEdit={isAdminEdit}
+        />
+      </div>
     </div>
   );
 }

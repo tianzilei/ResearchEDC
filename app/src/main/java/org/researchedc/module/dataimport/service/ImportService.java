@@ -11,14 +11,14 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.module.dataimport.dto.CreateImportJobRequest;
 import org.researchedc.module.dataimport.dto.ImportJobDTO;
 import org.researchedc.module.dataimport.entity.ImportJob;
 import org.researchedc.module.dataimport.enums.ImportJobStatus;
 import org.researchedc.module.dataimport.enums.ImportType;
 import org.researchedc.module.dataimport.internal.adapter.ImportCrfDataAdapter;
+import org.researchedc.module.dataimport.internal.adapter.ImportCrfDataAdapter.EventCrfValidationResult;
+import org.researchedc.module.dataimport.internal.adapter.ImportCrfDataAdapter.ParsedOdm;
 import org.researchedc.module.dataimport.repository.ImportJobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,22 +160,21 @@ public class ImportService {
         markValidating(id);
         try {
             Path filePath = Path.of(job.getStoredFilePath());
-            ODMContainer odm = importAdapter.parseOdm(filePath);
+            ParsedOdm odm = importAdapter.parseOdm(filePath);
             List<String> errors = importAdapter.validateMetadata(odm, job.getStudyId(), Locale.ENGLISH);
             if (!errors.isEmpty()) {
                 String summary = "{\"status\":\"invalid\",\"errors\":" + errors.size() + "}";
                 markValidated(id, summary);
                 return jobRepository.findById(id).map(this::toDTO).orElseThrow();
             }
-            boolean statusesValid = importAdapter.checkStatusesValid(odm, job.getStudyId(), Locale.ENGLISH);
-            List<EventCRFBean> eventCrfBeans = importAdapter.getEventCrfBeans(odm, job.getStudyId(), Locale.ENGLISH);
-            if (eventCrfBeans == null || !statusesValid) {
+            EventCrfValidationResult eventCrfs = importAdapter.validateEventCrfs(odm, job.getStudyId(), Locale.ENGLISH);
+            if (!eventCrfs.statusesValid() || eventCrfs.eventCrfCount() < 0) {
                 markValidated(id, "{\"status\":\"blocked\",\"reason\":\"event_crf_status\"}");
-            } else if (eventCrfBeans.isEmpty()) {
+            } else if (eventCrfs.eventCrfCount() == 0) {
                 markValidated(id, "{\"status\":\"validated\",\"eventCrfs\":0}");
             } else {
                 String editChecks = importAdapter.validateEditChecks(odm, job.getStudyId());
-                String summary = "{\"status\":\"validated\",\"eventCrfs\":" + eventCrfBeans.size()
+                String summary = "{\"status\":\"validated\",\"eventCrfs\":" + eventCrfs.eventCrfCount()
                         + ",\"editChecks\":" + editChecks + "}";
                 markValidated(id, summary);
             }
@@ -193,7 +192,7 @@ public class ImportService {
         markCommitting(id);
         try {
             Path filePath = Path.of(job.getStoredFilePath());
-            ODMContainer odm = importAdapter.parseOdm(filePath);
+            ParsedOdm odm = importAdapter.parseOdm(filePath);
             int eventCrfCount = importAdapter.commitImport(odm, job.getStudyId(), Locale.ENGLISH);
             String summary = "{\"status\":\"committed\",\"eventCrfs\":" + eventCrfCount + "}";
             job.setSummaryJson(summary);

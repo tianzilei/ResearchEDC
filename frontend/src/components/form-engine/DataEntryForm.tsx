@@ -1,12 +1,19 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Form, Button, Space, Typography, Alert } from "antd";
 import { FormField, type FormItemConfig } from "@/components/form-engine/FormField";
+import { RepeatingGroup } from "@/components/form-engine/RepeatingGroup";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { isFieldDisabled, type FormStatusConfig, type FormRecordStatus } from "@/components/form-engine/FormStatus";
 import { useTranslation } from "react-i18next";
 
 const { Text } = Typography;
+
+interface GroupInfo {
+  groupId: number;
+  groupLabel: string;
+  items: FormItemConfig[];
+}
 
 interface DataEntryFormProps {
   items: FormItemConfig[];
@@ -17,6 +24,12 @@ interface DataEntryFormProps {
   onSave?: (values: Record<string, string>, status: FormRecordStatus) => Promise<void>;
   enableAutoSave?: boolean;
   saveErrorItemIds?: Set<number>;
+  groupInstances?: Record<number, number[]>;
+  onAddGroupInstance?: (groupId: number) => void;
+  onRemoveGroupInstance?: (groupId: number, index: number) => void;
+  hiddenItemIds?: Set<number>;
+  itemDnCounts?: Map<number, number>;
+  isAdminEdit?: boolean;
 }
 
 export function DataEntryForm({
@@ -26,12 +39,34 @@ export function DataEntryForm({
   onSave,
   enableAutoSave = true,
   saveErrorItemIds,
+  groupInstances,
+  onAddGroupInstance,
+  onRemoveGroupInstance,
+  hiddenItemIds,
+  itemDnCounts,
+  isAdminEdit,
 }: DataEntryFormProps) {
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
   const [formValues, setFormValues] = useState(initialValues ?? {});
   const [manualSaveStatus, setManualSaveStatus] = useState<"idle" | "saved" | "error">("idle");
+
+  const groupInfoMap = useMemo(() => {
+    const map = new Map<number, GroupInfo>();
+    for (const item of items) {
+      if (item.groupId == null || hiddenItemIds?.has(item.itemId)) continue;
+      let g = map.get(item.groupId);
+      if (!g) {
+        g = { groupId: item.groupId, groupLabel: item.groupLabel ?? `Group ${item.groupId}`, items: [] };
+        map.set(item.groupId, g);
+      }
+      g.items.push(item);
+    }
+    return map;
+  }, [items]);
+
+  const ungroupedItems = useMemo(() => items.filter(i => i.groupId == null && !hiddenItemIds?.has(i.itemId)), [items, hiddenItemIds]);
 
   const handleFieldChange = useCallback((itemName: string) => (value: unknown) => {
     setFormValues((prev) => ({ ...prev, [itemName]: value as string }));
@@ -84,7 +119,7 @@ export function DataEntryForm({
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  const fieldsDisabled = useMemo(() => isFieldDisabled(statusConfig), [statusConfig]);
+  const fieldsDisabled = useMemo(() => isAdminEdit ? false : isFieldDisabled(statusConfig), [statusConfig, isAdminEdit]);
 
   const discrepancyCount = useMemo(() => {
     if (!statusConfig.isDoubleEntry || !statusConfig.originalValues) return 0;
@@ -106,6 +141,9 @@ export function DataEntryForm({
 
   return (
     <div>
+      {isAdminEdit && (
+        <Alert message={t("form.adminEditAlert")} type="warning" showIcon style={{ marginBottom: 16 }} />
+      )}
       {statusConfig.status === "LOCKED" && (
         <Alert message={t("form.lockedAlert")} type="warning" style={{ marginBottom: 16 }} />
       )}
@@ -136,16 +174,38 @@ export function DataEntryForm({
         disabled={fieldsDisabled}
         onValuesChange={() => setManualSaveStatus("idle")}
       >
-        {items
+        {(() => {
+          const groupedItems = Array.from(groupInfoMap.values()).map(group => {
+            const items = group.items.filter(i => !hiddenItemIds?.has(i.itemId));
+            if (items.length === 0) return null;
+            return (
+              <RepeatingGroup
+                key={group.groupId}
+                groupLabel={group.groupLabel}
+                items={items}
+                instanceIndices={groupInstances?.[group.groupId] ?? (group.items.length > 0 ? [0] : [])}
+                formValues={formValues}
+                onFieldChange={handleFieldChange}
+                onAddInstance={() => onAddGroupInstance?.(group.groupId)}
+                onRemoveInstance={(idx) => onRemoveGroupInstance?.(group.groupId, idx)}
+                disabled={fieldsDisabled}
+                saveErrorItemIds={saveErrorItemIds}
+              />
+            );
+          });
+          return groupedItems;
+        })()}
+        {ungroupedItems
           .sort((a, b) => a.ordinal - b.ordinal)
           .map((item) => (
             <FormField
-              key={item.itemId}
+              key={`item_${item.itemId}`}
               item={item}
-              value={formValues[item.name]}
-              onChange={handleFieldChange(item.name)}
+              value={formValues[`item_${item.itemId}`]}
+              onChange={handleFieldChange(`item_${item.itemId}`)}
               disabled={fieldsDisabled}
               hasError={saveErrorItemIds?.has(item.itemId) ?? false}
+              dnCount={itemDnCounts?.get(item.itemId)}
             />
           ))}
       </Form>

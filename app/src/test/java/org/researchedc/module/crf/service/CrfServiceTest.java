@@ -15,8 +15,10 @@ import org.researchedc.module.crf.dto.ItemDTO;
 import org.researchedc.module.crf.entity.CrfEntity;
 import org.researchedc.module.crf.entity.CrfVersionEntity;
 import org.researchedc.module.crf.internal.adapter.LegacyCrfAdapter;
+import org.researchedc.module.crf.internal.adapter.SCDItemMetadataDaoAdapter;
 import org.researchedc.module.crf.repository.CrfRepository;
 import org.researchedc.module.crf.repository.CrfVersionRepository;
+import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,12 +31,15 @@ class CrfServiceTest {
     @Mock private LegacyCrfAdapter legacyCrfAdapter;
     @Mock private CrfRepository crfRepository;
     @Mock private CrfVersionRepository crfVersionRepository;
+    @Mock private SCDItemMetadataDaoAdapter scdAdapter;
+    @Mock private ItemFormMetadataRepository itemFormMetadataRepository;
 
     private CrfService service;
 
     @BeforeEach
     void setUp() {
-        service = new CrfService(legacyCrfAdapter, crfRepository, crfVersionRepository);
+        service = new CrfService(legacyCrfAdapter, crfRepository, crfVersionRepository,
+                scdAdapter, itemFormMetadataRepository);
     }
 
     // --- listCrfs (delegates to adapter) ---

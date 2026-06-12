@@ -1,5 +1,6 @@
 package org.researchedc.module.datacapture.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,6 +10,7 @@ import org.researchedc.module.datacapture.dto.BatchSaveItemsRequest;
 import org.researchedc.module.datacapture.dto.ItemDataDTO;
 import org.researchedc.module.datacapture.dto.ItemGroupDTO;
 import org.researchedc.module.datacapture.dto.ResponseSetDTO;
+import org.researchedc.module.datacapture.dto.RuleEvalResponse;
 import org.researchedc.module.datacapture.dto.SaveItemDataRequest;
 import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.datacapture.service.DataCaptureService;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/data-capture")
@@ -47,8 +50,15 @@ public class DataCaptureController {
 
     @GetMapping("/item-groups")
     public ResponseEntity<List<ItemGroupDTO>> getItemGroups(
-            @RequestParam Integer crfId) {
-        return ResponseEntity.ok(dataCaptureService.getItemGroupsByCrf(crfId));
+            @RequestParam(required = false) Integer crfId,
+            @RequestParam(required = false) Integer crfVersionId) {
+        if (crfVersionId != null) {
+            return ResponseEntity.ok(dataCaptureService.getItemGroupsByCrfVersion(crfVersionId));
+        }
+        if (crfId != null) {
+            return ResponseEntity.ok(dataCaptureService.getItemGroupsByCrf(crfId));
+        }
+        return ResponseEntity.ok(List.of());
     }
 
     @PostMapping("/items")
@@ -65,6 +75,12 @@ public class DataCaptureController {
         Integer userId = currentUserUtils.getCurrentUserId();
         List<ItemDataDTO> dtos = dataCaptureService.batchSaveItems(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+    }
+
+    @GetMapping("/{eventCrfId}/rules")
+    public ResponseEntity<RuleEvalResponse> evaluateRules(
+            @PathVariable int eventCrfId) {
+        return ResponseEntity.ok(dataCaptureService.evaluateRules(eventCrfId));
     }
 
     @GetMapping("/attachments")
@@ -85,5 +101,17 @@ public class DataCaptureController {
     public ResponseEntity<List<String>> listAttachmentsByEventCrf(
             @RequestParam int eventCrfId) {
         return ResponseEntity.ok(dataCaptureService.listAttachmentsByEventCrf(eventCrfId));
+    }
+
+    @PostMapping("/attachments")
+    public ResponseEntity<Void> uploadAttachment(
+            @RequestParam int eventCrfId,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            dataCaptureService.uploadAttachment(eventCrfId, file);
+            return ResponseEntity.ok().build();
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

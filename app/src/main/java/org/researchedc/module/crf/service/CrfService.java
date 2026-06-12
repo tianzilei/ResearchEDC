@@ -1,7 +1,10 @@
 package org.researchedc.module.crf.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.researchedc.module.crf.dto.CrfSummaryDTO;
@@ -10,8 +13,11 @@ import org.researchedc.module.crf.dto.ItemDTO;
 import org.researchedc.module.crf.entity.CrfEntity;
 import org.researchedc.module.crf.entity.CrfVersionEntity;
 import org.researchedc.module.crf.internal.adapter.LegacyCrfAdapter;
+import org.researchedc.module.crf.internal.adapter.SCDItemMetadataDaoAdapter;
+import org.researchedc.module.crf.internal.adapter.SCDItemMetadataDaoAdapter.ScdRule;
 import org.researchedc.module.crf.repository.CrfRepository;
 import org.researchedc.module.crf.repository.CrfVersionRepository;
+import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +28,19 @@ public class CrfService {
     private final LegacyCrfAdapter legacyCrfAdapter;
     private final CrfRepository crfRepository;
     private final CrfVersionRepository crfVersionRepository;
+    private final SCDItemMetadataDaoAdapter scdAdapter;
+    private final ItemFormMetadataRepository itemFormMetadataRepository;
 
     public CrfService(LegacyCrfAdapter legacyCrfAdapter,
                       CrfRepository crfRepository,
-                      CrfVersionRepository crfVersionRepository) {
+                      CrfVersionRepository crfVersionRepository,
+                      SCDItemMetadataDaoAdapter scdAdapter,
+                      ItemFormMetadataRepository itemFormMetadataRepository) {
         this.legacyCrfAdapter = legacyCrfAdapter;
         this.crfRepository = crfRepository;
         this.crfVersionRepository = crfVersionRepository;
+        this.scdAdapter = scdAdapter;
+        this.itemFormMetadataRepository = itemFormMetadataRepository;
     }
 
     public List<CrfSummaryDTO> listCrfs() {
@@ -41,6 +53,27 @@ public class CrfService {
 
     public List<ItemDTO> getItemsBySection(int sectionId, int crfVersionId) {
         return legacyCrfAdapter.findItemsBySectionAndVersion(sectionId, crfVersionId);
+    }
+
+    public List<Map<String, Object>> getScdRulesBySection(int sectionId) {
+        List<ScdRule> scdBeans = scdAdapter.findRulesBySectionId(sectionId);
+        List<Map<String, Object>> rules = new ArrayList<>();
+        for (ScdRule scd : scdBeans) {
+            Map<String, Object> rule = new HashMap<>();
+            rule.put("scdItemId", scd.scdItemId());
+            rule.put("controlItemId", scd.controlItemFormMetadataId());
+            rule.put("controlItemName", scd.controlItemName());
+            rule.put("optionValue", scd.optionValue());
+            rule.put("message", scd.message());
+
+            var targetMeta = itemFormMetadataRepository.findById(scd.scdItemId());
+            targetMeta.ifPresent(m -> rule.put("targetItemId", m.getItemId()));
+            var controlMeta = itemFormMetadataRepository.findById(scd.controlItemFormMetadataId());
+            controlMeta.ifPresent(m -> rule.put("controlItemId", m.getItemId()));
+
+            rules.add(rule);
+        }
+        return rules;
     }
 
     public List<CrfEntity> getAllCrfEntities() {

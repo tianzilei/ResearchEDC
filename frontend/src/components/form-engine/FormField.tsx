@@ -1,4 +1,4 @@
-import { Input, InputNumber, Select, DatePicker, Checkbox, Radio, Space, Form, Typography } from "antd";
+import { Input, InputNumber, Select, DatePicker, Checkbox, Radio, Space, Form, Typography, Badge } from "antd";
 
 const { TextArea } = Input;
 
@@ -15,6 +15,8 @@ export interface FormItemConfig {
   regexp?: string;
   regexpErrorMsg?: string;
   options?: { label: string; value: string }[];
+  groupId?: number;
+  groupLabel?: string;
 }
 
 interface FormFieldProps {
@@ -23,6 +25,7 @@ interface FormFieldProps {
   onChange?: (value: any) => void;
   disabled?: boolean;
   hasError?: boolean;
+  dnCount?: number;
 }
 
 const typeMap: Record<string, string> = {
@@ -37,7 +40,7 @@ const typeMap: Record<string, string> = {
   "group": "text",
 };
 
-export function FormField({ item, value, onChange, disabled, hasError }: FormFieldProps) {
+export function FormField({ item, value, onChange, disabled, hasError, dnCount }: FormFieldProps) {
   const type = typeMap[item.dataType?.toLowerCase()] ?? "text";
   const isRequired = item.required;
 
@@ -79,7 +82,13 @@ export function FormField({ item, value, onChange, disabled, hasError }: FormFie
 
   return (
     <Form.Item
-      label={<Space>{item.name} {item.units && <Typography.Text type="secondary">({item.units})</Typography.Text>}</Space>}
+      label={<Space>
+        {dnCount != null && dnCount > 0 && (
+          <Badge count={dnCount} size="small" style={{ backgroundColor: "#faad14" }} />
+        )}
+        {item.name}
+        {item.units && <Typography.Text type="secondary">({item.units})</Typography.Text>}
+      </Space>}
       required={isRequired}
       validateTrigger="onBlur"
       validateStatus={hasError ? "error" : undefined}

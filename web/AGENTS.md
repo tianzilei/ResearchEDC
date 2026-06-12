@@ -1,77 +1,43 @@
-# web/ - Web UI Layer
+# web/ - Web UI Layer (Gutted)
 
-**Module:** Web interface, JSP pages, servlets, REST controllers
-**Files:** 263 Java files, 175 JSP files
+**Module:** Remaining web compatibility Java only
+**Files:** 102 Java files, 0 JSP files, 0 static assets
 
-> **前端共存:** 新 React SPA 运行于 `/app/*` 路径，旧 JSP 继续运行于 `/legacy/*`（通过 Nginx 路由）。
-> 新前端代码位于 `frontend/src/`，与 web 模块无关。REST 控制器仍在此模块中供新旧前端共用。
-> **Legacy removal status:** this module is still legacy-heavy. Current scan shows 87 `SecureController`/`CoreSecureController` subclasses and 175 JSP files. Enterprise, mail delivery, and login auxiliary paths were removed on 2026-06-09. Do not delete remaining servlets/JSPs until the matching SPA route, module API, redirect, and permission behavior are verified.
+> **Run 96 (2026-06-12):** All JSP views (29), static assets (~1400), GWT remnants, TLDs, tags, and pages-servlet.xml deleted. web.xml reduced from 310→40 lines (dead servlets/listeners/filters removed). 102 Java files remain: 6 secure servlet subclasses, servlet bases, data-entry/import validation helpers, form builders, table/view helpers, and SDV/scheduled-job support.
 
-## STRUCTURE
+## REMAINING FILES
 
 ```
 web/src/main/java/org/researchedc/
-├── control/          # Servlets (MVC controllers)
-│   ├── admin/        # Admin functions
-│   ├── extract/      # Data extraction
-│   ├── login/        # Authentication
-│   ├── managestudy/  # Study management
-│   ├── submit/       # Data entry/submission
-│   └── techadmin/    # Technical admin
-├── controller/       # Spring MVC REST controllers
-├── view/             # JSP view helpers
-└── web/              # Filters, beans, REST resources
-
-web/src/main/webapp/
-├── WEB-INF/jsp/      # JSP pages
-└── images/           # Static assets
+├── control/
+│   ├── core/                  # SecureController, CoreSecureController (base classes)
+│   ├── form/                  # Validator, DiscrepancyValidator, FormProcessor, etc.
+│   ├── managestudy/           # BeanFactory, ViewNotesServlet
+│   ├── SpringServletAccess.java
+│   └── submit/                # DataEntryServlet, DownloadAttachedFileServlet, ImportCRFInfoContainer
+├── view/                      # Link, Page, Table, form/Rule
+└── web/
+    ├── crfdata/               # ImportCRFDataService, ImportHelper
+    └── filter/                # LocaleFilter
 ```
 
-## WHERE TO LOOK
+## DEPENDENCY CHAIN
 
-| Task | Location | Notes |
-|------|----------|-------|
-| Study management UI | `control/managestudy/` | Servlets for study operations |
-| Data entry | `control/submit/` | CRF data entry servlets |
-| Admin panel | `control/admin/` | System administration |
-| REST API | `controller/` | Spring @Controller classes |
-| JSP pages | `webapp/WEB-INF/jsp/` | View templates |
-| Legacy deletion plan | `../docs/refactor/remove-legacy-code-plan.md` | Workflow migration and deletion gates |
+The high-risk data-entry/import cluster is kept because app/ module imports or still depends on it:
 
-## CONVENTIONS
+- `app/.../module/dataimport/` → `control.form.{Validator, DiscrepancyValidator, FormDiscrepancyNotes}` + `web.crfdata.ImportCRFDataService`
+- `app/.../OpenClinicaApplication.java` → component-scans `web.filter`
 
-- **Servlets:** Extend `SecureController` for auth/security
-- **REST Controllers:** Use `@Controller` + `@RequestMapping`
-- **JSPs:** Use `include/footer.jsp`, `include/header.jsp`
+## DELETION BLOCKER
 
-## TESTING
+Removing these Java files requires:
+1. Moving validation/import logic into `app/module/dataimport` (preferred)
+2. Accepting them as compatibility shim code
 
-**Base class:** `junit.framework.TestCase` (no Spring context, no database)
+## WEBAPP
 
-**Tests in web module** (2 test files: `SubmitDataServletTest`, `ListDiscNotesForCRFServletTest`):
-- Pure JUnit unit tests — no DB, no Spring context
-- Use **Mockito** (`import static org.mockito.Mockito.*`) for mocking role/permission objects
-- Test authorization logic like `mayViewData()`, `maySubmitData()` with different roles
-- Configure locale via `ResourceBundleProvider.updateLocale()`
-- ✅ 3 tests pass (JAVA_HOME=21 required for Mockito/ByteBuddy compatibility)
-
-## ANTI-PATTERNS
-
-- **NEVER** bypass `SecureController` - always check session
-- **NEVER** put SQL in servlets - delegate to core services
-- **ALWAYS** use `forwardPage()` pattern for navigation
-- **DO NOT** hardcode URLs - use `Page.*` constants
-
-## KEY PATTERNS
-
-### SecureController Pattern
-```java
-public class MyServlet extends SecureController {
-    @Override
-    protected void processRequest() throws Exception {
-        // Session/auth already validated
-        // ...
-        forwardPage(Page.MY_PAGE);
-    }
-}
+```
+web/src/main/webapp/
+└── WEB-INF/
+    └── web.xml               # 40 lines (EncodingFilter + listeners only)
 ```
