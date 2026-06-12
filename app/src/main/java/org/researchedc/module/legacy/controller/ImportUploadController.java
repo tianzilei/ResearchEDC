@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
-
-import org.researchedc.bean.login.UserAccountBean;
+import jakarta.servlet.http.HttpSession;
 import org.researchedc.module.dataimport.dto.ImportJobDTO;
 import org.researchedc.module.dataimport.service.ImportService;
 import org.slf4j.Logger;
@@ -73,9 +72,25 @@ public class ImportUploadController {
     }
 
     private Integer resolveRequestedBy(HttpServletRequest request) {
-        Object userBean = request.getSession().getAttribute("userBean");
-        if (userBean instanceof UserAccountBean user && user.getId() > 0) {
-            return user.getId();
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return null;
+        }
+        return readPositiveIntegerId(session.getAttribute("userBean"));
+    }
+
+    private Integer readPositiveIntegerId(Object candidate) {
+        if (candidate == null) {
+            return null;
+        }
+        try {
+            Object value = candidate.getClass().getMethod("getId").invoke(candidate);
+            if (value instanceof Number number && number.intValue() > 0) {
+                return number.intValue();
+            }
+        } catch (ReflectiveOperationException | SecurityException e) {
+            log.debug("Legacy import upload session user has no readable positive id: {}",
+                    candidate.getClass().getName());
         }
         return null;
     }
