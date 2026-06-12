@@ -15,7 +15,7 @@ Completed foundations:
 - SOAP `ws/` is absent.
 - DAO SPI widening is complete for the 24 main DAO families.
 - Phase 1 web/JSP/servlet deletion is closed; the `web/` directory is absent.
-- A `dataimport` Modulith module and SPA import wizard already exist.
+- A `dataimport` Modulith module and SPA import wizard exist with focused service/controller tests, typed preview/result contracts, commit audit events, and hardened attachment download.
 
 Current generated legacy inventory (2026-06-12):
 
@@ -35,7 +35,7 @@ Remaining blockers:
 |---|---:|---|
 | Phase 3 DAO implementation deletion | 95 | Blocked by module-owned repository/service replacements for every SPI method and removal of adapter fallback SQL |
 | Phase 4 shared service deletion | 30 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
-| Import/export compatibility hardening | module work | Dataimport module exists; needs tests, structured preview/errors, transactional commit/audit proof, and secure attachment download |
+| Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; remaining compatibility gaps are rule XML import, import job scheduling, disposable-DB rollback proof, and broader ODM/OpenRosa/export contract coverage |
 
 ## Current Import State
 
@@ -44,20 +44,28 @@ The current worktree contains:
 - `app/src/main/java/org/researchedc/module/dataimport/` with `ImportJob`, repository, DTOs, controller, service, and `ImportCrfDataAdapter`.
 - `POST /api/v1/imports/upload`, which uploads and creates one import job.
 - A temporary `/api/legacy/import/upload` bridge that delegates to `ImportService`.
-- SPA `frontend/src/pages/admin/ImportManager.tsx`, which uploads through `/api/v1/imports/upload` and validates/commits existing jobs.
-- `DataCaptureController`/`DataCaptureService` attachment download support that still needs hardening.
+- SPA `frontend/src/pages/admin/ImportManager.tsx`, which uploads through `/api/v1/imports/upload`, displays typed validation preview output, and validates/commits existing jobs.
+- `DataCaptureController`/`DataCaptureService` attachment support now uses event-CRF keyed routes and opaque attachment ids.
 
-Immediate issues to resolve:
+Completed in commit `bc1f24d97`:
 
-- No focused tests exist yet for the `dataimport` module or attachment endpoint.
-- The legacy upload bridge passes `requestedBy = null`; either remove the bridge or resolve the session user.
-- `ImportService.validate()` stores compact JSON strings instead of exposing a typed preview/error DTO.
-- `commit()` needs disposable-DB proof for rollback, audit parity, and result statistics.
-- Attachment download accepts raw file path/name input and needs event CRF/item-level permission checks.
+- Focused `ImportService`, import controller, legacy upload bridge, data-capture service/controller, and import audit event tests.
+- Legacy `/api/legacy/import/upload` resolves `requestedBy` from the session user when available.
+- `ImportService.validate()` returns `ImportPreviewDTO`; `GET /api/v1/imports/{id}/preview` exposes stored preview.
+- `ImportService.commit()` returns `ImportResultDTO`, records result stats, and publishes a Modulith event consumed by the audit module.
+- Attachment list/download/upload routes are keyed by event CRF; downloads use opaque attachment ids and permission/path-traversal checks.
+
+Remaining import/export compatibility issues to resolve:
+
+- Add disposable-database proof that failed commits roll back without partial writes.
+- Cover rule XML import and import job scheduling behavior or formally retire them.
+- Broaden ODM/OpenRosa/export contract coverage beyond the focused module tests.
 
 ## Next Plan
 
 ### 1. Add Import Module Tests
+
+Status: **complete in commit `bc1f24d97`**.
 
 Goal: protect the existing upload -> job -> validate -> commit lifecycle before changing behavior.
 
@@ -77,6 +85,8 @@ Exit gate:
 
 ### 2. Replace String Summary With Typed Preview
 
+Status: **complete in commit `bc1f24d97`**.
+
 Goal: make validation output usable by the SPA and testable without parsing ad hoc JSON fragments.
 
 Actions:
@@ -93,6 +103,8 @@ Exit gate:
 - SPA displays the same decision points as the legacy confirm/verify path.
 
 ### 3. Prove CRF Data Validation Coverage
+
+Status: **initial focused coverage complete in commit `bc1f24d97`; broader representative ODM fixture coverage remains.**
 
 Goal: prove the imported ODM path validates the clinical data conditions that still matter.
 
@@ -111,6 +123,8 @@ Exit gate:
 
 ### 4. Prove Commit And Audit
 
+Status: **audit event/result DTO coverage complete in commit `bc1f24d97`; disposable-database rollback proof remains.**
+
 Goal: prove the SPA/API path performs actual data mutation with rollback and audit parity.
 
 Actions:
@@ -126,6 +140,8 @@ Exit gate:
 - Audit/result output is visible through `/api/v1/imports/{id}` or preview/result endpoints.
 
 ### 5. Harden Attachment Download
+
+Status: **complete in commit `bc1f24d97` for current filesystem-backed attachment compatibility path.**
 
 Goal: make attachment download safe as app/module compatibility code.
 
@@ -195,10 +211,4 @@ scripts/ci/generate-legacy-inventory.py --output-dir docs/refactor --basename le
 
 ## Recommended Immediate Commit Boundary
 
-First commit should add focused tests and any compile/typecheck fixes for the existing import module. Do not delete more compatibility code in that commit.
-
-Second commit should replace string summaries with typed preview/result contracts.
-
-Third commit should prove commit/audit behavior and harden attachment download.
-
-Fourth commit should start the Phase 3 DAO deletion ledger and remove only artifacts with proven replacement coverage.
+Next commit should start the Phase 3 DAO deletion ledger and remove only artifacts with proven replacement coverage.
