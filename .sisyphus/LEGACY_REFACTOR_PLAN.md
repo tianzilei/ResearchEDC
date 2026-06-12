@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-12 (Legacy code removal is **not complete**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 95 DAO files under `shared/dao`, 30 shared-service inventory rows, and import/export compatibility hardening in app/module code. See `docs/refactor/remove-legacy-code-plan.md`.)
+> **Last updated:** 2026-06-13 (Legacy code removal is **not complete**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 95 DAO files under `shared/dao`, 30 shared-service inventory rows, and import/export compatibility hardening in app/module code. See `docs/refactor/remove-legacy-code-plan.md`.)
 > **Scope:** All remaining legacy code in `shared/` plus app-hosted compatibility classes migrated from `web/`; keep SOAP compatibility audits only if `ws/` reappears
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -152,7 +152,7 @@ Next work is no longer Phase B. Continue with the legacy route/workflow inventor
 
 **WebBeansConfig:** 0 `new XxxDAO()` calls remain. All DAO beans use `LegacyDaoFactory` or `@Primary` adapters. Only `new ArchivedDatasetFileDAO` was the last concrete construction, now replaced with `LegacyDaoFactory.archivedDatasetFileDao()`.
 
-**Build verification:** `mvn clean compile` ✅ | `mvn test -pl app -am` 295/295 in latest Phase 1 Enterprise/mail removal slice ✅ | `ModulithVerificationTest` ✅
+**Build verification:** `mvn clean compile` ✅ | `mvn test -pl app -am` 432/432 in latest project handoff ✅ | `ModulithVerificationTest` ✅
 
 The table ownership declarations below are derived from the actual JPA entities in each module.
 

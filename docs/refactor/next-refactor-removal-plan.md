@@ -1,7 +1,7 @@
 # Next Refactor And Removal Plan
 
 **Created:** 2026-06-11
-**Updated:** 2026-06-12
+**Updated:** 2026-06-13
 **Status source:** current worktree plus regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}`.
 
 ## Current Status
