@@ -35,7 +35,7 @@ Remaining blockers:
 |---|---:|---|
 | Phase 3 DAO implementation deletion | 95 | Blocked by module-owned repository/service replacements for every SPI method and removal of adapter fallback SQL |
 | Phase 4 shared service deletion | 30 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
-| Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; rollback proof added after commit `ae72d2415`; remaining compatibility gaps are rule XML import, import job scheduling, and broader ODM/OpenRosa/export contract coverage |
+| Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; rollback proof added after commit `ae72d2415`; remaining compatibility gaps are rule XML import and broader ODM/OpenRosa/export contract coverage; legacy import job scheduling is retired in the current tree and guarded against reintroduction |
 
 ## Current Import State
 
@@ -58,7 +58,8 @@ Completed in commit `bc1f24d97`:
 Remaining import/export compatibility issues to resolve:
 
 - Done after commit `ae72d2415`: item persistence failures in `ImportCrfDataAdapter.commitImport()` now fail the commit instead of logging-and-continuing; `scripts/ci/check-import-rollback-postgres.sh` proves failed import-style transactions leave no partial writes against an explicit disposable PostgreSQL database.
-- Cover rule XML import and import job scheduling behavior or formally retire them.
+- Done after commit `15c27c51e`: legacy `ImportSpringJob`/`ExampleSpringJob` classes are absent from the current tree; import scheduling is formally retired unless a new module-owned worker is explicitly added, and guardrails now prevent those Quartz jobs from returning.
+- Cover rule XML import behavior or formally retire it.
 - Broaden ODM/OpenRosa/export contract coverage beyond the focused module tests.
 
 ## Next Plan
