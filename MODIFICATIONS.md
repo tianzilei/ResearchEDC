@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-14 - EventDefinitionCRF unused SPI method cleanup
+
+- Removed two unused default methods from `EventDefinitionCRFDao`: `findAvailableByStudyEventDefStudy` and `findSiteHiddenByStudyEventDefStudy`.
+- Updated the Phase 3 ledger to 756/885 module-backed methods, 66 unused rows, 63 removed rows, and 0 fallback-SQL/legacy-only/adapter-gap rows.
+
 ## 2026-06-14 - RuleSetRuleAudit unused SPI deletion slice
 
 - Deleted unused `IRuleSetRuleAuditDAO` and its unused Hibernate-domain `RuleSetRuleAuditDao` implementation.

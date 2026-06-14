@@ -77,7 +77,7 @@ test methods awaiting reactivation.
 | SPI interfaces | ✅ 66 interfaces for DI (replaces direct DAO class references) |
 | Liquibase migrations | ✅ 208 XML files, versioned from 3.x through 3.18 |
 | Strangulation target | 🔶 Active — new code goes to `app/module/` |
-| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 88 DAO/SPI/implementation files still exist. Phase 3 ledger: 756/885 methods are module-backed; 68 unused rows remain; 61 rows are removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. |
+| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 88 DAO/SPI/implementation files still exist. Phase 3 ledger: 756/885 methods are module-backed; 66 unused rows remain; 63 rows are removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. |
 
 ## ANTI-PATTERNS
 

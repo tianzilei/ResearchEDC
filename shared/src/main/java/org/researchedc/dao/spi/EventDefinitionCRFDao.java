@@ -56,7 +56,5 @@ public interface EventDefinitionCRFDao {
     List findAllCrfMigrationDoesNotPerform(CRFVersionBean sourceCrfVersionBean, CRFVersionBean targetCrfVersionBean, ArrayList<String> studyEventDefnlist, ArrayList<String> sitelist);
 
     // Domain-entity-returning methods (default for gradual migration)
-    default List<EventDefinitionCrf> findAvailableByStudyEventDefStudy(Integer studyEventDefinitionId, Integer studyId) { throw new UnsupportedOperationException(); }
-    default List<EventDefinitionCrf> findSiteHiddenByStudyEventDefStudy(Integer studyEventDefinitionId, Integer studyId) { throw new UnsupportedOperationException(); }
     default List<EventDefinitionCrf> findByStudyEventDefinitionId(int studyEventDefinitionId) { throw new UnsupportedOperationException(); }
 }
