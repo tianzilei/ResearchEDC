@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-14 - Remove unused ISectionDAO datamap defaults
+
+- Removed unused default `ISectionDAO.saveOrUpdate(Section)` and `ISectionDAO.findByCrfVersionOrdinal(int, int)` declarations; no typed `ISectionDAO` callers use them.
+- Updated the Phase 3 ledger to 757/878 module-backed methods, 52 unused rows, 69 removed rows, and 826/878 covered or removed (94.1%).
+
 ## 2026-06-14 - Remove unused IStudyDAO datamap defaults
 
 - Removed unused default `IStudyDAO.findById(int)` and `IStudyDAO.findByColumnName(Object, String)` declarations; no typed `IStudyDAO` callers use them.

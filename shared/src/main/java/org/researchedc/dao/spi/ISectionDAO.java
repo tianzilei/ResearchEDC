@@ -1,7 +1,6 @@
 package org.researchedc.dao.spi;
 
 import org.researchedc.bean.core.EntityBean;
-import org.researchedc.domain.datamap.Section;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,7 +65,5 @@ public interface ISectionDAO {
 
     public HashMap getSectionIdForTabId(int crfVersionId, int tabId);
 
-    default Section saveOrUpdate(Section entity) { throw new UnsupportedOperationException(); }
-    default Section findByCrfVersionOrdinal(int crfVersionId, int ordinal) { throw new UnsupportedOperationException(); }
 
 }

@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-14 (Legacy code removal is **not complete**. Tracked workflow progress is 848/963 closed, **88.1%**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 88 DAO files under `shared/dao`, 27 shared-service inventory rows, and import/export compatibility hardening in app/module code. Phase 3 ledger: 757/878 methods module-backed; 824/878 module-backed or removed, **93.8%**; 54 unused rows remain; 67 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. See `docs/refactor/remove-legacy-code-plan.md`.)
+> **Last updated:** 2026-06-14 (Legacy code removal is **not complete**. Tracked workflow progress is 848/963 closed, **88.1%**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 88 DAO files under `shared/dao`, 27 shared-service inventory rows, and import/export compatibility hardening in app/module code. Phase 3 ledger: 757/878 methods module-backed; 826/878 module-backed or removed, **94.1%**; 52 unused rows remain; 69 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. See `docs/refactor/remove-legacy-code-plan.md`.)
 > **Scope:** All remaining legacy code in `shared/` plus app-hosted compatibility classes migrated from `web/`; keep SOAP compatibility audits only if `ws/` reappears
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -29,7 +29,7 @@ shared/   504 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ 
 web/        0 files → directory absent; needed import/validation compatibility classes migrated to app/
 ws/         0 Java files → SOAP module absent in current tree
 inventory 115 active artifacts -> 70 replace, 45 keep compatibility, 0 unknown
-phase-3  757/878 DAO SPI methods module-backed; 824/878 module-backed or removed (93.8%); 54 unused rows remain (6.2%); 67 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain
+phase-3  757/878 DAO SPI methods module-backed; 826/878 module-backed or removed (94.1%); 52 unused rows remain (5.9%); 69 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain
 ```
 
 Important distinction: `legacy-core/` removal was a module consolidation into `shared/`; it was not full legacy code removal.
@@ -284,7 +284,7 @@ Modules communicate via:
 
 ### C1: DAO Files Still Present (Blocked by remaining concrete consumers)
 
-Latest Phase 3 ledger checkpoint (2026-06-14): overall ledger status is 757 `module-backed`, 54 `unused`, and 65 `removed` across 878 tracked methods. DAO implementation deletion remains blocked until unused SPI rows are removed and registration/factory/inheritance/runtime dependencies are cleared for each family.
+Latest Phase 3 ledger checkpoint (2026-06-14): overall ledger status is 757 `module-backed`, 52 `unused`, and 65 `removed` across 878 tracked methods. DAO implementation deletion remains blocked until unused SPI rows are removed and registration/factory/inheritance/runtime dependencies are cleared for each family.
 
 The following DAO `.java` files still exist in `shared/`. As of 2026-06-02, **0 `DaoProvider.getDao()` call sites** and **0 direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches** remain across app/web/ws/shared. **All 19 DAO families** are SPI-widened. All DAO `.java` files must remain because they are the current SPI implementations; deletion is blocked by the need for module-owned replacements and workflow strangulation.
 

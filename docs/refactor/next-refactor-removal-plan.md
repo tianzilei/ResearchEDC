@@ -2,7 +2,7 @@
 
 **Created:** 2026-06-11
 **Updated:** 2026-06-14 (latest)
-**Status source:** current tree plus regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` and Phase 3 DAO replacement ledger (757/878 module-backed, 824/878 module-backed or removed, 0 fallback-sql, 0 legacy-only, 0 adapter-gap, 54 unused, 67 removed).
+**Status source:** current tree plus regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` and Phase 3 DAO replacement ledger (757/878 module-backed, 826/878 module-backed or removed, 0 fallback-sql, 0 legacy-only, 0 adapter-gap, 52 unused, 69 removed).
 
 ## Current Status
 
@@ -31,11 +31,11 @@ Current generated legacy inventory (2026-06-12):
 
 Remaining blockers:
 
-Progress snapshot: tracked workflow closure is **848/963 artifacts (88.1%)**; DAO method replacement/removal coverage is **824/878 (93.8%)**; remaining unused DAO SPI rows are **54/878 (6.2%)**; DAO-surface file deletion is **98/186 (52.7%)**.
+Progress snapshot: tracked workflow closure is **848/963 artifacts (88.1%)**; DAO method replacement/removal coverage is **826/878 (94.1%)**; remaining unused DAO SPI rows are **52/878 (5.9%)**; DAO-surface file deletion is **98/186 (52.7%)**.
 
 | Slice | Count | Status |
 |---|---:|---|
-| Phase 3 DAO implementation deletion | 88 | **No fallback/legacy/gap ledger blockers remain** — 757/878 methods module-backed; 54 unused SPI rows remain; 67 rows already removed; 0 fallback-sql, 0 legacy-only, 0 adapter-gap |
+| Phase 3 DAO implementation deletion | 88 | **No fallback/legacy/gap ledger blockers remain** — 757/878 methods module-backed; 52 unused SPI rows remain; 69 rows already removed; 0 fallback-sql, 0 legacy-only, 0 adapter-gap |
 | Phase 4 shared service deletion | 27 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
 | Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; rollback proof added after commit `ae72d2415`; remaining compatibility gap is broader ODM/OpenRosa/export contract coverage; legacy import job scheduling is retired in the current tree and guarded against reintroduction |
 
@@ -166,7 +166,7 @@ Exit gate:
 
 ### 6. Phase 3 DAO Replacement Ledger
 
-Status: **active**. Ledger updated: 757/878 methods are `module-backed`; **0 `legacy-only`, 0 `adapter-gap`, 0 `fallback-sql` rows remain**; 54 `unused` SPI methods remain; 65 methods already removed (`UsageStatsServiceDao` SPI+impl+service+entity, `RuleSetDomainDao` SPI+impl, `IAuditEventDAO` 19 unused methods, `AuditDao` 14 unused methods, `ArchivedDatasetFileDao` SPI+bean, `WebBeansConfig`, extract services). **All non-module-backed methods are now either unused or removed.**
+Status: **active**. Ledger updated: 757/878 methods are `module-backed`; **0 `legacy-only`, 0 `adapter-gap`, 0 `fallback-sql` rows remain**; 52 `unused` SPI methods remain; 65 methods already removed (`UsageStatsServiceDao` SPI+impl+service+entity, `RuleSetDomainDao` SPI+impl, `IAuditEventDAO` 19 unused methods, `AuditDao` 14 unused methods, `ArchivedDatasetFileDao` SPI+bean, `WebBeansConfig`, extract services). **All non-module-backed methods are now either unused or removed.**
 
 Goal: turn the 88 remaining `shared/dao` files into an actionable deletion queue.
 
@@ -195,7 +195,7 @@ Exit gate:
 - ✅ Removed 19 unused methods from `IAuditEventDAO` SPI and adapter.
 - ✅ Removed 14 unused methods from `AuditDao` SPI and adapter.
 - ✅ Deleted `ArchivedDatasetFileDao` SPI + bean (2 files), `WebBeansConfig` (1 file), extract services (2 files).
-- ⬜ Delete remaining `unused` SPI methods (54) from interfaces and remove corresponding legacy DAO implementations.
+- ⬜ Delete remaining `unused` SPI methods (52) from interfaces and remove corresponding legacy DAO implementations.
 - ⬜ At least one DAO implementation/support file is proven removable or explicitly deferred with every blocking SPI method listed.
 
 ### 7. Reconcile Inventory After Each Slice
