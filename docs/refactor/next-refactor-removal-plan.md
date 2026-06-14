@@ -1,8 +1,8 @@
 # Next Refactor And Removal Plan
 
 **Created:** 2026-06-11
-**Updated:** 2026-06-14
-**Status source:** current tree plus regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` and Phase 3 DAO replacement ledger after commit `d8092f192`.
+**Updated:** 2026-06-14 (latest)
+**Status source:** current tree plus regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` and Phase 3 DAO replacement ledger (756/885 module-backed, 0 fallback-sql, 0 legacy-only, 0 adapter-gap, 70 unused, 59 removed).
 
 ## Current Status
 
@@ -33,7 +33,7 @@ Remaining blockers:
 
 | Slice | Count | Status |
 |---|---:|---|
-| Phase 3 DAO implementation deletion | 95 | Blocked by 142 `fallback-sql`, 76 `legacy-only`, and 65 `adapter-gap` ledger rows plus implementation/support registration checks; 602/885 methods are module-backed after commit `d8092f192` |
+| Phase 3 DAO implementation deletion | 95 | **No ledger blockers remain** — 756/885 methods module-backed; 70 unused SPI methods ready for deletion; 59 methods already removed; 0 fallback-sql, 0 legacy-only, 0 adapter-gap |
 | Phase 4 shared service deletion | 30 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
 | Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; rollback proof added after commit `ae72d2415`; remaining compatibility gap is broader ODM/OpenRosa/export contract coverage; legacy import job scheduling is retired in the current tree and guarded against reintroduction |
 
@@ -164,7 +164,7 @@ Exit gate:
 
 ### 6. Phase 3 DAO Replacement Ledger
 
-Status: **active**. Ledger exists and was advanced in commit `d8092f192`: 602/885 methods are `module-backed`; 142 `fallback-sql`, 76 `legacy-only`, and 65 `adapter-gap` rows remain deletion blockers.
+Status: **active**. Ledger updated: 756/885 methods are `module-backed`; **0 `legacy-only`, 0 `adapter-gap`, 0 `fallback-sql` rows remain**; 70 `unused` SPI methods remain; 59 methods already removed (`UsageStatsServiceDao` SPI+impl+service+entity, `RuleSetDomainDao` SPI+impl, `IAuditEventDAO` 19 unused methods, `AuditDao` 14 unused methods, `ArchivedDatasetFileDao` SPI+bean, `WebBeansConfig`, extract services). **All non-module-backed methods are now either module-backed, unused, or removed.**
 
 Goal: turn the 95 remaining `shared/dao` files into an actionable deletion queue.
 
@@ -179,6 +179,21 @@ Exit gate:
 
 - ✅ A checked-in DAO deletion ledger exists.
 - ✅ Low-risk fallback rows for `StudyGroupDao`, `StudyGroupClassDao`, and `ISubjectDAO` were converted to module-backed behavior or proof in commit `d8092f192`.
+- ✅ All 142 `fallback-sql` methods reclassified to `module-backed` after adapter verification.
+- ✅ 26 `adapter-gap` methods reclassified (1 to `module-backed`, 25 to `unused`).
+- ✅ 16 `legacy-only` methods reclassified to `unused` (dead code with no module callers).
+- ✅ 11 `legacy-only` methods reclassified to `module-backed` (AuditDao + IAuditEventDAO adapters created).
+- ✅ 49 remaining `legacy-only` methods reclassified to `unused` (zero module callers across all families).
+- ✅ **0 `legacy-only` methods remain** — all 76 original legacy-only methods resolved.
+- ✅ 39 `adapter-gap` methods reclassified to `unused` (all called on concrete objects/repositories, not through SPI).
+- ✅ **0 `adapter-gap` methods remain** — all 65 original adapter-gap methods resolved.
+- ✅ **0 `fallback-sql`, 0 `legacy-only`, 0 `adapter-gap` remain** — only `module-backed` (756) and `unused` (118) and `removed` (11) categories.
+- ✅ Deleted `UsageStatsServiceDao` SPI + implementation + service + entity (4 files).
+- ✅ Deleted `RuleSetDomainDao` SPI + implementation (2 files) and cleaned up legacy service references.
+- ✅ Removed 19 unused methods from `IAuditEventDAO` SPI and adapter.
+- ✅ Removed 14 unused methods from `AuditDao` SPI and adapter.
+- ✅ Deleted `ArchivedDatasetFileDao` SPI + bean (2 files), `WebBeansConfig` (1 file), extract services (2 files).
+- ⬜ Delete remaining `unused` SPI methods (70) from interfaces and remove corresponding legacy DAO implementations.
 - ⬜ At least one DAO implementation/support file is proven removable or explicitly deferred with every blocking SPI method listed.
 
 ### 7. Reconcile Inventory After Each Slice
@@ -218,4 +233,15 @@ scripts/ci/generate-legacy-inventory.py --output-dir docs/refactor --basename le
 
 ## Recommended Immediate Commit Boundary
 
-Next commit should continue Phase 3 by reducing another narrow `fallback-sql` or `adapter-gap` cluster with focused adapter tests. Do not delete DAO implementation/support files until every method, registration, factory, inheritance, and runtime dependency is proven safe.
+Next commit should continue deleting `unused` SPI methods (70 remaining). The largest remaining families are:
+
+1. **IStudyEventDefinitionDAO** (6 unused) — `findByStudySubject`, `buildMaxOrdinalByStudyEvent`, `findAllActiveByStudy`, `findByStudyEventDefinitionId`, `findByColumnName`, `findById`
+2. **IItemDAO** (6 unused) — `findByNameCrfId`, `getItemDataTypeId`, `save`, `findByOcOID`, `findAllByCrfVersionId`, `findByItemGroupCrfVersionOrdered`
+3. **EventCRFDao** (6 unused) — `findById`, `findByStudyEventIdStudySubjectId`, `findByStudyEventIdStudySubjectIdCrfId`, `findByStudyEventIdStudySubjectIdCrfVersionId`, `findByStudyEventStatus`, `saveOrUpdate`
+4. **IStudyEventDAO** (5 unused) — `fetchByStudyEventDefOIDAndOrdinalTransactional`, `fetchListByStudyEventDefOID`, `findByStudyEventId`, `saveOrUpdate`, `findById`
+5. **IItemDataDAO** (5 unused) — `findAllByEventCrf`, `findByEventCrfGroup`, `findByItemEventCrfOrdinal`, `getMaxGroupRepeat`, `saveOrUpdate`
+6. **ICrfDAO** (5 unused) — `findByCrfId`, `findById`, `findByNameEntity`, `save`, `saveOrUpdate`
+
+For each: read the SPI interface, remove the unused method declarations, update the adapter to remove the corresponding `@Override` methods.
+
+Do not delete DAO implementation/support files until every method, registration, factory, inheritance, and runtime dependency is proven safe.

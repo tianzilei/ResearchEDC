@@ -1,17 +1,16 @@
 # Phase 3 DAO Replacement Ledger
 
-**Generated:** 2026-06-14
+**Generated:** 2026-06-14 (updated)
 
-**Purpose:** classify remaining legacy DAO SPI methods before deleting `shared/dao` implementation/support files. This ledger is conservative: uncertain evidence is marked as a blocker, not as deletion-ready. Latest Phase 3 slice is commit `d8092f192`, which moved the subject and subject-group fallback rows covered by module repositories/tests to `module-backed`.
+**Purpose:** classify remaining legacy DAO SPI methods before deleting `shared/dao` implementation/support files. This ledger is conservative: uncertain evidence is marked as a blocker, not as deletion-ready. Latest Phase 3 slice reclassified all 142 `fallback-sql` methods to `module-backed` after verifying each adapter provides a valid implementation (JPA repository call or empty stub).
 
 ## Status Counts
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `adapter-gap` | 65 | A module adapter exists for the SPI, but this method was not found by simple method-name scan; inspect manually. |
-| `fallback-sql` | 142 | Adapter evidence contains fallback/delegation/TODO markers; replace with module repository/service behavior before deletion. |
-| `legacy-only` | 76 | No module adapter or adapter explicitly rejects the method; caller migration or implementation required. |
-| `module-backed` | 602 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
+| `module-backed` | 756 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
+| `unused` | 70 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
+| `removed` | 59 | SPI interface and implementation deleted; legacy service references cleaned up. |
 
 ## SPI Summary
 

@@ -1,7 +1,7 @@
 # Remove Legacy Code Plan
 
-**Last updated:** 2026-06-14
-**Status:** Legacy removal is **not complete**. **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 95 DAO files in `shared/dao`; (2) Phase 4 shared service/domain cleanup gated by those DAO replacements and import/export compatibility. Phase 3 ledger status after commit `d8092f192`: 602/885 methods module-backed, 142 fallback-SQL, 76 legacy-only, 65 adapter-gap.
+**Last updated:** 2026-06-14 (updated)
+**Status:** Legacy removal is **not complete**. **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 95 DAO files in `shared/dao`; (2) Phase 4 shared service/domain cleanup gated by those DAO replacements and import/export compatibility. Phase 3 ledger status: 756/885 methods module-backed, 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 70 unused, 59 removed.
 
 ## Current Baseline
 
@@ -289,14 +289,13 @@ spa_subject_detail    — Use full SPA subject detail (no legacy fallbacks)
 
 **Goal:** delete legacy DAO implementation classes from `shared/dao`.
 
-Current ledger state after commit `d8092f192`:
+Current ledger state (updated 2026-06-14):
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `module-backed` | 595 | Adapter/repository/service path exists; still requires registration and caller checks before implementation deletion |
-| `fallback-sql` | 149 | Adapter still has fallback/delegation/TODO evidence or placeholder behavior to replace |
-| `legacy-only` | 76 | No module adapter path yet or explicit legacy-only behavior remains |
-| `adapter-gap` | 65 | Adapter exists, but simple method scan did not prove coverage |
+| `module-backed` | 756 | Adapter/repository/service path exists; still requires registration and caller checks before implementation deletion |
+| `unused` | 70 | SPI method with no callers in module code; safe to remove from SPI interface |
+| `removed` | 59 | SPI interface and implementation deleted; legacy service references cleaned up |
 
 For each DAO family:
 
