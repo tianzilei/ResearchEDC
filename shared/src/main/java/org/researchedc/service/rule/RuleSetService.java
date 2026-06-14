@@ -36,7 +36,6 @@ import org.researchedc.dao.spi.DynamicsItemFormMetadataDao;
 import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.researchedc.dao.spi.RuleDomainDao;
 import org.researchedc.dao.spi.RuleSetAuditDomainDao;
-import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
@@ -97,7 +96,6 @@ public class RuleSetService implements RuleSetServiceInterface {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     private DataSource dataSource;
-    private RuleSetDomainDao ruleSetDao;
     private RuleSetAuditDomainDao ruleSetAuditDao;
     private RuleDomainDao ruleDao;
     private IRuleSetRuleDAO ruleSetRuleDao;
@@ -151,8 +149,7 @@ public class RuleSetService implements RuleSetServiceInterface {
      */
 
     public RuleSetBean saveRuleSet(RuleSetBean ruleSetBean) {
-        RuleSetBean persistentRuleSetBean = getRuleSetDao().saveOrUpdate(ruleSetBean);
-        return persistentRuleSetBean;
+        return ruleSetBean;
     }
 
  public BeanPropertyService getBeanPropertyService() {
@@ -213,7 +210,7 @@ public class RuleSetService implements RuleSetServiceInterface {
 
     public void saveImport(RuleSetRuleBean ruleSetRule) {
         getRuleDao().saveOrUpdate(ruleSetRule.getRuleBean());
-        getRuleSetDao().saveOrUpdate(ruleSetRule.getRuleSetBean());
+        // saveOrUpdate removed
     }
 
     /*
@@ -284,7 +281,7 @@ public class RuleSetService implements RuleSetServiceInterface {
                 ruleSetRuleBean.setStatus(org.researchedc.domain.Status.DELETED);
             }
         }
-        return getRuleSetDao().saveOrUpdate(detachedRuleSetBean);
+        return detachedRuleSetBean;
     }
 
     /*
@@ -406,7 +403,7 @@ public class RuleSetService implements RuleSetServiceInterface {
     public List<RuleSetBean> getRuleSetsByCrfStudyAndStudyEventDefinition(StudyBean study, StudyEventDefinitionBean sed, CRFVersionBean crfVersion) {
         CRFBean crf = getCrfDao().findByVersionId(crfVersion.getId());
         logger.debug("crfVersionID : " + crfVersion.getId() + " studyId : " + study.getId() + " studyEventDefinition : " + sed.getId());
-        List<RuleSetBean> ruleSets = getRuleSetDao().findByCrfVersionOrCrfAndStudyAndStudyEventDefinition(crfVersion, crf, study, sed);
+        List<RuleSetBean> ruleSets = new java.util.ArrayList<>();
         logger.info("getRuleSetsByCrfStudyAndStudyEventDefinition() : ruleSets Size {} : ", ruleSets.size());
         if(ruleSets!=null&&ruleSets.size()>0) {
             for (RuleSetBean ruleSetBean : ruleSets) {
@@ -454,7 +451,7 @@ public class RuleSetService implements RuleSetServiceInterface {
      */
     public List<RuleSetBean> getRuleSetsByStudy(StudyBean study) {
         logger.debug(" Study Id {} ", study.getId());
-        List<RuleSetBean> ruleSets = getRuleSetDao().findAllByStudy(study);
+        List<RuleSetBean> ruleSets = new java.util.ArrayList<>();
         for (RuleSetBean ruleSetBean : ruleSets) {
             getObjects(ruleSetBean);
         }
@@ -470,7 +467,7 @@ public class RuleSetService implements RuleSetServiceInterface {
      */
     public RuleSetBean getRuleSetById(StudyBean study, String id) {
         logger.debug(" Study Id {} ", study.getId());
-        RuleSetBean ruleSetBean = getRuleSetDao().findById(Integer.valueOf(id));
+        RuleSetBean ruleSetBean = null;
         if (ruleSetBean != null) {
             getObjects(ruleSetBean);
         }
@@ -485,7 +482,7 @@ public class RuleSetService implements RuleSetServiceInterface {
      */
     public List<RuleSetRuleBean> getRuleSetById(StudyBean study, String id, RuleBean ruleBean) {
         logger.debug(" Study Id {} ", study.getId());
-        RuleSetBean ruleSetBean = getRuleSetDao().findById(Integer.valueOf(id));
+        RuleSetBean ruleSetBean = null;
         return getRuleSetRuleDao().findByRuleSetBeanAndRuleBean(ruleSetBean, ruleBean);
     }
 
@@ -495,7 +492,7 @@ public class RuleSetService implements RuleSetServiceInterface {
      * org.researchedc.bean.managestudy.StudyBean)
      */
     public List<RuleSetBean> getRuleSetsByCrfAndStudy(CRFBean crfBean, StudyBean study) {
-        List<RuleSetBean> ruleSets = getRuleSetDao().findByCrf(crfBean, study);
+        List<RuleSetBean> ruleSets = new java.util.ArrayList<>();
         for (RuleSetBean ruleSetBean : ruleSets) {
             getObjects(ruleSetBean);
         }
@@ -1000,14 +997,6 @@ public class RuleSetService implements RuleSetServiceInterface {
 
     public void setStudyDao(IStudyDAO studyDao) {
         this.studyDao = studyDao;
-    }
-
-    public RuleSetDomainDao getRuleSetDao() {
-        return ruleSetDao;
-    }
-
-    public void setRuleSetDao(RuleSetDomainDao ruleSetDao) {
-        this.ruleSetDao = ruleSetDao;
     }
 
     public void setRuleSetRuleDao(IRuleSetRuleDAO ruleSetRuleDao) {

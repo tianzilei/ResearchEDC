@@ -17,7 +17,6 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemBean;
 import org.researchedc.dao.spi.RuleDomainDao;
 import org.researchedc.dao.spi.RuleSetAuditDomainDao;
-import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
 import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
@@ -172,17 +171,6 @@ public interface RuleSetServiceInterface {
     public void setRequestURLMinusServletPath(String requestURLMinusServletPath);
 
     public abstract String getRequestURLMinusServletPath();
-
-    /**
-     * @return the ruleSetDao
-     */
-    public abstract RuleSetDomainDao getRuleSetDao();
-
-    /**
-     * @param ruleSetDao
-     *            the ruleSetDao to set
-     */
-    public abstract void setRuleSetDao(RuleSetDomainDao ruleSetDao);
 
     /**
      * @param ruleSetRuleDao

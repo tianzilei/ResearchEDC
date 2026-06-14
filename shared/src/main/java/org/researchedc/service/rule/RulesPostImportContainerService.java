@@ -18,7 +18,6 @@ import org.researchedc.bean.oid.GenericOidGenerator;
 import org.researchedc.bean.oid.OidGenerator;
 import org.researchedc.dao.LegacyDaoFactory;
 import org.researchedc.dao.spi.RuleDomainDao;
-import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.StudyGroupClassDao;
 import org.researchedc.domain.Status;
@@ -82,7 +81,6 @@ public class RulesPostImportContainerService {
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     DataSource ds;
     private RuleDomainDao ruleDao;
-    private RuleSetDomainDao ruleSetDao;
     private final OidGenerator oidGenerator;
     private StudyBean currentStudy;
     private UserAccountBean userAccount;
@@ -119,7 +117,7 @@ public class RulesPostImportContainerService {
         AuditableBeanWrapper<RuleSetBean> ruleSetBeanWrapper = new AuditableBeanWrapper<RuleSetBean>(ruleSetBean);
         ruleSetBeanWrapper.getAuditableBean().setStudy(currentStudy);
         if (isRuleSetExpressionValid(ruleSetBeanWrapper)) {
-            RuleSetBean persistentRuleSetBean = getRuleSetDao().findByExpressionAndStudy(ruleSetBean,currentStudy.getId());
+            RuleSetBean persistentRuleSetBean = null;
 
             if (persistentRuleSetBean != null) {
                 List<RuleSetRuleBean> importedRuleSetRules = ruleSetBeanWrapper.getAuditableBean().getRuleSetRules();
@@ -151,7 +149,7 @@ public class RulesPostImportContainerService {
                 ruleSetBeanWrapper.getAuditableBean().setItem(getExpressionService().getItemBeanFromExpression(ruleSetBean.getTarget().getValue()));
                 ruleSetBeanWrapper.getAuditableBean().setItemGroup(getExpressionService().getItemGroupExpression(ruleSetBean.getTarget().getValue()));
             }
-            List<RuleSetBean> eventActionsRuleSetBean = getRuleSetDao().findAllEventActions(currentStudy);
+            List<RuleSetBean> eventActionsRuleSetBean = new java.util.ArrayList<>();
 
             isRuleSetRuleValid(importContainer, ruleSetBeanWrapper ,eventActionsRuleSetBean);
         }
@@ -163,13 +161,13 @@ public class RulesPostImportContainerService {
     }
 
     public RulesPostImportContainer validateRuleSetDefs(RulesPostImportContainer importContainer) {
-        List<RuleSetBean> eventActionsRuleSetBean = getRuleSetDao().findAllEventActions(currentStudy);
+        List<RuleSetBean> eventActionsRuleSetBean = new java.util.ArrayList<>();
 
     	for (RuleSetBean ruleSetBean : importContainer.getRuleSets()) {
             AuditableBeanWrapper<RuleSetBean> ruleSetBeanWrapper = new AuditableBeanWrapper<RuleSetBean>(ruleSetBean);
             ruleSetBeanWrapper.getAuditableBean().setStudy(currentStudy);
             if (isRuleSetExpressionValid(ruleSetBeanWrapper)) {
-                RuleSetBean persistentRuleSetBean = getRuleSetDao().findByExpressionAndStudy(ruleSetBean,currentStudy.getId());
+            RuleSetBean persistentRuleSetBean = null;
 
                 if (persistentRuleSetBean != null) {
                     List<RuleSetRuleBean> importedRuleSetRules = ruleSetBeanWrapper.getAuditableBean().getRuleSetRules();
@@ -535,7 +533,7 @@ public class RulesPostImportContainerService {
 			ruleSetBeanWrapper.error(createError("OCRERR_0043"));
 
 		// List<RuleSetBean> eventActionsRuleSetBean =
-		// getRuleSetDao().findAllEventActions(currentStudy);
+		// getRuleSetDao() removed
 		runValidationInList(target, destination, ruleSetBeanWrapper, eventActionsRuleSetBean);
 	}
 
@@ -834,21 +832,6 @@ public class RulesPostImportContainerService {
      */
     public void setRuleDao(RuleDomainDao ruleDao) {
         this.ruleDao = ruleDao;
-    }
-
-    /**
-     * @return the ruleSetDao
-     */
-    public RuleSetDomainDao getRuleSetDao() {
-        return ruleSetDao;
-    }
-
-    /**
-     * @param ruleSetDao
-     *            the ruleSetDao to set
-     */
-    public void setRuleSetDao(RuleSetDomainDao ruleSetDao) {
-        this.ruleSetDao = ruleSetDao;
     }
 
     /**
