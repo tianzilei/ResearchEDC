@@ -19,7 +19,7 @@ questionnaire-service/
 │   ├── services/            # Business logic
 │   ├── scoring/             # Scoring engine (7 scorers)
 │   ├── workers/             # Background task workers
-│   └── tests/               # pytest test suite (31 tests)
+│   └── tests/               # pytest test suite (39 tests)
 ├── infra/                   # Infrastructure notes/configs
 └── packages/                # Shared Python packages
 ```
@@ -61,7 +61,7 @@ scoring/
 - **Framework:** FastAPI + SQLAlchemy 2.0 + Pydantic v2
 - **Architecture:** Router → Service → Repository → Model with Pydantic schemas for I/O
 - **Scoring:** Strategy pattern via `BaseScorer` with registry
-- **Tests:** pytest with 31 passing tests
+- **Tests:** pytest with 39 passing tests
 - **DB:** PostgreSQL via SQLAlchemy async session
 - **Deployment:** Bare host service started by root `deploy.sh`, served at `/q/*` behind the host reverse proxy
 

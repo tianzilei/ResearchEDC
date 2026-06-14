@@ -6,6 +6,13 @@
 
 ---
 
+## 2026-06-14 - Phase 3 DAO ledger documentation sync
+
+- Recorded commit `d8092f192` as the latest Phase 3 DAO replacement checkpoint.
+- Updated README, AGENTS, `.sisyphus/LEGACY_REFACTOR_PLAN.md`, and refactor plan docs with current ledger counts: 595/885 module-backed methods, 149 fallback-SQL rows, 76 legacy-only rows, and 65 adapter-gap rows.
+- Clarified that `ISubjectDAO`, `StudyGroupDao`, and `StudyGroupClassDao` now have 0 fallback rows, while DAO implementation/support deletion remains blocked by the remaining ledger rows plus registration/factory/inheritance/runtime checks.
+- Verification carried over from the slice: focused adapter tests 28/28, legacy guardrails, Modulith verification, and `git diff --check` all passed.
+
 ## 2026-06-13 - Documentation baseline refresh
 
 - Aligned README and AGENTS handoff docs with the current repository state: `web/` absent, `shared/` at 504 Java files, `shared/dao` at 95 Java files, active legacy inventory at 125 artifacts, and Java module tests at 432/432.

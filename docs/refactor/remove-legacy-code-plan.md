@@ -1,7 +1,7 @@
 # Remove Legacy Code Plan
 
-**Last updated:** 2026-06-13
-**Status:** Legacy removal is **not complete**. **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 95 DAO files in `shared/dao`; (2) Phase 4 shared service/domain cleanup gated by those DAO replacements and import/export compatibility.
+**Last updated:** 2026-06-14
+**Status:** Legacy removal is **not complete**. **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 95 DAO files in `shared/dao`; (2) Phase 4 shared service/domain cleanup gated by those DAO replacements and import/export compatibility. Phase 3 ledger status after commit `d8092f192`: 595/885 methods module-backed, 149 fallback-SQL, 76 legacy-only, 65 adapter-gap.
 
 ## Current Baseline
 
@@ -98,7 +98,7 @@ Current next action (updated 2026-06-12):
 3. ✅ Done: OpenRosa/Spring MVC compatibility classification. OpenRosa is active Modulith (18 files, `/api/v1/openrosa`). AccountController deleted (0 callers). SidebarInit/SidebarEnumConstants deleted (0 injections).
 4. ✅ Done: Webapp surface cleanup — 29 JSPs, ~1400 static assets, GWT remnants, TLDs, tags, pages-servlet.xml deleted. web.xml 310→40 lines. SDVUtil bean removed from WebBeansConfig.
 5. ✅ Done: web/ module DELETED — 9 needed files (Validator, DiscrepancyValidator, FormDiscrepancyNotes, Validation, EanCheckDigit, ValidatorRegularExpression, ImportCRFInfoContainer, ImportCRFInfo, ImportCRFDataService, ImportHelper) migrated to app/, 93 dead legacy servlets/views/helpers deleted. Entire web/ directory removed. JSP/JSTL dependencies cleaned from app/pom.xml.
-6. ⬜ Phase 3 DAO deletion: 5 dead files deleted (ScheduledJobSort, OCContextLoaderListener, SubjectGroupMapDao, OpenClinicaVersionDAO + SPI). 95 remaining DAO files blocked on module-owned DAO replacements — all 24 SPI adapters are fully module-owned, but shared/ services still inject legacy DAO SPI interfaces (e.g., RuleSetDomainDao, UsageStatsServiceDao) so concrete implementations cannot be deleted until services are migrated to module repos.
+6. ⬜ Phase 3 DAO deletion: 5 dead files deleted (ScheduledJobSort, OCContextLoaderListener, SubjectGroupMapDao, OpenClinicaVersionDAO + SPI). 95 remaining DAO files are blocked by the Phase 3 ledger: 595/885 methods are module-backed, while 149 fallback-SQL, 76 legacy-only, and 65 adapter-gap rows still require replacement/proof. Commit `d8092f192` eliminated the remaining fallback rows for `ISubjectDAO`, `StudyGroupDao`, and `StudyGroupClassDao`, but no DAO implementation/support file is deletion-ready yet.
 7. ✅ Done: Phase 4 shared bean deletion — EXHAUSTED. 73 files (-8570L) across runs 81-95. 0 dead code remaining.
 8. ✅ Done: Phase 5 dependency cleanup — EXHAUSTED. 19 dead deps removed; remaining 8 all active.
 9. ✅ Initial import/export compatibility hardening complete in commit `bc1f24d97`: focused dataimport/legacy bridge/data-capture tests, typed validation preview/result output, commit audit event, result stats, and secure attachment download keyed by event CRF plus opaque attachment ids. Rollback proof was added after commit `ae72d2415`; remaining compatibility work: deterministic ODM preview validation fixtures; representative ODM parse, OpenRosa submission form-context, and export API contract coverage added; rule XML import is retired and guarded against reintroduction; legacy import job scheduling is retired in the current tree.
@@ -251,7 +251,7 @@ These are the legacy artifacts that have **no SPA replacement** and are blocking
 
 Based on risk, effort, and dependency chain:
 
-1. **Phase 3 DAO replacement ledger** — Next executable slice. Generate a per-SPI method ledger, classify module-backed/fallback/legacy-only/unused methods, and delete only proven dead DAO implementation/support files.
+1. **Phase 3 DAO replacement ledger** — Current executable slice. The ledger exists; continue reducing `fallback-sql`, `legacy-only`, and `adapter-gap` rows with module-owned repository/service behavior and focused tests, then delete only proven dead DAO implementation/support files.
 2. **OpenRosa/Spring MVC compatibility classification** — Separate public compatibility contracts from routes that can move behind module-owned services/adapters.
 3. **CRF metadata/data-entry renderer** — Keep `CheckCRFLocked`, `showItemInput*`, `generate*`, section/item/group JSP fragments, and discrepancy/data-entry JSPs blocked until SPA `DataEntryPage` proves full CRF rendering, double data entry, discrepancy notes, rule execution, print/export, and remaining file-attachment parity beyond the hardened compatibility download path.
 4. **Inventory and plan hygiene** — Keep `legacy-workflow-inventory.{csv,md}` and handoff docs aligned with each committed slice; Phase 0 unknown classification is currently closed at 0 unknown artifacts.
@@ -289,10 +289,19 @@ spa_subject_detail    — Use full SPA subject detail (no legacy fallbacks)
 
 **Goal:** delete legacy DAO implementation classes from `shared/dao`.
 
+Current ledger state after commit `d8092f192`:
+
+| Status | Methods | Meaning |
+|---|---:|---|
+| `module-backed` | 595 | Adapter/repository/service path exists; still requires registration and caller checks before implementation deletion |
+| `fallback-sql` | 149 | Adapter still has fallback/delegation/TODO evidence or placeholder behavior to replace |
+| `legacy-only` | 76 | No module adapter path yet or explicit legacy-only behavior remains |
+| `adapter-gap` | 65 | Adapter exists, but simple method scan did not prove coverage |
+
 For each DAO family:
 
 - List every SPI method.
-- Mark each method as `module-backed`, `unused`, or `legacy-only`.
+- Mark each method as `module-backed`, `fallback-sql`, `legacy-only`, `adapter-gap`, or proven unused.
 - Replace `legacy-only` behavior with a module service/repository or retire the caller.
 - Remove adapter delegation to parent legacy SQL.
 - Delete the DAO implementation class only when no Spring bean registration, factory method, inheritance relationship, test, or runtime path needs it.

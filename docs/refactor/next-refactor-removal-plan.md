@@ -1,8 +1,8 @@
 # Next Refactor And Removal Plan
 
 **Created:** 2026-06-11
-**Updated:** 2026-06-13
-**Status source:** current worktree plus regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}`.
+**Updated:** 2026-06-14
+**Status source:** current tree plus regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` and Phase 3 DAO replacement ledger after commit `d8092f192`.
 
 ## Current Status
 
@@ -33,7 +33,7 @@ Remaining blockers:
 
 | Slice | Count | Status |
 |---|---:|---|
-| Phase 3 DAO implementation deletion | 95 | Blocked by module-owned repository/service replacements for every SPI method and removal of adapter fallback SQL |
+| Phase 3 DAO implementation deletion | 95 | Blocked by 149 `fallback-sql`, 76 `legacy-only`, and 65 `adapter-gap` ledger rows plus implementation/support registration checks; 595/885 methods are module-backed after commit `d8092f192` |
 | Phase 4 shared service deletion | 30 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
 | Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; rollback proof added after commit `ae72d2415`; remaining compatibility gap is broader ODM/OpenRosa/export contract coverage; legacy import job scheduling is retired in the current tree and guarded against reintroduction |
 
@@ -164,6 +164,8 @@ Exit gate:
 
 ### 6. Phase 3 DAO Replacement Ledger
 
+Status: **active**. Ledger exists and was advanced in commit `d8092f192`: 595/885 methods are `module-backed`; 149 `fallback-sql`, 76 `legacy-only`, and 65 `adapter-gap` rows remain deletion blockers.
+
 Goal: turn the 95 remaining `shared/dao` files into an actionable deletion queue.
 
 Actions:
@@ -175,8 +177,9 @@ Actions:
 
 Exit gate:
 
-- A checked-in DAO deletion ledger exists.
-- At least one low-risk DAO implementation/support file is proven removable or explicitly deferred with the blocking SPI methods listed.
+- ✅ A checked-in DAO deletion ledger exists.
+- ✅ Low-risk fallback rows for `StudyGroupDao`, `StudyGroupClassDao`, and `ISubjectDAO` were converted to module-backed behavior or proof in commit `d8092f192`.
+- ⬜ At least one DAO implementation/support file is proven removable or explicitly deferred with every blocking SPI method listed.
 
 ### 7. Reconcile Inventory After Each Slice
 
@@ -215,4 +218,4 @@ scripts/ci/generate-legacy-inventory.py --output-dir docs/refactor --basename le
 
 ## Recommended Immediate Commit Boundary
 
-Next commit should start the Phase 3 DAO deletion ledger and remove only artifacts with proven replacement coverage.
+Next commit should continue Phase 3 by reducing another narrow `fallback-sql` or `adapter-gap` cluster with focused adapter tests. Do not delete DAO implementation/support files until every method, registration, factory, inheritance, and runtime dependency is proven safe.

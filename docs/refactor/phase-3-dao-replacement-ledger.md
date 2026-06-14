@@ -1,8 +1,8 @@
 # Phase 3 DAO Replacement Ledger
 
-**Generated:** 2026-06-13
+**Generated:** 2026-06-14
 
-**Purpose:** classify remaining legacy DAO SPI methods before deleting `shared/dao` implementation/support files. This ledger is conservative: uncertain evidence is marked as a blocker, not as deletion-ready.
+**Purpose:** classify remaining legacy DAO SPI methods before deleting `shared/dao` implementation/support files. This ledger is conservative: uncertain evidence is marked as a blocker, not as deletion-ready. Latest Phase 3 slice is commit `d8092f192`, which moved the subject and subject-group fallback rows covered by module repositories/tests to `module-backed`.
 
 ## Status Counts
 

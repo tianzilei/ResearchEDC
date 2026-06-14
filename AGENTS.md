@@ -2,7 +2,7 @@
 
 **Derived from:** OpenClinica v3.x
 **Generated:** 2026-05-25
-**Updated:** 2026-06-13
+**Updated:** 2026-06-14
 **Branch:** master
 
 ## OVERVIEW
@@ -12,7 +12,7 @@ ResearchEDC is an independently maintained research electronic data capture (EDC
 New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (504 Java files, including 95 DAO/SPI/support files). `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and 9 needed import/validation classes were migrated to `app/`. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
 
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅**
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | **Phase 3 DAO ledger 595/885 module-backed** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅**
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 ✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
@@ -236,7 +236,8 @@ python -m pytest app/tests/ -v
   - ✅ **StudyGroupClassDAO → StudyGroupClassDao** — 4 shared/ consumers all SPI-typed
   - ✅ **StudyGroupDAO → StudyGroupDao** — 3 shared/ consumers all SPI-typed
   - ✅ **ArchivedDatasetFileDAO → ArchivedDatasetFileDao** — `58278d68b`; 8 consumer files converted
-- **Remaining work:** DAO `.java` file deletion is blocked on proving module-owned repository paths in production. Legacy DAO files (65+ in `shared/dao/`) are still the fallback for complex SQL queries. HibernateConfig still constructs all legacy DAO beans (harmless, shadowed by `@Primary` adapters). Minor DAO families (`AuditDao`, `IAuditEventDAO`, `IStudyParameterValueDAO`) remain without adapters — these are legacy-only data paths. `PasswordRequirementsDao` remains outside the 24 target families.
+- **Phase 3 ledger status (2026-06-14, commit `d8092f192`):** `docs/refactor/phase-3-dao-replacement-ledger.{md,csv}` tracks 885 SPI methods: 595 `module-backed`, 149 `fallback-sql`, 76 `legacy-only`, and 65 `adapter-gap`. `ISubjectDAO`, `StudyGroupDao`, and `StudyGroupClassDao` now have 0 fallback rows; deletion is still blocked by remaining fallback/legacy-only/adapter-gap rows plus implementation/support registration checks.
+- **Remaining work:** DAO `.java` file deletion is blocked on proving module-owned repository paths in production. Legacy DAO files (95 in `shared/dao/`) are still the fallback for complex SQL queries. HibernateConfig still constructs all legacy DAO beans (harmless, shadowed by `@Primary` adapters). Minor DAO families (`AuditDao`, `IAuditEventDAO`, `IStudyParameterValueDAO`) still include legacy-only/gap rows. `PasswordRequirementsDao` remains outside the 24 target families.
 - **Gauntlet commands:**
   - `git status --short`
   - `mvn -pl app -am compile -DskipTests && mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
