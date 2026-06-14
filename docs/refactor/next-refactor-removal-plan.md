@@ -33,7 +33,7 @@ Remaining blockers:
 
 | Slice | Count | Status |
 |---|---:|---|
-| Phase 3 DAO implementation deletion | 95 | Blocked by 149 `fallback-sql`, 76 `legacy-only`, and 65 `adapter-gap` ledger rows plus implementation/support registration checks; 595/885 methods are module-backed after commit `d8092f192` |
+| Phase 3 DAO implementation deletion | 95 | Blocked by 142 `fallback-sql`, 76 `legacy-only`, and 65 `adapter-gap` ledger rows plus implementation/support registration checks; 602/885 methods are module-backed after commit `d8092f192` |
 | Phase 4 shared service deletion | 30 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
 | Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; rollback proof added after commit `ae72d2415`; remaining compatibility gap is broader ODM/OpenRosa/export contract coverage; legacy import job scheduling is retired in the current tree and guarded against reintroduction |
 
@@ -164,7 +164,7 @@ Exit gate:
 
 ### 6. Phase 3 DAO Replacement Ledger
 
-Status: **active**. Ledger exists and was advanced in commit `d8092f192`: 595/885 methods are `module-backed`; 149 `fallback-sql`, 76 `legacy-only`, and 65 `adapter-gap` rows remain deletion blockers.
+Status: **active**. Ledger exists and was advanced in commit `d8092f192`: 602/885 methods are `module-backed`; 142 `fallback-sql`, 76 `legacy-only`, and 65 `adapter-gap` rows remain deletion blockers.
 
 Goal: turn the 95 remaining `shared/dao` files into an actionable deletion queue.
 

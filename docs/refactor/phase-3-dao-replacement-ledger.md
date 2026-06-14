@@ -9,9 +9,9 @@
 | Status | Methods | Meaning |
 |---|---:|---|
 | `adapter-gap` | 65 | A module adapter exists for the SPI, but this method was not found by simple method-name scan; inspect manually. |
-| `fallback-sql` | 149 | Adapter evidence contains fallback/delegation/TODO markers; replace with module repository/service behavior before deletion. |
+| `fallback-sql` | 142 | Adapter evidence contains fallback/delegation/TODO markers; replace with module repository/service behavior before deletion. |
 | `legacy-only` | 76 | No module adapter or adapter explicitly rejects the method; caller migration or implementation required. |
-| `module-backed` | 595 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
+| `module-backed` | 602 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
 
 ## SPI Summary
 
@@ -37,18 +37,18 @@
 | `IDiscrepancyNoteDAO` | 26 | 35 | 0 | 0 | 3 | `app/src/main/java/org/researchedc/module/discrepancynote/internal/adapter/DiscrepancyNoteDaoAdapter.java` |
 | `IItemDAO` | 20 | 16 | 0 | 0 | 6 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemDaoAdapter.java` |
 | `IItemDataDAO` | 52 | 0 | 0 | 0 | 5 | `app/src/main/java/org/researchedc/module/datacapture/internal/adapter/ItemDataDaoAdapter.java` |
-| `IItemFormMetadataDAO` | 15 | 4 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemFormMetadataDaoAdapter.java` |
+| `IItemFormMetadataDAO` | 19 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemFormMetadataDaoAdapter.java` |
 | `IItemGroupDAO` | 26 | 0 | 0 | 0 | 4 | `app/src/main/java/org/researchedc/module/datacapture/internal/adapter/ItemGroupDaoAdapter.java` |
 | `IItemGroupMetadataDAO` | 8 | 0 | 0 | 0 | 4 | `app/src/main/java/org/researchedc/module/datacapture/internal/adapter/ItemGroupMetadataDaoAdapter.java` |
 | `IRuleDAO` | 11 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/rule/internal/adapter/RuleDaoAdapter.java` |
 | `IRuleSetDAO` | 19 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/rule/internal/adapter/RuleSetDaoAdapter.java` |
 | `IRuleSetRuleAuditDAO` | 0 | 0 | 2 | 0 | 0 | `` |
 | `IRuleSetRuleDAO` | 7 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/rule/internal/adapter/RuleSetRuleDaoAdapter.java` |
-| `ISectionDAO` | 25 | 2 | 0 | 0 | 2 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/SectionDaoAdapter.java` |
+| `ISectionDAO` | 27 | 0 | 0 | 0 | 2 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/SectionDaoAdapter.java` |
 | `IStudyDAO` | 3 | 28 | 0 | 0 | 2 | `app/src/main/java/org/researchedc/module/study/internal/adapter/StudyDaoAdapter.java` |
 | `IStudyEventDAO` | 44 | 0 | 0 | 0 | 5 | `app/src/main/java/org/researchedc/module/event/internal/adapter/StudyEventDaoAdapter.java` |
 | `IStudyEventDefinitionDAO` | 10 | 8 | 4 | 0 | 2 | `app/src/main/java/org/researchedc/module/event/internal/adapter/StudyEventDefinitionDaoAdapter.java` |
-| `IStudyParameterValueDAO` | 14 | 1 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/study/internal/adapter/StudyParameterValueDaoAdapter.java` |
+| `IStudyParameterValueDAO` | 15 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/study/internal/adapter/StudyParameterValueDaoAdapter.java` |
 | `IStudySubjectDAO` | 40 | 14 | 0 | 0 | 3 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/StudySubjectDaoAdapter.java` |
 | `ISubjectDAO` | 27 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/SubjectDaoAdapter.java` |
 | `IUserAccountDAO` | 36 | 5 | 0 | 0 | 2 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/UserAccountDaoAdapter.java` |
