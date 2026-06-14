@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-14 - Dynamics item group metadata save adapter
+
+- Implemented `DynamicsItemGroupMetadataDaoAdapter.saveOrUpdate` for active CRF data-entry service calls that create/update `dyn_item_group_metadata`.
+- Reclassified that Phase 3 ledger row from unused to module-backed: 757/885 module-backed methods, 63 unused rows, 65 removed rows.
+
 ## 2026-06-14 - AuditUserLogin unused SPI method cleanup
 
 - Removed unused default `save` and `saveOrUpdate` methods from `AuditUserLoginDao`; active audit-login pagination/count methods remain intact.

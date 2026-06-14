@@ -8,9 +8,9 @@
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `module-backed` | 756 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
-| `unused` | 66 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
-| `removed` | 63 | SPI interface and implementation deleted; legacy service references cleaned up. |
+| `module-backed` | 757 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
+| `unused` | 63 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
+| `removed` | 65 | SPI interface and implementation deleted; legacy service references cleaned up. |
 
 ## SPI Summary
 
@@ -25,7 +25,7 @@
 | `DatabaseChangeLogDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/audit/internal/adapter/DatabaseChangeLogDaoAdapter.java` |
 | `DatasetDao` | 23 | 0 | 0 | `app/src/main/java/org/researchedc/module/dataset/internal/adapter/DatasetDaoAdapter.java` |
 | `DynamicsItemFormMetadataDao` | 11 | 1 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/DynamicsItemFormMetadataDaoAdapter.java` |
-| `DynamicsItemGroupMetadataDao` | 4 | 2 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/DynamicsItemGroupMetadataDaoAdapter.java` |
+| `DynamicsItemGroupMetadataDao` | 5 | 1 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/DynamicsItemGroupMetadataDaoAdapter.java` |
 | `EventCRFDao` | 42 | 6 | 0 | `app/src/main/java/org/researchedc/module/event/internal/adapter/EventCrfDaoAdapter.java` |
 | `EventDefinitionCRFDao` | 38 | 0 | 2 | `app/src/main/java/org/researchedc/module/event/internal/adapter/EventDefinitionCrfDaoAdapter.java` |
 | `EventDefinitionCrfTagDao` | 3 | 2 | 0 | `app/src/main/java/org/researchedc/module/event/internal/adapter/EventDefinitionCrfTagDaoAdapter.java` |

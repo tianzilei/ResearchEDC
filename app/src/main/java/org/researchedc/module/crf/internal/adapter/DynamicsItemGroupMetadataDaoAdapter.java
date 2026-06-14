@@ -34,7 +34,11 @@ public class DynamicsItemGroupMetadataDaoAdapter implements DynamicsItemGroupMet
     };
 
     public DynamicsItemGroupMetadataDaoAdapter(DataSource dataSource) {
-        this.jdbc = new JdbcTemplate(dataSource);
+        this(new JdbcTemplate(dataSource));
+    }
+
+    DynamicsItemGroupMetadataDaoAdapter(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
     }
 
     @Override
@@ -71,5 +75,32 @@ public class DynamicsItemGroupMetadataDaoAdapter implements DynamicsItemGroupMet
     public void delete(int eventCrfId) {
         String sql = "DELETE FROM dyn_item_group_metadata WHERE event_crf_id = ?";
         jdbc.update(sql, eventCrfId);
+    }
+
+    @Override
+    @Transactional
+    public DynamicsItemGroupMetadataBean saveOrUpdate(DynamicsItemGroupMetadataBean entity) {
+        if (entity.getId() != null && entity.getId() > 0) {
+            String sql = "UPDATE dyn_item_group_metadata SET show_group = ?, event_crf_id = ?, "
+                    + "item_group_metadata_id = ?, item_group_id = ?, passed_dde = ? WHERE id = ?";
+            jdbc.update(sql,
+                    entity.isShowGroup(),
+                    entity.getEventCrfId(),
+                    entity.getItemGroupMetadataId(),
+                    entity.getItemGroupId(),
+                    entity.getPassedDde(),
+                    entity.getId());
+            return entity;
+        }
+        String sql = "INSERT INTO dyn_item_group_metadata "
+                + "(id, show_group, event_crf_id, item_group_metadata_id, item_group_id, passed_dde) "
+                + "VALUES (nextval('dyn_item_group_metadata_id_seq'), ?, ?, ?, ?, ?)";
+        jdbc.update(sql,
+                entity.isShowGroup(),
+                entity.getEventCrfId(),
+                entity.getItemGroupMetadataId(),
+                entity.getItemGroupId(),
+                entity.getPassedDde());
+        return entity;
     }
 }
