@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-14 - Correct Phase 3 DAO ledger parser artifacts
+
+- Removed seven bogus `UnsupportedOperationException` rows from the Phase 3 DAO replacement ledger; these were parsed throw statements inside default methods, not standalone SPI methods.
+- Reconciled current refactor documentation to 878 real tracked DAO rows: 757 module-backed, 56 unused, 65 removed, and 822/878 covered or removed (93.6%).
+
 ## 2026-06-14 - Remove GitHub Actions CI/CD workflows
 
 - Deleted the remaining GitHub Actions workflow files under `.github/workflows/`: backend, frontend, questionnaire, legacy refactor report, and aggregate CI modernization workflows.

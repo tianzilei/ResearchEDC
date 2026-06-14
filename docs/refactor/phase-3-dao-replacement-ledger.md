@@ -9,10 +9,10 @@
 | Status | Methods | Meaning |
 |---|---:|---|
 | `module-backed` | 757 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
-| `unused` | 63 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
+| `unused` | 56 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
 | `removed` | 65 | SPI interface and implementation deleted; legacy service references cleaned up. |
 
-Coverage snapshot: 822/885 tracked methods are module-backed or removed (**92.9%**). Remaining method-level blockers are 63/885 unused rows (**7.1%**) that must be removed from SPI or reclassified with stronger evidence before DAO implementation deletion.
+Coverage snapshot: 822/878 tracked methods are module-backed or removed (**93.6%**). Remaining method-level blockers are 56/878 unused rows (**6.4%**) that must be removed from SPI or reclassified with stronger evidence before DAO implementation deletion.
 
 ## SPI Summary
 
@@ -20,17 +20,17 @@ Coverage snapshot: 822/885 tracked methods are module-backed or removed (**92.9%
 |---|---:|---:|---:|---|
 | `ArchivedDatasetFileDao` | 0 | 0 | 11 | `removed` |
 | `AuditDao` | 6 | 0 | 16 | `` |
-| `AuditUserLoginDao` | 2 | 2 | 2 | `app/src/main/java/org/researchedc/module/audit/internal/adapter/AuditUserLoginDaoAdapter.java` |
-| `AuthoritiesDao` | 2 | 1 | 0 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/AuthoritiesDaoAdapter.java` |
+| `AuditUserLoginDao` | 2 | 0 | 2 | `app/src/main/java/org/researchedc/module/audit/internal/adapter/AuditUserLoginDaoAdapter.java` |
+| `AuthoritiesDao` | 2 | 0 | 0 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/AuthoritiesDaoAdapter.java` |
 | `ConfigurationDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/ConfigurationDaoAdapter.java` |
 | `CrfVersionMediaDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/CrfVersionMediaDaoAdapter.java` |
 | `DatabaseChangeLogDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/audit/internal/adapter/DatabaseChangeLogDaoAdapter.java` |
 | `DatasetDao` | 23 | 0 | 0 | `app/src/main/java/org/researchedc/module/dataset/internal/adapter/DatasetDaoAdapter.java` |
-| `DynamicsItemFormMetadataDao` | 11 | 1 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/DynamicsItemFormMetadataDaoAdapter.java` |
-| `DynamicsItemGroupMetadataDao` | 5 | 1 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/DynamicsItemGroupMetadataDaoAdapter.java` |
+| `DynamicsItemFormMetadataDao` | 11 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/DynamicsItemFormMetadataDaoAdapter.java` |
+| `DynamicsItemGroupMetadataDao` | 5 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/DynamicsItemGroupMetadataDaoAdapter.java` |
 | `EventCRFDao` | 42 | 6 | 0 | `app/src/main/java/org/researchedc/module/event/internal/adapter/EventCrfDaoAdapter.java` |
 | `EventDefinitionCRFDao` | 38 | 0 | 2 | `app/src/main/java/org/researchedc/module/event/internal/adapter/EventDefinitionCrfDaoAdapter.java` |
-| `EventDefinitionCrfTagDao` | 3 | 2 | 0 | `app/src/main/java/org/researchedc/module/event/internal/adapter/EventDefinitionCrfTagDaoAdapter.java` |
+| `EventDefinitionCrfTagDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/event/internal/adapter/EventDefinitionCrfTagDaoAdapter.java` |
 | `FilterDao` | 11 | 0 | 0 | `app/src/main/java/org/researchedc/module/filter/internal/adapter/FilterDaoAdapter.java` |
 | `IAuditEventDAO` | 5 | 0 | 21 | `` |
 | `ICrfDAO` | 23 | 5 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/CrfDaoAdapter.java` |
