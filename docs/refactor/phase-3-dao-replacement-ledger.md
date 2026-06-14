@@ -8,11 +8,11 @@
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `module-backed` | 757 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
-| `unused` | 52 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
-| `removed` | 69 | SPI interface and implementation deleted; legacy service references cleaned up. |
+| `module-backed` | 758 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
+| `unused` | 50 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
+| `removed` | 70 | SPI interface and implementation deleted; legacy service references cleaned up. |
 
-Coverage snapshot: 826/878 tracked methods are module-backed or removed (**94.1%**). Remaining method-level blockers are 52/878 unused rows (**5.9%**) that must be removed from SPI or reclassified with stronger evidence before DAO implementation deletion.
+Coverage snapshot: 828/878 tracked methods are module-backed or removed (**94.3%**). Remaining method-level blockers are 50/878 unused rows (**5.7%**) that must be removed from SPI or reclassified with stronger evidence before DAO implementation deletion.
 
 ## SPI Summary
 
@@ -52,7 +52,7 @@ Coverage snapshot: 826/878 tracked methods are module-backed or removed (**94.1%
 | `IStudyParameterValueDAO` | 15 | 0 | 0 | `app/src/main/java/org/researchedc/module/study/internal/adapter/StudyParameterValueDaoAdapter.java` |
 | `IStudySubjectDAO` | 54 | 3 | 0 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/StudySubjectDaoAdapter.java` |
 | `ISubjectDAO` | 27 | 0 | 0 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/SubjectDaoAdapter.java` |
-| `IUserAccountDAO` | 41 | 2 | 0 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/UserAccountDaoAdapter.java` |
+| `IUserAccountDAO` | 42 | 0 | 1 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/UserAccountDaoAdapter.java` |
 | `ItemDataTypeDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemDataTypeDaoAdapter.java` |
 | `ItemReferenceTypeDao` | 1 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemReferenceTypeDaoAdapter.java` |
 | `MeasurementUnitDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/MeasurementUnitDaoAdapter.java` |

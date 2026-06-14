@@ -402,12 +402,23 @@ public class UserAccountDaoAdapter implements IUserAccountDAO {
 
     @Override
     public UserAccount findByUserId(Integer userId) {
-        return null;
+        return findById(userId);
     }
 
     @Override
     public UserAccount saveOrUpdate(UserAccount userAccount) {
         return null;
+    }
+
+
+    @Override
+    public UserAccount findById(Integer id) {
+        if (id == null) {
+            return null;
+        }
+        return userAccountRepository.findById(id)
+                .map(this::toDomain)
+                .orElse(null);
     }
 
     private ArrayList buildStudyUserRoleBeans(int studyId, boolean assignedOnly) {
@@ -487,6 +498,26 @@ public class UserAccountDaoAdapter implements IUserAccountDAO {
         bean.setUpdaterId(valueOrZero(entity.getUpdateId()));
         bean.setActive(true);
         return bean;
+    }
+
+    private UserAccount toDomain(UserAccountEntity entity) {
+        UserAccount user = new UserAccount();
+        if (entity.getUserId() != null) {
+            user.setUserId(entity.getUserId());
+        }
+        user.setUserName(entity.getUserName());
+        user.setFirstName(entity.getFirstName());
+        user.setLastName(entity.getLastName());
+        user.setEmail(entity.getEmail());
+        user.setPhone(entity.getPhone());
+        user.setInstitutionalAffiliation(entity.getInstitutionalAffiliation());
+        user.setPasswd(entity.getPasswordHash());
+        user.setDateCreated(toDate(entity.getDateCreated()));
+        user.setDateUpdated(toDate(entity.getDateUpdated()));
+        user.setUpdateId(entity.getUpdateId());
+        user.setEnabled(Boolean.TRUE.equals(entity.getEnabled()));
+        user.setAccountNonLocked(Boolean.TRUE.equals(entity.getAccountNonLocked()));
+        return user;
     }
 
     private StudyUserRoleBean toRoleBean(RoleEntity entity) {

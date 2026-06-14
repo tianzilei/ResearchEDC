@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-14 - Back IUserAccountDAO findById and remove unused column lookup
+
+- Kept active `IUserAccountDAO.findById(Integer)` in the SPI and backed it with `UserAccountDaoAdapter` via `UserAccountRepository`; `BeanPropertyService` still calls this contract.
+- Removed unused default `IUserAccountDAO.findByColumnName(Object, String)` and updated the Phase 3 ledger to 758/878 module-backed methods, 50 unused rows, 70 removed rows, and 828/878 covered or removed (94.3%).
+
 ## 2026-06-14 - Remove unused ISectionDAO datamap defaults
 
 - Removed unused default `ISectionDAO.saveOrUpdate(Section)` and `ISectionDAO.findByCrfVersionOrdinal(int, int)` declarations; no typed `ISectionDAO` callers use them.

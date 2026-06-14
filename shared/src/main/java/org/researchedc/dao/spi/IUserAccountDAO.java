@@ -52,5 +52,4 @@ public interface IUserAccountDAO {
     default UserAccount findByUserId(Integer userId) { throw new UnsupportedOperationException(); }
     default UserAccount saveOrUpdate(UserAccount userAccount) { throw new UnsupportedOperationException(); }
     default UserAccount findById(Integer id) { throw new UnsupportedOperationException(); }
-    default UserAccount findByColumnName(Object value, String columnName) { throw new UnsupportedOperationException(); }
 }
