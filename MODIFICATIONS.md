@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-14 - Remove GitHub Actions CI/CD workflows
+
+- Deleted the remaining GitHub Actions workflow files under `.github/workflows/`: backend, frontend, questionnaire, legacy refactor report, and aggregate CI modernization workflows.
+- Kept `.github/dependabot.yml` because it is dependency update configuration, not an Actions CI/CD workflow.
+
 ## 2026-06-14 - Refactor progress documentation snapshot
 
 - Updated project handoff and refactor documents with current progress percentages: 848/963 workflow artifacts closed (88.1%), 822/885 DAO SPI methods module-backed or removed (92.9%), 63/885 unused DAO rows remaining (7.1%), and 98/186 DAO-surface files removed (52.7%).
