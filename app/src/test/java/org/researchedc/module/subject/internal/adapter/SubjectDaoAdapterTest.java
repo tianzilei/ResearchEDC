@@ -95,6 +95,28 @@ class SubjectDaoAdapterTest {
     }
 
     @Test
+    void findByUniqueIdentifierAndAnyStudy_usesParentOrSelfRepositoryLookup() {
+        when(subjectRepository.findByUniqueIdentifierAndAnyStudyNative("SUBJ", 9))
+                .thenReturn(Optional.of(subject(4, "SUBJ", "f", Status.AVAILABLE.getId())));
+
+        SubjectBean bean = adapter.findByUniqueIdentifierAndAnyStudy("SUBJ", 9);
+
+        assertEquals(4, bean.getId());
+        verify(subjectRepository).findByUniqueIdentifierAndAnyStudyNative("SUBJ", 9);
+    }
+
+    @Test
+    void findByUniqueIdentifierAndParentStudy_usesParentStudyRepositoryLookup() {
+        when(subjectRepository.findByUniqueIdentifierAndParentStudyNative("SUBJ", 9))
+                .thenReturn(Optional.of(subject(5, "SUBJ", "m", Status.AVAILABLE.getId())));
+
+        SubjectBean bean = adapter.findByUniqueIdentifierAndParentStudy("SUBJ", 9);
+
+        assertEquals(5, bean.getId());
+        verify(subjectRepository).findByUniqueIdentifierAndParentStudyNative("SUBJ", 9);
+    }
+
+    @Test
     void findByUniqueIdentifier_whenMissing_returnsNullLikeLegacyDao() {
         when(subjectRepository.findByUniqueIdentifier("MISSING")).thenReturn(Optional.empty());
 

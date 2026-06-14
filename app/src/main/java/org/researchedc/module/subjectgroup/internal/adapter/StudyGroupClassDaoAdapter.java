@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.GroupClassType;
@@ -54,18 +55,18 @@ public class StudyGroupClassDaoAdapter implements StudyGroupClassDao {
 
     @Override
     public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
+        return filterAndSort(repository.findAll(), strOrderByColumn, blnAscendingSort, strSearchPhrase);
     }
 
     @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn,
                                           boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
+        return findAll(strOrderByColumn, blnAscendingSort, strSearchPhrase);
     }
 
     @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
-        return new ArrayList();
+        return findAll();
     }
 
     @Override
@@ -146,6 +147,59 @@ public class StudyGroupClassDaoAdapter implements StudyGroupClassDao {
                 })
                 .forEach(beans::add);
         return beans;
+    }
+
+
+    private ArrayList filterAndSort(List<StudyGroupClassEntity> entities, String orderByColumn, boolean ascending,
+                                    String searchPhrase) {
+        String search = searchPhrase == null ? "" : searchPhrase.trim().toLowerCase(Locale.ROOT);
+        Comparator<StudyGroupClassEntity> comparator = comparatorFor(orderByColumn);
+        if (!ascending) {
+            comparator = comparator.reversed();
+        }
+
+        ArrayList beans = new ArrayList();
+        entities.stream()
+                .filter(entity -> matches(entity, search))
+                .sorted(comparator.thenComparing(StudyGroupClassEntity::getStudyGroupClassId,
+                        Comparator.nullsLast(Integer::compareTo)))
+                .map(this::toBean)
+                .forEach(beans::add);
+        return beans;
+    }
+
+    private Comparator<StudyGroupClassEntity> comparatorFor(String orderByColumn) {
+        String column = orderByColumn == null ? "" : orderByColumn.trim().toLowerCase(Locale.ROOT);
+        return switch (column) {
+            case "study_group_class_id", "id" -> Comparator.comparing(StudyGroupClassEntity::getStudyGroupClassId,
+                    Comparator.nullsLast(Integer::compareTo));
+            case "study_id" -> Comparator.comparing(StudyGroupClassEntity::getStudyId,
+                    Comparator.nullsLast(Integer::compareTo));
+            case "status_id" -> Comparator.comparing(StudyGroupClassEntity::getStatusId,
+                    Comparator.nullsLast(Integer::compareTo));
+            case "group_class_type_id" -> Comparator.comparing(StudyGroupClassEntity::getGroupClassTypeId,
+                    Comparator.nullsLast(Integer::compareTo));
+            case "subject_assignment" -> Comparator.comparing(StudyGroupClassEntity::getSubjectAssignment,
+                    Comparator.nullsLast(String::compareToIgnoreCase));
+            default -> Comparator.comparing(StudyGroupClassEntity::getName,
+                    Comparator.nullsLast(String::compareToIgnoreCase));
+        };
+    }
+
+    private boolean matches(StudyGroupClassEntity entity, String search) {
+        if (search.isEmpty()) {
+            return true;
+        }
+        return contains(entity.getName(), search)
+                || contains(entity.getSubjectAssignment(), search)
+                || contains(entity.getStudyGroupClassId(), search)
+                || contains(entity.getStudyId(), search)
+                || contains(entity.getStatusId(), search)
+                || contains(entity.getGroupClassTypeId(), search);
+    }
+
+    private boolean contains(Object value, String search) {
+        return value != null && value.toString().toLowerCase(Locale.ROOT).contains(search);
     }
 
     private StudyGroupClassBean toBean(StudyGroupClassEntity entity) {

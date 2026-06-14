@@ -74,6 +74,30 @@ class StudyGroupDaoAdapterTest {
     }
 
     @Test
+    void findAllWithSearchAndSort_returnsModuleBackedRows() {
+        when(repository.findAll()).thenReturn(List.of(
+                group(2, "Beta", "Placebo cohort", 4),
+                group(1, "Alpha", "Treatment cohort", 3),
+                group(3, "Gamma", "Screening", 5)));
+
+        ArrayList result = (ArrayList) adapter.findAll("name", true, "cohort");
+
+        assertEquals(2, result.size());
+        assertEquals("Alpha", ((StudyGroupBean) result.get(0)).getName());
+        assertEquals("Beta", ((StudyGroupBean) result.get(1)).getName());
+    }
+
+    @Test
+    void findAllByPermissionDelegatesToModuleBackedList() {
+        when(repository.findAll()).thenReturn(List.of(group(3, "Gamma", "Screening", 5)));
+
+        ArrayList result = (ArrayList) adapter.findAllByPermission(new Object(), 1);
+
+        assertEquals(1, result.size());
+        assertEquals("Gamma", ((StudyGroupBean) result.get(0)).getName());
+    }
+
+    @Test
     void getGroupByStudySubject_preservesLegacyStudyScope() {
         when(repository.findByStudySubjectInStudyOrChildStudy(4, 10, 1)).thenReturn(List.of(group(7, "Site Arm", "", 2)));
 

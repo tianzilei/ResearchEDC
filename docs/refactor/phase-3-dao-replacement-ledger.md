@@ -9,9 +9,9 @@
 | Status | Methods | Meaning |
 |---|---:|---|
 | `adapter-gap` | 65 | A module adapter exists for the SPI, but this method was not found by simple method-name scan; inspect manually. |
-| `fallback-sql` | 157 | Adapter evidence contains fallback/delegation/TODO markers; replace with module repository/service behavior before deletion. |
+| `fallback-sql` | 149 | Adapter evidence contains fallback/delegation/TODO markers; replace with module repository/service behavior before deletion. |
 | `legacy-only` | 76 | No module adapter or adapter explicitly rejects the method; caller migration or implementation required. |
-| `module-backed` | 587 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
+| `module-backed` | 595 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
 
 ## SPI Summary
 
@@ -50,7 +50,7 @@
 | `IStudyEventDefinitionDAO` | 10 | 8 | 4 | 0 | 2 | `app/src/main/java/org/researchedc/module/event/internal/adapter/StudyEventDefinitionDaoAdapter.java` |
 | `IStudyParameterValueDAO` | 14 | 1 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/study/internal/adapter/StudyParameterValueDaoAdapter.java` |
 | `IStudySubjectDAO` | 40 | 14 | 0 | 0 | 3 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/StudySubjectDaoAdapter.java` |
-| `ISubjectDAO` | 24 | 3 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/SubjectDaoAdapter.java` |
+| `ISubjectDAO` | 27 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/SubjectDaoAdapter.java` |
 | `IUserAccountDAO` | 36 | 5 | 0 | 0 | 2 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/UserAccountDaoAdapter.java` |
 | `ItemDataTypeDao` | 3 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemDataTypeDaoAdapter.java` |
 | `ItemReferenceTypeDao` | 1 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemReferenceTypeDaoAdapter.java` |
@@ -63,7 +63,7 @@
 | `RuleSetDomainDao` | 0 | 0 | 7 | 0 | 0 | `` |
 | `SCDItemMetadataDomainDao` | 3 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/SCDItemMetadataDaoAdapter.java` |
 | `StudyGroupClassDao` | 12 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/subjectgroup/internal/adapter/StudyGroupClassDaoAdapter.java` |
-| `StudyGroupDao` | 11 | 5 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/subjectgroup/internal/adapter/StudyGroupDaoAdapter.java` |
+| `StudyGroupDao` | 16 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/subjectgroup/internal/adapter/StudyGroupDaoAdapter.java` |
 | `UsageStatsServiceDao` | 0 | 0 | 4 | 0 | 0 | `` |
 | `VersioningMapDao` | 1 | 0 | 0 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/VersioningMapDaoAdapter.java` |
 

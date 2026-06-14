@@ -92,6 +92,31 @@ class StudyGroupClassDaoAdapterTest {
     }
 
     @Test
+    void findAllWithSearchAndSort_returnsModuleBackedRows() {
+        when(repository.findAll()).thenReturn(List.of(
+                groupClass(2, "Beta", 4, Status.AVAILABLE.getId()),
+                groupClass(1, "Alpha", 3, Status.DELETED.getId()),
+                groupClass(3, "Gamma", 5, Status.AVAILABLE.getId())));
+
+        ArrayList result = (ArrayList) adapter.findAll("name", true, "a");
+
+        assertEquals(3, result.size());
+        assertEquals("Alpha", ((StudyGroupClassBean) result.get(0)).getName());
+        assertEquals("Beta", ((StudyGroupClassBean) result.get(1)).getName());
+        assertEquals("Gamma", ((StudyGroupClassBean) result.get(2)).getName());
+    }
+
+    @Test
+    void findAllByPermissionDelegatesToModuleBackedList() {
+        when(repository.findAll()).thenReturn(List.of(groupClass(7, "Cohort", 9, Status.AVAILABLE.getId())));
+
+        ArrayList result = (ArrayList) adapter.findAllByPermission(new Object(), 1);
+
+        assertEquals(1, result.size());
+        assertEquals("Cohort", ((StudyGroupClassBean) result.get(0)).getName());
+    }
+
+    @Test
     void create_mapsLegacyBeanToEntity() {
         StudyGroupClassEntity saved = groupClass(12, "Created", 6, Status.AVAILABLE.getId());
         when(repository.save(argThat(e -> {

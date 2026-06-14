@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.managestudy.StudyBean;
@@ -50,18 +51,18 @@ public class StudyGroupDaoAdapter implements StudyGroupDao {
 
     @Override
     public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
+        return filterAndSort(repository.findAll(), strOrderByColumn, blnAscendingSort, strSearchPhrase);
     }
 
     @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn,
                                           boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
+        return findAll(strOrderByColumn, blnAscendingSort, strSearchPhrase);
     }
 
     @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
-        return new ArrayList();
+        return findAll();
     }
 
     @Override
@@ -166,6 +167,49 @@ public class StudyGroupDaoAdapter implements StudyGroupDao {
                 .map(this::toBean)
                 .forEach(beans::add);
         return beans;
+    }
+
+    private ArrayList filterAndSort(List<StudyGroupEntity> entities, String orderByColumn, boolean ascending,
+                                    String searchPhrase) {
+        String search = searchPhrase == null ? "" : searchPhrase.trim().toLowerCase(Locale.ROOT);
+        Comparator<StudyGroupEntity> comparator = comparatorFor(orderByColumn);
+        if (!ascending) {
+            comparator = comparator.reversed();
+        }
+
+        ArrayList beans = new ArrayList();
+        entities.stream()
+                .filter(entity -> matches(entity, search))
+                .sorted(comparator.thenComparing(StudyGroupEntity::getStudyGroupId, Comparator.nullsLast(Integer::compareTo)))
+                .map(this::toBean)
+                .forEach(beans::add);
+        return beans;
+    }
+
+    private Comparator<StudyGroupEntity> comparatorFor(String orderByColumn) {
+        String column = orderByColumn == null ? "" : orderByColumn.trim().toLowerCase(Locale.ROOT);
+        return switch (column) {
+            case "name" -> Comparator.comparing(StudyGroupEntity::getName, Comparator.nullsLast(String::compareToIgnoreCase));
+            case "description" -> Comparator.comparing(StudyGroupEntity::getDescription,
+                    Comparator.nullsLast(String::compareToIgnoreCase));
+            case "study_group_class_id" -> Comparator.comparing(StudyGroupEntity::getStudyGroupClassId,
+                    Comparator.nullsLast(Integer::compareTo));
+            default -> Comparator.comparing(StudyGroupEntity::getStudyGroupId, Comparator.nullsLast(Integer::compareTo));
+        };
+    }
+
+    private boolean matches(StudyGroupEntity entity, String search) {
+        if (search.isEmpty()) {
+            return true;
+        }
+        return contains(entity.getName(), search)
+                || contains(entity.getDescription(), search)
+                || contains(entity.getStudyGroupId(), search)
+                || contains(entity.getStudyGroupClassId(), search);
+    }
+
+    private boolean contains(Object value, String search) {
+        return value != null && value.toString().toLowerCase(Locale.ROOT).contains(search);
     }
 
     private StudyGroupBean toBean(StudyGroupEntity entity) {

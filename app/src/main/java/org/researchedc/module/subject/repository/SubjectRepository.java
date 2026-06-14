@@ -23,7 +23,9 @@ public interface SubjectRepository extends JpaRepository<SubjectEntity, Integer>
 
     @Query(value = "SELECT s.* FROM module_subject s "
             + "JOIN module_study_subject ss ON s.subject_id = ss.subject_id "
-            + "WHERE s.unique_identifier = :uniqueIdentifier AND ss.study_id = :studyId",
+            + "JOIN module_study st ON ss.study_id = st.study_id "
+            + "WHERE s.unique_identifier = :uniqueIdentifier "
+            + "AND (st.parent_study_id = :studyId OR st.study_id = :studyId)",
             nativeQuery = true)
     Optional<SubjectEntity> findByUniqueIdentifierAndAnyStudyNative(
             @Param("uniqueIdentifier") String uniqueIdentifier,
