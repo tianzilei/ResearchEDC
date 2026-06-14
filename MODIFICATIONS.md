@@ -6,6 +6,10 @@
 
 ---
 
+## 2026-06-14 - Refactor progress documentation snapshot
+
+- Updated project handoff and refactor documents with current progress percentages: 848/963 workflow artifacts closed (88.1%), 822/885 DAO SPI methods module-backed or removed (92.9%), 63/885 unused DAO rows remaining (7.1%), and 98/186 DAO-surface files removed (52.7%).
+
 ## 2026-06-14 - Dynamics item group metadata save adapter
 
 - Implemented `DynamicsItemGroupMetadataDaoAdapter.saveOrUpdate` for active CRF data-entry service calls that create/update `dyn_item_group_metadata`.

@@ -12,6 +12,8 @@
 | `unused` | 63 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
 | `removed` | 65 | SPI interface and implementation deleted; legacy service references cleaned up. |
 
+Coverage snapshot: 822/885 tracked methods are module-backed or removed (**92.9%**). Remaining method-level blockers are 63/885 unused rows (**7.1%**) that must be removed from SPI or reclassified with stronger evidence before DAO implementation deletion.
+
 ## SPI Summary
 
 | SPI | module-backed | unused | removed | Adapter / state |

@@ -2,7 +2,7 @@
 
 **Created:** 2026-06-11
 **Updated:** 2026-06-14 (latest)
-**Status source:** current tree plus regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` and Phase 3 DAO replacement ledger (757/885 module-backed, 0 fallback-sql, 0 legacy-only, 0 adapter-gap, 63 unused, 65 removed).
+**Status source:** current tree plus regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` and Phase 3 DAO replacement ledger (757/885 module-backed, 822/885 module-backed or removed, 0 fallback-sql, 0 legacy-only, 0 adapter-gap, 63 unused, 65 removed).
 
 ## Current Status
 
@@ -30,6 +30,8 @@ Current generated legacy inventory (2026-06-12):
 | Unknown inventory rows | 0 |
 
 Remaining blockers:
+
+Progress snapshot: tracked workflow closure is **848/963 artifacts (88.1%)**; DAO method replacement/removal coverage is **822/885 (92.9%)**; remaining unused DAO SPI rows are **63/885 (7.1%)**; DAO-surface file deletion is **98/186 (52.7%)**.
 
 | Slice | Count | Status |
 |---|---:|---|
@@ -233,7 +235,7 @@ scripts/ci/generate-legacy-inventory.py --output-dir docs/refactor --basename le
 
 ## Recommended Immediate Commit Boundary
 
-Next commit should continue deleting `unused` SPI methods (70 remaining). The largest remaining families are:
+Next commit should continue deleting `unused` SPI methods (63 remaining). The largest remaining families are:
 
 1. **IStudyEventDefinitionDAO** (6 unused) — `findByStudySubject`, `buildMaxOrdinalByStudyEvent`, `findAllActiveByStudy`, `findByStudyEventDefinitionId`, `findByColumnName`, `findById`
 2. **IItemDAO** (6 unused) — `findByNameCrfId`, `getItemDataTypeId`, `save`, `findByOcOID`, `findAllByCrfVersionId`, `findByItemGroupCrfVersionOrdered`

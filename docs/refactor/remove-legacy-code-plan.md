@@ -1,7 +1,7 @@
 # Remove Legacy Code Plan
 
 **Last updated:** 2026-06-14 (updated)
-**Status:** Legacy removal is **not complete**. **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 88 DAO files in `shared/dao`; (2) Phase 4 shared service/domain cleanup gated by those DAO replacements and import/export compatibility. Phase 3 ledger status: 757/885 methods module-backed, 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 63 unused, 65 removed.
+**Status:** Legacy removal is **not complete**. Tracked workflow progress is **88.1%** (848/963 artifacts removed or closed; 115 active artifacts remain). **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 88 DAO files in `shared/dao`; (2) Phase 4 shared service/domain cleanup gated by those DAO replacements and import/export compatibility. Phase 3 ledger status: 757/885 methods module-backed, 822/885 module-backed or removed (92.9%), 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 63 unused (7.1%), 65 removed.
 
 ## Current Baseline
 
@@ -15,6 +15,8 @@ These counts come from the current repository tree and regenerated inventory (up
 | Legacy servlet inventory artifacts | 186 | 0 | No active servlet artifacts; `web/` is absent (-186) |
 | `ws/` | 75 | 0 | SOAP module directory is absent in the current tree (-75) |
 | Active legacy workflow inventory | 963 | 115 | Regenerated artifacts across DAO and shared service surfaces only (-848) |
+
+Progress snapshot: active workflow inventory is **848/963 closed (88.1%)**; DAO method replacement/removal coverage is **822/885 (92.9%)**; remaining unused DAO SPI rows are **63/885 (7.1%)**; DAO-surface file deletion is **98/186 (52.7%)**.
 
 ### Phase 1 Deletion Summary (8 slices completed)
 
