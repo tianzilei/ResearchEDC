@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-14 - Remove unused IStudyDAO datamap defaults
+
+- Removed unused default `IStudyDAO.findById(int)` and `IStudyDAO.findByColumnName(Object, String)` declarations; no typed `IStudyDAO` callers use them.
+- Updated the Phase 3 ledger to 757/878 module-backed methods, 54 unused rows, 67 removed rows, and 824/878 covered or removed (93.8%).
+
 ## 2026-06-14 - Correct Phase 3 DAO ledger parser artifacts
 
 - Removed seven bogus `UnsupportedOperationException` rows from the Phase 3 DAO replacement ledger; these were parsed throw statements inside default methods, not standalone SPI methods.

@@ -9,10 +9,10 @@
 | Status | Methods | Meaning |
 |---|---:|---|
 | `module-backed` | 757 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
-| `unused` | 56 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
-| `removed` | 65 | SPI interface and implementation deleted; legacy service references cleaned up. |
+| `unused` | 54 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
+| `removed` | 67 | SPI interface and implementation deleted; legacy service references cleaned up. |
 
-Coverage snapshot: 822/878 tracked methods are module-backed or removed (**93.6%**). Remaining method-level blockers are 56/878 unused rows (**6.4%**) that must be removed from SPI or reclassified with stronger evidence before DAO implementation deletion.
+Coverage snapshot: 824/878 tracked methods are module-backed or removed (**93.8%**). Remaining method-level blockers are 54/878 unused rows (**6.2%**) that must be removed from SPI or reclassified with stronger evidence before DAO implementation deletion.
 
 ## SPI Summary
 
@@ -46,7 +46,7 @@ Coverage snapshot: 822/878 tracked methods are module-backed or removed (**93.6%
 | `IRuleSetRuleAuditDAO` | 0 | 0 | 2 | `removed` |
 | `IRuleSetRuleDAO` | 7 | 0 | 0 | `app/src/main/java/org/researchedc/module/rule/internal/adapter/RuleSetRuleDaoAdapter.java` |
 | `ISectionDAO` | 27 | 2 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/SectionDaoAdapter.java` |
-| `IStudyDAO` | 31 | 2 | 0 | `app/src/main/java/org/researchedc/module/study/internal/adapter/StudyDaoAdapter.java` |
+| `IStudyDAO` | 31 | 0 | 2 | `app/src/main/java/org/researchedc/module/study/internal/adapter/StudyDaoAdapter.java` |
 | `IStudyEventDAO` | 44 | 5 | 0 | `app/src/main/java/org/researchedc/module/event/internal/adapter/StudyEventDaoAdapter.java` |
 | `IStudyEventDefinitionDAO` | 18 | 6 | 0 | `app/src/main/java/org/researchedc/module/event/internal/adapter/StudyEventDefinitionDaoAdapter.java` |
 | `IStudyParameterValueDAO` | 15 | 0 | 0 | `app/src/main/java/org/researchedc/module/study/internal/adapter/StudyParameterValueDaoAdapter.java` |
