@@ -45,7 +45,7 @@ Current high-level status:
 - React SPA covers major workflows. The legacy frame component remains in the SPA for compatibility, but there are no current `web/` JSP views in the repository.
 - Questionnaire service has its own API, data model, scoring engine, and tests.
 - `DaoProvider` has been removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` construction is at 0 active matches across the legacy Java surfaces.
-- Legacy DAO consumer work is mostly complete: `DaoProvider` and direct DAO construction are gone, and the target DAO families have been SPI-widened. The DAO implementation files still remain until module-owned replacements are proven under production workflows. The Phase 3 DAO method ledger is checked in and currently classifies 756 of 885 tracked methods as module-backed, with 66 unused rows left to remove, 63 rows already removed, and 0 fallback-SQL, legacy-only, or adapter-gap rows remaining.
+- Legacy DAO consumer work is mostly complete: `DaoProvider` and direct DAO construction are gone, and the target DAO families have been SPI-widened. The DAO implementation files still remain until module-owned replacements are proven under production workflows. The Phase 3 DAO method ledger is checked in and currently classifies 756 of 885 tracked methods as module-backed, with 64 unused rows left to remove, 65 rows already removed, and 0 fallback-SQL, legacy-only, or adapter-gap rows remaining.
 - Phase B schema ownership is complete. Remaining legacy deletion work is proving every DAO SPI method and workflow is module-owned, repository-backed, or unused before legacy DAO `.java` files can be deleted.
 - Enterprise UI/functionality and active mail-delivery code paths were removed on 2026-06-09. Email/contact fields remain as compatibility data and are tracked by the follow-up email-field removal plan.
 - Phase II (@SuppressWarnings elimination) is **COMPLETE**. Reduced from 168 to 72 annotations (57% reduction). Remaining 72 are all genuine (27 non-deferred) or deferred (45 TableFactory, will self-resolve with SPA strangulation).
@@ -55,7 +55,7 @@ Current legacy removal baseline:
 | Surface | Current Count | Removal Gate |
 |---------|---------------|--------------|
 | `shared/src/main/java/org/researchedc` | 504 Java files | Shared beans/services/DAO/domain callers replaced or proven unused |
-| `shared/dao` | 88 Java files | SPI implementations replaced by module-owned repositories/services; Phase 3 ledger is 756/885 module-backed methods with 66 unused rows left |
+| `shared/dao` | 88 Java files | SPI implementations replaced by module-owned repositories/services; Phase 3 ledger is 756/885 module-backed methods with 64 unused rows left |
 | `web/` Java | 0 files | Directory deleted; needed compatibility classes migrated to `app/` |
 | JSP pages | 0 files | `web/` views deleted |
 | Legacy servlet inventory | 0 artifacts | Servlet workflows migrated, retired, or deleted |

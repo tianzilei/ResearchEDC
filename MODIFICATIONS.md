@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-14 - AuditUserLogin unused SPI method cleanup
+
+- Removed unused default `save` and `saveOrUpdate` methods from `AuditUserLoginDao`; active audit-login pagination/count methods remain intact.
+- Updated the Phase 3 ledger to 756/885 module-backed methods, 64 unused rows, 65 removed rows, and 0 fallback-SQL/legacy-only/adapter-gap rows.
+
 ## 2026-06-14 - EventDefinitionCRF unused SPI method cleanup
 
 - Removed two unused default methods from `EventDefinitionCRFDao`: `findAvailableByStudyEventDefStudy` and `findSiteHiddenByStudyEventDefStudy`.

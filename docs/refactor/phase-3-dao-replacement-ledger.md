@@ -18,7 +18,7 @@
 |---|---:|---:|---:|---|
 | `ArchivedDatasetFileDao` | 0 | 0 | 11 | `removed` |
 | `AuditDao` | 6 | 0 | 16 | `` |
-| `AuditUserLoginDao` | 2 | 4 | 0 | `app/src/main/java/org/researchedc/module/audit/internal/adapter/AuditUserLoginDaoAdapter.java` |
+| `AuditUserLoginDao` | 2 | 2 | 2 | `app/src/main/java/org/researchedc/module/audit/internal/adapter/AuditUserLoginDaoAdapter.java` |
 | `AuthoritiesDao` | 2 | 1 | 0 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/AuthoritiesDaoAdapter.java` |
 | `ConfigurationDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/ConfigurationDaoAdapter.java` |
 | `CrfVersionMediaDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/CrfVersionMediaDaoAdapter.java` |
