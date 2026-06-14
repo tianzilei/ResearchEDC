@@ -187,35 +187,6 @@ public class RuleSetDaoAdapter implements IRuleSetDAO {
     }
 
     @Override
-    public org.researchedc.domain.rule.RuleSetBean findById(Integer id) {
-        return repository.findById(id)
-                .map(e -> {
-                    org.researchedc.domain.rule.RuleSetBean b = new org.researchedc.domain.rule.RuleSetBean();
-                    b.setId(e.getRuleSetId());
-                    b.setStudyId(e.getStudyId());
-                    return b;
-                })
-                .orElse(null);
-    }
-
-    @Override
-    public org.researchedc.domain.rule.RuleSetBean findByExpressionAndStudy(
-            org.researchedc.domain.rule.RuleSetBean ruleSet, int studyId) {
-        if (ruleSet == null || ruleSet.getTarget() == null) {
-            return null;
-        }
-        String expressionValue = ruleSet.getTarget().getValue();
-        return repository.findByExpressionValueAndStudyId(expressionValue, studyId)
-                .map(e -> {
-                    org.researchedc.domain.rule.RuleSetBean b = new org.researchedc.domain.rule.RuleSetBean();
-                    b.setId(e.getRuleSetId());
-                    b.setStudyId(e.getStudyId());
-                    return b;
-                })
-                .orElse(null);
-    }
-
-    @Override
     public Object getEntityFromHashMap(HashMap hm) {
         RuleSetEntity entity = new RuleSetEntity();
         entity.setRuleSetId((Integer) hm.get("rule_set_id"));

@@ -18,7 +18,6 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.domain.datamap.ItemData;
 import org.researchedc.module.datacapture.entity.ItemDataEntity;
 import org.researchedc.module.datacapture.repository.ItemDataRepository;
 import org.springframework.context.annotation.Primary;
@@ -374,12 +373,6 @@ public class ItemDataDaoAdapter implements IItemDataDAO {
 
     @Override
     public void undelete(int itemDataId, int updaterId) {
-    }
-
-    @Override
-    public List<ItemData> findByEventCrfId(int eventCRFId) {
-        ArrayList beans = findAllByEventCRFId(eventCRFId);
-        return new ArrayList(beans);
     }
 
     private void apply(ItemDataBean bean, ItemDataEntity entity) {

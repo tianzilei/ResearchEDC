@@ -14,7 +14,6 @@ import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.domain.datamap.CrfVersion;
 import org.researchedc.module.crf.entity.CrfVersionEntity;
 import org.researchedc.module.crf.repository.CrfRepository;
 import org.researchedc.module.crf.repository.CrfVersionRepository;
@@ -206,11 +205,6 @@ public class CrfVersionDaoAdapter implements ICrfVersionDAO {
     @Override
     public Map<Integer, CRFVersionBean> buildCrfVersionById(Integer studySubjectId) {
         return new HashMap<>();
-    }
-
-    @Override
-    public CrfVersion findByOcOID(String OCOID) {
-        return null;
     }
 
     private void apply(CRFVersionBean bean, CrfVersionEntity entity) {

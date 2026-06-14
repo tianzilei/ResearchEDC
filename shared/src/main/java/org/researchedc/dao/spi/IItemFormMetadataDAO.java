@@ -9,7 +9,6 @@ import java.util.Map;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.domain.crfdata.InstantOnChangePairContainer;
-import org.researchedc.domain.datamap.ItemFormMetadata;
 import org.researchedc.exception.OpenClinicaException;
 
 public interface IItemFormMetadataDAO {
@@ -70,7 +69,4 @@ public interface IItemFormMetadataDAO {
 
     public Map<Integer,List<InstantOnChangePairContainer>> sectionInstantMapInSameSection(int crfVersionId);
 
-    default ItemFormMetadata saveOrUpdate(ItemFormMetadata entity) { throw new UnsupportedOperationException(); }
-    default ItemFormMetadata findByItemCrfVersion(Integer itemId, Integer crfVersionId) { throw new UnsupportedOperationException(); }
-    default java.util.List<ItemFormMetadata> findAllByCrfVersion(int crfVersionId) { throw new UnsupportedOperationException(); }
 }

@@ -323,11 +323,6 @@ public class StudyEventDaoAdapter implements IStudyEventDAO {
         return null;
     }
 
-    @Override
-    public Integer findMaxOrdinalByStudySubjectStudyEventDefinition(int studySubjectId, int studyEventDefinitionId) {
-        return 0;
-    }
-
     // --- Private helpers ---
 
     private void apply(StudyEventBean bean, StudyEventEntity entity) {

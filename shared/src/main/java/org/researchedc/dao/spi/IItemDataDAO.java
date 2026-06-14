@@ -13,7 +13,6 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.SectionBean;
-import org.researchedc.domain.datamap.ItemData;
 
 public interface IItemDataDAO {
 
@@ -83,7 +82,6 @@ public interface IItemDataDAO {
 
     public ArrayList<ItemDataBean> findAllActiveBySectionIdAndEventCRFId(int sectionId, int eventCRFId);
 
-    default List<ItemData> findByEventCrfId(int eventCRFId) { throw new UnsupportedOperationException(); }
     public ArrayList<ItemDataBean> findAllByEventCRFId(int eventCRFId);
 
     public ArrayList<ItemDataBean> findAllByEventCRFIdAndItemId(int eventCRFId, int itemId);

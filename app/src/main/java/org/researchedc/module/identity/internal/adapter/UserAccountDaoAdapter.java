@@ -401,17 +401,6 @@ public class UserAccountDaoAdapter implements IUserAccountDAO {
     }
 
     @Override
-    public UserAccount findByUserId(Integer userId) {
-        return findById(userId);
-    }
-
-    @Override
-    public UserAccount saveOrUpdate(UserAccount userAccount) {
-        return null;
-    }
-
-
-    @Override
     public UserAccount findById(Integer id) {
         if (id == null) {
             return null;

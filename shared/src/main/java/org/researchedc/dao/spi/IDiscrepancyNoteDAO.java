@@ -9,8 +9,6 @@ import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.dao.managestudy.ListNotesFilter;
 import org.researchedc.dao.managestudy.ListNotesSort;
-import org.researchedc.domain.datamap.DiscrepancyNote;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -78,7 +76,4 @@ public interface IDiscrepancyNoteDAO {
     boolean isFetchMapping();
     void setFetchMapping(boolean fetchMapping);
 
-    default DiscrepancyNote findByDiscrepancyNoteId(int discrepancyNoteId) { throw new UnsupportedOperationException(); }
-    default java.util.List<DiscrepancyNote> findParentNotesByItemData(Integer itemDataId) { throw new UnsupportedOperationException(); }
-    default DiscrepancyNote saveOrUpdate(DiscrepancyNote entity) { throw new UnsupportedOperationException(); }
 }

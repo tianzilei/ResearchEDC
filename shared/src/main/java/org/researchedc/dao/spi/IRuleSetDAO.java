@@ -29,7 +29,5 @@ public interface IRuleSetDAO {
     EntityBean update(EntityBean eb);
     EntityBean remove(RuleSetBean ruleSetBean, UserAccountBean ub);
     EntityBean restore(RuleSetBean ruleSetBean, UserAccountBean ub);
-    default org.researchedc.domain.rule.RuleSetBean findById(Integer id) { throw new UnsupportedOperationException(); }
-    default org.researchedc.domain.rule.RuleSetBean findByExpressionAndStudy(org.researchedc.domain.rule.RuleSetBean ruleSet, int studyId) { throw new UnsupportedOperationException(); }
     Object getEntityFromHashMap(HashMap hm);
 }

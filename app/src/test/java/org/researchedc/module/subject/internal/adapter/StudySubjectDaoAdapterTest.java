@@ -22,7 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.domain.datamap.Study;
 import org.researchedc.domain.datamap.StudySubject;
 import org.researchedc.module.subject.entity.StudySubjectEntity;
 import org.researchedc.module.subject.repository.StudySubjectRepository;
@@ -131,16 +130,6 @@ class StudySubjectDaoAdapterTest {
     }
 
     @Test
-    void findTheGreatestLabelByStudy_ignoresNonNumericLabels() {
-        when(repository.findByStudyId(3)).thenReturn(List.of(
-                studySubject(1, 3, 20, "abc", 1),
-                studySubject(2, 3, 21, "44", 1),
-                studySubject(3, 3, 22, "12", 1)));
-
-        assertEquals(44, adapter.findTheGreatestLabelByStudy(3));
-    }
-
-    @Test
     void findByOcOID_returnsDomainStudySubjectWithIdAndOid() {
         when(repository.findByOcOid("SS_OID"))
                 .thenReturn(Optional.of(studySubject(9, 1, 2, "SS", 1, "SS_OID")));
@@ -149,19 +138,6 @@ class StudySubjectDaoAdapterTest {
 
         assertEquals(9, result.getStudySubjectId());
         assertEquals("SS_OID", result.getOcOid());
-    }
-
-    @Test
-    void findByLabelAndStudyOrParentStudy_returnsDomainStudySubject() {
-        Study study = new Study();
-        study.setStudyId(8);
-        when(repository.findByLabelAndStudyId("SUBJ", 8))
-                .thenReturn(List.of(studySubject(12, 8, 44, "SUBJ", 1, "OID12")));
-
-        StudySubject result = adapter.findByLabelAndStudyOrParentStudy("SUBJ", study);
-
-        assertEquals(12, result.getStudySubjectId());
-        assertEquals("OID12", result.getOcOid());
     }
 
     @Test

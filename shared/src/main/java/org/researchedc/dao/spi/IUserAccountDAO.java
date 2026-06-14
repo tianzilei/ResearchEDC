@@ -49,7 +49,5 @@ public interface IUserAccountDAO {
     Object getEntityFromHashMap(HashMap hm, boolean findOwner);
     StudyUserRoleBean getRoleFromHashMap(HashMap hm);
     boolean isQuerySuccessful();
-    default UserAccount findByUserId(Integer userId) { throw new UnsupportedOperationException(); }
-    default UserAccount saveOrUpdate(UserAccount userAccount) { throw new UnsupportedOperationException(); }
     default UserAccount findById(Integer id) { throw new UnsupportedOperationException(); }
 }

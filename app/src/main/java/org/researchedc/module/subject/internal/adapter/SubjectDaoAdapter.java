@@ -15,7 +15,6 @@ import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.dao.submit.ListSubjectFilter;
 import org.researchedc.dao.submit.ListSubjectSort;
-import org.researchedc.domain.datamap.Subject;
 import org.researchedc.module.subject.entity.SubjectEntity;
 import org.researchedc.module.subject.repository.SubjectRepository;
 import org.springframework.context.annotation.Primary;
@@ -184,11 +183,6 @@ public class SubjectDaoAdapter implements ISubjectDAO {
     @Override
     public void deleteTestSubject(String uniqueIdentifier) {
         // no-op
-    }
-
-    @Override
-    public Subject saveOrUpdate(Subject subject) {
-        return subject;
     }
 
     @Override

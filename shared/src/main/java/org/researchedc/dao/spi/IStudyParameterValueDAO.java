@@ -4,7 +4,6 @@ import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.service.StudyParameter;
 import org.researchedc.bean.service.StudyParameterValueBean;
-import org.researchedc.domain.datamap.StudyParameterValue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +23,5 @@ public interface IStudyParameterValueDAO {
     ArrayList findParamConfigByStudy(StudyBean study);
     EntityBean create(EntityBean eb);
     EntityBean update(EntityBean eb);
-    default StudyParameterValue findByStudyIdParameter(int studyId, String parameter) { throw new UnsupportedOperationException(); }
     Object getEntityFromHashMap(HashMap hm);
 }

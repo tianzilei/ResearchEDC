@@ -25,7 +25,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyType;
-import org.researchedc.domain.datamap.Study;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.module.study.entity.StudyEntity;
 import org.researchedc.module.study.repository.StudyRepository;
@@ -191,15 +190,6 @@ class StudyDaoAdapterTest {
         when(repository.findByOcOid("MISSING")).thenReturn(Optional.empty());
 
         assertNull(adapter.findByOid("MISSING"));
-    }
-
-    @Test
-    void findByOcOID_returnsDomainStudyWithIdOnly() {
-        when(repository.findByOcOid("OID")).thenReturn(Optional.of(study(12, "Study", "S", null, 1)));
-
-        Study result = adapter.findByOcOID("OID");
-
-        assertEquals(12, result.getStudyId());
     }
 
     @Test

@@ -1,13 +1,10 @@
 package org.researchedc.dao.spi;
 
 import org.researchedc.bean.core.EntityBean;
-import org.researchedc.domain.datamap.CrfBean;
-import org.researchedc.domain.datamap.ItemGroup;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.researchedc.bean.submit.ItemGroupBean;
 
 public interface IItemGroupDAO {
@@ -66,9 +63,4 @@ public interface IItemGroupDAO {
 
     public ItemGroupBean findTopOneGroupBySectionId(int sectionId);
 
-    default ItemGroup findByNameCrfId(String name, CrfBean crf) { throw new UnsupportedOperationException(); }
-    default ItemGroup findByNameCrfId(String name, int crfId) { throw new UnsupportedOperationException(); }
-    default java.io.Serializable save(ItemGroup entity) { throw new UnsupportedOperationException(); }
-    default String getValidOid(ItemGroup itemGroup, String crfName, String itemGroupLabel, java.util.ArrayList<String> oidList) { throw new UnsupportedOperationException(); }
-    default ArrayList<ItemGroup> findByCrfVersionId(Integer crfVersionId) { throw new UnsupportedOperationException(); }
 }

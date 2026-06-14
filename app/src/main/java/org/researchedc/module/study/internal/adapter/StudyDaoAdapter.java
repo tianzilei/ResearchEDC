@@ -13,7 +13,6 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyType;
 import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.domain.datamap.Study;
 import org.researchedc.module.study.entity.StudyEntity;
 import org.researchedc.module.study.repository.StudyRepository;
 import org.springframework.context.annotation.Primary;
@@ -296,17 +295,6 @@ public class StudyDaoAdapter implements IStudyDAO {
     @Override
     public ArrayList<Integer> getStudyIdsByCRF(int crfId) {
         return new ArrayList<>(repository.findStudyIdsByCrfId(crfId));
-    }
-
-    @Override
-    public Study findByOcOID(String OCOID) {
-        return repository.findByOcOid(OCOID)
-                .map(e -> {
-                    Study s = new Study();
-                    s.setStudyId(e.getStudyId());
-                    return s;
-                })
-                .orElse(null);
     }
 
     private void apply(StudyBean bean, StudyEntity entity) {

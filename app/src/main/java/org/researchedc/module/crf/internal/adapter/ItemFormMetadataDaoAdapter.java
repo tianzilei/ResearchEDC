@@ -14,7 +14,6 @@ import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.domain.crfdata.InstantOnChangePairContainer;
-import org.researchedc.domain.datamap.ItemFormMetadata;
 import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.module.crf.entity.ItemFormMetadataEntity;
 import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
@@ -284,85 +283,6 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
             return responseSetFromRow(hm);
         }
         return new ResponseSetBean();
-    }
-
-    // ── Default method overrides (replaces Hibernate ItemFormMetadataDao) ──
-
-    @Override
-    public ItemFormMetadata findByItemCrfVersion(Integer itemId, Integer crfVersionId) {
-        return null;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public java.util.List<ItemFormMetadata> findAllByCrfVersion(int crfVersionId) {
-        return new java.util.ArrayList<>();
-    }
-
-    @Override
-    @Transactional(readOnly = false)
-    public ItemFormMetadata saveOrUpdate(ItemFormMetadata entity) {
-        if (entity.getItemFormMetadataId() > 0) {
-            updateItemFormMetadata(entity);
-        } else {
-            insertItemFormMetadata(entity);
-        }
-        return entity;
-    }
-
-    private void insertItemFormMetadata(ItemFormMetadata e) {
-        Number newId = getJdbcTemplate().queryForObject(
-            "SELECT nextval('item_form_metadata_item_form_metadata_id_seq')",
-            Number.class);
-        long id = newId != null ? newId.longValue() : 0L;
-        String sql = """
-            INSERT INTO item_form_metadata (
-                item_form_metadata_id, item_id, response_set_id, section_id,
-                crf_version_id, header, subheader, parent_id, parent_label,
-                column_number, page_number_label, question_number_label,
-                left_item_text, right_item_text, decision_condition_id,
-                regexp, regexp_error_msg, ordinal, required,
-                default_value, response_layout, width_decimal, show_item
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """;
-        getJdbcTemplate().update(sql,
-            id,
-            e.getItem() != null ? e.getItem().getItemId() : 0,
-            e.getResponseSet() != null ? e.getResponseSet().getResponseSetId() : 0,
-            e.getSection() != null ? e.getSection().getSectionId() : 0,
-            e.getCrfVersionId(),
-            e.getHeader(), e.getSubheader(), e.getParentId(), e.getParentLabel(),
-            e.getColumnNumber(), e.getPageNumberLabel(), e.getQuestionNumberLabel(),
-            e.getLeftItemText(), e.getRightItemText(), e.getDecisionConditionId(),
-            e.getRegexp(), e.getRegexpErrorMsg(), e.getOrdinal(), e.getRequired(),
-            e.getDefaultValue(), e.getResponseLayout(), e.getWidthDecimal(), e.getShowItem());
-        // Set the auto-generated ID back on the entity so callers see it
-        e.setItemFormMetadataId((int) id);
-    }
-
-    private void updateItemFormMetadata(ItemFormMetadata e) {
-        String sql = """
-            UPDATE item_form_metadata SET
-                item_id = ?, response_set_id = ?, section_id = ?,
-                crf_version_id = ?, header = ?, subheader = ?, parent_id = ?,
-                parent_label = ?, column_number = ?, page_number_label = ?,
-                question_number_label = ?, left_item_text = ?, right_item_text = ?,
-                decision_condition_id = ?, regexp = ?, regexp_error_msg = ?,
-                ordinal = ?, required = ?, default_value = ?,
-                response_layout = ?, width_decimal = ?, show_item = ?
-            WHERE item_form_metadata_id = ?
-            """;
-        getJdbcTemplate().update(sql,
-            e.getItem() != null ? e.getItem().getItemId() : 0,
-            e.getResponseSet() != null ? e.getResponseSet().getResponseSetId() : 0,
-            e.getSection() != null ? e.getSection().getSectionId() : 0,
-            e.getCrfVersionId(),
-            e.getHeader(), e.getSubheader(), e.getParentId(), e.getParentLabel(),
-            e.getColumnNumber(), e.getPageNumberLabel(), e.getQuestionNumberLabel(),
-            e.getLeftItemText(), e.getRightItemText(), e.getDecisionConditionId(),
-            e.getRegexp(), e.getRegexpErrorMsg(), e.getOrdinal(), e.getRequired(),
-            e.getDefaultValue(), e.getResponseLayout(), e.getWidthDecimal(), e.getShowItem(),
-            e.getItemFormMetadataId());
     }
 
     // ── JdbcTemplate-backed native SQL helpers ──────────────────────────

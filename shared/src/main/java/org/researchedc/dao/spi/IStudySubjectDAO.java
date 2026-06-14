@@ -9,7 +9,6 @@ import org.researchedc.dao.managestudy.FindSubjectsFilter;
 import org.researchedc.dao.managestudy.FindSubjectsSort;
 import org.researchedc.dao.managestudy.StudyAuditLogFilter;
 import org.researchedc.dao.managestudy.StudyAuditLogSort;
-import org.researchedc.domain.datamap.Study;
 import org.researchedc.domain.datamap.StudySubject;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,7 +39,6 @@ public interface IStudySubjectDAO {
     EntityBean findAnotherBySameLabel(String label, int studyId, int studySubjectId);
     EntityBean findAnotherBySameLabelInSites(String label, int studyId, int studySubjectId);
     StudySubjectBean findByLabelAndStudy(String label, StudyBean study);
-    default StudySubjectBean findByLabelAndStudy(String label, Study study) { throw new UnsupportedOperationException(); }
     StudySubjectBean findSameByLabelAndStudy(String label, int studyId, int id);
     StudySubjectBean findByOidAndStudy(String oid, int studyId);
     StudySubjectBean findByOid(String oid);
@@ -68,14 +66,7 @@ public interface IStudySubjectDAO {
     Integer getTotalCountStudySubjectForCrfMigration(CRFVersionBean sourceCrfVersionBean, CRFVersionBean targetCrfVersionBean, ArrayList<String> studyEventDefnlist, ArrayList<String> sitelist);
 
     default StudySubject findByOcOID(String OCOID) { throw new UnsupportedOperationException(); }
-    default StudySubject findByLabelAndStudyOrParentStudy(String label, Study study) { throw new UnsupportedOperationException(); }
-    default int findTheGreatestLabelByStudy(Integer studyId) { throw new UnsupportedOperationException(); }
-    default ArrayList<StudySubject> findByLabelAndParentStudy(String label, Study parentStudy) { throw new UnsupportedOperationException(); }
-    default StudySubject saveOrUpdate(StudySubject studySubject) { throw new UnsupportedOperationException(); }
-    default String getValidOid(StudySubject studySubject, ArrayList<String> oidList) { throw new UnsupportedOperationException(); }
     default StudySubject findById(Integer id) { throw new UnsupportedOperationException(); }
-    default StudySubject findByColumnName(Object value, String columnName) { throw new UnsupportedOperationException(); }
-    default java.util.List<org.researchedc.domain.datamap.StudyEvent> fetchListSEs(String ocOid) { throw new UnsupportedOperationException(); }
     Integer getCountofStudySubjectsAtStudyOrSite(StudyBean currentStudy);
     Integer getCountofStudySubjectsAtStudy(StudyBean currentStudy);
     Integer getCountofStudySubjects(StudyBean currentStudy);

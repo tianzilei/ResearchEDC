@@ -148,14 +148,6 @@ class ItemFormMetadataDaoAdapterTest {
     }
 
     @Test
-    void findAllByCrfVersion_returnsEmptyList() {
-        java.util.List<org.researchedc.domain.datamap.ItemFormMetadata> result = adapter.findAllByCrfVersion(5);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
     void findByMultiplePKs_returnsMultipleBeans() throws Exception {
         when(repository.findById(1)).thenReturn(Optional.of(ifmEntity(1, 20, 5)));
         when(repository.findById(2)).thenReturn(Optional.of(ifmEntity(2, 21, 5)));

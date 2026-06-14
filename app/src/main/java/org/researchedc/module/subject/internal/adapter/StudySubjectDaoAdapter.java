@@ -29,7 +29,6 @@ import org.researchedc.dao.managestudy.ListEventsForSubjectSort;
 import org.researchedc.dao.managestudy.StudyAuditLogFilter;
 import org.researchedc.dao.managestudy.StudyAuditLogSort;
 import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.domain.datamap.Study;
 import org.researchedc.domain.datamap.StudySubject;
 import org.researchedc.module.subject.entity.StudySubjectEntity;
 import org.researchedc.module.subject.repository.StudySubjectRepository;
@@ -162,14 +161,6 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
     @Override
     public StudySubjectBean findByLabelAndStudy(String label, StudyBean study) {
         return repository.findByLabelAndStudyId(label, study.getId()).stream()
-                .findFirst()
-                .map(this::toBean)
-                .orElse(null);
-    }
-
-    @Override
-    public StudySubjectBean findByLabelAndStudy(String label, Study study) {
-        return repository.findByLabelAndStudyId(label, study.getStudyId()).stream()
                 .findFirst()
                 .map(this::toBean)
                 .orElse(null);
@@ -348,48 +339,6 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
         return repository.findByOcOid(OCOID)
                 .map(e -> new StudySubject(e.getStudySubjectId(), e.getOcOid() != null ? e.getOcOid() : ""))
                 .orElse(null);
-    }
-
-    @Override
-    public StudySubject findByLabelAndStudyOrParentStudy(String label, Study study) {
-        return repository.findByLabelAndStudyId(label, study.getStudyId()).stream()
-                .findFirst()
-                .map(e -> new StudySubject(e.getStudySubjectId(), e.getOcOid() != null ? e.getOcOid() : ""))
-                .orElse(null);
-    }
-
-    @Override
-    public int findTheGreatestLabelByStudy(Integer studyId) {
-        return repository.findByStudyId(studyId).stream()
-                .map(e -> {
-                    try {
-                        return Integer.parseInt(e.getLabel());
-                    } catch (NumberFormatException ex) {
-                        return 0;
-                    }
-                })
-                .max(Integer::compareTo)
-                .orElse(0);
-    }
-
-    @Override
-    public ArrayList<StudySubject> findByLabelAndParentStudy(String label, Study parentStudy) {
-        List<StudySubjectEntity> entities = repository.findByLabelAndStudyId(label, parentStudy.getStudyId());
-        ArrayList<StudySubject> result = new ArrayList<>();
-        for (StudySubjectEntity e : entities) {
-            result.add(new StudySubject(e.getStudySubjectId(), e.getOcOid() != null ? e.getOcOid() : ""));
-        }
-        return result;
-    }
-
-    @Override
-    public StudySubject saveOrUpdate(StudySubject studySubject) {
-        return null;
-    }
-
-    @Override
-    public String getValidOid(StudySubject studySubject, ArrayList<String> oidList) {
-        return studySubject.getOcOid();
     }
 
     @Override

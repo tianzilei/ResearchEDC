@@ -5,8 +5,6 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.dao.submit.ListSubjectFilter;
 import org.researchedc.dao.submit.ListSubjectSort;
-import org.researchedc.domain.datamap.Subject;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,6 +35,5 @@ public interface ISubjectDAO {
     SubjectBean findByUniqueIdentifierAndStudy(String uniqueIdentifier, int studyId);
     SubjectBean findByUniqueIdentifierAndParentStudy(String uniqueIdentifier, int studyId);
     void deleteTestSubject(String uniqueIdentifier);
-    default Subject saveOrUpdate(Subject subject) { throw new UnsupportedOperationException(); }
     Object getEntityFromHashMap(HashMap hm);
 }

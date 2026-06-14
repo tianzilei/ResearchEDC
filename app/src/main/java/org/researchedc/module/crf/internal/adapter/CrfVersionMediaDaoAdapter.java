@@ -28,8 +28,4 @@ public class CrfVersionMediaDaoAdapter implements CrfVersionMediaDao {
         return repository.findById(id).orElse(null);
     }
 
-    @Override
-    public void saveOrUpdate(CrfVersionMedia entity) {
-        repository.save(entity);
-    }
 }

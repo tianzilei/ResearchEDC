@@ -3,7 +3,6 @@ package org.researchedc.dao.spi;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.domain.datamap.Study;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,5 +38,4 @@ public interface IStudyDAO {
     EntityBean findByName(String name);
     void deleteTestOnly(String name);
     ArrayList<Integer> getStudyIdsByCRF(int crfId);
-    default Study findByOcOID(String OCOID) { throw new UnsupportedOperationException(); }
 }

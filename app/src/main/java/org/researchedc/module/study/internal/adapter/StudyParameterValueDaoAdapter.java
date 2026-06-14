@@ -15,7 +15,6 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.service.StudyParameter;
 import org.researchedc.bean.service.StudyParameterValueBean;
 import org.researchedc.dao.spi.IStudyParameterValueDAO;
-import org.researchedc.domain.datamap.StudyParameterValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -220,11 +219,4 @@ public class StudyParameterValueDaoAdapter implements IStudyParameterValueDAO {
         return findByPK(id);
     }
 
-    // ── default method from SPI (already has default impl, but provide override) ──
-
-    @Override
-    public StudyParameterValue findByStudyIdParameter(int studyId, String parameter) {
-        log.warn("findByStudyIdParameter not implemented with Hibernate entity; returning null");
-        return null;
-    }
 }

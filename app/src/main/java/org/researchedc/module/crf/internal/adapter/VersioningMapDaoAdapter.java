@@ -1,7 +1,6 @@
 package org.researchedc.module.crf.internal.adapter;
 
 import org.researchedc.dao.spi.VersioningMapDao;
-import org.researchedc.domain.datamap.VersioningMap;
 import org.researchedc.module.crf.internal.adapter.repository.VersioningMapRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -16,8 +15,4 @@ public class VersioningMapDaoAdapter implements VersioningMapDao {
         this.repository = repository;
     }
 
-    @Override
-    public void saveOrUpdate(VersioningMap entity) {
-        repository.save(entity);
-    }
 }
