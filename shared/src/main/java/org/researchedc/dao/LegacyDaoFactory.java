@@ -2,7 +2,6 @@ package org.researchedc.dao;
 
 import javax.sql.DataSource;
 
-import org.researchedc.dao.spi.ArchivedDatasetFileDao;
 import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.dao.spi.EventDefinitionCRFDao;
@@ -132,12 +131,6 @@ public final class LegacyDaoFactory {
     public static ISectionDAO sectionDao(DataSource dataSource) {
         return applicationContext != null
                 ? applicationContext.getBean(ISectionDAO.class)
-                : null;
-    }
-
-    public static ArchivedDatasetFileDao archivedDatasetFileDao(DataSource dataSource) {
-        return applicationContext != null
-                ? applicationContext.getBean(ArchivedDatasetFileDao.class)
                 : null;
     }
 

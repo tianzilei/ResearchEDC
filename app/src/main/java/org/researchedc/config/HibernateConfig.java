@@ -6,14 +6,11 @@ import org.hibernate.SessionFactory;
 import org.researchedc.dao.QueryStore;
 import org.researchedc.dao.hibernate.*;
 import org.researchedc.dao.spi.ConfigurationDao;
-import org.researchedc.dao.spi.IRuleSetRuleAuditDAO;
 import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
 import org.researchedc.dao.spi.RuleSetAuditDomainDao;
-import org.researchedc.dao.spi.RuleSetDomainDao;
 import org.researchedc.dao.spi.SCDItemMetadataDomainDao;
 import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.dao.spi.ResponseSetDomainDao;
-import org.researchedc.dao.spi.UsageStatsServiceDao;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -76,11 +73,6 @@ public class HibernateConfig {
 
     // RuleActionRunLogDao replaced by @Primary RuleActionRunLogDaoAdapter
 
-    @Bean
-    public RuleSetDomainDao ruleSetDao() {
-        return new RuleSetDao();
-    }
-
     // RuleSetAuditDao replaced by @Primary RuleSetAuditDaoAdapter
 
     // RuleSetRuleDao replaced by @Primary RuleSetRuleDaoAdapter
@@ -135,11 +127,6 @@ public class HibernateConfig {
     // TagDao deleted - no consumers; EventDefinitionCrfTagDaoAdapter serves tagging
 
     // IdtViewDao @Bean removed - zero consumers; impl + SPI deleted
-
-    @Bean
-    public UsageStatsServiceDao usageStatsServiceDAO() {
-        return new UsageStatsServiceDAO();
-    }
 
     // DatabaseChangeLogDao replaced by @Primary DatabaseChangeLogDaoAdapter
 
