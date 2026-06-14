@@ -6,6 +6,13 @@
 
 ---
 
+## 2026-06-14 - RuleSetRuleAudit unused SPI deletion slice
+
+- Deleted unused `IRuleSetRuleAuditDAO` and its unused Hibernate-domain `RuleSetRuleAuditDao` implementation.
+- Kept active SQL writer `RuleSetRuleAuditDAO`, which is still used by `RuleSetRuleDAO`.
+- Regenerated the legacy workflow inventory and reconciled Phase 3 documentation to 756/885 module-backed methods, 68 unused rows, 61 removed rows, and 0 fallback-SQL/legacy-only/adapter-gap rows.
+- Verification: `mvn -pl app -am compile -DskipTests`, `ModulithVerificationTest`, `scripts/ci/check-legacy-guardrails.sh`, and `git diff --check` passed.
+
 ## 2026-06-14 - Phase 3 DAO ledger documentation sync
 
 - Recorded commit `d8092f192` as the latest Phase 3 DAO replacement checkpoint.

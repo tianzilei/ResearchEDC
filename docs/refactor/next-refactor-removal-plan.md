@@ -2,7 +2,7 @@
 
 **Created:** 2026-06-11
 **Updated:** 2026-06-14 (latest)
-**Status source:** current tree plus regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` and Phase 3 DAO replacement ledger (756/885 module-backed, 0 fallback-sql, 0 legacy-only, 0 adapter-gap, 70 unused, 59 removed).
+**Status source:** current tree plus regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` and Phase 3 DAO replacement ledger (756/885 module-backed, 0 fallback-sql, 0 legacy-only, 0 adapter-gap, 68 unused, 61 removed).
 
 ## Current Status
 
@@ -21,20 +21,20 @@ Current generated legacy inventory (2026-06-12):
 
 | Surface | Remaining |
 |---|---:|
-| Active legacy workflow artifacts | 125 |
+| Active legacy workflow artifacts | 115 |
 | JSP views | 0 |
 | Legacy servlets | 0 |
 | Spring MVC route artifacts | 0 |
-| DAO files under `shared/dao` | 95 |
-| Shared services in inventory | 30 |
+| DAO files under `shared/dao` | 88 |
+| Shared services in inventory | 27 |
 | Unknown inventory rows | 0 |
 
 Remaining blockers:
 
 | Slice | Count | Status |
 |---|---:|---|
-| Phase 3 DAO implementation deletion | 95 | **No ledger blockers remain** — 756/885 methods module-backed; 70 unused SPI methods ready for deletion; 59 methods already removed; 0 fallback-sql, 0 legacy-only, 0 adapter-gap |
-| Phase 4 shared service deletion | 30 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
+| Phase 3 DAO implementation deletion | 88 | **No fallback/legacy/gap ledger blockers remain** — 756/885 methods module-backed; 68 unused SPI rows remain; 61 rows already removed; 0 fallback-sql, 0 legacy-only, 0 adapter-gap |
+| Phase 4 shared service deletion | 27 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
 | Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; rollback proof added after commit `ae72d2415`; remaining compatibility gap is broader ODM/OpenRosa/export contract coverage; legacy import job scheduling is retired in the current tree and guarded against reintroduction |
 
 ## Current Import State
@@ -164,9 +164,9 @@ Exit gate:
 
 ### 6. Phase 3 DAO Replacement Ledger
 
-Status: **active**. Ledger updated: 756/885 methods are `module-backed`; **0 `legacy-only`, 0 `adapter-gap`, 0 `fallback-sql` rows remain**; 70 `unused` SPI methods remain; 59 methods already removed (`UsageStatsServiceDao` SPI+impl+service+entity, `RuleSetDomainDao` SPI+impl, `IAuditEventDAO` 19 unused methods, `AuditDao` 14 unused methods, `ArchivedDatasetFileDao` SPI+bean, `WebBeansConfig`, extract services). **All non-module-backed methods are now either module-backed, unused, or removed.**
+Status: **active**. Ledger updated: 756/885 methods are `module-backed`; **0 `legacy-only`, 0 `adapter-gap`, 0 `fallback-sql` rows remain**; 68 `unused` SPI methods remain; 61 methods already removed (`UsageStatsServiceDao` SPI+impl+service+entity, `RuleSetDomainDao` SPI+impl, `IAuditEventDAO` 19 unused methods, `AuditDao` 14 unused methods, `ArchivedDatasetFileDao` SPI+bean, `WebBeansConfig`, extract services). **All non-module-backed methods are now either module-backed, unused, or removed.**
 
-Goal: turn the 95 remaining `shared/dao` files into an actionable deletion queue.
+Goal: turn the 88 remaining `shared/dao` files into an actionable deletion queue.
 
 Actions:
 
@@ -193,7 +193,7 @@ Exit gate:
 - ✅ Removed 19 unused methods from `IAuditEventDAO` SPI and adapter.
 - ✅ Removed 14 unused methods from `AuditDao` SPI and adapter.
 - ✅ Deleted `ArchivedDatasetFileDao` SPI + bean (2 files), `WebBeansConfig` (1 file), extract services (2 files).
-- ⬜ Delete remaining `unused` SPI methods (70) from interfaces and remove corresponding legacy DAO implementations.
+- ⬜ Delete remaining `unused` SPI methods (68) from interfaces and remove corresponding legacy DAO implementations.
 - ⬜ At least one DAO implementation/support file is proven removable or explicitly deferred with every blocking SPI method listed.
 
 ### 7. Reconcile Inventory After Each Slice

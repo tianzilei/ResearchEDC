@@ -16,7 +16,7 @@ shared/src/main/java/org/researchedc/
 │                 #             service, odmbeans, submit, masking)
 ├── config/       # CoreResourcesConfig.java — resource bundle accessor
 ├── core/         # Core utilities — formatters, file access, resource helpers (7 files)
-├── dao/          # Data access layer — 95 files
+├── dao/          # Data access layer — 88 files
 │   ├── hibernate/ # AbstractDomainDao subclasses (67 files, JPA-based)
 │   ├── spi/       # DAO SPI interfaces (66 files)
 │   ├── managestudy/ # Study/subject DAOs
@@ -77,7 +77,7 @@ test methods awaiting reactivation.
 | SPI interfaces | ✅ 66 interfaces for DI (replaces direct DAO class references) |
 | Liquibase migrations | ✅ 208 XML files, versioned from 3.x through 3.18 |
 | Strangulation target | 🔶 Active — new code goes to `app/module/` |
-| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 95 DAO/SPI/implementation files still exist. Phase 3 ledger after commit `d8092f192`: 595/885 methods are module-backed; 149 fallback-SQL, 76 legacy-only, and 65 adapter-gap rows still block DAO implementation/support deletion. |
+| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 88 DAO/SPI/implementation files still exist. Phase 3 ledger: 756/885 methods are module-backed; 68 unused rows remain; 61 rows are removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. |
 
 ## ANTI-PATTERNS
 
