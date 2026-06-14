@@ -9,7 +9,6 @@ import org.researchedc.dao.managestudy.FindSubjectsFilter;
 import org.researchedc.dao.managestudy.FindSubjectsSort;
 import org.researchedc.dao.managestudy.StudyAuditLogFilter;
 import org.researchedc.dao.managestudy.StudyAuditLogSort;
-import org.researchedc.domain.datamap.StudySubject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,7 +37,6 @@ public interface IStudySubjectDAO {
     ArrayList findAllBySubjectId(int subjectId);
     EntityBean findAnotherBySameLabel(String label, int studyId, int studySubjectId);
     EntityBean findAnotherBySameLabelInSites(String label, int studyId, int studySubjectId);
-    StudySubjectBean findByLabelAndStudy(String label, StudyBean study);
     StudySubjectBean findSameByLabelAndStudy(String label, int studyId, int id);
     StudySubjectBean findByOidAndStudy(String oid, int studyId);
     StudySubjectBean findByOid(String oid);
@@ -65,8 +63,6 @@ public interface IStudySubjectDAO {
     Integer getTotalEventCrfCountForCrfMigration(CRFVersionBean sourceCrfVersionBean, CRFVersionBean targetCrfVersionBean, ArrayList<String> studyEventDefnlist, ArrayList<String> sitelist);
     Integer getTotalCountStudySubjectForCrfMigration(CRFVersionBean sourceCrfVersionBean, CRFVersionBean targetCrfVersionBean, ArrayList<String> studyEventDefnlist, ArrayList<String> sitelist);
 
-    default StudySubject findByOcOID(String OCOID) { throw new UnsupportedOperationException(); }
-    default StudySubject findById(Integer id) { throw new UnsupportedOperationException(); }
     Integer getCountofStudySubjectsAtStudyOrSite(StudyBean currentStudy);
     Integer getCountofStudySubjectsAtStudy(StudyBean currentStudy);
     Integer getCountofStudySubjects(StudyBean currentStudy);

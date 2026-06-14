@@ -400,16 +400,6 @@ public class UserAccountDaoAdapter implements IUserAccountDAO {
         return true;
     }
 
-    @Override
-    public UserAccount findById(Integer id) {
-        if (id == null) {
-            return null;
-        }
-        return userAccountRepository.findById(id)
-                .map(this::toDomain)
-                .orElse(null);
-    }
-
     private ArrayList buildStudyUserRoleBeans(int studyId, boolean assignedOnly) {
         ArrayList result = new ArrayList();
         List<RoleEntity> roles = roleRepository.findByStudyId(studyId);

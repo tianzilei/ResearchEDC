@@ -5,7 +5,6 @@ import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.domain.datamap.StudyEventDefinition;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,5 +29,4 @@ public interface IStudyEventDefinitionDAO {
     Collection findAllByStudyAndLimit(int studyId);
     ArrayList<StudyEventDefinitionBean> findAllActiveByParentStudyId(int parentStudyId);
     java.util.ArrayList findAllActiveByStudy(StudyBean study);
-    default StudyEventDefinition findByColumnName(Object value, String columnName) { throw new UnsupportedOperationException(); }
 }

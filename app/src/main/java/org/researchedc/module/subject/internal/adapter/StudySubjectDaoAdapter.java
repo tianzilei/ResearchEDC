@@ -159,14 +159,6 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
     }
 
     @Override
-    public StudySubjectBean findByLabelAndStudy(String label, StudyBean study) {
-        return repository.findByLabelAndStudyId(label, study.getId()).stream()
-                .findFirst()
-                .map(this::toBean)
-                .orElse(null);
-    }
-
-    @Override
     public StudySubjectBean findSameByLabelAndStudy(String label, int studyId, int id) {
         return repository.findByLabelAndStudyId(label, studyId).stream()
                 .filter(e -> !e.getStudySubjectId().equals(id))
@@ -332,13 +324,6 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
                                                             ArrayList<String> studyEventDefnlist,
                                                             ArrayList<String> sitelist) {
         return 0;
-    }
-
-    @Override
-    public StudySubject findByOcOID(String OCOID) {
-        return repository.findByOcOid(OCOID)
-                .map(e -> new StudySubject(e.getStudySubjectId(), e.getOcOid() != null ? e.getOcOid() : ""))
-                .orElse(null);
     }
 
     @Override

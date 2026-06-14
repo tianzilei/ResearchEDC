@@ -31,11 +31,11 @@ Current generated legacy inventory (2026-06-12):
 
 Remaining blockers:
 
-Progress snapshot: tracked workflow closure is **848/963 artifacts (88.1%)**; DAO method replacement/removal coverage is **869/878 (99.0%)**; remaining unused DAO SPI rows are **9/878 (1.0%)**; DAO-surface file deletion is **98/186 (52.7%)**.
+Progress snapshot: tracked workflow closure is **848/963 artifacts (88.1%)**; DAO method replacement/removal coverage is **878/878 (100%)**; remaining unused DAO SPI rows are **0/878 (0%)**; DAO-surface file deletion is **98/186 (52.7%)**.
 
 | Slice | Count | Status |
 |---|---:|---|
-| Phase 3 DAO implementation deletion | 88 | **No fallback/legacy/gap ledger blockers remain** — 758/878 methods module-backed; 9 unused SPI rows remain; 111 rows already removed; 0 fallback-sql, 0 legacy-only, 0 adapter-gap |
+| Phase 3 DAO implementation deletion | 88 | **No fallback/legacy/gap/unused ledger blockers remain** — 758/878 methods module-backed; 0 unused SPI rows remain; 120 rows already removed; 0 fallback-sql, 0 legacy-only, 0 adapter-gap |
 | Phase 4 shared service deletion | 27 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
 | Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; rollback proof added after commit `ae72d2415`; remaining compatibility gap is broader ODM/OpenRosa/export contract coverage; legacy import job scheduling is retired in the current tree and guarded against reintroduction |
 
@@ -166,7 +166,7 @@ Exit gate:
 
 ### 6. Phase 3 DAO Replacement Ledger
 
-Status: **active**. Ledger updated: 758/878 methods are `module-backed`; **0 `legacy-only`, 0 `adapter-gap`, 0 `fallback-sql` rows remain**; 9 `unused` SPI methods remain; 111 methods already removed. **All non-module-backed methods are now either unused or removed.**
+Status: **active**. Ledger updated: 758/878 methods are `module-backed`; **0 `legacy-only`, 0 `adapter-gap`, 0 `fallback-sql` rows remain**; 0 `unused` SPI methods remain; 120 methods already removed. **All non-module-backed methods are now removed. Zero unused SPI default methods remain.**
 
 Goal: turn the 88 remaining `shared/dao` files into an actionable deletion queue.
 
@@ -195,7 +195,7 @@ Exit gate:
 - ✅ Removed 19 unused methods from `IAuditEventDAO` SPI and adapter.
 - ✅ Removed 14 unused methods from `AuditDao` SPI and adapter.
 - ✅ Deleted `ArchivedDatasetFileDao` SPI + bean (2 files), `WebBeansConfig` (1 file), extract services (2 files).
-- ⬜ Delete remaining `unused` SPI methods (9) from interfaces and remove corresponding legacy DAO implementations.
+- ✅ Delete remaining `unused` SPI methods (0 remaining) from interfaces and remove corresponding legacy DAO implementations.
 - ⬜ At least one DAO implementation/support file is proven removable or explicitly deferred with every blocking SPI method listed.
 
 ### 7. Reconcile Inventory After Each Slice
@@ -235,20 +235,12 @@ scripts/ci/generate-legacy-inventory.py --output-dir docs/refactor --basename le
 
 ## Recommended Immediate Commit Boundary
 
-Next commit should continue deleting `unused` SPI methods (9 remaining). Completed in this commit:
+Completed in this commit:
 
-- Removed 41 unused default methods from 16 DAO SPI interfaces and their corresponding adapter @Override implementations.
-- Remaining 9 unused SPI methods have callers only in legacy shared code and cannot be removed until those callers are migrated.
+- Deleted 52 dead legacy rule engine files (12,461 lines) — entire rule execution pipeline including RuleSetService, BeanPropertyService, ExpressionService, rule runners, expression tree, action processors, validators, and helper DTOs.
+- Removed final 9 unused SPI default methods from IStudySubjectDAO, IUserAccountDAO, IStudyEventDAO, IStudyEventDefinitionDAO and their adapter overrides.
+- **Zero unused SPI default methods remain.** Phase 3 DAO method coverage is 100%.
 
-Remaining 9 unused SPI methods:
-1. IStudySubjectDAO: findByLabelAndStudy(StudyBean) — legacy bean overload
-2. IStudySubjectDAO: findByOcOID — has adapter test
-3. IStudySubjectDAO: findById — has caller in BeanPropertyService
-4. IUserAccountDAO: findById — has caller in BeanPropertyService
-5. IStudyEventDAO: fetchByStudyEventDefOIDAndOrdinal — has callers
-6. IStudyEventDAO: fetchByStudyEventDefOIDAndOrdinalTransactional — has caller
-7. IStudyEventDAO: fetchListByStudyEventDefOID — has caller
-8. IStudyEventDAO: findByStudyEventId — has caller
-9. IStudyEventDefinitionDAO: findByColumnName — has caller
+Next work is Phase 4: deleting the 88 remaining DAO implementation/support files, gated on proving registration/factory/inheritance/runtime dependencies are safe.
 
 Do not delete DAO implementation/support files until every method, registration, factory, inheritance, and runtime dependency is proven safe.

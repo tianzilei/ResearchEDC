@@ -130,17 +130,6 @@ class StudySubjectDaoAdapterTest {
     }
 
     @Test
-    void findByOcOID_returnsDomainStudySubjectWithIdAndOid() {
-        when(repository.findByOcOid("SS_OID"))
-                .thenReturn(Optional.of(studySubject(9, 1, 2, "SS", 1, "SS_OID")));
-
-        StudySubject result = adapter.findByOcOID("SS_OID");
-
-        assertEquals(9, result.getStudySubjectId());
-        assertEquals("SS_OID", result.getOcOid());
-    }
-
-    @Test
     void countByStudyAndStatus_delegatesToRepository() {
         StudyBean study = new StudyBean();
         study.setId(17);

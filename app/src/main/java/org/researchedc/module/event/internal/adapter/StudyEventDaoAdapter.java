@@ -311,18 +311,6 @@ public class StudyEventDaoAdapter implements IStudyEventDAO {
         return observer;
     }
 
-    // --- Default method overrides ---
-
-    @Override
-    public StudyEvent fetchByStudyEventDefOIDAndOrdinal(String oid, Integer ordinal, int studySubjectId) {
-        return null;
-    }
-
-    @Override
-    public StudyEvent saveOrUpdateTransactional(StudyEventContainer container) {
-        return null;
-    }
-
     // --- Private helpers ---
 
     private void apply(StudyEventBean bean, StudyEventEntity entity) {
