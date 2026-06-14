@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.AuditableEntityBean;
@@ -17,7 +16,6 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.domain.datamap.StudyEventDefinition;
 import org.researchedc.module.event.entity.StudyEventDefinitionEntity;
 import org.researchedc.module.event.repository.StudyEventDefinitionRepository;
 import org.springframework.context.annotation.Primary;
@@ -180,26 +178,11 @@ public class StudyEventDefinitionDaoAdapter implements IStudyEventDefinitionDAO 
     }
 
     @Override
-    public Map<Integer, StudyEventDefinitionBean> findByStudySubject(int studySubjectId) {
-        return new HashMap<>();
-    }
-
-    @Override
-    public Map<Integer, Integer> buildMaxOrdinalByStudyEvent(int studySubjectId) {
-        return new HashMap<>();
-    }
-
-    @Override
     public ArrayList findAllActiveByStudy(StudyBean study) {
         if (study.getParentStudyId() > 0) {
             return toBeans(repository.findByStatusIdAndStudyId(Status.AVAILABLE.getId(), study.getParentStudyId()));
         }
         return toBeans(repository.findByStatusIdAndStudyId(Status.AVAILABLE.getId(), study.getId()));
-    }
-
-    @Override
-    public StudyEventDefinition findByStudyEventDefinitionId(int studyEventDefinitionId) {
-        throw new UnsupportedOperationException("Use findByPK instead");
     }
 
     private void apply(StudyEventDefinitionBean bean, StudyEventDefinitionEntity entity) {

@@ -62,6 +62,5 @@ public interface IStudyEventDAO extends Listener {
     default StudyEvent saveOrUpdate(StudyEventContainer container) { throw new UnsupportedOperationException(); }
     default StudyEvent saveOrUpdateTransactional(StudyEventContainer container) { throw new UnsupportedOperationException(); }
     default Integer findMaxOrdinalByStudySubjectStudyEventDefinition(int studySubjectId, int studyEventDefinitionId) { throw new UnsupportedOperationException(); }
-    default StudyEvent findById(Integer id) { throw new UnsupportedOperationException(); }
     boolean isThisRepeatingEventScheduledMoreThanOneTime(int studyId, int sed_Id);
 }

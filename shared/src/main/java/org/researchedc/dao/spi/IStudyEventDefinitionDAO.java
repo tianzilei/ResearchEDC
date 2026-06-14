@@ -9,7 +9,6 @@ import org.researchedc.domain.datamap.StudyEventDefinition;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 public interface IStudyEventDefinitionDAO {
     EntityBean findByPK(int ID);
@@ -30,10 +29,6 @@ public interface IStudyEventDefinitionDAO {
     StudyEventDefinitionBean findByEventDefinitionCRFId(int eventDefinitionCRFId);
     Collection findAllByStudyAndLimit(int studyId);
     ArrayList<StudyEventDefinitionBean> findAllActiveByParentStudyId(int parentStudyId);
-    Map<Integer, StudyEventDefinitionBean> findByStudySubject(int studySubjectId);
-    Map<Integer, Integer> buildMaxOrdinalByStudyEvent(int studySubjectId);
     java.util.ArrayList findAllActiveByStudy(StudyBean study);
-    default StudyEventDefinition findByStudyEventDefinitionId(int studyEventDefinitionId) { throw new UnsupportedOperationException(); }
     default StudyEventDefinition findByColumnName(Object value, String columnName) { throw new UnsupportedOperationException(); }
-    default StudyEventDefinition findById(Integer id) { throw new UnsupportedOperationException(); }
 }

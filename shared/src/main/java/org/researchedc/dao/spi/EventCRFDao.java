@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import org.researchedc.dao.EventCRFSDVFilter;
 import org.researchedc.dao.EventCRFSDVSort;
-import org.researchedc.domain.datamap.EventCrf;
 
 public interface EventCRFDao {
     EntityBean findByPK(int ID);
@@ -62,12 +61,4 @@ public interface EventCRFDao {
     ArrayList<EventCRFBean> getWithFilterAndSort(int studyId, int parentStudyId, EventCRFSDVFilter filter, EventCRFSDVSort sort, int rowStart, int rowEnd);
     ArrayList getEventCRFsByStudySubjectLabelLimit(String label, int studyId, int parentStudyId, int limit, int offset);
     Integer countEventCRFsByStudySubjectLabel(String label, int studyId, int parentStudyId);
-
-    // Domain-entity-returning methods (default for gradual migration)
-    default EventCrf saveOrUpdate(EventCrf entity) { throw new UnsupportedOperationException(); }
-    default EventCrf findByStudyEventIdStudySubjectIdCrfId(int studyEventId, int studySubjectId, int crfId) { throw new UnsupportedOperationException(); }
-    default EventCrf findByStudyEventIdStudySubjectIdCrfVersionId(int studyEventId, int studySubjectId, int crfVersionId) { throw new UnsupportedOperationException(); }
-    default List<EventCrf> findByStudyEventStatus(Integer studyEventId, Integer statusCode) { throw new UnsupportedOperationException(); }
-    default EventCrf findById(Integer id) { throw new UnsupportedOperationException(); }
-    default List<EventCrf> findByStudyEventIdStudySubjectId(Integer studyEventId, String studySubjectOid) { throw new UnsupportedOperationException(); }
 }

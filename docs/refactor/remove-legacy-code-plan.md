@@ -16,7 +16,7 @@ These counts come from the current repository tree and regenerated inventory (up
 | `ws/` | 75 | 0 | SOAP module directory is absent in the current tree (-75) |
 | Active legacy workflow inventory | 963 | 115 | Regenerated artifacts across DAO and shared service surfaces only (-848) |
 
-Progress snapshot: active workflow inventory is **848/963 closed (88.1%)**; DAO method replacement/removal coverage is **828/878 (94.3%)**; remaining unused DAO SPI rows are **50/878 (5.7%)**; DAO-surface file deletion is **98/186 (52.7%)**.
+Progress snapshot: active workflow inventory is **848/963 closed (88.1%)**; DAO method replacement/removal coverage is **856/878 (97.5%)**; remaining unused DAO SPI rows are **22/878 (2.5%)**; DAO-surface file deletion is **98/186 (52.7%)**.
 
 ### Phase 1 Deletion Summary (8 slices completed)
 
@@ -100,7 +100,7 @@ Current next action (updated 2026-06-12):
 3. ✅ Done: OpenRosa/Spring MVC compatibility classification. OpenRosa is active Modulith (18 files, `/api/v1/openrosa`). AccountController deleted (0 callers). SidebarInit/SidebarEnumConstants deleted (0 injections).
 4. ✅ Done: Webapp surface cleanup — 29 JSPs, ~1400 static assets, GWT remnants, TLDs, tags, pages-servlet.xml deleted. web.xml 310→40 lines. SDVUtil bean removed from WebBeansConfig.
 5. ✅ Done: web/ module DELETED — 9 needed files (Validator, DiscrepancyValidator, FormDiscrepancyNotes, Validation, EanCheckDigit, ValidatorRegularExpression, ImportCRFInfoContainer, ImportCRFInfo, ImportCRFDataService, ImportHelper) migrated to app/, 93 dead legacy servlets/views/helpers deleted. Entire web/ directory removed. JSP/JSTL dependencies cleaned from app/pom.xml.
-6. ⬜ Phase 3 DAO deletion: 5 dead files deleted (ScheduledJobSort, OCContextLoaderListener, SubjectGroupMapDao, OpenClinicaVersionDAO + SPI). 88 remaining DAO files are blocked by final deletion proof: 757/878 methods are module-backed, 50 unused SPI rows remain, 70 rows are removed, and 0 fallback-SQL/legacy-only/adapter-gap rows remain. This slice deleted unused `IRuleSetRuleAuditDAO` and `RuleSetRuleAuditDao`; continue removing unused SPI rows and then verify registration/factory/inheritance/runtime dependencies before deleting implementation/support files.
+6. ⬜ Phase 3 DAO deletion: 5 dead files deleted (ScheduledJobSort, OCContextLoaderListener, SubjectGroupMapDao, OpenClinicaVersionDAO + SPI). 88 remaining DAO files are blocked by final deletion proof: 758/878 methods are module-backed, 22 unused SPI rows remain, 98 rows are removed, and 0 fallback-SQL/legacy-only/adapter-gap rows remain. This slice deleted 28 unused default/abstract methods from 6 DAO families (IStudyEventDefinitionDAO, IItemDAO, EventCRFDao, IStudyEventDAO, IItemDataDAO, ICrfDAO); continue removing unused SPI rows and then verify registration/factory/inheritance/runtime dependencies before deleting implementation/support files.
 7. ✅ Done: Phase 4 shared bean deletion — EXHAUSTED. 73 files (-8570L) across runs 81-95. 0 dead code remaining.
 8. ✅ Done: Phase 5 dependency cleanup — EXHAUSTED. 19 dead deps removed; remaining 8 all active.
 9. ✅ Initial import/export compatibility hardening complete in commit `bc1f24d97`: focused dataimport/legacy bridge/data-capture tests, typed validation preview/result output, commit audit event, result stats, and secure attachment download keyed by event CRF plus opaque attachment ids. Rollback proof was added after commit `ae72d2415`; remaining compatibility work: deterministic ODM preview validation fixtures; representative ODM parse, OpenRosa submission form-context, and export API contract coverage added; rule XML import is retired and guarded against reintroduction; legacy import job scheduling is retired in the current tree.
@@ -291,13 +291,13 @@ spa_subject_detail    — Use full SPA subject detail (no legacy fallbacks)
 
 **Goal:** delete legacy DAO implementation classes from `shared/dao`.
 
-Current ledger state (updated 2026-06-14):
+Current ledger state (updated 2026-06-15):
 
 | Status | Methods | Meaning |
 |---|---:|---|
 | `module-backed` | 758 | Adapter/repository/service path exists; still requires registration and caller checks before implementation deletion |
-| `unused` | 50 | SPI method with no callers in module code; safe to remove from SPI interface |
-| `removed` | 70 | SPI interface and implementation deleted; legacy service references cleaned up |
+| `unused` | 22 | SPI method with no callers in module code; safe to remove from SPI interface |
+| `removed` | 98 | SPI interface and implementation deleted; legacy service references cleaned up |
 
 For each DAO family:
 

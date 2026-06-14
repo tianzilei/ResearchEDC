@@ -119,10 +119,4 @@ public interface IItemDataDAO {
     public ArrayList<ItemDataBean> findAllByEventCRFIdAndItemGroupId(int eventCRFId, int itemGroupId);
 
     public void undelete(int itemDataId, int updaterId);
-
-    default ItemData findByItemEventCrfOrdinal(Integer itemId, Integer eventCrfId, Integer ordinal) { throw new UnsupportedOperationException(); }
-    default int getMaxGroupRepeat(Integer eventCrfId, Integer itemId) { throw new UnsupportedOperationException(); }
-    default ItemData saveOrUpdate(ItemData entity) { throw new UnsupportedOperationException(); }
-    default List<ItemData> findAllByEventCrf(Integer eventCrfId) { throw new UnsupportedOperationException(); }
-    default List<ItemData> findByEventCrfGroup(Integer eventCrfId, Integer itemGroupId) { throw new UnsupportedOperationException(); }
 }
