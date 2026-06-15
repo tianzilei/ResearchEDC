@@ -2,85 +2,53 @@
 
 **Created:** 2026-06-11
 **Updated:** 2026-06-15
-**Status source:** current tree analysis
 
 ## Current Status
 
-Legacy removal is **not complete** but major structural blockers are eliminated.
+| Surface | Before | Current | Removed | % Removed |
+|---------|--------|---------|---------|-----------|
+| `shared/` Java files | 793 | 297 | 496 | **62.6%** |
+| `shared/` lines | ~80,000+ | 37,212 | ~43,000+ | **~54%** |
+| `shared/dao/` files | 186 | 76 | 110 | **59.1%** |
+| `web/` files | 480 | 0 | 480 | **100%** |
+| `ws/` files | 75 | 0 | 75 | **100%** |
+| SPI methods | 878 | 878 covered | 120 removed | **100%** |
+| Module files | — | 404 | — | — |
+| Module lines | — | 27,471 | — | — |
 
-Completed:
+**Code balance:** 297 legacy / 404 modern files = **42% legacy / 58% modern**
 
-- Phase 0 inventory and guardrails ✅
-- Phase B schema ownership ✅ (12 triggers, 27 entities)
-- Phase 1 web/JSP/servlet deletion ✅ (web/ absent)
-- Phase 2 SOAP retirement ✅ (ws/ absent)
-- Phase 3 DAO SPI method cleanup ✅ (878/878 methods, 100% coverage)
-- LegacyDaoFactory elimination ✅
-- EntityDAO/AuditableEntityDAO infrastructure deletion ✅
-- ExtractBean deletion ✅
-- Rule engine dead code deletion ✅ (52 files, 12,461 lines)
-- ODM export/scoring/discrepancy dead code deletion ✅ (36 files, 14,294 lines)
+## Completed This Session
 
-Current metrics:
-
-| Surface | Before | Current | Removed |
-|---------|--------|---------|---------|
-| `shared/` Java files | 793 | 395 | 398 (50.2%) |
-| `shared/dao/` files | 186 | 76 | 110 (59.1%) |
-| `web/` files | 480 | 0 | 480 (100%) |
-| `ws/` files | 75 | 0 | 75 (100%) |
-| SPI methods | 878 | 878 covered | 120 removed, 758 module-backed |
-| Module files | — | 404 | — |
-| Shared lines | — | 45,394 | — |
-| Module lines | — | 27,471 | — |
+- ✅ 28 unused SPI methods removed from 6 DAO families
+- ✅ 41 unused SPI methods removed from 16 DAO families
+- ✅ 52 dead rule engine files deleted (12,461 lines)
+- ✅ QueryDAO deleted
+- ✅ 36 dead ODM/scoring/discrepancy files deleted (14,294 lines)
+- ✅ LegacyDaoFactory, EntityDAO, ExtractBean deleted (7,468 lines)
+- ✅ 94 dead shared/ files deleted (8,446 lines)
+- ✅ SPI method coverage: 100% (878/878)
 
 ## Remaining Work
 
-### 1. Shared dead code scan
+### Remaining shared/ breakdown (297 files)
 
-Status: **active**
+| Category | Files | Status |
+|----------|-------|--------|
+| Bean/DTOs | 88 | Most have active callers from adapters |
+| Domain entities | 112 | JPA mappings, used by adapters |
+| DAO (SPI + filter + infra) | 76 | Structurally required by adapter pattern |
+| Services | 4 | Active callers from app/ |
+| Jobs | 4 | Active Quartz infrastructure |
+| Core | 4 | Active (CoreResources, StringUtil, etc.) |
+| Other (i18n, patterns, exceptions) | 9 | Active |
 
-Goal: find and delete dead shared/ files that have no callers from app/module code.
+### Next actions
 
-The 395 remaining shared files break down as:
-
-- 167 beans/DTOs — some used by adapters, some potentially dead
-- 112 domain entities — JPA mappings, some used by adapters
-- 76 DAO files — SPI interfaces + filter/sort + core infrastructure (structurally required)
-- 40 services, logic, validators, i18n, jobs, exceptions
-
-Actions:
-
-- Scan each shared/service/ file for callers from app/
-- Scan each shared/logic/ file for callers from app/
-- Scan each shared/bean/ file for callers from app/
-- Scan each shared/domain/ file for callers from app/
-- Delete dead files, update plan
-
-Exit gate:
-
-- Every remaining shared/ file has at least one active caller from app/ or is structurally required (SPI interface, entity, filter/sort)
-
-### 2. Shared line reduction
-
-Goal: reduce shared/ from 45,394 lines toward module-owned code.
-
-Actions:
-
-- For shared/services with active callers: consider migrating to module-owned services
-- For shared/beans with active callers: consider replacing with module DTOs
-- For shared/domain entities: keep until module entities fully replace them
-
-### 3. Done Definition
-
-Legacy code removal is complete only when all are true:
-
-- `web/` directory is deleted ✅
-- `ws/` remains absent ✅
-- `shared/dao` contains only SPI interfaces, filter/sort, and core infrastructure ✅ (76 files remain, all structurally required)
-- Legacy-only beans/services/jobs/utilities in `shared/` have no callers and are deleted ⬜
-- Legacy-only dependencies are removed from Maven ⬜
-- Full backend, frontend, and E2E verification passes ✅
+1. **Dead bean scan** — check remaining 88 beans for any more dead files
+2. **Dead service scan** — check remaining 4 services for dead files
+3. **Line reduction** — remove dead methods/fields from alive beans
+4. **Done definition** — all remaining shared/ files have active callers
 
 ## Verification Commands
 
