@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-14 (Legacy code removal is **not complete**. Tracked workflow progress is 848/963 closed, **88.1%**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 88 DAO files under `shared/dao`, 27 shared-service inventory rows, and import/export compatibility hardening in app/module code. Phase 3 ledger: 759/878 methods module-backed; 878/878 module-backed or removed, **100.0%**; 0 unused rows remain; 119 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. See `docs/refactor/remove-legacy-code-plan.md`.)
+> **Last updated:** 2026-06-14 (Legacy code removal is **not complete**. Tracked workflow progress is 848/963 closed, **88.1%**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 75 DAO/SPI/support Java files under `shared/dao`, 27 shared-service inventory rows, and import/export compatibility hardening in app/module code. Phase 3 ledger: 759/878 methods module-backed; 878/878 module-backed or removed, **100.0%**; 0 unused rows remain; 119 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. See `docs/refactor/remove-legacy-code-plan.md`.)
 > **Scope:** All remaining legacy code in `shared/` plus app-hosted compatibility classes migrated from `web/`; keep SOAP compatibility audits only if `ws/` reappears
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -25,7 +25,7 @@
 
 ```
 shared/   504 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ validator/ i18n/ patterns/ core/ log/
-           88 Java files under shared/src/main/java/org/researchedc/dao
+           75 Java files under shared/src/main/java/org/researchedc/dao
 web/        0 files → directory absent; needed import/validation compatibility classes migrated to app/
 ws/         0 Java files → SOAP module absent in current tree
 inventory 115 active artifacts -> 70 replace, 45 keep compatibility, 0 unknown

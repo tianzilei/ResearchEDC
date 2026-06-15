@@ -3,14 +3,6 @@ package org.researchedc.config;
 import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
-import org.researchedc.dao.QueryStore;
-import org.researchedc.dao.hibernate.*;
-import org.researchedc.dao.spi.ConfigurationDao;
-import org.researchedc.dao.spi.RuleActionRunLogDomainDao;
-import org.researchedc.dao.spi.RuleSetAuditDomainDao;
-import org.researchedc.dao.spi.SCDItemMetadataDomainDao;
-import org.researchedc.dao.spi.IRuleSetRuleDAO;
-import org.researchedc.dao.spi.ResponseSetDomainDao;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -25,13 +17,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 /**
  * Java @Configuration replacing applicationContext-core-hibernate.xml.
  *
- * <p>Migrates all 58 legacy Hibernate/DAO beans from XML to Java Config.
- * Infrastructure beans (EntityManagerFactory, TransactionManager, etc.) are
- * auto-configured by Spring Boot and intentionally omitted here.</p>
- *
- * <p>Each AbstractDomainDao subclass gets a no-arg constructor; Spring's
- * {@code @PersistenceContext} on {@link AbstractDomainDao#entityManager}
- * handles EntityManager injection automatically.</p>
+ * <p>Legacy DAO beans have been replaced by module-owned primary adapters or
+ * dynamic registration in DaoRegistrar. This class now only keeps the
+ * shared JPA and Hibernate infrastructure that remaining compatibility code
+ * still needs.</p>
  */
 @Configuration
 public class HibernateConfig {
@@ -77,7 +66,6 @@ public class HibernateConfig {
 
     // RuleSetRuleDao replaced by @Primary RuleSetRuleDaoAdapter
 
-    // RuleSetRuleDao replaced by @Primary RuleSetRuleDaoAdapter
 
     // ──────────────────────────────────────────────────────────────────────
     //  CRF / Item DAOs

@@ -56,7 +56,7 @@ Current legacy removal baseline:
 | Surface | Current Count | Removal Gate |
 |---------|---------------|--------------|
 | `shared/src/main/java/org/researchedc` | 504 Java files | Shared beans/services/DAO/domain callers replaced or proven unused |
-| `shared/dao` | 88 Java files | 98/186 DAO-surface files removed (52.7%); remaining SPI implementations require module-owned repository/service proof; Phase 3 ledger is 759/878 module-backed methods with 0 unused rows left |
+| `shared/dao` | 75 Java files | 111/186 DAO-surface files removed (59.7%); remaining SPI implementations require module-owned repository/service proof; Phase 3 ledger is 759/878 module-backed methods with 0 unused rows left |
 | `web/` Java | 0 files | Directory deleted; needed compatibility classes migrated to `app/` |
 | JSP pages | 0 files | `web/` views deleted |
 | Legacy servlet inventory | 0 artifacts | Servlet workflows migrated, retired, or deleted |

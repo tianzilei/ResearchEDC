@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-15 - Remove dead DAO package markers
+
+- Deleted seven two-line `shared/dao` `package.html` marker files with no runtime role after the DAO surface moved to SPI adapters and module-owned implementations.
+- Trimmed stale `HibernateConfig` imports and comments so it now documents only shared JPA/Hibernate infrastructure; updated handoff docs to the live 75-file `shared/dao` Java surface and 111/186 DAO-surface deletion count.
+
 ## 2026-06-15 - Reconcile stale Phase 3 unused ledger rows
 
 - Reconciled 50 stale Phase 3 `unused` ledger rows against the current SPI interfaces: 49 methods were already absent from the interfaces, and `IStudyEventDefinitionDAO.findAllActiveByStudy(StudyBean)` remains an active module-backed contract.

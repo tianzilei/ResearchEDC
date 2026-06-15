@@ -1,7 +1,7 @@
 # Remove Legacy Code Plan
 
 **Last updated:** 2026-06-14 (updated)
-**Status:** Legacy removal is **not complete**. Tracked workflow progress is **88.1%** (848/963 artifacts removed or closed; 115 active artifacts remain). **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 88 DAO files in `shared/dao`; (2) Phase 4 shared service/domain cleanup gated by those DAO replacements and import/export compatibility. Phase 3 ledger status: 759/878 methods module-backed, 878/878 module-backed or removed (100.0%), 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 0 unused (0.0%), 119 removed.
+**Status:** Legacy removal is **not complete**. Tracked workflow progress is **88.1%** (848/963 artifacts removed or closed; 115 active artifacts remain). **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 75 DAO/SPI/support Java files in `shared/dao`; (2) Phase 4 shared service/domain cleanup gated by those DAO replacements and import/export compatibility. Phase 3 ledger status: 759/878 methods module-backed, 878/878 module-backed or removed (100.0%), 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 0 unused (0.0%), 119 removed.
 
 ## Current Baseline
 
@@ -16,7 +16,7 @@ These counts come from the current repository tree and regenerated inventory (up
 | `ws/` | 75 | 0 | SOAP module directory is absent in the current tree (-75) |
 | Active legacy workflow inventory | 963 | 115 | Regenerated artifacts across DAO and shared service surfaces only (-848) |
 
-Progress snapshot: active workflow inventory is **848/963 closed (88.1%)**; DAO method replacement/removal coverage is **878/878 (100%)**; remaining unused DAO SPI rows are **0/878 (0%)**; DAO-surface file deletion is **98/186 (52.7%)**.
+Progress snapshot: active workflow inventory is **848/963 closed (88.1%)**; DAO method replacement/removal coverage is **878/878 (100%)**; remaining unused DAO SPI rows are **0/878 (0%)**; DAO-surface file deletion is **111/186 (59.7%)**.
 
 ### Phase 1 Deletion Summary (8 slices completed)
 
@@ -82,7 +82,7 @@ Completed on 2026-06-07 after Phase B validation:
 
 - `scripts/ci/generate-legacy-inventory.py` generates CSV and Markdown inventories for legacy servlets, JSPs, Spring MVC routes, SOAP endpoints, DAO files, Quartz jobs, and shared services.
 - `docs/refactor/legacy-workflow-inventory.csv` initially recorded 963 artifacts. The regenerated 2026-06-14 inventory now records 115 active artifacts after `web/` deletion, SOAP retirement, and Phase 3 DAO/support deletion passes.
-- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 70 `replace`, 45 `keep compatibility`, and 0 `unknown` artifacts. The remaining rows are 88 DAO-surface files plus 27 shared services.
+- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 70 `replace`, 45 `keep compatibility`, and 0 `unknown` artifacts. The remaining rows include 75 live DAO Java files plus 27 shared services; regenerate the workflow inventory before using its older DAO-surface row count as a deletion metric.
 - `scripts/ci/generate-legacy-report.sh` now includes the workflow inventory artifacts in the generated legacy report.
 - The first low-risk Phase 1 vertical slice, `phase-1-admin-read-only`, is now closed; no active artifacts remain in the generated inventory.
 - `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows; all rows are now covered/deleted or formally retired, and the generated inventory has no active `phase-1-admin-read-only` artifacts.

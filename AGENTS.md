@@ -89,7 +89,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | **SubjectGroup module** | `app/.../module/subjectgroup/` | 分组类/组 JPA 实体 (gateway only) |
 | **DiscrepancyNote module** | `app/.../module/discrepancynote/` | 差异备注 JPA 实体 (gateway only) |
 | **Shared (legacy) logic** | `shared/src/main/java/org/researchedc/` | DAO/domain/service/bean/logic |
-| Legacy DAOs | `shared/.../dao/` | 88 DAO/SPI/support files; deletion blocked by replacement proof |
+| Legacy DAOs | `shared/.../dao/` | 75 DAO/SPI/support Java files; deletion blocked by replacement proof |
 | Legacy DAOs (JPA) | `shared/.../dao/hibernate/` | AbstractDomainDao 子类 |
 | Legacy DAO SPI interfaces | `shared/.../dao/spi/` | 66 个接口 (IStudyDAO, ISubjectDAO, ...) |
 | Legacy Hibernate entities | `shared/.../domain/datamap/` | ~62 实体, JPA 注解 |
@@ -238,7 +238,7 @@ python -m pytest app/tests/ -v
   - ✅ **ArchivedDatasetFileDAO → ArchivedDatasetFileDao** — `58278d68b`; 8 consumer files converted
 - **Refactor progress snapshot (2026-06-15):** active workflow inventory is 848/963 closed (**88.1%**), Phase 3 DAO method coverage is 878/878 module-backed or removed (**100%**), DAO method blockers are 0/878 unused rows (**0%**), shared/ reduced from 793 to 278 files (**64.9%**), LegacyDaoFactory eliminated, EntityDAO infrastructure deleted, dead code cleanup complete.
 - **Phase 3 ledger status (2026-06-14, updated):** `docs/refactor/phase-3-dao-replacement-ledger.{md,csv}` tracks 878 SPI methods: 759 `module-backed`, 0 `fallback-sql`, 0 `legacy-only`, 0 `adapter-gap`, 0 `unused`, and 119 `removed`. Deletion is now gated by proving no registration/factory/inheritance/runtime dependency remains for each implementation/support file.
-- **Remaining work:** DAO `.java` file deletion is blocked on proving module-owned repository paths in production. Legacy DAO files (88 in `shared/dao/`) are still the fallback for complex SQL queries. HibernateConfig still constructs all legacy DAO beans (harmless, shadowed by `@Primary` adapters). `PasswordRequirementsDao` remains outside the 24 target families.
+- **Remaining work:** DAO `.java` file deletion is blocked on proving module-owned repository paths in production. `shared/dao` still has 75 DAO/SPI/support Java files. Remaining legacy DAO implementations are still the fallback for complex SQL queries; `HibernateConfig` now only keeps shared JPA/Hibernate infrastructure while `DaoRegistrar` dynamically registers unshadowed compatibility DAO classes. `PasswordRequirementsDao` remains outside the 24 target families.
 - **Gauntlet commands:**
   - `git status --short`
   - `mvn -pl app -am compile -DskipTests && mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
