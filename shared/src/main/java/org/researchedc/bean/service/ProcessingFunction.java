@@ -19,8 +19,8 @@ public abstract class ProcessingFunction implements ProcessingInterface,Serializ
     // the following is for the properties of custom-post processing. Some of them could be redundant.
     private String location;
     private String exportFileName;
-    private boolean deleteOld;
-    private boolean zip;
+    protected boolean deleteOld;
+    protected boolean zip;
     private File[] oldFiles;
     
     private String archivedFileName;
@@ -89,20 +89,5 @@ public abstract class ProcessingFunction implements ProcessingInterface,Serializ
 		this.exportFileName = exportFileName;
 	}
 
-	public boolean isDeleteOld() {
-		return deleteOld;
-	}
-
-	public void setDeleteOld(boolean deleteOld) {
-		this.deleteOld = deleteOld;
-	}
-
-	public boolean isZip() {
-		return zip;
-	}
-
-	public void setZip(boolean zip) {
-		this.zip = zip;
-	}
     
 }

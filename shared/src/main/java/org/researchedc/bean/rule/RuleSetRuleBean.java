@@ -92,13 +92,6 @@ public class RuleSetRuleBean extends AuditableEntityBean {
         return ruleActions;
     }
 
-    public void addAction(RuleActionBean ruleAction) {
-        if (actions == null) {
-            actions = new ArrayList<RuleActionBean>();
-        }
-        actions.add(ruleAction);
-    }
-
     // getters & setters
     public RuleSetBean getRuleSetBean() {
         return ruleSetBean;

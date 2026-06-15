@@ -77,13 +77,6 @@ public class StudyParameter extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the inheritable.
-     */
-    public boolean isInheritable() {
-        return inheritable;
-    }
-
-    /**
      * @param inheritable
      *            The inheritable to set.
      */
@@ -106,13 +99,6 @@ public class StudyParameter extends AuditableEntityBean {
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * @return Returns the overridable.
-     */
-    public boolean isOverridable() {
-        return overridable;
     }
 
     /**

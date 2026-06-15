@@ -279,11 +279,6 @@ public class UserAccount extends DataMapDomainObject {
 		this.enabled = enabled;
 	}
 
-	@Column(name = "account_non_locked", nullable = false)
-	public boolean isAccountNonLocked() {
-		return this.accountNonLocked;
-	}
-
 	public void setAccountNonLocked(boolean accountNonLocked) {
 		this.accountNonLocked = accountNonLocked;
 	}
@@ -297,15 +292,10 @@ public class UserAccount extends DataMapDomainObject {
 		this.lockCounter = lockCounter;
 	}
 
-	@Column(name = "run_webservices", nullable = false)
-	public boolean isRunWebservices() {
-		return this.runWebservices;
-	}
-
 	public void setRunWebservices(boolean runWebservices) {
 		this.runWebservices = runWebservices;
 	}
-
+	
 	
 	
 	/*@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
@@ -333,11 +323,6 @@ public class UserAccount extends DataMapDomainObject {
 
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
-    }
-
-    @Column(name = "enable_api_key")
-    public boolean isEnableApiKey() {
-        return enableApiKey;
     }
 
     public void setEnableApiKey(boolean enableApiKey) {

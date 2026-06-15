@@ -192,14 +192,6 @@ public class EventDefinitionCRFBean extends AuditableEntityBean {
         this.parentId = parentId;
     }
 
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    public void setHidden(boolean hidden) {
-        this.hidden = hidden;
-    }
-
     public boolean isHideCrf() {
         return hideCrf;
     }
@@ -533,13 +525,5 @@ public class EventDefinitionCRFBean extends AuditableEntityBean {
 		
 	}
 
-    public boolean isOffline() {
-        return offline;
-    }
 
-    public void setOffline(boolean offline) {
-        this.offline = offline;
-    }
-
-	
 }

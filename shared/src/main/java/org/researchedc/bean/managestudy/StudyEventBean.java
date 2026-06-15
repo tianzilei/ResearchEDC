@@ -329,28 +329,6 @@ public class StudyEventBean extends AuditableEntityBean {
         this.stage = stage;
     }
 
-    /**
-     * @return Returns the scheduledDatePast.
-     */
-    public boolean isScheduledDatePast() {
-        return scheduledDatePast;
-    }
-
-    /**
-     * @param scheduledDatePast
-     *            The scheduledDatePast to set.
-     */
-    public void setScheduledDatePast(boolean scheduledDatePast) {
-        this.scheduledDatePast = scheduledDatePast;
-    }
-
-    public boolean isEditable(){
-        return editable;
-    }
-    public void setEditable(boolean editable){
-        this.editable = editable;
-    }
-
     public StudySubjectBean getStudySubject() {
         return studySubject;
     }

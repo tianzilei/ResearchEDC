@@ -76,7 +76,6 @@ class StudyGroupClassDaoAdapterTest {
         assertEquals(2, result.size());
         assertEquals("Alpha", ((StudyGroupClassBean) result.get(0)).getName());
         assertEquals("Beta", ((StudyGroupClassBean) result.get(1)).getName());
-        assertFalse(((StudyGroupClassBean) result.get(0)).isSelected());
     }
 
     @Test

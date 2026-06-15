@@ -45,15 +45,6 @@ public class RandomizeActionBean extends RuleActionBean {
     
 
 
-    public void addProperty(PropertyBean property) {
-        if (properties == null) {
-            properties = new ArrayList<PropertyBean>();
-        }
-        properties.add(property);
-    }
-     
-   
-
     @Override
     @Transient
     public String getSummary() {
@@ -121,13 +112,6 @@ public class RandomizeActionBean extends RuleActionBean {
         this.stratificationFactors = stratificationFactors;
     }
     
-    public void addStratificationFactor(StratificationFactorBean stratificationFactor) {
-        if (stratificationFactors == null) {
-            stratificationFactors = new ArrayList<StratificationFactorBean>();
-        }
-        stratificationFactors.add(stratificationFactor);
-    }    
-
 }
 
 

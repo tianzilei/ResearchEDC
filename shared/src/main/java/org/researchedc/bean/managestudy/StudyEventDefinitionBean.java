@@ -148,36 +148,6 @@ public class StudyEventDefinitionBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the lockable.
-     */
-    public boolean isLockable() {
-        return lockable;
-    }
-
-    /**
-     * @param lockable
-     *            The lockable to set.
-     */
-    public void setLockable(boolean lockable) {
-        this.lockable = lockable;
-    }
-
-    /**
-     * @return Returns the populated.
-     */
-    public boolean isPopulated() {
-        return populated;
-    }
-
-    /**
-     * @param populated
-     *            The isPopulated to set.
-     */
-    public void setPopulated(boolean populated) {
-        this.populated = populated;
-    }
-
-    /**
      * @return Returns the ordinal.
      */
     public int getOrdinal() {

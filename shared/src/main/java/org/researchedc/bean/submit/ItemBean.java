@@ -301,21 +301,6 @@ public class ItemBean extends AuditableEntityBean {
 
     
     /**
-     * @return Returns the selected.
-     */
-    public boolean isSelected() {
-        return selected;
-    }
-
-    /**
-     * @param selected
-     *            The selected to set.
-     */
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
-    /**
      * @return Returns the defName.
      */
     public String getDefName() {

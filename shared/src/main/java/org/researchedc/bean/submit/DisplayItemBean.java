@@ -446,14 +446,6 @@ public class DisplayItemBean {
 	}
 
 
-    public boolean isBlankDwelt() {
-        return blankDwelt;
-    }
-
-    public void setBlankDwelt(boolean blankDwelt) {
-        this.blankDwelt = blankDwelt;
-    }
-
 	public boolean getIsNewItem() {
 		return isNewItem;
 	}

@@ -35,8 +35,10 @@ public class I18nFormatUtil {
      */
     public final static String dateFormatString(Locale locale) {
         Locale l = resolveLocale(locale);
-        return StringUtil.parseDateFormat(
-                ResourceBundleProvider.getFormatBundle(l).getString("date_format_string"));
+        String fmt = ResourceBundleProvider.getFormatBundle(l).getString("date_format_string");
+        while (fmt.contains("Y")) { fmt = fmt.replace("Y", "y"); }
+        while (fmt.contains("D")) { fmt = fmt.replace("D", "d"); }
+        return fmt;
     }
 
     /**
@@ -68,8 +70,10 @@ public class I18nFormatUtil {
      */
 	public final static String yearMonthFormatString(Locale locale) {
 	    Locale l = resolveLocale(locale);
-	    return StringUtil.parseDateFormat(
-                ResourceBundleProvider.getFormatBundle(l).getString("date_format_year_month"));
+        String fmt = ResourceBundleProvider.getFormatBundle(l).getString("date_format_year_month");
+        while (fmt.contains("Y")) { fmt = fmt.replace("Y", "y"); }
+        while (fmt.contains("D")) { fmt = fmt.replace("D", "d"); }
+        return fmt;
 	}
 
 	public final static String yearFormatString() {

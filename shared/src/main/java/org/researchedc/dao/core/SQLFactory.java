@@ -118,11 +118,6 @@ public class SQLFactory {
     }
 
     // name should be one of the public static final Strings above
-    public void addDigester(String name, DAODigester dig) {
-        digesters.put(name, dig);
-    }
-
-    // name should be one of the public static final Strings above
     public DAODigester getDigester(String name) {
         return (DAODigester) digesters.get(name);
     }

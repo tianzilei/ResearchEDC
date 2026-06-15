@@ -33,10 +33,6 @@ public class StudyGroupClassBean extends AuditableEntityBean {
     private String studyGroupName = "";// not in DB
     private boolean selected = false; // not in DB, tbh
 
-    public boolean isSelected() {
-        return selected;
-    }
-
     public void setSelected(boolean selected) {
         this.selected = selected;
     }

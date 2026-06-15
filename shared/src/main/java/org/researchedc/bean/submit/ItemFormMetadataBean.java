@@ -312,14 +312,6 @@ public class ItemFormMetadataBean extends EntityBean {
         this.showItem = showItem;
     }
 
-    public boolean isHighlighted() {
-        return isHighlighted;
-    }
-
-    public void setHighlighted(boolean isHighlighted) {
-        this.isHighlighted = isHighlighted;
-    }
-
     public String getSectionName() {
         return sectionName;
     }

@@ -290,32 +290,19 @@ public class UserAccountBean extends AuditableEntityBean {
     // ///////////////////////
 
     public void addUserType(UserType u) {
-        // in effect userTypes is just a single UserType object
-        // we do things this way for forward-compatibility,
-        // i.e. it may be possible for users to have multiple UserTypes in the
-        // future
         if (userTypes.size() > 0) {
             userTypes.clear();
         }
-
         userTypes.add(u);
-
         if (u.equals(UserType.USER)) {
             sysAdmin = false;
             techAdmin = false;
         }
-
         if (u.equals(UserType.SYSADMIN)) {
             sysAdmin = true;
         }
-
-        /*
-         * currently set tech admin superior to sys admin, i.e anything a sysadmin can do, a tech admin can do too.
-         */
         if (u.equals(UserType.TECHADMIN)) {
             sysAdmin = true;
-            // need to remove this to avoid problems creating and updating
-            // users, tbh
             techAdmin = true;
         }
     }
@@ -428,15 +415,6 @@ public class UserAccountBean extends AuditableEntityBean {
 	public void setApiKey(String apiKey) {
 		this.apiKey = apiKey;
 	}
-
-	public boolean isEnableApiKey() {
-		return enableApiKey;
-	}
-
-	public void setEnableApiKey(boolean enableApiKey) {
-		this.enableApiKey = enableApiKey;
-	}
-
 
 
 }

@@ -7,7 +7,6 @@
  */
 package org.researchedc.core.form;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,33 +22,7 @@ import java.util.regex.Pattern;
  * @author jxu
  */
 public class StringUtil {
-    /*
-     * A utility method for escaping apostrophes in Strings. "My'String" becomes
-     * "My\'String". This could be used for example to escape a String for
-     * insertion into a postgresql varchar field.
-     */
-    public static String escapeSingleQuote(String escapeSource) {
 
-        if (escapeSource == null || "".equalsIgnoreCase(escapeSource)) {
-            return "";
-        }
-        // We have to use four backslashes in a row here to properly reproduce
-        // \' from
-        // a single apostrophe
-        return escapeSource.replaceAll("'", "\\\\'");
-
-    }
-
-   
-    
-
-    /**
-     * Checks whether a string is blank
-     *
-     * @param s
-     * @return true if blank, false otherwise
-     * @deprecated Use {@link org.apache.commons.lang3.StringUtils#isBlank(CharSequence)} instead.
-     */
     @Deprecated
     public static boolean isBlank(String s) {
         return s == null ? true : s.trim().equals("") ? true : false;
@@ -59,22 +32,6 @@ public class StringUtil {
     public static boolean isNumber(String s) {
         // To Do: whether we consider a blank string is still a number?
         return Pattern.matches("[0-9]*", s) ? true : false;
-
-    }
-
-    public static boolean isValidDate(String s) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
-        sdf.setLenient(false);
-        try {
-            java.util.Date date = sdf.parse(s);
-            if (date.after(new java.util.Date())) {
-                return false; // not a date in the past,for date of birth
-            }
-        } catch (ParseException fe) {
-            return false; // format is wrong
-        }
-
-        return true;
 
     }
 
@@ -101,13 +58,59 @@ public class StringUtil {
      */
     // ywang (Nov., 2008)
     public static boolean isFormatDate(String s, String dateFormat) { 
-        String dateformat = parseDateFormat(dateFormat);
-        return isSameDate(dateformat, dateformat, s);
+        String dateformat = dateFormat;
+        while (dateformat.contains("Y")) { dateformat = dateformat.replace("Y", "y"); }
+        while (dateformat.contains("D")) { dateformat = dateformat.replace("D", "d"); }
+        SimpleDateFormat sdf1 = new SimpleDateFormat(dateformat);
+        sdf1.setLenient(false);
+        SimpleDateFormat sdf2 = new SimpleDateFormat(dateformat);
+        sdf2.setLenient(false);
+        try {
+            Date d1 = sdf1.parse(s);
+            try {
+                String temp = sdf2.format(d1);
+                if (temp.equals(s)) {
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(d1);
+                    int year = c.get(Calendar.YEAR);
+                    return year <= 9999 && year >= 1000;
+                } else {
+                    return false;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
     
     public static boolean isFormatDate(String s, String dateFormat, Locale locale) {
-        String dateformat = parseDateFormat(dateFormat);
-        return isSameDate(dateformat, dateformat, s, locale);
+        String dateformat = dateFormat;
+        while (dateformat.contains("Y")) { dateformat = dateformat.replace("Y", "y"); }
+        while (dateformat.contains("D")) { dateformat = dateformat.replace("D", "d"); }
+        SimpleDateFormat sdf1 = new SimpleDateFormat(dateformat, locale);
+        sdf1.setLenient(false);
+        SimpleDateFormat sdf2 = new SimpleDateFormat(dateformat, locale);
+        sdf2.setLenient(false);
+        try {
+            Date d1 = sdf1.parse(s);
+            try {
+                String temp = sdf2.format(d1);
+                if (temp.equals(s)) {
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(d1);
+                    int year = c.get(Calendar.YEAR);
+                    return year <= 9999 && year >= 1000;
+                } else {
+                    return false;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -120,7 +123,9 @@ public class StringUtil {
      */
     //ywang (Oct., 2011)
     public static boolean isDateFormatString(String s, String dateFormat, Locale locale) {
-        String dateformat = parseDateFormat(dateFormat);
+        String dateformat = dateFormat;
+        while (dateformat.contains("Y")) { dateformat = dateformat.replace("Y", "y"); }
+        while (dateformat.contains("D")) { dateformat = dateformat.replace("D", "d"); }
         SimpleDateFormat f = new SimpleDateFormat(dateformat, locale);
         f.setLenient(false);
         try {
@@ -159,7 +164,10 @@ public class StringUtil {
         if(dn != 4) {
             return false;
         }
-        String yearformat = parseDateFormat(yearFormat) + "-MM-dd";
+        String yearformat = yearFormat;
+        while (yearformat.contains("Y")) { yearformat = yearformat.replace("Y", "y"); }
+        while (yearformat.contains("D")) { yearformat = yearformat.replace("D", "d"); }
+        yearformat = yearformat + "-MM-dd";
         SimpleDateFormat sdf_y;
         if(locale == null) {
             sdf_y = new SimpleDateFormat(yearformat);
@@ -185,73 +193,54 @@ public class StringUtil {
      */
     //ywang (Nov., 2008)
     public static boolean isPartialYearMonth(String s, String yearMonthFormat) {
-        String yearmonthformat = parseDateFormat(yearMonthFormat) + "-dd";
+        String yearmonthformat = yearMonthFormat;
+        while (yearmonthformat.contains("Y")) { yearmonthformat = yearmonthformat.replace("Y", "y"); }
+        while (yearmonthformat.contains("D")) { yearmonthformat = yearmonthformat.replace("D", "d"); }
+        yearmonthformat = yearmonthformat + "-dd";
         String sym = s + "-18";
-        return isSameDate(yearmonthformat, yearmonthformat, sym);
-    }
-
-    public static boolean isPartialYearMonth(String s, String yearMonthFormat, Locale locale) {
-        String yearmonthformat = parseDateFormat(yearMonthFormat) + "-dd";
-        String sym = s + "-18";
-        return isSameDate(yearmonthformat, yearmonthformat, sym, locale);
-    }
-
-    /**
-     * return dateFormat with lowercase "y" and "d"
-     *
-     * @param dateFormat
-     * @return
-     */
-    public static String parseDateFormat(String dateFormat) {
-        String s = dateFormat;
-        while (s.contains("Y")) {
-            s = s.replace("Y", "y");
-        }
-        while (s.contains("D")) {
-            s = s.replace("D", "d");
-        }
-        return s;
-    }
-
-    /**
-     * Return true if a date String is the same day when it is parsed by two
-     * different dateFormats. The year can only between 1000 and 9999.
-     * SimpleDataFormat uses the default locale.
-     *
-     * @param dateFormat1
-     * @param dateFormat2
-     * @param dateStr
-     * @return
-     */
-    public static boolean isSameDate(String dateFormat1, String dateFormat2, String dateStr) {
-        SimpleDateFormat sdf1 = new SimpleDateFormat(dateFormat1);
+        SimpleDateFormat sdf1 = new SimpleDateFormat(yearmonthformat);
         sdf1.setLenient(false);
-        SimpleDateFormat sdf2 = new SimpleDateFormat(dateFormat2);
+        SimpleDateFormat sdf2 = new SimpleDateFormat(yearmonthformat);
         sdf2.setLenient(false);
-        return sameDate(sdf1, sdf2, dateStr);
-    }
-
-    public static boolean isSameDate(String dateFormat1, String dateFormat2, String dateStr, Locale locale) {
-        SimpleDateFormat sdf1 = new SimpleDateFormat(dateFormat1, locale);
-        sdf1.setLenient(false);
-        SimpleDateFormat sdf2 = new SimpleDateFormat(dateFormat2, locale);
-        sdf2.setLenient(false);
-        return sameDate(sdf1,sdf2,dateStr);
-    }
-
-    private static boolean sameDate(SimpleDateFormat sdf1, SimpleDateFormat sdf2, String dateStr) {
         try {
-            Date d1 = sdf1.parse(dateStr);
+            Date d1 = sdf1.parse(sym);
             try {
                 String temp = sdf2.format(d1);
-                if (temp.equals(dateStr)) {
+                if (temp.equals(sym)) {
                     Calendar c = Calendar.getInstance();
                     c.setTime(d1);
                     int year = c.get(Calendar.YEAR);
-                    if(year>9999 || year<1000) {
-                        return false;
-                    }
-                    return true;
+                    return year <= 9999 && year >= 1000;
+                } else {
+                    return false;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isPartialYearMonth(String s, String yearMonthFormat, Locale locale) {
+        String yearmonthformat = yearMonthFormat;
+        while (yearmonthformat.contains("Y")) { yearmonthformat = yearmonthformat.replace("Y", "y"); }
+        while (yearmonthformat.contains("D")) { yearmonthformat = yearmonthformat.replace("D", "d"); }
+        yearmonthformat = yearmonthformat + "-dd";
+        String sym = s + "-18";
+        SimpleDateFormat sdf1 = new SimpleDateFormat(yearmonthformat, locale);
+        sdf1.setLenient(false);
+        SimpleDateFormat sdf2 = new SimpleDateFormat(yearmonthformat, locale);
+        sdf2.setLenient(false);
+        try {
+            Date d1 = sdf1.parse(sym);
+            try {
+                String temp = sdf2.format(d1);
+                if (temp.equals(sym)) {
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(d1);
+                    int year = c.get(Calendar.YEAR);
+                    return year <= 9999 && year >= 1000;
                 } else {
                     return false;
                 }

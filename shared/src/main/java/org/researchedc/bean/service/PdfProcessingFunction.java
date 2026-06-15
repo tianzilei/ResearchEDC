@@ -117,7 +117,7 @@ public class PdfProcessingFunction extends ProcessingFunction  {
             
            
             
-            if(isZip())
+            if(zip)
             {
             	
             	
@@ -163,11 +163,11 @@ public class PdfProcessingFunction extends ProcessingFunction  {
               
         }
        
-        if(isDeleteOld())
+        if(deleteOld)
         {
         	deleteOldFiles(this.getOldFiles(),outputFile,zipName);
         }
-        if(isZip())
+        if(zip)
         {
         	outputFile.delete();
         }

@@ -804,13 +804,6 @@ public class StudyBean extends AuditableEntityBean {
         setType(t);
     }
 
-    /**
-     * @return Returns the isGenetic.
-     */
-    public boolean isGenetic() {
-        return genetic;
-    }
-
     public void setGenetic(boolean genetic) {
         this.genetic = genetic;
 

@@ -62,14 +62,6 @@ public class HideActionBean extends RuleActionBean {
         this.properties = properties;
     }
 
-    @Transient
-    public void addProperty(PropertyBean property) {
-        if (properties == null) {
-            properties = new ArrayList<PropertyBean>();
-        }
-        properties.add(property);
-    }
-
     @Override
     public String toString() {
         return "HideActionBean [message=" + message + ", properties=" + properties + "]";

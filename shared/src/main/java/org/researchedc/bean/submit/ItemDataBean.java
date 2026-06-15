@@ -86,21 +86,6 @@ public class ItemDataBean extends AuditableEntityBean {
     }
 
     /**
-     * @return the selected
-     */
-    public boolean isSelected() {
-        return selected;
-    }
-
-    /**
-     * @param selected
-     *            the selected to set
-     */
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
-    /**
      * @return Returns the itemId.
      */
     public int getItemId() {
@@ -167,14 +152,6 @@ public class ItemDataBean extends AuditableEntityBean {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
-
-	public boolean isAuditLog() {
-        return auditLog;
-    }
-
-    public void setAuditLog(boolean auditLog) {
-        this.auditLog = auditLog;
-    }
 
 	public ItemBean getItem() {
 		return item;

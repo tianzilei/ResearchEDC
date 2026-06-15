@@ -6,20 +6,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.researchedc.bean.extract.ExtractPropertyBean;
-import org.researchedc.bean.service.PdfProcessingFunction;
-import org.researchedc.bean.service.SasProcessingFunction;
-import org.researchedc.bean.service.SqlProcessingFunction;
 import org.researchedc.exception.OpenClinicaSystemException;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ResourceLoaderAware;
@@ -73,58 +66,15 @@ public class CoreResources implements ResourceLoaderAware {
         this.dataInfo = dataInfoProps;
         if (resourceLoader == null)
             resourceLoader = new DefaultResourceLoader();
-        webapp = getWebAppName(resourceLoader.getResource("/").getURI().getPath());
-
-    }
-
-    public void reportUrl() {
-        String contHome = System.getProperty("catalina.home");
-        Properties pros = System.getProperties();
-        Enumeration proEnum = pros.propertyNames();
-        for (; proEnum.hasMoreElements();) {
-            // Get property name
-            String propName = (String) proEnum.nextElement();
-
-            // Get property value
-            String propValue = (String) pros.get(propName);
-        }
-    }
-
-    public Properties getPropValues(Properties prop, String propFileName) throws IOException {
-        // System.out.println(propFileName);
-
-        prop = new Properties();
-        File file = new File(propFileName);
-        if (!file.exists())
-            return null;
-
-        InputStream inputStream = new FileInputStream(propFileName);
-        prop.load(inputStream);
-
-        return prop;
-    }
-
-    public void getPropertiesSource() {
         try {
-            String filePath = "$catalina.home/$WEBAPP.lower.config";
-
-            filePath = replaceWebapp(filePath);
-            filePath = replaceCatHome(filePath);
-
-            String dataInfoPropFileName = filePath + "/datainfo.properties";
-            String extractPropFileName = filePath + "/extract.properties";
-
-            Properties OC_dataDataInfoProperties = getPropValues(dataInfoProp, dataInfoPropFileName);
-            Properties OC_dataExtractProperties = getPropValues(extractProp, extractPropFileName);
-
-            if (OC_dataDataInfoProperties != null)
-                dataInfo = OC_dataDataInfoProperties;
-            if (OC_dataExtractProperties != null)
-                extractInfo = OC_dataExtractProperties;
-
+            String path = resourceLoader.getResource("/").getURI().getPath();
+            String[] tokens = path.split("/");
+            webapp = tokens[(tokens.length - 1)].trim();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            webapp = "ROOT";
+        }
+        if (webapp == null) {
+            webapp = "ROOT";
         }
     }
 
@@ -136,16 +86,14 @@ public class CoreResources implements ResourceLoaderAware {
             // @pgawade 18-April-2011 Fix for issue 8394
             try {
                 String path = resourceLoader.getResource("/").getURI().getPath();
-                webapp = getWebAppName(path);
+                String[] tokens = path.split("/");
+                webapp = tokens[(tokens.length - 1)].trim();
             } catch (Exception e) {
-                // Embedded mode: resource loader returns null path, default to ROOT
                 webapp = "ROOT";
             }
             if (webapp == null) {
                 webapp = "ROOT";
             }
-            getPropertiesSource();
-
             String filePath = "$catalina.home/$WEBAPP.lower.config";
 
             filePath = replaceWebapp(filePath);
@@ -154,13 +102,18 @@ public class CoreResources implements ResourceLoaderAware {
             String dataInfoPropFileName = filePath + "/datainfo.properties";
             String extractPropFileName = filePath + "/extract.properties";
 
-            Properties OC_dataDataInfoProperties = getPropValues(dataInfoProp, dataInfoPropFileName);
-            Properties OC_dataExtractProperties = getPropValues(extractProp, extractPropFileName);
-
-            if (OC_dataDataInfoProperties != null)
-                dataInfo = OC_dataDataInfoProperties;
-            if (OC_dataExtractProperties != null)
-                extractInfo = OC_dataExtractProperties;
+            File df = new File(dataInfoPropFileName);
+            if (df.exists()) {
+                Properties p = new Properties();
+                p.load(new FileInputStream(dataInfoPropFileName));
+                dataInfo = p;
+            }
+            File ef = new File(extractPropFileName);
+            if (ef.exists()) {
+                Properties p = new Properties();
+                p.load(new FileInputStream(extractPropFileName));
+                extractInfo = p;
+            }
 
             // Fallback: load from classpath for embedded mode where catalina.home is a temp dir
             if (dataInfo == null) {
@@ -197,12 +150,15 @@ public class CoreResources implements ResourceLoaderAware {
             DB_NAME = dbName;
             SQLFactory factory = SQLFactory.getInstance();
             factory.run(dbName, resourceLoader);
-            setODM_MAPPING_DIR();
+            try {
+                ODM_MAPPING_DIR = getField("filePath");
+            } catch (Exception e) {
+                // In embedded mode, file path resolution may fail silently
+            }
             if (extractInfo != null) {
                 copyBaseToDest(resourceLoader);
                 // @pgawade 18-April-2011 Fix for issue 8394
                 copyODMMappingXMLtoResources(resourceLoader);
-                extractProperties = findExtractProperties();
                 // JN: this is in for junits to run without extract props
                 copyImportRulesFiles();
                 copyConfig();
@@ -310,7 +266,6 @@ public class CoreResources implements ResourceLoaderAware {
     }
 
     private Properties setDataInfoProperties() {
-        getPropertiesSource();
 
         String filePath = DATAINFO.getProperty("filePath");
         if (filePath == null || filePath.isEmpty())
@@ -668,175 +623,13 @@ public class CoreResources implements ResourceLoaderAware {
         return resourceLoader;
     }
 
-    public static ArrayList<ExtractPropertyBean> getExtractProperties() {
-        return extractProperties;
-    }
-
     public void setExtractProperties(ArrayList extractProperties) {
         this.extractProperties = extractProperties;
     }
 
-    private ArrayList<ExtractPropertyBean> findExtractProperties() throws OpenClinicaSystemException {
-        ArrayList<ExtractPropertyBean> ret = new ArrayList<ExtractPropertyBean>();
-
-        // ExtractPropertyBean epbean = new ExtractPropertyBean();
-        int i = 1;
-        int maxExtractOption = getMaxExtractCounterValue();
-        while (i <= maxExtractOption) {
-            if (!getExtractField("extract." + i + ".file").equals("")) {
-                ExtractPropertyBean epbean = new ExtractPropertyBean();
-                epbean.setId(i);
-                // we will implement a find by id function in the front end
-    
-                // check to make sure the file exists, if not throw an exception and system will abort to start.
-                checkForFile(getExtractFields("extract." + i + ".file"));
-                epbean.setFileName(getExtractFields("extract." + i + ".file"));
-                // file name of the xslt stylesheet
-                epbean.setFiledescription(getExtractField("extract." + i + ".fileDescription"));
-                // description of the choice of format
-                epbean.setHelpText(getExtractField("extract." + i + ".helpText"));
-                // help text, currently in the alt-text of the link
-                epbean.setLinkText(getExtractField("extract." + i + ".linkText"));
-                // link text of the choice of format
-                // epbean.setRolesAllowed(getExtractField("xsl.allowed." + i).split(","));
-                // which roles are allowed to see the choice?
-                epbean.setFileLocation(getExtractField("extract." + i + ".location"));
-                // destination of the copied files
-                // epbean.setFormat(getExtractField("xsl.format." + i));
-                // if (("").equals(epbean.getFormat())) {
-                // }
-                // formatting choice. currently permenantly set at oc1.3
-                /*
-                 * String clinica = getExtractField("extract."+i+".odmType"); if(clinica!=null) {
-                 * if(clinica.equalsIgnoreCase("clinical_data")) epbean.setFormat("occlinical_data"); else
-                 * epbean.setFormat("oc1.3"); } else
-                 */
-    
-                epbean.setOdmType(getExtractField("extract." + i + ".odmType"));
-    
-                epbean.setFormat("oc1.3");
-    
-                // destination file name of the copied files
-                epbean.setExportFileName(getExtractFields("extract." + i + ".exportname"));
-                // post-processing event after the creation
-                String whichFunction = getExtractField("extract." + i + ".post").toLowerCase();
-                // added by JN: Zipformat comes from extract properties returns true by default
-                epbean.setZipFormat(getExtractFieldBoolean("extract." + i + ".zip"));
-                epbean.setDeleteOld(getExtractFieldBoolean("extract." + i + ".deleteOld"));
-                epbean.setSuccessMessage(getExtractField("extract." + i + ".success"));
-                epbean.setFailureMessage(getExtractField("extract." + i + ".failure"));
-                epbean.setZipName(getExtractField("extract." + i + ".zipName"));
-                if (epbean.getFileName().length != epbean.getExportFileName().length)
-                    throw new OpenClinicaSystemException(
-                            "The comma seperated values of file names and export file names should correspond 1 on 1 for the property number" + i);
-    
-                if ("sql".equals(whichFunction)) {
-                    // set the bean within, so that we can access the file locations etc
-                    SqlProcessingFunction function = new SqlProcessingFunction(epbean);
-                    String whichSettings = getExtractField("xsl.post." + i + ".sql");
-                    if (!"".equals(whichSettings)) {
-                        function.setDatabaseType(getExtractFieldNoRep(whichSettings + ".dataBase").toLowerCase());
-                        function.setDatabaseUrl(getExtractFieldNoRep(whichSettings + ".url"));
-                        function.setDatabaseUsername(getExtractFieldNoRep(whichSettings + ".username"));
-                        function.setDatabasePassword(getExtractFieldNoRep(whichSettings + ".password"));
-                    } else {
-                        // set default db settings here
-                        function.setDatabaseType(getField("dataBase"));
-                        function.setDatabaseUrl(getField("url"));
-                        function.setDatabaseUsername(getField("username"));
-                        function.setDatabasePassword(getField("password"));
-                    }
-                    // also pre-set the database connection stuff
-                    epbean.setPostProcessing(function);
-                    // System.out.println("found db password: " + function.getDatabasePassword());
-                } else if ("pdf".equals(whichFunction)) {
-                    // TODO add other functions here
-                    epbean.setPostProcessing(new PdfProcessingFunction());
-                } else if ("sas".equals(whichFunction)) {
-                    epbean.setPostProcessing(new SasProcessingFunction());
-                } else if (!whichFunction.isEmpty()) {
-                    String postProcessorName = getExtractField(whichFunction + ".postProcessor");
-                    if (postProcessorName.equals("pdf")) {
-                        epbean.setPostProcessing(new PdfProcessingFunction());
-                        epbean.setPostProcDeleteOld(getExtractFieldBoolean(whichFunction + ".deleteOld"));
-                        epbean.setPostProcZip(getExtractFieldBoolean(whichFunction + ".zip"));
-                        epbean.setPostProcLocation(getExtractField(whichFunction + ".location"));
-                        epbean.setPostProcExportName(getExtractField(whichFunction + ".exportname"));
-                    }
-                    // since the database is the last option TODO: think about custom post processing options
-                    else {
-                        SqlProcessingFunction function = new SqlProcessingFunction(epbean);
-    
-                        function.setDatabaseType(getExtractFieldNoRep(whichFunction + ".dataBase").toLowerCase());
-                        function.setDatabaseUrl(getExtractFieldNoRep(whichFunction + ".url"));
-                        function.setDatabaseUsername(getExtractFieldNoRep(whichFunction + ".username"));
-                        function.setDatabasePassword(getExtractFieldNoRep(whichFunction + ".password"));
-                        epbean.setPostProcessing(function);
-                    }
-    
-                } else {
-                    // add a null here
-                    epbean.setPostProcessing(null);
-                }
-                ret.add(epbean);
-            }
-            i++;
-        }
-        // tbh change to print out properties
-
-        // System.out.println("found " + ret.size() + " records in extract.properties");
-        return ret;
-    }
-
-    private int getMaxExtractCounterValue() {
-        Set<String> properties = EXTRACTINFO.stringPropertyNames();
-        int numExtractTypes = 0;
-        for (String property:properties) {
-            if (property.split(Pattern.quote(".")).length == 3 && property.startsWith("extract.") && property.endsWith(".file")) {
-                try {
-                    int value = Integer.parseInt(property.split(Pattern.quote("."))[1]);
-                    if (value > numExtractTypes) numExtractTypes = value;
-                } catch (Exception e) {
-                    // Wasn't a number. Do nothing.
-                }
-            }
-        }
-        return numExtractTypes;
-    }
-
-    private String getExtractFieldNoRep(String key) {
-        String value = EXTRACTINFO.getProperty(key);
-        if (value != null) {
-            value = value.trim();
-        }
-
-        return value == null ? "" : value;
-    }
-
-    private void checkForFile(String[] extractFields) throws OpenClinicaSystemException {
-
-        int cnt = extractFields.length;
-        int i = 0;
-        // iterate through all comma separated file names
-        while (i < cnt) {
-
-            File f = new File(getField("filePath") + "xslt" + File.separator + extractFields[i]);
-            // System.out.println(getField("filePath") + "xslt" + File.separator + extractFields[i]);
-            if (!f.exists())
-                throw new OpenClinicaSystemException("FileNotFound -- Please make sure" + extractFields[i] + "exists");
-
-            i++;
-
-        }
-
-    }
 
     public InputStream getInputStream(String fileName) throws IOException {
         return resourceLoader.getResource("classpath:properties/" + fileName).getInputStream();
-    }
-
-    public URL getURL(String fileName) throws IOException {
-        return resourceLoader.getResource("classpath:properties/" + fileName).getURL();
     }
 
     /**
@@ -866,37 +659,6 @@ public class CoreResources implements ResourceLoaderAware {
         }
     }
 
-    public void setPROPERTIES_DIR() {
-        String resource = "classpath:properties/placeholder.properties";
-        // System.out.println("Resource " + resource);
-        Resource scr = resourceLoader.getResource(resource);
-        String absolutePath = null;
-        try {
-            // System.out.println("Resource" + resource);
-            absolutePath = scr.getFile().getAbsolutePath();
-            // System.out.println("Resource" + ((ClassPathResource) scr).getPath());
-            // System.out.println("Resource" + resource);
-            PROPERTIES_DIR = absolutePath.replaceAll("placeholder.properties", "");
-            // System.out.println("Resource " + PROPERTIES_DIR);
-        } catch (IOException e) {
-            throw new OpenClinicaSystemException(e.getMessage(), e.fillInStackTrace());
-        }
-
-    }
-
-    /**
-     * @pgawade 18-April-2011 - Fix for issue 8394 Method to set the absolute file path value to point to "odm_mapping"
-     *          in resources. cd_odm_mapping.xml file used by Castor API during CRF data import will be copied to this
-     *          location during application initialization
-     */
-    public void setODM_MAPPING_DIR() {
-        try {
-            ODM_MAPPING_DIR = getField("filePath");
-        } catch (Exception e) {
-            // In embedded mode, file path resolution may fail silently
-        }
-    }
-
     public static String getDBName() {
         if (null == DB_NAME)
             return "postgres";
@@ -910,67 +672,6 @@ public class CoreResources implements ResourceLoaderAware {
         }
         return value == null ? "" : value;
     }
-
-    // TODO internationalize
-    public static String getExtractField(String key) {
-        String value = EXTRACTINFO.getProperty(key);
-        if (value != null) {
-            value = value.trim();
-        }
-        value = replacePaths(value);
-        return value == null ? "" : value;
-    }
-
-    // JN:The following method returns default of true when converting from string
-    public static boolean getExtractFieldBoolean(String key) {
-        String value = EXTRACTINFO.getProperty(key);
-        if (value != null) {
-            value = value.trim();
-        }
-        if (value == null)
-            return true;// Defaulting to true
-        if (value.equalsIgnoreCase("false"))
-            return false;
-        else
-            return true;// defaulting to true
-
-    }
-
-    public static String[] getExtractFields(String key) {
-        String value = EXTRACTINFO.getProperty(key);
-
-        // System.out.println("key? " + key + " value = " + value);
-
-        if (value != null) {
-            value = value.trim();
-        }
-        return value.split(",");
-    }
-
-    // JN: by using static when u click same export link from 2 different datasets the first one stays in tact and is
-    // saved in
-    // there.
-
-    /**
-     *
-     */
-    public ExtractPropertyBean findExtractPropertyBeanById(int id, String datasetId) {
-        boolean notDone = true;
-        ArrayList<ExtractPropertyBean> epBeans = findExtractProperties();
-        ExtractPropertyBean returnBean = null;
-        for (ExtractPropertyBean epbean : epBeans) {
-
-            if (epbean.getId() == id) {
-                epbean.setDatasetId(datasetId);
-                notDone = false;
-                // returnBean = epbean;
-                return epbean;
-            }
-
-        }
-        return returnBean;
-    }
-
     public Properties getDataInfo() {
         return DATAINFO;
     }
@@ -980,32 +681,8 @@ public class CoreResources implements ResourceLoaderAware {
         DATAINFO = dataInfo;
     }
 
-    public Properties getExtractInfo() {
-        return extractInfo;
-    }
-
     public void setExtractInfo(Properties extractInfo) {
         this.extractInfo = extractInfo;
     }
-
-    // Pradnya G code added by Jamuna
-    public String getWebAppName(String servletCtxRealPath) {
-        String webAppName = null;
-        if (null != servletCtxRealPath) {
-            String[] tokens = servletCtxRealPath.split("/");
-            webAppName = tokens[(tokens.length - 1)].trim();
-        }
-        return webAppName;
-    }
-
-    public Properties getDATAINFO() {
-        return DATAINFO;
-    }
-
-    // // TODO comment out system out after dev
-    // private static void logMe(String message) {
-    // System.out.println(message);
-    // logger.info(message);
-    // }
 
 }

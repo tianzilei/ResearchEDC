@@ -43,27 +43,6 @@ public class RuleSetBean extends AuditableEntityBean {
     // originalTarget populated with same value as target.
     private ExpressionBean originalTarget;
 
-    public void addRuleSetRule(RuleSetRuleBean ruleSetRuleBean) {
-        if (this.ruleSetRules == null)
-            this.ruleSetRules = new ArrayList<RuleSetRuleBean>();
-        ruleSetRuleBean.setRuleSetBean(this);
-        ruleSetRules.add(ruleSetRuleBean);
-    }
-
-    public void addRuleSetRule(RuleBean ruleBean) {
-        if (this.ruleSetRules == null)
-            this.ruleSetRules = new ArrayList<RuleSetRuleBean>();
-        RuleSetRuleBean ruleSetRuleBean = new RuleSetRuleBean();
-        ruleSetRuleBean.setRuleBean(ruleBean);
-        ruleSetRuleBean.setRuleSetBean(this);
-    }
-
-    public void addExpression(ExpressionBean expressionBean) {
-        if (this.expressions == null)
-            this.expressions = new ArrayList<ExpressionBean>();
-        expressions.add(expressionBean);
-    }
-
     public String getStudyEventDefinitionName() {
         return getStudyEventDefinition().getName();
     }

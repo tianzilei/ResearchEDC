@@ -230,14 +230,6 @@ public class ItemGroupMetadataBean extends EntityBean {
         this.showGroup = showGroup;
     }
 
-    public boolean isHighlighted() {
-        return isHighlighted;
-    }
-
-    public void setHighlighted(boolean isHighlighted) {
-        this.isHighlighted = isHighlighted;
-    }
-
     public boolean isRepeatingGroup() {
         return repeatingGroup;
     }

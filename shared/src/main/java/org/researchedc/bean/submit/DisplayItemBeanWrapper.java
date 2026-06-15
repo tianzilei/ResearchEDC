@@ -63,14 +63,6 @@ public class DisplayItemBeanWrapper {
         return displayItemBeans;
     }
 
-    public boolean isSavable() {
-        return isSavable;
-    }
-
-    public void setSavable(boolean isSavable) {
-        this.isSavable = isSavable;
-    }
-
     public String getStudySubjectOid() {
 		return studySubjectOid;
 	}
@@ -141,14 +133,6 @@ public class DisplayItemBeanWrapper {
 
     public void setCrfVersionName(String crfVersionName) {
         this.crfVersionName = crfVersionName;
-    }
-
-    public boolean isOverwrite() {
-        return isOverwrite;
-    }
-
-    public void setOverwrite(boolean isOverwrite) {
-        this.isOverwrite = isOverwrite;
     }
 
 	public String getStudyEventRepeatKey() {

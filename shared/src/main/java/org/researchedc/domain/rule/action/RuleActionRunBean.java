@@ -215,29 +215,4 @@ public class RuleActionRunBean extends AbstractMutableDomainObject implements Se
 
     }
 
-    @Transient
-    public Boolean canRun(Phase phase) {
-        switch (phase) {
-        case ADMIN_EDITING: {
-            return getAdministrativeDataEntry();
-        }
-        case INITIAL_DATA_ENTRY: {
-            return getInitialDataEntry();
-        }
-        case DOUBLE_DATA_ENTRY: {
-            return getDoubleDataEntry();
-        }
-        case IMPORT: {
-            return getImportDataEntry();
-        }
-        case BATCH: {
-            return getBatch();
-        }
-
-        default:
-            return false;
-        }
-
-    }
-
 }

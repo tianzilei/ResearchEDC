@@ -332,17 +332,6 @@ public class RuleSetBean extends AbstractAuditableMutableDomainObject implements
 	}
 
 	
-    @JoinColumn(name = "run_schedule")
-	public boolean isRunSchedule() {
-		return runSchedule;
-	}
-
-	public void setRunSchedule(boolean runSchedule) {
-		this.runSchedule = runSchedule;
-	}
-
-
-
 
 
 
