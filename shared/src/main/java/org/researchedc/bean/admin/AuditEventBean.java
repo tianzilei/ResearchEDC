@@ -36,7 +36,6 @@ public class AuditEventBean extends AuditableEntityBean {
     private String columnName = "";
     private String oldValue = "";
     private String newValue = "";
-    private int updateCount = 0;
     private HashMap changes = new HashMap();
     private HashMap otherInfo = new HashMap();
     private String studyName = "NULL";
@@ -182,21 +181,6 @@ public class AuditEventBean extends AuditableEntityBean {
      */
     public void setUserId(int userId) {
         this.userId = userId;
-    }
-
-    /**
-     * @return Returns the updateCount.
-     */
-    public int getUpdateCount() {
-        return userId;
-    }
-
-    /**
-     * @param updateCount
-     *            The updateCount to set.
-     */
-    public void setUpdateCount(int updateCount) {
-        this.updateCount = updateCount;
     }
 
     /**

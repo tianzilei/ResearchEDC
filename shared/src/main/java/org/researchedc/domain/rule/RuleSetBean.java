@@ -8,7 +8,6 @@
 package org.researchedc.domain.rule;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -70,112 +69,6 @@ public class RuleSetBean extends AbstractAuditableMutableDomainObject implements
     private Integer crfVersionId;
     private Integer itemId;
     private Integer itemGroupId;
-
-    // Business
-
-    @Transient
-    public void addRuleSetRule(RuleSetRuleBean ruleSetRuleBean) {
-        if (this.ruleSetRules == null)
-            this.ruleSetRules = new ArrayList<RuleSetRuleBean>();
-        ruleSetRuleBean.setRuleSetBean(this);
-        ruleSetRules.add(ruleSetRuleBean);
-    }
-
-    @Transient
-    public void addRuleSetRuleForDisplay(RuleSetRuleBean ruleSetRuleBean) {
-        if (this.ruleSetRules == null)
-            this.ruleSetRules = new ArrayList<RuleSetRuleBean>();
-        //ruleSetRuleBean.setRuleSetBean(this); Need to comment this so no bi direction established
-        ruleSetRules.add(ruleSetRuleBean);
-    }
-
-    @Transient
-    public void addRuleSetRule(RuleBean ruleBean) {
-        if (this.ruleSetRules == null)
-            this.ruleSetRules = new ArrayList<RuleSetRuleBean>();
-        RuleSetRuleBean ruleSetRuleBean = new RuleSetRuleBean();
-        ruleSetRuleBean.setRuleBean(ruleBean);
-        ruleSetRuleBean.setRuleSetBean(this);
-    }
-
-    @Transient
-    public void addRuleSetRules(List<RuleSetRuleBean> ruleSetRuleBeans) {
-        if (this.ruleSetRules == null)
-            this.ruleSetRules = new ArrayList<RuleSetRuleBean>();
-
-        for (RuleSetRuleBean ruleSetRuleBean : ruleSetRuleBeans) {
-            ruleSetRuleBean.setRuleSetBean(this);
-        }
-        this.ruleSetRules.addAll(ruleSetRuleBeans);
-    }
-
-    @Transient
-    public void addExpression(ExpressionBean expressionBean) {
-        if (this.expressions == null)
-            this.expressions = new ArrayList<ExpressionBean>();
-        expressions.add(expressionBean);
-    }
-
-    @Transient
-    public String getStudyEventDefinitionName() {
-        return getStudyEventDefinition() != null ? getStudyEventDefinition().getName() : "All";
-    }
-
-    @Transient
-    public String getStudyEventDefinitionNameWithOID() {
-        return getStudyEventDefinition() == null ? "" : getStudyEventDefinitionName() + " (" + getStudyEventDefinition().getOid() + ")";
-    }
-
-    @Transient
-    public String getCrfWithVersionName() {
-        String crfVersionName = getCrfVersion() != null ? " - " + getCrfVersion().getName() : "";
-        String crfName = getCrf() != null ? getCrf().getName() : "";
-        return crfName + crfVersionName;
-    }
-
-    @Transient
-    public String getCrfName() {
-        return getCrf() != null ? getCrf().getName() : "";
-    }
-
-    @Transient
-    public String getCrfVersionName() {
-        return getCrfVersion() != null ? getCrfVersion().getName() : "All";
-    }
-
-    @Transient
-    public String getCrfWithVersionNameWithOid() {
-        String oid = getCrfVersion() != null ? getCrfVersion().getOid() : getCrf() != null ? getCrf().getOid() : "";
-        return getCrfWithVersionName() + (!oid.equals("") ? " (" + oid + ")" : "");
-    }
-
-    @Transient
-    public int getRuleSetRuleSize() {
-        return this.ruleSetRules.size();
-    }
-
-    @Transient
-    public String getGroupLabel() {
-        return getItemGroup() != null ? getItemGroup().getName() : "";
-    }
-
-    @Transient
-    public String getItemName() {
-    	if(getItem()==null) return "";
-    	return getItem().getName();
-    }
-
-    @Transient
-    public String getGroupLabelWithOid() {
-        return getItemGroup() == null ? "" : getGroupLabel() + " (" + getItemGroup().getOid() + ")";
-    }
-
-    @Transient
-    public String getItemNameWithOid() {
-       if(getItemName()!=null&& !getItemName().isEmpty())
-    	return getItemName() + " (" + getItem().getOid() + ")";
-       else return "";
-    }
 
     // Getters & Setters
     @Transient

@@ -40,13 +40,6 @@ public class CRFVersionBean extends AuditableEntityBean {
     }
 
     /**
-     * @return date_created Date
-     */
-    public Date getDateCreated() {
-        return date_created;
-    }
-
-    /**
      * @return Returns the cRFId.
      */
     public int getCrfId() {
@@ -106,21 +99,6 @@ public class CRFVersionBean extends AuditableEntityBean {
      */
     public void setStatusId(int statusId) {
         this.statusId = statusId;
-    }
-
-    /**
-     * @return Returns the downloadable.
-     */
-    public boolean isDownloadable() {
-        return downloadable;
-    }
-
-    /**
-     * @param downloadable
-     *            The downloadable to set.
-     */
-    public void setDownloadable(boolean downloadable) {
-        this.downloadable = downloadable;
     }
 
     public String getOid() {

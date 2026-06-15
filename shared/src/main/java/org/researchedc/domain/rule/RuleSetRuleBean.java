@@ -9,7 +9,6 @@ package org.researchedc.domain.rule;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -28,9 +27,7 @@ import org.researchedc.domain.rule.action.HideActionBean;
 import org.researchedc.domain.rule.action.InsertActionBean;
 import org.researchedc.domain.rule.action.RandomizeActionBean;
 import org.researchedc.domain.rule.action.RuleActionBean;
-import org.researchedc.domain.rule.action.RuleActionRunBean.Phase;
 import org.researchedc.domain.rule.action.ShowActionBean;
-import org.apache.commons.collections4.Factory;
 import org.apache.commons.collections4.FactoryUtils;
 import org.apache.commons.collections4.list.LazyList;
 import org.hibernate.annotations.Cache;
@@ -70,112 +67,6 @@ public class RuleSetRuleBean extends AbstractAuditableMutableDomainObject implem
         EXACT_DOUBLE, TO_BE_REMOVED, LINE
     }
 
-    @Transient
-    public void formToModel() {
-        actions = new ArrayList<RuleActionBean>();
-        actions.addAll(lazyDiscrepancyNoteActions);
-        actions.addAll(lazyShowActions);
-        actions.addAll(lazyHideActions);
-        actions.addAll(lazyEventActions);
-        actions.addAll(lazyRandomizeActions);
-    }
-
-    @Transient
-    public HashMap<String, ArrayList<RuleActionBean>> getAllActionsWithEvaluatesToAsKey() {
-        HashMap<String, ArrayList<RuleActionBean>> h = new HashMap<String, ArrayList<RuleActionBean>>();
-        for (RuleActionBean action : actions) {
-            String key = action.getExpressionEvaluatesTo().toString();
-            if (h.containsKey(key)) {
-                h.get(key).add(action);
-            } else {
-                ArrayList<RuleActionBean> a = new ArrayList<RuleActionBean>();
-                a.add(action);
-                h.put(key, a);
-            }
-        }
-        return h;
-    }
-
-    @Transient
-    public HashMap<String, ArrayList<RuleActionBean>> getAllActionsWithEvaluatesToAsKey(String actionEvaluatesTo) {
-        HashMap<String, ArrayList<RuleActionBean>> h = new HashMap<String, ArrayList<RuleActionBean>>();
-        for (RuleActionBean action : actions) {
-            String key = action.getExpressionEvaluatesTo().toString();
-            if (actionEvaluatesTo == null || actionEvaluatesTo.equals(key)) {
-                if (h.containsKey(key)) {
-                    h.get(key).add(action);
-                } else {
-                    ArrayList<RuleActionBean> a = new ArrayList<RuleActionBean>();
-                    a.add(action);
-                    h.put(key, a);
-                }
-            }
-        }
-        return h;
-    }
-
-    @Transient
-    public HashMap<String, ArrayList<String>> getActionsAsKeyPair(String actionEvaluatesTo) {
-        HashMap<String, ArrayList<String>> h = new HashMap<String, ArrayList<String>>();
-        for (RuleActionBean action : actions) {
-            String key = action.getExpressionEvaluatesTo().toString();
-            if (actionEvaluatesTo.equals(key)) {
-                if (h.containsKey(key)) {
-                    h.get(key).add(action.getSummary());
-                } else {
-                    ArrayList<String> a = new ArrayList<String>();
-                    a.add(action.getSummary());
-                    h.put(key, a);
-                }
-            }
-        }
-        return h;
-    }
-
-    /**
-     * Run the rule and pass in the result. Will return all actions that match the result.
-     *
-     * @param actionEvaluatesTo
-     * @return
-     */
-    @Transient
-    public List<RuleActionBean> getActions(String ruleEvaluatedTo) {
-        List<RuleActionBean> ruleActions = new ArrayList<RuleActionBean>();
-        for (RuleActionBean action : actions) {
-            String key = action.getExpressionEvaluatesTo().toString();
-            if (ruleEvaluatedTo.equals(key)) {
-                ruleActions.add(action);
-            }
-        }
-        return ruleActions;
-    }
-
-    /**
-     * Run the rule and pass in the result. Will return all actions that match the result.
-     *
-     * @param actionEvaluatesTo
-     * @return
-     */
-    @Transient
-    public List<RuleActionBean> getActions(String ruleEvaluatedTo, Phase phase) {
-        List<RuleActionBean> ruleActions = new ArrayList<RuleActionBean>();
-        for (RuleActionBean action : actions) {
-            String key = action.getExpressionEvaluatesTo().toString();
-            if (ruleEvaluatedTo.equals(key) && action.getRuleActionRun().canRun(phase)) {
-                ruleActions.add(action);
-            }
-        }
-        return ruleActions;
-    }
-
-    @Transient
-    public void addAction(RuleActionBean ruleAction) {
-        if (actions == null) {
-            actions = new ArrayList<RuleActionBean>();
-        }
-        actions.add(ruleAction);
-    }
-
     @ManyToOne
     @JoinColumn(name = "rule_set_id", nullable = false, updatable = false, insertable = false)
     public RuleSetBean getRuleSetBean() {
@@ -205,11 +96,6 @@ public class RuleSetRuleBean extends AbstractAuditableMutableDomainObject implem
 
     public void setActions(List<RuleActionBean> actions) {
         this.actions = actions;
-    }
-
-    @Transient
-    public String getOriginalOid() {
-        return oid;
     }
 
     @Transient

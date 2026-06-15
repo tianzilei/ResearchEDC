@@ -9,7 +9,6 @@ package org.researchedc.bean.managestudy;
 
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.service.StudyParameterConfig;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 
 import java.util.ArrayList;
@@ -73,8 +72,6 @@ public class StudyBean extends AuditableEntityBean {
     // private boolean usingDOB = false;
     // private boolean discrepancyManagement = false;
     private String oid;
-
-    private StudyParameterConfig studyParameterConfig = new StudyParameterConfig();
 
     private ArrayList studyParameters = new ArrayList();
 
@@ -897,21 +894,6 @@ public class StudyBean extends AuditableEntityBean {
      */
     public void setSummary(String summary) {
         this.summary = summary;
-    }
-
-    /**
-     * @return Returns the studyParameterConfig.
-     */
-    public StudyParameterConfig getStudyParameterConfig() {
-        return studyParameterConfig;
-    }
-
-    /**
-     * @param studyParameterConfig
-     *            The studyParameterConfig to set.
-     */
-    public void setStudyParameterConfig(StudyParameterConfig studyParameterConfig) {
-        this.studyParameterConfig = studyParameterConfig;
     }
 
     public String getOid() {

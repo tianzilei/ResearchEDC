@@ -17,7 +17,7 @@ import java.util.Map;
  *
  *
  */
-public class StudyEventDefinitionBean extends AuditableEntityBean implements Comparable {
+public class StudyEventDefinitionBean extends AuditableEntityBean {
     private String description = "";
 
     private boolean repeating = false;
@@ -213,20 +213,6 @@ public class StudyEventDefinitionBean extends AuditableEntityBean implements Com
 
     public void setCrfsWithDefaultVersion(Map crfsWithDefaultVersion) {
         this.crfsWithDefaultVersion = crfsWithDefaultVersion;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(Object o) {
-        if (o == null || !o.getClass().equals(this.getClass())) {
-            return 0;
-        }
-
-        StudyEventDefinitionBean sedb = (StudyEventDefinitionBean) o;
-        return this.ordinal - sedb.ordinal;
     }
 
     /*
