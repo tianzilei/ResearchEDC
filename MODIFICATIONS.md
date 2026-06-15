@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-15 - Remove unused SQLFactory cache wrapper
+
+- Removed the unused `CacheWrapper`/`EhCacheWrapper` abstraction and deleted `SQLFactory` dead cache initialization; no runtime callers used the wrapper `get`/`put` path.
+- Removed the now-unused Caffeine dependency from `shared/pom.xml` and regenerated the legacy workflow inventory to 73 active DAO artifacts (28 replace, 45 keep compatibility).
+
 ## 2026-06-15 - Regenerate legacy workflow inventory
 
 - Regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` after DAO marker cleanup; active workflow inventory is now 75 artifacts, all under the DAO surface.

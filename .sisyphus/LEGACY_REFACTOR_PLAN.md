@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-14 (Legacy code removal is **not complete**. Tracked workflow progress is 888/963 closed, **92.2%**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 75 DAO/SPI/support Java files under `shared/dao`. Phase 3 ledger: 759/878 methods module-backed; 878/878 module-backed or removed, **100.0%**; 0 unused rows remain; 119 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. See `docs/refactor/remove-legacy-code-plan.md`.)
+> **Last updated:** 2026-06-14 (Legacy code removal is **not complete**. Tracked workflow progress is 890/963 closed, **92.4%**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 73 DAO/SPI/support Java files under `shared/dao`. Phase 3 ledger: 759/878 methods module-backed; 878/878 module-backed or removed, **100.0%**; 0 unused rows remain; 119 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. See `docs/refactor/remove-legacy-code-plan.md`.)
 > **Scope:** All remaining legacy code in `shared/` plus app-hosted compatibility classes migrated from `web/`; keep SOAP compatibility audits only if `ws/` reappears
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -28,7 +28,7 @@ shared/   504 Java files → bean/ dao/ domain/ service/ logic/ job/ exception/ 
            75 Java files under shared/src/main/java/org/researchedc/dao
 web/        0 files → directory absent; needed import/validation compatibility classes migrated to app/
 ws/         0 Java files → SOAP module absent in current tree
-inventory 75 active artifacts -> 30 replace, 45 keep compatibility, 0 unknown
+inventory 73 active artifacts -> 28 replace, 45 keep compatibility, 0 unknown
 phase-3  759/878 DAO SPI methods module-backed; 878/878 module-backed or removed (100.0%); 0 unused rows remain (0.0%); 119 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain
 ```
 
@@ -517,7 +517,7 @@ Available at `GET/PUT /api/v1/studies/:id/feature-flags` (JSONB on `study` table
 |-------|-------------|-----------------|--------------|
 | A1-A5 | Write operations | ✅ COMPLETE | None |
 | B1-B3 | Schema ownership | ✅ COMPLETE | 12 bidirectional sync triggers, 27 entities remapped, 24 adapters |
-| C1-C4 | Legacy code deletion | 🔶 In progress, not complete | **0 direct legacy constructor matches, 0 `DaoProvider.getDao()` calls, 24/24 DAO families SPI-widened. Workflow progress is 888/963 closed (92.2%). Physical deletion remains blocked by DAO implementation replacement proof.** |
+| C1-C4 | Legacy code deletion | 🔶 In progress, not complete | **0 direct legacy constructor matches, 0 `DaoProvider.getDao()` calls, 24/24 DAO families SPI-widened. Workflow progress is 890/963 closed (92.4%). Physical deletion remains blocked by DAO implementation replacement proof.** |
 | D1-D2 | Config migration | ✅ Complete | 11 XML → Java Config, dead XML stubs cleanup (2026-05-23) |
 | E1-E2 | Auth unification | ✅ Complete | Dual SecurityFilterChain (JWT API + OIDC web) |
 | F1-F2 | SOAP retirement | ✅ Current tree retired | `ws/` is absent; keep compatibility audit only if SOAP endpoints reappear |

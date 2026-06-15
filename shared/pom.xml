@@ -18,12 +18,6 @@
     </properties>
 
     <dependencies>
-        <!-- Caffeine Cache (replaces Ehcache 2) -->
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-        </dependency>
-
         <!-- Jakarta Transaction API -->
         <dependency>
             <groupId>jakarta.transaction</groupId>

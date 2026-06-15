@@ -16,12 +16,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-
-import org.researchedc.dao.cache.EhCacheWrapper;
 import org.springframework.core.io.ResourceLoader;
 import org.xml.sax.SAXException;
 
@@ -77,21 +72,8 @@ public class SQLFactory {
     // YW, 05-2008, for odm extract
     public final String DAO_ODM_EXTRACT = "odm_extract";
 
-    
     private SQLFactory(){
     	//to thwart any instantiation of this class
-    }
-    
-    
-    public static EhCacheWrapper ehCacheWrapper;
-    
-
-    public EhCacheWrapper getEhCacheWrapper() {
-        return ehCacheWrapper;
-    }
-
-    public void setEhCacheWrapper(EhCacheWrapper ehCacheWrapper) {
-        this.ehCacheWrapper = ehCacheWrapper;
     }
 
     private static Hashtable digesters = new Hashtable();
@@ -122,10 +104,6 @@ public class SQLFactory {
         return (DAODigester) digesters.get(name);
     }
 
-    
-    
-    
-    
     public void run(String dbName, ResourceLoader resourceLoader) {
         // we get the type of the database and run the factory, picking
         // up all the queries. NOTE that this should only be run
@@ -140,15 +118,7 @@ public class SQLFactory {
         // key is the public static final sting used above; value is the actual
         // filename
         HashMap fileList = new HashMap();
-        Cache<String, Object> caffeineCache = Caffeine.newBuilder()
-            .maximumSize(10000)
-            .expireAfterWrite(90, TimeUnit.SECONDS)
-            .build();
-        EhCacheWrapper<String, Object> ehCache = new EhCacheWrapper<>("org.researchedc.dao.core.DAOCache", caffeineCache);
-        
-        
-        setEhCacheWrapper(ehCache);
-        
+
         if ("oracle".equals(dbName)) {
             // logger.warn("Oracle Test");
             fileList.put(this.DAO_USERACCOUNT, "oracle_useraccount_dao.xml");

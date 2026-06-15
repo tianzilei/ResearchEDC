@@ -38,7 +38,7 @@ The long-running refactor follows a strangler pattern: keep legacy behavior work
 
 Current high-level status:
 
-- Overall tracked legacy-removal progress is about **92.2%** by active workflow inventory: 888 of 963 artifacts are removed or closed, with 75 active artifacts remaining. DAO method replacement/removal coverage is **100.0%**: 878 of 878 tracked SPI methods are module-backed or removed, with 0 unused method-level blockers remaining.
+- Overall tracked legacy-removal progress is about **92.4%** by active workflow inventory: 890 of 963 artifacts are removed or closed, with 73 active artifacts remaining. DAO method replacement/removal coverage is **100.0%**: 878 of 878 tracked SPI methods are module-backed or removed, with 0 unused method-level blockers remaining.
 - `legacy-core/` has been consolidated into `shared/` with package rename to `org.researchedc`.
 - Legacy code is **not fully removed**. Current baseline still includes `shared/` legacy beans/DAOs/services. The `web/` JSP/SecureController module and `ws/` SOAP module are absent from the current tree.
 - Spring XML and Ehcache-era configuration have largely been replaced by Java configuration and modern cache/security wiring.
@@ -56,11 +56,11 @@ Current legacy removal baseline:
 | Surface | Current Count | Removal Gate |
 |---------|---------------|--------------|
 | `shared/src/main/java/org/researchedc` | 504 Java files | Shared beans/services/DAO/domain callers replaced or proven unused |
-| `shared/dao` | 75 Java files | 111/186 DAO-surface files removed (59.7%); remaining SPI implementations require module-owned repository/service proof; Phase 3 ledger is 759/878 module-backed methods with 0 unused rows left |
+| `shared/dao` | 73 Java files | 113/186 DAO-surface files removed (60.8%); remaining SPI implementations require module-owned repository/service proof; Phase 3 ledger is 759/878 module-backed methods with 0 unused rows left |
 | `web/` Java | 0 files | Directory deleted; needed compatibility classes migrated to `app/` |
 | JSP pages | 0 files | `web/` views deleted |
 | Legacy servlet inventory | 0 artifacts | Servlet workflows migrated, retired, or deleted |
-| Active legacy workflow inventory | 75 artifacts | 888/963 artifacts removed or closed (92.2%); current regenerated inventory is DAO-only with no unknown rows |
+| Active legacy workflow inventory | 73 artifacts | 890/963 artifacts removed or closed (92.4%); current regenerated inventory is DAO-only with no unknown rows |
 | `ws/` Java | 0 files | SOAP module is absent; keep compatibility audit if endpoints reappear |
 
 For detailed handoff notes, see [AGENTS.md](./AGENTS.md), [.sisyphus/LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md), and [docs/refactor/remove-legacy-code-plan.md](./docs/refactor/remove-legacy-code-plan.md).
