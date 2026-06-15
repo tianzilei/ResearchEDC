@@ -9,8 +9,6 @@ package org.researchedc.bean.managestudy;
 
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.oid.OidGenerator;
-import org.researchedc.bean.oid.StudyOidGenerator;
 import org.researchedc.bean.service.StudyParameterConfig;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 
@@ -75,7 +73,6 @@ public class StudyBean extends AuditableEntityBean {
     // private boolean usingDOB = false;
     // private boolean discrepancyManagement = false;
     private String oid;
-    private OidGenerator oidGenerator = new StudyOidGenerator();
 
     private StudyParameterConfig studyParameterConfig = new StudyParameterConfig();
 
@@ -1059,14 +1056,6 @@ public class StudyBean extends AuditableEntityBean {
 
     public void setOid(String oid) {
         this.oid = oid;
-    }
-
-    public OidGenerator getOidGenerator() {
-        return oidGenerator;
-    }
-
-    public void setOidGenerator(OidGenerator oidGenerator) {
-        this.oidGenerator = oidGenerator;
     }
 
     public boolean isSite(int parentStudyId) {

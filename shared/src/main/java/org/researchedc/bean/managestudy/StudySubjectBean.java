@@ -8,8 +8,6 @@
 package org.researchedc.bean.managestudy;
 
 import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.oid.OidGenerator;
-import org.researchedc.bean.oid.StudySubjectOidGenerator;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,8 +59,6 @@ public class StudySubjectBean extends AuditableEntityBean {
      * The OID, used for export and import of data.
      */
     private String oid;
-
-    private OidGenerator oidGenerator = new StudySubjectOidGenerator();
     private String time_zone;
     	
 	public StudySubjectBean() {
@@ -75,14 +71,6 @@ public class StudySubjectBean extends AuditableEntityBean {
 
 	public void setOid(String oid) {
 		this.oid = oid;
-	}
-
-	public OidGenerator getOidGenerator() {
-		return oidGenerator;
-	}
-
-	public void setOidGenerator(OidGenerator oidGenerator) {
-		this.oidGenerator = oidGenerator;
 	}
 
     /**

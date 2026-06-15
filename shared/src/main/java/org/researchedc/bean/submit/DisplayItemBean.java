@@ -9,8 +9,6 @@ package org.researchedc.bean.submit;
 import org.researchedc.bean.core.NullValue;
 import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
 import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
-import org.researchedc.service.crfdata.SCDData;
-import org.researchedc.service.crfdata.front.InstantOnChangeFrontStrGroup;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -86,15 +84,12 @@ public class DisplayItemBean implements Comparable {
      * It is true if a scd item will display because of chosen options.
      */
     private boolean isSCDtoBeShown = false;
-    private SCDData scdData;
     /**
      * True, when an item should hide but take a blank spot.<br>
      * False, when an item should show or should hide without taking a spot.
      * By default, it is false.
      */
     private boolean blankDwelt;
-
-    private InstantOnChangeFrontStrGroup instantFrontStrGroup;
 
     private void setProperties() {
         data = new ItemDataBean();
@@ -105,9 +100,7 @@ public class DisplayItemBean implements Comparable {
         numColumns = 0;
         dbData = new ItemDataBean();
         isSCDtoBeShown = false;
-        scdData = new SCDData();
         blankDwelt = false;
-        instantFrontStrGroup = new InstantOnChangeFrontStrGroup();
         isNewItem=true;
     }
 
@@ -362,14 +355,12 @@ public class DisplayItemBean implements Comparable {
         result = prime * result + (discrepancyNotes == null ? 0 : discrepancyNotes.hashCode());
         result = prime * result + (editFlag == null ? 0 : editFlag.hashCode());
         result = prime * result + (eventDefinitionCRF == null ? 0 : eventDefinitionCRF.hashCode());
-        result = prime * result + (instantFrontStrGroup == null ? 0 : instantFrontStrGroup.hashCode());
         result = prime * result + (isSCDtoBeShown ? 1231 : 1237);
         result = prime * result + (item == null ? 0 : item.hashCode());
         result = prime * result + (metadata == null ? 0 : metadata.hashCode());
         result = prime * result + numChildren;
         result = prime * result + numColumns;
         result = prime * result + numDiscrepancyNotes;
-        result = prime * result + (scdData == null ? 0 : scdData.hashCode());
         result = prime * result + totClosed;
         result = prime * result + totNA;
         result = prime * result + totNew;
@@ -421,11 +412,6 @@ public class DisplayItemBean implements Comparable {
                 return false;
         } else if (!eventDefinitionCRF.equals(other.eventDefinitionCRF))
             return false;
-        if (instantFrontStrGroup == null) {
-            if (other.instantFrontStrGroup != null)
-                return false;
-        } else if (!instantFrontStrGroup.equals(other.instantFrontStrGroup))
-            return false;
         if (isSCDtoBeShown != other.isSCDtoBeShown)
             return false;
         if (item == null) {
@@ -443,11 +429,6 @@ public class DisplayItemBean implements Comparable {
         if (numColumns != other.numColumns)
             return false;
         if (numDiscrepancyNotes != other.numDiscrepancyNotes)
-            return false;
-        if (scdData == null) {
-            if (other.scdData != null)
-                return false;
-        } else if (!scdData.equals(other.scdData))
             return false;
         if (totClosed != other.totClosed)
             return false;
@@ -591,22 +572,6 @@ public class DisplayItemBean implements Comparable {
 
     public void setBlankDwelt(boolean blankDwelt) {
         this.blankDwelt = blankDwelt;
-    }
-
-    public SCDData getScdData() {
-        return scdData;
-    }
-
-    public void setScdData(SCDData scdData) {
-        this.scdData = scdData;
-    }
-
-    public InstantOnChangeFrontStrGroup getInstantFrontStrGroup() {
-        return instantFrontStrGroup;
-    }
-
-    public void setInstantFrontStrGroup(InstantOnChangeFrontStrGroup instantFrontStrGroup) {
-        this.instantFrontStrGroup = instantFrontStrGroup;
     }
 
 	public boolean getIsNewItem() {

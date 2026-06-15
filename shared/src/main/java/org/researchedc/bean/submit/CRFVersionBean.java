@@ -8,8 +8,6 @@
 package org.researchedc.bean.submit;
 
 import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.oid.CrfVersionOidGenerator;
-import org.researchedc.bean.oid.OidGenerator;
 
 import java.util.Date;
 
@@ -33,13 +31,11 @@ public class CRFVersionBean extends AuditableEntityBean {
     private String enketoURL = "";
 
     private String oid;
-    private OidGenerator oidGenerator;
 
     private String xform;
     private String xformName;
 
     public CRFVersionBean() {
-        this.oidGenerator = new CrfVersionOidGenerator();
         date_created = new Date();
     }
 
@@ -133,14 +129,6 @@ public class CRFVersionBean extends AuditableEntityBean {
 
     public void setOid(String oid) {
         this.oid = oid;
-    }
-
-    public OidGenerator getOidGenerator() {
-        return oidGenerator;
-    }
-
-    public void setOidGenerator(OidGenerator oidGenerator) {
-        this.oidGenerator = oidGenerator;
     }
 
     public String getXform() {

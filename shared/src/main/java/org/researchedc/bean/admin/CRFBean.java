@@ -9,8 +9,6 @@
 package org.researchedc.bean.admin;
 
 import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.oid.CrfOidGenerator;
-import org.researchedc.bean.oid.OidGenerator;
 
 import java.util.ArrayList;
 
@@ -29,11 +27,9 @@ public class CRFBean extends AuditableEntityBean {
     private boolean selected = false; // not in DB
 
     private String oid;
-    private OidGenerator oidGenerator;
     private int studyId;
 
     public CRFBean() {
-        this.oidGenerator = new CrfOidGenerator();
         versions = new ArrayList();
     }
 
@@ -107,14 +103,6 @@ public class CRFBean extends AuditableEntityBean {
 
     public void setOid(String oid) {
         this.oid = oid;
-    }
-
-    public OidGenerator getOidGenerator() {
-        return oidGenerator;
-    }
-
-    public void setOidGenerator(OidGenerator oidGenerator) {
-        this.oidGenerator = oidGenerator;
     }
 
     public int getStudyId() {

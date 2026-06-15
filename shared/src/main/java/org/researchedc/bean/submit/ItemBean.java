@@ -9,8 +9,6 @@ package org.researchedc.bean.submit;
 
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.ItemDataType;
-import org.researchedc.bean.oid.ItemOidGenerator;
-import org.researchedc.bean.oid.OidGenerator;
 
 import java.util.ArrayList;
 
@@ -45,7 +43,6 @@ public class ItemBean extends AuditableEntityBean implements Comparable {
         result = prime * result + ((itemDataElements == null) ? 0 : itemDataElements.hashCode());
         result = prime * result + itemReferenceTypeId;
         result = prime * result + ((oid == null) ? 0 : oid.hashCode());
-        result = prime * result + ((oidGenerator == null) ? 0 : oidGenerator.hashCode());
         result = prime * result + (phiStatus ? 1231 : 1237);
         result = prime * result + (selected ? 1231 : 1237);
         result = prime * result + statusId;
@@ -110,11 +107,6 @@ public class ItemBean extends AuditableEntityBean implements Comparable {
                 return false;
         } else if (!oid.equals(other.oid))
             return false;
-        if (oidGenerator == null) {
-            if (other.oidGenerator != null)
-                return false;
-        } else if (!oidGenerator.equals(other.oidGenerator))
-            return false;
         if (phiStatus != other.phiStatus)
             return false;
         if (selected != other.selected)
@@ -147,7 +139,6 @@ public class ItemBean extends AuditableEntityBean implements Comparable {
     private String crfName = ""; // not in DB
 
     private String oid;
-    private OidGenerator oidGenerator;
 
     private String datasetItemMapKey = ""; // which is
 
@@ -157,8 +148,6 @@ public class ItemBean extends AuditableEntityBean implements Comparable {
     public ItemBean() {
         dataType = ItemDataType.ST;
         itemMetas = new ArrayList();
-        
-        this.oidGenerator = new ItemOidGenerator();
     }
 
     /**
@@ -392,14 +381,6 @@ public class ItemBean extends AuditableEntityBean implements Comparable {
 
     public void setOid(String oid) {
         this.oid = oid;
-    }
-
-    public OidGenerator getOidGenerator() {
-        return oidGenerator;
-    }
-
-    public void setOidGenerator(OidGenerator oidGenerator) {
-        this.oidGenerator = oidGenerator;
     }
 
     public String getDatasetItemMapKey() {

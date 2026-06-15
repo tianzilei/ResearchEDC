@@ -20,8 +20,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.oid.GenericOidGenerator;
-import org.researchedc.bean.oid.OidGenerator;
 import org.researchedc.domain.AbstractAuditableMutableDomainObject;
 import org.researchedc.domain.rule.expression.ExpressionBean;
 import org.hibernate.annotations.GenericGenerator;
@@ -48,13 +46,11 @@ public class RuleBean extends AbstractAuditableMutableDomainObject implements Se
 
     private ExpressionBean expression;
     private List<RuleSetRuleBean> ruleSetRules;
-    private OidGenerator oidGenerator;
 
     // TODO : Pending conversion of the objects below to use Hibernate
     private Integer studyId;
 
     public RuleBean() {
-        this.oidGenerator = new GenericOidGenerator();
     }
 
     // SETTERS & GETTERS
@@ -144,14 +140,5 @@ public class RuleBean extends AbstractAuditableMutableDomainObject implements Se
             this.studyId = study.getId();
         }
         this.study = study;
-    }
-
-    @Transient
-    public OidGenerator getOidGenerator() {
-        return oidGenerator;
-    }
-
-    public void setOidGenerator(OidGenerator oidGenerator) {
-        this.oidGenerator = oidGenerator;
     }
 }

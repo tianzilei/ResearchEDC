@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.oid.ItemGroupOidGenerator;
-import org.researchedc.bean.oid.OidGenerator;
 
 /**
  * Created by IntelliJ IDEA. User: bruceperry Date: May 7, 2007
@@ -18,14 +16,12 @@ public class ItemGroupBean extends AuditableEntityBean implements Serializable{
     // change 07-08-07, tbh
     private ArrayList items = new ArrayList();
     private String oid;
-    private OidGenerator oidGenerator;
     
     public ItemGroupBean() {
         super();
         crfId = 0;
         name = "";
         meta = new ItemGroupMetadataBean();
-        oidGenerator = new ItemGroupOidGenerator();
     }
 
     
@@ -68,14 +64,6 @@ public class ItemGroupBean extends AuditableEntityBean implements Serializable{
 
     public void setOid(String oid) {
         this.oid = oid;
-    }
-
-    public OidGenerator getOidGenerator() {
-        return oidGenerator;
-    }
-
-    public void setOidGenerator(OidGenerator oidGenerator) {
-        this.oidGenerator = oidGenerator;
     }
 
     public ArrayList getItemGroupMetaBeans() {

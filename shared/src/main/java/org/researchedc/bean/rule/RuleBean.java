@@ -8,8 +8,6 @@
 package org.researchedc.bean.rule;
 
 import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.oid.GenericOidGenerator;
-import org.researchedc.bean.oid.OidGenerator;
 import org.researchedc.bean.rule.expression.ExpressionBean;
 
 import java.util.List;
@@ -33,10 +31,8 @@ public class RuleBean extends AuditableEntityBean {
 
     private ExpressionBean expression;
     private List<RuleSetRuleBean> ruleSetRules;
-    private OidGenerator oidGenerator;
 
     public RuleBean() {
-        this.oidGenerator = new GenericOidGenerator();
     }
 
     // SETTERS & GETTERS
@@ -87,13 +83,5 @@ public class RuleBean extends AuditableEntityBean {
 
     public void setOid(String oid) {
         this.oid = oid;
-    }
-
-    public OidGenerator getOidGenerator() {
-        return oidGenerator;
-    }
-
-    public void setOidGenerator(OidGenerator oidGenerator) {
-        this.oidGenerator = oidGenerator;
     }
 }

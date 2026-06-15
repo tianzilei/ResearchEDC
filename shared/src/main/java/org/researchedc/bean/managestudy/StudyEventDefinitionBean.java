@@ -8,8 +8,6 @@
 package org.researchedc.bean.managestudy;
 
 import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.oid.OidGenerator;
-import org.researchedc.bean.oid.StudyEventDefinitionOidGenerator;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -47,10 +45,8 @@ public class StudyEventDefinitionBean extends AuditableEntityBean implements Com
     private Map crfsWithDefaultVersion;
 
     private String oid;
-    private OidGenerator oidGenerator;
 
     public StudyEventDefinitionBean() {
-        this.oidGenerator = new StudyEventDefinitionOidGenerator();
     }
 
     public String getOid() {
@@ -59,14 +55,6 @@ public class StudyEventDefinitionBean extends AuditableEntityBean implements Com
 
     public void setOid(String oid) {
         this.oid = oid;
-    }
-
-    public OidGenerator getOidGenerator() {
-        return oidGenerator;
-    }
-
-    public void setOidGenerator(OidGenerator oidGenerator) {
-        this.oidGenerator = oidGenerator;
     }
 
     /**
