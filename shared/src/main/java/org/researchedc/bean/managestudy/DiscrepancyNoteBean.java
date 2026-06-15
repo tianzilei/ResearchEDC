@@ -51,17 +51,13 @@ public class DiscrepancyNoteBean extends AuditableEntityBean {
     private String eventName = "";
     private Date eventStart;
     private String crfName = "";
-    private String crfStatus = "";
     private int numChildren = 0;
     private String entityName = "";
     private String entityValue = "";
-    private boolean isSaved = true;
-    private boolean activated= true;
 
     private StudySubjectBean studySub = new StudySubjectBean();
 
     private int subjectId = 0;
-    private String siteId;
 
     // indicates whether a note is in the db or
     // not
@@ -74,36 +70,14 @@ public class DiscrepancyNoteBean extends AuditableEntityBean {
     private int assignedUserId = 0;
     private UserAccountBean assignedUser = new UserAccountBean();
 
-    private String createdDateString = "";
-    private String updatedDateString = "";
-
     private Integer days;
     private Integer age;
 
     //Non Persistent Beans - The downstream implementations eg.DiscrepancyNoteOutputServlet make you do this...
     private StudyEventBean event = new StudyEventBean();
-    private StudyEventDefinitionBean studyEventDefinitionBean = new StudyEventDefinitionBean();
-    private Integer itemDataOrdinal;
-    private String itemGroupName;
 
 
     private StudyBean study = new StudyBean();
-
-    public String getCreatedDateString() {
-        return createdDateString;
-    }
-
-    public void setCreatedDateString(String createdDateString) {
-        this.createdDateString = createdDateString;
-    }
-
-    public String getUpdatedDateString() {
-        return updatedDateString;
-    }
-
-    public void setUpdatedDateString(String updatedDateString) {
-        this.updatedDateString = updatedDateString;
-    }
 
     public int getEventCRFId() {
         return eventCRFId;
@@ -140,7 +114,6 @@ public class DiscrepancyNoteBean extends AuditableEntityBean {
     // YW >>
 
     public DiscrepancyNoteBean() {
-    	activated = true;
         disType = DiscrepancyNoteType.QUERY;
         resStatus = ResolutionStatus.OPEN;
         children = new ArrayList();
@@ -435,14 +408,6 @@ public class DiscrepancyNoteBean extends AuditableEntityBean {
         this.crfName = crfName;
     }
 
-    public String getCrfStatus() {
-        return crfStatus;
-    }
-
-    public void setCrfStatus(String crfStatus) {
-        this.crfStatus = crfStatus;
-    }
-
     /**
      * @return Returns the numChildren.
      */
@@ -486,21 +451,6 @@ public class DiscrepancyNoteBean extends AuditableEntityBean {
      */
     public void setEntityValue(String entityValue) {
         this.entityValue = entityValue;
-    }
-
-    /**
-     * @return Returns the isSaved.
-     */
-    public boolean isSaved() {
-        return isSaved;
-    }
-
-    /**
-     * @param isSaved
-     *            The isSaved to set.
-     */
-    public void setSaved(boolean isSaved) {
-        this.isSaved = isSaved;
     }
 
     /**
@@ -579,46 +529,6 @@ public class DiscrepancyNoteBean extends AuditableEntityBean {
     public void setStudy(StudyBean study) {
         this.study = study;
     }
-
-    public String getSiteId() {
-        return siteId;
-    }
-
-    public void setSiteId(String siteId) {
-        this.siteId = siteId;
-    }
-
-    public StudyEventDefinitionBean getStudyEventDefinitionBean() {
-        return studyEventDefinitionBean;
-    }
-
-    public void setStudyEventDefinitionBean(StudyEventDefinitionBean studyEventDefinitionBean) {
-        this.studyEventDefinitionBean = studyEventDefinitionBean;
-    }
-
-    public Integer getItemDataOrdinal() {
-        return itemDataOrdinal;
-    }
-
-    public void setItemDataOrdinal(Integer itemDataOrdinal) {
-        this.itemDataOrdinal = itemDataOrdinal;
-    }
-
-    public String getItemGroupName() {
-        return itemGroupName;
-    }
-
-    public void setItemGroupName(String itemGroupName) {
-        this.itemGroupName = itemGroupName;
-    }
-
-	public boolean isActivated() {
-		return activated;
-	}
-
-	public void setActivated(boolean activated) {
-		this.activated = activated;
-	}
 
 
 }

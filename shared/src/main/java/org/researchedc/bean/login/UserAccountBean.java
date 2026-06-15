@@ -383,13 +383,6 @@ public class UserAccountBean extends AuditableEntityBean {
     // }
 
     /**
-     * @return Returns the roles.
-     */
-    public ArrayList getRoles() {
-        return roles;
-    }
-
-    /**
      * @return Returns the notes.
      */
     public String getNotes() {

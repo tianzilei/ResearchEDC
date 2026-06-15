@@ -64,37 +64,6 @@ public class EventCRFBean extends AuditableEntityBean {
         nexGenStatus = org.researchedc.domain.Status.INVALID;
     }
 
-    public EventCRFBean(EventCRFBean eventCRFBean) {
-        super();
-        this.studyEventId = eventCRFBean.getStudyEventId();
-        this.CRFVersionId = eventCRFBean.getCRFVersionId();
-        this.dateInterviewed = eventCRFBean.getDateInterviewed();
-        this.interviewerName = eventCRFBean.getInterviewerName();
-        this.completionStatusId = eventCRFBean.getCompletionStatusId();
-        this.status = eventCRFBean.getStatus();
-        this.nexGenStatus = eventCRFBean.getNexGenStatus();
-        this.annotations = eventCRFBean.getAnnotations();
-        this.dateCompleted = eventCRFBean.getDateCompleted();
-        this.validatorId = eventCRFBean.getValidatorId();
-        this.dateValidate = eventCRFBean.getDateValidate();
-        this.dateValidateCompleted = eventCRFBean.getDateValidateCompleted();
-        this.validatorAnnotations = eventCRFBean.getValidatorAnnotations();
-        this.validateString = eventCRFBean.getValidateString();
-        this.studySubjectId = eventCRFBean.getStudySubjectId();
-        this.electronicSignatureStatus = eventCRFBean.isElectronicSignatureStatus();
-        this.sdvStatus = eventCRFBean.isSdvStatus();
-        this.studySubjectName = eventCRFBean.getStudySubjectName();
-        this.eventName = eventCRFBean.getEventName();
-        this.studyName = eventCRFBean.getStudyName();
-        this.eventOrdinal = eventCRFBean.getEventOrdinal();
-        this.crf = eventCRFBean.getCrf();
-        this.crfVersion = eventCRFBean.getCrfVersion();
-        this.stage = eventCRFBean.getStage();
-        this.ownerId = eventCRFBean.getOwnerId();
-        this.createdDate = eventCRFBean.getCreatedDate();
-        this.updaterId = eventCRFBean.getUpdaterId();
-    }
-
     public boolean isSdvStatus() {
         return sdvStatus;
     }
@@ -240,31 +209,12 @@ public class EventCRFBean extends AuditableEntityBean {
     }
 
     /**
-     * @deprecated
-     * @return Returns the statusId.
-     */
-    @Deprecated
-    public int getStatusId() {
-        return status.getId();
-    }
-
-    /**
      * @param status
      *            The status to set.
      */
     @Override
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    /**
-     * @deprecated
-     * @param statusId
-     *            The statusId to set.
-     */
-    @Deprecated
-    public void setStatusId(int statusId) {
-        status = Status.get(statusId);
     }
 
     /**

@@ -11,8 +11,6 @@ import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.SubjectEventStatus;
-import org.researchedc.patterns.ocobserver.Listener;
-import org.researchedc.patterns.ocobserver.Observer;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +19,7 @@ import java.util.Date;
  * @author jxu
  *
  */
-public class StudyEventBean extends AuditableEntityBean implements Listener {
+public class StudyEventBean extends AuditableEntityBean {
     // STUDY_EVENT_ID STUDY_EVENT_DEFINITION_ID SUBJECT_ID
     // LOCATION SAMPLE_ORDINAL DATE_START DATE_END
     // OWNER_ID STATUS_ID DATE_CREATED DATE_UPDATED
@@ -361,15 +359,4 @@ public class StudyEventBean extends AuditableEntityBean implements Listener {
         this.studySubject = studySubject;
     }
 
-	@Override
-	public void setObserver(Observer o) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Observer getObserver() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

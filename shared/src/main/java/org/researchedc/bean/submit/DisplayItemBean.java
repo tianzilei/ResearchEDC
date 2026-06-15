@@ -10,13 +10,12 @@ import org.researchedc.bean.core.NullValue;
 import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
 import org.researchedc.bean.managestudy.EventDefinitionCRFBean;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
  * @author ssachs
  */
-public class DisplayItemBean implements Comparable {
+public class DisplayItemBean {
     private ItemDataBean data;
     private ItemBean item;
     private ItemFormMetadataBean metadata;
@@ -198,18 +197,6 @@ public class DisplayItemBean implements Comparable {
      * @param children
      *            The children to set.
      */
-    public void setChildren(ArrayList children) {
-        this.children = children;
-        numChildren = children.size();
-
-        if (numChildren > 0) {
-            DisplayItemBean dib = (DisplayItemBean) children.get(numChildren - 1);
-            numColumns = dib.getMetadata().getColumnNumber();
-        } else {
-            numColumns = 1;
-        }
-    }
-
     /**
      * @return Returns the numChildren.
      */
@@ -236,113 +223,6 @@ public class DisplayItemBean implements Comparable {
      *         this DisplayItemBean's A positive number if o is a
      *         DisplayItemBean with a lesser ordinal than this DisplayItemBean's
      */
-    public int compareTo(Object o) {
-        if (!o.getClass().equals(this.getClass())) {
-            return 0;
-        }
-
-        DisplayItemBean arg = (DisplayItemBean) o;
-        return getMetadata().getOrdinal() - arg.getMetadata().getOrdinal();
-    }
-
-    /**
-     * Loads a set of values from the form into the bean. This means that the
-     * selected property of the ResponseOptionBean objects
-     * metadata.responseSet.opresponseOption value is set properly, and
-     *
-     * @param values
-     */
-    public void loadFormValue(ArrayList values) {
-        ResponseSetBean rsb = getMetadata().getResponseSet();
-
-        String valueForDB = "";
-        String glue = "";
-
-       // OC-8975 remove current/old value in ResponseSetBean, then update with form value
-        if(rsb.getResponseType().equals(org.researchedc.bean.core.ResponseType.CHECKBOX) ||
-        		rsb.getResponseType().equals(org.researchedc.bean.core.ResponseType.SELECTMULTI)) {
-        	rsb.removeSelection();	
-        }
-        
-        for (int i = 0; i < values.size(); i++) {
-            String value = (String) values.get(i);
-
-            if (value == null || value.equals("")) {
-                continue;
-            }
-
-            rsb.setSelected(value.trim(), true);
-
-            valueForDB += glue + value;
-            glue = ",";
-        }
-
-        getMetadata().setResponseSet(rsb);
-        getData().setValue(valueForDB);
-    }
-
-    public void loadFormValue(String value) {
-        ResponseSetBean rsb = getMetadata().getResponseSet();
-        org.researchedc.bean.core.ResponseType rt = rsb.getResponseType();
-
-        if (rt.equals(org.researchedc.bean.core.ResponseType.TEXT) || rt.equals(org.researchedc.bean.core.ResponseType.TEXTAREA) //|| rt.equals(org.researchedc.bean.core.ResponseType.CODING)
-            || rt.equals(org.researchedc.bean.core.ResponseType.CALCULATION) || rt.equals(org.researchedc.bean.core.ResponseType.GROUP_CALCULATION)
-            || rt.equals(org.researchedc.bean.core.ResponseType.FILE) || rt.equals(org.researchedc.bean.core.ResponseType.INSTANT_CALCULATION)) {
-            rsb.setValue(value);
-        } else {
-            if (value != null) {
-                rsb.setSelected(value.trim(), true);
-            }
-        }
-        // logger.info("loadFormValue, line 241, DisplayItemBean
-        // "+rsb.getResponseType().getName());
-        getMetadata().setResponseSet(rsb);
-        getData().setValue(value);// comment set by tbh, 112007
-    }
-
-    public void loadDBValue() {
-        ResponseSetBean rsb = getMetadata().getResponseSet();
-        org.researchedc.bean.core.ResponseType rt = rsb.getResponseType();
-        String dbValue = getData().getValue();
-        if (rt.equals(org.researchedc.bean.core.ResponseType.CHECKBOX) || rt.equals(org.researchedc.bean.core.ResponseType.SELECTMULTI)) {
-            String dbValues[] = dbValue.split(",");
-
-            if (dbValues != null) {
-                for (String element : dbValues) {
-                    if (element != null) {
-                        rsb.setSelected(element.trim(), true);
-                    }
-                }
-            }
-        } else if (rt.equals(org.researchedc.bean.core.ResponseType.TEXT) || rt.equals(org.researchedc.bean.core.ResponseType.TEXTAREA) //|| rt.equals(org.researchedc.bean.core.ResponseType.CODING)
-            || rt.equals(org.researchedc.bean.core.ResponseType.CALCULATION) || rt.equals(org.researchedc.bean.core.ResponseType.GROUP_CALCULATION)
-            || rt.equals(org.researchedc.bean.core.ResponseType.INSTANT_CALCULATION)) {
-            rsb.setValue(dbValue);
-        } else if (rt.equals(org.researchedc.bean.core.ResponseType.FILE)) {
-            // Here assume dbValue from database should be a valid file pathname
-            if (dbValue.length() > 0) {
-                getDbData().setValue(dbValue);
-                File f = new File(dbValue);
-                String filename = f.getName();
-                if (f.isFile()) {
-                    rsb.setValue(filename);
-                } else {
-                    // File does not exist,
-                    rsb.setValue("fileNotFound#" + filename);
-                }
-            } else {
-                rsb.setValue(dbValue);
-            }
-        } else {
-            if (dbValue != null) {
-                dbValue = dbValue.trim();
-            }
-            rsb.setSelected(dbValue, true);
-        }
-
-        getMetadata().setResponseSet(rsb);
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;

@@ -13,7 +13,7 @@ import org.researchedc.core.form.StringUtil;
 /**
  * @author ssachs
  */
-public class ItemFormMetadataBean extends EntityBean implements Comparable {
+public class ItemFormMetadataBean extends EntityBean {
     //
     private int itemId;
     private int crfVersionId;
@@ -655,14 +655,6 @@ public class ItemFormMetadataBean extends EntityBean implements Comparable {
 
     public void setResponseLayout(String responseLayout) {
         this.responseLayout = responseLayout;
-    }
-
-    public int compareTo(Object o) {
-        if (o == null || !(o instanceof ItemFormMetadataBean)) {
-            return 1;
-        }
-        int ordinal = ((ItemFormMetadataBean) o).getOrdinal();
-        return Integer.valueOf(this.getOrdinal()).compareTo(ordinal);
     }
 
     public String getWidthDecimal() {
