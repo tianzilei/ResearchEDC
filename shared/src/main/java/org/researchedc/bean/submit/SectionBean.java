@@ -272,16 +272,6 @@ public class SectionBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the parent.
-     */
-    public SectionBean getParent() {
-        if (parent == null) {
-            parent = new SectionBean();
-        }
-        return parent;
-    }
-
-    /**
      * @param parent
      *            The parent to set.
      */

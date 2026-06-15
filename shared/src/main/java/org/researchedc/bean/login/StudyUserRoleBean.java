@@ -55,14 +55,7 @@ public class StudyUserRoleBean extends AuditableEntityBean {
     private String userName = ""; // name here is role.name, this is different
     // from name,not guaranteed to have a value
 
-    // User role capabilities, use this instead the role name.
-    private boolean canSubmitData;
-    private boolean canExtractData;
-    private boolean canManageStudy;
-
     private int userAccountId = 0;
-
-    private boolean canMonitor;
 
     public StudyUserRoleBean() {
         role = Role.INVALID;
@@ -86,13 +79,6 @@ public class StudyUserRoleBean extends AuditableEntityBean {
         this.role = role;
         super.setId(role.getId());
         super.setName(role.getName());
-        // roleName=='coordinator' || roleName=='director' || roleName=='ra' ||
-        // roleName=='investigator'}
-        this.canSubmitData =
-            this.role == Role.COORDINATOR || this.role == Role.STUDYDIRECTOR || this.role == Role.RESEARCHASSISTANT || this.role == Role.RESEARCHASSISTANT2 || this.role == Role.INVESTIGATOR;
-        this.canExtractData = this.role == Role.COORDINATOR || this.role == Role.STUDYDIRECTOR || this.role == Role.INVESTIGATOR;
-        this.canManageStudy = this.role == Role.COORDINATOR || this.role == Role.STUDYDIRECTOR;
-        this.canMonitor = this.role == Role.MONITOR;
     }
 
     public int getUserAccountId() {
@@ -225,41 +211,5 @@ public class StudyUserRoleBean extends AuditableEntityBean {
 
     public boolean isInvalid() {
         return this.role == Role.INVALID;
-    }
-
-    public boolean isSubmitData() {
-        return canSubmitData;
-    }
-
-    public boolean isExtractData() {
-        return canExtractData;
-    }
-
-    public boolean isManageStudy() {
-        return canManageStudy;
-    }
-
-    public boolean isMonitor() {
-        return canMonitor;
-    }
-
-    public boolean isInvestigator() {
-        return this.role == Role.INVESTIGATOR;
-    }
-
-    public boolean isResearchAssistant() {
-        return this.role == Role.RESEARCHASSISTANT;
-    }
-
-    public boolean isResearchAssistant2() {
-        return this.role == Role.RESEARCHASSISTANT2;
-    }
-
-    public boolean isCoordinator() {
-        return this.role == Role.COORDINATOR;
-    }
-
-    public boolean isDirector() {
-        return this.role == Role.STUDYDIRECTOR;
     }
 }

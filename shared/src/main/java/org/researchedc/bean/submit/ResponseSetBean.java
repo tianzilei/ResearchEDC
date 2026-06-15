@@ -165,41 +165,4 @@ public class ResponseSetBean extends EntityBean {
     public void setValue(String value) {
         this.value = value;
     }
-
-    /**
-     * Indicate that a ResponseOption with the specified value was or was not
-     * selected.
-     *
-     * @param value
-     *            The value of the ResponseOption whose selection is specified.
-     * @param selected
-     *            <code>true</code> if the ResponseOption was selected,
-     *            <code>false</code> otherwise.
-     */
-    public void setSelected(String value, boolean selected) {
-        if (optionIndexesByValue.containsKey(value)) {
-            int ind = ((Integer) optionIndexesByValue.get(value)).intValue();
-
-            if (ind >= 0 && ind < options.size()) {
-                if(responseType.getId() == 5 || responseType.getId() == 6){
-                    //only for radio and single-select menu
-                    options = removeSelection();
-                }
-                ResponseOptionBean rob = (ResponseOptionBean) options.get(ind);
-                rob.setSelected(selected);
-                options.set(ind, rob);
-            }
-        }
-    }
-    public ArrayList removeSelection(){
-        ArrayList list = new ArrayList();
-        for(int i = 0; i < options.size(); i++){
-            ResponseOptionBean rob = (ResponseOptionBean) options.get(i);
-            if(rob.isSelected()){
-                rob.setSelected(false);
-            }
-            list.add(rob);
-        }
-        return list;
-    }
 }
