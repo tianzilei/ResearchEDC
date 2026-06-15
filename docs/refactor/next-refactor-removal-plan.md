@@ -35,7 +35,7 @@ Progress snapshot: tracked workflow closure is **848/963 artifacts (88.1%)**; DA
 
 | Slice | Count | Status |
 |---|---:|---|
-| Phase 3 DAO implementation deletion | 88 | **No fallback/legacy/gap/unused ledger blockers remain** — 758/878 methods module-backed; 0 unused SPI rows remain; 120 rows already removed; 0 fallback-sql, 0 legacy-only, 0 adapter-gap |
+| Phase 3 DAO implementation deletion | 87 | **No SPI method blockers remain** — 758/878 methods module-backed; 0 unused SPI rows; 120 removed. 87 DAO files remain; deletion gated on LegacyDaoFactory + 13 callers in shared/ (ODM export, scoring, discrepancy notes, extract beans, session management). Only QueryDAO deleted this slice. |
 | Phase 4 shared service deletion | 27 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
 | Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; rollback proof added after commit `ae72d2415`; remaining compatibility gap is broader ODM/OpenRosa/export contract coverage; legacy import job scheduling is retired in the current tree and guarded against reintroduction |
 
@@ -237,10 +237,15 @@ scripts/ci/generate-legacy-inventory.py --output-dir docs/refactor --basename le
 
 Completed in this commit:
 
-- Deleted 52 dead legacy rule engine files (12,461 lines) — entire rule execution pipeline including RuleSetService, BeanPropertyService, ExpressionService, rule runners, expression tree, action processors, validators, and helper DTOs.
-- Removed final 9 unused SPI default methods from IStudySubjectDAO, IUserAccountDAO, IStudyEventDAO, IStudyEventDefinitionDAO and their adapter overrides.
-- **Zero unused SPI default methods remain.** Phase 3 DAO method coverage is 100%.
+- Deleted 1 dead DAO file (QueryDAO.java).
+- DAOInterface.java cannot be deleted — its methods are called within EntityDAO.
 
-Next work is Phase 4: deleting the 88 remaining DAO implementation/support files, gated on proving registration/factory/inheritance/runtime dependencies are safe.
+**87 DAO files remain.** All SPI methods are module-backed or removed (100% coverage). The remaining DAO files are blocked by `LegacyDaoFactory` and its 13 callers in shared/ (ODM export, scoring, discrepancy notes, extract beans, session management). Deleting these requires migrating those callers to module-owned code — a significant effort beyond the scope of incremental SPI cleanup.
 
-Do not delete DAO implementation/support files until every method, registration, factory, inheritance, and runtime dependency is proven safe.
+**Deletion path to unlock ~70+ files:**
+1. Migrate ODM export (MetadataUnit, OdmUnit, OdmStudyBase) → unlocks OdmExtractDAO, DatasetDAO, StudyConfigService
+2. Migrate ScoreCalculator → unlocks IItemDAO, IItemDataDAO, IItemFormMetadataDAO SPI cleanup
+3. Migrate DiscrepancyNoteUtil/Service → unlocks IDiscrepancyNoteDAO, EventCRFDao, EventDefinitionCRFDao
+4. Migrate ExtractBean → unlocks ICrfDAO, ICrfVersionDAO, IStudyEventDefinitionDAO, StudyGroupClassDao, StudyGroupDao
+5. Delete LegacyDaoFactory → unlocks all remaining SPI interfaces
+6. Delete EntityDAO/AuditableEntityDAO/core infrastructure → after Validator.java refactored
