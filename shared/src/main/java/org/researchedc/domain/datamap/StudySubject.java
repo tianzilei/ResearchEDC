@@ -2,7 +2,6 @@ package org.researchedc.domain.datamap;
 // Generated Jul 31, 2013 2:03:33 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
-import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,8 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -48,11 +45,6 @@ public class StudySubject  extends DataMapDomainObject {
 	private Date dateUpdated;
 	private Integer updateId;
 	private String ocOid;
-	private List<SubjectGroupMap> subjectGroupMaps ;
-	private List<DnStudySubjectMap> dnStudySubjectMaps;
-	private List<StudyEvent> studyEvents ;
-	private List<EventCrf> eventCrfs;
-	private List<StudyEventDefinition> studyEventDefinitions;
 	
 	public StudySubject() {
 	}
@@ -65,9 +57,7 @@ public class StudySubject  extends DataMapDomainObject {
 	public StudySubject(int studySubjectId, UserAccount userAccount,
 			Study study, Status status, Subject subject, String label,
 			String secondaryLabel, Date enrollmentDate, Date dateCreated,
-			Date dateUpdated, Integer updateId, String ocOid,
-			List<SubjectGroupMap> subjectGroupMaps, List<DnStudySubjectMap> dnStudySubjectMaps,  List<StudyEvent> studyEvents,
-			List<EventCrf> eventCrfs) {
+			Date dateUpdated, Integer updateId, String ocOid) {
 		this.studySubjectId = studySubjectId;
 		this.userAccount = userAccount;
 		this.study = study;
@@ -80,10 +70,6 @@ public class StudySubject  extends DataMapDomainObject {
 		this.dateUpdated = dateUpdated;
 		this.updateId = updateId;
 		this.ocOid = ocOid;
-		this.subjectGroupMaps = subjectGroupMaps;
-		this.dnStudySubjectMaps = dnStudySubjectMaps;
-		this.studyEvents = studyEvents;
-		this.eventCrfs = eventCrfs;
 	}
 
 	@Id
@@ -205,47 +191,6 @@ public class StudySubject  extends DataMapDomainObject {
 
 	public void setOcOid(String ocOid) {
 		this.ocOid = ocOid;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "studySubject")
-	public List<SubjectGroupMap> getSubjectGroupMaps() {
-		return this.subjectGroupMaps;
-	}
-
-	public void setSubjectGroupMaps(List<SubjectGroupMap> subjectGroupMaps) {
-		this.subjectGroupMaps = subjectGroupMaps;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "studySubject")
-	@OrderBy("discrepancyNote")
-	public List<DnStudySubjectMap> getDnStudySubjectMaps() {
-		return this.dnStudySubjectMaps;
-	}
-
-	public void setDnStudySubjectMaps(List<DnStudySubjectMap> dnStudySubjectMaps) {
-		this.dnStudySubjectMaps = dnStudySubjectMaps;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY)
-	
-	@JoinColumn(name="study_subject_id")
-	
-	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	public List<StudyEvent> getStudyEvents() {
-		return this.studyEvents;
-	}
-
-	public void setStudyEvents( List<StudyEvent> studyEvents) {
-		this.studyEvents = studyEvents;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "studySubject")
-	public List<EventCrf> getEventCrfs() {
-		return this.eventCrfs;
-	}
-
-	public void setEventCrfs(List<EventCrf> eventCrfs) {
-		this.eventCrfs = eventCrfs;
 	}
 
 }

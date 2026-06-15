@@ -2,7 +2,6 @@
 // Generated Jul 31, 2013 2:03:33 PM by Hibernate Tools 3.4.0.CR1
 package org.researchedc.domain.datamap;
 import java.util.Date;
-import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,7 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -44,7 +42,6 @@ public class ItemGroup  extends DataMapDomainObject {
 	private Date dateUpdated;
 	private Integer updateId;
 	private String ocOid;
-	private List<ItemGroupMetadata> itemGroupMetadatas;
 
 	public ItemGroup() {
 	}
@@ -57,7 +54,7 @@ public class ItemGroup  extends DataMapDomainObject {
 
 	public ItemGroup(int itemGroupId, UserAccount userAccount, Status status,
 			CrfBean crf, String name, Date dateCreated, Date dateUpdated,
-			Integer updateId, String ocOid,List<ItemGroupMetadata> itemGroupMetadatas) {
+			Integer updateId, String ocOid) {
 		this.itemGroupId = itemGroupId;
 		this.userAccount = userAccount;
 		this.status = status;
@@ -67,7 +64,6 @@ public class ItemGroup  extends DataMapDomainObject {
 		this.dateUpdated = dateUpdated;
 		this.updateId = updateId;
 		this.ocOid = ocOid;
-		this.itemGroupMetadatas = itemGroupMetadatas;
 	}
 
 	@Id
@@ -162,15 +158,6 @@ public class ItemGroup  extends DataMapDomainObject {
 
 	public void setOcOid(String ocOid) {
 		this.ocOid = ocOid;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "itemGroup")
-	public List<ItemGroupMetadata> getItemGroupMetadatas() {
-		return this.itemGroupMetadatas;
-	}
-
-	public void setItemGroupMetadatas(List<ItemGroupMetadata> itemGroupMetadatas) {
-		this.itemGroupMetadatas = itemGroupMetadatas;
 	}
 
 	

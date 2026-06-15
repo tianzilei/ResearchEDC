@@ -2,7 +2,6 @@ package org.researchedc.domain.datamap;
 // Generated Jul 31, 2013 2:03:33 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
-import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,8 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -58,8 +55,6 @@ public class EventCrf  extends DataMapDomainObject {
 	private boolean sdvStatus;
 	private Integer oldStatusId;
 	private Integer sdvUpdateId;
-	private List<DnEventCrfMap> dnEventCrfMaps;
-	private List<ItemData> itemDatas ;
 
 	public EventCrf() {
 	}
@@ -77,8 +72,7 @@ public class EventCrf  extends DataMapDomainObject {
 			Date dateValidateCompleted, String validatorAnnotations,
 			String validateString, Date dateCreated, Date dateUpdated,
 			Integer updateId, Boolean electronicSignatureStatus,
-			boolean sdvStatus, Integer oldStatusId, Integer sdvUpdateId,
-			List<DnEventCrfMap> dnEventCrfMaps, List<ItemData> itemDatas) {
+			boolean sdvStatus, Integer oldStatusId, Integer sdvUpdateId) {
 		this.eventCrfId = eventCrfId;
 		this.userAccount = userAccount;
 		this.completionStatus = completionStatus;
@@ -102,8 +96,6 @@ public class EventCrf  extends DataMapDomainObject {
 		this.sdvStatus = sdvStatus;
 		this.oldStatusId = oldStatusId;
 		this.sdvUpdateId = sdvUpdateId;
-		this.dnEventCrfMaps = dnEventCrfMaps;
-		this.itemDatas = itemDatas;
 	}
 
 	@Id
@@ -328,26 +320,6 @@ public class EventCrf  extends DataMapDomainObject {
 	public void setSdvUpdateId(Integer sdvUpdateId) {
 		this.sdvUpdateId = sdvUpdateId;
 	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "eventCrf")
-	@OrderBy("discrepancyNote")
-	public List<DnEventCrfMap> getDnEventCrfMaps() {
-		return this.dnEventCrfMaps;
-	}
-
-	public void setDnEventCrfMaps(List<DnEventCrfMap> dnEventCrfMaps) {
-		this.dnEventCrfMaps = dnEventCrfMaps;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "eventCrf")
-	public List<ItemData> getItemDatas() {
-		return this.itemDatas;
-	}
-
-	public void setItemDatas(List<ItemData> itemDatas) {
-		this.itemDatas = itemDatas;
-	}
-
 
 
 }

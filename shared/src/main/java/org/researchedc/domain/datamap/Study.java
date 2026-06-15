@@ -93,14 +93,9 @@ public class Study   extends DataMapDomainObject {
 	private String oc_oid;
 	private Integer oldStatusId;
 	private List<CrfBean> crfs ;
-	private List<StudyEventDefinition> studyEventDefinitions ;
-	private List<Study> studies;
 	private List<StudyUserRole> studyUserRoles;
 	//private Set datasets = new HashSet(0);
 	private List<StudyParameterValue> studyParameterValues;
-	private List<StudySubject> studySubjects ;
-	private List<EventDefinitionCrf> eventDefinitionCrfs;
-	private List<DiscrepancyNote> discrepancyNotes ;
 	private List<StudyModuleStatus> studyModuleStatuses ;
 	private Integer version;
 
@@ -132,10 +127,9 @@ public class Study   extends DataMapDomainObject {
 			String assignment, String endpoint, String interventions,
 			String duration, String selection, String timing,
 			String officialTitle, Boolean resultsReference, String ocOid,
-			Integer oldStatusId, List<CrfBean> crfs, List<StudyEventDefinition> studyEventDefinitions,
-			List<Study> studies, List<StudyUserRole> studyUserRoles, Set datasets,
-			List<StudyParameterValue> studyParameterValues, List<StudySubject> studySubjects,
-			List<EventDefinitionCrf> eventDefinitionCrfs, List<DiscrepancyNote> discrepancyNotes,
+			Integer oldStatusId, List<CrfBean> crfs,
+			List<StudyUserRole> studyUserRoles, Set datasets,
+			List<StudyParameterValue> studyParameterValues,
 			List<StudyModuleStatus> studyModuleStatuses) {
 		this.studyId = studyId;
 		this.userAccount = userAccount;
@@ -194,14 +188,9 @@ public class Study   extends DataMapDomainObject {
 		this.oc_oid = ocOid;
 		this.oldStatusId = oldStatusId;
 		this.crfs = crfs;
-		this.studyEventDefinitions = studyEventDefinitions;
-		this.studies = studies;
 		this.studyUserRoles = studyUserRoles;
 	//	this.datasets = datasets;
 		this.studyParameterValues = studyParameterValues;
-		this.studySubjects = studySubjects;
-		this.eventDefinitionCrfs = eventDefinitionCrfs;
-		this.discrepancyNotes = discrepancyNotes;
 		this.studyModuleStatuses = studyModuleStatuses;
 	}
 
@@ -729,86 +718,5 @@ public class Study   extends DataMapDomainObject {
 		this.crfs = crfs;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-	public List<StudyEventDefinition> getStudyEventDefinitions() {
-		return this.studyEventDefinitions;
-	}
 
-	public void setStudyEventDefinitions(List<StudyEventDefinition> studyEventDefinitions) {
-		this.studyEventDefinitions = studyEventDefinitions;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-	public List<Study> getStudies() {
-		return this.studies;
-	}
-
-	public void setStudies(List<Study> studies) {
-		this.studies = studies;
-	}
-
-	//@OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-//	public List<StudyUserRole> getStudyUserRoles() {
-//		return this.studyUserRoles;
-//	}
-//
-//	public void setStudyUserRoles(List<StudyUserRole> studyUserRoles) {
-//		this.studyUserRoles = studyUserRoles;
-//	}
-
-	/*@OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-	public Set getDatasets() {
-		return this.datasets;
-	}
-
-	public void setDatasets(Set datasets) {
-		this.datasets = datasets;
-	}*/
-
-	//@OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-/*	public List<StudyParameterValue> getStudyParameterValues() {
-		return this.studyParameterValues;
-	}
-
-	public void setStudyParameterValues(List<StudyParameterValue> studyParameterValues) {
-		this.studyParameterValues = studyParameterValues;
-	}*/
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-	public List<StudySubject> getStudySubjects() {
-		return this.studySubjects;
-	}
-
-	public void setStudySubjects(List<StudySubject> studySubjects) {
-		this.studySubjects = studySubjects;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-	public List<EventDefinitionCrf> getEventDefinitionCrfs() {
-		return this.eventDefinitionCrfs;
-	}
-
-	public void setEventDefinitionCrfs( List<EventDefinitionCrf> eventDefinitionCrfs) {
-		this.eventDefinitionCrfs = eventDefinitionCrfs;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-	public List<DiscrepancyNote> getDiscrepancyNotes() {
-		return this.discrepancyNotes;
-	}
-
-	public void setDiscrepancyNotes(List<DiscrepancyNote> discrepancyNotes) {
-		this.discrepancyNotes = discrepancyNotes;
-	}
-
-	//@OneToMany(fetch = FetchType.LAZY, mappedBy = "study")
-	/*public List<StudyModuleStatus> getStudyModuleStatuses() {
-		return this.studyModuleStatuses;
-	}
-
-	public void setStudyModuleStatuses(List<StudyModuleStatus> studyModuleStatuses) {
-		this.studyModuleStatuses = studyModuleStatuses;
-	}*/
-
-	
 }

@@ -20,23 +20,10 @@ import jakarta.persistence.TemporalType;
 
 import org.researchedc.domain.DataMapDomainObject;
 import org.researchedc.domain.Status;
-import org.researchedc.domain.datamap.CrfBean;
-import org.researchedc.domain.datamap.CrfVersion;
-import org.researchedc.domain.datamap.DiscrepancyNote;
-import org.researchedc.domain.datamap.EventCrf;
-import org.researchedc.domain.datamap.EventDefinitionCrf;
 import org.researchedc.domain.datamap.Item;
-import org.researchedc.domain.datamap.ItemData;
 import org.researchedc.domain.datamap.ItemGroup;
-import org.researchedc.domain.datamap.Section;
 import org.researchedc.domain.datamap.Study;
-import org.researchedc.domain.datamap.StudyEvent;
-import org.researchedc.domain.datamap.StudyEventDefinition;
-import org.researchedc.domain.datamap.StudyGroupClass;
-import org.researchedc.domain.datamap.StudySubject;
 import org.researchedc.domain.datamap.StudyUserRole;
-import org.researchedc.domain.datamap.Subject;
-import org.researchedc.domain.datamap.SubjectGroupMap;
 import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -84,30 +71,9 @@ public class UserAccount extends DataMapDomainObject {
 	private boolean enableApiKey;
 	private String apiKey;
 	
-	private List userRoleAccesses ;
 	private List<Item> items;
-	private List<Section> sections ;
 	private List<ItemGroup> itemGroups;
-	private List<CrfBean> crfs;
-	private List<UserAccount> userAccounts;
-	private List<DiscrepancyNote> discrepancyNotesForAssignedUserId;
-	private List<StudySubject> studySubjects;
-	private List<EventDefinitionCrf> eventDefinitionCrfs;
-	private List<StudyGroupClass> studyGroupClasses;
-	private List<StudyEventDefinition> studyEventDefinitions ;
-	private List<Subject> subjects;
-	private List<SubjectGroupMap> subjectGroupMaps;
-	private List<AuditUserLoginBean> auditUserLogins;
-	private List<DiscrepancyNote> discrepancyNotesForOwnerId;
 	private List<StudyUserRole> studyUserRoles ;
-	private List decisionConditions;
-	private List<ItemData> itemDatas ;
-	private List filters ;
-	private List<Study> studies ;
-	private List datasets;
-	private List<EventCrf> eventCrfs ;
-	private List<StudyEvent> studyEvents ;
-	private List<CrfVersion> crfVersions;
 	private Integer version;
 
 	public UserAccount() {
@@ -387,22 +353,13 @@ public class UserAccount extends DataMapDomainObject {
         this.apiKey = apiKey;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
 	public List<Item> getItems() {
 		return this.items;
 	}
 
 	public void setItems(List<Item> items) {
 		this.items = items;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<Section> getSections() {
-		return this.sections;
-	}
-
-	public void setSections(List<Section> sections) {
-		this.sections = sections;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
@@ -414,106 +371,6 @@ public class UserAccount extends DataMapDomainObject {
 		this.itemGroups = itemGroups;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<CrfBean> getCrfs() {
-		return this.crfs;
-	}
-
-	public void setCrfs(List<CrfBean> crfs) {
-		this.crfs = crfs;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<UserAccount> getUserAccounts() {
-		return this.userAccounts;
-	}
-
-	public void setUserAccounts(List<UserAccount> userAccounts) {
-		this.userAccounts = userAccounts;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<DiscrepancyNote> getDiscrepancyNotesForAssignedUserId() {
-		return this.discrepancyNotesForAssignedUserId;
-	}
-
-	public void setDiscrepancyNotesForAssignedUserId(
-			List discrepancyNotesForAssignedUserId) {
-		this.discrepancyNotesForAssignedUserId = discrepancyNotesForAssignedUserId;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<StudySubject> getStudySubjects() {
-		return this.studySubjects;
-	}
-
-	public void setStudySubjects(List<StudySubject> studySubjects) {
-		this.studySubjects = studySubjects;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<EventDefinitionCrf> getEventDefinitionCrfs() {
-		return this.eventDefinitionCrfs;
-	}
-
-	public void setEventDefinitionCrfs(List<EventDefinitionCrf> eventDefinitionCrfs) {
-		this.eventDefinitionCrfs = eventDefinitionCrfs;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<StudyGroupClass> getStudyGroupClasses() {
-		return this.studyGroupClasses;
-	}
-
-	public void setStudyGroupClasses(List<StudyGroupClass> studyGroupClasses) {
-		this.studyGroupClasses = studyGroupClasses;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<StudyEventDefinition> getStudyEventDefinitions() {
-		return this.studyEventDefinitions;
-	}
-
-	public void setStudyEventDefinitions(List<StudyEventDefinition> studyEventDefinitions) {
-		this.studyEventDefinitions = studyEventDefinitions;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<Subject> getSubjects() {
-		return this.subjects;
-	}
-
-	public void setSubjects(List<Subject> subjects) {
-		this.subjects = subjects;
-	}
-
-	/*@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<SubjectGroupMap> getSubjectGroupMaps() {
-		return this.subjectGroupMaps;
-	}
-
-	public void setSubjectGroupMaps(List<SubjectGroupMap> subjectGroupMaps) {
-		this.subjectGroupMaps = subjectGroupMaps;
-	}*/
-
-	/*@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List getAuditUserLogins() {
-		return this.auditUserLogins;
-	}
-
-	public void setAuditUserLogins(List auditUserLogins) {
-		this.auditUserLogins = auditUserLogins;
-	}*/
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccountByOwnerId")
-	public List<DiscrepancyNote> getDiscrepancyNotesForOwnerId() {
-		return this.discrepancyNotesForOwnerId;
-	}
-
-	public void setDiscrepancyNotesForOwnerId(List<DiscrepancyNote> discrepancyNotesForOwnerId) {
-		this.discrepancyNotesForOwnerId = discrepancyNotesForOwnerId;
-	}
-
 	/*@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
 	public List<StudyUserRole> getStudyUserRoles() {
 		return this.studyUserRoles;
@@ -523,80 +380,5 @@ public class UserAccount extends DataMapDomainObject {
 		this.studyUserRoles = studyUserRoles;
 	}*/
 
-	/*@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List getDecisionConditions() {
-		return this.decisionConditions;
-	}
-
-	public void setDecisionConditions(List decisionConditions) {
-		this.decisionConditions = decisionConditions;
-	}*/
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<ItemData> getItemDatas() {
-		return this.itemDatas;
-	}
-
-	public void setItemDatas(List<ItemData> itemDatas) {
-		this.itemDatas = itemDatas;
-	}
-
-	/*@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List getFilters() {
-		return this.filters;
-	}
-
-	public void setFilters(List filters) {
-		this.filters = filters;
-	}*/
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<Study> getStudies() {
-		return this.studies;
-	}
-
-	public void setStudies(List<Study> studies) {
-		this.studies = studies;
-	}
-
-	/*@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List getDatasets() {
-		return this.datasets;
-	}
-
-	public void setDatasets(List datasets) {
-		this.datasets = datasets;
-	}*/
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<EventCrf> getEventCrfs() {
-		return this.eventCrfs;
-	}
-
-	public void setEventCrfs(List<EventCrf> eventCrfs) {
-		this.eventCrfs = eventCrfs;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<StudyEvent> getStudyEvents() {
-		return this.studyEvents;
-	}
-
-	public void setStudyEvents(List<StudyEvent> studyEvents) {
-		this.studyEvents = studyEvents;
-	}
-
-	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userAccount")
-	public List<CrfVersion> getCrfVersions() {
-		return this.crfVersions;
-	}
-
-	public void setCrfVersions(List<CrfVersion> crfVersions) {
-		this.crfVersions = crfVersions;
-	}
-
-
-	
 
 }

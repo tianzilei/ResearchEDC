@@ -2,9 +2,7 @@
 // Generated Jul 31, 2013 2:03:33 PM by Hibernate Tools 3.4.0.CR1
 package org.researchedc.domain.datamap;
 import java.util.Date;
-import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,8 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -49,7 +45,6 @@ public class ItemData  extends DataMapDomainObject {
 	private Integer ordinal;
 	private Status oldStatus;
 	private Boolean deleted;
-	private List<DnItemDataMap> dnItemDataMaps;
 
 	public ItemData() {
 	}
@@ -61,8 +56,7 @@ public class ItemData  extends DataMapDomainObject {
 
 	public ItemData(int itemDataId, UserAccount userAccount, EventCrf eventCrf,
 			Item item, Status status, String value, Date dateCreated,
-			Date dateUpdated, Integer updateId, Integer ordinal, Boolean ocformDeleted,
-			 List<DnItemDataMap> dnItemDataMaps) {
+			Date dateUpdated, Integer updateId, Integer ordinal, Boolean ocformDeleted) {
 		this.itemDataId = itemDataId;
 		this.userAccount = userAccount;
 		this.eventCrf = eventCrf;
@@ -74,8 +68,6 @@ public class ItemData  extends DataMapDomainObject {
 		this.updateId = updateId;
 		this.ordinal = ordinal;
 		this.deleted = ocformDeleted;
-
-		this.dnItemDataMaps = dnItemDataMaps;
 	}
 
 	@Id
@@ -197,18 +189,6 @@ public class ItemData  extends DataMapDomainObject {
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
-
-
-	@OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.ALL}, mappedBy = "itemData")
-	@OrderBy("discrepancyNote")
-	public List<DnItemDataMap> getDnItemDataMaps() {
-		return this.dnItemDataMaps;
-	}
-
-	public void setDnItemDataMaps(List<DnItemDataMap> dnItemDataMaps) {
-		this.dnItemDataMaps = dnItemDataMaps;
-	}
-
 
 
 }

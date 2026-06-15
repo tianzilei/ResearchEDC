@@ -4,34 +4,31 @@
 
 ## Current State
 
-| Surface | Before | Current | Removed | % |
-|---------|--------|---------|---------|---|
-| shared/ files | 793 | 279 | 514 | 64.8% |
-| shared/ lines | ~80,000 | 35,499 | ~44,500 | ~56% |
+| Surface | Before | After | Removed | % |
+|---------|--------|-------|---------|---|
+| shared/ files | 793 | 278 | 515 | 64.9% |
+| shared/ lines | ~80,000 | 33,997 | ~46,000 | ~57% |
 | dao/ files | 186 | 75 | 111 | 59.7% |
 | web/ | 480 | 0 | 480 | 100% |
 | ws/ | 75 | 0 | 75 | 100% |
 | SPI methods | 878 | 878 covered | 120 removed | 100% |
 | Module files | — | 404 | — | — |
-| Module lines | — | 27,471 | — | — |
 
-**Code balance:** 279 legacy / 404 modern = 41% legacy / 59% modern (files), 56% legacy / 44% modern (lines)
+**Code balance:** 278 legacy / 404 modern = 41% legacy / 59% modern (files)
 
 ## Status
 
-Dead code is exhausted. All 279 remaining shared/ files have active callers from module code.
+Dead code is exhausted. All 278 remaining shared files have active callers.
 
-## Next: Line Reduction
+## Next: Dead @OneToMany Collection Cleanup
 
-Goal: reduce shared/ from 35,499 lines by removing dead methods, fields, and inner classes from alive files.
+The explore agent found 41 `@OneToMany` collection getters across 12 domain entities with zero callers from app/ code. These are JPA-mapped but represent unnecessary Hibernate overhead.
 
-Priority targets (largest files with most dead surface):
+Priority: remove dead `@OneToMany` fields that are confirmed unused by module code.
 
-1. **EntityDAO.java deleted** — 3,156 lines removed ✅
-2. **ExtractBean.java deleted** — 3,000+ lines removed ✅
-3. **Large bean files** — check for dead methods in StudyBean, CRFVersionBean, ItemBean, EventCRFBean, StudySubjectBean, etc.
-4. **Large domain entities** — check for dead methods in domain entities
-5. **DAO SPI interfaces** — check for dead abstract methods still in interfaces
+## Next: Dead Inner Classes / Static Fields
+
+Scan remaining files for dead inner classes, static fields, and constants.
 
 ## Verification
 

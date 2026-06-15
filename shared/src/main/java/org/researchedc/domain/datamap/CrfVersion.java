@@ -3,7 +3,6 @@ package org.researchedc.domain.datamap;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -13,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -51,12 +49,7 @@ public class CrfVersion extends DataMapDomainObject {
     private String xform;
     private String xformName;
     private Set filterCrfVersionMaps = new HashSet(0);
-    private List<VersioningMap> versioningMaps;
-    private List<EventCrf> eventCrfs;
-    private List<Section> sections;
-    private List<EventDefinitionCrf> eventDefinitionCrfs;
     private Set decisionConditions = new HashSet(0);
-    private Set<ItemGroupMetadata> itemGroupMetadatas;;
 
     public CrfVersion() {
     }
@@ -69,8 +62,7 @@ public class CrfVersion extends DataMapDomainObject {
 
     public CrfVersion(int crfVersionId, UserAccount userAccount, Status status, CrfBean crf, String name, String description, String revisionNotes,
             Date dateCreated, Date dateUpdated, Integer updateId, String ocOid, String xform, String xformName, Set filterCrfVersionMaps,
-            List<VersioningMap> versioningMaps, List<EventCrf> eventCrfs, List<Section> sections, List<EventDefinitionCrf> eventDefinitionCrfs,
-            Set decisionConditions, Set<ItemGroupMetadata> itemGroupMetadatas) {
+            Set decisionConditions) {
         this.crfVersionId = crfVersionId;
         this.userAccount = userAccount;
         this.status = status;
@@ -85,12 +77,7 @@ public class CrfVersion extends DataMapDomainObject {
         this.xform = xform;
         this.xformName = xformName;
         this.filterCrfVersionMaps = filterCrfVersionMaps;
-        this.versioningMaps = versioningMaps;
-        this.eventCrfs = eventCrfs;
-        this.sections = sections;
-        this.eventDefinitionCrfs = eventDefinitionCrfs;
         this.decisionConditions = decisionConditions;
-        this.itemGroupMetadatas = itemGroupMetadatas;
     }
 
     @Id
@@ -228,55 +215,11 @@ public class CrfVersion extends DataMapDomainObject {
      * }
      */
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "crfVersion")
-    public List<VersioningMap> getVersioningMaps() {
-        return this.versioningMaps;
-    }
-
-    public void setVersioningMaps(List<VersioningMap> versioningMaps) {
-        this.versioningMaps = versioningMaps;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "crfVersion")
-    public List<EventCrf> getEventCrfs() {
-        return this.eventCrfs;
-    }
-
-    public void setEventCrfs(List<EventCrf> eventCrfs) {
-        this.eventCrfs = eventCrfs;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "crfVersion")
-    public List<Section> getSections() {
-        return this.sections;
-    }
-
-    public void setSections(List<Section> sections) {
-        this.sections = sections;
-    }
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "crfVersion")
-    public List<EventDefinitionCrf> getEventDefinitionCrfs() {
-        return this.eventDefinitionCrfs;
-    }
-
-    public void setEventDefinitionCrfs(List<EventDefinitionCrf> eventDefinitionCrfs) {
-        this.eventDefinitionCrfs = eventDefinitionCrfs;
-    }
-
     /*
      * @OneToMany(fetch = FetchType.LAZY, mappedBy = "crfVersion") public Set getDecisionConditions() { return
      * this.decisionConditions; }
      * 
      * public void setDecisionConditions(Set decisionConditions) { this.decisionConditions = decisionConditions; }
      */
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "crfVersion")
-    public Set<ItemGroupMetadata> getItemGroupMetadatas() {
-        return this.itemGroupMetadatas;
-    }
-
-    public void setItemGroupMetadatas(Set<ItemGroupMetadata> itemGroupMetadatas) {
-        this.itemGroupMetadatas = itemGroupMetadatas;
-    }
 
 }

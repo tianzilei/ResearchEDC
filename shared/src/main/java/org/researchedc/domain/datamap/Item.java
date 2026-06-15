@@ -2,9 +2,6 @@
 // Generated Jul 31, 2013 2:03:33 PM by Hibernate Tools 3.4.0.CR1
 package org.researchedc.domain.datamap;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -50,14 +46,6 @@ public class Item  extends DataMapDomainObject{
 	private Date dateUpdated;
 	private Integer updateId;
 	private String ocOid;
-	private List<ItemFormMetadata> itemFormMetadatas;
-	private List<ItemData> itemDatas;
-	//private Set dcSummaryItemMaps = new HashSet(0);
-	private List<VersioningMap> versioningMaps ;
-	//private Set dcSubstitutionEvents;
-	private List<ItemGroupMetadata> itemGroupMetadatas ;
-	//private Set dcPrimitivesForItemId ;
-	//private Set dcPrimitivesForDynamicValueItemId ;
 
 	public Item() {
 	}
@@ -71,11 +59,7 @@ public class Item  extends DataMapDomainObject{
 			ItemReferenceType itemReferenceType, Status status,
 			ItemDataType itemDataType, String name, String description,
 			String units, Boolean phiStatus, Date dateCreated,
-			Date dateUpdated, Integer updateId, String ocOid,
-			List<ItemFormMetadata> itemFormMetadatas, List<ItemData>  itemDatas, /*Set dcSummaryItemMaps,*/
-//			List<VersioningMap>  versioningMaps, Set dcSubstitutionEvents,
-			 List<ItemGroupMetadata> itemGroupMetadatas/*, Set dcPrimitivesForItemId,
-			Set dcPrimitivesForDynamicValueItemId*/) {
+			Date dateUpdated, Integer updateId, String ocOid) {
 		this.itemId = itemId;
 		this.userAccount = userAccount;
 		this.itemReferenceType = itemReferenceType;
@@ -89,14 +73,6 @@ public class Item  extends DataMapDomainObject{
 		this.dateUpdated = dateUpdated;
 		this.updateId = updateId;
 		this.ocOid = ocOid;
-		this.itemFormMetadatas = itemFormMetadatas;
-		this.itemDatas = itemDatas;
-		//this.dcSummaryItemMaps = dcSummaryItemMaps;
-		this.versioningMaps = versioningMaps;
-		//this.dcSubstitutionEvents = dcSubstitutionEvents;
-		this.itemGroupMetadatas = itemGroupMetadatas;
-		//this.dcPrimitivesForItemId = dcPrimitivesForItemId;
-		//this.dcPrimitivesForDynamicValueItemId = dcPrimitivesForDynamicValueItemId;
 	}
 
 	@Id
@@ -230,80 +206,5 @@ public class Item  extends DataMapDomainObject{
 	public void setOcOid(String ocOid) {
 		this.ocOid = ocOid;
 	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
-	public List<ItemFormMetadata>  getItemFormMetadatas() {
-		return this.itemFormMetadatas;
-	}
-
-	public void setItemFormMetadatas(List<ItemFormMetadata>  itemFormMetadatas) {
-		this.itemFormMetadatas = itemFormMetadatas;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
-	public List<ItemData> getItemDatas() {
-		return this.itemDatas;
-	}
-
-	public void setItemDatas(List<ItemData>  itemDatas) {
-		this.itemDatas = itemDatas;
-	}
-
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
-//	public Set getDcSummaryItemMaps() {
-//		return this.dcSummaryItemMaps;
-//	}
-//
-//	public void setDcSummaryItemMaps(Set dcSummaryItemMaps) {
-//		this.dcSummaryItemMaps = dcSummaryItemMaps;
-//	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
-	public List<VersioningMap>  getVersioningMaps() {
-		return this.versioningMaps;
-	}
-
-	public void setVersioningMaps(List<VersioningMap>  versioningMaps) {
-		this.versioningMaps = versioningMaps;
-	}
-
-/*	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
-	public Set getDcSubstitutionEvents() {
-		return this.dcSubstitutionEvents;
-	}
-
-	public void setDcSubstitutionEvents(Set dcSubstitutionEvents) {
-		this.dcSubstitutionEvents = dcSubstitutionEvents;
-	}
-*/
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
-	public  List<ItemGroupMetadata> getItemGroupMetadatas() {
-		return this.itemGroupMetadatas;
-	}
-
-public void setItemGroupMetadatas( List<ItemGroupMetadata> itemGroupMetadatas) {
-		this.itemGroupMetadatas = itemGroupMetadatas;
-	}
-
-/*		//@OneToMany(fetch = FetchType.LAZY, mappedBy = "itemByItemId")
-	public Set getDcPrimitivesForItemId() {
-		return this.dcPrimitivesForItemId;
-	}*/
-
-//	public void setDcPrimitivesForItemId(Set dcPrimitivesForItemId) {
-//		this.dcPrimitivesForItemId = dcPrimitivesForItemId;
-//	}
-//
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "itemByDynamicValueItemId")
-//	public Set getDcPrimitivesForDynamicValueItemId() {
-//		return this.dcPrimitivesForDynamicValueItemId;
-//	}
-
-/*	public void setDcPrimitivesForDynamicValueItemId(
-			Set dcPrimitivesForDynamicValueItemId) {
-		this.dcPrimitivesForDynamicValueItemId = dcPrimitivesForDynamicValueItemId;
-	}*/
-
-
 
 }

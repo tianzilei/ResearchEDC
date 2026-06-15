@@ -1,6 +1,5 @@
 package org.researchedc.domain.datamap;
 import java.util.Date;
-import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,8 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -45,10 +42,6 @@ public class Subject  extends DataMapDomainObject {
 	private Date dateUpdated;
 	private Integer updateId;
 	private Boolean dobCollected;
-	//private Set subjectsForMotherId = new HashSet(0);
-	private List<StudySubject> studySubjects;
-//	private Set subjectsForFatherId = new HashSet(0);
-	private List<DnSubjectMap> dnSubjectMaps ;
 
 	public Subject() {
 	}
@@ -61,8 +54,7 @@ public class Subject  extends DataMapDomainObject {
 			Subject subjectByMotherId, Status status,
 			Subject subjectByFatherId, Date dateOfBirth, Character gender,
 			String uniqueIdentifier, Date dateCreated, Date dateUpdated,
-			Integer updateId, Boolean dobCollected,
-			List<StudySubject> studySubjects, List<DnSubjectMap> dnSubjectMaps) {
+			Integer updateId, Boolean dobCollected) {
 		this.subjectId = subjectId;
 		this.userAccount = userAccount;
 		this.subjectByMotherId = subjectByMotherId;
@@ -75,9 +67,6 @@ public class Subject  extends DataMapDomainObject {
 		this.dateUpdated = dateUpdated;
 		this.updateId = updateId;
 		this.dobCollected = dobCollected;
-		;
-		this.studySubjects = studySubjects;
-		this.dnSubjectMaps = dnSubjectMaps;
 	}
 
 	@Id
@@ -199,44 +188,5 @@ public class Subject  extends DataMapDomainObject {
 	public void setDobCollected(Boolean dobCollected) {
 		this.dobCollected = dobCollected;
 	}
-
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "subjectByMotherId")
-//	public Set getSubjectsForMotherId() {
-//		return this.subjectsForMotherId;
-//	}
-//
-//	public void setSubjectsForMotherId(Set subjectsForMotherId) {
-//		this.subjectsForMotherId = subjectsForMotherId;
-//	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "subject")
-	public List<StudySubject> getStudySubjects() {
-		return this.studySubjects;
-	}
-
-	public void setStudySubjects(List<StudySubject>  studySubjects) {
-		this.studySubjects = studySubjects;
-	}
-
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "subjectByFatherId")
-//	public Set getSubjectsForFatherId() {
-//		return this.subjectsForFatherId;
-//	}
-//
-//	public void setSubjectsForFatherId(Set subjectsForFatherId) {
-//		this.subjectsForFatherId = subjectsForFatherId;
-//	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "subject")
-	@OrderBy("discrepancyNote")
-    public List<DnSubjectMap> getDnSubjectMaps() {
-		return this.dnSubjectMaps;
-	}
-
-	public void setDnSubjectMaps(List<DnSubjectMap> dnSubjectMaps) {
-		this.dnSubjectMaps = dnSubjectMaps;
-	}
-
-	
 
 }

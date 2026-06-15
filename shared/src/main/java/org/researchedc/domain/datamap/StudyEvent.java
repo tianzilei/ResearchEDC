@@ -2,7 +2,6 @@ package org.researchedc.domain.datamap;
 // Generated Jul 31, 2013 2:03:33 PM by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
-import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,8 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -51,8 +48,6 @@ public class StudyEvent extends DataMapDomainObject  {
 	private Integer subjectEventStatusId;
 	private Boolean startTimeFlag;
 	private Boolean endTimeFlag;
-	private List<DnStudyEventMap> dnStudyEventMaps ;
-	private List<EventCrf> eventCrfs ;
 	private Integer sedOrdinal;
 	
 	public StudyEvent() {
@@ -68,7 +63,7 @@ public class StudyEvent extends DataMapDomainObject  {
 			Integer sampleOrdinal, Date dateStart, Date dateEnd,
 			Date dateCreated, Date dateUpdated, Integer updateId,
 			Integer subjectEventStatusId, Boolean startTimeFlag,
-			Boolean endTimeFlag, List<DnStudyEventMap> dnStudyEventMaps, List<EventCrf> eventCrfs) {
+			Boolean endTimeFlag) {
 		this.studyEventId = studyEventId;
 		this.userAccount = userAccount;
 		this.studyEventDefinition = studyEventDefinition;
@@ -84,8 +79,6 @@ public class StudyEvent extends DataMapDomainObject  {
 		this.subjectEventStatusId = subjectEventStatusId;
 		this.startTimeFlag = startTimeFlag;
 		this.endTimeFlag = endTimeFlag;
-		this.dnStudyEventMaps = dnStudyEventMaps;
-		this.eventCrfs = eventCrfs;
 	}
 
 	@Id
@@ -238,26 +231,6 @@ public class StudyEvent extends DataMapDomainObject  {
 		this.endTimeFlag = endTimeFlag;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "studyEvent")
-	@OrderBy("discrepancyNote")
-    public List<DnStudyEventMap> getDnStudyEventMaps() {
-		return this.dnStudyEventMaps;
-	}
-
-	public void setDnStudyEventMaps(List<DnStudyEventMap> dnStudyEventMaps) {
-		this.dnStudyEventMaps = dnStudyEventMaps;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "studyEvent")
-	@OrderBy("dateUpdated asc")
-	
-	public List<EventCrf> getEventCrfs() {
-		return this.eventCrfs;
-	}
-
-	public void setEventCrfs(List<EventCrf> eventCrfs) {
-		this.eventCrfs = eventCrfs;
-	}
 	 @Column(name = "status_id")
 	public Integer getStatusId() {
 		return statusId;
@@ -277,7 +250,7 @@ public class StudyEvent extends DataMapDomainObject  {
 
 	public void setSedOrdinal(Integer sedOrdinal) {
 		this.sedOrdinal = sedOrdinal;
-	}
+}
 */
 
 	
