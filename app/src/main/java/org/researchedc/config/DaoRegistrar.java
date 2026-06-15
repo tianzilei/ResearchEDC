@@ -17,7 +17,7 @@ public class DaoRegistrar implements BeanDefinitionRegistryPostProcessor {
 
     private static final Pattern DAO_NAME_PATTERN = Pattern.compile(".*DAO$|.*Dao$");
     private static final String[] SKIP_CLASSES = {
-        "AbstractDomainDao", "EntityDAO", "AuditableEntityDAO",
+        "AbstractDomainDao",
         "DatabaseChangeLogDao",
         "CoreResources",
         "ItemFormMetadataDAO", "SectionDAO", "FilterDAO", "StudyGroupClassDAO", "StudyGroupDAO",

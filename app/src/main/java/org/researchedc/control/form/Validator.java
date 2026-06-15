@@ -40,8 +40,6 @@ import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ResponseOptionBean;
 import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.core.AuditableEntityDAO;
-import org.researchedc.dao.core.EntityDAO;
 import org.researchedc.dao.spi.IStudyDAO;
 import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
 import org.researchedc.dao.spi.IUserAccountDAO;
@@ -588,10 +586,6 @@ public class Validator {
     /*
      * use for: ENTITY_EXISTS_IN_STUDY
      */
-    public void addValidation(String fieldName, int type, AuditableEntityDAO dao, StudyBean study) {
-        addEntityExistsInStudyValidation(fieldName, type, dao, study);
-    }
-
     public void addValidation(String fieldName, int type, IStudyEventDefinitionDAO dao, StudyBean study) {
         addEntityExistsInStudyValidation(fieldName, type, dao, study);
     }
@@ -607,10 +601,6 @@ public class Validator {
     /*
      * use for: ENTITY_EXISTS
      */
-    public void addValidation(String fieldName, int type, EntityDAO edao) {
-        addEntityExistsValidation(fieldName, type, edao);
-    }
-
     public void addValidation(String fieldName, int type, IStudyDAO studyDao) {
         addEntityExistsValidation(fieldName, type, studyDao);
     }
@@ -1658,9 +1648,6 @@ public class Validator {
     }
 
     private EntityBean findEntityByPK(Object dao, int id) throws Exception {
-        if (dao instanceof EntityDAO entityDao) {
-            return entityDao.findByPK(id);
-        }
         if (dao instanceof IStudyDAO studyDao) {
             return studyDao.findByPK(id);
         }
@@ -1690,9 +1677,6 @@ public class Validator {
     }
 
     private AuditableEntityBean findEntityByPKAndStudy(Object dao, int id, StudyBean study) {
-        if (dao instanceof AuditableEntityDAO auditableEntityDao) {
-            return auditableEntityDao.findByPKAndStudy(id, study);
-        }
         if (dao instanceof IStudyEventDefinitionDAO studyEventDefinitionDao) {
             return studyEventDefinitionDao.findByPKAndStudy(id, study);
         }

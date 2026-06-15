@@ -2,7 +2,6 @@ package org.researchedc.dao.spi;
 
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.extract.DatasetBean;
-import org.researchedc.bean.extract.ExtractBean;
 import org.researchedc.bean.managestudy.StudyBean;
 
 import java.util.ArrayList;
@@ -26,12 +25,5 @@ public interface DatasetDao {
     Collection findByOwnerId(int ownerId, int studyId);
     EntityBean updateAll(EntityBean eb);
     EntityBean updateGroupMap(DatasetBean db);
-    ExtractBean getDatasetData(ExtractBean eb, int currentstudyid, int parentstudyid);
-    String parseSQLDataset(String sql, boolean issed, boolean hasfilterzero);
-    String genDatabaseDateConstraint(ExtractBean eb);
-    String getECStatusConstraint(int datasetItemStatusId);
-    String getItemDataStatusConstraint(int datasetItemStatusId);
-    ArrayList selectStudySubjects(int studyid, int parentid, String sedin, String it_in, String dateConstraint, String ecStatusConstraint,
-            String itStatusConstraint);
     Object getEntityFromHashMap(HashMap hm);
 }

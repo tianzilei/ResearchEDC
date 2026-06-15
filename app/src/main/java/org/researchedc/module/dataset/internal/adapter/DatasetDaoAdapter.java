@@ -13,7 +13,6 @@ import org.researchedc.bean.core.DatasetItemStatus;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.extract.DatasetBean;
-import org.researchedc.bean.extract.ExtractBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.dao.spi.DatasetDao;
 import org.researchedc.module.dataset.entity.DatasetEntity;
@@ -134,38 +133,6 @@ public class DatasetDaoAdapter implements DatasetDao {
         entity.setName(db.getName());
         entity.setDateUpdated(LocalDateTime.now());
         return toBean(datasetRepository.save(entity));
-    }
-
-    @Override
-    public ExtractBean getDatasetData(ExtractBean eb, int currentstudyid, int parentstudyid) {
-        return null;
-    }
-
-    @Override
-    public String parseSQLDataset(String sql, boolean issed, boolean hasfilterzero) {
-        return "";
-    }
-
-    @Override
-    public String genDatabaseDateConstraint(ExtractBean eb) {
-        return "";
-    }
-
-    @Override
-    public String getECStatusConstraint(int datasetItemStatusId) {
-        return "";
-    }
-
-    @Override
-    public String getItemDataStatusConstraint(int datasetItemStatusId) {
-        return "";
-    }
-
-    @Override
-    public ArrayList selectStudySubjects(int studyid, int parentid, String sedin, String it_in,
-                                          String dateConstraint, String ecStatusConstraint,
-                                          String itStatusConstraint) {
-        return new ArrayList();
     }
 
     @Override
