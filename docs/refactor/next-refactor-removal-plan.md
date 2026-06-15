@@ -35,7 +35,7 @@ Progress snapshot: tracked workflow closure is **848/963 artifacts (88.1%)**; DA
 
 | Slice | Count | Status |
 |---|---:|---|
-| Phase 3 DAO implementation deletion | 87 | **No SPI method blockers remain** — 758/878 methods module-backed; 0 unused SPI rows; 120 removed. 87 DAO files remain; deletion gated on LegacyDaoFactory + 13 callers in shared/ (ODM export, scoring, discrepancy notes, extract beans, session management). Only QueryDAO deleted this slice. |
+| Phase 3 DAO implementation deletion | 82 | **No SPI method blockers remain** — 758/878 methods module-backed; 0 unused SPI rows; 120 removed. 82 DAO files remain; deletion gated on remaining LegacyDaoFactory callers (AuditableEntityBean, ExtractBean). 36 dead files deleted this slice (ODM export, scoring, discrepancy notes, extract DAOs, ODM beans). |
 | Phase 4 shared service deletion | 27 | Blocked by active callers, import/export compatibility, ODM/rule/data-entry behavior, or DAO extraction |
 | Import/export compatibility hardening | module work | Initial upload/validate/commit/audit and attachment download hardening complete in commit `bc1f24d97`; rollback proof added after commit `ae72d2415`; remaining compatibility gap is broader ODM/OpenRosa/export contract coverage; legacy import job scheduling is retired in the current tree and guarded against reintroduction |
 

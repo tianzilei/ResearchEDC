@@ -8,14 +8,8 @@
 package org.researchedc.bean.core;
 
 import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.core.SessionManager;
-import org.researchedc.dao.LegacyDaoFactory;
-import org.researchedc.dao.spi.IUserAccountDAO;
 
 import java.util.Date;
-import java.util.function.Function;
-
-import javax.sql.DataSource;
 
 /**
  * <P>
@@ -52,10 +46,6 @@ public class AuditableEntityBean extends EntityBean {
 
     protected Status oldStatus;
 
-    // used to retrieve the owner and updater when needed
-    protected IUserAccountDAO udao;
-    private Function<DataSource, IUserAccountDAO> userAccountDaoFactory = LegacyDaoFactory::userAccountDao;
-
     public AuditableEntityBean() {
         createdDate = new Date(0);
         updatedDate = new Date(0);
@@ -64,26 +54,12 @@ public class AuditableEntityBean extends EntityBean {
         updaterId = 0;
         updater = null;
         status = null;
-        udao = null;
     }
 
     /**
      * @return Returns the owner.
      */
     public UserAccountBean getOwner() {
-        if (owner != null) {
-            return owner;
-        }
-
-        try {
-            IUserAccountDAO userAccountDao = getUserAccountDao();
-            if (owner == null || owner.getId() != ownerId) {
-                owner = (UserAccountBean) userAccountDao.findByPK(ownerId);
-            }
-        } catch (Exception e) {
-            owner = null;
-        }
-
         return owner;
     }
 
@@ -119,44 +95,6 @@ public class AuditableEntityBean extends EntityBean {
          * if ((owner != null) || (owner.getId() != ownerId)) { owner = null;
          * getOwner(); }
          */}
-
-    /**
-     * @return Returns the updater.
-     */
-    public UserAccountBean getUpdater() {
-        if (updater != null) {
-            return updater;
-        }
-
-        try {
-            IUserAccountDAO userAccountDao = getUserAccountDao();
-            if (updater == null || updater.getId() != updaterId) {
-                updater = (UserAccountBean) userAccountDao.findByPK(updaterId);
-            }
-
-        } catch (Exception e) {
-            updater = null;
-        }
-
-        // try {
-        // if (udao == null) {
-        // SessionManager sm = new SessionManager(null, "tomh");
-        // }
-        // updater = (UserAccountBean) udao.findByPK(updaterId);
-        // }
-        // catch (Exception e) {
-        // updater = null;
-        // }
-
-        return updater;
-    }
-
-    private IUserAccountDAO getUserAccountDao() {
-        if (udao == null) {
-            udao = userAccountDaoFactory.apply(SessionManager.getStaticDataSource());
-        }
-        return udao;
-    }
 
     /**
      * @param updater

@@ -18,11 +18,11 @@ public class DaoRegistrar implements BeanDefinitionRegistryPostProcessor {
     private static final Pattern DAO_NAME_PATTERN = Pattern.compile(".*DAO$|.*Dao$");
     private static final String[] SKIP_CLASSES = {
         "AbstractDomainDao", "EntityDAO", "AuditableEntityDAO",
-        "DatabaseChangeLogDao", "QueryDAO",
+        "DatabaseChangeLogDao",
         "CoreResources",
-        "ItemFormMetadataDAO", "SectionDAO", "DatasetDAO", "FilterDAO", "StudyGroupClassDAO", "StudyGroupDAO",
+        "ItemFormMetadataDAO", "SectionDAO", "FilterDAO", "StudyGroupClassDAO", "StudyGroupDAO",
         "RuleDAO", "RuleSetDAO", "DiscrepancyNoteDAO",                 "StudyParameterValueDao", "RuleActionRunLogDao", "RuleSetAuditDao", "SCDItemMetadataDao",
-        "DynamicsItemGroupMetadataDao", "RuleSetRuleDao", "DynamicsItemFormMetadataDao", "RuleSetRuleDao",
+        "DynamicsItemGroupMetadataDao", "DynamicsItemFormMetadataDao",
     };
 
     @Override
