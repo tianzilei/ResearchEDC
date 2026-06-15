@@ -8,11 +8,11 @@
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `module-backed` | 758 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
-| `unused` | 50 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
-| `removed` | 70 | SPI interface and implementation deleted; legacy service references cleaned up. |
+| `module-backed` | 759 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
+| `unused` | 0 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
+| `removed` | 119 | SPI interface and implementation deleted; legacy service references cleaned up. |
 
-Coverage snapshot: 828/878 tracked methods are module-backed or removed (**94.3%**). Remaining method-level blockers are 50/878 unused rows (**5.7%**) that must be removed from SPI or reclassified with stronger evidence before DAO implementation deletion.
+Coverage snapshot: 878/878 tracked methods are module-backed or removed (**100.0%**). No method-level blockers remain; DAO implementation deletion now depends on proving registration, factory, inheritance, and runtime dependencies are safe per DAO family.
 
 ## SPI Summary
 
@@ -28,29 +28,29 @@ Coverage snapshot: 828/878 tracked methods are module-backed or removed (**94.3%
 | `DatasetDao` | 23 | 0 | 0 | `app/src/main/java/org/researchedc/module/dataset/internal/adapter/DatasetDaoAdapter.java` |
 | `DynamicsItemFormMetadataDao` | 11 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/DynamicsItemFormMetadataDaoAdapter.java` |
 | `DynamicsItemGroupMetadataDao` | 5 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/DynamicsItemGroupMetadataDaoAdapter.java` |
-| `EventCRFDao` | 42 | 6 | 0 | `app/src/main/java/org/researchedc/module/event/internal/adapter/EventCrfDaoAdapter.java` |
+| `EventCRFDao` | 42 | 0 | 6 | `app/src/main/java/org/researchedc/module/event/internal/adapter/EventCrfDaoAdapter.java` |
 | `EventDefinitionCRFDao` | 38 | 0 | 2 | `app/src/main/java/org/researchedc/module/event/internal/adapter/EventDefinitionCrfDaoAdapter.java` |
 | `EventDefinitionCrfTagDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/event/internal/adapter/EventDefinitionCrfTagDaoAdapter.java` |
 | `FilterDao` | 11 | 0 | 0 | `app/src/main/java/org/researchedc/module/filter/internal/adapter/FilterDaoAdapter.java` |
 | `IAuditEventDAO` | 5 | 0 | 21 | `` |
-| `ICrfDAO` | 23 | 5 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/CrfDaoAdapter.java` |
-| `ICrfVersionDAO` | 29 | 3 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/CrfVersionDaoAdapter.java` |
-| `IDiscrepancyNoteDAO` | 61 | 3 | 0 | `app/src/main/java/org/researchedc/module/discrepancynote/internal/adapter/DiscrepancyNoteDaoAdapter.java` |
-| `IItemDAO` | 36 | 6 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemDaoAdapter.java` |
-| `IItemDataDAO` | 52 | 5 | 0 | `app/src/main/java/org/researchedc/module/datacapture/internal/adapter/ItemDataDaoAdapter.java` |
+| `ICrfDAO` | 23 | 0 | 5 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/CrfDaoAdapter.java` |
+| `ICrfVersionDAO` | 29 | 0 | 3 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/CrfVersionDaoAdapter.java` |
+| `IDiscrepancyNoteDAO` | 61 | 0 | 3 | `app/src/main/java/org/researchedc/module/discrepancynote/internal/adapter/DiscrepancyNoteDaoAdapter.java` |
+| `IItemDAO` | 36 | 0 | 6 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemDaoAdapter.java` |
+| `IItemDataDAO` | 52 | 0 | 5 | `app/src/main/java/org/researchedc/module/datacapture/internal/adapter/ItemDataDaoAdapter.java` |
 | `IItemFormMetadataDAO` | 19 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemFormMetadataDaoAdapter.java` |
-| `IItemGroupDAO` | 26 | 4 | 0 | `app/src/main/java/org/researchedc/module/datacapture/internal/adapter/ItemGroupDaoAdapter.java` |
-| `IItemGroupMetadataDAO` | 8 | 4 | 0 | `app/src/main/java/org/researchedc/module/datacapture/internal/adapter/ItemGroupMetadataDaoAdapter.java` |
+| `IItemGroupDAO` | 26 | 0 | 4 | `app/src/main/java/org/researchedc/module/datacapture/internal/adapter/ItemGroupDaoAdapter.java` |
+| `IItemGroupMetadataDAO` | 8 | 0 | 4 | `app/src/main/java/org/researchedc/module/datacapture/internal/adapter/ItemGroupMetadataDaoAdapter.java` |
 | `IRuleDAO` | 11 | 0 | 0 | `app/src/main/java/org/researchedc/module/rule/internal/adapter/RuleDaoAdapter.java` |
 | `IRuleSetDAO` | 19 | 0 | 0 | `app/src/main/java/org/researchedc/module/rule/internal/adapter/RuleSetDaoAdapter.java` |
 | `IRuleSetRuleAuditDAO` | 0 | 0 | 2 | `removed` |
 | `IRuleSetRuleDAO` | 7 | 0 | 0 | `app/src/main/java/org/researchedc/module/rule/internal/adapter/RuleSetRuleDaoAdapter.java` |
 | `ISectionDAO` | 27 | 0 | 2 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/SectionDaoAdapter.java` |
 | `IStudyDAO` | 31 | 0 | 2 | `app/src/main/java/org/researchedc/module/study/internal/adapter/StudyDaoAdapter.java` |
-| `IStudyEventDAO` | 44 | 5 | 0 | `app/src/main/java/org/researchedc/module/event/internal/adapter/StudyEventDaoAdapter.java` |
-| `IStudyEventDefinitionDAO` | 18 | 6 | 0 | `app/src/main/java/org/researchedc/module/event/internal/adapter/StudyEventDefinitionDaoAdapter.java` |
+| `IStudyEventDAO` | 44 | 0 | 5 | `app/src/main/java/org/researchedc/module/event/internal/adapter/StudyEventDaoAdapter.java` |
+| `IStudyEventDefinitionDAO` | 19 | 0 | 5 | `app/src/main/java/org/researchedc/module/event/internal/adapter/StudyEventDefinitionDaoAdapter.java` |
 | `IStudyParameterValueDAO` | 15 | 0 | 0 | `app/src/main/java/org/researchedc/module/study/internal/adapter/StudyParameterValueDaoAdapter.java` |
-| `IStudySubjectDAO` | 54 | 3 | 0 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/StudySubjectDaoAdapter.java` |
+| `IStudySubjectDAO` | 54 | 0 | 3 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/StudySubjectDaoAdapter.java` |
 | `ISubjectDAO` | 27 | 0 | 0 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/SubjectDaoAdapter.java` |
 | `IUserAccountDAO` | 42 | 0 | 1 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/UserAccountDaoAdapter.java` |
 | `ItemDataTypeDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemDataTypeDaoAdapter.java` |

@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-15 - Reconcile stale Phase 3 unused ledger rows
+
+- Reconciled 50 stale Phase 3 `unused` ledger rows against the current SPI interfaces: 49 methods were already absent from the interfaces, and `IStudyEventDefinitionDAO.findAllActiveByStudy(StudyBean)` remains an active module-backed contract.
+- Updated the Phase 3 ledger to 759/878 module-backed methods, 0 unused rows, 119 removed rows, and 878/878 covered or removed (100.0%). DAO file deletion is now gated by registration, factory, inheritance, and runtime dependency proof rather than method-level unused blockers.
+
 ## 2026-06-14 - Back IUserAccountDAO findById and remove unused column lookup
 
 - Kept active `IUserAccountDAO.findById(Integer)` in the SPI and backed it with `UserAccountDaoAdapter` via `UserAccountRepository`; `BeanPropertyService` still calls this contract.

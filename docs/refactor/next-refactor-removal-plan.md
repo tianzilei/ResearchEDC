@@ -11,7 +11,7 @@
 | dao/ files | 186 | 75 | 111 | 59.7% |
 | web/ | 480 | 0 | 480 | 100% |
 | ws/ | 75 | 0 | 75 | 100% |
-| SPI methods | 878 | 878 covered | 120 removed | 100% |
+| SPI methods | 878 | 878 covered | 119 removed | 100% |
 | Module files | — | 404 | — | — |
 
 **Code balance:** 278 legacy / 404 modern = 41% legacy / 59% modern (files), 58% legacy / 42% modern (lines)
