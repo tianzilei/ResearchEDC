@@ -1,15 +1,15 @@
 # Remove Legacy Code Plan
 
-**Last updated:** 2026-06-14 (updated)
+**Last updated:** 2026-06-16
 **Status:** Legacy removal is **not complete**. Tracked workflow progress is **92.6%** (892/963 artifacts removed or closed; 71 active artifacts remain). **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 71 DAO/SPI/support Java files in `shared/dao`; (2) import/export compatibility hardening in app/module code. Phase 3 ledger status: 757/878 methods module-backed, 878/878 module-backed or removed (100.0%), 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 0 unused (0.0%), 121 removed.
 
 ## Current Baseline
 
-These counts come from the current repository tree and regenerated inventory (updated 2026-06-15):
+These counts come from the current repository tree and regenerated inventory (updated 2026-06-16):
 
 | Surface | Count (before) | Count (after) | Meaning |
 |---------|----------------|---------------|---------|
-| `shared/src/main/java/org/researchedc` | 793 | 504 | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities (-289) |
+| `shared/src/main/java/org/researchedc` | 793 | 273 | Legacy beans, DAOs, entities, jobs, exceptions, utilities (-520) |
 | `shared/src/main/java/org/researchedc/dao` | 186 | 71 | DAO SPI interfaces plus legacy DAO implementations/support (-115) |
 | `web/` | 480 | 0 | **ENTIRE DIRECTORY DELETED** — 102 files migrated to app/ or deleted (-480) |
 | Legacy servlet inventory artifacts | 186 | 0 | No active servlet artifacts; `web/` is absent (-186) |
@@ -291,7 +291,7 @@ spa_subject_detail    — Use full SPA subject detail (no legacy fallbacks)
 
 **Goal:** delete legacy DAO implementation classes from `shared/dao`.
 
-Current ledger state (updated 2026-06-15):
+Current ledger state (updated 2026-06-16):
 
 | Status | Methods | Meaning |
 |---|---:|---|

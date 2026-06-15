@@ -1,7 +1,7 @@
 # ResearchEDC
 
 - Version: 0.1
-- Last updated: 2026-06-14
+- Last updated: 2026-06-16
 - License: GNU LGPL
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x.
@@ -55,7 +55,7 @@ Current legacy removal baseline:
 
 | Surface | Current Count | Removal Gate |
 |---------|---------------|--------------|
-| `shared/src/main/java/org/researchedc` | 504 Java files | Shared beans/services/DAO/domain callers replaced or proven unused |
+| `shared/src/main/java/org/researchedc` | 273 Java files | Shared beans/services/DAO/domain callers replaced or proven unused |
 | `shared/dao` | 71 Java files | 115/186 DAO-surface files removed (61.8%); remaining SPI implementations require module-owned repository/service proof; Phase 3 ledger is 757/878 module-backed methods with 0 unused rows left |
 | `web/` Java | 0 files | Directory deleted; needed compatibility classes migrated to `app/` |
 | JSP pages | 0 files | `web/` views deleted |
