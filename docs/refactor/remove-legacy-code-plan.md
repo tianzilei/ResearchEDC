@@ -1,7 +1,7 @@
 # Remove Legacy Code Plan
 
 **Last updated:** 2026-06-14 (updated)
-**Status:** Legacy removal is **not complete**. Tracked workflow progress is **92.4%** (890/963 artifacts removed or closed; 73 active artifacts remain). **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 73 DAO/SPI/support Java files in `shared/dao`; (2) import/export compatibility hardening in app/module code. Phase 3 ledger status: 759/878 methods module-backed, 878/878 module-backed or removed (100.0%), 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 0 unused (0.0%), 119 removed.
+**Status:** Legacy removal is **not complete**. Tracked workflow progress is **92.6%** (892/963 artifacts removed or closed; 71 active artifacts remain). **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 71 DAO/SPI/support Java files in `shared/dao`; (2) import/export compatibility hardening in app/module code. Phase 3 ledger status: 757/878 methods module-backed, 878/878 module-backed or removed (100.0%), 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 0 unused (0.0%), 121 removed.
 
 ## Current Baseline
 
@@ -10,13 +10,13 @@ These counts come from the current repository tree and regenerated inventory (up
 | Surface | Count (before) | Count (after) | Meaning |
 |---------|----------------|---------------|---------|
 | `shared/src/main/java/org/researchedc` | 793 | 504 | Legacy beans, DAOs, services, entities, rules, jobs, exceptions, utilities (-289) |
-| `shared/src/main/java/org/researchedc/dao` | 186 | 73 | DAO SPI interfaces plus legacy DAO implementations/support (-113) |
+| `shared/src/main/java/org/researchedc/dao` | 186 | 71 | DAO SPI interfaces plus legacy DAO implementations/support (-115) |
 | `web/` | 480 | 0 | **ENTIRE DIRECTORY DELETED** — 102 files migrated to app/ or deleted (-480) |
 | Legacy servlet inventory artifacts | 186 | 0 | No active servlet artifacts; `web/` is absent (-186) |
 | `ws/` | 75 | 0 | SOAP module directory is absent in the current tree (-75) |
-| Active legacy workflow inventory | 963 | 73 | Regenerated artifacts across the remaining DAO surface only (-890) |
+| Active legacy workflow inventory | 963 | 71 | Regenerated artifacts across the remaining DAO surface only (-892) |
 
-Progress snapshot: active workflow inventory is **890/963 closed (92.4%)**; DAO method replacement/removal coverage is **878/878 (100%)**; remaining unused DAO SPI rows are **0/878 (0%)**; DAO-surface file deletion is **113/186 (60.8%)**.
+Progress snapshot: active workflow inventory is **892/963 closed (92.6%)**; DAO method replacement/removal coverage is **878/878 (100%)**; remaining unused DAO SPI rows are **0/878 (0%)**; DAO-surface file deletion is **115/186 (61.8%)**.
 
 ### Phase 1 Deletion Summary (8 slices completed)
 
@@ -81,8 +81,8 @@ Completed on 2026-06-07:
 Completed on 2026-06-07 after Phase B validation:
 
 - `scripts/ci/generate-legacy-inventory.py` generates CSV and Markdown inventories for legacy servlets, JSPs, Spring MVC routes, SOAP endpoints, DAO files, Quartz jobs, and shared services.
-- `docs/refactor/legacy-workflow-inventory.csv` initially recorded 963 artifacts. The regenerated 2026-06-15 inventory now records 73 active artifacts after `web/` deletion, SOAP retirement, shared-service removal, and Phase 3 DAO/support deletion passes.
-- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 28 `replace`, 45 `keep compatibility`, and 0 `unknown` artifacts. All remaining rows are live `shared/dao` Java files.
+- `docs/refactor/legacy-workflow-inventory.csv` initially recorded 963 artifacts. The regenerated 2026-06-15 inventory now records 71 active artifacts after `web/` deletion, SOAP retirement, shared-service removal, and Phase 3 DAO/support deletion passes.
+- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 26 `replace`, 45 `keep compatibility`, and 0 `unknown` artifacts. All remaining rows are live `shared/dao` Java files.
 - `scripts/ci/generate-legacy-report.sh` now includes the workflow inventory artifacts in the generated legacy report.
 - The first low-risk Phase 1 vertical slice, `phase-1-admin-read-only`, is now closed; no active artifacts remain in the generated inventory.
 - `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows; all rows are now covered/deleted or formally retired, and the generated inventory has no active `phase-1-admin-read-only` artifacts.
@@ -100,7 +100,7 @@ Current next action (updated 2026-06-12):
 3. ✅ Done: OpenRosa/Spring MVC compatibility classification. OpenRosa is active Modulith (18 files, `/api/v1/openrosa`). AccountController deleted (0 callers). SidebarInit/SidebarEnumConstants deleted (0 injections).
 4. ✅ Done: Webapp surface cleanup — 29 JSPs, ~1400 static assets, GWT remnants, TLDs, tags, pages-servlet.xml deleted. web.xml 310→40 lines. SDVUtil bean removed from WebBeansConfig.
 5. ✅ Done: web/ module DELETED — 9 needed files (Validator, DiscrepancyValidator, FormDiscrepancyNotes, Validation, EanCheckDigit, ValidatorRegularExpression, ImportCRFInfoContainer, ImportCRFInfo, ImportCRFDataService, ImportHelper) migrated to app/, 93 dead legacy servlets/views/helpers deleted. Entire web/ directory removed. JSP/JSTL dependencies cleaned from app/pom.xml.
-6. ⬜ Phase 3 DAO deletion: 5 dead files deleted (ScheduledJobSort, OCContextLoaderListener, SubjectGroupMapDao, OpenClinicaVersionDAO + SPI). 73 remaining DAO/SPI/support Java files are blocked by final deletion proof: 759/878 methods are module-backed, 0 unused SPI rows remain, 119 rows are removed, and 0 fallback-SQL/legacy-only/adapter-gap rows remain. This slice also deleted 52 dead legacy rule engine files (RuleSetService, BeanPropertyService, ExpressionService, rule runners, expression tree, action processors, validators, helper DTOs — 12,461 lines) and removed all 9 remaining unused SPI default methods. Phase 3 SPI method coverage is now 100%. Next: prove DAO implementation/support file registration/factory/inheritance/runtime dependencies are safe before deletion.
+6. ⬜ Phase 3 DAO deletion: 5 dead files deleted (ScheduledJobSort, OCContextLoaderListener, SubjectGroupMapDao, OpenClinicaVersionDAO + SPI). 71 remaining DAO/SPI/support Java files are blocked by final deletion proof: 757/878 methods are module-backed, 0 unused SPI rows remain, 121 rows are removed, and 0 fallback-SQL/legacy-only/adapter-gap rows remain. This slice also deleted 52 dead legacy rule engine files (RuleSetService, BeanPropertyService, ExpressionService, rule runners, expression tree, action processors, validators, helper DTOs — 12,461 lines) and removed all 9 remaining unused SPI default methods. Phase 3 SPI method coverage is now 100%. Next: prove DAO implementation/support file registration/factory/inheritance/runtime dependencies are safe before deletion.
 7. ✅ Done: Phase 4 shared bean deletion — EXHAUSTED. 73 files (-8570L) across runs 81-95. 0 dead code remaining.
 8. ✅ Done: Phase 5 dependency cleanup — EXHAUSTED. 19 dead deps removed; remaining 8 all active.
 9. ✅ Initial import/export compatibility hardening complete in commit `bc1f24d97`: focused dataimport/legacy bridge/data-capture tests, typed validation preview/result output, commit audit event, result stats, and secure attachment download keyed by event CRF plus opaque attachment ids. Rollback proof was added after commit `ae72d2415`; remaining compatibility work: deterministic ODM preview validation fixtures; representative ODM parse, OpenRosa submission form-context, and export API contract coverage added; rule XML import is retired and guarded against reintroduction; legacy import job scheduling is retired in the current tree.
@@ -295,9 +295,9 @@ Current ledger state (updated 2026-06-15):
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `module-backed` | 759 | Adapter/repository/service path exists; still requires registration and caller checks before implementation deletion |
+| `module-backed` | 757 | Adapter/repository/service path exists; still requires registration and caller checks before implementation deletion |
 | `unused` | 0 | No unused SPI methods remain |
-| `removed` | 119 | SPI interface and implementation deleted; legacy service references cleaned up |
+| `removed` | 121 | SPI interface and implementation deleted; legacy service references cleaned up |
 
 For each DAO family:
 

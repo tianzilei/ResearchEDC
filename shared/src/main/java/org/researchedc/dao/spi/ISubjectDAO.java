@@ -1,10 +1,7 @@
 package org.researchedc.dao.spi;
 
 import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.SubjectBean;
-import org.researchedc.dao.submit.ListSubjectFilter;
-import org.researchedc.dao.submit.ListSubjectSort;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,8 +24,6 @@ public interface ISubjectDAO {
     ArrayList findAllByGenderNotSelf(char gender, int id);
     ArrayList findAllMalesNotSelf(int id);
     ArrayList findAllFemalesNotSelf(int id);
-    ArrayList<SubjectBean> getWithFilterAndSort(StudyBean currentStudy, ListSubjectFilter filter, ListSubjectSort sort, int rowStart, int rowEnd);
-    Integer getCountWithFilter(ListSubjectFilter filter, StudyBean currentStudy);
     EntityBean findAnotherByIdentifier(String name, int subjectId);
     SubjectBean findByUniqueIdentifier(String uniqueIdentifier);
     SubjectBean findByUniqueIdentifierAndAnyStudy(String uniqueIdentifier, int studyId);

@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-16 - Remove unused ISubjectDAO list filters
+
+- Removed unused `ISubjectDAO` list-filter SPI methods and the no-op `SubjectDaoAdapter` stubs; deleted `ListSubjectFilter` and `ListSubjectSort` after confirming no live callers remained.
+- Regenerated the legacy workflow inventory to 71 active DAO artifacts (26 replace, 45 keep compatibility) and updated the Phase 3 ledger to 757/878 module-backed methods, 121 removed rows, and 878/878 covered or removed (100.0%).
+
 ## 2026-06-15 - Remove unused SQLFactory cache wrapper
 
 - Removed the unused `CacheWrapper`/`EhCacheWrapper` abstraction and deleted `SQLFactory` dead cache initialization; no runtime callers used the wrapper `get`/`put` path.

@@ -10,11 +10,8 @@ import java.util.List;
 
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.SubjectBean;
 import org.researchedc.dao.spi.ISubjectDAO;
-import org.researchedc.dao.submit.ListSubjectFilter;
-import org.researchedc.dao.submit.ListSubjectSort;
 import org.researchedc.module.subject.entity.SubjectEntity;
 import org.researchedc.module.subject.repository.SubjectRepository;
 import org.springframework.context.annotation.Primary;
@@ -136,16 +133,6 @@ public class SubjectDaoAdapter implements ISubjectDAO {
         return toBeans(subjectRepository.findByGenderAndSubjectIdNot("f", id));
     }
 
-    @Override
-    public ArrayList<SubjectBean> getWithFilterAndSort(StudyBean currentStudy, ListSubjectFilter filter,
-                                                       ListSubjectSort sort, int rowStart, int rowEnd) {
-        return new ArrayList();
-    }
-
-    @Override
-    public Integer getCountWithFilter(ListSubjectFilter filter, StudyBean currentStudy) {
-        return 0;
-    }
 
     @Override
     public EntityBean findAnotherByIdentifier(String name, int subjectId) {

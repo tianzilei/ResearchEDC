@@ -8,9 +8,9 @@
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `module-backed` | 759 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
+| `module-backed` | 757 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
 | `unused` | 0 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
-| `removed` | 119 | SPI interface and implementation deleted; legacy service references cleaned up. |
+| `removed` | 121 | SPI interface and implementation deleted; legacy service references cleaned up. |
 
 Coverage snapshot: 878/878 tracked methods are module-backed or removed (**100.0%**). No method-level blockers remain; DAO implementation deletion now depends on proving registration, factory, inheritance, and runtime dependencies are safe per DAO family.
 
@@ -51,7 +51,7 @@ Coverage snapshot: 878/878 tracked methods are module-backed or removed (**100.0
 | `IStudyEventDefinitionDAO` | 19 | 0 | 5 | `app/src/main/java/org/researchedc/module/event/internal/adapter/StudyEventDefinitionDaoAdapter.java` |
 | `IStudyParameterValueDAO` | 15 | 0 | 0 | `app/src/main/java/org/researchedc/module/study/internal/adapter/StudyParameterValueDaoAdapter.java` |
 | `IStudySubjectDAO` | 54 | 0 | 3 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/StudySubjectDaoAdapter.java` |
-| `ISubjectDAO` | 27 | 0 | 0 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/SubjectDaoAdapter.java` |
+| `ISubjectDAO` | 25 | 0 | 2 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/SubjectDaoAdapter.java` |
 | `IUserAccountDAO` | 42 | 0 | 1 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/UserAccountDaoAdapter.java` |
 | `ItemDataTypeDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemDataTypeDaoAdapter.java` |
 | `ItemReferenceTypeDao` | 1 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemReferenceTypeDaoAdapter.java` |
