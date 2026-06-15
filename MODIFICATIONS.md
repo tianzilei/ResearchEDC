@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-15 - Regenerate legacy workflow inventory
+
+- Regenerated `docs/refactor/legacy-workflow-inventory.{csv,md}` after DAO marker cleanup; active workflow inventory is now 75 artifacts, all under the DAO surface.
+- Updated current-status docs to 888/963 artifacts closed (92.2%), 30 `replace`, 45 `keep compatibility`, and 0 `unknown` inventory rows.
+
 ## 2026-06-15 - Remove dead DAO package markers
 
 - Deleted seven two-line `shared/dao` `package.html` marker files with no runtime role after the DAO surface moved to SPI adapters and module-owned implementations.
