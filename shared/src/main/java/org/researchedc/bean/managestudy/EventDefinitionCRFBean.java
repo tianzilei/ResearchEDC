@@ -8,8 +8,6 @@
 package org.researchedc.bean.managestudy;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.AuditableEntityBean;
@@ -45,7 +43,6 @@ public class EventDefinitionCRFBean extends AuditableEntityBean {
         result = prime * result + ((eventName == null) ? 0 : eventName.hashCode());
         result = prime * result + (hidden ? 1231 : 1237);
         result = prime * result + (hideCrf ? 1231 : 1237);
-        result = prime * result + ((nullFlags == null) ? 0 : nullFlags.hashCode());
         result = prime * result + ((nullValues == null) ? 0 : nullValues.hashCode());
         result = prime * result + ((nullValuesList == null) ? 0 : nullValuesList.hashCode());
         result = prime * result + ordinal;
@@ -104,11 +101,6 @@ public class EventDefinitionCRFBean extends AuditableEntityBean {
         if (hidden != other.hidden)
             return false;
         if (hideCrf != other.hideCrf)
-            return false;
-        if (nullFlags == null) {
-            if (other.nullFlags != null)
-                return false;
-        } else if (!nullFlags.equals(other.nullFlags))
             return false;
         if (nullValues == null) {
             if (other.nullValues != null)
@@ -250,8 +242,6 @@ public class EventDefinitionCRFBean extends AuditableEntityBean {
     private ArrayList versions = new ArrayList();// not in table
 
     private CRFBean crf = new CRFBean(); // not in table
-
-    private HashMap nullFlags = new LinkedHashMap(); // not in table
 
     private String defaultVersionName = "";// not in DB
 
@@ -470,37 +460,6 @@ public class EventDefinitionCRFBean extends AuditableEntityBean {
      */
     public void setCrf(CRFBean crf) {
         this.crf = crf;
-    }
-
-    /**
-     * @return Returns the nullFlags.
-     */
-    public HashMap getNullFlags() {
-        if (nullFlags.size() == 0) {
-            nullFlags.put("NI", "0");
-            nullFlags.put("NA", "0");
-            nullFlags.put("UNK", "0");
-            nullFlags.put("NASK", "0");
-            nullFlags.put("NAV", "0");
-            nullFlags.put("ASKU", "0");
-            nullFlags.put("NAV", "0");
-            nullFlags.put("OTH", "0");
-            nullFlags.put("PINF", "0");
-            nullFlags.put("NINF", "0");
-            nullFlags.put("MSK", "0");
-            nullFlags.put("NPE", "0");
-
-
-        }
-        return nullFlags;
-    }
-
-    /**
-     * @param nullFlags
-     *            The nullFlags to set.
-     */
-    public void setNullFlags(HashMap nullFlags) {
-        this.nullFlags = nullFlags;
     }
 
     /**

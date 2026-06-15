@@ -176,7 +176,7 @@ public class DisplayItemBean {
 
                     ro.setValue(nv.getName());
                     ro.setText(nv.getDescription());
-                    rsb.addOption(ro);
+                    rsb.getOptions().add(ro);
                 }
             }
         }

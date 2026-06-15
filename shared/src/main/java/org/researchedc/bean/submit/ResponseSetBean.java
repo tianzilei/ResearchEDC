@@ -141,17 +141,6 @@ public class ResponseSetBean extends EntityBean {
     }
 
     /**
-     * Add an option to the array of response options.
-     *
-     * @param ro
-     *            The ResponseOptionBean to add.
-     */
-    public void addOption(ResponseOptionBean ro) {
-        options.add(ro);
-        optionIndexesByValue.put(ro.getValue(), Integer.valueOf(options.size() - 1));
-    }
-
-    /**
      * @return Returns the value.
      */
     public String getValue() {
