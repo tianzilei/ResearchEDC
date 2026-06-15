@@ -18,7 +18,7 @@ import java.util.ArrayList;
  *
  * @author thickerson
  */
-public class ItemBean extends AuditableEntityBean implements Comparable {
+public class ItemBean extends AuditableEntityBean {
     private String description = "";
 
     private String units = "";
@@ -291,13 +291,6 @@ public class ItemBean extends AuditableEntityBean implements Comparable {
     public ArrayList<ItemDataBean> getItemDataElements() {
         return itemDataElements;
     }
-    public void addItemDataElement(ItemDataBean el) {
-        if ( itemDataElements == null){
-        	itemDataElements = new ArrayList<ItemDataBean>();
-        }
-        itemDataElements.add(el);
-    }
-
     /**
      * @param itemMetas
      *            The itemMetas to set.
@@ -320,29 +313,6 @@ public class ItemBean extends AuditableEntityBean implements Comparable {
      */
     public void setSelected(boolean selected) {
         this.selected = selected;
-    }
-
-    public int compareTo(Object o) {
-        if (!o.getClass().equals(this.getClass())) {
-            return 0;
-        }
-
-        ItemBean arg = (ItemBean) o;
-        if (!getItemMetas().isEmpty() && !arg.getItemMetas().isEmpty()) {
-            ItemFormMetadataBean m1 = (ItemFormMetadataBean) getItemMetas().get(0);
-            ItemFormMetadataBean m2 = (ItemFormMetadataBean) arg.getItemMetas().get(0);
-            return m1.getOrdinal() - m2.getOrdinal();
-        }
-        //fix null pointer exception here 
-        else if (itemDataElements!=null && !itemDataElements.isEmpty() && arg.getItemDataElements()!=null && !arg.getItemDataElements().isEmpty()) {
-            ItemDataBean m1 = (ItemDataBean) getItemDataElements().get(0);
-            ItemDataBean m2 = (ItemDataBean) arg.getItemDataElements().get(0);
-            return m1.getOrdinal() - m2.getOrdinal();
-        }
-        
-        else {
-            return getName().compareTo(arg.getName());
-        }
     }
 
     /**

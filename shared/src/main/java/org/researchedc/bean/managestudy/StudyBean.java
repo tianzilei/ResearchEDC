@@ -143,30 +143,6 @@ public class StudyBean extends AuditableEntityBean {
     private String selection = "";
     private String timing = "";
 
-    public String getAbbreviatedName() {
-        String name = getName();
-        if (name.length() > 30) {
-            name = name.substring(0, 27) + "...";
-        }
-        return name;
-    }
-
-    public String getAbbreviatedParentStudyName() {
-        String parentStudyName = getParentStudyName();
-        if (parentStudyName.length() > 30) {
-            parentStudyName = parentStudyName.substring(0, 27) + "...";
-        }
-        return parentStudyName;
-    }
-
-    public String getAbbreviatedIdentifier() {
-        String identifier = getIdentifier();
-        if (identifier.length() > 25) {
-            identifier = identifier.substring(0, 22) + "...";
-        }
-        return identifier;
-    }
-
     /**
      * @return Returns the ageMax.
      */
@@ -205,14 +181,6 @@ public class StudyBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the allocation key, should be used when storing the Study
-     *         in the database.
-     */
-    public String getAllocationKey() {
-        return allocation;
-    }
-
-    /**
      * @param allocation
      *            The allocation to set.
      */
@@ -225,14 +193,6 @@ public class StudyBean extends AuditableEntityBean {
      */
     public String getAssignment() {
         return ResourceBundleProvider.getResAdmin(assignment);
-    }
-
-    /**
-     * @return Returns the assignment key, should be used when storing the Study
-     *         in the database.
-     */
-    public String getAssignmentKey() {
-        return assignment;
     }
 
     /**
@@ -281,14 +241,6 @@ public class StudyBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the control key, should be used when storing the Study in
-     *         the database.
-     */
-    public String getControlKey() {
-        return control;
-    }
-
-    /**
      * @param control
      *            The control to set.
      */
@@ -334,14 +286,6 @@ public class StudyBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the duration key, should be used when storing the Study
-     *         in the database.
-     */
-    public String getDurationKey() {
-        return duration;
-    }
-
-    /**
      * @param duration
      *            The duration to set.
      */
@@ -369,14 +313,6 @@ public class StudyBean extends AuditableEntityBean {
      */
     public String getEndpoint() {
         return ResourceBundleProvider.getResAdmin(endpoint);
-    }
-
-    /**
-     * @return Returns the endpoint key, should be used when storing the Study
-     *         in the database.
-     */
-    public String getEndpointKey() {
-        return endpoint;
     }
 
     /**
@@ -500,14 +436,6 @@ public class StudyBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the facilityRecruitmentStatus key, should be used when
-     *         storing the Study in the database.
-     */
-    public String getFacilityRecruitmentStatusKey() {
-        return facilityRecruitmentStatus;
-    }
-
-    /**
      * @param facilityRecruitmentStatus
      *            The facilityRecruitmentStatus to set.
      */
@@ -550,14 +478,6 @@ public class StudyBean extends AuditableEntityBean {
      */
     public String getGender() {
         return ResourceBundleProvider.getResAdmin(gender);
-    }
-
-    /**
-     * @return Returns the gender key, should be used when storing the Study in
-     *         the database.
-     */
-    public String getGenderKey() {
-        return gender;
     }
 
     /**
@@ -606,14 +526,6 @@ public class StudyBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the interventions, using the keys of the intervention
-     *         types, should be used when storing the Study in the database.
-     */
-    public String getInterventionsKey() {
-        return interventions;
-    }
-
-    /**
      * @param interventions
      *            The interventions to set.
      */
@@ -641,14 +553,6 @@ public class StudyBean extends AuditableEntityBean {
      */
     public String getMasking() {
         return ResourceBundleProvider.getResAdmin(masking);
-    }
-
-    /**
-     * @return Returns the masking key, should be used when storing the Study in
-     *         the database.
-     */
-    public String getMaskingKey() {
-        return masking;
     }
 
     /**
@@ -716,14 +620,6 @@ public class StudyBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the phase key, should be used when storing the Study in
-     *         the database.
-     */
-    public String getPhaseKey() {
-        return phase;
-    }
-
-    /**
      * @param phase
      *            The phase to set.
      */
@@ -784,14 +680,6 @@ public class StudyBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the purpose key, should be used when storing the Study in
-     *         the database.
-     */
-    public String getPurposeKey() {
-        return purpose;
-    }
-
-    /**
      * @param purpose
      *            The purpose to set.
      */
@@ -804,14 +692,6 @@ public class StudyBean extends AuditableEntityBean {
      */
     public String getSelection() {
         return ResourceBundleProvider.getResAdmin(selection);
-    }
-
-    /**
-     * @return Returns the selection key, should be used when storing the Study
-     *         in the database.
-     */
-    public String getSelectionKey() {
-        return selection;
     }
 
     /**
@@ -865,14 +745,6 @@ public class StudyBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the timing key, should be used when storing the Study in
-     *         the database.
-     */
-    public String getTimingKey() {
-        return timing;
-    }
-
-    /**
      * @param timing
      *            The timing to set.
      */
@@ -885,14 +757,6 @@ public class StudyBean extends AuditableEntityBean {
      */
     public String getProtocolType() {
         return ResourceBundleProvider.getResAdmin(protocolType);
-    }
-
-    /**
-     * @return Returns the type key, should be used when storing the Study in
-     *         the database.
-     */
-    public String getProtocolTypeKey() {
-        return protocolType;
     }
 
     /**
@@ -1056,10 +920,6 @@ public class StudyBean extends AuditableEntityBean {
 
     public void setOid(String oid) {
         this.oid = oid;
-    }
-
-    public boolean isSite(int parentStudyId) {
-        return parentStudyId > 0 ? true : false;
     }
 
 }

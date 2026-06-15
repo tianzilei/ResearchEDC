@@ -95,12 +95,6 @@ public class EventCRFBean extends AuditableEntityBean {
         this.updaterId = eventCRFBean.getUpdaterId();
     }
 
-    public EventCRFBean copy() {
-        EventCRFBean newObj = new EventCRFBean(this);
-        return newObj;
-
-    }
-
     public boolean isSdvStatus() {
         return sdvStatus;
     }

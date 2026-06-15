@@ -1,61 +1,42 @@
 # Next Refactor And Removal Plan
 
-**Created:** 2026-06-11
 **Updated:** 2026-06-15
 
-## Current Status
+## Current State
 
-| Surface | Before | Current | Removed | % Removed |
-|---------|--------|---------|---------|-----------|
-| `shared/` Java files | 793 | 297 | 496 | **62.6%** |
-| `shared/` lines | ~80,000+ | 37,212 | ~43,000+ | **~54%** |
-| `shared/dao/` files | 186 | 76 | 110 | **59.1%** |
-| `web/` files | 480 | 0 | 480 | **100%** |
-| `ws/` files | 75 | 0 | 75 | **100%** |
-| SPI methods | 878 | 878 covered | 120 removed | **100%** |
+| Surface | Before | Current | Removed | % |
+|---------|--------|---------|---------|---|
+| shared/ files | 793 | 279 | 514 | 64.8% |
+| shared/ lines | ~80,000 | 35,499 | ~44,500 | ~56% |
+| dao/ files | 186 | 75 | 111 | 59.7% |
+| web/ | 480 | 0 | 480 | 100% |
+| ws/ | 75 | 0 | 75 | 100% |
+| SPI methods | 878 | 878 covered | 120 removed | 100% |
 | Module files | — | 404 | — | — |
 | Module lines | — | 27,471 | — | — |
 
-**Code balance:** 297 legacy / 404 modern files = **42% legacy / 58% modern**
+**Code balance:** 279 legacy / 404 modern = 41% legacy / 59% modern (files), 56% legacy / 44% modern (lines)
 
-## Completed This Session
+## Status
 
-- ✅ 28 unused SPI methods removed from 6 DAO families
-- ✅ 41 unused SPI methods removed from 16 DAO families
-- ✅ 52 dead rule engine files deleted (12,461 lines)
-- ✅ QueryDAO deleted
-- ✅ 36 dead ODM/scoring/discrepancy files deleted (14,294 lines)
-- ✅ LegacyDaoFactory, EntityDAO, ExtractBean deleted (7,468 lines)
-- ✅ 94 dead shared/ files deleted (8,446 lines)
-- ✅ SPI method coverage: 100% (878/878)
+Dead code is exhausted. All 279 remaining shared/ files have active callers from module code.
 
-## Remaining Work
+## Next: Line Reduction
 
-### Remaining shared/ breakdown (297 files)
+Goal: reduce shared/ from 35,499 lines by removing dead methods, fields, and inner classes from alive files.
 
-| Category | Files | Status |
-|----------|-------|--------|
-| Bean/DTOs | 88 | Most have active callers from adapters |
-| Domain entities | 112 | JPA mappings, used by adapters |
-| DAO (SPI + filter + infra) | 76 | Structurally required by adapter pattern |
-| Services | 4 | Active callers from app/ |
-| Jobs | 4 | Active Quartz infrastructure |
-| Core | 4 | Active (CoreResources, StringUtil, etc.) |
-| Other (i18n, patterns, exceptions) | 9 | Active |
+Priority targets (largest files with most dead surface):
 
-### Next actions
+1. **EntityDAO.java deleted** — 3,156 lines removed ✅
+2. **ExtractBean.java deleted** — 3,000+ lines removed ✅
+3. **Large bean files** — check for dead methods in StudyBean, CRFVersionBean, ItemBean, EventCRFBean, StudySubjectBean, etc.
+4. **Large domain entities** — check for dead methods in domain entities
+5. **DAO SPI interfaces** — check for dead abstract methods still in interfaces
 
-1. **Dead bean scan** — check remaining 88 beans for any more dead files
-2. **Dead service scan** — check remaining 4 services for dead files
-3. **Line reduction** — remove dead methods/fields from alive beans
-4. **Done definition** — all remaining shared/ files have active callers
-
-## Verification Commands
+## Verification
 
 ```bash
-git status --short
 mvn -pl app -am compile -DskipTests
 mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false
 bash scripts/ci/check-legacy-guardrails.sh
-cd frontend && pnpm typecheck
 ```

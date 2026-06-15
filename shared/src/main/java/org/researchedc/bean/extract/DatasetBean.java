@@ -231,84 +231,6 @@ public class DatasetBean extends AuditableEntityBean {
     }
 
     /**
-     * takes the dataset bean information and generates a query; this will
-     * changes if the database changes. This will also change when we apply
-     * filters.
-     * 
-     * @return string in SQL, to elicit information.
-     */
-    public String generateQuery() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("select distinct * from " + VIEW_NAME + " where ");
-
-        if (!this.getEventIds().isEmpty()) {
-            String idList = this.getEventIds().toString();
-            sb.append("study_event_definition_id in (" + idList + ") and ");
-        }
-        if (!this.getItemIds().isEmpty()) {
-            String idList = this.getItemIds().toString();
-            sb.append("item_id in (" + idList + ") and ");
-        }
-
-        String pattern = "yyyy-MM-dd";
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        // guard clauses to defend vs NPE, tbh 10-2009
-        String beginDate = "1900-01-01";
-        if (dateStart != null) {
-            beginDate = sdf.format(this.dateStart);
-        }
-        String stopDate = "2100-01-01";
-        if (dateEnd != null) {
-            stopDate = sdf.format(this.dateEnd);
-        }
-        // << tbh 10/2009
-        sb.append("(date(date_created) >= date('" + beginDate + "')) and (date(date_created) <= date('" + stopDate + "'))");
-        // perform regexp here that pulls out [] square brackets
-
-        String returnMe = sb.toString().replaceAll("\\[|\\]", "");
-        // returnMe = returnMe.replaceAll("[^0-9])",")");
-        // return sb.toString();
-        returnMe = returnMe + " order by date_start asc";
-        return returnMe;
-    }
-
-    /**
-     * generateOracleQuery, generates the Oracle syntax for the query (this may
-     * have to be changed to reflect different syntaxes in the future)
-     * 
-     * @return the Oracle SQL syntax to capture datasets.
-     */
-    public String generateOracleQuery() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("select distinct * from " + VIEW_NAME + " where ");
-        if (!this.getEventIds().isEmpty()) {
-            String idList = this.getEventIds().toString();
-            sb.append("study_event_definition_id in (" + idList + ") and ");
-        }
-
-        if (!this.getItemIds().isEmpty()) {
-            String idList = this.getItemIds().toString();
-            sb.append("item_id in (" + idList + ") and ");
-        }
-        String pattern = "dd-MMM-yyyy";// changed by bads issue 2152
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-        String beginDate = sdf.format(this.dateStart);
-        String stopDate = sdf.format(this.dateEnd);
-
-        sb.append("(date_created >= '" + beginDate + "') and (date_created <= '" + stopDate + "')");
-        // perform regexp here that pulls out [] square brackets
-
-        logger.info("-----------------------------");
-        logger.info(sb.toString());
-        logger.info("-----------------------------");
-        String returnMe = sb.toString().replaceAll("\\[|\\]", "");
-        // returnMe = returnMe.replaceAll("[^0-9])",")");
-        // return sb.toString();
-        returnMe = returnMe + " order by date_start";
-        return returnMe;
-    }
-
-    /**
      * @return Returns the itemIds.
      */
     public ArrayList getItemIds() {
@@ -428,29 +350,6 @@ public class DatasetBean extends AuditableEntityBean {
         this.showSubjectGender = showSubjectGender;
     }
 
-    /**
-     * @return Returns the itemDefCrf.
-     */
-    public ArrayList getItemDefCrf() {
-        return itemDefCrf;
-    }
-
-    /**
-     * @param itemDefCrf
-     *            The itemDefCrf to set.
-     */
-    public void setItemDefCrf(ArrayList itemDefCrf) {
-        this.itemDefCrf = itemDefCrf;
-    }
-
-    public boolean isShowCRFcompletionDate() {
-        return showCRFcompletionDate;
-    }
-
-    public void setShowCRFcompletionDate(boolean showCRFcompletionDate) {
-        this.showCRFcompletionDate = showCRFcompletionDate;
-    }
-
     public boolean isShowCRFinterviewerDate() {
         return showCRFinterviewerDate;
     }
@@ -491,22 +390,6 @@ public class DatasetBean extends AuditableEntityBean {
      * showDiscrepancyInformation) { this.showDiscrepancyInformation =
      * showDiscrepancyInformation; }
      */
-
-    public boolean isShowEventEndTime() {
-        return showEventEndTime;
-    }
-
-    public void setShowEventEndTime(boolean showEventEndTime) {
-        this.showEventEndTime = showEventEndTime;
-    }
-
-    public boolean isShowEventStartTime() {
-        return showEventStartTime;
-    }
-
-    public void setShowEventStartTime(boolean showEventStartTime) {
-        this.showEventStartTime = showEventStartTime;
-    }
 
     public boolean isShowEventStatus() {
         return showEventStatus;
@@ -563,14 +446,6 @@ public class DatasetBean extends AuditableEntityBean {
         this.showSubjectGroupInformation = showSubjectGroupInformation;
     }
 
-    public ArrayList getSubjectGroupIds() {
-        return subjectGroupIds;
-    }
-
-    public void setSubjectGroupIds(ArrayList subjectGroupIds) {
-        this.subjectGroupIds = subjectGroupIds;
-    }
-
     public void setODMMetaDataVersionName(String odmMetaDataVersionName) {
         this.odmMetaDataVersionName = odmMetaDataVersionName;
     }
@@ -609,13 +484,6 @@ public class DatasetBean extends AuditableEntityBean {
 
     public void setDatasetItemStatus(DatasetItemStatus datasetItemStatus) {
         this.datasetItemStatus = datasetItemStatus;
-    }
-
-    public String sqlWithUniqeItemIds(String itemIdStr) {
-        String sql = "";
-        String[] s1 = this.SQLStatement.split("item_id in");
-        sql += s1[0] + itemIdStr + s1[1].substring(s1[1].indexOf(")"));
-        return sql;
     }
 
     /*

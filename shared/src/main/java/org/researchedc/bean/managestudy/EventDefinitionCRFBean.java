@@ -19,7 +19,7 @@ import org.researchedc.domain.SourceDataVerification;
 /**
  * @author jxu
  */
-public class EventDefinitionCRFBean extends AuditableEntityBean implements Comparable {
+public class EventDefinitionCRFBean extends AuditableEntityBean {
     private int studyEventDefinitionId = 0;
 
     // issue 3212: the Event CRF is hidden from views in the application
@@ -533,42 +533,12 @@ public class EventDefinitionCRFBean extends AuditableEntityBean implements Compa
         this.defaultVersionName = defaultVersionName;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(Object o) {
-        if (o == null || !o.getClass().equals(this.getClass())) {
-            return 0;
-        }
-
-        EventDefinitionCRFBean edcb = (EventDefinitionCRFBean) o;
-        return this.ordinal - edcb.ordinal;
-    }
-
     public SourceDataVerification getSourceDataVerification() {
         return sourceDataVerification;
     }
 
     public void setSourceDataVerification(SourceDataVerification sourceDataVerification) {
         this.sourceDataVerification = sourceDataVerification;
-    }
-
-    public String getSelectedVersionNames() {
-        return selectedVersionNames;
-    }
-
-    public void setSelectedVersionNames(String selectedVersionNames) {
-        this.selectedVersionNames = selectedVersionNames;
-    }
-
-    public ArrayList<Integer> getSelectedVersionIdList() {
-        return selectedVersionIdList;
-    }
-
-    public void setSelectedVersionIdList(ArrayList<Integer> selectedVersionIdList) {
-        this.selectedVersionIdList = selectedVersionIdList;
     }
 
     public String getEventName() {
@@ -578,14 +548,6 @@ public class EventDefinitionCRFBean extends AuditableEntityBean implements Compa
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
-
-	public CRFVersionBean getDefaultCRF() {
-		return defaultCRF;
-	}
-
-	public void setDefaultCRF(CRFVersionBean defaultCRF) {
-		this.defaultCRF = defaultCRF;
-	}
 
 	public boolean isParticipantForm() {
 		return participantForm == true;

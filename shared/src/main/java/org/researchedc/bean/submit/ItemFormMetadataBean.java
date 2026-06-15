@@ -681,14 +681,4 @@ public class ItemFormMetadataBean extends EntityBean implements Comparable {
         this.conditionalDisplay = conditionalDisplay;
     }
     
-    /**
-     * Return true if conditionalDisplay String length > 0
-     * @return
-     */
-    public boolean isConditionalDisplayItem() {
-        if(this.conditionalDisplay!=null && this.conditionalDisplay.length()>0) {
-            return true;
-        }
-        return false;
-    }
 }

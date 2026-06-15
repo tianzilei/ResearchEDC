@@ -328,26 +328,6 @@ public class UserAccountBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the techAdmin flag, for technical administrators.
-     */
-    public boolean isTechAdmin() {
-        return techAdmin;
-    }
-
-    public boolean hasUserType(UserType u) {
-        Iterator userTypesIt = userTypes.iterator();
-
-        while (userTypesIt.hasNext()) {
-            UserType myType = (UserType) userTypesIt.next();
-            if (myType.equals(u)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * @return Returns the activeStudyId.
      */
     public int getActiveStudyId() {
@@ -360,22 +340,6 @@ public class UserAccountBean extends AuditableEntityBean {
      */
     public void setActiveStudyId(int activeStudyId) {
         this.activeStudyId = activeStudyId;
-    }
-
-    public void addRole(StudyUserRoleBean sur) {
-        if (sur.getRole() != null && sur.getRole().equals(Role.ADMIN)) {
-            addUserType(UserType.SYSADMIN);
-            return;
-        }
-
-        Integer key = Integer.valueOf(sur.getStudyId());
-        if (rolesByStudy.containsKey(key)) {
-            Integer index = (Integer) rolesByStudy.get(key);
-            roles.set(index.intValue(), sur);
-        } else {
-            roles.add(sur);
-            rolesByStudy.put(key, Integer.valueOf(roles.size() - 1));
-        }
     }
 
     public StudyUserRoleBean getRoleByStudy(StudyBean study) {
@@ -395,19 +359,6 @@ public class UserAccountBean extends AuditableEntityBean {
         }
 
         return new StudyUserRoleBean();
-    }
-
-    public boolean hasRoleInStudy(int studyId) {
-        StudyUserRoleBean s = getRoleByStudy(studyId);
-        return s.isActive();
-    }
-
-    public Role getActiveStudyRole() {
-        return getRoleByStudy(activeStudyId).getRole();
-    }
-
-    public String getActiveStudyRoleName() {
-        return getRoleByStudy(activeStudyId).getRole().getName();
     }
 
     // public boolean hasPrivilege(Privilege p) {
@@ -439,56 +390,6 @@ public class UserAccountBean extends AuditableEntityBean {
     }
 
     /**
-     * @param roles
-     *            The roles to set.
-     */
-    public void setRoles(ArrayList roles) {
-        this.roles = new ArrayList();
-        rolesByStudy.clear();
-
-        for (int i = 0; i < roles.size(); i++) {
-            StudyUserRoleBean sur = (StudyUserRoleBean) roles.get(i);
-
-            if (sur.getRole().equals(Role.ADMIN)) {
-                addUserType(UserType.SYSADMIN);
-                continue;
-            }
-
-            this.roles.add(sur);
-
-            Integer key = Integer.valueOf(sur.getStudyId());
-            Integer value = Integer.valueOf(this.roles.size() - 1);
-            rolesByStudy.put(key, value);
-        }
-    }
-
-    public boolean equals(UserAccountBean ub) {
-        if (ub == null) {
-            return false;
-        }
-        return id == ub.getId();
-    }
-
-    /**
-     * @return Returns the numVisitsToMainMenu.
-     */
-    public int getNumVisitsToMainMenu() {
-        return numVisitsToMainMenu;
-    }
-
-    /**
-     * @param numVisitsToMainMenu
-     *            The numVisitsToMainMenu to set.
-     */
-    public void setNumVisitsToMainMenu(int numVisitsToMainMenu) {
-        this.numVisitsToMainMenu = numVisitsToMainMenu;
-    }
-
-    public void incNumVisitsToMainMenu() {
-        numVisitsToMainMenu++;
-    }
-
-    /**
      * @return Returns the notes.
      */
     public String getNotes() {
@@ -509,10 +410,6 @@ public class UserAccountBean extends AuditableEntityBean {
 
     public void setRunWebservices(Boolean runWebservices) {
         this.runWebservices = runWebservices;
-    }
-
-    public boolean isLdapUser() {
-        return this.passwd.equals("*");
     }
 
 	public String getAccessCode() {
