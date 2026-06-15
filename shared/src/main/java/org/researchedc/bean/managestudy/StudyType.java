@@ -9,7 +9,6 @@ package org.researchedc.bean.managestudy;
 
 import org.researchedc.bean.core.Term;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,20 +31,12 @@ public class StudyType extends Term {
         super(id, name);
     }
 
-    public static boolean contains(int id) {
-        return Term.contains(id, list);
-    }
-
     public static StudyType get(int id) {
         Term t = Term.get(id, list);
         if (!t.isActive()) {
             return StudyType.INVALID;
         }
         return (StudyType) t;
-    }
-
-    public static ArrayList toArrayList() {
-        return new ArrayList(list);
     }
 
 }

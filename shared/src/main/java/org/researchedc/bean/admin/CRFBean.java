@@ -78,10 +78,6 @@ public class CRFBean extends AuditableEntityBean {
         this.versions = versions;
     }
 
-    public int getVersionNumber() {
-        return this.versions.size();
-    }
-
     /**
      * @return Returns the selected.
      */

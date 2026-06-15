@@ -57,13 +57,6 @@ public class StudyGroupClassBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the groupClassTypeName.
-     */
-    public String getGroupClassTypeName() {
-        return org.researchedc.i18n.util.ResourceBundleProvider.getResTerm(groupClassTypeName);
-    }
-
-    /**
      * @param groupClassTypeName
      *            The groupClassTypeName to set.
      */

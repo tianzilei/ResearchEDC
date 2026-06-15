@@ -54,7 +54,14 @@ public class ListSubjectFilter implements CriteriaCommand {
         if (value != null) {
             if (property.equals("subject.status")) {
                 criteria = criteria + " and ";
-                criteria = criteria + " " + columnMapping.get(property) + " = " + Status.getByName(value.toString()).getId() + " ";
+                int statusId = 0;
+                for (int si = 0; si < 12; si++) {
+                    if (Status.contains(si) && Status.get(si).getName().equals(value.toString())) {
+                        statusId = si;
+                        break;
+                    }
+                }
+                criteria = criteria + " " + columnMapping.get(property) + " = " + statusId + " ";
             } else if (property.equals("subject.createdDate") || property.equals("subject.updatedDate")) {
                 criteria += onlyYearAndMonthAndDay(String.valueOf(value), columnMapping.get(property));
                 criteria += onlyYear(String.valueOf(value), columnMapping.get(property));
