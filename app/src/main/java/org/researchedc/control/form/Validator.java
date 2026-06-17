@@ -26,7 +26,6 @@ import java.util.regex.PatternSyntaxException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.EntityAction;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.NumericComparisonOperator;
@@ -34,21 +33,15 @@ import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.TermType;
 import org.researchedc.bean.core.UserType;
-import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ResponseOptionBean;
 import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.core.form.StringUtil;
-import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.spi.IUserAccountDAO;
 import org.researchedc.i18n.core.LocaleResolver;
 import org.researchedc.i18n.util.I18nFormatUtil;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -179,11 +172,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * <li> e.g. addValidation( password , Validator.LENGTH_NUMERIC_COMPARISON,
  * NumericComparisonOperator.GREATER_THAN_OR_EQUAL_TO, 8);
  * </ul>
- * <li> ENTITY_EXISTS   not yet implemented, but it will test that the value of
- * an input field holds the primary key of some entity in the database; the
- * entity type is implicitly specified by an EntityDAO passed to addValidation
- * <li> USERNAME_UNIQUE - not yet implemented, but it will test that there are
- * no users with the specified username
  * <li> IS_AN_INTEGER   test that a string is a valid integer
  * <ul>
  * <li> addValidation(fieldname, Validator.IS_AN_INTEGER)
@@ -231,16 +219,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * earlierDateFieldName);
  * <li> e.g. addValidation("endDate", Validator.DATE_IS_AFTER_OR_EQUAL,
  * "startDate");
- * </ul>
- * <li> ENTITY_EXISTS_IN_STUDY - test that an entity exists in a particular
- * study
- * <ul>
- * <li> addValidation(entityIDFieldName, Validator.ENTITY_EXISTS_IN_STUDY,
- * auditableEntityDAO, studyBean);
- * <li> note that the DAO provided must define findByPKAndStudyName; otherwise
- * this validation always fails.
- * <li> e.g. addValidation("studySubject", Validator.ENTITY_EXISTS_IN_STUDY,
- * subjectStudyDAO, currentStudy);
  * </ul>
  * <li> NO_BLANKS_SET - test that at least one value was entered for a set (e.g.
  * a checkbox or multiple select)
@@ -400,9 +378,6 @@ public class Validator {
     // e.g.
     // IS_A_EMAIL removed — email delivery retired (0 active callers, run-66)
     public static final int LENGTH_NUMERIC_COMPARISON = 7;
-    public static final int ENTITY_EXISTS = 8; // for checking if a primary key
-    // is valid
-    public static final int USERNAME_UNIQUE = 9;
     public static final int IS_AN_INTEGER = 10;
     public static final int IS_A_FILE = 11; // to check for uploads, making sure
     // that there is a file present
@@ -417,7 +392,6 @@ public class Validator {
     // like
     // "NumQuestions >=
     // 1"
-    public static final int ENTITY_EXISTS_IN_STUDY = 19;
     public static final int IS_A_PHONE_NUMBER = 20;
     public static final int NO_BLANKS_SET = 22;
     public static final int IN_RESPONSE_SET = 23;
@@ -583,39 +557,6 @@ public class Validator {
         addValidation(fieldName, v);
     }
 
-    /*
-     * use for: ENTITY_EXISTS_IN_STUDY
-     */
-    public void addValidation(String fieldName, int type, IStudyEventDefinitionDAO dao, StudyBean study) {
-        addEntityExistsInStudyValidation(fieldName, type, dao, study);
-    }
-
-    private void addEntityExistsInStudyValidation(String fieldName, int type, Object dao, StudyBean study) {
-        Validation v = new Validation(type);
-        v.addArgument(dao);
-        v.addArgument(study);
-
-        addValidation(fieldName, v);
-    }
-
-    /*
-     * use for: ENTITY_EXISTS
-     */
-    public void addValidation(String fieldName, int type, IStudyDAO studyDao) {
-        addEntityExistsValidation(fieldName, type, studyDao);
-    }
-
-    public void addValidation(String fieldName, int type, IUserAccountDAO userAccountDao) {
-        addEntityExistsValidation(fieldName, type, userAccountDao);
-    }
-
-    private void addEntityExistsValidation(String fieldName, int type, Object dao) {
-        Validation v = new Validation(type);
-        v.addArgument(dao);
-
-        addValidation(fieldName, v);
-    }
-
     // TODO: add is_of_file_type addValidation method
 
     /*
@@ -772,15 +713,6 @@ public class Validator {
             case IS_A_PHONE_NUMBER:
                 errorMessage =
                     resexception.getString("input_not_valid_phone") + getPhoneRegEx().getDescription() + " " + resexception.getString("format4") + ".";
-                break;
-            case ENTITY_EXISTS:
-                errorMessage = resexception.getString("not_select_valid_entity");
-                break;
-            case ENTITY_EXISTS_IN_STUDY:
-                errorMessage = resexception.getString("not_select_valid_entity_current_study");
-                break;
-            case USERNAME_UNIQUE:
-                errorMessage = resexception.getString("username_already_exists");
                 break;
             case IS_AN_INTEGER:
                 errorMessage = resexception.getString("input_not_integer");
@@ -973,28 +905,6 @@ public class Validator {
             break;
         case IS_A_PHONE_NUMBER:
             if (!isPhoneNumber(fieldName)) {
-                addError(fieldName, v);
-            }
-            break;
-        case ENTITY_EXISTS:
-            Object entityDao = v.getArg(0);
-
-            if (!entityExists(fieldName, entityDao)) {
-                addError(fieldName, v);
-            }
-            break;
-        case ENTITY_EXISTS_IN_STUDY:
-            Object dao = v.getArg(0);
-            StudyBean study = (StudyBean) v.getArg(1);
-
-            if (!entityExistsInStudy(fieldName, dao, study)) {
-                addError(fieldName, v);
-            }
-            break;
-        case USERNAME_UNIQUE:
-            IUserAccountDAO udao = (IUserAccountDAO) v.getArg(0);
-
-            if (!usernameUnique(fieldName, udao)) {
                 addError(fieldName, v);
             }
             break;
@@ -1624,83 +1534,6 @@ public class Validator {
         }
 
         return false;
-    }
-
-    protected boolean entityExists(String fieldName, Object dao) {
-        String fieldValue = getFieldValue(fieldName);
-
-        if (fieldValue == null) {
-            return false;
-        }
-
-        try {
-            int id = Integer.parseInt(fieldValue);
-            EntityBean e = findEntityByPK(dao, id);
-
-            if (!e.isActive()) {
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private EntityBean findEntityByPK(Object dao, int id) throws Exception {
-        if (dao instanceof IStudyDAO studyDao) {
-            return studyDao.findByPK(id);
-        }
-        throw new IllegalArgumentException("Unsupported ENTITY_EXISTS DAO type: " + dao.getClass().getName());
-    }
-
-    protected boolean entityExistsInStudy(String fieldName, Object dao, StudyBean study) {
-
-        String fieldValue = getFieldValue(fieldName);
-
-        if (fieldValue == null) {
-            return false;
-        }
-
-        try {
-            int id = Integer.parseInt(fieldValue);
-            AuditableEntityBean e = findEntityByPKAndStudy(dao, id, study);
-
-            if (!e.isActive()) {
-                return false;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private AuditableEntityBean findEntityByPKAndStudy(Object dao, int id, StudyBean study) {
-        if (dao instanceof IStudyEventDefinitionDAO studyEventDefinitionDao) {
-            return studyEventDefinitionDao.findByPKAndStudy(id, study);
-        }
-        throw new IllegalArgumentException("Unsupported ENTITY_EXISTS_IN_STUDY DAO type: " + dao.getClass().getName());
-    }
-
-    protected boolean usernameUnique(String fieldName, IUserAccountDAO udao) {
-        String fieldValue = getFieldValue(fieldName);
-
-        if (fieldValue == null) {
-            return true;
-        }
-
-        try {
-            UserAccountBean ub = (UserAccountBean) udao.findByUserName(fieldValue);
-
-            if (ub.isActive()) {
-                return false;
-            }
-        } catch (Exception e) {
-            return true;
-        }
-
-        return true;
     }
 
     protected boolean isDateAfterOrEqual(String laterDateFieldName, String earlierDateFieldName) {

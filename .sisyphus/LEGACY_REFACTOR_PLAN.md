@@ -24,7 +24,7 @@
 ### Remaining legacy code baseline (2026-06-12, current worktree after regenerated inventory)
 
 ```
-shared/   242 Java files → bean/ dao SPI/ domain/ job/ exception/ i18n/ patterns/ core/ support/
+shared/   241 Java files → bean/ dao SPI/ domain/ job/ exception/ i18n/ patterns/ core/ support/
            39 Java files under shared/src/main/java/org/researchedc/dao
 web/        0 files → directory absent; needed import/validation compatibility classes migrated to app/
 ws/         0 Java files → SOAP module absent in current tree
@@ -258,16 +258,17 @@ Modules communicate via:
 > - **0 `DaoProvider.getDao()` call sites** remain across app/web/ws/shared.
 > - Base servlet/controller paths now receive DAOs and `StudyConfigService` through Spring injection instead of `DaoProvider`.
 > - Rule-runner action processors moved to injected collaborators through `RuleSetService`/`RuleRunner`/`ActionProcessorFacade`; the high-volume study/subject/user-account collaborators were later widened to SPI where covered.
-> - `StudySubjectServiceImpl`, `ParticipantEventService`, `JobTriggerService`, `ApiSecurityFilter`, `SubjectTransferValidator`, `SetUpStudyRole`, and `MetadataCollectorResource` have been moved toward injected collaborators.
+> - `StudySubjectServiceImpl`, `ParticipantEventService`, `JobTriggerService`, `SubjectTransferValidator`, `SetUpStudyRole`, and `MetadataCollectorResource` have been moved toward injected collaborators; the former `ApiSecurityFilter` compatibility class was later removed as dead surface.
+> - The app-hosted import bridge later dropped its dead `DataSource` seam as `ImportCRFDataService` shed preview-only helpers, then pulled commit item shaping, study metadata/OID validation, and the remaining event/status compatibility logic into `ImportCrfDataAdapter`; that final slice deleted `ImportCRFDataService` and brought non-adapter legacy DAO/SPI imports in `app/src/main/java` down to zero.
 > - **`mvn -pl app -am compile -DskipTests`** ✅
 >
 > **Completed in 2026-05-29 SPI consumer widening:**
 > - Commit `10f0f6ea2` (`Refactor legacy DAO consumers to SPI`) widened high-volume `StudyDAO`, `StudySubjectDAO`, `SubjectDAO`, and `UserAccountDAO` consumers across shared/web/ws/app to `IStudyDAO`, `IStudySubjectDAO`, `ISubjectDAO`, and `IUserAccountDAO` where the SPI already covered the calls.
 > - Added `app/src/main/java/org/researchedc/config/DaoRegistrar.java` for central DAO bean registration and kept default manual construction contained in `shared/src/main/java/org/researchedc/dao/LegacyDaoFactory.java`.
 > - `LegacyDaoFactory` now exposes SPI-returning factories for study, study-subject, subject, and user-account DAOs.
-> - `OidcSessionBridgeSuccessHandler` and legacy validators/controllers now resolve user-account access through `IUserAccountDAO` instead of concrete `UserAccountDAO`.
+> - The now-deleted `OidcSessionBridgeSuccessHandler` and then-active legacy validators/controllers were widened from concrete `UserAccountDAO` usage to `IUserAccountDAO`; later cleanup removed the dead handler and dead DAO-backed `Validator` branches with no remaining callers.
 > - Current concrete references for this DAO family are boundary-only: DAO implementation classes, `LegacyDaoFactory`, and the remaining WS `UserAccountAdapter` containment wrapper.
-> - Follow-up, currently uncommitted WS CRF slice widens `CrfBusinessLogicHelper`, `ImportCRFDataService`, and `StudyEventDefinitionEndpoint` from concrete `CRFDAO` fields/imports to `ICrfDAO`; `mvn -pl app -am compile -DskipTests` and `git diff --check` passed before the documentation refresh.
+> - Follow-up, an earlier WS CRF slice widened `CrfBusinessLogicHelper`, the since-deleted `ImportCRFDataService`, and `StudyEventDefinitionEndpoint` from concrete `CRFDAO` fields/imports to `ICrfDAO`; `mvn -pl app -am compile -DskipTests` and `git diff --check` passed before the documentation refresh.
 >
 > **Next steps for DAO deletion:**
 > 1. Replace concrete DAO typed fields/parameters in legacy services and helpers with module-owned service ports.

@@ -497,8 +497,8 @@ The remaining CRF metadata artifacts are active data-entry/section-view dependen
 
 2. **SPI 消费端收敛:**
    - `StudyDAO`、`StudySubjectDAO`、`SubjectDAO`、`UserAccountDAO` 的 shared/web/ws/app 消费端改为 `IStudyDAO`、`IStudySubjectDAO`、`ISubjectDAO`、`IUserAccountDAO`。
-   - `OidcSessionBridgeSuccessHandler`、legacy controller/filter/job/validator 等路径通过 SPI 访问 user account 数据。
-   - `Validator` 相关 username/entity 校验支持 SPI user-account DAO，减少对具体 `UserAccountDAO` 的依赖。
+   - 当时的 `OidcSessionBridgeSuccessHandler`、legacy controller/filter/job/validator 等路径通过 SPI 访问 user account 数据；其中前者已在后续 dead-surface cleanup 中删除。
+   - `Validator` 当时的 username/entity 校验被 widened 到 SPI user-account DAO；这些校验分支后续在确认无调用方后已删除。
 
 3. **当前边界状态:**
    - `StudyDAO` / `StudySubjectDAO` / `SubjectDAO` / `UserAccountDAO` 具体类型引用已降为边界点：DAO 实现类、`LegacyDaoFactory`，以及 `ws/internal/adapter/UserAccountAdapter`。
@@ -591,7 +591,7 @@ The remaining CRF metadata artifacts are active data-entry/section-view dependen
    - `NotificationActionProcessor`、`RandomizeActionProcessor` 不再在执行路径内直接构造这些 DAO。
 
 3. **服务与过滤器迁移:**
-   - `StudySubjectServiceImpl`、`ParticipantEventService`、`JobTriggerService`、`ApiSecurityFilter`、`SubjectTransferValidator`、`SetUpStudyRole`、`MetadataCollectorResource` 改为使用注入协作者。
+   - `StudySubjectServiceImpl`、`ParticipantEventService`、`JobTriggerService`、`SubjectTransferValidator`、`SetUpStudyRole`、`MetadataCollectorResource` 改为使用注入协作者；当时仍在树中的 `ApiSecurityFilter` 已在后续 dead-surface cleanup 中删除。
    - `StudyConfigService` 注册为 Spring service，并在 legacy 调用点开始复用注入实例。
 
 ### 当前状态统计

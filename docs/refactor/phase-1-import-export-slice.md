@@ -61,7 +61,7 @@ All render CRF data in print format — used for regulatory inspection, ODM expo
 | Gap | Impact | Effort |
 |-----|--------|--------|
 | No ODM XML validation pipeline in module | Cannot replace `ImportCRFDataServlet` | HIGH |
-| No study metadata/OID validation in module | ImportCRFDataService is legacy-only | HIGH |
+| Study metadata/OID validation still depends on legacy SPI adapters | Now lives in `ImportCrfDataAdapter`, but still needs DAO-port strangulation | MEDIUM |
 | No edit check execution during import | Validation errors shown in legacy JSP only | HIGH |
 | No CRF definition (Excel) import in module | SPA ImportManager broken for `crf-def` type | MEDIUM |
 | No file attachment download endpoint | `DownloadAttachedFileServlet` blocks deletion | MEDIUM |
@@ -77,12 +77,11 @@ import.jsp → ImportCRFDataServlet (action=confirm)
   ├── FileUploadHelper.returnFiles()
   ├── ODM 1.3/1.2.1 XML schema validation
   ├── Castor unmarshalling (ODMContainer)
-  ├── ImportCRFDataService.validateStudyMetadata()
-  ├── ImportCRFDataService.eventCRFStatusesValid()
-  ├── ImportCRFDataService.fetchEventCRFBeans()
-  ├── ImportCRFDataService.lookupValidationErrors() [edit checks]
-  ├── ImportCRFDataService.generateSummaryStatsBean()
-  └── Forward to verifyImport.jsp → commit
+  ├── ImportCrfDataAdapter.validateMetadata()
+  ├── ImportCrfDataAdapter.validateEventCrfs()
+  ├── ImportCrfDataAdapter.validateEditChecks() [edit checks]
+  ├── Forward to verifyImport.jsp → commit
+  └── ImportCrfDataAdapter.commitImport()
 ```
 
 ### Target Module-Owned Path (TO BUILD)
@@ -100,7 +99,7 @@ SPA ImportManager
 ```
 ImportCRFDataServlet deletion requires:
   ├── Module-owned import service (ODM validation, Castor → Jackson migration?)
-  ├── ImportCRFDataService extraction from web/ → app/module/import/
+  ├── Remaining servlet compatibility workflow extraction out of `ImportCRFDataServlet`
   ├── REST API for import workflow steps
   └── SPA ImportManager rewrite (multi-step wizard)
 
