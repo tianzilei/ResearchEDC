@@ -1,23 +1,23 @@
 package org.researchedc.module.audit.internal.adapter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.researchedc.domain.technicaladmin.DatabaseChangeLogBean;
 import org.researchedc.module.audit.dto.DatabaseChangeLogDTO;
 
-class DatabaseChangeLogAdapterTest {
+class DatabaseChangeLogDaoAdapterTest {
 
     @Test
-    void findAll_mapsLegacyBeansToDtos() {
-        org.researchedc.dao.spi.DatabaseChangeLogDao dao =
-                org.mockito.Mockito.mock(org.researchedc.dao.spi.DatabaseChangeLogDao.class);
+    void findChangeLogs_mapsJpaBeansToDtos() {
         DatabaseChangeLogBean bean = new DatabaseChangeLogBean();
         bean.setId("2026-06-07-phase-b");
         bean.setAuthor("codex");
@@ -28,11 +28,18 @@ class DatabaseChangeLogAdapterTest {
         bean.setComments("phase b");
         bean.setTag("v1");
         bean.setLiquibase("4.3.5");
-        when(dao.findAll()).thenReturn(new ArrayList<>(List.of(bean)));
+        EntityManager entityManager = Mockito.mock(EntityManager.class);
+        @SuppressWarnings("unchecked")
+        TypedQuery<DatabaseChangeLogBean> query = Mockito.mock(TypedQuery.class);
+        Mockito.when(entityManager.createQuery(
+                "FROM DatabaseChangeLogBean dcl ORDER BY dcl.id DESC",
+                DatabaseChangeLogBean.class)).thenReturn(query);
+        Mockito.when(query.getResultList()).thenReturn(List.of(bean));
 
-        DatabaseChangeLogAdapter adapter = new DatabaseChangeLogAdapter(dao);
+        DatabaseChangeLogDaoAdapter adapter = new DatabaseChangeLogDaoAdapter();
+        adapter.setEntityManager(entityManager);
 
-        List<DatabaseChangeLogDTO> result = adapter.findAll();
+        List<DatabaseChangeLogDTO> result = adapter.findChangeLogs();
 
         assertEquals(1, result.size());
         DatabaseChangeLogDTO dto = result.getFirst();

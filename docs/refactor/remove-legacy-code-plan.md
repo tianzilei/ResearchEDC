@@ -100,7 +100,7 @@ Current next action (updated 2026-06-12):
 3. ✅ Done: OpenRosa/Spring MVC compatibility classification. OpenRosa is active Modulith (18 files, `/api/v1/openrosa`). AccountController deleted (0 callers). SidebarInit/SidebarEnumConstants deleted (0 injections).
 4. ✅ Done: Webapp surface cleanup — 29 JSPs, ~1400 static assets, GWT remnants, TLDs, tags, pages-servlet.xml deleted. web.xml 310→40 lines. SDVUtil bean removed from WebBeansConfig.
 5. ✅ Done: web/ module DELETED — 9 needed files (Validator, DiscrepancyValidator, FormDiscrepancyNotes, Validation, EanCheckDigit, ValidatorRegularExpression, ImportCRFInfoContainer, ImportCRFInfo, ImportCRFDataService, ImportHelper) migrated to app/, 93 dead legacy servlets/views/helpers deleted. Entire web/ directory removed. JSP/JSTL dependencies cleaned from app/pom.xml.
-6. ⬜ Phase 3 DAO deletion: 5 dead files deleted (ScheduledJobSort, OCContextLoaderListener, SubjectGroupMapDao, OpenClinicaVersionDAO + SPI). 43 remaining DAO SPI Java files are blocked by caller migration to module-owned ports: 720/878 methods are module-backed, 0 unused SPI rows remain, 158 rows are removed, and 0 fallback-SQL/legacy-only/adapter-gap rows remain. Phase 3 SPI method coverage is now 100%.
+6. ⬜ Phase 3 DAO deletion: 17 dead files/bridges deleted (ScheduledJobSort, OCContextLoaderListener, SubjectGroupMapDao, OpenClinicaVersionDAO + SPI). 39 remaining DAO SPI Java files are blocked by caller migration to module-owned ports: 720/878 methods are module-backed, 0 unused SPI rows remain, 158 rows are removed, and 0 fallback-SQL/legacy-only/adapter-gap rows remain. Phase 3 SPI method coverage is now 100%.
 7. ✅ Done: Phase 4 shared bean deletion — EXHAUSTED. 73 files (-8570L) across runs 81-95. 0 dead code remaining.
 8. ✅ Done: Phase 5 dependency cleanup — EXHAUSTED. 19 dead deps removed; remaining 8 all active.
 9. ✅ Initial import/export compatibility hardening complete in commit `bc1f24d97`: focused dataimport/legacy bridge/data-capture tests, typed validation preview/result output, commit audit event, result stats, and secure attachment download keyed by event CRF plus opaque attachment ids. Rollback proof was added after commit `ae72d2415`; remaining compatibility work: deterministic ODM preview validation fixtures; representative ODM parse, OpenRosa submission form-context, and export API contract coverage added; rule XML import is retired and guarded against reintroduction; legacy import job scheduling is retired in the current tree.
@@ -291,13 +291,13 @@ spa_subject_detail    — Use full SPA subject detail (no legacy fallbacks)
 
 **Goal:** delete remaining legacy DAO SPI interfaces from `shared/dao`.
 
-Current ledger state (updated 2026-06-16):
+Current ledger state (updated 2026-06-17):
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `module-backed` | 757 | Adapter/repository/service path exists; still requires registration and caller checks before implementation deletion |
+| `module-backed` | 720 | Adapter/repository/service path exists; still requires registration and caller checks before implementation deletion |
 | `unused` | 0 | No unused SPI methods remain |
-| `removed` | 121 | SPI interface and implementation deleted; legacy service references cleaned up |
+| `removed` | 158 | SPI interface and implementation deleted; legacy service references cleaned up |
 
 For each DAO family:
 

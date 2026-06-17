@@ -4,14 +4,17 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.researchedc.dao.spi.DatabaseChangeLogDao;
 import org.researchedc.domain.technicaladmin.DatabaseChangeLogBean;
+import org.researchedc.module.audit.dto.DatabaseChangeLogDTO;
+import org.researchedc.module.audit.service.DatabaseChangeLogPort;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 
 /**
  * @Primary adapter implementing {@link DatabaseChangeLogDao} (legacy SPI)
@@ -23,7 +26,7 @@ import java.util.ArrayList;
 @Component("databaseChangeLogDao")
 @Primary
 @Transactional(readOnly = true)
-public class DatabaseChangeLogDaoAdapter implements DatabaseChangeLogDao {
+public class DatabaseChangeLogDaoAdapter implements DatabaseChangeLogDao, DatabaseChangeLogPort {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -34,6 +37,13 @@ public class DatabaseChangeLogDaoAdapter implements DatabaseChangeLogDao {
                 "FROM DatabaseChangeLogBean dcl ORDER BY dcl.id DESC",
                 DatabaseChangeLogBean.class);
         return new ArrayList<>(query.getResultList());
+    }
+
+    @Override
+    public List<DatabaseChangeLogDTO> findChangeLogs() {
+        return findAll().stream()
+                .map(this::toDto)
+                .toList();
     }
 
     @Override
@@ -53,5 +63,22 @@ public class DatabaseChangeLogDaoAdapter implements DatabaseChangeLogDao {
         return entityManager.createQuery(
                 "SELECT COUNT(dcl) FROM DatabaseChangeLogBean dcl",
                 Long.class).getSingleResult();
+    }
+
+    void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    private DatabaseChangeLogDTO toDto(DatabaseChangeLogBean bean) {
+        return new DatabaseChangeLogDTO(
+                bean.getId(),
+                bean.getAuthor(),
+                bean.getFileName(),
+                bean.getDataExecuted() != null ? bean.getDataExecuted().toInstant().toString() : null,
+                bean.getMd5Sum(),
+                bean.getDescription(),
+                bean.getComments(),
+                bean.getTag(),
+                bean.getLiquibase());
     }
 }

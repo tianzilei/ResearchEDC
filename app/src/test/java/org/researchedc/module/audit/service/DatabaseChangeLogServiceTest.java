@@ -17,13 +17,13 @@ class DatabaseChangeLogServiceTest {
         DatabaseChangeLogDTO dto = new DatabaseChangeLogDTO(
                 "id", "author", "file.xml", "1970-01-01T00:00:00Z",
                 "md5", "description", "comments", "tag", "liquibase");
-        when(port.findAll()).thenReturn(List.of(dto));
+        when(port.findChangeLogs()).thenReturn(List.of(dto));
 
         DatabaseChangeLogService service = new DatabaseChangeLogService(port);
 
         List<DatabaseChangeLogDTO> result = service.listChangeLogs();
 
         assertEquals(List.of(dto), result);
-        verify(port).findAll();
+        verify(port).findChangeLogs();
     }
 }

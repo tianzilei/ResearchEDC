@@ -17,6 +17,6 @@ public class DatabaseChangeLogService {
     }
 
     public List<DatabaseChangeLogDTO> listChangeLogs() {
-        return databaseChangeLogPort.findAll();
+        return databaseChangeLogPort.findChangeLogs();
     }
 }

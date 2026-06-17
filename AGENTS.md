@@ -237,7 +237,7 @@ python -m pytest app/tests/ -v
   - ✅ **StudyGroupDAO → StudyGroupDao** — 3 shared/ consumers all SPI-typed
   - ✅ **ArchivedDatasetFileDAO → ArchivedDatasetFileDao** — `58278d68b`; 8 consumer files converted
 - **Refactor progress snapshot (2026-06-17):** active workflow inventory is 924/963 closed (**96.0%**), Phase 3 DAO method coverage is 878/878 module-backed or removed (**100%**), DAO method blockers are 0/878 unused rows (**0%**), shared/ reduced from 793 to 242 files (**69.0%**), DAO-surface deletion is 147/186 files (**79.0%**), LegacyDaoFactory eliminated, EntityDAO infrastructure deleted, dead code cleanup complete.
-- **Phase 3 ledger status (2026-06-17):** `docs/refactor/phase-3-dao-replacement-ledger.{md,csv}` tracks 878 SPI methods: 729 `module-backed`, 0 `fallback-sql`, 0 `legacy-only`, 0 `adapter-gap`, 0 `unused`, and 149 `removed`. Deletion is now gated by migrating callers from legacy SPI names to module-owned ports.
+- **Phase 3 ledger status (2026-06-17):** `docs/refactor/phase-3-dao-replacement-ledger.{md,csv}` tracks 878 SPI methods: 720 `module-backed`, 0 `fallback-sql`, 0 `legacy-only`, 0 `adapter-gap`, 0 `unused`, and 158 `removed`. Deletion is now gated by migrating callers from legacy SPI names to module-owned ports.
 - **Remaining work:** `shared/dao` is now SPI-only with 39 DAO SPI Java files. Remaining deletion is blocked by callers that still depend on legacy SPI names instead of module-owned ports.
 - **Gauntlet commands:**
   - `git status --short`

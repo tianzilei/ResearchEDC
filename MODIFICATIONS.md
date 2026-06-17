@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-17 - Move database changelog reads to module port
+
+- Removed the extra `DatabaseChangeLogAdapter` bridge that injected the legacy `DatabaseChangeLogDao` SPI and made `DatabaseChangeLogDaoAdapter` serve the module-owned `DatabaseChangeLogPort` directly.
+- Renamed the module port method to `findChangeLogs()` so `DatabaseChangeLogService` no longer calls a legacy-shaped `findAll()` contract; updated focused audit adapter and service tests.
+
 ## 2026-06-17 - Remove unused CRF lookup SPI bridges
 
 - Removed the unused `CrfVersionMediaDao`, `ItemDataTypeDao`, `ItemReferenceTypeDao`, and `ResponseTypeDao` SPI bridges plus their CRF adapter and repository pairs after confirming no live callers remained.

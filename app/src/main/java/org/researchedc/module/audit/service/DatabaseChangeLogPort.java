@@ -6,5 +6,5 @@ import org.researchedc.module.audit.dto.DatabaseChangeLogDTO;
 
 public interface DatabaseChangeLogPort {
 
-    List<DatabaseChangeLogDTO> findAll();
+    List<DatabaseChangeLogDTO> findChangeLogs();
 }

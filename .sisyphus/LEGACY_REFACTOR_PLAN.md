@@ -213,7 +213,7 @@ Modules communicate via:
 
 ## Phase C: Legacy Code Deletion (DAO .java files remain — blocked by remaining concrete DAO dependencies and module extraction)
 
-> **Status (2026-06-02):** Phase C DAO SPI widening is **COMPLETE**. All 19 DAO families are SPI-widened. `DaoProvider.getDao()` and direct `new XxxDAO(...)` / `new StudyConfigService(...)` call sites remain 0. The DAO `.java` files in `shared/` still cannot be deleted because they are the current SPI implementations. All consumer references in web/ (45+ files), shared/ (15+ files), and ws/ (0 files) now use SPI interfaces. Remaining concrete type names are limited to DAO implementation classes, `LegacyDaoFactory`, `DaoRegistrar` bean name strings, and commented-out code — all harmless.
+> **Status (2026-06-02):** Phase C DAO SPI widening is **COMPLETE**. All 24 DAO families are SPI-widened. `DaoProvider.getDao()` and direct `new XxxDAO(...)` / `new StudyConfigService(...)` call sites remain 0. The DAO `.java` files in `shared/` still cannot be deleted because they are the current SPI implementations. All consumer references in web/ (45+ files), shared/ (15+ files), and ws/ (0 files) now use SPI interfaces. Remaining concrete type names are limited to DAO implementation classes, `LegacyDaoFactory`, `DaoRegistrar` bean name strings, and commented-out code — all harmless.
 >
 > **Completed SPI Widening — 19 families:**
 > - ✅ `StudyDAO` → `IStudyDAO` — boundary-only; concrete refs limited to impl, `LegacyDaoFactory`
@@ -284,9 +284,9 @@ Modules communicate via:
 
 ### C1: DAO Files Still Present (Blocked by remaining concrete consumers)
 
-Latest Phase 3 ledger checkpoint (2026-06-16): overall ledger status is 757 `module-backed`, 0 `unused`, and 121 `removed` across 878 tracked methods. DAO implementation deletion remains blocked until registration/factory/inheritance/runtime dependencies are cleared for each family.
+Latest Phase 3 ledger checkpoint (2026-06-17): overall ledger status is 720 `module-backed`, 0 `unused`, and 158 `removed` across 878 tracked methods. DAO implementation deletion remains blocked until registration/factory/inheritance/runtime dependencies are cleared for each family.
 
-The following DAO `.java` files still exist in `shared/`. As of 2026-06-02, **0 `DaoProvider.getDao()` call sites** and **0 direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches** remain across app/web/ws/shared. **All 19 DAO families** are SPI-widened. All DAO `.java` files must remain because they are the current SPI implementations; deletion is blocked by the need for module-owned replacements and workflow strangulation.
+The following DAO `.java` files still exist in `shared/`. As of 2026-06-02, **0 `DaoProvider.getDao()` call sites** and **0 direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches** remain across app/web/ws/shared. **All 24 DAO families** are SPI-widened. All DAO `.java` files must remain because they are the current SPI implementations; deletion is blocked by the need for module-owned replacements and workflow strangulation.
 
 | DAO File | SPI Status | Can delete? |
 |----------|-----------|-------------|
