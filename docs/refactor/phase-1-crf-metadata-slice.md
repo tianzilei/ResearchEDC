@@ -21,7 +21,7 @@ Initial candidate groups:
 No remaining file in this slice may be deleted until all checks are true for that file's workflow:
 
 1. SPA/API CRF preview or data-entry route is the default navigation path.
-2. Legacy route either redirects to SPA or is no longer registered in `web.xml`/Spring MVC config/`LegacyServletConfig`.
+2. Legacy route either redirects to SPA or is no longer registered in `web.xml`, Spring MVC config, or any Boot servlet initializer.
 3. Permissions match the relevant `SecureController.mayProceed()` behavior.
 4. CRF section, repeating group, item rendering, print, lock/unlock, and discrepancy-note behavior has parity proof.
 5. JSP include/tag/helper references are gone.

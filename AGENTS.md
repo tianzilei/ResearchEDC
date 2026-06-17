@@ -79,7 +79,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | **Subject module** | `app/.../module/subject/` | 桥接 subject/study_subject, REST API |
 | **Event module** | `app/.../module/event/` | 桥接 study_event/event_crf, REST API |
 | **Data Capture module** | `app/.../module/datacapture/` | 桥接 item_data/response_set, REST API |
-| **Legacy Servlet Registration** | `app/.../config/LegacyServletConfig.java` | Remaining legacy import/export/data-entry servlet compatibility registrations |
+| **Legacy servlet registration** | retired | No Boot servlet compatibility registration class remains in the current tree |
 | **Security config** | `app/.../config/SecurityConfig.java` | DaoAuthenticationProvider + form login |
 | **Encoding config** | `app/.../config/CoreResourcesConfig.java` | MessageSource UTF-8 + ODM FreeMarker UTF-8 |
 | **Identity module** | `app/.../module/identity/` | 桥接 user_account/study_user_role, REST API |

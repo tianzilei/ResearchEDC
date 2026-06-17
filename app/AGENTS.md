@@ -1,7 +1,7 @@
 # app/ - Spring Boot Modular Monolith Entry Point
 
 **Module:** Application entry point, configuration, and Modulith modules  
-**Files:** 432 Java files total, including 402 under `module/`; 17 Modulith modules
+**Files:** 430 Java files total, including 402 under `module/`; 17 Modulith modules
 
 > Entry point: `OpenClinicaApplication.java` — Spring Boot WAR packaging.  
 > Config classes in `org.researchedc.config.*` handle Hibernate, security (Spring Security form login + CSRF), scheduling, and OpenAPI.
@@ -11,7 +11,7 @@
 ```
 app/src/main/java/org/researchedc/
 ├── OpenClinicaApplication.java   # @SpringBootApplication entry point
-├── config/                       # 14 configuration classes
+├── config/                       # 12 configuration classes
 │   ├── SecurityConfig.java       # Spring Security form login, CSRF, session management
 │   ├── HibernateConfig.java      # Dual DataSource (legacy + module)
 │   ├── WebMvcConfig.java         # SPA fallback to /app/index.html

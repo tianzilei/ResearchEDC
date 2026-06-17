@@ -261,6 +261,7 @@ Modules communicate via:
 > - `StudySubjectServiceImpl`, `ParticipantEventService`, `JobTriggerService`, `SubjectTransferValidator`, `SetUpStudyRole`, and `MetadataCollectorResource` have been moved toward injected collaborators; the former `ApiSecurityFilter` compatibility class was later removed as dead surface.
 > - The app-hosted import bridge later dropped its dead `DataSource` seam as `ImportCRFDataService` shed preview-only helpers, then pulled commit item shaping, study metadata/OID validation, and the remaining event/status compatibility logic into `ImportCrfDataAdapter`; that final slice deleted `ImportCRFDataService` and brought non-adapter legacy DAO/SPI imports in `app/src/main/java` down to zero.
 > - A follow-up cleanup deleted the remaining dead `app/src/main/java/org/researchedc/web/*` classes (`ImportHelper` and `OpenClinicaLdapAuthoritiesPopulator`), leaving no Java sources under the former app-hosted `org.researchedc.web` compatibility package.
+> - The same cleanup pass later removed the orphaned `ImportCRFInfo` value object and the now-no-op `LegacyServletConfig`, leaving no app-hosted servlet-compatibility registration class in the current tree.
 > - **`mvn -pl app -am compile -DskipTests`** ✅
 >
 > **Completed in 2026-05-29 SPI consumer widening:**
