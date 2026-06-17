@@ -41,7 +41,7 @@ Dead code is exhausted. All remaining shared files have active callers.
 
 ## Next Steps (requires deeper refactoring)
 
-Current active slice: migrate remaining module callers from legacy SPI names to module-owned ports. The latest audit slice moved database changelog list reads onto `DatabaseChangeLogPort.findChangeLogs()` and removed the extra SPI-injecting bridge adapter; the legacy `DatabaseChangeLogDao` SPI remains only for compatibility adapter methods until all callers are migrated.
+Current active slice: migrate remaining module callers from legacy SPI names to module-owned ports. The latest audit slices moved database changelog list reads onto `DatabaseChangeLogPort.findChangeLogs()` and moved audit-user event reads out of `IAuditEventDAO`/`IUserAccountDAO` injection into the audit module adapter query path. The remaining DAO SPI files stay blocked on caller migration, not method-level replacement coverage.
 
 1. **Replace adapter-delegated behavior with module-owned implementations** — the 39 DAO SPI files and 82 beans are the legacy surface that module adapters depend on. Reducing further requires migrating adapter logic to use module repositories directly.
 2. **Migrate remaining shared support code to module-owned services** — no `shared/service` package remains; further reduction requires proving compatibility support classes unused.

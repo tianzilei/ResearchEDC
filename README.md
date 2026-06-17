@@ -47,7 +47,7 @@ Current high-level status:
 - Questionnaire service has its own API, data model, scoring engine, and tests.
 - `DaoProvider` has been removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` construction is at 0 active matches across the legacy Java surfaces.
 - Legacy DAO consumer work is mostly complete: `DaoProvider` and direct DAO construction are gone, the target DAO families have been SPI-widened, and `shared/dao` is now SPI-only. The Phase 3 DAO method ledger is checked in and currently classifies 720 of 878 tracked methods as module-backed, with 0 unused rows left to remove, 158 rows already removed, and 0 fallback-SQL, legacy-only, or adapter-gap rows remaining.
-- Phase B schema ownership is complete. Remaining legacy deletion work is migrating callers from legacy SPI names to module-owned ports before the remaining SPI interfaces can be deleted.
+- Phase B schema ownership is complete. Remaining legacy deletion work is migrating callers from legacy SPI names to module-owned ports before the remaining SPI interfaces can be deleted; the audit database-changelog and audit-user-event reads are now on module-local ports/queries.
 - Enterprise UI/functionality and active mail-delivery code paths were removed on 2026-06-09. Email/contact fields remain as compatibility data and are tracked by the follow-up email-field removal plan.
 - Phase II (@SuppressWarnings elimination) is **COMPLETE**. Reduced from 168 to 72 annotations (57% reduction). Remaining 72 are all genuine (27 non-deferred) or deferred (45 TableFactory, will self-resolve with SPA strangulation).
 

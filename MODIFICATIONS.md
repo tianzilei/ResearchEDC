@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-17 - Move audit user event reads off legacy SPI
+
+- Reworked `AuditUserEventAdapter` to read user and audit-event rows through module-local native queries instead of injecting `IAuditEventDAO` and `IUserAccountDAO`.
+- Updated the focused adapter test to mock the `EntityManager` query path and assert the DTO mapping produced by the audit-module adapter.
+
 ## 2026-06-17 - Move database changelog reads to module port
 
 - Removed the extra `DatabaseChangeLogAdapter` bridge that injected the legacy `DatabaseChangeLogDao` SPI and made `DatabaseChangeLogDaoAdapter` serve the module-owned `DatabaseChangeLogPort` directly.

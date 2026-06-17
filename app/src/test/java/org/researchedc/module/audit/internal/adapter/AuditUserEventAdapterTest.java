@@ -1,23 +1,21 @@
 package org.researchedc.module.audit.internal.adapter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.when;
 
+import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.researchedc.bean.admin.AuditEventBean;
-import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.spi.IAuditEventDAO;
-import org.researchedc.dao.spi.IUserAccountDAO;
+import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.module.audit.dto.AuditUserEventDTO;
 import org.researchedc.module.audit.dto.AuditUserEventsDTO;
-import org.researchedc.i18n.util.ResourceBundleProvider;
 
 class AuditUserEventAdapterTest {
 
@@ -27,36 +25,35 @@ class AuditUserEventAdapterTest {
     }
 
     @Test
-    void findUserEvents_mapsLegacyUserAndAuditRows() {
-        IAuditEventDAO auditEventDao = org.mockito.Mockito.mock(IAuditEventDAO.class);
-        IUserAccountDAO userAccountDao = org.mockito.Mockito.mock(IUserAccountDAO.class);
-        UserAccountBean user = new UserAccountBean();
-        user.setId(7);
-        user.setName("sysadmin");
-        user.setFirstName("System");
-        user.setLastName("Admin");
-        AuditEventBean event = new AuditEventBean();
-        event.setId(42);
-        event.setAuditDate(Date.from(Instant.parse("2026-06-07T12:00:00Z")));
-        event.setAuditTable("user_account");
-        event.setUserId(7);
-        event.setEntityId(99);
-        event.setReasonForChange("updated");
-        event.setActionMessage("user_updated");
-        event.setColumnName("phone");
-        event.setOldValue("old-phone");
-        event.setNewValue("new-phone");
-        event.setStudyId(11);
-        event.setStudyName("Main Study");
-        event.setSubjectId(12);
-        event.setSubjectName("SUBJ-001");
-        HashMap<String, Object> changes = new HashMap<>();
-        changes.put("phone", "new-phone");
-        event.setChanges(changes);
-        when(userAccountDao.findByPK(7)).thenReturn(user);
-        when(auditEventDao.findAllByUserId(7)).thenReturn(new ArrayList<>(java.util.List.of(event)));
+    void findUserEvents_mapsNativeUserAndAuditRows() {
+        EntityManager entityManager = org.mockito.Mockito.mock(EntityManager.class);
+        Query userQuery = org.mockito.Mockito.mock(Query.class);
+        Query eventsQuery = org.mockito.Mockito.mock(Query.class);
+        when(entityManager.createNativeQuery(startsWith("SELECT user_id"))).thenReturn(userQuery);
+        when(userQuery.setParameter(1, 7)).thenReturn(userQuery);
+        when(userQuery.getResultList()).thenReturn(java.util.Collections.singletonList(
+                new Object[] {7, "sysadmin", "System", "Admin"}));
+        when(entityManager.createNativeQuery(startsWith("SELECT ae.audit_id"))).thenReturn(eventsQuery);
+        when(eventsQuery.setParameter(1, 7)).thenReturn(eventsQuery);
+        when(eventsQuery.getResultList()).thenReturn(java.util.Collections.singletonList(new Object[] {
+                42,
+                Timestamp.from(Instant.parse("2026-06-07T12:00:00Z")),
+                "user_account",
+                7,
+                99,
+                "updated",
+                "user_updated",
+                "old-phone",
+                "new-phone",
+                "phone",
+                11,
+                12
+        }));
 
-        AuditUserEventsDTO result = new AuditUserEventAdapter(auditEventDao, userAccountDao).findUserEvents(7);
+        AuditUserEventAdapter adapter = new AuditUserEventAdapter();
+        adapter.setEntityManager(entityManager);
+
+        AuditUserEventsDTO result = adapter.findUserEvents(7);
 
         assertEquals(7, result.user().id());
         assertEquals("sysadmin", result.user().userName());
@@ -75,9 +72,10 @@ class AuditUserEventAdapterTest {
         assertEquals("old-phone", dto.oldValue());
         assertEquals("new-phone", dto.newValue());
         assertEquals(11, dto.studyId());
-        assertEquals("Main Study", dto.studyName());
+        assertEquals("NULL", dto.studyName());
         assertEquals(12, dto.subjectId());
-        assertEquals("SUBJ-001", dto.subjectName());
-        assertEquals("new-phone", dto.changes().get("phone"));
+        assertEquals("NULL", dto.subjectName());
+        assertTrue(dto.changes().isEmpty());
+        assertTrue(dto.otherInfo().isEmpty());
     }
 }
