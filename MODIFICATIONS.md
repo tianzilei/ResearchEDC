@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-17 - Remove DAO core SQL XML loader
+
+- Moved `CoreResources` out of `shared/dao` into `org.researchedc.core`, removed the unused `SQLFactory`/`DAODigester` XML SQL loader, and deleted the remaining Digester dependencies from shared and the BOM.
+- Regenerated the legacy workflow inventory to 43 active DAO SPI artifacts (43 keep compatibility, 0 replace) with the remaining DAO surface now SPI-only.
+
 ## 2026-06-17 - Remove unused DAO compatibility surfaces
 
 - Moved `QueryStore` into app configuration, removed the audit login DAO SPI bridge in favor of direct criteria reads, and deleted dead rule-assignment, SDV, list-filter/list-sort, and VersioningMap compatibility surfaces.

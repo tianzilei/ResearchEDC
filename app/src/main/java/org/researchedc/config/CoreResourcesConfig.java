@@ -2,7 +2,7 @@ package org.researchedc.config;
 
 import java.io.InputStream;
 import java.util.Properties;
-import org.researchedc.dao.core.CoreResources;
+import org.researchedc.core.CoreResources;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;

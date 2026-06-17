@@ -31,7 +31,7 @@ import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.Validator;
-import org.researchedc.dao.core.CoreResources;
+import org.researchedc.core.CoreResources;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemFormMetadataDAO;

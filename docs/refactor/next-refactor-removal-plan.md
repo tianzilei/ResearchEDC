@@ -6,15 +6,15 @@
 
 | Surface | Before | After | Removed | % |
 |---------|--------|-------|---------|---|
-| shared/ files | 793 | 248 | 545 | 68.7% |
+| shared/ files | 793 | 246 | 547 | 69.0% |
 | shared/ lines | ~80,000 | 31,139 | ~48,861 | ~61% |
-| dao/ files | 186 | 46 | 140 | 75.3% |
+| dao/ files | 186 | 43 | 143 | 76.9% |
 | web/ | 480 | 0 | 480 | 100% |
 | ws/ | 75 | 0 | 75 | 100% |
 | SPI methods | 878 | 878 covered | 149 removed | 100% |
 | Module files | — | 401 | — | — |
 
-**Code balance:** 248 legacy / 401 modern = 40% legacy / 60% modern (files), 58% legacy / 42% modern (lines)
+**Code balance:** 246 legacy / 401 modern = 38% legacy / 62% modern (files), 58% legacy / 42% modern (lines)
 
 ## Status
 
@@ -28,20 +28,20 @@ Dead code is exhausted. All remaining shared files have active callers.
 - ✅ LegacyDaoFactory: eliminated
 - ✅ EntityDAO infrastructure: deleted
 
-## Remaining Surface (248 files)
+## Remaining Surface (246 files)
 
 | Category | Files | Status |
 |----------|-------|--------|
 | Bean/DTOs | 82 | Active — used by module adapters |
 | Domain entities | 103 | Active — JPA @Entity mappings, used by module repositories |
-| DAO (SPI + filter + infra) | 46 | Active — SPI interfaces implemented by module adapters |
+| DAO (SPI) | 43 | Active — SPI interfaces implemented by module adapters |
 | Jobs | 4 | Active — Quartz infrastructure |
 | Core | 4 | Active — CoreResources, StringUtil, etc. |
 | Other | 13 | Active — i18n, patterns, exceptions |
 
 ## Next Steps (requires deeper refactoring)
 
-1. **Replace adapter-delegated behavior with module-owned implementations** — the 46 DAO files and 82 beans are the legacy surface that module adapters depend on. Reducing further requires migrating adapter logic to use module repositories directly.
+1. **Replace adapter-delegated behavior with module-owned implementations** — the 43 DAO SPI files and 82 beans are the legacy surface that module adapters depend on. Reducing further requires migrating adapter logic to use module repositories directly.
 2. **Migrate remaining shared support code to module-owned services** — no `shared/service` package remains; further reduction requires proving compatibility support classes unused.
 3. **Remove JSTL/JMesa dependencies** — after all JSP-era rendering code is confirmed dead.
 

@@ -1,4 +1,4 @@
-package org.researchedc.dao.core;
+package org.researchedc.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -44,7 +44,7 @@ public class CoreResources implements ResourceLoaderAware {
     public static final Integer SPSS_ID = 9;
 
     private static String webapp;
-    protected final static Logger logger = LoggerFactory.getLogger("org.researchedc.dao.core.CoreResources");
+    protected final static Logger logger = LoggerFactory.getLogger(CoreResources.class);
     // private MessageSource messageSource;
     private static ArrayList<ExtractPropertyBean> extractProperties;
 
@@ -148,8 +148,6 @@ public class CoreResources implements ResourceLoaderAware {
             EXTRACTINFO = extractInfo;
 
             DB_NAME = dbName;
-            SQLFactory factory = SQLFactory.getInstance();
-            factory.run(dbName, resourceLoader);
             try {
                 ODM_MAPPING_DIR = getField("filePath");
             } catch (Exception e) {
@@ -624,7 +622,7 @@ public class CoreResources implements ResourceLoaderAware {
     }
 
     public void setExtractProperties(ArrayList extractProperties) {
-        this.extractProperties = extractProperties;
+        CoreResources.extractProperties = extractProperties;
     }
 
 

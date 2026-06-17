@@ -26,7 +26,7 @@ import org.researchedc.bean.submit.crfdata.ImportItemGroupDataBean;
 import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.bean.submit.crfdata.StudyEventDataBean;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
-import org.researchedc.dao.core.CoreResources;
+import org.researchedc.core.CoreResources;
 import org.researchedc.dao.spi.IItemDAO;
 import org.researchedc.dao.spi.IItemDataDAO;
 import org.researchedc.dao.spi.IItemFormMetadataDAO;

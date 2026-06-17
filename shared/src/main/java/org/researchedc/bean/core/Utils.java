@@ -8,7 +8,7 @@
 
 package org.researchedc.bean.core;
 
-import org.researchedc.dao.core.CoreResources;
+import org.researchedc.core.CoreResources;
 
 import java.io.File;
 

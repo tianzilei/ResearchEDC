@@ -1,6 +1,6 @@
 package org.researchedc.bean.service;
 
-import org.researchedc.dao.core.CoreResources;
+import org.researchedc.core.CoreResources;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FOPException;
@@ -35,26 +35,26 @@ import javax.xml.transform.sax.SAXResult;
  */
 public class PdfProcessingFunction extends ProcessingFunction  {
 
-  
+
 	protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
-	   
+
     public PdfProcessingFunction() {
         fileType = "pdf";
     }
-    
+
     /*
      * The run() method.  Note that we will assume that all variables (i.e. file
      * paths) are set here.
-     * 
-     * Running this will open a file stream, perform a transform with the *.fo 
-     * file (note, does not necessarily have to have a *.fo suffix) and then 
+     *
+     * Running this will open a file stream, perform a transform with the *.fo
+     * file (note, does not necessarily have to have a *.fo suffix) and then
      * return a success/fail message.
      * (non-Javadoc)
      * @see org.researchedc.bean.service.ProcessingInterface#run()
      */
     public ProcessingResultType run() {
-         FopFactory fopFactory = FopFactory.newInstance(new java.io.File(".").toURI()); 
-        OutputStream out = null;   
+         FopFactory fopFactory = FopFactory.newInstance(new java.io.File(".").toURI());
+        OutputStream out = null;
         File outputFile =null;
         String zipName = "_";
         File xslFile = null;
@@ -64,33 +64,33 @@ public class PdfProcessingFunction extends ProcessingFunction  {
             //set the renderer to be PDF
             // the expected sequence here will be xml -> xslt -> fo -> pdf
             // where fo is the transformed file
-            
+
             File procExportDirectory;
             File oldFiles[] = null;
-         
+
             if(this.getExportFileName()!=null && this.getLocation()!=null)
             {
 
-            	procExportDirectory = new File(this.getLocation());
-            		if(!procExportDirectory.isDirectory())
-            		{
-            			procExportDirectory.mkdir();
-            		}
-            	outputFile = new File(procExportDirectory+File.separator+this.getExportFileName()+".pdf");
-            	zipName = (procExportDirectory+File.separator+this.getExportFileName()+".zip");
+	procExportDirectory = new File(this.getLocation());
+		if(!procExportDirectory.isDirectory())
+		{
+			procExportDirectory.mkdir();
+		}
+	outputFile = new File(procExportDirectory+File.separator+this.getExportFileName()+".pdf");
+	zipName = (procExportDirectory+File.separator+this.getExportFileName()+".zip");
             }
             else
             {
-            	outputFile = new File(this.getODMXMLFileName() + ".pdf");//getODMFILENAme is a path of .fo object
-            	zipName = this.getODMXMLFileName() + ".zip";
+	outputFile = new File(this.getODMXMLFileName() + ".pdf");//getODMFILENAme is a path of .fo object
+	zipName = this.getODMXMLFileName() + ".zip";
             }
-            
-            
+
+
              xslFile = new File(this.getTransformFileName());//transformfilename is abs path+file name(.fo) transformFileName and odmxmlfile name are same?
             out = new FileOutputStream(outputFile);
             out = new BufferedOutputStream(out);
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
-            
+
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(); // identity transformer
             Source src = new StreamSource(xslFile);
@@ -113,43 +113,43 @@ public class PdfProcessingFunction extends ProcessingFunction  {
             }
             logger.debug("Generated " + foResults.getPageCount() + " pages in total.");
             out.close();
-          
-            
-           
-            
+
+
+
+
             if(zip)
             {
-            	
-            	
-            	if(outputFile!=null)
-            	{
-            		ZipOutputStream zipOut = null;
-            		FileInputStream fis = null;
-            		try{
-            		 fis = new FileInputStream(outputFile);
-            	
-            		 zipOut = new ZipOutputStream(new FileOutputStream(new File( zipName)));
-            		zipOut.putNextEntry(new ZipEntry(outputFile.getName()));
-            		int bytesRead;
+
+
+	if(outputFile!=null)
+	{
+		ZipOutputStream zipOut = null;
+		FileInputStream fis = null;
+		try{
+		 fis = new FileInputStream(outputFile);
+
+		 zipOut = new ZipOutputStream(new FileOutputStream(new File( zipName)));
+		zipOut.putNextEntry(new ZipEntry(outputFile.getName()));
+		int bytesRead;
                     byte[] buff = new byte[512];
                     while ((bytesRead = fis.read(buff)) != -1) {
-                    	zipOut.write(buff, 0, bytesRead);
+	zipOut.write(buff, 0, bytesRead);
                     }
-                    
+
                     zipOut.closeEntry();
                     zipOut.finish();
-            		}catch(Exception e){
-            			e.printStackTrace();
-            		}finally{
-            			if(zipOut!=null)zipOut.close();
-                      	if(fis!=null)fis.close();
-            		}
-              
-            	}
-            	setArchivedFileName(new File(zipName).getName());
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			if(zipOut!=null)zipOut.close();
+	if(fis!=null)fis.close();
+		}
+
+	}
+	setArchivedFileName(new File(zipName).getName());
             }
             else
-            	setArchivedFileName(outputFile.getName());
+	setArchivedFileName(outputFile.getName());
         } catch (Exception e) {
             e.printStackTrace();
             ProcessingResultType resultError = ProcessingResultType.FAIL;
@@ -158,43 +158,43 @@ public class PdfProcessingFunction extends ProcessingFunction  {
             resultError.setDescription("Your job failed with the message of: " + e.getMessage());
             return resultError;
         } finally {
-        	  
-              
-              
+
+
+
         }
-       
+
         if(deleteOld)
         {
-        	deleteOldFiles(this.getOldFiles(),outputFile,zipName);
+	deleteOldFiles(this.getOldFiles(),outputFile,zipName);
         }
         if(zip)
         {
-        	outputFile.delete();
+	outputFile.delete();
         }
         //delete intermediatory .fo file
         if(xslFile!=null)xslFile.delete();
-        
+
         // otherwise return a success with the URL link
-        
-        
+
+
         ProcessingResultType resultSuccess = ProcessingResultType.SUCCESS;
-        resultSuccess.setUrl(CoreResources.getField("sysURL.base") + 
+        resultSuccess.setUrl(CoreResources.getField("sysURL.base") +
                 "AccessFile?fileId="); // to the pdf
         resultSuccess.setArchiveMessage("Success");
         resultSuccess.setDescription("Your job succeeded please find the URL below");
         return resultSuccess;
-        
-        
+
+
     }
     private void deleteOldFiles(File[] oldFiles,File outputFile, String zipFile) {
-	    	//File[] files = complete.listFiles();
-    		File zip= new File(zipFile);
+	//File[] files = complete.listFiles();
+		File zip= new File(zipFile);
 			for(int i=0;i<oldFiles.length;i++)
 			{
 				if(!outputFile.getName().equals(oldFiles[i].getName())&& !zip.getName().equals(oldFiles[i].getName()))
 				oldFiles[i].delete();
 			}
-			
+
 		}
-    
+
 }

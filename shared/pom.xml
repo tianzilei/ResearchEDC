@@ -32,13 +32,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Apache Commons Digester (legacy v2 API, used by DAODigester) -->
-        <dependency>
-            <groupId>commons-digester</groupId>
-            <artifactId>commons-digester</artifactId>
-            <version>2.1</version>
-        </dependency>
-
         <!-- Apache HttpClient (updated from commons-httpclient) -->
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
