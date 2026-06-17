@@ -2,7 +2,7 @@
 
 **Derived from:** OpenClinica v3.x
 **Generated:** 2026-05-25
-**Updated:** 2026-06-17
+**Updated:** 2026-06-18
 **Branch:** master
 
 ## OVERVIEW
@@ -201,7 +201,7 @@ python -m pytest app/tests/ -v
 ## NOTES
 
 - **Database:** Supports Oracle and PostgreSQL
-- **Security:** Spring Security form login (Session Cookie + CSRF); Legacy Spring Security for JSP
+- **Security:** Spring Security form login (session-backed for SPA + REST). Dead app-side OAuth2/Keycloak scaffolding was removed on 2026-06-18; legacy JSP-era Spring Security notes remain historical only.
 - **Routing:** `/app/*` -> React SPA, `/legacy/*` -> JSP, `/q/*` -> questionnaire, `/api/*` -> REST
 - **Modulith:** Only `org.researchedc.module.*` is verified; `shared/` packages are excluded
 - **Version:** 0.1

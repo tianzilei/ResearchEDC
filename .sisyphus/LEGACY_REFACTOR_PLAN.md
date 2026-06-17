@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-17 (Legacy code removal is **not complete**. Tracked workflow progress is 924/963 closed, **96.0%**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 39 DAO SPI Java files under `shared/dao`. Phase 3 ledger: 720/878 methods module-backed; 878/878 module-backed or removed, **100.0%**; 0 unused rows remain; 158 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. See `docs/refactor/remove-legacy-code-plan.md`.)
+> **Last updated:** 2026-06-18 (Legacy code removal is **not complete**. Tracked workflow progress is 924/963 closed, **96.0%**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 39 DAO SPI Java files under `shared/dao`. Phase 3 ledger: 720/878 methods module-backed; 878/878 module-backed or removed, **100.0%**; 0 unused rows remain; 158 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. See `docs/refactor/remove-legacy-code-plan.md`.)
 > **Scope:** All remaining legacy code in `shared/` plus app-hosted compatibility classes migrated from `web/`; keep SOAP compatibility audits only if `ws/` reappears
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -359,7 +359,7 @@ All 11 `applicationContext-*.xml` files have been replaced by Java `@Configurati
 | `applicationContext-core-security.xml` | ✅ `SecurityConfig.java` |
 | `applicationContext-core-service.xml` | ✅ `ServiceConfig.java` |
 | `applicationContext-core-email.xml` | ✅ `MailConfig.java` |
-| `applicationContext-core-scheduler.xml` | ✅ `SchedulingConfig.java` |
+| `applicationContext-core-scheduler.xml` | ✅ retired; no live `@Scheduled` callers remain in the current tree |
 | `applicationContext-core-annotation-scheduler.xml` | ✅ (already annotation-based) |
 | `applicationContext-core-timer.xml` | ✅ merged into `SchedulerConfig.java` |
 | `applicationContext-security.xml` | ✅ `SecurityConfig.java`, file stripped to stub (2026-05-23) |
@@ -367,27 +367,25 @@ All 11 `applicationContext-*.xml` files have been replaced by Java `@Configurati
 
 Cleanup (2026-05-23): `application-context-web-beans.xml` deleted (duplicate stub). `ws/applicationContext-web-beans.xml` deleted (empty).
 
-### D2: Ehcache 2 → Caffeine ✅
+### D2: Cache Cleanup ✅
 - Hibernate second-level cache: migrated to `jcache`
-- Application cache: Spring `@Cacheable` with Caffeine `CacheManager`
-- Ehcache XML configs: removed
+- Dead application-level cache scaffolding (`CacheConfig` + Caffeine dependency) removed after scans confirmed there are no live `@Cacheable` callers
+- Ehcache-era XML configs: removed
 
 ---
 
-## Phase E: Authentication Unification (Priority: High)
+## Phase E: Authentication Baseline (Current Tree)
 
 ### E1: Current State
 - JSP pages: Spring Security 3.x with legacy `SecureController` session-based auth
-- React SPA: Keycloak OIDC with JWT tokens
-- SOAP endpoints: WS-Security with password callback
-- Python questionnaire: Keycloak JWT validation
+- React SPA + REST API: Spring Security form/session auth in `SecurityConfig`
+- SOAP endpoints: `ws/` absent in the current tree
+- Python questionnaire: independent service auth/config, outside the app module baseline
 
 ### E2: Migration Steps
-1. Deploy Keycloak Tomcat Adapter for JSP pages (Phase 2)
-2. Add JWT filter that bridges to `SecureController` session
-3. Add Spring Security 6 Resource Server config as `@Configuration`
-4. Remove old `spring-security-oauth2` dependency
-5. Remove `spring-security-oauth2` 2.0.x from `pom.xml`
+1. Keep the current session-backed Spring Security path as the supported app baseline unless a new auth program is explicitly introduced.
+2. If OAuth2/OIDC is revived later, add it with active `SecurityFilterChain` wiring, properties, and coverage before reintroducing dependencies.
+3. Keep questionnaire-service token validation concerns isolated from the monolith unless there is a deliberate cross-service auth unification effort.
 
 ---
 
@@ -522,7 +520,7 @@ Available at `GET/PUT /api/v1/studies/:id/feature-flags` (JSONB on `study` table
 | B1-B3 | Schema ownership | ✅ COMPLETE | 12 bidirectional sync triggers, 27 entities remapped, 24 adapters |
 | C1-C4 | Legacy code deletion | 🔶 In progress, not complete | **0 direct legacy constructor matches, 0 `DaoProvider.getDao()` calls, 24/24 DAO families SPI-widened. Workflow progress is 924/963 closed (96.0%). Physical deletion remains blocked by legacy SPI caller migration to module-owned ports.** |
 | D1-D2 | Config migration | ✅ Complete | 11 XML → Java Config, dead XML stubs cleanup (2026-05-23) |
-| E1-E2 | Auth unification | ✅ Complete | Dual SecurityFilterChain (JWT API + OIDC web) |
+| E1-E2 | Auth baseline cleanup | ✅ Current tree aligned | Session-backed Spring Security only; dead app-side OAuth2/Keycloak scaffolding removed |
 | F1-F2 | SOAP retirement | ✅ Current tree retired | `ws/` is absent; keep compatibility audit only if SOAP endpoints reappear |
 | G1-G3 | JSP strangulation | ✅ Complete in current tree | `web/` is absent; JSP pages and legacy servlet inventory are 0. |
 | H1 | Data migration | ✅ COMPLETE | Phase A complete |

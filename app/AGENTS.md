@@ -11,7 +11,7 @@
 ```
 app/src/main/java/org/researchedc/
 ├── OpenClinicaApplication.java   # @SpringBootApplication entry point
-├── config/                       # 12 configuration classes
+├── config/                       # 9 configuration classes
 │   ├── SecurityConfig.java       # Spring Security form login, CSRF, session management
 │   ├── HibernateConfig.java      # Dual DataSource (legacy + module)
 │   ├── WebMvcConfig.java         # SPA fallback to /app/index.html

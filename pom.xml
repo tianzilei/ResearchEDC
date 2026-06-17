@@ -69,7 +69,6 @@
 		<logback.version>1.5.7</logback.version>
 		<janino.version>3.1.10</janino.version>
 		<liquibase.version>4.3.5</liquibase.version>
-		<caffeine.version>3.1.8</caffeine.version>
 	</properties>
 	<profiles>
 		<profile>
@@ -437,11 +436,6 @@
 			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.ben-manes.caffeine</groupId>
-			<artifactId>caffeine</artifactId>
-			<version>${caffeine.version}</version>
 		</dependency>
 		<!-- LIQUIBASE -->
 		<dependency>
