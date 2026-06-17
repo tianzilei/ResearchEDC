@@ -213,7 +213,7 @@ Modules communicate via:
 
 ## Phase C: Legacy Code Deletion (DAO .java files remain — blocked by remaining concrete DAO dependencies and module extraction)
 
-> **Status (2026-06-02):** Phase C DAO SPI widening is **COMPLETE**. All 24 DAO families are SPI-widened. `DaoProvider.getDao()` and direct `new XxxDAO(...)` / `new StudyConfigService(...)` call sites remain 0. The DAO `.java` files in `shared/` still cannot be deleted because they are the current SPI implementations. All consumer references in web/ (45+ files), shared/ (15+ files), and ws/ (0 files) now use SPI interfaces. Remaining concrete type names are limited to DAO implementation classes, `LegacyDaoFactory`, `DaoRegistrar` bean name strings, and commented-out code — all harmless.
+> **Status (2026-06-02):** Phase C DAO SPI widening is **COMPLETE**. All 24 DAO families are SPI-widened. `DaoProvider.getDao()` and direct `new XxxDAO(...)` / `new StudyConfigService(...)` call sites remain 0. The DAO `.java` files in `shared/` still cannot be deleted because they are the current SPI implementations. All consumer references in web/ (45+ files), shared/ (15+ files), and ws/ (0 files) now use SPI interfaces. Remaining concrete type names are limited to DAO implementation classes, `LegacyDaoFactory`, and commented-out code — all harmless.
 >
 > **Completed SPI Widening — 19 families:**
 > - ✅ `StudyDAO` → `IStudyDAO` — boundary-only; concrete refs limited to impl, `LegacyDaoFactory`
@@ -239,7 +239,7 @@ Modules communicate via:
 > **Completed in 2026-06-02 (remaining 8 DAO families SPI-widened):**
 > - ~20 commits (`868a4f6fa`–`968391b3b`) widened `StudyEventDAO`, `StudyEventDefinitionDAO`, `RuleSetDAO`, `RuleDAO`, `DatasetDAO`, `FilterDAO`, `StudyGroupClassDAO`, and `StudyGroupDAO` consumers across shared/web/ws from concrete types to SPI interfaces.
 > - All 45+ web/ consumer files, 15+ shared/ consumer files, and 0 ws/ consumer files now use SPI-typed fields exclusively.
-> - Remaining concrete type names (DAO impl classes, `LegacyDaoFactory`, `DaoRegistrar` string literal, `OdmExtractDAO extends DatasetDAO`, commented-out code in 3 extract servlets) are harmless — none represent active concrete consumer dependencies.
+> - Remaining concrete type names (DAO impl classes, `LegacyDaoFactory`, `OdmExtractDAO extends DatasetDAO`, commented-out code in 3 extract servlets) are harmless — none represent active concrete consumer dependencies.
 > - Verified: `mvn -pl app -am compile -DskipTests` ✅, `ModulithVerificationTest` ✅, clean working tree.
 >
 > **Completed in Sequence 18-19 (2026-05-23):**
@@ -260,11 +260,12 @@ Modules communicate via:
 > - Rule-runner action processors moved to injected collaborators through `RuleSetService`/`RuleRunner`/`ActionProcessorFacade`; the high-volume study/subject/user-account collaborators were later widened to SPI where covered.
 > - `StudySubjectServiceImpl`, `ParticipantEventService`, `JobTriggerService`, `SubjectTransferValidator`, `SetUpStudyRole`, and `MetadataCollectorResource` have been moved toward injected collaborators; the former `ApiSecurityFilter` compatibility class was later removed as dead surface.
 > - The app-hosted import bridge later dropped its dead `DataSource` seam as `ImportCRFDataService` shed preview-only helpers, then pulled commit item shaping, study metadata/OID validation, and the remaining event/status compatibility logic into `ImportCrfDataAdapter`; that final slice deleted `ImportCRFDataService` and brought non-adapter legacy DAO/SPI imports in `app/src/main/java` down to zero.
+> - A follow-up cleanup deleted the remaining dead `app/src/main/java/org/researchedc/web/*` classes (`ImportHelper` and `OpenClinicaLdapAuthoritiesPopulator`), leaving no Java sources under the former app-hosted `org.researchedc.web` compatibility package.
 > - **`mvn -pl app -am compile -DskipTests`** ✅
 >
 > **Completed in 2026-05-29 SPI consumer widening:**
 > - Commit `10f0f6ea2` (`Refactor legacy DAO consumers to SPI`) widened high-volume `StudyDAO`, `StudySubjectDAO`, `SubjectDAO`, and `UserAccountDAO` consumers across shared/web/ws/app to `IStudyDAO`, `IStudySubjectDAO`, `ISubjectDAO`, and `IUserAccountDAO` where the SPI already covered the calls.
-> - Added `app/src/main/java/org/researchedc/config/DaoRegistrar.java` for central DAO bean registration and kept default manual construction contained in `shared/src/main/java/org/researchedc/dao/LegacyDaoFactory.java`.
+> - Added `app/src/main/java/org/researchedc/config/DaoRegistrar.java` for central DAO bean registration and kept default manual construction contained in `shared/src/main/java/org/researchedc/dao/LegacyDaoFactory.java`; later cleanup removed `DaoRegistrar` once no concrete DAO classes remained in `shared/src/main/java/org/researchedc/dao`.
 > - `LegacyDaoFactory` now exposes SPI-returning factories for study, study-subject, subject, and user-account DAOs.
 > - The now-deleted `OidcSessionBridgeSuccessHandler` and then-active legacy validators/controllers were widened from concrete `UserAccountDAO` usage to `IUserAccountDAO`; later cleanup removed the dead handler and dead DAO-backed `Validator` branches with no remaining callers.
 > - Current concrete references for this DAO family are boundary-only: DAO implementation classes, `LegacyDaoFactory`, and the remaining WS `UserAccountAdapter` containment wrapper.

@@ -17,10 +17,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 /**
  * Java @Configuration replacing applicationContext-core-hibernate.xml.
  *
- * <p>Legacy DAO beans have been replaced by module-owned primary adapters or
- * dynamic registration in DaoRegistrar. This class now only keeps the
- * shared JPA and Hibernate infrastructure that remaining compatibility code
- * still needs.</p>
+ * <p>Legacy DAO beans have been replaced by module-owned primary adapters.
+ * This class now only keeps the shared JPA and Hibernate infrastructure that
+ * remaining compatibility code still needs.</p>
  */
 @Configuration
 public class HibernateConfig {
