@@ -12,9 +12,9 @@
 | web/ | 480 | 0 | 480 | 100% |
 | ws/ | 75 | 0 | 75 | 100% |
 | SPI methods | 878 | 878 covered | 158 removed | 100% |
-| Module files | — | 393 | — | — |
+| Module files | — | 392 | — | — |
 
-**Code balance:** 242 legacy / 393 modern = 38% legacy / 62% modern (files), 58% legacy / 42% modern (lines)
+**Code balance:** 242 legacy / 392 modern = 38% legacy / 62% modern (files), 58% legacy / 42% modern (lines)
 
 ## Status
 
@@ -43,7 +43,7 @@ Dead code is exhausted. All remaining shared files have active callers.
 
 Current active slice: migrate remaining module callers from legacy SPI names to module-owned ports. The latest audit slices moved database changelog list reads onto `DatabaseChangeLogPort.findChangeLogs()`, moved audit-user event reads out of `IAuditEventDAO`/`IUserAccountDAO` injection, and moved study-subject event audit reads out of seven legacy DAO SPI injections into audit module query paths. The remaining DAO SPI files stay blocked on caller migration, not method-level replacement coverage.
 
-1. **Replace adapter-delegated behavior with module-owned implementations** — the 39 DAO SPI files and 82 beans are the legacy surface that module adapters depend on. Reducing further requires migrating adapter logic to use module repositories directly.
+1. **Replace legacy SPI callers with module-owned ports** — the 39 DAO SPI files and 82 beans are the legacy surface that module adapters and compatibility paths still depend on. Reducing further requires migrating callers to module ports and repositories directly.
 2. **Migrate remaining shared support code to module-owned services** — no `shared/service` package remains; further reduction requires proving compatibility support classes unused.
 3. **Remove JSTL/JMesa dependencies** — after all JSP-era rendering code is confirmed dead.
 

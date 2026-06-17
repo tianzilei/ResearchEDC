@@ -2,17 +2,17 @@
 
 **Generated:** 2026-06-14 (updated)
 
-**Purpose:** classify remaining legacy DAO SPI methods before deleting `shared/dao` implementation/support files. This ledger is conservative: uncertain evidence is marked as a blocker, not as deletion-ready. Latest Phase 3 slice reclassified all 142 `fallback-sql` methods to `module-backed` after verifying each adapter provides a valid implementation (JPA repository call or empty stub).
+**Purpose:** classify remaining legacy DAO SPI methods before deleting or replacing `shared/dao` SPI interfaces. This ledger is conservative: uncertain evidence is marked as a blocker, not as deletion-ready. Latest Phase 3 slice reclassified all 142 `fallback-sql` methods to `module-backed` after verifying each adapter provides a valid implementation (JPA repository call or empty stub).
 
 ## Status Counts
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `module-backed` | 720 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
+| `module-backed` | 720 | A module adapter or service path implements the method; still needs caller migration before deleting legacy SPI interfaces. |
 | `unused` | 0 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
-| `removed` | 158 | SPI interface and implementation deleted; legacy service references cleaned up. |
+| `removed` | 158 | SPI contract deleted or removed from the ledger; legacy service references cleaned up. |
 
-Coverage snapshot: 720/878 tracked methods are module-backed and 158/878 are removed; 878/878 tracked methods are module-backed or removed (**100.0%**). No method-level blockers remain; DAO implementation deletion now depends on proving registration, factory, inheritance, and runtime dependencies are safe per DAO family.
+Coverage snapshot: 720/878 tracked methods are module-backed and 158/878 are removed; 878/878 tracked methods are module-backed or removed (**100.0%**). No method-level blockers remain; DAO SPI deletion now depends on migrating callers from legacy SPI names to module-owned ports.
 
 ## SPI Summary
 
@@ -70,10 +70,10 @@ Coverage snapshot: 720/878 tracked methods are module-backed and 158/878 are rem
 
 ## Immediate Deletion Rules
 
-- Do not delete a DAO implementation/support file from `shared/dao` solely because an SPI adapter exists.
-- Before deleting, verify no `DaoRegistrar` registration, `HibernateConfig` bean, `LegacyDaoFactory` factory method, inheritance dependency, or runtime caller remains.
+- Do not delete a DAO SPI interface from `shared/dao` solely because an adapter exists.
+- Before deleting, verify no module adapter, injected caller, test, or runtime compatibility path still depends on the SPI name.
 - Treat `unused` rows as blockers until each method is removed from the SPI or has stronger module-backed evidence.
-- Prioritize deleting unused SPI rows, then verify registration, factory, inheritance, and runtime caller dependencies before deleting implementation/support files.
+- Prioritize caller migration from legacy SPI names to module-owned ports; then delete SPI interfaces once no injected caller remains.
 
 ## Detailed Rows
 

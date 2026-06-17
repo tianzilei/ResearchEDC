@@ -1,6 +1,6 @@
 # Remove Legacy Code Plan
 
-**Last updated:** 2026-06-16
+**Last updated:** 2026-06-17
 **Status:** Legacy removal is **not complete**. Tracked workflow progress is **96.0%** (924/963 artifacts removed or closed; 39 active artifacts remain). **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining work is now concentrated in: (1) Phase 3 module-owned DAO replacement/deletion → 39 DAO SPI Java files in `shared/dao`; (2) import/export compatibility hardening in app/module code. Phase 3 ledger status: 720/878 methods module-backed, 878/878 module-backed or removed (100.0%), 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 0 unused (0.0%), 158 removed.
 
 ## Current Baseline
@@ -9,7 +9,7 @@ These counts come from the current repository tree and regenerated inventory (up
 
 | Surface | Count (before) | Count (after) | Meaning |
 |---------|----------------|---------------|---------|
-| `shared/src/main/java/org/researchedc` | 793 | 242 | Legacy beans, DAOs, entities, jobs, exceptions, utilities (-551) |
+| `shared/src/main/java/org/researchedc` | 793 | 242 | Legacy beans, DAO SPI, entities, jobs, exceptions, utilities (-551) |
 | `shared/src/main/java/org/researchedc/dao` | 186 | 39 | DAO SPI interfaces only (-147) |
 | `web/` | 480 | 0 | **ENTIRE DIRECTORY DELETED** — 102 files migrated to app/ or deleted (-480) |
 | Legacy servlet inventory artifacts | 186 | 0 | No active servlet artifacts; `web/` is absent (-186) |
@@ -49,7 +49,7 @@ None of the above means legacy code is removed. It means the code is better cont
 
 1. Delete only after replacement behavior is proven by tests and route/API usage.
 2. Do not remove JSP/servlet code only because a React page exists; verify navigation, permissions, audit, validation, import/export behavior, and rollback path.
-3. Do not delete a DAO implementation until every SPI method it provides is backed by module-owned repository/service code or is proven unused.
+3. Do not delete a DAO SPI interface until every caller has moved to a module-owned port, or the contract is proven unused.
 4. Prefer deleting whole workflows over deleting isolated helper classes.
 5. Keep OpenClinica-derived ODM compatibility code until import/export contracts are explicitly replaced or versioned.
 
@@ -57,11 +57,11 @@ None of the above means legacy code is removed. It means the code is better cont
 
 **Goal:** make deletion measurable and prevent accidental claims of completion.
 
-- Create a generated inventory of all legacy routes, servlets, JSPs, SOAP endpoints, DAO implementations, Quartz jobs, and shared services.
+- Create a generated inventory of all legacy routes, servlets, JSPs, SOAP endpoints, DAO SPI interfaces, Quartz jobs, and shared services.
 - Map every legacy route to one of: `replace`, `retire`, `keep compatibility`, or `unknown`.
 - Add CI guard scripts for:
   - `DaoProvider.getDao` remains 0.
-  - direct `new XxxDAO(...)` remains 0 outside implementation boundaries.
+  - direct `new XxxDAO(...)` remains 0 outside approved adapter/test boundaries.
   - no new `SecureController` subclass is added.
   - no new JSP file is added.
 - Record current counts in release notes whenever the baseline changes.
@@ -82,7 +82,7 @@ Completed on 2026-06-07 after Phase B validation:
 
 - `scripts/ci/generate-legacy-inventory.py` generates CSV and Markdown inventories for legacy servlets, JSPs, Spring MVC routes, SOAP endpoints, DAO files, Quartz jobs, and shared services.
 - `docs/refactor/legacy-workflow-inventory.csv` initially recorded 963 artifacts. The regenerated 2026-06-17 inventory now records 39 active artifacts after `web/` deletion, SOAP retirement, shared-service removal, and Phase 3 DAO/support deletion passes.
-- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 43 `keep compatibility` and 0 `unknown` artifacts. All remaining rows are live `shared/dao` Java files.
+- `docs/refactor/legacy-workflow-inventory.md` now summarizes the active inventory: 39 `keep compatibility` and 0 `unknown` artifacts. All remaining rows are live `shared/dao` Java files.
 - `scripts/ci/generate-legacy-report.sh` now includes the workflow inventory artifacts in the generated legacy report.
 - The first low-risk Phase 1 vertical slice, `phase-1-admin-read-only`, is now closed; no active artifacts remain in the generated inventory.
 - `docs/refactor/phase-1-admin-read-only-ledger.csv` maps the 51 admin read-only rows; all rows are now covered/deleted or formally retired, and the generated inventory has no active `phase-1-admin-read-only` artifacts.
@@ -295,9 +295,9 @@ Current ledger state (updated 2026-06-17):
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `module-backed` | 720 | Adapter/repository/service path exists; still requires registration and caller checks before implementation deletion |
+| `module-backed` | 720 | Adapter/repository/service path exists; still requires caller migration before SPI interface deletion |
 | `unused` | 0 | No unused SPI methods remain |
-| `removed` | 158 | SPI interface and implementation deleted; legacy service references cleaned up |
+| `removed` | 158 | SPI contract deleted or removed from the ledger; legacy service references cleaned up |
 
 For each DAO family:
 
@@ -305,7 +305,7 @@ For each DAO family:
 - Mark each method as `module-backed`, `fallback-sql`, `legacy-only`, `adapter-gap`, or proven unused.
 - Replace `legacy-only` behavior with a module service/repository or retire the caller.
 - Remove adapter delegation to parent legacy SQL.
-- Delete the DAO implementation class only when no Spring bean registration, factory method, inheritance relationship, test, or runtime path needs it.
+- Delete the DAO SPI interface only when no module adapter, injected caller, test, or runtime compatibility path needs it.
 
 High-risk DAO groups:
 
@@ -397,7 +397,7 @@ Legacy code removal is complete only when all are true:
 
 - `web/` directory is deleted. ✅ (2026-06-12)
 - `ws/` remains absent or is explicitly retained as a non-legacy compatibility adapter. ✅
-- `shared/dao` legacy implementations are removed or replaced by module-owned ports with no legacy SQL delegation.
+- `shared/dao` legacy SPI interfaces are removed or replaced by module-owned ports with no legacy-shaped caller dependency.
 - Legacy-only beans/services/jobs/utilities in `shared/` have no callers and are deleted.
 - Legacy-only dependencies are removed from Maven.
 - Full backend, frontend, questionnaire, and E2E verification passes.

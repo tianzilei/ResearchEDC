@@ -2,7 +2,7 @@
 
 **Derived from:** OpenClinica v3.x
 **Generated:** 2026-05-25
-**Updated:** 2026-06-16
+**Updated:** 2026-06-17
 **Branch:** master
 
 ## OVERVIEW
@@ -12,7 +12,7 @@ ResearchEDC is an independently maintained research electronic data capture (EDC
 New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (242 Java files, including 39 DAO SPI files). `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and 9 needed import/validation classes were migrated to `app/`. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
 
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | **Refactor progress ~95%** ✅ | **Phase 3 DAO ledger 720/878 module-backed; 878/878 covered/removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅**
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | **Refactor progress 96.0%** ✅ | **Phase 3 DAO ledger 720/878 module-backed; 878/878 covered/removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅**
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 ✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
@@ -40,11 +40,11 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │       ├── subjectgroup/    # 受试者分组 (JPA 实体 + 仓库, 9 文件)
 │       └── discrepancynote/ # 差异备注管理 (JPA 实体 + 仓库, 7 文件)
 ├── shared/                  # 共享领域逻辑与数据访问 — 242 Java files (replaces legacy-core, still legacy-heavy)
-│   ├── bean/                # DTOs (253 文件)
-│   ├── dao/                 # 数据访问层 (43 SPI interfaces)
-│   ├── domain/              # Hibernate 实体 (166 文件)
-│   ├── service/             # 业务服务 (50 files)
-│   ├── logic/               # 规则引擎 (57 文件)
+│   ├── bean/                # DTOs (82 Java files)
+│   ├── dao/                 # 数据访问层 (39 SPI interfaces)
+│   ├── domain/              # Hibernate 实体 (103 Java files)
+│   ├── job/                 # Quartz infrastructure (4 Java files)
+│   ├── core/                # Core resources/utilities (4 Java files)
 │   └── ...                  # job, exception, validator, i18n, patterns, config
 ├── frontend/                # React 19 + TypeScript SPA (pnpm workspace, 102 src TS/TSX files)
 ├── questionnaire-service/   # Python FastAPI 问卷微服务 (独立部署, 76 Python files)
@@ -90,8 +90,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | **DiscrepancyNote module** | `app/.../module/discrepancynote/` | 差异备注 JPA 实体 (gateway only) |
 | **Shared (legacy) logic** | `shared/src/main/java/org/researchedc/` | DAO/domain/service/bean/logic |
 | Legacy DAOs | `shared/.../dao/` | 39 DAO SPI Java files; deletion blocked by caller migration |
-| Legacy DAOs (JPA) | `shared/.../dao/hibernate/` | AbstractDomainDao 子类 |
-| Legacy DAO SPI interfaces | `shared/.../dao/spi/` | 43 个接口 (IStudyDAO, ISubjectDAO, ...) |
+| Legacy DAO SPI interfaces | `shared/.../dao/spi/` | 39 个接口 (IStudyDAO, ISubjectDAO, ...) |
 | Legacy Hibernate entities | `shared/.../domain/datamap/` | ~62 实体, JPA 注解 |
 | Import/validation classes | `app/.../control/form/` | Validator, DiscrepancyValidator, FormDiscrepancyNotes (migrated from web/) |
 | Liquibase migrations | `shared/.../migration/` | 208 个版本化 schema XML |
@@ -105,7 +104,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 ### Backend
 - **Package:** `org.researchedc.*`
 - **Beans:** `*Bean` suffix for legacy DTOs (e.g., `StudyBean`)
-- **DAOs:** `*DAO` suffix, extend `EntityDAO<K extends EntityBean>`; SPI interfaces prefixed with `I`
+- **DAOs:** remaining `shared/dao` files are SPI/port interfaces; new data access belongs in module repositories and module-owned ports.
 - **Modules:** `org.researchedc.module.<name>.*` with `@ApplicationModule`
 - **Module entities:** `@Entity(name = "Module<Name>")` to avoid collision with shared entities
 - **Module FKs:** Plain `Integer`/`Long` columns, NOT JPA `@ManyToOne` (follows randomization pattern)
@@ -208,14 +207,14 @@ python -m pytest app/tests/ -v
 - **Version:** 0.1
 - **legacy-core → shared:** `legacy-core/` was removed on 2026-05-23. Its code was consolidated into `shared/` with `@Repository`/`@Service` annotations and package rename to `org.researchedc`. This was a module consolidation, **not** full legacy code removal.
 - **Frontend TypeScript:** ✅ `pnpm typecheck` — 0 errors (strict mode).
-- **DAO constructor baseline:** `DaoProvider` bridge has been removed. Direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) is now 0 matches across `shared/`; `ws/` is absent. All 24 target DAO families are SPI-widened; deletion is gated on module-owned replacement implementations (Phase B).
+- **DAO constructor baseline:** `DaoProvider` bridge has been removed. Direct legacy DAO/`StudyConfigService` construction (`new XxxDAO(...)` / `new StudyConfigService(...)`) is now 0 matches across `shared/`; `ws/` is absent. All 24 target DAO families are SPI-widened; deletion is gated on migrating callers from legacy SPI names to module-owned ports.
 
 ### Legacy DAO Refactor Handoff (2026-06-05)
 
-- **Status:** Phase C SPI widening **COMPLETE** — all **24 DAO families** are SPI-widened. All consumer references in web/ (50+ files), shared/ (20+ files), and ws/ (0 files) now use SPI interfaces. Remaining concrete type names are limited to DAO implementation classes, `LegacyDaoFactory`, `DaoRegistrar` bean name strings, `OdmExtractDAO extends DatasetDAO` inheritance, and commented-out code in 3 extract servlets — all harmless.
+- **Status:** Phase C SPI widening **COMPLETE** — all **24 DAO families** are SPI-widened. The remaining checked-in DAO surface is SPI-only: 39 Java files under `shared/dao/spi`. `web/` and `ws/` are absent, `LegacyDaoFactory` and `EntityDAO` infrastructure are deleted, and remaining deletion is blocked by callers that still depend on legacy SPI names.
 - **Phase B adapters:** 24 `@Primary @Component` adapter classes in `app/module/*/internal/adapter/` bridge all SPI interfaces to module-owned repositories (27 `module_*` tables). A few complex analytical methods (e.g., `getNumItems*`, `findNext`) delegate to parent legacy DAO SQL.
 - **DAO families SPI-widened (24 of 24):**
-  - ✅ **StudyDAO / StudySubjectDAO / SubjectDAO / UserAccountDAO** — boundary-only; concrete refs limited to implementation classes, `LegacyDaoFactory`, and `UserAccountAdapter`
+  - ✅ **StudyDAO / StudySubjectDAO / SubjectDAO / UserAccountDAO** — concrete implementations deleted; remaining callers use SPI names and need module-owned port migration.
   - ✅ **CRFDAO → ICrfDAO** — `460fab3f2`, `01efa4b05`
   - ✅ **CRFVersionDAO → ICrfVersionDAO** — ~20 commits (`9da44e612`–`1e337b75b`)
   - ✅ **DiscrepancyNoteDAO → IDiscrepancyNoteDAO** — `0e47f8872`, `ec1b9b0d9`
@@ -236,7 +235,7 @@ python -m pytest app/tests/ -v
   - ✅ **StudyGroupClassDAO → StudyGroupClassDao** — 4 shared/ consumers all SPI-typed
   - ✅ **StudyGroupDAO → StudyGroupDao** — 3 shared/ consumers all SPI-typed
   - ✅ **ArchivedDatasetFileDAO → ArchivedDatasetFileDao** — `58278d68b`; 8 consumer files converted
-- **Refactor progress snapshot (2026-06-17):** active workflow inventory is 924/963 closed (**96.0%**), Phase 3 DAO method coverage is 878/878 module-backed or removed (**100%**), DAO method blockers are 0/878 unused rows (**0%**), shared/ reduced from 793 to 242 files (**69.0%**), DAO-surface deletion is 147/186 files (**79.0%**), LegacyDaoFactory eliminated, EntityDAO infrastructure deleted, dead code cleanup complete.
+- **Refactor progress snapshot (2026-06-17):** active workflow inventory is 924/963 closed (**96.0%**), Phase 3 DAO method coverage is 878/878 module-backed or removed (**100%**), DAO method blockers are 0/878 unused rows (**0%**), shared/ reduced from 793 to 242 files (**69.5%**), DAO-surface deletion is 147/186 files (**79.0%**), LegacyDaoFactory eliminated, EntityDAO infrastructure deleted, dead code cleanup complete.
 - **Phase 3 ledger status (2026-06-17):** `docs/refactor/phase-3-dao-replacement-ledger.{md,csv}` tracks 878 SPI methods: 720 `module-backed`, 0 `fallback-sql`, 0 `legacy-only`, 0 `adapter-gap`, 0 `unused`, and 158 `removed`. Deletion is now gated by migrating callers from legacy SPI names to module-owned ports.
 - **Remaining work:** `shared/dao` is now SPI-only with 39 DAO SPI Java files. Remaining deletion is blocked by callers that still depend on legacy SPI names instead of module-owned ports. Latest caller-migration slices moved audit database-changelog, audit-user-event, and study-subject event audit reads off legacy SPI injection.
 - **Gauntlet commands:**

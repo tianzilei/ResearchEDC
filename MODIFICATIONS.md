@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-17 - Refresh refactor documentation baseline
+
+- Updated root, shared, and refactor handoff docs to the current 96.0% workflow progress baseline, 39 active DAO SPI artifacts, 720/878 module-backed methods, and 878/878 covered or removed ledger state.
+- Refreshed the checked-in legacy workflow inventory timestamp and clarified that remaining `shared/dao` deletion is blocked by caller migration to module-owned ports, not DAO implementation/factory infrastructure.
+
 ## 2026-06-17 - Move audit study subject event reads off legacy SPI
 
 - Reworked `AuditStudySubjectEventAdapter` to assemble study, subject, audit, event, definition, and event-CRF DTOs through module-local native queries instead of injecting seven legacy DAO SPI adapters.

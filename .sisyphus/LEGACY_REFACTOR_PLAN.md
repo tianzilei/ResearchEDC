@@ -24,7 +24,7 @@
 ### Remaining legacy code baseline (2026-06-12, current worktree after regenerated inventory)
 
 ```
-shared/   242 Java files → bean/ dao/ domain/ job/ exception/ validator/ i18n/ patterns/ core/ log/
+shared/   242 Java files → bean/ dao SPI/ domain/ job/ exception/ i18n/ patterns/ core/ support/
            39 Java files under shared/src/main/java/org/researchedc/dao
 web/        0 files → directory absent; needed import/validation compatibility classes migrated to app/
 ws/         0 Java files → SOAP module absent in current tree
@@ -175,7 +175,7 @@ Each Modulith module owns specific database tables. These declarations define th
 | **openrosa** | OpenRosa REST/XML compatibility API | controller/service DTOs | no owned tables | `/api/v1/openrosa` |
 | **legacy** | (gateway only, no owned tables) | — | — | `/api/v1/legacy/*` |
 
-**Key constraint:** Modules with SHARED tables share them with legacy `core/domain/*` entities. These tables must not be altered by the module without coordinating with legacy code. The module writes to these tables via JPA Repository; legacy code reads/writes via `EntityDAO` subclasses. Both paths are in use until legacy DAOs are deleted.
+**Key constraint:** Modules with shared-schema tables must coordinate table changes with compatibility code. Module-owned repositories and adapters are the supported path; remaining legacy SPI callers must move to module-owned ports before the SPI interfaces can be deleted.
 
 ### B2: Schema Migration Strategy
 
@@ -284,7 +284,7 @@ Modules communicate via:
 
 ### C1: DAO Files Still Present (Blocked by remaining concrete consumers)
 
-Latest Phase 3 ledger checkpoint (2026-06-17): overall ledger status is 720 `module-backed`, 0 `unused`, and 158 `removed` across 878 tracked methods. DAO implementation deletion remains blocked until registration/factory/inheritance/runtime dependencies are cleared for each family.
+Latest Phase 3 ledger checkpoint (2026-06-17): overall ledger status is 720 `module-backed`, 0 `unused`, and 158 `removed` across 878 tracked methods. DAO SPI deletion is blocked by caller migration from legacy SPI names to module-owned ports.
 
 The following DAO `.java` files still exist in `shared/`. As of 2026-06-02, **0 `DaoProvider.getDao()` call sites** and **0 direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches** remain across app/web/ws/shared. **All 24 DAO families** are SPI-widened. All DAO `.java` files must remain because they are the current SPI implementations; deletion is blocked by the need for module-owned replacements and workflow strangulation.
 
@@ -517,7 +517,7 @@ Available at `GET/PUT /api/v1/studies/:id/feature-flags` (JSONB on `study` table
 |-------|-------------|-----------------|--------------|
 | A1-A5 | Write operations | ✅ COMPLETE | None |
 | B1-B3 | Schema ownership | ✅ COMPLETE | 12 bidirectional sync triggers, 27 entities remapped, 24 adapters |
-| C1-C4 | Legacy code deletion | 🔶 In progress, not complete | **0 direct legacy constructor matches, 0 `DaoProvider.getDao()` calls, 24/24 DAO families SPI-widened. Workflow progress is 924/963 closed (96.0%). Physical deletion remains blocked by DAO implementation replacement proof.** |
+| C1-C4 | Legacy code deletion | 🔶 In progress, not complete | **0 direct legacy constructor matches, 0 `DaoProvider.getDao()` calls, 24/24 DAO families SPI-widened. Workflow progress is 924/963 closed (96.0%). Physical deletion remains blocked by legacy SPI caller migration to module-owned ports.** |
 | D1-D2 | Config migration | ✅ Complete | 11 XML → Java Config, dead XML stubs cleanup (2026-05-23) |
 | E1-E2 | Auth unification | ✅ Complete | Dual SecurityFilterChain (JWT API + OIDC web) |
 | F1-F2 | SOAP retirement | ✅ Current tree retired | `ws/` is absent; keep compatibility audit only if SOAP endpoints reappear |
