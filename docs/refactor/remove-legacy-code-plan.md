@@ -102,7 +102,7 @@ Current next action (updated 2026-06-17):
 5. ✅ Done: web/ module DELETED — needed validation/import compatibility classes were migrated to app/ (Validator, DiscrepancyValidator, FormDiscrepancyNotes, Validation, EanCheckDigit, ValidatorRegularExpression, ImportCRFInfo, ImportHelper). Later cleanup removed the temporary app-hosted bridge leftovers as their callers disappeared, including `ImportCRFInfo`, `ImportCRFInfoContainer`, the now-deleted `ImportCRFDataService`, the last dead `app/src/main/java/org/researchedc/web/*` holdouts (`ImportHelper`, `OpenClinicaLdapAuthoritiesPopulator`), and the now-no-op `LegacyServletConfig`. 93 dead legacy servlets/views/helpers deleted. Entire web/ directory removed, no Java classes remain under `app/src/main/java/org/researchedc/web`, and no Boot servlet compatibility registration class remains in the current tree. JSP/JSTL dependencies cleaned from app/pom.xml.
 6. ⬜ Phase 3 DAO deletion: 17 dead files/bridges deleted (ScheduledJobSort, OCContextLoaderListener, SubjectGroupMapDao, OpenClinicaVersionDAO + SPI). 39 remaining DAO SPI Java files are blocked by caller migration to module-owned ports: 720/878 methods are module-backed, 0 unused SPI rows remain, 158 rows are removed, and 0 fallback-SQL/legacy-only/adapter-gap rows remain. Phase 3 SPI method coverage is now 100%. Recent caller-migration slices moved database changelog reads onto `DatabaseChangeLogPort.findChangeLogs()`, audit-user event reads out of `IAuditEventDAO`/`IUserAccountDAO` injection, study-subject event audit reads out of seven legacy DAO SPI injections into audit adapter query paths, removed dead DAO-backed `Validator` branches (`ENTITY_EXISTS`, `ENTITY_EXISTS_IN_STUDY`, `USERNAME_UNIQUE`) once the current tree proved they had no callers, simplified the app import bridge so `ImportCrfDataAdapter` no longer carries a dead `DataSource` constructor dependency after preview-only `ImportCRFDataService` helpers were dropped, moved commit item shaping, study metadata/OID validation, and the remaining event/status compatibility logic into the module adapter, removed the last app-level non-adapter SPI-heavy holdout, deleted the final dead `app/src/main/java/org/researchedc/web/*` leftovers, removed the obsolete `DaoRegistrar` once no concrete DAO classes remained under `shared/src/main/java/org/researchedc/dao`, deleted the orphaned `ImportCRFInfo` plus the now-no-op `LegacyServletConfig`, and then trimmed additional dead app-side scaffolding by removing the unreferenced `KeycloakJwtAuthenticationConverter`, the inactive OAuth2 starters/JWT-only helper path, and the no-op `CacheConfig`/`SchedulingConfig` shims after scans confirmed there were no live `@Cacheable` or `@Scheduled` callers. Verification scans now show zero non-adapter legacy DAO/SPI imports under `app/src/main/java`, zero Java classes under `app/src/main/java/org/researchedc/web`, zero concrete DAO classes under `shared/src/main/java/org/researchedc/dao`, no Boot servlet compatibility registration class in the current tree, and no active app-side OAuth2/Keycloak wiring.
 7. ✅ Done: Phase 4 shared bean deletion — EXHAUSTED. 73 files (-8570L) across runs 81-95. 0 dead code remaining.
-8. ✅ Done: Phase 5 dependency cleanup — dedicated scavenging pass exhausted; follow-up removal slices may still retire app-side dependencies when their last callers disappear, as with the OAuth2/Caffeine cleanup in the current tree.
+8. ✅ Done: Phase 5 dependency cleanup — dedicated scavenging pass exhausted; follow-up removal slices may still retire app-side or shared-era dependencies when their last callers disappear, as with the OAuth2/Caffeine cleanup and the later shared `jmesa`/JSTL/JSP dependency removal in the current tree.
 9. ✅ Initial import/export compatibility hardening complete in commit `bc1f24d97`: focused dataimport/legacy bridge/data-capture tests, typed validation preview/result output, commit audit event, result stats, and secure attachment download keyed by event CRF plus opaque attachment ids. Rollback proof was added after commit `ae72d2415`; remaining compatibility work: deterministic ODM preview validation fixtures; representative ODM parse, OpenRosa submission form-context, and export API contract coverage added; rule XML import is retired and guarded against reintroduction; legacy import job scheduling is retired in the current tree.
 
 ## Phase B PostgreSQL Validation
@@ -365,7 +365,6 @@ Candidates after prior phases:
 - parent pom.xml + research-edc-bom/pom.xml: jxl.version, sitemesh, jersey, jdom2, stax-ex, commons-logging, commons-beanutils-core properties and dependency management entries
 
 **Cannot remove yet (still actively used):**
-- JMesa — 252 imports in codebase (table rendering)
 - Castor — ~30 imports (import/export XML marshalling)
 - JSON-Lib — 35 imports (2 files: JSONClinicalDataPostProcessor, MetadataCollectorResource)
 - OpenPDF — **CONFIRMED DEAD** (0 Java imports; DownloadDiscrepancyNote deleted, no POM reference found — run-81 audit)
@@ -373,9 +372,15 @@ Candidates after prior phases:
 - Rome RSS — **CONFIRMED DEAD** (0 Java imports; RssReaderServlet deleted in Phase 1, no POM reference found — run-81 audit)
 - Quartz — 148 imports (job scheduling)
 - Old commons-dbcp — 7 imports (ExtendedBasicDataSource, controllers)
-- JSTL — 575 JSP references
+- OpenClinica ODM — import/export compatibility still depends on the legacy ODM model
 
 **Exit gate:** Maven module `web` is removed or no longer contains legacy runtime dependencies; `ws` remains absent.
+
+Follow-up completed on 2026-06-18:
+
+- `shared/pom.xml` no longer carries `jmesa`, JSTL API, or direct JSP API dependencies.
+- Parent/BOM metadata no longer carries `jmesa`, JSTL, or JSP API version/dependency-management entries.
+- Repo-wide scans confirmed there were no surviving `org.jmesa.*`, JSTL, or JSP tag API imports after `web/` deletion.
 
 ## Verification Commands
 

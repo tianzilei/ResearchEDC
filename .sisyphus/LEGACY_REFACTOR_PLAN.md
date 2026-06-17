@@ -546,7 +546,7 @@ Available at `GET/PUT /api/v1/studies/:id/feature-flags` (JSONB on `study` table
 
 | Dependency | Used In | Usage | Removal Strategy |
 |------------|---------|-------|-----------------|
-| **JMesa** 2.5.2 | historical `legacy-core`/`web` use | Retired JSP table rendering | Removed with JSP strangulation; keep absent. |
+| **JMesa** 2.5.2 | historical `legacy-core`/`web` use | Retired JSP table rendering | Removed from the current Maven surface after `web/` deletion; keep absent. |
 | **Castor** 1.4.1 | `shared`, `web` | ODM XML export in MetaDataReportBean, rule handlers (OidHandler, EmailHandler) | Remove with export/import migration; SOAP is already absent |
 | **OpenClinica ODM** 2.2 | `legacy-core` | Internal ODM data model (bean/odmbeans/) | Remove with export/import module migration |
 | **Sitemesh** | historical `web` use | Retired JSP page decoration | Removed with JSP strangulation; keep absent. |

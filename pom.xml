@@ -54,13 +54,8 @@
 		<postgresql.version>42.7.3</postgresql.version>
 		<servlet-api.version>4.0.1</servlet-api.version>
 		<jakarta-servlet.version>6.0.0</jakarta-servlet.version>
-		<jakarta-servlet-jsp.version>3.1.1</jakarta-servlet-jsp.version>
 		<jakarta-transaction.version>2.0.1</jakarta-transaction.version>
 		<jakarta-xml-bind.version>4.0.1</jakarta-xml-bind.version>
-
-
-		<jstl-api.version>3.0.0</jstl-api.version>
-		<jstl-impl.version>3.0.1</jstl-impl.version>
 		<mockito.version>5.11.0</mockito.version>
 		<byte-buddy.version>1.14.12</byte-buddy.version>
 		<testcontainers.version>1.19.8</testcontainers.version>
@@ -107,11 +102,6 @@
 				<version>${spring-modulith.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.jmesa</groupId>
-				<artifactId>jmesa</artifactId>
-				<version>2.5.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.akaza.openclinica.odm</groupId>
@@ -197,11 +187,6 @@
 				<version>${jakarta-servlet.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>jakarta.servlet.jsp</groupId>
-				<artifactId>jakarta.servlet.jsp-api</artifactId>
-				<version>${jakarta-servlet-jsp.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>jakarta.transaction</groupId>
 				<artifactId>jakarta.transaction-api</artifactId>
 				<version>${jakarta-transaction.version}</version>
@@ -212,16 +197,6 @@
 				<version>${jakarta-xml-bind.version}</version>
 			</dependency>
 
-			<dependency>
-				<groupId>jakarta.servlet.jsp.jstl</groupId>
-				<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-				<version>${jstl-api.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.glassfish.web</groupId>
-				<artifactId>jakarta.servlet.jsp.jstl</artifactId>
-				<version>${jstl-impl.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>net.bytebuddy</groupId>
 				<artifactId>byte-buddy</artifactId>

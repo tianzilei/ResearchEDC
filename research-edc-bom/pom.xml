@@ -55,15 +55,10 @@
 
         <!-- Jakarta EE -->
         <jakarta-servlet.version>6.0.0</jakarta-servlet.version>
-        <jakarta-servlet-jsp.version>3.1.1</jakarta-servlet-jsp.version>
         <jakarta-transaction.version>2.0.1</jakarta-transaction.version>
         <jakarta-xml-bind.version>4.0.1</jakarta-xml-bind.version>
 
         <jakarta-validation.version>3.0.2</jakarta-validation.version>
-
-        <!-- JSTL -->
-        <jstl-api.version>3.0.0</jstl-api.version>
-        <jstl-impl.version>3.0.1</jstl-impl.version>
 
 
         <!-- Logging -->
@@ -77,9 +72,6 @@
 
         <!-- Scheduling -->
         <quartz.version>2.3.2</quartz.version>
-
-        <!-- Tables/Grids -->
-        <jmesa.version>2.5.2</jmesa.version>
 
         <!-- OpenClinica ODM -->
         <openclinica-odm.version>2.2</openclinica-odm.version>
@@ -317,11 +309,6 @@
                 <version>${jakarta-servlet.version}</version>
             </dependency>
             <dependency>
-                <groupId>jakarta.servlet.jsp</groupId>
-                <artifactId>jakarta.servlet.jsp-api</artifactId>
-                <version>${jakarta-servlet-jsp.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>jakarta.transaction</groupId>
                 <artifactId>jakarta.transaction-api</artifactId>
                 <version>${jakarta-transaction.version}</version>
@@ -335,20 +322,6 @@
                 <groupId>jakarta.validation</groupId>
                 <artifactId>jakarta.validation-api</artifactId>
                 <version>${jakarta-validation.version}</version>
-            </dependency>
-
-            <!-- ============================================== -->
-            <!-- JSTL                                            -->
-            <!-- ============================================== -->
-            <dependency>
-                <groupId>jakarta.servlet.jsp.jstl</groupId>
-                <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-                <version>${jstl-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.web</groupId>
-                <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-                <version>${jstl-impl.version}</version>
             </dependency>
 
             <!-- ============================================== -->
@@ -406,15 +379,6 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>${quartz.version}</version>
-            </dependency>
-
-            <!-- ============================================== -->
-            <!-- Tables / Grids                                   -->
-            <!-- ============================================== -->
-            <dependency>
-                <groupId>org.jmesa</groupId>
-                <artifactId>jmesa</artifactId>
-                <version>${jmesa.version}</version>
             </dependency>
 
             <!-- ============================================== -->
