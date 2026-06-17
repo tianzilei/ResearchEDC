@@ -1,27 +1,14 @@
 package org.researchedc.module.audit.internal.adapter;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import org.researchedc.bean.admin.AuditBean;
-import org.researchedc.bean.core.DataEntryStage;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.SubjectEventStatus;
-import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.managestudy.StudyEventBean;
-import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.bean.submit.SubjectBean;
-import org.researchedc.dao.spi.AuditDao;
-import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.module.audit.dto.AuditEventCrfDTO;
 import org.researchedc.module.audit.dto.AuditStudyDTO;
 import org.researchedc.module.audit.dto.AuditStudyEventDTO;
@@ -39,54 +26,34 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 class AuditStudySubjectEventAdapter implements AuditStudySubjectEventPort {
 
-    private final IStudyDAO studyDao;
-    private final IStudySubjectDAO studySubjectDao;
-    private final ISubjectDAO subjectDao;
-    private final AuditDao auditDao;
-    private final IStudyEventDAO studyEventDao;
-    private final IStudyEventDefinitionDAO studyEventDefinitionDao;
-    private final EventCRFDao eventCrfDao;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    AuditStudySubjectEventAdapter(IStudyDAO studyDao,
-                                  IStudySubjectDAO studySubjectDao,
-                                  ISubjectDAO subjectDao,
-                                  AuditDao auditDao,
-                                  IStudyEventDAO studyEventDao,
-                                  IStudyEventDefinitionDAO studyEventDefinitionDao,
-                                  EventCRFDao eventCrfDao) {
-        this.studyDao = studyDao;
-        this.studySubjectDao = studySubjectDao;
-        this.subjectDao = subjectDao;
-        this.auditDao = auditDao;
-        this.studyEventDao = studyEventDao;
-        this.studyEventDefinitionDao = studyEventDefinitionDao;
-        this.eventCrfDao = eventCrfDao;
+    AuditStudySubjectEventAdapter() {
     }
 
     @Override
     public AuditStudySubjectEventsDTO findStudySubjectEvents(int studyId) {
-        StudyBean study = (StudyBean) studyDao.findByPK(studyId);
-        List<AuditStudySubjectLogDTO> subjects = studySubjectDao.findAllByStudyOrderByLabel(study)
-                .stream()
-                .map(bean -> toSubjectLog((StudySubjectBean) bean))
+        Object[] study = findStudy(studyId);
+        List<AuditStudySubjectLogDTO> subjects = findStudySubjects(studyId).stream()
+                .map(this::toSubjectLog)
                 .toList();
         return new AuditStudySubjectEventsDTO(toStudy(study), subjects);
     }
 
-    private AuditStudySubjectLogDTO toSubjectLog(StudySubjectBean studySubject) {
-        SubjectBean subject = (SubjectBean) subjectDao.findByPK(studySubject.getSubjectId());
+    private AuditStudySubjectLogDTO toSubjectLog(Object[] studySubject) {
+        int studySubjectId = integer(studySubject[0]);
+        int subjectId = integer(studySubject[4]);
+        Object[] subject = findSubject(subjectId);
         List<AuditStudySubjectAuditDTO> audits = new ArrayList<>();
-        audits.addAll(auditDao.findStudySubjectAuditEvents(studySubject.getId())
-                .stream()
-                .map(bean -> toAudit((AuditBean) bean))
+        audits.addAll(findStudySubjectAudits(studySubjectId).stream()
+                .map(this::toAudit)
                 .toList());
-        audits.addAll(auditDao.findSubjectAuditEvents(subject.getId())
-                .stream()
-                .map(bean -> toAudit((AuditBean) bean))
+        audits.addAll(findSubjectAudits(subjectId).stream()
+                .map(this::toAudit)
                 .toList());
-        List<AuditStudyEventDTO> events = studyEventDao.findAllByStudySubject(studySubject)
-                .stream()
-                .map(bean -> toStudyEvent((StudyEventBean) bean))
+        List<AuditStudyEventDTO> events = findStudyEvents(studySubjectId).stream()
+                .map(this::toStudyEvent)
                 .toList();
         return new AuditStudySubjectLogDTO(
                 toStudySubject(studySubject),
@@ -95,118 +62,230 @@ class AuditStudySubjectEventAdapter implements AuditStudySubjectEventPort {
                 events);
     }
 
-    private AuditStudyDTO toStudy(StudyBean bean) {
+    private Object[] findStudy(int studyId) {
+        List<?> rows = entityManager.createNativeQuery(
+                "SELECT study_id, name, unique_identifier, secondary_identifier, oc_oid " +
+                "FROM module_study WHERE study_id = ?")
+                .setParameter(1, studyId)
+                .getResultList();
+        return rows.isEmpty() ? new Object[] {studyId, "", "", "", ""} : (Object[]) rows.getFirst();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Object[]> findStudySubjects(int studyId) {
+        return entityManager.createNativeQuery(
+                "SELECT ss.study_subject_id, ss.label, ss.secondary_label, ss.oc_oid, " +
+                "ss.subject_id, ss.study_id, ss.date_created, ss.owner_id, ua.user_name, ss.status_id " +
+                "FROM module_study_subject ss " +
+                "LEFT JOIN user_account ua ON ua.user_id = ss.owner_id " +
+                "WHERE ss.study_id = ? ORDER BY ss.label")
+                .setParameter(1, studyId)
+                .getResultList();
+    }
+
+    private Object[] findSubject(int subjectId) {
+        List<?> rows = entityManager.createNativeQuery(
+                "SELECT subject_id, unique_identifier, date_of_birth, gender, dob_collected, status_id " +
+                "FROM module_subject WHERE subject_id = ?")
+                .setParameter(1, subjectId)
+                .getResultList();
+        return rows.isEmpty() ? new Object[] {subjectId, "", null, "m", false, Status.INVALID.getId()}
+                : (Object[]) rows.getFirst();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Object[]> findStudySubjectAudits(int studySubjectId) {
+        return entityManager.createNativeQuery(
+                auditSql("study_subject", "2,3,4,27"))
+                .setParameter(1, studySubjectId)
+                .getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Object[]> findSubjectAudits(int subjectId) {
+        return entityManager.createNativeQuery(auditSql("subject", "5,6,7"))
+                .setParameter(1, subjectId)
+                .getResultList();
+    }
+
+    private String auditSql(String table, String typeIds) {
+        return "SELECT ale.audit_id, ale.audit_date, ale.audit_table, ale.user_id, ale.entity_id, " +
+                "ale.entity_name, alet.name, ale.audit_log_event_type_id, ale.old_value, " +
+                "ale.new_value, ale.reason_for_change, ua.user_name " +
+                "FROM audit_log_event ale JOIN user_account ua ON ale.user_id=ua.user_id " +
+                "JOIN audit_log_event_type alet ON ale.audit_log_event_type_id=alet.audit_log_event_type_id " +
+                "WHERE ale.audit_table='" + table + "' AND ale.audit_log_event_type_id IN (" + typeIds + ") " +
+                "AND ale.entity_id=? ORDER BY ale.audit_date DESC";
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Object[]> findStudyEvents(int studySubjectId) {
+        return entityManager.createNativeQuery(
+                "SELECT se.study_event_id, se.study_event_definition_id, se.study_subject_id, " +
+                "se.location, se.sample_ordinal, se.date_start, se.date_end, se.status_id, " +
+                "se.subject_event_status_id " +
+                "FROM module_study_event se WHERE se.study_subject_id = ? ORDER BY se.study_event_id")
+                .setParameter(1, studySubjectId)
+                .getResultList();
+    }
+
+    private Object[] findDefinition(int definitionId) {
+        List<?> rows = entityManager.createNativeQuery(
+                "SELECT study_event_definition_id, name, oc_oid, description, category, type, repeating " +
+                "FROM module_study_event_definition WHERE study_event_definition_id = ?")
+                .setParameter(1, definitionId)
+                .getResultList();
+        return rows.isEmpty() ? new Object[] {definitionId, "", "", "", "", "", false}
+                : (Object[]) rows.getFirst();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Object[]> findEventCrfs(int studyEventId) {
+        return entityManager.createNativeQuery(
+                "SELECT event_crf_id, study_event_id, study_subject_id, crf_version_id, " +
+                "date_interviewed, interviewer_name, date_completed, status_id, " +
+                "electronic_signature_status, sdv_status " +
+                "FROM module_event_crf WHERE study_event_id = ? ORDER BY event_crf_id")
+                .setParameter(1, studyEventId)
+                .getResultList();
+    }
+
+    private AuditStudyDTO toStudy(Object[] row) {
         return new AuditStudyDTO(
-                bean.getId(),
-                bean.getName(),
-                bean.getIdentifier(),
-                bean.getSecondaryIdentifier(),
-                bean.getOid());
+                integer(row[0]),
+                string(row[1]),
+                string(row[2]),
+                string(row[3]),
+                string(row[4]));
     }
 
-    private AuditStudySubjectDTO toStudySubject(StudySubjectBean bean) {
-        UserAccountBean owner = bean.getOwner();
+    private AuditStudySubjectDTO toStudySubject(Object[] row) {
         return new AuditStudySubjectDTO(
-                bean.getId(),
-                bean.getLabel(),
-                bean.getSecondaryLabel(),
-                bean.getOid(),
-                bean.getSubjectId(),
-                bean.getStudyId(),
-                toInstant(bean.getCreatedDate()),
-                owner != null ? owner.getId() : null,
-                owner != null ? owner.getName() : null,
-                statusName(bean.getStatus()));
+                integer(row[0]),
+                string(row[1]),
+                string(row[2]),
+                string(row[3]),
+                integer(row[4]),
+                integer(row[5]),
+                toInstant(row[6]),
+                nullableInteger(row[7]),
+                string(row[8]),
+                statusName(row[9]));
     }
 
-    private AuditSubjectDTO toSubject(SubjectBean bean) {
+    private AuditSubjectDTO toSubject(Object[] row) {
+        String gender = string(row[3]);
         return new AuditSubjectDTO(
-                bean.getId(),
-                bean.getUniqueIdentifier(),
-                bean.getLabel(),
-                toInstant(bean.getDateOfBirth()),
-                String.valueOf(bean.getGender()),
-                bean.isDobCollected(),
-                statusName(bean.getStatus()));
+                integer(row[0]),
+                string(row[1]),
+                "",
+                toInstant(row[2]),
+                !gender.isEmpty() ? gender.substring(0, 1) : "m",
+                bool(row[4]),
+                statusName(row[5]));
     }
 
-    private AuditStudySubjectAuditDTO toAudit(AuditBean bean) {
+    private AuditStudySubjectAuditDTO toAudit(Object[] row) {
         return new AuditStudySubjectAuditDTO(
-                bean.getId(),
-                toInstant(bean.getAuditDate()),
-                bean.getAuditTable(),
-                bean.getUserId(),
-                bean.getUserName(),
-                bean.getEntityId(),
-                bean.getEntityName(),
-                bean.getAuditEventTypeName(),
-                bean.getAuditEventTypeId(),
-                bean.getOldValue(),
-                bean.getNewValue(),
-                bean.getReasonForChange());
+                integer(row[0]),
+                toInstant(row[1]),
+                string(row[2]),
+                integer(row[3]),
+                string(row[11]),
+                integer(row[4]),
+                string(row[5]),
+                string(row[6]),
+                integer(row[7]),
+                string(row[8]),
+                string(row[9]),
+                string(row[10]));
     }
 
-    private AuditStudyEventDTO toStudyEvent(StudyEventBean bean) {
-        StudyEventDefinitionBean definition =
-                (StudyEventDefinitionBean) studyEventDefinitionDao.findByPK(bean.getStudyEventDefinitionId());
-        List<AuditEventCrfDTO> eventCrfs = eventCrfDao.findAllByStudyEvent(bean)
-                .stream()
-                .map(eventCrf -> toEventCrf((EventCRFBean) eventCrf))
+    private AuditStudyEventDTO toStudyEvent(Object[] row) {
+        int eventId = integer(row[0]);
+        int definitionId = integer(row[1]);
+        List<AuditEventCrfDTO> eventCrfs = findEventCrfs(eventId).stream()
+                .map(this::toEventCrf)
                 .toList();
         return new AuditStudyEventDTO(
-                bean.getId(),
-                bean.getStudyEventDefinitionId(),
-                bean.getStudySubjectId(),
-                bean.getLocation(),
-                bean.getSampleOrdinal(),
-                toInstant(bean.getDateStarted()),
-                toInstant(bean.getDateEnded()),
-                statusName(bean.getStatus()),
-                stageName(bean.getStage()),
-                subjectEventStatusName(bean.getSubjectEventStatus()),
-                toDefinition(definition),
+                eventId,
+                definitionId,
+                integer(row[2]),
+                string(row[3]),
+                integer(row[4]),
+                toInstant(row[5]),
+                toInstant(row[6]),
+                statusName(row[7]),
+                null,
+                subjectEventStatusName(row[8]),
+                toDefinition(findDefinition(definitionId)),
                 eventCrfs);
     }
 
-    private AuditStudyEventDefinitionDTO toDefinition(StudyEventDefinitionBean bean) {
+    private AuditStudyEventDefinitionDTO toDefinition(Object[] row) {
         return new AuditStudyEventDefinitionDTO(
-                bean.getId(),
-                bean.getName(),
-                bean.getOid(),
-                bean.getDescription(),
-                bean.getCategory(),
-                bean.getType(),
-                bean.isRepeating());
+                integer(row[0]),
+                string(row[1]),
+                string(row[2]),
+                string(row[3]),
+                string(row[4]),
+                string(row[5]),
+                bool(row[6]));
     }
 
-    private AuditEventCrfDTO toEventCrf(EventCRFBean bean) {
+    private AuditEventCrfDTO toEventCrf(Object[] row) {
         return new AuditEventCrfDTO(
-                bean.getId(),
-                bean.getStudyEventId(),
-                bean.getStudySubjectId(),
-                bean.getCRFVersionId(),
-                toInstant(bean.getDateInterviewed()),
-                bean.getInterviewerName(),
-                toInstant(bean.getDateCompleted()),
-                statusName(bean.getStatus()),
-                stageName(bean.getStage()),
-                bean.isElectronicSignatureStatus(),
-                bean.isSdvStatus());
+                integer(row[0]),
+                integer(row[1]),
+                integer(row[2]),
+                integer(row[3]),
+                toInstant(row[4]),
+                string(row[5]),
+                toInstant(row[6]),
+                statusName(row[7]),
+                null,
+                bool(row[8]),
+                bool(row[9]));
     }
 
-    private String toInstant(Date value) {
-        return value != null ? value.toInstant().toString() : null;
+    void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
-    private String statusName(Status status) {
-        return status != null ? status.getName() : null;
+    private int integer(Object value) {
+        return value instanceof Number number ? number.intValue() : 0;
     }
 
-    private String stageName(DataEntryStage stage) {
-        return stage != null ? stage.getName() : null;
+    private Integer nullableInteger(Object value) {
+        return value instanceof Number number ? number.intValue() : null;
     }
 
-    private String subjectEventStatusName(SubjectEventStatus status) {
-        return status != null ? status.getName() : null;
+    private boolean bool(Object value) {
+        return value instanceof Boolean bool && bool;
+    }
+
+    private String string(Object value) {
+        return value != null ? value.toString() : "";
+    }
+
+    private String toInstant(Object value) {
+        if (value instanceof java.sql.Timestamp timestamp) {
+            return timestamp.toInstant().toString();
+        }
+        if (value instanceof java.util.Date date) {
+            return date.toInstant().toString();
+        }
+        if (value instanceof LocalDateTime dateTime) {
+            return dateTime.atZone(ZoneId.systemDefault()).toInstant().toString();
+        }
+        return null;
+    }
+
+    private String statusName(Object value) {
+        return value instanceof Number number ? Status.getFromMap(number.intValue()).getName() : null;
+    }
+
+    private String subjectEventStatusName(Object value) {
+        return value instanceof Number number ? SubjectEventStatus.getFromMap(number.intValue()).getName() : null;
     }
 }

@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-17 - Move audit study subject event reads off legacy SPI
+
+- Reworked `AuditStudySubjectEventAdapter` to assemble study, subject, audit, event, definition, and event-CRF DTOs through module-local native queries instead of injecting seven legacy DAO SPI adapters.
+- Updated the focused adapter test to exercise the `EntityManager` query path and assert production-realistic module-table fields.
+
 ## 2026-06-17 - Move audit user event reads off legacy SPI
 
 - Reworked `AuditUserEventAdapter` to read user and audit-event rows through module-local native queries instead of injecting `IAuditEventDAO` and `IUserAccountDAO`.

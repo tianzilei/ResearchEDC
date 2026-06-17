@@ -1,34 +1,18 @@
 package org.researchedc.module.audit.internal.adapter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.when;
 
+import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.researchedc.bean.admin.AuditBean;
-import org.researchedc.bean.core.DataEntryStage;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.core.SubjectEventStatus;
-import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.managestudy.StudyEventBean;
-import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.bean.submit.SubjectBean;
-import org.researchedc.dao.spi.AuditDao;
-import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.spi.ISubjectDAO;
 import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.module.audit.dto.AuditStudySubjectEventsDTO;
 import org.researchedc.module.audit.dto.AuditStudySubjectLogDTO;
@@ -41,114 +25,102 @@ class AuditStudySubjectEventAdapterTest {
     }
 
     @Test
-    void findStudySubjectEvents_mapsLegacyStudySubjectAuditAndEventRows() {
-        IStudyDAO studyDao = org.mockito.Mockito.mock(IStudyDAO.class);
-        IStudySubjectDAO studySubjectDao = org.mockito.Mockito.mock(IStudySubjectDAO.class);
-        ISubjectDAO subjectDao = org.mockito.Mockito.mock(ISubjectDAO.class);
-        AuditDao auditDao = org.mockito.Mockito.mock(AuditDao.class);
-        IStudyEventDAO studyEventDao = org.mockito.Mockito.mock(IStudyEventDAO.class);
-        IStudyEventDefinitionDAO studyEventDefinitionDao =
-                org.mockito.Mockito.mock(IStudyEventDefinitionDAO.class);
-        EventCRFDao eventCrfDao = org.mockito.Mockito.mock(EventCRFDao.class);
+    void findStudySubjectEvents_mapsNativeStudySubjectAuditAndEventRows() {
+        EntityManager entityManager = org.mockito.Mockito.mock(EntityManager.class);
+        Query studyQuery = queryReturning(new Object[] {11, "Main Study", "PROTO-1", "SECONDARY", "S_MAIN"});
+        Query studySubjectsQuery = queryReturning(new Object[] {
+                21,
+                "SUBJ-001",
+                "ALT-001",
+                "SS_SUBJ001",
+                31,
+                11,
+                Timestamp.from(Instant.parse("2026-06-07T10:00:00Z")),
+                7,
+                "owner",
+                1
+        });
+        Query subjectQuery = queryReturning(new Object[] {
+                31,
+                "PERSON-001",
+                Timestamp.from(Instant.parse("1990-01-01T00:00:00Z")),
+                "f",
+                true,
+                1
+        });
+        Query studySubjectAuditsQuery = queryReturning(new Object[] {
+                41,
+                Timestamp.from(Instant.parse("2026-06-07T12:00:00Z")),
+                "study_subject",
+                8,
+                21,
+                "secondary_label",
+                "Subject Updated",
+                2,
+                "old",
+                "new",
+                "corrected",
+                "updater"
+        });
+        Query subjectAuditsQuery = queryReturning(new Object[] {
+                42,
+                null,
+                "subject",
+                0,
+                31,
+                "unique_identifier",
+                "",
+                5,
+                "",
+                "",
+                "",
+                ""
+        });
+        Query eventsQuery = queryReturning(new Object[] {
+                51,
+                61,
+                21,
+                "Clinic",
+                1,
+                Timestamp.from(Instant.parse("2026-06-08T00:00:00Z")),
+                Timestamp.from(Instant.parse("2026-06-08T03:00:00Z")),
+                1,
+                1
+        });
+        Query eventCrfsQuery = queryReturning(new Object[] {
+                71,
+                51,
+                21,
+                81,
+                Timestamp.from(Instant.parse("2026-06-08T01:00:00Z")),
+                "Interviewer",
+                Timestamp.from(Instant.parse("2026-06-08T02:00:00Z")),
+                1,
+                true,
+                false
+        });
+        Query definitionQuery = queryReturning(new Object[] {
+                61,
+                "Baseline",
+                "SE_BASE",
+                "desc",
+                "screening",
+                "common",
+                false
+        });
+        when(entityManager.createNativeQuery(startsWith("SELECT study_id"))).thenReturn(studyQuery);
+        when(entityManager.createNativeQuery(startsWith("SELECT ss.study_subject_id"))).thenReturn(studySubjectsQuery);
+        when(entityManager.createNativeQuery(startsWith("SELECT subject_id"))).thenReturn(subjectQuery);
+        when(entityManager.createNativeQuery(startsWith("SELECT ale.audit_id")))
+                .thenReturn(studySubjectAuditsQuery, subjectAuditsQuery);
+        when(entityManager.createNativeQuery(startsWith("SELECT se.study_event_id"))).thenReturn(eventsQuery);
+        when(entityManager.createNativeQuery(startsWith("SELECT event_crf_id"))).thenReturn(eventCrfsQuery);
+        when(entityManager.createNativeQuery(startsWith("SELECT study_event_definition_id"))).thenReturn(definitionQuery);
 
-        StudyBean study = new StudyBean();
-        study.setId(11);
-        study.setName("Main Study");
-        study.setIdentifier("PROTO-1");
-        study.setSecondaryIdentifier("SECONDARY");
-        study.setOid("S_MAIN");
+        AuditStudySubjectEventAdapter adapter = new AuditStudySubjectEventAdapter();
+        adapter.setEntityManager(entityManager);
 
-        UserAccountBean owner = new UserAccountBean();
-        owner.setId(7);
-        owner.setName("owner");
-
-        StudySubjectBean studySubject = new StudySubjectBean();
-        studySubject.setId(21);
-        studySubject.setLabel("SUBJ-001");
-        studySubject.setSecondaryLabel("ALT-001");
-        studySubject.setOid("SS_SUBJ001");
-        studySubject.setSubjectId(31);
-        studySubject.setStudyId(11);
-        studySubject.setCreatedDate(Date.from(Instant.parse("2026-06-07T10:00:00Z")));
-        studySubject.setOwner(owner);
-        studySubject.setStatus(Status.AVAILABLE);
-
-        SubjectBean subject = new SubjectBean();
-        subject.setId(31);
-        subject.setUniqueIdentifier("PERSON-001");
-        subject.setLabel("subject-label");
-        subject.setDateOfBirth(Date.from(Instant.parse("1990-01-01T00:00:00Z")));
-        subject.setGender('f');
-        subject.setDobCollected(true);
-        subject.setStatus(Status.AVAILABLE);
-
-        AuditBean studySubjectAudit = new AuditBean();
-        studySubjectAudit.setId(41);
-        studySubjectAudit.setAuditDate(Date.from(Instant.parse("2026-06-07T12:00:00Z")));
-        studySubjectAudit.setAuditTable("study_subject");
-        studySubjectAudit.setUserId(8);
-        studySubjectAudit.setUserName("updater");
-        studySubjectAudit.setEntityId(21);
-        studySubjectAudit.setEntityName("secondary_label");
-        studySubjectAudit.setAuditEventTypeName("Subject Updated");
-        studySubjectAudit.setAuditEventTypeId(2);
-        studySubjectAudit.setOldValue("old");
-        studySubjectAudit.setNewValue("new");
-        studySubjectAudit.setReasonForChange("corrected");
-
-        AuditBean subjectAudit = new AuditBean();
-        subjectAudit.setId(42);
-        subjectAudit.setAuditTable("subject");
-        subjectAudit.setEntityId(31);
-        subjectAudit.setEntityName("unique_identifier");
-
-        StudyEventBean event = new StudyEventBean();
-        event.setId(51);
-        event.setStudyEventDefinitionId(61);
-        event.setStudySubjectId(21);
-        event.setLocation("Clinic");
-        event.setSampleOrdinal(1);
-        event.setDateStarted(Date.from(Instant.parse("2026-06-08T00:00:00Z")));
-        event.setDateEnded(Date.from(Instant.parse("2026-06-08T03:00:00Z")));
-        event.setStatus(Status.AVAILABLE);
-        event.setStage(DataEntryStage.INITIAL_DATA_ENTRY);
-        event.setSubjectEventStatus(SubjectEventStatus.SCHEDULED);
-
-        StudyEventDefinitionBean definition = new StudyEventDefinitionBean();
-        definition.setId(61);
-        definition.setName("Baseline");
-        definition.setOid("SE_BASE");
-        definition.setDescription("desc");
-        definition.setCategory("screening");
-        definition.setType("common");
-        definition.setRepeating(false);
-
-        EventCRFBean eventCrf = new EventCRFBean();
-        eventCrf.setId(71);
-        eventCrf.setStudyEventId(51);
-        eventCrf.setStudySubjectId(21);
-        eventCrf.setCRFVersionId(81);
-        eventCrf.setDateInterviewed(Date.from(Instant.parse("2026-06-08T01:00:00Z")));
-        eventCrf.setInterviewerName("Interviewer");
-        eventCrf.setDateCompleted(Date.from(Instant.parse("2026-06-08T02:00:00Z")));
-        eventCrf.setStatus(Status.AVAILABLE);
-        eventCrf.setStage(DataEntryStage.INITIAL_DATA_ENTRY);
-        eventCrf.setElectronicSignatureStatus(true);
-        eventCrf.setSdvStatus(false);
-
-        when(studyDao.findByPK(11)).thenReturn(study);
-        when(studySubjectDao.findAllByStudyOrderByLabel(study))
-                .thenReturn(new ArrayList<>(List.of(studySubject)));
-        when(subjectDao.findByPK(31)).thenReturn(subject);
-        when(auditDao.findStudySubjectAuditEvents(21)).thenReturn(new ArrayList<>(List.of(studySubjectAudit)));
-        when(auditDao.findSubjectAuditEvents(31)).thenReturn(new ArrayList<>(List.of(subjectAudit)));
-        when(studyEventDao.findAllByStudySubject(studySubject)).thenReturn(new ArrayList<>(List.of(event)));
-        when(studyEventDefinitionDao.findByPK(61)).thenReturn(definition);
-        when(eventCrfDao.findAllByStudyEvent(event)).thenReturn(new ArrayList<>(List.of(eventCrf)));
-
-        AuditStudySubjectEventsDTO result = new AuditStudySubjectEventAdapter(
-                studyDao, studySubjectDao, subjectDao, auditDao, studyEventDao,
-                studyEventDefinitionDao, eventCrfDao).findStudySubjectEvents(11);
+        AuditStudySubjectEventsDTO result = adapter.findStudySubjectEvents(11);
 
         assertEquals(11, result.study().id());
         assertEquals("Main Study", result.study().name());
@@ -160,6 +132,7 @@ class AuditStudySubjectEventAdapterTest {
         assertEquals("available", row.studySubject().status());
         assertEquals(31, row.subject().id());
         assertEquals("PERSON-001", row.subject().uniqueIdentifier());
+        assertEquals("", row.subject().label());
         assertEquals("1990-01-01T00:00:00Z", row.subject().dateOfBirth());
         assertEquals(2, row.audits().size());
         assertEquals("study_subject", row.audits().getFirst().auditTable());
@@ -168,8 +141,16 @@ class AuditStudySubjectEventAdapterTest {
         assertEquals("Baseline", row.events().getFirst().definition().name());
         assertEquals("Clinic", row.events().getFirst().location());
         assertEquals("scheduled", row.events().getFirst().subjectEventStatus());
+        assertNull(row.events().getFirst().stage());
         assertEquals(71, row.events().getFirst().eventCrfs().getFirst().id());
         assertEquals("Interviewer", row.events().getFirst().eventCrfs().getFirst().interviewerName());
-        assertEquals("initial data entry", row.events().getFirst().eventCrfs().getFirst().stage());
+        assertNull(row.events().getFirst().eventCrfs().getFirst().stage());
+    }
+
+    private Query queryReturning(Object[] row) {
+        Query query = org.mockito.Mockito.mock(Query.class);
+        when(query.setParameter(org.mockito.Mockito.eq(1), org.mockito.Mockito.any())).thenReturn(query);
+        when(query.getResultList()).thenReturn(java.util.Collections.singletonList(row));
+        return query;
     }
 }
