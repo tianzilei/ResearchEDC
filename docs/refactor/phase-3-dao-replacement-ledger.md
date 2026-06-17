@@ -8,11 +8,11 @@
 
 | Status | Methods | Meaning |
 |---|---:|---|
-| `module-backed` | 757 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
+| `module-backed` | 720 | A module `@Primary` adapter implements a method with the same name; still needs caller and registration checks before deleting legacy implementation files. |
 | `unused` | 0 | SPI method with no callers in module code; safe to remove from SPI interface or mark as deprecated. |
-| `removed` | 121 | SPI interface and implementation deleted; legacy service references cleaned up. |
+| `removed` | 158 | SPI interface and implementation deleted; legacy service references cleaned up. |
 
-Coverage snapshot: 729/878 tracked methods are module-backed and 149/878 are removed; 878/878 tracked methods are module-backed or removed (**100.0%**). No method-level blockers remain; DAO implementation deletion now depends on proving registration, factory, inheritance, and runtime dependencies are safe per DAO family.
+Coverage snapshot: 720/878 tracked methods are module-backed and 158/878 are removed; 878/878 tracked methods are module-backed or removed (**100.0%**). No method-level blockers remain; DAO implementation deletion now depends on proving registration, factory, inheritance, and runtime dependencies are safe per DAO family.
 
 ## SPI Summary
 
@@ -23,7 +23,7 @@ Coverage snapshot: 729/878 tracked methods are module-backed and 149/878 are rem
 | `AuditUserLoginDao` | 0 | 0 | 4 | `removed` |
 | `AuthoritiesDao` | 2 | 0 | 0 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/AuthoritiesDaoAdapter.java` |
 | `ConfigurationDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/ConfigurationDaoAdapter.java` |
-| `CrfVersionMediaDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/CrfVersionMediaDaoAdapter.java` |
+| `CrfVersionMediaDao` | 0 | 0 | 3 | `removed` |
 | `DatabaseChangeLogDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/audit/internal/adapter/DatabaseChangeLogDaoAdapter.java` |
 | `DatasetDao` | 23 | 0 | 0 | `app/src/main/java/org/researchedc/module/dataset/internal/adapter/DatasetDaoAdapter.java` |
 | `DynamicsItemFormMetadataDao` | 11 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/DynamicsItemFormMetadataDaoAdapter.java` |
@@ -53,11 +53,11 @@ Coverage snapshot: 729/878 tracked methods are module-backed and 149/878 are rem
 | `IStudySubjectDAO` | 42 | 0 | 15 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/StudySubjectDaoAdapter.java` |
 | `ISubjectDAO` | 25 | 0 | 2 | `app/src/main/java/org/researchedc/module/subject/internal/adapter/SubjectDaoAdapter.java` |
 | `IUserAccountDAO` | 42 | 0 | 1 | `app/src/main/java/org/researchedc/module/identity/internal/adapter/UserAccountDaoAdapter.java` |
-| `ItemDataTypeDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemDataTypeDaoAdapter.java` |
-| `ItemReferenceTypeDao` | 1 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ItemReferenceTypeDaoAdapter.java` |
+| `ItemDataTypeDao` | 0 | 0 | 3 | `removed` |
+| `ItemReferenceTypeDao` | 0 | 0 | 1 | `removed` |
 | `MeasurementUnitDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/MeasurementUnitDaoAdapter.java` |
 | `ResponseSetDomainDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/datacapture/internal/adapter/ResponseSetDaoAdapter.java` |
-| `ResponseTypeDao` | 2 | 0 | 0 | `app/src/main/java/org/researchedc/module/crf/internal/adapter/ResponseTypeDaoAdapter.java` |
+| `ResponseTypeDao` | 0 | 0 | 2 | `removed` |
 | `RuleActionRunLogDomainDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/rule/internal/adapter/RuleActionRunLogDaoAdapter.java` |
 | `RuleDomainDao` | 3 | 0 | 0 | `app/src/main/java/org/researchedc/module/rule/internal/adapter/RuleDomainDaoAdapter.java` |
 | `RuleSetAuditDomainDao` | 2 | 0 | 0 | `app/src/main/java/org/researchedc/module/rule/internal/adapter/RuleSetAuditDaoAdapter.java` |

@@ -1,7 +1,7 @@
 # shared/ - Shared Domain Logic & Data Access
 
 **Module:** Legacy domain logic, data access, entities, and business services
-**Files:** 246 Java files
+**Files:** 242 Java files
 **Package:** `org.researchedc.*`
 
 > Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
@@ -69,10 +69,10 @@ test methods awaiting reactivation.
 |--------|--------|
 | Package rename | ✅ `org.akaza.openclinica` → `org.researchedc` |
 | Annotations | ✅ `@Repository`/`@Service` applied to all DAOs and services |
-| SPI interfaces | ✅ 43 interfaces for DI (replaces direct DAO class references) |
+| SPI interfaces | ✅ 39 interfaces for DI (replaces direct DAO class references) |
 | Liquibase migrations | ✅ 208 XML files, versioned from 3.x through 3.18 |
 | Strangulation target | 🔶 Active — new code goes to `app/module/` |
-| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 43 DAO SPI Java files still exist under `shared/dao`. Phase 3 ledger: 729/878 methods are module-backed; 878/878 are module-backed or removed (100%); 0 unused rows remain; 149 rows are removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. |
+| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 39 DAO SPI Java files still exist under `shared/dao`. Phase 3 ledger: 720/878 methods are module-backed; 878/878 are module-backed or removed (100%); 0 unused rows remain; 158 rows are removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. |
 
 ## ANTI-PATTERNS
 

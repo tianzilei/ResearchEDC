@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-17 - Remove unused CRF lookup SPI bridges
+
+- Removed the unused `CrfVersionMediaDao`, `ItemDataTypeDao`, `ItemReferenceTypeDao`, and `ResponseTypeDao` SPI bridges plus their CRF adapter and repository pairs after confirming no live callers remained.
+- Regenerated the legacy workflow inventory to 39 active DAO SPI artifacts (39 keep compatibility, 0 replace) and updated the Phase 3 ledger to 720/878 module-backed methods, 158 removed rows, and 878/878 covered or removed (100.0%).
+
 ## 2026-06-17 - Remove DAO core SQL XML loader
 
 - Moved `CoreResources` out of `shared/dao` into `org.researchedc.core`, removed the unused `SQLFactory`/`DAODigester` XML SQL loader, and deleted the remaining Digester dependencies from shared and the BOM.

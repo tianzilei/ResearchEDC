@@ -9,10 +9,10 @@
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x. Built on Java 21 with Spring Framework 6.1.5, Hibernate ORM 6.4.4, and Liquibase migrations. Multi-module Maven project supporting Oracle and PostgreSQL.
 
-New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (246 Java files, including 43 DAO SPI files). `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and 9 needed import/validation classes were migrated to `app/`. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
+New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (242 Java files, including 39 DAO SPI files). `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and 9 needed import/validation classes were migrated to `app/`. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
 
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | **Refactor progress ~95%** ✅ | **Phase 3 DAO ledger 729/878 module-backed; 878/878 covered/removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅**
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | **Refactor progress ~95%** ✅ | **Phase 3 DAO ledger 720/878 module-backed; 878/878 covered/removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅**
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 ✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
@@ -39,7 +39,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │       ├── filter/          # 过滤器管理 (JPA 实体 + 仓库, 7 文件)
 │       ├── subjectgroup/    # 受试者分组 (JPA 实体 + 仓库, 9 文件)
 │       └── discrepancynote/ # 差异备注管理 (JPA 实体 + 仓库, 7 文件)
-├── shared/                  # 共享领域逻辑与数据访问 — 246 Java files (replaces legacy-core, still legacy-heavy)
+├── shared/                  # 共享领域逻辑与数据访问 — 242 Java files (replaces legacy-core, still legacy-heavy)
 │   ├── bean/                # DTOs (253 文件)
 │   ├── dao/                 # 数据访问层 (43 SPI interfaces)
 │   ├── domain/              # Hibernate 实体 (166 文件)
@@ -89,7 +89,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | **SubjectGroup module** | `app/.../module/subjectgroup/` | 分组类/组 JPA 实体 (gateway only) |
 | **DiscrepancyNote module** | `app/.../module/discrepancynote/` | 差异备注 JPA 实体 (gateway only) |
 | **Shared (legacy) logic** | `shared/src/main/java/org/researchedc/` | DAO/domain/service/bean/logic |
-| Legacy DAOs | `shared/.../dao/` | 43 DAO SPI Java files; deletion blocked by caller migration |
+| Legacy DAOs | `shared/.../dao/` | 39 DAO SPI Java files; deletion blocked by caller migration |
 | Legacy DAOs (JPA) | `shared/.../dao/hibernate/` | AbstractDomainDao 子类 |
 | Legacy DAO SPI interfaces | `shared/.../dao/spi/` | 43 个接口 (IStudyDAO, ISubjectDAO, ...) |
 | Legacy Hibernate entities | `shared/.../domain/datamap/` | ~62 实体, JPA 注解 |
@@ -236,9 +236,9 @@ python -m pytest app/tests/ -v
   - ✅ **StudyGroupClassDAO → StudyGroupClassDao** — 4 shared/ consumers all SPI-typed
   - ✅ **StudyGroupDAO → StudyGroupDao** — 3 shared/ consumers all SPI-typed
   - ✅ **ArchivedDatasetFileDAO → ArchivedDatasetFileDao** — `58278d68b`; 8 consumer files converted
-- **Refactor progress snapshot (2026-06-17):** active workflow inventory is 920/963 closed (**95.5%**), Phase 3 DAO method coverage is 878/878 module-backed or removed (**100%**), DAO method blockers are 0/878 unused rows (**0%**), shared/ reduced from 793 to 246 files (**69.0%**), DAO-surface deletion is 143/186 files (**76.9%**), LegacyDaoFactory eliminated, EntityDAO infrastructure deleted, dead code cleanup complete.
+- **Refactor progress snapshot (2026-06-17):** active workflow inventory is 924/963 closed (**96.0%**), Phase 3 DAO method coverage is 878/878 module-backed or removed (**100%**), DAO method blockers are 0/878 unused rows (**0%**), shared/ reduced from 793 to 242 files (**69.0%**), DAO-surface deletion is 147/186 files (**79.0%**), LegacyDaoFactory eliminated, EntityDAO infrastructure deleted, dead code cleanup complete.
 - **Phase 3 ledger status (2026-06-17):** `docs/refactor/phase-3-dao-replacement-ledger.{md,csv}` tracks 878 SPI methods: 729 `module-backed`, 0 `fallback-sql`, 0 `legacy-only`, 0 `adapter-gap`, 0 `unused`, and 149 `removed`. Deletion is now gated by migrating callers from legacy SPI names to module-owned ports.
-- **Remaining work:** `shared/dao` is now SPI-only with 43 DAO SPI Java files. Remaining deletion is blocked by callers that still depend on legacy SPI names instead of module-owned ports.
+- **Remaining work:** `shared/dao` is now SPI-only with 39 DAO SPI Java files. Remaining deletion is blocked by callers that still depend on legacy SPI names instead of module-owned ports.
 - **Gauntlet commands:**
   - `git status --short`
   - `mvn -pl app -am compile -DskipTests && mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
