@@ -16,8 +16,6 @@ import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventBean;
-import org.researchedc.dao.managestudy.ListNotesFilter;
-import org.researchedc.dao.managestudy.ListNotesSort;
 import org.researchedc.dao.spi.IDiscrepancyNoteDAO;
 import org.researchedc.module.discrepancynote.entity.DiscrepancyNoteEntity;
 import org.researchedc.module.discrepancynote.repository.DiscrepancyNoteRepository;
@@ -90,60 +88,12 @@ public class DiscrepancyNoteDaoAdapter implements IDiscrepancyNoteDAO {
     }
 
     @Override
-    public Integer getSubjectDNCountWithFilter(ListNotesFilter filter, Integer currentStudyId) {
-        return 0;
-    }
-
-    @Override
-    public Integer getStudySubjectDNCountWithFilter(ListNotesFilter filter, Integer currentStudyId) {
-        return 0;
-    }
-
-    @Override
-    public Integer getStudyEventDNCountWithFilter(ListNotesFilter filter, Integer currentStudyId) {
-        return 0;
-    }
-
-    @Override
-    public Integer getEventCrfDNCountWithFilter(ListNotesFilter filter, Integer currentStudyId) {
-        return 0;
-    }
-
-    @Override
-    public Integer getItemDataDNCountWithFilter(ListNotesFilter filter, Integer currentStudyId) {
-        return 0;
-    }
-
-    @Override
-    public ArrayList<DiscrepancyNoteBean> getWithFilterAndSort(StudyBean currentStudy, ListNotesFilter filter,
-                                                               ListNotesSort sort, int rowStart, int rowEnd) {
-        return new ArrayList();
-    }
-
-    @Override
-    public Integer getViewNotesCountWithFilter(ListNotesFilter filter, StudyBean currentStudy) {
-        return 0;
-    }
-
-    @Override
     public Integer getViewNotesCountWithFilter(String filter, StudyBean currentStudy) {
         return 0;
     }
 
     @Override
-    public ArrayList<DiscrepancyNoteBean> getViewNotesWithFilterAndSort(StudyBean currentStudy, ListNotesFilter filter,
-                                                                        ListNotesSort sort) {
-        return new ArrayList();
-    }
-
-    @Override
     public ArrayList<DiscrepancyNoteBean> findAllDiscrepancyNotesDataByStudy(StudyBean currentStudy) {
-        return new ArrayList();
-    }
-
-    @Override
-    public ArrayList<DiscrepancyNoteBean> getNotesWithFilterAndSort(StudyBean currentStudy, ListNotesFilter filter,
-                                                                    ListNotesSort sort) {
         return new ArrayList();
     }
 

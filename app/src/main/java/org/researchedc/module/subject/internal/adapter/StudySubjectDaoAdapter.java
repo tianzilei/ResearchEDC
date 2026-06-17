@@ -16,18 +16,6 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.dao.StudySubjectSDVFilter;
-import org.researchedc.dao.StudySubjectSDVSort;
-import org.researchedc.dao.managestudy.FindSubjectsFilter;
-import org.researchedc.dao.managestudy.FindSubjectsSort;
-import org.researchedc.dao.managestudy.ListDiscNotesForCRFFilter;
-import org.researchedc.dao.managestudy.ListDiscNotesForCRFSort;
-import org.researchedc.dao.managestudy.ListDiscNotesSubjectFilter;
-import org.researchedc.dao.managestudy.ListDiscNotesSubjectSort;
-import org.researchedc.dao.managestudy.ListEventsForSubjectFilter;
-import org.researchedc.dao.managestudy.ListEventsForSubjectSort;
-import org.researchedc.dao.managestudy.StudyAuditLogFilter;
-import org.researchedc.dao.managestudy.StudyAuditLogSort;
 import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.domain.datamap.StudySubject;
 import org.researchedc.module.subject.entity.StudySubjectEntity;
@@ -256,61 +244,6 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
     }
 
     @Override
-    public Integer getCountWithFilter(ListDiscNotesSubjectFilter filter, StudyBean study) {
-        return 0;
-    }
-
-    @Override
-    public Integer getCountWithFilter(ListDiscNotesForCRFFilter filter, StudyBean study) {
-        return 0;
-    }
-
-    @Override
-    public ArrayList getWithFilterAndSort(StudyBean study, ListDiscNotesForCRFFilter filter,
-                                          ListDiscNotesForCRFSort sort, int rowStart, int rowLength) {
-        return new ArrayList();
-    }
-
-    @Override
-    public ArrayList getWithFilterAndSort(StudyBean study, ListDiscNotesSubjectFilter filter,
-                                          ListDiscNotesSubjectSort sort, int rowStart, int rowLength) {
-        return new ArrayList();
-    }
-
-    @Override
-    public Integer getCountWithFilter(ListEventsForSubjectFilter filter, StudyBean study) {
-        return 0;
-    }
-
-    @Override
-    public ArrayList getWithFilterAndSort(StudyBean study, ListEventsForSubjectFilter filter,
-                                          ListEventsForSubjectSort sort, int rowStart, int rowLength) {
-        return new ArrayList();
-    }
-
-    @Override
-    public Integer getCountWithFilter(FindSubjectsFilter filter, StudyBean study) {
-        return 0;
-    }
-
-    @Override
-    public ArrayList getWithFilterAndSort(StudyBean study, FindSubjectsFilter filter,
-                                          FindSubjectsSort sort, int rowStart, int rowEnd) {
-        return new ArrayList();
-    }
-
-    @Override
-    public Integer getCountWithFilter(StudyAuditLogFilter filter, StudyBean study) {
-        return 0;
-    }
-
-    @Override
-    public ArrayList getWithFilterAndSort(StudyBean study, StudyAuditLogFilter filter,
-                                          StudyAuditLogSort sort, int rowStart, int rowEnd) {
-        return new ArrayList();
-    }
-
-    @Override
     public Integer getTotalEventCrfCountForCrfMigration(CRFVersionBean sourceCrfVersionBean,
                                                         CRFVersionBean targetCrfVersionBean,
                                                         ArrayList<String> studyEventDefnlist,
@@ -344,17 +277,6 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
     @Override
     public Integer getCountofStudySubjectsBasedOnStatus(StudyBean currentStudy, Status status) {
         return (int) repository.countByStudyIdAndStatusId(currentStudy.getId(), status.getId());
-    }
-
-    @Override
-    public ArrayList findAllByStudySDV(int studyId, int parentStudyId, StudySubjectSDVFilter filter,
-                                      StudySubjectSDVSort sort, int rowStart, int rowEnd) {
-        return new ArrayList();
-    }
-
-    @Override
-    public int countAllByStudySDV(int studyId, int parentStudyId, StudySubjectSDVFilter filter) {
-        return 0;
     }
 
     private void apply(StudySubjectBean bean, StudySubjectEntity entity) {

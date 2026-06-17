@@ -6,14 +6,10 @@ import java.util.ArrayList;
 import javax.sql.DataSource;
 
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.dao.hibernate.ViewRuleAssignmentFilter;
-import org.researchedc.dao.hibernate.ViewRuleAssignmentSort;
 import org.researchedc.dao.spi.IRuleSetRuleDAO;
 import org.researchedc.domain.rule.RuleBean;
 import org.researchedc.domain.rule.RuleSetBean;
 import org.researchedc.domain.rule.RuleSetRuleBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -26,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Primary
 @Transactional(readOnly = true)
 public class RuleSetRuleDaoAdapter implements IRuleSetRuleDAO {
-
-    private static final Logger log = LoggerFactory.getLogger(RuleSetRuleDaoAdapter.class);
     private final JdbcTemplate jdbc;
 
     private final RowMapper<RuleSetRuleBean> rowMapper = (rs, rowNum) -> {
@@ -53,19 +47,6 @@ public class RuleSetRuleDaoAdapter implements IRuleSetRuleDAO {
                 + "JOIN rule_set rs ON rs.id = rsr.rule_set_id "
                 + "WHERE rs.study_id = ? AND rsr.status_id = 1";
         return new ArrayList<>(jdbc.query(sql, rowMapper, studyId));
-    }
-
-    @Override
-    public int getCountWithFilter(ViewRuleAssignmentFilter filter) {
-        log.warn("getCountWithFilter called — complex dynamic SQL not implemented; returning 0");
-        return 0;
-    }
-
-    @Override
-    public ArrayList<RuleSetRuleBean> getWithFilterAndSort(ViewRuleAssignmentFilter filter,
-            ViewRuleAssignmentSort sort, int rowStart, int rowEnd) {
-        log.warn("getWithFilterAndSort called — complex dynamic SQL not implemented; returning empty");
-        return new ArrayList<>();
     }
 
     @Override

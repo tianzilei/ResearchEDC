@@ -20,8 +20,6 @@ import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.dao.EventCRFSDVFilter;
-import org.researchedc.dao.EventCRFSDVSort;
 import org.researchedc.dao.spi.EventCRFDao;
 import org.researchedc.module.event.entity.EventCrfEntity;
 import org.researchedc.module.event.repository.EventCrfRepository;
@@ -291,17 +289,6 @@ public class EventCrfDaoAdapter implements EventCRFDao {
 
     @Override
     public ArrayList getEventCRFsByStudySubject(int studySubjectId, int studyId, int parentStudyId) {
-        return new ArrayList();
-    }
-
-    @Override
-    public Integer getCountWithFilter(int studyId, int parentStudyId, EventCRFSDVFilter filter) {
-        return 0;
-    }
-
-    @Override
-    public ArrayList<EventCRFBean> getWithFilterAndSort(int studyId, int parentStudyId, EventCRFSDVFilter filter,
-                                                        EventCRFSDVSort sort, int rowStart, int rowEnd) {
         return new ArrayList();
     }
 

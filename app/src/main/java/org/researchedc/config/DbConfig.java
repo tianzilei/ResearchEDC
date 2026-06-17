@@ -3,7 +3,6 @@ package org.researchedc.config;
 import javax.sql.DataSource;
 import liquibase.integration.spring.SpringLiquibase;
 import org.researchedc.core.ExtendedBasicDataSource;
-import org.researchedc.dao.QueryStore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import org.researchedc.dao.EventCRFSDVFilter;
-import org.researchedc.dao.EventCRFSDVSort;
 
 public interface EventCRFDao {
     EntityBean findByPK(int ID);
@@ -56,9 +54,6 @@ public interface EventCRFDao {
     Integer countEventCRFsByStudySubject(int studySubjectId, int studyId, int parentStudyId);
     ArrayList getEventCRFsByStudySubjectCompleteOrLocked(int studySubjectId);
     ArrayList getEventCRFsByStudySubjectLimit(int studySubjectId, int studyId, int parentStudyId, int limit, int offset);
-    ArrayList getEventCRFsByStudySubject(int studySubjectId, int studyId, int parentStudyId);
-    Integer getCountWithFilter(int studyId, int parentStudyId, EventCRFSDVFilter filter);
-    ArrayList<EventCRFBean> getWithFilterAndSort(int studyId, int parentStudyId, EventCRFSDVFilter filter, EventCRFSDVSort sort, int rowStart, int rowEnd);
-    ArrayList getEventCRFsByStudySubjectLabelLimit(String label, int studyId, int parentStudyId, int limit, int offset);
+    ArrayList getEventCRFsByStudySubject(int studySubjectId, int studyId, int parentStudyId);    ArrayList getEventCRFsByStudySubjectLabelLimit(String label, int studyId, int parentStudyId, int limit, int offset);
     Integer countEventCRFsByStudySubjectLabel(String label, int studyId, int parentStudyId);
 }

@@ -6,6 +6,12 @@
 
 ---
 
+## 2026-06-17 - Remove unused DAO compatibility surfaces
+
+- Moved `QueryStore` into app configuration, removed the audit login DAO SPI bridge in favor of direct criteria reads, and deleted dead rule-assignment, SDV, list-filter/list-sort, and VersioningMap compatibility surfaces.
+- Removed the unused `commons-digester3` dependency while keeping the active `commons-digester` 2.1 path for `DAODigester`.
+- Regenerated the legacy workflow inventory to 46 active DAO artifacts (3 replace, 43 keep compatibility) and updated the Phase 3 ledger to 729/878 module-backed methods, 149 removed rows, and 878/878 covered or removed (100.0%).
+
 ## 2026-06-16 - Remove unused ISubjectDAO list filters
 
 - Removed unused `ISubjectDAO` list-filter SPI methods and the no-op `SubjectDaoAdapter` stubs; deleted `ListSubjectFilter` and `ListSubjectSort` after confirming no live callers remained.

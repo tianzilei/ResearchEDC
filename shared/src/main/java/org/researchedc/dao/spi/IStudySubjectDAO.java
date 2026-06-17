@@ -5,21 +5,9 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.dao.managestudy.FindSubjectsFilter;
-import org.researchedc.dao.managestudy.FindSubjectsSort;
-import org.researchedc.dao.managestudy.StudyAuditLogFilter;
-import org.researchedc.dao.managestudy.StudyAuditLogSort;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import org.researchedc.dao.managestudy.ListDiscNotesSubjectFilter;
-import org.researchedc.dao.managestudy.ListDiscNotesSubjectSort;
-import org.researchedc.dao.managestudy.ListEventsForSubjectFilter;
-import org.researchedc.dao.managestudy.ListEventsForSubjectSort;
-import org.researchedc.dao.managestudy.ListDiscNotesForCRFFilter;
-import org.researchedc.dao.managestudy.ListDiscNotesForCRFSort;
-import org.researchedc.dao.StudySubjectSDVFilter;
-import org.researchedc.dao.StudySubjectSDVSort;
 
 public interface IStudySubjectDAO {
     EntityBean findByPK(int ID);
@@ -49,24 +37,10 @@ public interface IStudySubjectDAO {
     StudySubjectBean createWithGroup(StudySubjectBean sb);
     StudySubjectBean createWithoutGroup(StudySubjectBean sb);
     EntityBean update(EntityBean eb, java.sql.Connection con);
-    ArrayList getGroupByStudySubject(int studySubjectId, int studyId, int parentStudyId);
-    Integer getCountWithFilter(ListDiscNotesSubjectFilter filter, StudyBean study);
-    Integer getCountWithFilter(ListDiscNotesForCRFFilter filter, StudyBean study);
-    ArrayList getWithFilterAndSort(StudyBean study, ListDiscNotesForCRFFilter filter, ListDiscNotesForCRFSort sort, int rowStart, int rowLength);
-    ArrayList getWithFilterAndSort(StudyBean study, ListDiscNotesSubjectFilter filter, ListDiscNotesSubjectSort sort, int rowStart, int rowLength);
-    Integer getCountWithFilter(ListEventsForSubjectFilter filter, StudyBean study);
-    ArrayList getWithFilterAndSort(StudyBean study, ListEventsForSubjectFilter filter, ListEventsForSubjectSort sort, int rowStart, int rowLength);
-    Integer getCountWithFilter(FindSubjectsFilter filter, StudyBean study);
-    ArrayList getWithFilterAndSort(StudyBean study, FindSubjectsFilter filter, FindSubjectsSort sort, int rowStart, int rowEnd);
-    Integer getCountWithFilter(StudyAuditLogFilter filter, StudyBean study);
-    ArrayList getWithFilterAndSort(StudyBean study, StudyAuditLogFilter filter, StudyAuditLogSort sort, int rowStart, int rowEnd);
-    Integer getTotalEventCrfCountForCrfMigration(CRFVersionBean sourceCrfVersionBean, CRFVersionBean targetCrfVersionBean, ArrayList<String> studyEventDefnlist, ArrayList<String> sitelist);
+    ArrayList getGroupByStudySubject(int studySubjectId, int studyId, int parentStudyId);    Integer getTotalEventCrfCountForCrfMigration(CRFVersionBean sourceCrfVersionBean, CRFVersionBean targetCrfVersionBean, ArrayList<String> studyEventDefnlist, ArrayList<String> sitelist);
     Integer getTotalCountStudySubjectForCrfMigration(CRFVersionBean sourceCrfVersionBean, CRFVersionBean targetCrfVersionBean, ArrayList<String> studyEventDefnlist, ArrayList<String> sitelist);
 
     Integer getCountofStudySubjectsAtStudyOrSite(StudyBean currentStudy);
     Integer getCountofStudySubjectsAtStudy(StudyBean currentStudy);
     Integer getCountofStudySubjects(StudyBean currentStudy);
-    Integer getCountofStudySubjectsBasedOnStatus(StudyBean currentStudy, Status status);
-    ArrayList findAllByStudySDV(int studyId, int parentStudyId, StudySubjectSDVFilter filter, StudySubjectSDVSort sort, int rowStart, int rowEnd);
-    int countAllByStudySDV(int studyId, int parentStudyId, StudySubjectSDVFilter filter);
-}
+    Integer getCountofStudySubjectsBasedOnStatus(StudyBean currentStudy, Status status);}
