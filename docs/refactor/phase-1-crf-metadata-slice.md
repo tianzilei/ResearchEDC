@@ -1,19 +1,19 @@
 # Phase 1 CRF Metadata Slice
 
-**Status:** partially reconciled; generated inventory still has 11 active `phase-1-crf-metadata` artifacts.
+**Status:** closed in the generated active inventory; 0 active `phase-1-crf-metadata` artifacts remain.
 **Inventory source:** `docs/refactor/legacy-workflow-inventory.csv` (`phase_slice=phase-1-crf-metadata`).
 **Slice ledger:** `docs/refactor/phase-1-crf-metadata-ledger.csv`.
 
 ## Scope
 
-This slice covers the CRF metadata boundary rows that were previously grouped together with active data-entry rendering fragments. The purpose of this pass was to separate true CRF section viewing, active data-entry dependencies, and compatibility-sensitive print/import fragments before further deletion.
+This slice records the CRF metadata boundary rows that were previously grouped together with active data-entry rendering fragments. The current generated active inventory is closed; this file is now a historical slice ledger.
 
 Initial candidate groups:
 
 | Group | Rows | Result |
 |---|---:|---|
-| CRF section viewer | 2 | Blocked by `ViewSectionDataEntryServlet`, monitor input fragments, and print compatibility dependencies. |
-| Active data-entry rendering | 9 | Blocked by active JSP includes from `initialDataEntry.jsp`, `initialDataEntryNw.jsp`, `administrativeEditing.jsp`, `doubleDataEntry.jsp`, `viewSectionDataEntry.jsp`, and `interviewer.jsp`. |
+| CRF section viewer | 2 | Closed in generated active inventory after web/JSP/servlet deletion. |
+| Active data-entry rendering | 9 | Closed in generated active inventory after web/JSP/servlet deletion. |
 | Orphaned fragments | 2 | Already absent from the filesystem and dropped from regenerated active inventory. |
 
 ## Deletion Gate
@@ -34,14 +34,14 @@ The ledger started with 13 rows from the stale active inventory. After regenerat
 | Status | Count | Meaning |
 |---|---:|---|
 | `deleted` | 2 | Files are absent and no longer appear in generated active inventory. |
-| `blocked` | 11 | Live CRF/data-entry dependencies remain referenced by JSPs, `web.xml`, or legacy servlets. |
+| `closed` | 11 | Former live CRF/data-entry dependencies no longer appear in generated active inventory. |
 
-## Remaining Blockers
+## Former Blockers
 
-- `viewSectionDataEntry.jsp` and `viewSectionDataEntryHtml.jsp` remain tied to legacy section viewing and print behavior.
-- `showItemInput*`, `showGroupItemInput*`, `generate*`, and `showSection.jsp` remain active item/repeating-group rendering dependencies.
-- `CheckCRFLocked` is still registered in `web.xml` and called by `interviewer.jsp`.
+- `viewSectionDataEntry.jsp` and `viewSectionDataEntryHtml.jsp` were tied to legacy section viewing and print behavior.
+- `showItemInput*`, `showGroupItemInput*`, `generate*`, and `showSection.jsp` were item/repeating-group rendering dependencies.
+- `CheckCRFLocked` was registered in `web.xml` and called by `interviewer.jsp`.
 
 ## Result
 
-This slice is open but narrowed. The generated inventory now records 11 active `phase-1-crf-metadata` artifacts, down from the stale 13-row candidate list. Further deletion is blocked on SPA/module CRF rendering, print, and lock/unlock parity.
+This slice is closed in the generated active inventory. The current inventory records 0 active `phase-1-crf-metadata` artifacts and 0 active artifacts overall.

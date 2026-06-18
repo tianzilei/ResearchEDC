@@ -49,7 +49,7 @@ None of the above means legacy code is removed. It means the code is better cont
 
 1. Delete only after replacement behavior is proven by tests and route/API usage.
 2. Do not remove JSP/servlet code only because a React page exists; verify navigation, permissions, audit, validation, import/export behavior, and rollback path.
-3. Do not delete a DAO SPI interface until every caller has moved to a module-owned port, or the contract is proven unused.
+3. Do not reintroduce DAO SPI interfaces; use module-owned ports and repositories for compatibility behavior.
 4. Prefer deleting whole workflows over deleting isolated helper classes.
 5. Keep OpenClinica-derived ODM compatibility code until import/export contracts are explicitly replaced or versioned.
 

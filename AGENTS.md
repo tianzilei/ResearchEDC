@@ -264,4 +264,4 @@ python -m pytest app/tests/ -v
 - [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) — Python FastAPI microservice
 - [LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md) — Remaining legacy refactoring roadmap
 - [Remove Legacy Code Plan](./docs/refactor/remove-legacy-code-plan.md) — Explicit deletion plan and measurable gates
-- [Next Refactor And Removal Plan](./docs/refactor/next-refactor-removal-plan.md) — Current legacy-removal status, import hardening, and Phase 3 DAO deletion queue
+- [Next Refactor And Removal Plan](./docs/refactor/next-refactor-removal-plan.md) — Current legacy-removal status, import hardening, and post-DAO-deletion guardrails

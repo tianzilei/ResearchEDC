@@ -198,9 +198,9 @@ Modules communicate via:
 
 ---
 
-## Phase C: Legacy Code Deletion (DAO .java files remain — blocked by remaining concrete DAO dependencies and module extraction)
+## Phase C: Legacy Code Deletion (DAO SPI deletion complete)
 
-> **Status (2026-06-02):** Phase C DAO SPI widening is **COMPLETE**. All 24 DAO families are SPI-widened. `DaoProvider.getDao()` and direct `new XxxDAO(...)` / `new StudyConfigService(...)` call sites remain 0. The DAO `.java` files in `shared/` still cannot be deleted because they are the current SPI implementations. All consumer references in web/ (45+ files), shared/ (15+ files), and ws/ (0 files) now use SPI interfaces. Remaining concrete type names are limited to DAO implementation classes, `LegacyDaoFactory`, and commented-out code — all harmless.
+> **Status (2026-06-19):** Phase C DAO SPI widening and deletion are **COMPLETE**. `DaoProvider.getDao()`, direct `new XxxDAO(...)` / `new StudyConfigService(...)` call sites, LegacyDaoFactory, EntityDAO infrastructure, and shared DAO SPI files are removed. Compatibility behavior now uses module-owned ports and repositories.
 >
 > **Completed SPI Widening — 19 families:**
 > - ✅ `StudyDAO` → `IStudyDAO` — boundary-only; concrete refs limited to impl, `LegacyDaoFactory`
