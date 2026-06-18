@@ -6,17 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.researchedc.bean.core.Utils;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.login.StudyUserRoleBean;
-import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.spi.IUserAccountDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,35 +17,21 @@ public class AttachmentStorageAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(AttachmentStorageAdapter.class);
 
-    private final EventCRFDao eventCrfDao;
-    private final IStudyDAO studyDao;
-    private final IStudySubjectDAO studySubjectDao;
-    private final IUserAccountDAO userAccountDao;
+    private final JdbcTemplate jdbc;
 
-    public AttachmentStorageAdapter(EventCRFDao eventCrfDao,
-                                    IStudyDAO studyDao,
-                                    IStudySubjectDAO studySubjectDao,
-                                    IUserAccountDAO userAccountDao) {
-        this.eventCrfDao = eventCrfDao;
-        this.studyDao = studyDao;
-        this.studySubjectDao = studySubjectDao;
-        this.userAccountDao = userAccountDao;
+    public AttachmentStorageAdapter(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
     }
 
     public String getStudyOidByEventCrf(int eventCrfId) {
         try {
-            EventCRFBean eventCrf = (EventCRFBean) eventCrfDao.findByPK(eventCrfId);
-            if (eventCrf == null) {
-                return null;
-            }
-
-            StudySubjectBean studySubject = (StudySubjectBean) studySubjectDao.findByPK(eventCrf.getStudySubjectId());
-            if (studySubject == null) {
-                return null;
-            }
-
-            StudyBean study = (StudyBean) studyDao.findByPK(studySubject.getStudyId());
-            return study != null ? study.getOid() : null;
+            return jdbc.query("""
+                    SELECT st.oc_oid
+                    FROM module_event_crf ecrf
+                    JOIN module_study_subject ss ON ss.study_subject_id = ecrf.study_subject_id
+                    JOIN module_study st ON st.study_id = ss.study_id
+                    WHERE ecrf.event_crf_id = ?
+                    """, rs -> rs.next() ? rs.getString("oc_oid") : null, eventCrfId);
         } catch (Exception e) {
             log.warn("Failed to resolve study OID for eventCrfId={}: {}", eventCrfId, e.getMessage());
             return null;
@@ -65,34 +44,26 @@ public class AttachmentStorageAdapter {
             return false;
         }
         try {
-            UserAccountBean user = (UserAccountBean) userAccountDao.findByPK(userId);
-            if (user == null || !user.isActive()) {
+            AttachmentUser user = findUser(userId);
+            if (user == null) {
                 return false;
             }
-            if (user.isSysAdmin()) {
+            if (user.isAdmin()) {
                 return true;
             }
 
-            EventCRFBean eventCrf = (EventCRFBean) eventCrfDao.findByPK(eventCrfId);
-            if (eventCrf == null) {
-                return false;
-            }
-            StudySubjectBean studySubject = (StudySubjectBean) studySubjectDao.findByPK(eventCrf.getStudySubjectId());
-            if (studySubject == null) {
-                return false;
-            }
-            StudyBean study = (StudyBean) studyDao.findByPK(studySubject.getStudyId());
+            AttachmentStudy study = findStudyByEventCrf(eventCrfId);
             if (study == null) {
                 return false;
             }
 
-            StudyUserRoleBean directRole = user.getRoleByStudy(study.getId());
+            StudyUserRoleBean directRole = roleByStudy(user.userName(), study.id());
             if (directRole != null && directRole.isActive() && !directRole.isInvalid()) {
                 return true;
             }
 
-            if (study.getParentStudyId() > 0) {
-                StudyUserRoleBean parentRole = user.getRoleByStudy(study.getParentStudyId());
+            if (study.parentStudyId() > 0) {
+                StudyUserRoleBean parentRole = roleByStudy(user.userName(), study.parentStudyId());
                 return parentRole != null && parentRole.isActive() && !parentRole.isInvalid();
             }
             return false;
@@ -103,6 +74,61 @@ public class AttachmentStorageAdapter {
         }
     }
 
+    private AttachmentStudy findStudyByEventCrf(int eventCrfId) {
+        return jdbc.query("""
+                SELECT st.study_id, COALESCE(st.parent_study_id, 0) AS parent_study_id
+                FROM module_event_crf ecrf
+                JOIN module_study_subject ss ON ss.study_subject_id = ecrf.study_subject_id
+                JOIN module_study st ON st.study_id = ss.study_id
+                WHERE ecrf.event_crf_id = ?
+                """, rs -> {
+            if (!rs.next()) {
+                return null;
+            }
+            return new AttachmentStudy(rs.getInt("study_id"), rs.getInt("parent_study_id"));
+        }, eventCrfId);
+    }
+
+    private AttachmentUser findUser(int userId) {
+        String sql = """
+                SELECT user_id, user_name, user_type_id
+                FROM module_user_account
+                WHERE user_id = ?
+                """;
+        return jdbc.query(sql, rs -> {
+            if (!rs.next()) {
+                return null;
+            }
+            return new AttachmentUser(
+                    rs.getInt("user_id"),
+                    rs.getString("user_name"),
+                    rs.getInt("user_type_id"));
+        }, userId);
+    }
+
+    private StudyUserRoleBean roleByStudy(String userName, int studyId) {
+        String sql = """
+                SELECT study_user_role_id, user_name, role_name, study_id, status_id
+                FROM module_study_user_role
+                WHERE user_name = ? AND study_id = ?
+                ORDER BY study_user_role_id
+                LIMIT 1
+                """;
+        return jdbc.query(sql, rs -> {
+            if (!rs.next()) {
+                return new StudyUserRoleBean();
+            }
+            StudyUserRoleBean bean = new StudyUserRoleBean();
+            bean.setId(rs.getInt("study_user_role_id"));
+            bean.setName(rs.getString("user_name"));
+            bean.setUserName(rs.getString("user_name"));
+            bean.setRoleName(rs.getString("role_name"));
+            bean.setStudyId(rs.getInt("study_id"));
+            bean.setStatus(org.researchedc.bean.core.Status.get(rs.getInt("status_id")));
+            return bean;
+        }, userName, studyId);
+    }
+
     public List<String> getCandidateStudyOids(String studyOid) {
         if (studyOid == null || studyOid.isBlank()) {
             return List.of();
@@ -111,29 +137,78 @@ public class AttachmentStorageAdapter {
         List<String> oids = new ArrayList<>();
         oids.add(studyOid);
 
-        StudyBean study = (StudyBean) studyDao.findByOid(studyOid);
+        AttachmentStudyWithOid study = findStudyByOid(studyOid);
         if (study == null) {
             return oids;
         }
 
-        if (study.getParentStudyId() > 0) {
-            StudyBean parent = (StudyBean) studyDao.findByPK(study.getParentStudyId());
-            if (parent != null && parent.getOid() != null && !oids.contains(parent.getOid())) {
-                oids.add(parent.getOid());
+        if (study.parentStudyId() > 0) {
+            AttachmentStudyWithOid parent = findStudyById(study.parentStudyId());
+            if (parent != null && parent.oid() != null && !oids.contains(parent.oid())) {
+                oids.add(parent.oid());
             }
         }
 
-        var children = studyDao.findAllByParent(study.getId());
-        if (children != null) {
-            for (Object child : children) {
-                StudyBean childStudy = (StudyBean) child;
-                if (childStudy.getOid() != null && !oids.contains(childStudy.getOid())) {
-                    oids.add(childStudy.getOid());
-                }
+        for (String childOid : findChildStudyOids(study.id())) {
+            if (childOid != null && !oids.contains(childOid)) {
+                oids.add(childOid);
             }
         }
 
         return oids;
+    }
+
+    private AttachmentStudyWithOid findStudyByOid(String studyOid) {
+        return jdbc.query("""
+                SELECT study_id, COALESCE(parent_study_id, 0) AS parent_study_id, oc_oid
+                FROM module_study
+                WHERE oc_oid = ?
+                """, rs -> {
+            if (!rs.next()) {
+                return null;
+            }
+            return new AttachmentStudyWithOid(
+                    rs.getInt("study_id"),
+                    rs.getInt("parent_study_id"),
+                    rs.getString("oc_oid"));
+        }, studyOid);
+    }
+
+    private AttachmentStudyWithOid findStudyById(int studyId) {
+        return jdbc.query("""
+                SELECT study_id, COALESCE(parent_study_id, 0) AS parent_study_id, oc_oid
+                FROM module_study
+                WHERE study_id = ?
+                """, rs -> {
+            if (!rs.next()) {
+                return null;
+            }
+            return new AttachmentStudyWithOid(
+                    rs.getInt("study_id"),
+                    rs.getInt("parent_study_id"),
+                    rs.getString("oc_oid"));
+        }, studyId);
+    }
+
+    private List<String> findChildStudyOids(int parentStudyId) {
+        return jdbc.queryForList("""
+                SELECT oc_oid
+                FROM module_study
+                WHERE parent_study_id = ?
+                ORDER BY study_id
+                """, String.class, parentStudyId);
+    }
+
+    private record AttachmentUser(int id, String userName, int userTypeId) {
+        boolean isAdmin() {
+            return userTypeId == 1 || userTypeId == 3;
+        }
+    }
+
+    private record AttachmentStudy(int id, int parentStudyId) {
+    }
+
+    private record AttachmentStudyWithOid(int id, int parentStudyId, String oid) {
     }
 
     public File resolveAttachmentFile(String fileName, String studyOid) {

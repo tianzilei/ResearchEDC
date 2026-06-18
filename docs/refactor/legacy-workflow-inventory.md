@@ -1,6 +1,6 @@
 # Legacy Workflow Inventory
 
-Generated: 2026-06-17 14:45:08 UTC
+Generated: 2026-06-17 18:09:14 UTC
 
 Full CSV inventory: `legacy-workflow-inventory.csv`
 
@@ -8,19 +8,19 @@ Full CSV inventory: `legacy-workflow-inventory.csv`
 
 | Artifact type | Count |
 |---|---:|
-| `dao-spi` | 39 |
+| `dao-spi` | 11 |
 
 ## Summary By Classification
 
 | Classification | Count |
 |---|---:|
-| `keep compatibility` | 39 |
+| `keep compatibility` | 11 |
 
 ## Summary By Phase Slice
 
 | Phase slice | Count |
 |---|---:|
-| `phase-3-dao-implementation-deletion` | 39 |
+| `phase-3-dao-implementation-deletion` | 11 |
 
 ## First Phase 1 Candidate Slice
 

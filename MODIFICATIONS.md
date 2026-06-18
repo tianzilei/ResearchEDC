@@ -6,6 +6,31 @@
 
 ---
 
+## 2026-06-18 - Delete no-caller DAO SPI adapter slice
+
+- Deleted no-caller DAO SPI/adapters for dataset, filter, event-definition CRF, section, and dynamics item metadata after repo-wide scans proved no live caller or bean path remained.
+- Regenerated the legacy workflow inventory to 18 active DAO SPI artifacts and updated the Phase 3 ledger to 499/878 module-backed methods, 379 removed rows, and 878/878 covered or removed (100.0%).
+- Updated root, shared, and refactor handoff docs to the current 98.1% workflow progress baseline and 18-file DAO SPI surface.
+
+## 2026-06-18 - Delete second no-caller DAO SPI adapter slice
+
+- Deleted no-caller DAO SPI/adapters for item-group metadata, discrepancy note, subject, study-group class, and study-group after scans proved only their own adapters/tests referenced the legacy SPI names.
+- Removed the obsolete `SCDItemMetadataDomainDao` SPI while keeping `SCDItemMetadataDaoAdapter` as a module-local service used directly by `CrfService`.
+- Regenerated the legacy workflow inventory to 12 active DAO SPI artifacts and updated the Phase 3 ledger to 383/878 module-backed methods, 495 removed rows, and 878/878 covered or removed (100.0%).
+
+## 2026-06-18 - Move attachment identity lookup off legacy SPI
+
+- Reworked `AttachmentStorageAdapter` to resolve users, study roles, event CRFs, study subjects, and study OIDs through local module-table SQL instead of legacy DAO SPI injection.
+- Deleted the now-adapter-only `IUserAccountDAO` SPI and `UserAccountDaoAdapter`.
+- Regenerated the legacy workflow inventory to 11 active DAO SPI artifacts and updated the Phase 3 ledger to 341/878 module-backed methods, 537 removed rows, and 878/878 covered or removed (100.0%).
+
+## 2026-06-18 - Delete database changelog SPI contract
+
+- Deleted the legacy `DatabaseChangeLogDao` SPI after the audit module had already moved database changelog reads behind `DatabaseChangeLogPort.findChangeLogs()`.
+- Simplified `DatabaseChangeLogDaoAdapter` so it implements only the module-owned port and removed unused legacy-shaped `findAll`, `findById`, and `count` contracts.
+- Deleted the unused `MeasurementUnitDao` and `EventDefinitionCrfTagDao` SPI/adapter pairs after repo-wide scans confirmed no callers.
+- Regenerated the legacy workflow inventory to 24 active DAO SPI artifacts and updated the Phase 3 ledger to 614/878 module-backed methods, 264 removed rows, and 878/878 covered or removed (100.0%).
+
 ## 2026-06-17 - Refresh refactor documentation baseline
 
 - Updated root, shared, and refactor handoff docs to the current 96.0% workflow progress baseline, 39 active DAO SPI artifacts, 720/878 module-backed methods, and 878/878 covered or removed ledger state.

@@ -1,7 +1,7 @@
 # shared/ - Shared Domain Logic & Data Access
 
 **Module:** Legacy domain logic, data access, entities, and business services
-**Files:** 241 Java files
+**Files:** 213 Java files
 **Package:** `org.researchedc.*`
 
 > Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
@@ -13,15 +13,15 @@
 ```
 shared/src/main/java/org/researchedc/
 ├── bean/         # DTOs — 81 Java files
-├── core/         # Core resources/utilities — 4 Java files
-├── dao/          # Data access layer — 39 SPI interfaces
-│   └── spi/      # DAO SPI interfaces (39 files)
+├── core/         # Core resources/utilities — 5 Java files
+├── dao/          # Data access layer — 11 SPI interfaces
+│   └── spi/      # DAO SPI interfaces (11 files)
 ├── domain/       # Hibernate/domain entities — 103 Java files
 ├── exception/    # Custom exceptions — 2 Java files
 ├── i18n/         # Internationalization utilities + 22 .properties files
 ├── job/          # Quartz infrastructure — 4 Java files
 ├── patterns/     # Observer pattern infrastructure — 4 Java files
-└── other support # Logging, validation, and compatibility helpers — 4 Java files
+└── other support # Logging, validation, and compatibility helpers — 0 Java files
 
 shared/src/main/resources/
 ├── migration/    # Liquibase schema migrations (208 XML files)
@@ -32,7 +32,7 @@ shared/src/main/resources/
 
 | Area | Files | Description |
 |------|-------|-------------|
-| **DAO (SPI)** | 39 | Interface definitions for dependency injection (`IStudyDAO`, `ISubjectDAO`, etc.) |
+| **DAO (SPI)** | 11 | Interface definitions for dependency injection (`IStudyDAO`, etc.) |
 | **Domain Entities** | 103 | Hibernate `@Entity` classes mapping to database tables (`datamap/` has 62) |
 | **DTO Beans** | 81 | `EntityBean` subclasses — data transfer objects for legacy servlets |
 | **Liquibase Migrations** | 208 | Versioned schema changes from OpenClinica 3.x through 3.18 |
@@ -61,10 +61,10 @@ test methods awaiting reactivation.
 |--------|--------|
 | Package rename | ✅ `org.akaza.openclinica` → `org.researchedc` |
 | Annotations | ✅ `@Repository`/`@Service` applied to all DAOs and services |
-| SPI interfaces | ✅ 39 interfaces for DI; deletion waits for caller migration to module-owned ports |
+| SPI interfaces | ✅ 11 interfaces for DI; deletion waits for caller migration to module-owned ports |
 | Liquibase migrations | ✅ 208 XML files, versioned from 3.x through 3.18 |
 | Strangulation target | 🔶 Active — new code goes to `app/module/` |
-| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 39 DAO SPI Java files still exist under `shared/dao`. Phase 3 ledger: 720/878 methods are module-backed; 878/878 are module-backed or removed (100%); 0 unused rows remain; 158 rows are removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. |
+| DAO deletion blocked | 🔶 `DaoProvider` removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches are 0. Target DAO families are SPI-widened, but 11 DAO SPI Java files still exist under `shared/dao`. Phase 3 ledger: 341/878 methods are module-backed; 878/878 are module-backed or removed (100%); 0 unused rows remain; 537 rows are removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. |
 
 ## ANTI-PATTERNS
 

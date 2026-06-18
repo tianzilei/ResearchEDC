@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Last updated:** 2026-06-18 (Legacy code removal is **not complete**. Tracked workflow progress is 924/963 closed, **96.0%**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 39 DAO SPI Java files under `shared/dao`. Phase 3 ledger: 720/878 methods module-backed; 878/878 module-backed or removed, **100.0%**; 0 unused rows remain; 158 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. See `docs/refactor/remove-legacy-code-plan.md`.)
+> **Last updated:** 2026-06-18 (Legacy code removal is **not complete**. Tracked workflow progress is 952/963 closed, **98.9%**. Phase B schema ownership, Phase C SPI widening, and Phase 1 web/JSP/servlet deletion are complete. Remaining blockers are 11 DAO SPI Java files under `shared/dao`. Phase 3 ledger: 341/878 methods module-backed; 878/878 module-backed or removed, **100.0%**; 0 unused rows remain; 537 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain. See `docs/refactor/remove-legacy-code-plan.md`.)
 > **Scope:** All remaining legacy code in `shared/` plus app-hosted compatibility classes migrated from `web/`; keep SOAP compatibility audits only if `ws/` reappears
 > **Strategy:** Strangler Fig — new modules replace legacy, legacy code is deleted only after replacement is proven
 
@@ -24,12 +24,12 @@
 ### Remaining legacy code baseline (2026-06-12, current worktree after regenerated inventory)
 
 ```
-shared/   241 Java files → bean/ dao SPI/ domain/ job/ exception/ i18n/ patterns/ core/ support/
-           39 Java files under shared/src/main/java/org/researchedc/dao
+shared/   213 Java files → bean/ dao SPI/ domain/ job/ exception/ i18n/ patterns/ core/ support/
+           11 Java files under shared/src/main/java/org/researchedc/dao
 web/        0 files → directory absent; needed import/validation compatibility classes migrated to app/
 ws/         0 Java files → SOAP module absent in current tree
-inventory 39 active artifacts -> 39 keep compatibility, 0 unknown
-phase-3  720/878 DAO SPI methods module-backed; 878/878 module-backed or removed (100.0%); 0 unused rows remain (0.0%); 158 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain
+inventory 11 active artifacts -> 11 keep compatibility, 0 unknown
+phase-3  341/878 DAO SPI methods module-backed; 878/878 module-backed or removed (100.0%); 0 unused rows remain (0.0%); 537 removed; 0 fallback-SQL, legacy-only, or adapter-gap rows remain
 ```
 
 Important distinction: `legacy-core/` removal was a module consolidation into `shared/`; it was not full legacy code removal.
@@ -116,34 +116,21 @@ Next work is no longer Phase B. Continue with the legacy route/workflow inventor
 | identity | `RoleEntity` | `study_user_role` | `module_role` |
 | subjectgroup | `StudyGroupClassEntity` | `study_group_class` | `module_study_group_class` |
 
-**24 `@Primary @Component` adapter classes created** — all SPI interfaces are bridge to module-owned repositories:
+**Current active DAO SPI adapters (2026-06-18)** — 11 SPI interfaces still bridge import compatibility to module-owned repositories; deleted SPI families are tracked in `docs/refactor/phase-3-dao-replacement-ledger.md`:
 
 | Module | Adapter | SPI | Backed By |
 |--------|---------|-----|-----------|
 | study | `StudyDaoAdapter` | `IStudyDAO` | `StudyRepository` |
-| subject | `SubjectDaoAdapter` | `ISubjectDAO` | `SubjectRepository` |
 | subject | `StudySubjectDaoAdapter` | `IStudySubjectDAO` | `StudySubjectRepository` |
 | event | `StudyEventDaoAdapter` | `IStudyEventDAO` | `StudyEventRepository` |
 | event | `StudyEventDefinitionDaoAdapter` | `IStudyEventDefinitionDAO` | repo |
 | event | `EventCrfDaoAdapter` | `EventCRFDao` | repo |
-| event | `EventDefinitionCrfDaoAdapter` | `EventDefinitionCRFDao` | repo |
-| crf | `CrfDaoAdapter` | `ICrfDAO` | `CrfRepository` |
 | crf | `CrfVersionDaoAdapter` | `ICrfVersionDAO` | `CrfVersionRepository` |
 | crf | `ItemDaoAdapter` | `IItemDAO` | `ItemRepository` |
-| crf | `SectionDaoAdapter` | `ISectionDAO` | `SectionRepository` |
 | crf | `ItemFormMetadataDaoAdapter` | `IItemFormMetadataDAO` | `ItemFormMetadataRepository` |
 | datacapture | `ItemDataDaoAdapter` | `IItemDataDAO` | `ItemDataRepository` |
 | datacapture | `ItemGroupDaoAdapter` | `IItemGroupDAO` | repo |
-| datacapture | `ItemGroupMetadataDaoAdapter` | `IItemGroupMetadataDAO` | repo |
-| identity | `UserAccountDaoAdapter` | `IUserAccountDAO` | `UserAccountRepository` |
-| rule | `RuleSetDaoAdapter` | `IRuleSetDAO` | repo |
-| rule | `RuleDaoAdapter` | `IRuleDAO` | repo |
-| dataset | `DatasetDaoAdapter` | `DatasetDao` | `DatasetRepository` |
-| filter | `FilterDaoAdapter` | `FilterDao` | `FilterRepository` |
-| subjectgroup | `StudyGroupClassDaoAdapter` | `StudyGroupClassDao` | `StudyGroupClassRepository` |
-| subjectgroup | `StudyGroupDaoAdapter` | `StudyGroupDao` | repo |
-| discrepancynote | `DiscrepancyNoteDaoAdapter` | `IDiscrepancyNoteDAO` | repo |
-| datacapture | *(also)* `ItemFormMetadataDaoAdapter` | `IItemFormMetadataDAO` | `ItemFormMetadataRepository` |
+| datacapture | `ResponseSetDaoAdapter` | `ResponseSetDomainDao` | repo |
 
 **ALL 27 module entities now point to `module_*` tables. 12 bidirectional sync trigger migration files registered in release.xml.**
 
@@ -287,7 +274,7 @@ Modules communicate via:
 
 ### C1: DAO Files Still Present (Blocked by remaining concrete consumers)
 
-Latest Phase 3 ledger checkpoint (2026-06-17): overall ledger status is 720 `module-backed`, 0 `unused`, and 158 `removed` across 878 tracked methods. DAO SPI deletion is blocked by caller migration from legacy SPI names to module-owned ports.
+Latest Phase 3 ledger checkpoint (2026-06-18): overall ledger status is 341 `module-backed`, 0 `unused`, and 537 `removed` across 878 tracked methods. DAO SPI deletion is blocked by caller migration from legacy SPI names to module-owned ports.
 
 The following DAO `.java` files still exist in `shared/`. As of 2026-06-02, **0 `DaoProvider.getDao()` call sites** and **0 direct `new XxxDAO(...)` / `new StudyConfigService(...)` matches** remain across app/web/ws/shared. **All 24 DAO families** are SPI-widened. All DAO `.java` files must remain because they are the current SPI implementations; deletion is blocked by the need for module-owned replacements and workflow strangulation.
 
@@ -518,7 +505,7 @@ Available at `GET/PUT /api/v1/studies/:id/feature-flags` (JSONB on `study` table
 |-------|-------------|-----------------|--------------|
 | A1-A5 | Write operations | ✅ COMPLETE | None |
 | B1-B3 | Schema ownership | ✅ COMPLETE | 12 bidirectional sync triggers, 27 entities remapped, 24 adapters |
-| C1-C4 | Legacy code deletion | 🔶 In progress, not complete | **0 direct legacy constructor matches, 0 `DaoProvider.getDao()` calls, 24/24 DAO families SPI-widened. Workflow progress is 924/963 closed (96.0%). Physical deletion remains blocked by legacy SPI caller migration to module-owned ports.** |
+| C1-C4 | Legacy code deletion | 🔶 In progress, not complete | **0 direct legacy constructor matches, 0 `DaoProvider.getDao()` calls, DAO families SPI-widened. Workflow progress is 952/963 closed (98.9%). Physical deletion remains blocked by legacy SPI caller migration to module-owned ports.** |
 | D1-D2 | Config migration | ✅ Complete | 11 XML → Java Config, dead XML stubs cleanup (2026-05-23) |
 | E1-E2 | Auth baseline cleanup | ✅ Current tree aligned | Session-backed Spring Security only; dead app-side OAuth2/Keycloak scaffolding removed |
 | F1-F2 | SOAP retirement | ✅ Current tree retired | `ws/` is absent; keep compatibility audit only if SOAP endpoints reappear |

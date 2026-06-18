@@ -59,19 +59,9 @@ public class HibernateConfig {
     //  Rule DAOs
     // ──────────────────────────────────────────────────────────────────────
 
-    // RuleActionRunLogDao replaced by @Primary RuleActionRunLogDaoAdapter
-
-    // RuleSetAuditDao replaced by @Primary RuleSetAuditDaoAdapter
-
-    // RuleSetRuleDao replaced by @Primary RuleSetRuleDaoAdapter
-
-
     // ──────────────────────────────────────────────────────────────────────
     //  CRF / Item DAOs
     // ──────────────────────────────────────────────────────────────────────
-
-    // ItemGroupMetadataDao @Bean removed - no consumers inject concrete type;
-    // IItemGroupMetadataDAO consumers go through @Primary ItemGroupMetadataDaoAdapter
 
     // SCDItemMetadataDao replaced by @Primary SCDItemMetadataDaoAdapter
 
@@ -82,8 +72,6 @@ public class HibernateConfig {
     // ──────────────────────────────────────────────────────────────────────
     //  Study / Subject DAOs
     // ──────────────────────────────────────────────────────────────────────
-
-    // StudyParameterValueDao replaced by @Primary StudyParameterValueDaoAdapter
 
     // ──────────────────────────────────────────────────────────────────────
     //  User / Auth DAOs
@@ -99,22 +87,16 @@ public class HibernateConfig {
     //  Dynamics / Flag DAOs
     // ──────────────────────────────────────────────────────────────────────
 
-    // DynamicsItemFormMetadataDao replaced by @Primary DynamicsItemFormMetadataDaoAdapter
-
-    // DynamicsItemGroupMetadataDao replaced by @Primary DynamicsItemGroupMetadataDaoAdapter
-
     // ──────────────────────────────────────────────────────────────────────
     //  Misc / Config / Tag DAOs
     // ──────────────────────────────────────────────────────────────────────
 
-    // ConfigurationDao replaced by @Primary ConfigurationDaoAdapter
-
     // PasswordRequirements @Bean removed — 0 consumers after admin servlet deletions
 
-    // TagDao deleted - no consumers; EventDefinitionCrfTagDaoAdapter serves tagging
+    // TagDao and EventDefinitionCrfTagDao deleted - no consumers remain
 
     // IdtViewDao @Bean removed - zero consumers; impl + SPI deleted
 
-    // DatabaseChangeLogDao replaced by @Primary DatabaseChangeLogDaoAdapter
+    // DatabaseChangeLogDao legacy SPI deleted; DatabaseChangeLogPort is backed by DatabaseChangeLogDaoAdapter
 
 }
