@@ -2,6 +2,7 @@
   displayName = "Data Capture",
   allowedDependencies = {
     "audit::service", "audit::enums",
+    "dataimport::service",
     "event::repository", "event::entity",
     "subject::repository", "subject::entity",
     "crf::repository", "crf::entity",

@@ -17,7 +17,7 @@ import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.bean.submit.SectionBean;
-import org.researchedc.dao.spi.IItemDataDAO;
+import org.researchedc.module.dataimport.service.ImportItemDataPort;
 import org.researchedc.module.datacapture.entity.ItemDataEntity;
 import org.researchedc.module.datacapture.repository.ItemDataRepository;
 import org.springframework.context.annotation.Primary;
@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("itemDataDAO")
 @Primary
 @Transactional(readOnly = true)
-public class ItemDataDaoAdapter implements IItemDataDAO {
+public class ItemDataDaoAdapter implements ImportItemDataPort {
 
     private final ItemDataRepository repository;
 
@@ -35,14 +35,12 @@ public class ItemDataDaoAdapter implements IItemDataDAO {
         this.repository = repository;
     }
 
-    @Override
     public EntityBean findByPK(int ID) {
         return repository.findById(ID)
                 .map(this::toBean)
                 .orElseGet(ItemDataBean::new);
     }
 
-    @Override
     @Transactional
     public EntityBean create(EntityBean eb) {
         ItemDataBean bean = (ItemDataBean) eb;
@@ -52,13 +50,11 @@ public class ItemDataDaoAdapter implements IItemDataDAO {
         return toBean(repository.save(entity));
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb) {
         return upsert(eb);
     }
 
-    @Override
     @Transactional
     public EntityBean upsert(EntityBean eb) {
         ItemDataBean bean = (ItemDataBean) eb;
@@ -74,37 +70,48 @@ public class ItemDataDaoAdapter implements IItemDataDAO {
         return toBean(repository.save(entity));
     }
 
-    @Override
+    @Transactional
+    public void upsertImportItemData(
+            int itemId,
+            int eventCrfId,
+            int ordinal,
+            int ownerId,
+            int statusId,
+            String value) {
+        ItemDataBean bean = new ItemDataBean();
+        bean.setItemId(itemId);
+        bean.setEventCRFId(eventCrfId);
+        bean.setOrdinal(ordinal);
+        bean.setOwnerId(ownerId);
+        bean.setStatus(Status.getFromMap(statusId));
+        bean.setValue(value);
+        upsert(bean);
+    }
+
     public Collection<ItemDataBean> findAll() {
         return toBeans(repository.findAll());
     }
 
-    @Override
     public ArrayList<ItemDataBean> findAllByEventCRFId(int eventCRFId) {
         return toBeans(repository.findByEventCrfId(eventCRFId));
     }
 
-    @Override
     public ArrayList<ItemDataBean> findAllByEventCRFIdAndItemId(int eventCRFId, int itemId) {
         return toBeans(repository.findByEventCrfIdAndItemId(eventCRFId, itemId));
     }
 
-    @Override
     public ArrayList<ItemDataBean> findAllByEventCRFIdAndItemIdNoStatus(int eventCRFId, int itemId) {
         return toBeans(repository.findByEventCrfIdAndItemId(eventCRFId, itemId));
     }
 
-    @Override
     public ArrayList<ItemDataBean> findAllByEventCRFIdAndItemGroupId(int eventCRFId, int itemGroupId) {
         return toBeans(repository.findByEventCrfId(eventCRFId));
     }
 
-    @Override
     public ArrayList<ItemDataBean> findAllBySectionIdAndEventCRFId(int sectionId, int eventCRFId) {
         return toBeans(repository.findByEventCrfId(eventCRFId));
     }
 
-    @Override
     public ArrayList<ItemDataBean> findAllActiveBySectionIdAndEventCRFId(int sectionId, int eventCRFId) {
         List<ItemDataEntity> all = repository.findByEventCrfId(eventCRFId);
         ArrayList<ItemDataBean> result = new ArrayList<>();
@@ -119,12 +126,10 @@ public class ItemDataDaoAdapter implements IItemDataDAO {
         return result;
     }
 
-    @Override
     public ArrayList<ItemDataBean> findAllBlankRequiredByEventCRFId(int eventCRFId, int crfVersionId) {
         return new ArrayList<>();
     }
 
-    @Override
     public ItemDataBean findByItemIdAndEventCRFId(int itemId, int eventCRFId) {
         List<ItemDataEntity> entities = repository.findByItemIdAndEventCrfId(itemId, eventCRFId);
         if (entities.isEmpty()) {
@@ -133,7 +138,6 @@ public class ItemDataDaoAdapter implements IItemDataDAO {
         return toBean(entities.get(0));
     }
 
-    @Override
     public ItemDataBean findByItemIdAndEventCRFIdAndOrdinal(int itemId, int eventCRFId, int ordinal) {
         List<ItemDataEntity> entities = repository.findByItemIdAndEventCrfIdAndOrdinal(itemId, eventCRFId, ordinal);
         if (entities.isEmpty()) {
@@ -142,7 +146,6 @@ public class ItemDataDaoAdapter implements IItemDataDAO {
         return toBean(entities.get(0));
     }
 
-    @Override
     public ItemDataBean findByItemIdAndEventCRFIdAndOrdinalRaw(int itemId, int eventCRFId, int ordinal) {
         List<ItemDataEntity> entities = repository.findByItemIdAndEventCrfIdAndOrdinal(itemId, eventCRFId, ordinal);
         if (entities.isEmpty()) {
@@ -151,48 +154,39 @@ public class ItemDataDaoAdapter implements IItemDataDAO {
         return toBean(entities.get(0));
     }
 
-    @Override
     public ItemDataBean findByEventCRFIdAndItemName(EventCRFBean eventCrfBean, String itemName) {
         return null;
     }
 
-    @Override
     public int findAllRequiredByEventCRFId(EventCRFBean ecb) {
         return 0;
     }
 
-    @Override
     public int getMaxOrdinalForGroup(EventCRFBean ecb, SectionBean sb, ItemGroupBean igb) {
         return 0;
     }
 
-    @Override
     public int getMaxOrdinalForGroupByGroupOID(String itemGroupOid, int eventCrfId) {
         return 0;
     }
 
-    @Override
     public int getMaxOrdinalForGroupByItemAndEventCrf(Integer itemId, EventCRFBean ec) {
         return 0;
     }
 
-    @Override
     public boolean isItemExists(int itemId, int ordinalForRepeatingGroupField, int eventCrfId) {
         List<ItemDataEntity> entities = repository.findByItemIdAndEventCrfIdAndOrdinal(itemId, eventCrfId, ordinalForRepeatingGroupField);
         return !entities.isEmpty();
     }
 
-    @Override
     public int getGroupSize(int itemId, int eventcrfId) {
         return 0;
     }
 
-    @Override
     public List<String> findValuesByItemOID(String itoid) {
         return new ArrayList<>();
     }
 
-    @Override
     public Object getEntityFromHashMap(HashMap hm) {
         ItemDataBean bean = new ItemDataBean();
         if (hm.get("item_data_id") instanceof Integer) {
@@ -231,7 +225,6 @@ public class ItemDataDaoAdapter implements IItemDataDAO {
         return bean;
     }
 
-    @Override
     public Object getKeyFromHashMap(HashMap hm) {
         StringBuilder key = new StringBuilder();
         if (hm.get("study_event_id") != null) {
@@ -246,132 +239,106 @@ public class ItemDataDaoAdapter implements IItemDataDAO {
         return key.toString();
     }
 
-    @Override
     public boolean isFormatDates() {
         return false;
     }
 
-    @Override
     public void setFormatDates(boolean formatDates) {
     }
 
-    @Override
     public Collection findMinMaxDates() {
         return new ArrayList<>();
     }
 
-    @Override
     public void setTypesExpected() {
     }
 
-    @Override
     public void setExtraTypesExpected() {
     }
 
-    @Override
     public HashMap findByStudySubjectAndOids(Integer studyId, String itemOid, String itemGroupOid, int studySubjectId) {
         return new HashMap();
     }
 
-    @Override
     public void setExtraTypesExpectedForStudyLevelSql() {
     }
 
-    @Override
     @Transactional
     public EntityBean updateValue(EntityBean eb) {
         return eb;
     }
 
-    @Override
     @Transactional
     public EntityBean updateValueForRemoved(EntityBean eb) {
         return eb;
     }
 
-    @Override
     @Transactional
     public EntityBean updateStatus(EntityBean eb) {
         return eb;
     }
 
-    @Override
     public ItemDataBean setItemDataBeanIfDateOrPdate(ItemDataBean idb, String currentDfString, ItemDataType dataType) {
         return idb;
     }
 
-    @Override
     @Transactional
     public EntityBean updateValue(EntityBean eb, String currentDfString) {
         return eb;
     }
 
-    @Override
     @Transactional
     public EntityBean updateUser(EntityBean eb) {
         return eb;
     }
 
-    @Override
     public ItemDataType getDataType(int itemId) {
         return ItemDataType.ST;
     }
 
-    @Override
     public String formatPDate(String pDate) {
         return pDate;
     }
 
-    @Override
     public String reFormatPDate(String pDate) {
         return pDate;
     }
 
-    @Override
     public List<ItemDataBean> findByStudyEventAndOids(Integer studyEventId, String itemOid, String itemGroupOid) {
         return new ArrayList<>();
     }
 
-    @Override
     public HashMap findCountByStudyEventAndOIDs(Integer studyId, String itemOid, String itemGroupOid) {
         return new HashMap();
     }
 
-    @Override
     public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn,
                                           boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
         return new ArrayList();
     }
 
-    @Override
     public void delete(int itemDataId) {
         repository.deleteById(itemDataId);
     }
 
-    @Override
     public void deleteDnMap(int itemDataId) {
     }
 
-    @Override
     public ArrayList<ItemDataBean> findByCRFVersion(CRFVersionBean crfVersionBean) {
         return new ArrayList<>();
     }
 
-    @Override
     public void updateStatusByEventCRF(EventCRFBean eventCRF, Status s) {
     }
 
-    @Override
     public void undelete(int itemDataId, int updaterId) {
     }
 

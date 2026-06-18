@@ -1,7 +1,7 @@
 # ResearchEDC
 
 - Version: 0.1
-- Last updated: 2026-06-18
+- Last updated: 2026-06-19
 - License: GNU LGPL
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x.
@@ -38,16 +38,16 @@ The long-running refactor follows a strangler pattern: keep legacy behavior work
 
 Current high-level status:
 
-- Overall tracked legacy-removal progress is about **98.9%** by active workflow inventory: 952 of 963 artifacts are removed or closed, with 11 active artifacts remaining. DAO method replacement/removal coverage is **100.0%**: 878 of 878 tracked SPI methods are module-backed or removed, with 0 unused method-level blockers remaining.
+- Overall tracked legacy-removal progress is **100.0%** by active workflow inventory: 963 of 963 artifacts are removed or closed, with 0 active artifacts remaining. DAO method replacement/removal coverage is **100.0%**: 878 of 878 tracked SPI methods are removed, with 0 unused method-level blockers remaining.
 - `legacy-core/` has been consolidated into `shared/` with package rename to `org.researchedc`.
-- Legacy code is **not fully removed**. Current baseline still includes `shared/` legacy beans/DAOs/services. The `web/` JSP/SecureController module and `ws/` SOAP module are absent from the current tree.
+- Legacy code is **not fully removed**. Current baseline still includes `shared/` legacy beans, entities, jobs, and support classes. The `web/` JSP/SecureController module, `ws/` SOAP module, and `shared/dao` SPI surface are absent from the current tree.
 - Spring XML and Ehcache-era configuration have largely been replaced by Java configuration and modern cache/security wiring.
 - Modulith modules exist for study, subject, event, data capture, identity, CRF, export, audit, randomization, dashboard, rule, dataset, filter, subject group, discrepancy note, OpenRosa, and legacy gateway functions.
 - React SPA covers major workflows. The legacy frame component remains in the SPA for compatibility, but there are no current `web/` JSP views in the repository.
 - Questionnaire service has its own API, data model, scoring engine, and tests.
 - `DaoProvider` has been removed; direct `new XxxDAO(...)` / `new StudyConfigService(...)` construction is at 0 active matches across the legacy Java surfaces.
-- Legacy DAO consumer work is mostly complete: `DaoProvider`, `LegacyDaoFactory`, `EntityDAO`, and direct DAO construction are gone, the target DAO families have been SPI-widened, and `shared/dao` is now SPI-only. The Phase 3 DAO method ledger is checked in and currently classifies 341 of 878 tracked methods as module-backed, with 0 unused rows left to remove, 537 rows already removed, and 0 fallback-SQL, legacy-only, or adapter-gap rows remaining.
-- Phase B schema ownership is complete. Remaining legacy deletion work is migrating callers from legacy SPI names to module-owned ports before the remaining SPI interfaces can be deleted; the audit database-changelog, audit-user-event, and study-subject event audit reads are now on module-local ports/queries.
+- Legacy DAO consumer work is complete: `DaoProvider`, `LegacyDaoFactory`, `EntityDAO`, direct DAO construction, and the shared DAO SPI files are gone. The Phase 3 DAO method ledger is checked in and currently classifies 878 of 878 tracked methods as removed, with 0 unused rows left to remove and 0 fallback-SQL, legacy-only, or adapter-gap rows remaining.
+- Phase B schema ownership is complete. Remaining compatibility hardening lives in module code and uses module-owned ports/repositories rather than legacy SPI names.
 - Enterprise UI/functionality and active mail-delivery code paths were removed on 2026-06-09. Email/contact fields remain as compatibility data and are tracked by the follow-up email-field removal plan.
 - Phase II (@SuppressWarnings elimination) is **COMPLETE**. Reduced from 168 to 72 annotations (57% reduction). Remaining 72 are all genuine (27 non-deferred) or deferred (45 TableFactory, will self-resolve with SPA strangulation).
 
@@ -55,12 +55,12 @@ Current legacy removal baseline:
 
 | Surface | Current Count | Removal Gate |
 |---------|---------------|--------------|
-| `shared/src/main/java/org/researchedc` | 213 Java files | Shared beans, domain entities, DAO SPI, jobs, core, and support classes still needed by compatibility paths |
-| `shared/dao` | 11 Java files | 175/186 DAO-surface files removed (94.1%); remaining SPI interfaces require caller migration to module-owned ports; Phase 3 ledger is 341/878 module-backed methods with 0 unused rows left |
+| `shared/src/main/java/org/researchedc` | 202 Java files | Shared beans, domain entities, jobs, core, and support classes still needed by compatibility paths |
+| `shared/dao` | 0 files | DAO SPI surface deleted; Phase 3 ledger is 878/878 removed |
 | `web/` Java | 0 files | Directory deleted; needed compatibility classes migrated to `app/` |
 | JSP pages | 0 files | `web/` views deleted |
 | Legacy servlet inventory | 0 artifacts | Servlet workflows migrated, retired, or deleted |
-| Active legacy workflow inventory | 11 artifacts | 952/963 artifacts removed or closed (98.9%); current regenerated inventory is DAO SPI-only with no unknown rows |
+| Active legacy workflow inventory | 0 artifacts | 963/963 artifacts removed or closed (100.0%); current regenerated inventory has no active rows |
 | `ws/` Java | 0 files | SOAP module is absent; keep compatibility audit if endpoints reappear |
 
 For detailed handoff notes, see [AGENTS.md](./AGENTS.md), [.sisyphus/LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md), and [docs/refactor/remove-legacy-code-plan.md](./docs/refactor/remove-legacy-code-plan.md).

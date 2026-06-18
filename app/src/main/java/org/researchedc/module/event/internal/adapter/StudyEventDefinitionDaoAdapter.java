@@ -15,7 +15,7 @@ import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
+import org.researchedc.module.dataimport.service.ImportStudyEventDefinitionPort;
 import org.researchedc.module.event.entity.StudyEventDefinitionEntity;
 import org.researchedc.module.event.repository.StudyEventDefinitionRepository;
 import org.springframework.context.annotation.Primary;
@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("studyEventDefinitionDAO")
 @Primary
 @Transactional(readOnly = true)
-public class StudyEventDefinitionDaoAdapter implements IStudyEventDefinitionDAO {
+public class StudyEventDefinitionDaoAdapter implements ImportStudyEventDefinitionPort {
 
     private final StudyEventDefinitionRepository repository;
 
@@ -33,14 +33,12 @@ public class StudyEventDefinitionDaoAdapter implements IStudyEventDefinitionDAO 
         this.repository = repository;
     }
 
-    @Override
     public EntityBean findByPK(int ID) {
         return repository.findById(ID)
                 .map(this::toBean)
                 .orElseGet(StudyEventDefinitionBean::new);
     }
 
-    @Override
     public AuditableEntityBean findByPKAndStudy(int id, StudyBean study) {
         return repository.findById(id)
                 .filter(e -> e.getStudyId() != null && e.getStudyId().equals(study.getId()))
@@ -48,7 +46,6 @@ public class StudyEventDefinitionDaoAdapter implements IStudyEventDefinitionDAO 
                 .orElseGet(StudyEventDefinitionBean::new);
     }
 
-    @Override
     @Transactional
     public EntityBean create(EntityBean eb) {
         StudyEventDefinitionBean bean = (StudyEventDefinitionBean) eb;
@@ -58,7 +55,6 @@ public class StudyEventDefinitionDaoAdapter implements IStudyEventDefinitionDAO 
         return toBean(repository.save(entity));
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb) {
         StudyEventDefinitionBean bean = (StudyEventDefinitionBean) eb;
@@ -70,28 +66,23 @@ public class StudyEventDefinitionDaoAdapter implements IStudyEventDefinitionDAO 
         return toBean(repository.save(entity));
     }
 
-    @Override
     public Collection findAll() {
         return toBeans(repository.findAll());
     }
 
-    @Override
     public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn,
                                           boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
         return new ArrayList();
     }
 
-    @Override
     public Object getEntityFromHashMap(HashMap hm) {
         StudyEventDefinitionEntity entity = new StudyEventDefinitionEntity();
         entity.setStudyEventDefinitionId((Integer) hm.get("study_event_definition_id"));
@@ -111,14 +102,12 @@ public class StudyEventDefinitionDaoAdapter implements IStudyEventDefinitionDAO 
         return toBean(entity);
     }
 
-    @Override
     public StudyEventDefinitionBean findByOid(String oid) {
         return repository.findByOcOid(oid)
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    @Override
     public StudyEventDefinitionBean findByOidAndStudy(String oid, int studyId, int parentStudyId) {
         StudyEventDefinitionBean bean = findByOidAndStudy(oid, studyId);
         if (bean == null) {
@@ -127,13 +116,23 @@ public class StudyEventDefinitionDaoAdapter implements IStudyEventDefinitionDAO 
         return bean;
     }
 
+    public Object[] findImportStudyEventDefinitionByOidAndStudy(
+            String oid, int studyId, int parentStudyId) {
+        StudyEventDefinitionEntity entity = repository.findByOcOidAndStudyId(oid, studyId)
+                .or(() -> repository.findByOcOidAndStudyId(oid, parentStudyId))
+                .orElse(null);
+        if (entity == null) {
+            return null;
+        }
+        return new Object[]{entity.getStudyEventDefinitionId(), entity.getName()};
+    }
+
     private StudyEventDefinitionBean findByOidAndStudy(String oid, int studyId) {
         return repository.findByOcOidAndStudyId(oid, studyId)
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    @Override
     public ArrayList findAllByStudy(StudyBean study) {
         if (study.getParentStudyId() > 0) {
             return toBeans(repository.findByStudyIdOrderByName(study.getParentStudyId()));
@@ -141,17 +140,14 @@ public class StudyEventDefinitionDaoAdapter implements IStudyEventDefinitionDAO 
         return toBeans(repository.findByStudyIdOrderByName(study.getId()));
     }
 
-    @Override
     public ArrayList findAllWithStudyEvent(StudyBean currentStudy) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList<StudyEventDefinitionBean> findAllByCrf(CRFBean crf) {
         return new ArrayList<StudyEventDefinitionBean>();
     }
 
-    @Override
     public EntityBean findByName(String name) {
         List<StudyEventDefinitionEntity> results = repository.findByName(name);
         if (results.isEmpty()) {
@@ -160,24 +156,20 @@ public class StudyEventDefinitionDaoAdapter implements IStudyEventDefinitionDAO 
         return toBean(results.get(0));
     }
 
-    @Override
     public StudyEventDefinitionBean findByEventDefinitionCRFId(int eventDefinitionCRFId) {
         return repository.findByEventDefinitionCRFId(eventDefinitionCRFId)
                 .map(this::toBean)
                 .orElseGet(StudyEventDefinitionBean::new);
     }
 
-    @Override
     public Collection findAllByStudyAndLimit(int studyId) {
         return toBeans(repository.findByStudyIdOrderByName(studyId));
     }
 
-    @Override
     public ArrayList<StudyEventDefinitionBean> findAllActiveByParentStudyId(int parentStudyId) {
         return toBeans(repository.findByStatusIdAndStudyId(Status.AVAILABLE.getId(), parentStudyId));
     }
 
-    @Override
     public ArrayList findAllActiveByStudy(StudyBean study) {
         if (study.getParentStudyId() > 0) {
             return toBeans(repository.findByStatusIdAndStudyId(Status.AVAILABLE.getId(), study.getParentStudyId()));

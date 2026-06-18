@@ -12,7 +12,7 @@ import java.util.List;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.submit.ItemGroupBean;
-import org.researchedc.dao.spi.IItemGroupDAO;
+import org.researchedc.module.dataimport.service.ImportItemGroupPort;
 import org.researchedc.module.datacapture.entity.ItemGroupEntity;
 import org.researchedc.module.datacapture.repository.ItemGroupRepository;
 import org.springframework.context.annotation.Primary;
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("itemGroupDAO")
 @Primary
 @Transactional(readOnly = true)
-public class ItemGroupDaoAdapter implements IItemGroupDAO {
+public class ItemGroupDaoAdapter implements ImportItemGroupPort {
 
     private final ItemGroupRepository repository;
 
@@ -30,18 +30,15 @@ public class ItemGroupDaoAdapter implements IItemGroupDAO {
         this.repository = repository;
     }
 
-    @Override
     public void setTypesExpected() {
     }
 
-    @Override
     public EntityBean findByPK(int ID) {
         return repository.findById(ID)
                 .map(this::toBean)
                 .orElseGet(ItemGroupBean::new);
     }
 
-    @Override
     @Transactional
     public EntityBean create(EntityBean eb) {
         ItemGroupBean bean = (ItemGroupBean) eb;
@@ -51,7 +48,6 @@ public class ItemGroupDaoAdapter implements IItemGroupDAO {
         return toBean(repository.save(entity));
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb) {
         ItemGroupBean bean = (ItemGroupBean) eb;
@@ -63,29 +59,24 @@ public class ItemGroupDaoAdapter implements IItemGroupDAO {
         return toBean(repository.save(entity));
     }
 
-    @Override
     public Collection findAll() {
         return toBeans(repository.findAll());
     }
 
-    @Override
     public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType,
                                           String strOrderByColumn, boolean blnAscendingSort,
                                           String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
         return new ArrayList();
     }
 
-    @Override
     public Object getEntityFromHashMap(HashMap hm) {
         ItemGroupEntity entity = new ItemGroupEntity();
         entity.setItemGroupId((Integer) hm.get("item_group_id"));
@@ -100,7 +91,6 @@ public class ItemGroupDaoAdapter implements IItemGroupDAO {
         return toBean(entity);
     }
 
-    @Override
     public EntityBean findByName(String name) {
         return repository.findByName(name).stream()
                 .findFirst()
@@ -108,7 +98,6 @@ public class ItemGroupDaoAdapter implements IItemGroupDAO {
                 .orElseGet(ItemGroupBean::new);
     }
 
-    @Override
     public ItemGroupBean findByOid(String oid) {
         return repository.findByOcOid(oid).stream()
                 .findFirst()
@@ -116,7 +105,6 @@ public class ItemGroupDaoAdapter implements IItemGroupDAO {
                 .orElse(null);
     }
 
-    @Override
     public ItemGroupBean findByOidAndCrf(String oid, int crfId) {
         return repository.findByOcOidAndCrfId(oid, crfId).stream()
                 .findFirst()
@@ -124,7 +112,6 @@ public class ItemGroupDaoAdapter implements IItemGroupDAO {
                 .orElse(null);
     }
 
-    @Override
     public List<ItemGroupBean> findAllByOid(String oid) {
         List<ItemGroupBean> beans = new ArrayList<>();
         repository.findByOcOid(oid).stream()
@@ -134,43 +121,42 @@ public class ItemGroupDaoAdapter implements IItemGroupDAO {
         return beans;
     }
 
-    @Override
+    public List<Object[]> findImportItemGroupsByOid(String oid) {
+        return repository.findByOcOid(oid).stream()
+                .sorted(Comparator.comparing(ItemGroupEntity::getItemGroupId, Comparator.nullsLast(Integer::compareTo)))
+                .map(entity -> new Object[]{entity.getItemGroupId()})
+                .toList();
+    }
+
     public String getValidOid(ItemGroupBean itemGroup, String crfName, String itemGroupLabel,
                               ArrayList<String> oidList) {
         return "";
     }
 
-    @Override
     public List<ItemGroupBean> findGroupByCRFVersionID(int Id) {
         return toBeans(repository.findGroupByCRFVersionIdNative(Id));
     }
 
-    @Override
     public List<ItemGroupBean> findGroupByCRFVersionIDMap(int Id) {
         return toBeans(repository.findGroupByCRFVersionIdNative(Id));
     }
 
-    @Override
     public List<ItemGroupBean> findOnlyGroupsByCRFVersionID(int Id) {
         return toBeans(repository.findOnlyGroupsByCRFVersionIdNative(Id));
     }
 
-    @Override
     public List<ItemGroupBean> findGroupBySectionId(int sectionId) {
         return toBeans(repository.findGroupBySectionIdNative(sectionId));
     }
 
-    @Override
     public List<ItemGroupBean> findLegitGroupBySectionId(int sectionId) {
         return toBeans(repository.findLegitGroupBySectionIdNative(sectionId));
     }
 
-    @Override
     public List<ItemGroupBean> findLegitGroupAllBySectionId(int sectionId) {
         return toBeans(repository.findLegitGroupAllBySectionIdNative(sectionId));
     }
 
-    @Override
     public ItemGroupBean findGroupByGroupNameAndCrfVersionId(String groupName, int crfVersionId) {
         return repository.findGroupByGroupNameAndCrfVersionIdNative(crfVersionId, groupName).stream()
                 .findFirst()
@@ -178,7 +164,6 @@ public class ItemGroupDaoAdapter implements IItemGroupDAO {
                 .orElse(null);
     }
 
-    @Override
     public ItemGroupBean findGroupByItemIdCrfVersionId(int itemId, int crfVersionId) {
         return repository.findGroupByItemIdCrfVersionIdNative(crfVersionId, itemId).stream()
                 .findFirst()
@@ -186,12 +171,10 @@ public class ItemGroupDaoAdapter implements IItemGroupDAO {
                 .orElse(null);
     }
 
-    @Override
     public Collection findGroupsByItemID(int ID) {
         return toBeans(repository.findGroupsByItemIdNative(ID));
     }
 
-    @Override
     public ItemGroupBean findTopOneGroupBySectionId(int sectionId) {
         return repository.findTopOneGroupBySectionIdNative(sectionId).stream()
                 .findFirst()
@@ -199,16 +182,13 @@ public class ItemGroupDaoAdapter implements IItemGroupDAO {
                 .orElseGet(ItemGroupBean::new);
     }
 
-    @Override
     public void deleteTestGroup(String name) {
     }
 
-    @Override
     public Boolean isItemGroupRepeatingBasedOnAllCrfVersions(String groupOid) {
         return false;
     }
 
-    @Override
     public Boolean isItemGroupRepeatingBasedOnCrfVersion(String groupOid, Integer crfVersion) {
         return false;
     }

@@ -12,9 +12,9 @@ import javax.sql.DataSource;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ResponseSetBean;
-import org.researchedc.dao.spi.IItemFormMetadataDAO;
 import org.researchedc.domain.crfdata.InstantOnChangePairContainer;
 import org.researchedc.exception.OpenClinicaException;
+import org.researchedc.module.dataimport.service.ImportItemFormMetadataPort;
 import org.researchedc.module.crf.entity.ItemFormMetadataEntity;
 import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("itemFormMetadataDAO")
 @Primary
 @Transactional(readOnly = true)
-public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
+public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
 
     private final ItemFormMetadataRepository repository;
     private final DataSource dataSource;
@@ -37,11 +37,9 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
         this.dataSource = dataSource;
     }
 
-    @Override
     public void setTypesExpected() {
     }
 
-    @Override
     public Object getEntityFromHashMap(HashMap hm) {
         ItemFormMetadataEntity entity = new ItemFormMetadataEntity();
         entity.setItemFormMetadataId(asInteger(hm.get("item_form_metadata_id")));
@@ -59,39 +57,32 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
         return toBean(entity);
     }
 
-    @Override
     public Collection findAll() {
         return toBeans(repository.findAll());
     }
 
-    @Override
     public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public EntityBean findByPK(int id) {
         return repository.findById(id)
                 .map(this::toBean)
                 .orElseGet(ItemFormMetadataBean::new);
     }
 
-    @Override
     public ArrayList<ItemFormMetadataBean> findAllByCRFVersionId(int crfVersionId) {
         return toBeans(repository.findByCrfVersionIdOrderByOrdinal(crfVersionId));
     }
 
-    @Override
     public ArrayList<ItemFormMetadataBean> findAllBySectionId(int sectionId) {
         return toBeans(repository.findBySectionIdOrderByOrdinal(sectionId));
     }
 
-    @Override
     public ArrayList<ItemFormMetadataBean> findAllByCRFVersionIdAndSectionId(int crfVersionId, int sectionId) {
         return toBeans(repository.findByCrfVersionIdAndSectionIdOrderByOrdinal(crfVersionId, sectionId));
     }
 
-    @Override
     public ItemFormMetadataBean findByItemIdAndCRFVersionId(int itemId, int crfVersionId) {
         return repository.findByItemIdAndCrfVersionId(itemId, crfVersionId).stream()
                 .findFirst()
@@ -99,7 +90,6 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
                 .orElseGet(ItemFormMetadataBean::new);
     }
 
-    @Override
     @Transactional
     public EntityBean create(EntityBean eb) {
         ItemFormMetadataBean bean = (ItemFormMetadataBean) eb;
@@ -110,7 +100,6 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
         return saved;
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb) {
         ItemFormMetadataBean bean = (ItemFormMetadataBean) eb;
@@ -121,33 +110,28 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
         return toBean(repository.save(entity));
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType,
                                            String strOrderByColumn, boolean blnAscendingSort,
                                            String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
         return new ArrayList();
     }
 
     // ── Stub overrides for inherited methods with zero callers ──────────
 
-    @Override
     public int findCountAllHiddenByCRFVersionId(int crfVersionId) {
         // No callers — method was used by legacy CRF workflow only
         return 0;
     }
 
-    @Override
     public int findCountAllHiddenButShownByEventCRFId(int eventCrfId) {
         // No callers — method was used by legacy CRF workflow only
         return 0;
     }
 
-    @Override
     public ItemFormMetadataBean findByItemIdAndCRFVersionIdNotInIGM(int itemId, int crfVersionId) {
         // No callers — returns empty bean
         return new ItemFormMetadataBean();
@@ -157,14 +141,12 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
 
     private static final Logger log = LoggerFactory.getLogger(ItemFormMetadataDaoAdapter.class);
 
-    @Override
     public int findMaxId() {
         String sql = "SELECT COALESCE(MAX(ifm.item_form_metadata_id), 0) FROM item_form_metadata ifm";
         Integer result = getJdbcTemplate().queryForObject(sql, Integer.class);
         return result != null ? result : 0;
     }
 
-    @Override
     public ArrayList<ItemFormMetadataBean> findAllByCRFVersionIdAndResponseTypeId(int crfVersionId, int responseTypeId) {
         // Native SQL from item_form_metadata_dao.xml: findAllByCRFVersionIdAndResponseTypeId
         String sql = "SELECT m.*, rs.response_type_id, rs.label, rs.options_text, rs.options_values "
@@ -173,21 +155,18 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
         return findAllBySql(sql, crfVersionId, responseTypeId);
     }
 
-    @Override
     public ArrayList<ItemFormMetadataBean> findAllItemsRequiredAndShownByCrfVersionId(int crfVersionId) {
         // Native SQL from item_form_metadata_dao.xml: findAllItemsRequiredAndShownByCrfVersionId
         String sql = "SELECT * FROM item_form_metadata WHERE crf_version_id = ? AND required = true AND show_item = true";
         return findAllBySql(sql, crfVersionId);
     }
 
-    @Override
     public ArrayList<ItemFormMetadataBean> findAllItemsRequiredAndHiddenByCrfVersionId(int crfVersionId) {
         // Native SQL from item_form_metadata_dao.xml: findAllItemsRequiredAndHiddenByCrfVersionId
         String sql = "SELECT * FROM item_form_metadata WHERE crf_version_id = ? AND required = true AND show_item = false";
         return findAllBySql(sql, crfVersionId);
     }
 
-    @Override
     public ArrayList<ItemFormMetadataBean> findAllByCRFIdItemIdAndHasValidations(int crfId, int itemId) {
         // Native SQL from item_form_metadata_dao.xml: findAllByCRFIdItemIdAndHasValidations
         String sql = "SELECT m.*, rs.response_type_id, rs.label, rs.options_text, rs.options_values "
@@ -199,7 +178,6 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
         return findAllBySql(sql, crfId, itemId);
     }
 
-    @Override
     public ArrayList<ItemFormMetadataBean> findAllByItemId(int itemId) {
         // Native SQL from item_form_metadata_dao.xml: findAllByItemId — 6-table join
         String sql = "SELECT DISTINCT m.*, rs.response_type_id, rs.label, rs.options_text, "
@@ -216,7 +194,27 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
         return findAllByItemIdSql(sql, itemId);
     }
 
-    @Override
+    public List<Object[]> findImportItemFormMetadataByItemId(int itemId) {
+        String sql = "SELECT DISTINCT m.width_decimal, rs.response_type_id, rs.options_text, rs.options_values "
+            + "FROM item_form_metadata m, response_set rs, crf_version cv, "
+            + "item_group_metadata igm, item_group ig, section sec "
+            + "WHERE m.item_id = ? "
+            + "AND m.response_set_id = rs.response_set_id "
+            + "AND cv.crf_version_id = m.crf_version_id "
+            + "AND igm.item_id = m.item_id "
+            + "AND ig.item_group_id = igm.item_group_id "
+            + "AND sec.section_id = m.section_id";
+        return getJdbcTemplate().query(
+                sql,
+                (rs, rowNum) -> new Object[]{
+                        rs.getString("width_decimal"),
+                        rs.getObject("response_type_id"),
+                        rs.getString("options_text"),
+                        rs.getString("options_values")
+                },
+                itemId);
+    }
+
     public ArrayList<ItemFormMetadataBean> findAllByItemIdAndHasValidations(int itemId) {
         // Native SQL from item_form_metadata_dao.xml: findAllByItemIdAndHasValidations
         String sql = "SELECT DISTINCT m.*, rs.response_type_id, rs.label, rs.options_text, "
@@ -234,7 +232,6 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
         return findAllByItemIdSql(sql, itemId);
     }
 
-    @Override
     public ArrayList<ItemFormMetadataBean> findSCDItemsBySectionId(Integer sectionId) {
         // Native SQL from item_form_metadata_dao.xml: findSCDItemsBySectionId
         String sql = "SELECT ifm.* FROM item_form_metadata ifm "
@@ -244,7 +241,6 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
         return findAllBySql(sql, sectionId);
     }
 
-    @Override
     public boolean instantTypeExistsInSection(int sectionId) {
         // Native SQL from item_form_metadata_dao.xml: instantTypeExistsInSection
         String sql = "SELECT ifm.item_form_metadata_id FROM item_form_metadata ifm, response_set rs "
@@ -254,7 +250,6 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
         return !results.isEmpty() && results.get(0) > 0;
     }
 
-    @Override
     public Map<Integer, List<InstantOnChangePairContainer>> sectionInstantMapInSameSection(int crfVersionId) {
         // Stub — blocked on Phase 1 P8 removing DataEntryServlet callers.
         // This is the most complex inherited method (10 joins, 5 params).
@@ -262,7 +257,6 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
         return new HashMap<>();
     }
 
-    @Override
     public ArrayList<ItemFormMetadataBean> findByMultiplePKs(ArrayList ints) throws OpenClinicaException {
         ArrayList<ItemFormMetadataBean> answer = new ArrayList<>();
         for (Object pk : ints) {
@@ -272,7 +266,6 @@ public class ItemFormMetadataDaoAdapter implements IItemFormMetadataDAO {
         return answer;
     }
 
-    @Override
     public ResponseSetBean findResponseSetByPK(int id) {
         String sql = "SELECT rs.*, rt.* FROM response_set rs, response_type rt "
             + "WHERE rs.response_type_id = rt.response_type_id AND rs.response_set_id = ?";

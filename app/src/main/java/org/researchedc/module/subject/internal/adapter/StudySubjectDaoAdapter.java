@@ -16,8 +16,8 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.dao.spi.IStudySubjectDAO;
 import org.researchedc.domain.datamap.StudySubject;
+import org.researchedc.module.dataimport.service.ImportStudySubjectPort;
 import org.researchedc.module.subject.entity.StudySubjectEntity;
 import org.researchedc.module.subject.repository.StudySubjectRepository;
 import org.springframework.context.annotation.Primary;
@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("studySubjectDAO")
 @Primary
 @Transactional(readOnly = true)
-public class StudySubjectDaoAdapter implements IStudySubjectDAO {
+public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
 
     private final StudySubjectRepository repository;
 
@@ -35,19 +35,16 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
         this.repository = repository;
     }
 
-    @Override
     public EntityBean findByPK(int ID) {
         return repository.findById(ID)
                 .map(this::toBean)
                 .orElseGet(StudySubjectBean::new);
     }
 
-    @Override
     public ArrayList findAllByStudy(StudyBean study) {
         return toBeans(repository.findByStudyId(study.getId()));
     }
 
-    @Override
     @Transactional
     public EntityBean create(EntityBean eb) {
         StudySubjectBean bean = (StudySubjectBean) eb;
@@ -57,7 +54,6 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
         return toBean(repository.save(entity));
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb) {
         StudySubjectBean bean = (StudySubjectBean) eb;
@@ -69,28 +65,23 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
         return toBean(repository.save(entity));
     }
 
-    @Override
     public Collection findAll() {
         return toBeans(repository.findAll());
     }
 
-    @Override
     public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn,
                                           boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
         return new ArrayList();
     }
 
-    @Override
     public Object getEntityFromHashMap(HashMap hm) {
         StudySubjectEntity entity = new StudySubjectEntity();
         entity.setStudySubjectId((Integer) hm.get("study_subject_id"));
@@ -108,27 +99,22 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
         return toBean(entity);
     }
 
-    @Override
     public ArrayList findAllByStudyOrderByLabel(StudyBean sb) {
         return toBeans(repository.findByStudyIdOrderByLabel(sb.getId()));
     }
 
-    @Override
     public ArrayList findAllActiveByStudyOrderByLabel(StudyBean sb) {
         return toBeans(repository.findByStudyIdAndStatusIdOrderByLabel(sb.getId(), Status.AVAILABLE.getId()));
     }
 
-    @Override
     public ArrayList findAllWithStudyEvent(StudyBean currentStudy) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList findAllBySubjectId(int subjectId) {
         return toBeans(repository.findBySubjectId(subjectId));
     }
 
-    @Override
     public EntityBean findAnotherBySameLabel(String label, int studyId, int studySubjectId) {
         return repository.findByLabelAndStudyId(label, studyId).stream()
                 .filter(e -> !e.getStudySubjectId().equals(studySubjectId))
@@ -137,7 +123,6 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
                 .orElse(null);
     }
 
-    @Override
     public EntityBean findAnotherBySameLabelInSites(String label, int studyId, int studySubjectId) {
         return repository.findByLabelContainingIgnoreCase(label).stream()
                 .filter(e -> !e.getStudySubjectId().equals(studySubjectId))
@@ -146,7 +131,6 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
                 .orElse(null);
     }
 
-    @Override
     public StudySubjectBean findSameByLabelAndStudy(String label, int studyId, int id) {
         return repository.findByLabelAndStudyId(label, studyId).stream()
                 .filter(e -> !e.getStudySubjectId().equals(id))
@@ -155,21 +139,24 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
                 .orElse(null);
     }
 
-    @Override
     public StudySubjectBean findByOidAndStudy(String oid, int studyId) {
         return repository.findByOcOidAndStudyId(oid, studyId)
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    @Override
+    public Object[] findImportStudySubjectByOidAndStudy(String oid, int studyId) {
+        return repository.findByOcOidAndStudyId(oid, studyId)
+                .map(entity -> new Object[]{entity.getStudySubjectId(), entity.getLabel()})
+                .orElse(null);
+    }
+
     public StudySubjectBean findByOid(String oid) {
         return repository.findByOcOid(oid)
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    @Override
     public String findStudySubjectIdsByStudyIds(String studyIds) {
         if (studyIds == null || studyIds.isEmpty()) return "";
         List<StudySubjectEntity> results = new ArrayList<>();
@@ -184,24 +171,20 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
                 .collect(Collectors.joining(","));
     }
 
-    @Override
     public StudySubjectBean findBySubjectIdAndStudy(int subjectId, StudyBean study) {
         return repository.findBySubjectIdAndStudyId(subjectId, study.getId())
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    @Override
     public ArrayList findAllByStudyId(int studyId) {
         return toBeans(repository.findByStudyId(studyId));
     }
 
-    @Override
     public ArrayList findAllByStudyIdAndLimit(int studyId, boolean isLimited) {
         return toBeans(repository.findByStudyId(studyId));
     }
 
-    @Override
     public int findTheGreatestLabel() {
         return repository.findTopByOrderByStudySubjectIdDesc()
                 .map(e -> {
@@ -214,36 +197,30 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
                 .orElse(0);
     }
 
-    @Override
     @Transactional
     public StudySubjectBean create(StudySubjectBean sb, boolean withGroup) {
         return (StudySubjectBean) create((EntityBean) sb);
     }
 
-    @Override
     @Transactional
     public StudySubjectBean createWithGroup(StudySubjectBean sb) {
         return create(sb, true);
     }
 
-    @Override
     @Transactional
     public StudySubjectBean createWithoutGroup(StudySubjectBean sb) {
         return create(sb, false);
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb, Connection con) {
         return update(eb);
     }
 
-    @Override
     public ArrayList getGroupByStudySubject(int studySubjectId, int studyId, int parentStudyId) {
         return new ArrayList();
     }
 
-    @Override
     public Integer getTotalEventCrfCountForCrfMigration(CRFVersionBean sourceCrfVersionBean,
                                                         CRFVersionBean targetCrfVersionBean,
                                                         ArrayList<String> studyEventDefnlist,
@@ -251,7 +228,6 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
         return 0;
     }
 
-    @Override
     public Integer getTotalCountStudySubjectForCrfMigration(CRFVersionBean sourceCrfVersionBean,
                                                             CRFVersionBean targetCrfVersionBean,
                                                             ArrayList<String> studyEventDefnlist,
@@ -259,22 +235,18 @@ public class StudySubjectDaoAdapter implements IStudySubjectDAO {
         return 0;
     }
 
-    @Override
     public Integer getCountofStudySubjectsAtStudyOrSite(StudyBean currentStudy) {
         return (int) repository.countByStudyId(currentStudy.getId());
     }
 
-    @Override
     public Integer getCountofStudySubjectsAtStudy(StudyBean currentStudy) {
         return (int) repository.countByStudyId(currentStudy.getId());
     }
 
-    @Override
     public Integer getCountofStudySubjects(StudyBean currentStudy) {
         return (int) repository.countByStudyId(currentStudy.getId());
     }
 
-    @Override
     public Integer getCountofStudySubjectsBasedOnStatus(StudyBean currentStudy, Status status) {
         return (int) repository.countByStudyIdAndStatusId(currentStudy.getId(), status.getId());
     }

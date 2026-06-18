@@ -13,10 +13,10 @@ import java.util.Map;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.dao.spi.ICrfVersionDAO;
 import org.researchedc.module.crf.entity.CrfVersionEntity;
 import org.researchedc.module.crf.repository.CrfRepository;
 import org.researchedc.module.crf.repository.CrfVersionRepository;
+import org.researchedc.module.dataimport.service.ImportCrfVersionPort;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("CRFVersionDAO")
 @Primary
 @Transactional(readOnly = true)
-public class CrfVersionDaoAdapter implements ICrfVersionDAO {
+public class CrfVersionDaoAdapter implements ImportCrfVersionPort {
 
     private final CrfVersionRepository crfVersionRepository;
     private final CrfRepository crfRepository;
@@ -35,14 +35,12 @@ public class CrfVersionDaoAdapter implements ICrfVersionDAO {
         this.crfRepository = crfRepository;
     }
 
-    @Override
     public EntityBean findByPK(int ID) {
         return crfVersionRepository.findById(ID)
                 .map(this::toBean)
                 .orElseGet(CRFVersionBean::new);
     }
 
-    @Override
     @Transactional
     public EntityBean create(EntityBean eb) {
         CRFVersionBean bean = (CRFVersionBean) eb;
@@ -52,7 +50,6 @@ public class CrfVersionDaoAdapter implements ICrfVersionDAO {
         return toBean(crfVersionRepository.save(entity));
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb) {
         CRFVersionBean bean = (CRFVersionBean) eb;
@@ -64,11 +61,9 @@ public class CrfVersionDaoAdapter implements ICrfVersionDAO {
         return toBean(crfVersionRepository.save(entity));
     }
 
-    @Override
     public void setTypesExpected() {
     }
 
-    @Override
     public Object getEntityFromHashMap(HashMap hm) {
         CRFVersionBean bean = new CRFVersionBean();
         bean.setId(valueOrZero((Integer) hm.get("crf_version_id")));
@@ -85,57 +80,46 @@ public class CrfVersionDaoAdapter implements ICrfVersionDAO {
         return bean;
     }
 
-    @Override
     public Collection findAll() {
         return toBeans(crfVersionRepository.findAll());
     }
 
-    @Override
     public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByCRF(int crfId) {
         return toBeans(crfVersionRepository.findByCrfId(crfId));
     }
 
-    @Override
     public Collection findAllActiveByCRF(int crfId) {
         return toBeans(crfVersionRepository.findByCrfIdAndStatusId(crfId, Status.AVAILABLE.getId()));
     }
 
-    @Override
     public Collection findItemFromMap(int versionId) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findItemUsedByOtherVersion(int versionId) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList findNotSharedItemsByVersion(int versionId) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList findDefCRFVersionsByStudyEvent(int studyEventDefinitionId) {
         return new ArrayList();
     }
 
-    @Override
     public boolean isItemUsedByOtherVersion(int versionId) {
         return false;
     }
 
-    @Override
     public boolean hasItemData(int itemId) {
         return false;
     }
 
-    @Override
     public EntityBean findByFullName(String version, String crfName) {
         return crfRepository.findByName(crfName)
                 .flatMap(crf -> crfVersionRepository.findByNameAndCrfId(version, crf.getCrfId()))
@@ -143,39 +127,39 @@ public class CrfVersionDaoAdapter implements ICrfVersionDAO {
                 .orElseGet(CRFVersionBean::new);
     }
 
-    @Override
     @Transactional
     public void delete(int id) {
     }
 
-    @Override
     public ArrayList generateDeleteQueries(int versionId, ArrayList items) {
         return new ArrayList();
     }
 
-    @Override
     public String getValidOid(CRFVersionBean crfVersion, String crfName, String crfVersionName) {
         return "";
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType,
                                           String strOrderByColumn, boolean blnAscendingSort,
                                           String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList findAllByOid(String oid) {
         return toBeans(crfVersionRepository.findByOcOidContaining(oid));
     }
 
     @Override
+    public List<ImportCrfVersion> findAllImportCrfVersionsByOid(String oid) {
+        return crfVersionRepository.findByOcOidContaining(oid).stream()
+                .map(entity -> new ImportCrfVersion(entity.getCrfVersionId()))
+                .toList();
+    }
+
     public int getCRFIdFromCRFVersionId(int CRFVersionId) {
         return crfVersionRepository.findById(CRFVersionId)
                 .map(CrfVersionEntity::getCrfId)
@@ -183,26 +167,22 @@ public class CrfVersionDaoAdapter implements ICrfVersionDAO {
                 .orElse(0);
     }
 
-    @Override
     public ArrayList findAllByCRFId(int CRFId) {
         return toBeans(crfVersionRepository.findByCrfId(CRFId));
     }
 
-    @Override
     public Integer findCRFVersionId(int crfId, String versionName) {
         return crfVersionRepository.findByNameAndCrfId(versionName, crfId)
                 .map(CrfVersionEntity::getCrfVersionId)
                 .orElse(null);
     }
 
-    @Override
     public CRFVersionBean findByOid(String oid) {
         return crfVersionRepository.findByOcOid(oid)
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    @Override
     public Map<Integer, CRFVersionBean> buildCrfVersionById(Integer studySubjectId) {
         return new HashMap<>();
     }

@@ -1,5 +1,5 @@
 @org.springframework.modulith.ApplicationModule(
   displayName = "CRF",
-  allowedDependencies = {}
+  allowedDependencies = {"dataimport::service"}
 )
 package org.researchedc.module.crf;

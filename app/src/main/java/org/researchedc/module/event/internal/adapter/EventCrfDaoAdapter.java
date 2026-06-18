@@ -20,7 +20,7 @@ import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.dao.spi.EventCRFDao;
+import org.researchedc.module.dataimport.service.ImportEventCrfPort;
 import org.researchedc.module.event.entity.EventCrfEntity;
 import org.researchedc.module.event.repository.EventCrfRepository;
 import org.springframework.context.annotation.Primary;
@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("eventCRFDAO")
 @Primary
 @Transactional(readOnly = true)
-public class EventCrfDaoAdapter implements EventCRFDao {
+public class EventCrfDaoAdapter implements ImportEventCrfPort {
 
     private final EventCrfRepository eventCrfRepository;
 
@@ -38,14 +38,12 @@ public class EventCrfDaoAdapter implements EventCRFDao {
         this.eventCrfRepository = eventCrfRepository;
     }
 
-    @Override
     public EntityBean findByPK(int ID) {
         return eventCrfRepository.findById(ID)
                 .map(this::toBean)
                 .orElseGet(EventCRFBean::new);
     }
 
-    @Override
     @Transactional
     public EntityBean create(EntityBean eb) {
         EventCRFBean bean = (EventCRFBean) eb;
@@ -55,7 +53,6 @@ public class EventCrfDaoAdapter implements EventCRFDao {
         return toBean(eventCrfRepository.save(entity));
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb) {
         EventCRFBean bean = (EventCRFBean) eb;
@@ -67,28 +64,23 @@ public class EventCrfDaoAdapter implements EventCRFDao {
         return toBean(eventCrfRepository.save(entity));
     }
 
-    @Override
     public Collection findAll() {
         return toBeans(eventCrfRepository.findAll());
     }
 
-    @Override
     public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn,
                                           boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
         return new ArrayList();
     }
 
-    @Override
     public Object getEntityFromHashMap(HashMap hm) {
         EventCrfEntity entity = new EventCrfEntity();
         entity.setEventCrfId((Integer) hm.get("event_crf_id"));
@@ -115,23 +107,19 @@ public class EventCrfDaoAdapter implements EventCRFDao {
         return toBean(entity);
     }
 
-    @Override
     public ArrayList findAllByStudyEvent(StudyEventBean studyEvent) {
         return toBeans(eventCrfRepository.findByStudyEventId(studyEvent.getId()));
     }
 
-    @Override
     public ArrayList findAllByStudyEventAndStatus(StudyEventBean studyEvent, Status status) {
         return toBeans(eventCrfRepository.findByStudyEventIdAndStatusId(
                 studyEvent.getId(), status.getId()));
     }
 
-    @Override
     public ArrayList<EventCRFBean> findAllByStudySubject(int studySubjectId) {
         return toBeans(eventCrfRepository.findByStudySubjectId(studySubjectId));
     }
 
-    @Override
     public ArrayList findAllByStudyEventAndCrfOrCrfVersionOid(StudyEventBean studyEvent, String crfVersionOrCrfOID) {
         try {
             return toBeans(eventCrfRepository.findByStudyEventIdAndCrfVersionId(
@@ -141,33 +129,27 @@ public class EventCrfDaoAdapter implements EventCRFDao {
         }
     }
 
-    @Override
     public ArrayList<EventCRFBean> findAllByStudyEventInParticipantForm(StudyEventBean studyEvent,
                                                                         int sed_Id, int studyId) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList<EventCRFBean> findAllByStudyEventDefinition(int sed_Id, int studyId) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList findAllByCRF(int crfId) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList findAllByCRFVersion(int versionId) {
         return toBeans(eventCrfRepository.findByCrfVersionId(versionId));
     }
 
-    @Override
     public ArrayList findAllStudySubjectByCRFVersion(int versionId) {
         return toBeans(eventCrfRepository.findByCrfVersionId(versionId));
     }
 
-    @Override
     public ArrayList findUndeletedWithStudySubjectsByCRFVersion(int versionId) {
         return toBeans(eventCrfRepository.findByCrfVersionId(versionId).stream()
                 .filter(e -> e.getStatusId() == null
@@ -176,14 +158,20 @@ public class EventCrfDaoAdapter implements EventCRFDao {
                 .collect(Collectors.toList()));
     }
 
-    @Override
     public ArrayList findByEventSubjectVersion(StudyEventBean studyEvent, StudySubjectBean studySubject,
                                                CRFVersionBean crfVersion) {
         return toBeans(eventCrfRepository.findByStudyEventIdAndStudySubjectIdAndCrfVersionId(
                 studyEvent.getId(), studySubject.getId(), crfVersion.getId()));
     }
 
-    @Override
+    public List<Object[]> findImportEventCrfsByEventSubjectVersion(
+            int studyEventId, int studySubjectId, int crfVersionId) {
+        return eventCrfRepository.findByStudyEventIdAndStudySubjectIdAndCrfVersionId(
+                        studyEventId, studySubjectId, crfVersionId).stream()
+                .map(this::toImportRow)
+                .toList();
+    }
+
     public EventCRFBean findByEventCrfVersion(StudyEventBean studyEvent, CRFVersionBean crfVersion) {
         return eventCrfRepository.findByStudyEventIdAndCrfVersionId(
                         studyEvent.getId(), crfVersion.getId()).stream()
@@ -192,44 +180,64 @@ public class EventCrfDaoAdapter implements EventCRFDao {
                 .orElse(null);
     }
 
-    @Override
     public ArrayList<EventCRFBean> findByCrfVersion(CRFVersionBean crfVersion) {
         return toBeans(eventCrfRepository.findByCrfVersionId(crfVersion.getId()));
     }
 
-    @Override
     @Transactional
     public void delete(int eventCRFId) {
     }
 
-    @Override
     @Transactional
     public void setSDVStatus(boolean sdvStatus, int userId, int eventCRFId) {
     }
 
-    @Override
     @Transactional
     public void markComplete(EventCRFBean ecb, boolean ide) {
     }
 
-    @Override
     @Transactional
     public void updateCRFVersionID(int event_crf_id, int crf_version_id, int user_id) {
     }
 
-    @Override
     @Transactional
     public void updateCRFVersionID(int event_crf_id, int crf_version_id, int user_id, java.sql.Connection con) {
     }
 
-    @Override
     public ArrayList findByEventSubjectCRFid(StudyEventBean studyEvent, StudySubjectBean studySubject,
                                              CRFVersionBean crfVersion) {
         return toBeans(eventCrfRepository.findByStudyEventIdAndStudySubjectIdAndCrfVersionId(
                 studyEvent.getId(), studySubject.getId(), crfVersion.getId()));
     }
 
-    @Override
+    public List<Object[]> findImportEventCrfsByEventSubjectCrfId(
+            int studyEventId, int studySubjectId, int crfVersionId) {
+        return eventCrfRepository.findByStudyEventIdAndStudySubjectIdAndCrfVersionId(
+                        studyEventId, studySubjectId, crfVersionId).stream()
+                .map(this::toImportRow)
+                .toList();
+    }
+
+    @Transactional
+    public Object[] createImportEventCrf(
+            int studyEventId,
+            int studySubjectId,
+            int crfVersionId,
+            int ownerId,
+            String interviewerName,
+            int statusId) {
+        EventCrfEntity entity = new EventCrfEntity();
+        entity.setStudyEventId(studyEventId);
+        entity.setStudySubjectId(studySubjectId);
+        entity.setCrfVersionId(crfVersionId);
+        entity.setOwnerId(ownerId);
+        entity.setInterviewerName(interviewerName);
+        entity.setStatusId(statusId);
+        entity.setDateInterviewed(LocalDateTime.now());
+        entity.setDateCreated(LocalDateTime.now());
+        return toImportRow(eventCrfRepository.save(entity));
+    }
+
     public EventCRFBean findByEventCrfID(StudyEventBean studyEvent, CRFVersionBean crfVersion) {
         return eventCrfRepository.findByStudyEventIdAndCrfVersionId(
                         studyEvent.getId(), crfVersion.getId()).stream()
@@ -238,17 +246,14 @@ public class EventCrfDaoAdapter implements EventCRFDao {
                 .orElse(null);
     }
 
-    @Override
     public Map<Integer, SortedSet<EventCRFBean>> buildEventCrfListByStudyEvent(Integer studySubjectId) {
         return new HashMap();
     }
 
-    @Override
     public Set<Integer> buildNonEmptyEventCrfIds(Integer studySubjectId) {
         return new java.util.LinkedHashSet();
     }
 
-    @Override
     public List<EventCRFBean> findAllCRFMigrationReportList(CRFVersionBean sourceCrfVersionBean,
                                                             CRFVersionBean targetCrfVersionBean,
                                                             ArrayList<String> studyEventDefnlist,
@@ -256,49 +261,40 @@ public class EventCrfDaoAdapter implements EventCRFDao {
         return new ArrayList();
     }
 
-    @Override
     public Integer countEventCRFsByEventNameSubjectLabel(String eventName, String subjectLabel) {
         return 0;
     }
 
-    @Override
     public AuditableEntityBean findByPKAndStudy(int id, StudyBean study) {
         return null;
     }
 
-    @Override
     public boolean isQuerySuccessful() {
         return true;
     }
 
-    @Override
     public Integer countEventCRFsByStudySubject(int studySubjectId, int studyId, int parentStudyId) {
         return 0;
     }
 
-    @Override
     public ArrayList getEventCRFsByStudySubjectCompleteOrLocked(int studySubjectId) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList getEventCRFsByStudySubjectLimit(int studySubjectId, int studyId, int parentStudyId,
                                                      int limit, int offset) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList getEventCRFsByStudySubject(int studySubjectId, int studyId, int parentStudyId) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList getEventCRFsByStudySubjectLabelLimit(String label, int studyId, int parentStudyId,
                                                           int limit, int offset) {
         return new ArrayList();
     }
 
-    @Override
     public Integer countEventCRFsByStudySubjectLabel(String label, int studyId, int parentStudyId) {
         return 0;
     }
@@ -329,6 +325,14 @@ public class EventCrfDaoAdapter implements EventCRFDao {
                 .map(this::toBean)
                 .forEach(beans::add);
         return beans;
+    }
+
+    private Object[] toImportRow(EventCrfEntity entity) {
+        return new Object[]{
+                valueOrZero(entity.getEventCrfId()),
+                valueOrZero(entity.getCrfVersionId()),
+                valueOrZero(entity.getStatusId())
+        };
     }
 
     private EventCRFBean toBean(EventCrfEntity entity) {

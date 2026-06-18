@@ -12,7 +12,7 @@ import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyType;
-import org.researchedc.dao.spi.IStudyDAO;
+import org.researchedc.module.dataimport.service.ImportStudyLookupPort;
 import org.researchedc.module.study.entity.StudyEntity;
 import org.researchedc.module.study.repository.StudyRepository;
 import org.springframework.context.annotation.Primary;
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("studyDAO")
 @Primary
 @Transactional(readOnly = true)
-public class StudyDaoAdapter implements IStudyDAO {
+public class StudyDaoAdapter implements ImportStudyLookupPort {
 
     private final StudyRepository repository;
 
@@ -30,14 +30,12 @@ public class StudyDaoAdapter implements IStudyDAO {
         this.repository = repository;
     }
 
-    @Override
     public EntityBean findByPK(int ID) {
         return repository.findById(ID)
                 .map(this::toBean)
                 .orElseGet(StudyBean::new);
     }
 
-    @Override
     @Transactional
     public EntityBean create(EntityBean eb) {
         StudyBean bean = (StudyBean) eb;
@@ -48,7 +46,6 @@ public class StudyDaoAdapter implements IStudyDAO {
         return toBean(repository.save(entity));
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb) {
         StudyBean bean = (StudyBean) eb;
@@ -60,28 +57,23 @@ public class StudyDaoAdapter implements IStudyDAO {
         return toBean(repository.save(entity));
     }
 
-    @Override
     public Collection findAll() {
         return toBeans(repository.findAll());
     }
 
-    @Override
     public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType,
                                           String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
         return new ArrayList();
     }
 
-    @Override
     public Object getEntityFromHashMap(HashMap hm) {
         StudyEntity entity = new StudyEntity();
         entity.setStudyId((Integer) hm.get("study_id"));
@@ -141,17 +133,14 @@ public class StudyDaoAdapter implements IStudyDAO {
         return toBean(entity);
     }
 
-    @Override
     public Collection findAllByUser(String username) {
         return toBeans(repository.findByUserName(username));
     }
 
-    @Override
     public Collection findAllByUserNotRemoved(String username) {
         return toBeans(repository.findByUserNameNotRemoved(username));
     }
 
-    @Override
     public ArrayList findAllByStatus(Status status) {
         if (status == null) {
             return new ArrayList();
@@ -159,32 +148,26 @@ public class StudyDaoAdapter implements IStudyDAO {
         return toBeans(repository.findByStatusIdOrderByName(status.getId()));
     }
 
-    @Override
     public Collection findAllByLimit(boolean isLimited) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllParents() {
         return toBeans(repository.findByParentStudyIdIsNullOrderByName());
     }
 
-    @Override
     public boolean isAParent(int studyId) {
         return !repository.findByParentStudyIdOrderByName(studyId).isEmpty();
     }
 
-    @Override
     public Collection findAllByParent(int parentStudyId) {
         return toBeans(repository.findByParentStudyIdOrderByName(parentStudyId));
     }
 
-    @Override
     public Collection findAllByParentAndLimit(int parentStudyId, boolean isLimited) {
         return toBeans(repository.findByParentStudyIdOrderByName(parentStudyId));
     }
 
-    @Override
     public Collection findAll(int studyId) {
         return repository.findById(studyId)
                 .map(e -> {
@@ -195,7 +178,6 @@ public class StudyDaoAdapter implements IStudyDAO {
                 .orElseGet(ArrayList::new);
     }
 
-    @Override
     public Collection<Integer> findAllSiteIdsByStudy(StudyBean study) {
         if (study == null || study.getId() <= 0) {
             return new ArrayList<>();
@@ -203,7 +185,6 @@ public class StudyDaoAdapter implements IStudyDAO {
         return new ArrayList<>(repository.findSiteIdsByParentStudyId(study.getId()));
     }
 
-    @Override
     public Collection<Integer> findOlnySiteIdsByStudy(StudyBean study) {
         if (study == null || study.getId() <= 0) {
             return new ArrayList<>();
@@ -211,19 +192,16 @@ public class StudyDaoAdapter implements IStudyDAO {
         return new ArrayList<>(repository.findSiteIdsByParentStudyId(study.getId()));
     }
 
-    @Override
     public Collection findAllByParentStudyIdOrderedByIdAsc(int parentStudyId) {
         return toBeans(repository.findByParentStudyIdOrderByName(parentStudyId));
     }
 
-    @Override
     public StudyBean findByStudySubjectId(int studySubjectId) {
         return repository.findByStudySubjectId(studySubjectId)
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    @Override
     @Transactional
     public StudyBean updateSitesStatus(StudyBean sb) {
         List<StudyEntity> sites = repository.findByParentStudyIdOrderByName(sb.getId());
@@ -236,7 +214,6 @@ public class StudyDaoAdapter implements IStudyDAO {
         return sb;
     }
 
-    @Override
     @Transactional
     public StudyBean updateStudyStatus(StudyBean sb) {
         StudyEntity entity = repository.findById(sb.getId()).orElse(null);
@@ -251,12 +228,10 @@ public class StudyDaoAdapter implements IStudyDAO {
         return sb;
     }
 
-    @Override
     public HashMap getChildrenByParentIds(ArrayList allStudies) {
         return new HashMap();
     }
 
-    @Override
     public StudyBean findByOid(String oid) {
         return repository.findByOcOid(oid)
                 .map(this::toBean)
@@ -264,13 +239,20 @@ public class StudyDaoAdapter implements IStudyDAO {
     }
 
     @Override
+    public Object[] findImportStudyByOid(String oid) {
+        StudyBean study = findByOid(oid);
+        if (study == null) {
+            return null;
+        }
+        return new Object[]{study.getId(), study.getParentStudyId(), study.getName()};
+    }
+
     public StudyBean findByUniqueIdentifier(String uniqueIdentifier) {
         return repository.findByUniqueIdentifier(uniqueIdentifier)
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    @Override
     public StudyBean findSiteByUniqueIdentifier(String parentUniqueIdentifier, String siteUniqueIdentifier) {
         StudyEntity parent = repository.findByUniqueIdentifier(parentUniqueIdentifier).orElse(null);
         if (parent == null) {
@@ -281,18 +263,15 @@ public class StudyDaoAdapter implements IStudyDAO {
                 .orElse(null);
     }
 
-    @Override
     public EntityBean findByName(String name) {
         List<StudyEntity> results = repository.findByNameContainingIgnoreCase(name);
         return results.isEmpty() ? new StudyBean() : toBean(results.get(0));
     }
 
-    @Override
     public void deleteTestOnly(String name) {
         // no-op: test-only method
     }
 
-    @Override
     public ArrayList<Integer> getStudyIdsByCRF(int crfId) {
         return new ArrayList<>(repository.findStudyIdsByCrfId(crfId));
     }

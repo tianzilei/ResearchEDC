@@ -19,8 +19,8 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.dao.spi.IStudyEventDAO;
 import org.researchedc.domain.datamap.StudyEvent;
+import org.researchedc.module.dataimport.service.ImportStudyEventPort;
 import org.researchedc.module.event.entity.StudyEventEntity;
 import org.researchedc.module.event.repository.StudyEventRepository;
 import org.researchedc.patterns.ocobserver.Observer;
@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component("studyEventDAO")
 @Primary
 @Transactional(readOnly = true)
-public class StudyEventDaoAdapter implements IStudyEventDAO {
+public class StudyEventDaoAdapter implements ImportStudyEventPort {
 
     private final StudyEventRepository studyEventRepository;
 
@@ -40,19 +40,16 @@ public class StudyEventDaoAdapter implements IStudyEventDAO {
         this.studyEventRepository = studyEventRepository;
     }
 
-    @Override
     public EntityBean findByPK(int ID) {
         return studyEventRepository.findById(ID)
                 .map(this::toBean)
                 .orElseGet(StudyEventBean::new);
     }
 
-    @Override
     public EntityBean findByPKCached(int ID) {
         return findByPK(ID);
     }
 
-    @Override
     @Transactional
     public EntityBean create(EntityBean eb) {
         StudyEventBean bean = (StudyEventBean) eb;
@@ -62,13 +59,11 @@ public class StudyEventDaoAdapter implements IStudyEventDAO {
         return toBean(studyEventRepository.save(entity));
     }
 
-    @Override
     @Transactional
     public EntityBean create(EntityBean eb, boolean isTransaction) {
         return create(eb);
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb) {
         StudyEventBean bean = (StudyEventBean) eb;
@@ -82,46 +77,38 @@ public class StudyEventDaoAdapter implements IStudyEventDAO {
         return toBean(studyEventRepository.save(entity));
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb, boolean isTransaction) {
         return update(eb);
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb, Connection con) {
         return update(eb);
     }
 
-    @Override
     @Transactional
     public EntityBean update(EntityBean eb, Connection con, boolean isTransaction) {
         return update(eb);
     }
 
-    @Override
     public Collection findAll() {
         return toBeans(studyEventRepository.findAll());
     }
 
-    @Override
     public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn,
                                           boolean blnAscendingSort, String strSearchPhrase) {
         return new ArrayList();
     }
 
-    @Override
     public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
         return new ArrayList();
     }
 
-    @Override
     public Object getEntityFromHashMap(HashMap hm) {
         StudyEventEntity entity = new StudyEventEntity();
         entity.setStudyEventId((Integer) hm.get("study_event_id"));
@@ -143,27 +130,22 @@ public class StudyEventDaoAdapter implements IStudyEventDAO {
         return toBean(entity);
     }
 
-    @Override
     public Collection findAllByDefinition(int definitionId) {
         return toBeans(studyEventRepository.findByStudyEventDefinitionId(definitionId));
     }
 
-    @Override
     public ArrayList findAllByStudyEventDefinitionAndCrfOids(String studyEventDefinitionOid, String crfOrCrfVersionOid) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList findAllWithSubjectLabelByDefinition(int definitionId) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList findAllWithSubjectLabelByStudySubjectAndDefinition(StudySubjectBean studySubject, int definitionId) {
         return new ArrayList();
     }
 
-    @Override
     public EntityBean findByStudySubjectIdAndDefinitionIdAndOrdinal(int ssbid, int sedid, int ord) {
         List<StudyEventEntity> results = studyEventRepository
                 .findByStudySubjectIdAndStudyEventDefinitionIdAndSampleOrdinal(ssbid, sedid, ord);
@@ -173,29 +155,38 @@ public class StudyEventDaoAdapter implements IStudyEventDAO {
         return toBean(results.get(0));
     }
 
-    @Override
+    public Object[] findImportStudyEventBySubjectDefinitionOrdinal(
+            int studySubjectId, int studyEventDefinitionId, int ordinal) {
+        return studyEventRepository
+                .findByStudySubjectIdAndStudyEventDefinitionIdAndSampleOrdinal(
+                        studySubjectId, studyEventDefinitionId, ordinal)
+                .stream()
+                .findFirst()
+                .map(entity -> new Object[]{
+                        entity.getStudyEventId(),
+                        entity.getSubjectEventStatusId(),
+                        entity.getLocation()})
+                .orElse(null);
+    }
+
     public ArrayList findAllByDefinitionAndSubject(StudyEventDefinitionBean definition, StudySubjectBean subject) {
         return toBeans(studyEventRepository
                 .findByStudyEventDefinitionIdAndStudySubjectId(definition.getId(), subject.getId()));
     }
 
-    @Override
     public ArrayList findAllByDefinitionAndSubjectOrderByOrdinal(StudyEventDefinitionBean definition, StudySubjectBean subject) {
         return toBeans(studyEventRepository
                 .findByStudyEventDefinitionIdAndStudySubjectIdOrderBySampleOrdinal(definition.getId(), subject.getId()));
     }
 
-    @Override
     public ArrayList findAllByStudyAndStudySubjectId(StudyBean study, int studySubjectId) {
         return toBeans(studyEventRepository.findByStudySubjectId(studySubjectId));
     }
 
-    @Override
     public ArrayList findAllByStudyAndEventDefinitionId(StudyBean study, int eventDefinitionId) {
         return toBeans(studyEventRepository.findByStudyEventDefinitionId(eventDefinitionId));
     }
 
-    @Override
     public int getMaxSampleOrdinal(StudyEventDefinitionBean sedb, StudySubjectBean studySubject) {
         Optional<StudyEventEntity> result = studyEventRepository
                 .findTopByStudyEventDefinitionIdAndStudySubjectIdOrderBySampleOrdinalDesc(
@@ -203,96 +194,78 @@ public class StudyEventDaoAdapter implements IStudyEventDAO {
         return result.map(e -> valueOrZero(e.getSampleOrdinal())).orElse(0);
     }
 
-    @Override
     public AuditableEntityBean findByPKAndStudy(int id, StudyBean study) {
         return (AuditableEntityBean) findByPK(id);
     }
 
-    @Override
     public ArrayList findAllByStudy(StudyBean study) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList findAllBySubjectAndStudy(int subjectId, int studyId) {
         return new ArrayList();
     }
 
-    @Override
     public ArrayList findAllBySubjectId(int subjectId) {
         return toBeans(studyEventRepository.findByStudySubjectId(subjectId));
     }
 
-    @Override
     public ArrayList findAllBySubjectIdOrdered(int subjectId) {
         return toBeans(studyEventRepository.findByStudySubjectIdOrderByDateStart(subjectId));
     }
 
-    @Override
     public HashMap findCRFsByStudy(StudyBean sb) {
         return new HashMap();
     }
 
-    @Override
     public HashMap findCRFsByStudyEvent(StudyEventBean seb) {
         return new HashMap();
     }
 
-    @Override
     public int getDefinitionIdFromStudyEventId(int studyEventId) {
         return studyEventRepository.findById(studyEventId)
                 .map(e -> valueOrZero(e.getStudyEventDefinitionId()))
                 .orElse(0);
     }
 
-    @Override
     public EntityBean getNextScheduledEvent(String studySubjectOID) {
         return new StudyEventBean();
     }
 
-    @Override
     public ArrayList findAllByStudySubject(StudySubjectBean ssb) {
         return toBeans(studyEventRepository.findByStudySubjectId(ssb.getId()));
     }
 
-    @Override
     public ArrayList findAllByStudySubjectAndDefinition(StudySubjectBean ssb, StudyEventDefinitionBean sed) {
         return new ArrayList();
     }
 
-    @Override
     public Integer countNotRemovedEvents(Integer studyEventDefinitionId) {
         return 0;
     }
 
-    @Override
     public int getCurrentPK() {
         return 0;
     }
 
-    @Override
     public Integer getCountofEventsBasedOnEventStatus(StudyBean currentStudy, SubjectEventStatus subjectEventStatus) {
         return 0;
     }
 
-    @Override
     public Integer getCountofEvents(StudyBean currentStudy) {
         return 0;
     }
 
-    @Override
     public StudyEventBean findAllByStudyEventDefinitionAndCrfOidsAndOrdinal(
             String studyEventDefinitionOid, String crfOrCrfVersionOid, String ordinal, String studySubjectId) {
         return new StudyEventBean();
     }
 
-    @Override
     public HashMap getStudySubjectCRFData(StudyBean sb, int studySubjectId, int eventDefId,
                                           String crfVersionOID, int eventOrdinal) {
         return new HashMap();
     }
 
-    @Override
     public boolean isThisRepeatingEventScheduledMoreThanOneTime(int studyId, int sed_Id) {
         return false;
     }
@@ -301,12 +274,10 @@ public class StudyEventDaoAdapter implements IStudyEventDAO {
 
     private Observer observer;
 
-    @Override
     public void setObserver(Observer o) {
         this.observer = o;
     }
 
-    @Override
     public Observer getObserver() {
         return observer;
     }

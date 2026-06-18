@@ -16,9 +16,6 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 import org.researchedc.bean.core.SubjectEventStatus;
-import org.researchedc.bean.submit.EventCRFBean;
-import org.researchedc.bean.submit.ItemBean;
-import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.crfdata.CRFDataPostImportContainer;
 import org.researchedc.bean.submit.crfdata.FormDataBean;
 import org.researchedc.bean.submit.crfdata.ImportItemDataBean;
@@ -26,23 +23,22 @@ import org.researchedc.bean.submit.crfdata.ImportItemGroupDataBean;
 import org.researchedc.bean.submit.crfdata.ODMContainer;
 import org.researchedc.bean.submit.crfdata.StudyEventDataBean;
 import org.researchedc.bean.submit.crfdata.SubjectDataBean;
-import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.core.CoreResources;
-import org.researchedc.dao.spi.EventCRFDao;
-import org.researchedc.dao.spi.ICrfVersionDAO;
-import org.researchedc.dao.spi.IItemDAO;
-import org.researchedc.dao.spi.IItemDataDAO;
-import org.researchedc.dao.spi.IItemFormMetadataDAO;
-import org.researchedc.dao.spi.IItemGroupDAO;
-import org.researchedc.dao.spi.IStudyDAO;
-import org.researchedc.dao.spi.IStudyEventDAO;
-import org.researchedc.dao.spi.IStudyEventDefinitionDAO;
-import org.researchedc.dao.spi.IStudySubjectDAO;
-import org.researchedc.dao.spi.ResponseSetDomainDao;
 import org.researchedc.bean.submit.CRFVersionBean;
+import org.researchedc.module.dataimport.service.ImportCrfVersionPort;
+import org.researchedc.module.dataimport.service.ImportEventCrfPort;
+import org.researchedc.module.dataimport.service.ImportItemDataPort;
+import org.researchedc.module.dataimport.service.ImportItemFormMetadataPort;
+import org.researchedc.module.dataimport.service.ImportItemGroupPort;
+import org.researchedc.module.dataimport.service.ImportItemPort;
+import org.researchedc.module.dataimport.service.ImportResponseSetPort;
+import org.researchedc.module.dataimport.service.ImportStudyEventDefinitionPort;
+import org.researchedc.module.dataimport.service.ImportStudyEventPort;
+import org.researchedc.module.dataimport.service.ImportStudyLookupPort;
+import org.researchedc.module.dataimport.service.ImportStudySubjectPort;
 
 class ImportCrfDataAdapterTest {
 
@@ -72,17 +68,17 @@ class ImportCrfDataAdapterTest {
 
         try {
             ImportCrfDataAdapter adapter = new ImportCrfDataAdapter(
-                    mock(IItemDataDAO.class),
-                    mock(IItemDAO.class),
-                    mock(IItemGroupDAO.class),
-                    mock(IItemFormMetadataDAO.class),
-                    mock(IStudyDAO.class),
-                    mock(IStudySubjectDAO.class),
-                    mock(IStudyEventDAO.class),
-                    mock(IStudyEventDefinitionDAO.class),
-                    mock(ICrfVersionDAO.class),
-                    mock(EventCRFDao.class),
-                    mock(ResponseSetDomainDao.class));
+                    mock(ImportItemDataPort.class),
+                    mock(ImportItemPort.class),
+                    mock(ImportItemGroupPort.class),
+                    mock(ImportItemFormMetadataPort.class),
+                    mock(ImportStudyLookupPort.class),
+                    mock(ImportStudySubjectPort.class),
+                    mock(ImportStudyEventPort.class),
+                    mock(ImportStudyEventDefinitionPort.class),
+                    mock(ImportCrfVersionPort.class),
+                    mock(ImportEventCrfPort.class),
+                    mock(ImportResponseSetPort.class));
 
             ODMContainer odm = adapter.parseOdm(fixture).odm();
 
@@ -110,31 +106,28 @@ class ImportCrfDataAdapterTest {
 
     @Test
     void commitImport_whenItemPersistenceFails_throwsToTriggerTransactionRollback() {
-        IItemDataDAO itemDataDao = mock(IItemDataDAO.class);
-        IItemDAO itemDao = mock(IItemDAO.class);
-        IStudyDAO studyDao = mock(IStudyDAO.class);
-        IStudySubjectDAO studySubjectDao = mock(IStudySubjectDAO.class);
-        IStudyEventDAO studyEventDao = mock(IStudyEventDAO.class);
-        IStudyEventDefinitionDAO studyEventDefinitionDao = mock(IStudyEventDefinitionDAO.class);
-        ICrfVersionDAO crfVersionDao = mock(ICrfVersionDAO.class);
-        EventCRFDao eventCrfDao = mock(EventCRFDao.class);
+        ImportItemDataPort itemDataPort = mock(ImportItemDataPort.class);
+        ImportItemPort itemPort = mock(ImportItemPort.class);
+        ImportStudyLookupPort studyLookupPort = mock(ImportStudyLookupPort.class);
+        ImportStudySubjectPort studySubjectPort = mock(ImportStudySubjectPort.class);
+        ImportStudyEventPort studyEventPort = mock(ImportStudyEventPort.class);
+        ImportStudyEventDefinitionPort studyEventDefinitionPort = mock(ImportStudyEventDefinitionPort.class);
+        ImportCrfVersionPort crfVersionPort = mock(ImportCrfVersionPort.class);
+        ImportEventCrfPort eventCrfPort = mock(ImportEventCrfPort.class);
         ImportCrfDataAdapter adapter = new ImportCrfDataAdapter(
-                itemDataDao,
-                itemDao,
-                mock(IItemGroupDAO.class),
-                mock(IItemFormMetadataDAO.class),
-                studyDao,
-                studySubjectDao,
-                studyEventDao,
-                studyEventDefinitionDao,
-                crfVersionDao,
-                eventCrfDao,
-                mock(ResponseSetDomainDao.class));
+                itemDataPort,
+                itemPort,
+                mock(ImportItemGroupPort.class),
+                mock(ImportItemFormMetadataPort.class),
+                studyLookupPort,
+                studySubjectPort,
+                studyEventPort,
+                studyEventDefinitionPort,
+                crfVersionPort,
+                eventCrfPort,
+                mock(ImportResponseSetPort.class));
 
         ODMContainer odm = odmWithOneItem("S_DEMO", "SS_DEMO", "SE_BASELINE", "F_VITALS_V1", "I_WEIGHT", "70");
-        StudyBean study = new StudyBean();
-        study.setId(1);
-        study.setParentStudyId(0);
         StudySubjectBean subject = new StudySubjectBean();
         subject.setId(2);
         subject.setName("SS_DEMO");
@@ -146,44 +139,62 @@ class ImportCrfDataAdapterTest {
         event.setSubjectEventStatus(SubjectEventStatus.SCHEDULED);
         CRFVersionBean version = new CRFVersionBean();
         version.setId(5);
-        EventCRFBean createdEventCrf = new EventCRFBean();
-        createdEventCrf.setId(12);
 
-        when(studyDao.findByOid("S_DEMO")).thenReturn(study);
-        when(studySubjectDao.findByOidAndStudy("SS_DEMO", 1)).thenReturn(subject);
-        when(studyEventDefinitionDao.findByOidAndStudy("SE_BASELINE", 1, 0)).thenReturn(definition);
-        when(studyEventDao.findByStudySubjectIdAndDefinitionIdAndOrdinal(2, 3, 1)).thenReturn(event);
-        when(crfVersionDao.findAllByOid("F_VITALS_V1")).thenReturn(new ArrayList<>(List.of(version)));
-        when(eventCrfDao.findByEventSubjectVersion(event, subject, version)).thenReturn(new ArrayList<>());
-        when(eventCrfDao.findByEventSubjectCRFid(event, subject, version)).thenReturn(new ArrayList<>());
-        when(eventCrfDao.create(any(EventCRFBean.class))).thenReturn(createdEventCrf);
-        ItemBean item = new ItemBean();
-        item.setId(77);
-        when(itemDao.findByOid("I_WEIGHT")).thenReturn(List.of(item));
-        when(itemDataDao.upsert(any(ItemDataBean.class))).thenThrow(new RuntimeException("database write failed"));
+        when(studyLookupPort.findImportStudyByOid("S_DEMO")).thenReturn(new Object[]{1, 0, "Demo Study"});
+        when(studySubjectPort.findImportStudySubjectByOidAndStudy("SS_DEMO", 1))
+                .thenReturn(new Object[]{2, "SS_DEMO"});
+        when(studyEventDefinitionPort.findImportStudyEventDefinitionByOidAndStudy("SE_BASELINE", 1, 0))
+                .thenReturn(new Object[]{3, "Baseline"});
+        when(studyEventPort.findImportStudyEventBySubjectDefinitionOrdinal(2, 3, 1))
+                .thenReturn(new Object[]{4, SubjectEventStatus.SCHEDULED.getId(), ""});
+        when(crfVersionPort.findAllImportCrfVersionsByOid("F_VITALS_V1"))
+                .thenReturn(List.of(new ImportCrfVersionPort.ImportCrfVersion(5)));
+        when(eventCrfPort.findImportEventCrfsByEventSubjectVersion(4, 2, 5))
+                .thenReturn(new ArrayList<>());
+        when(eventCrfPort.findImportEventCrfsByEventSubjectCrfId(4, 2, 5))
+                .thenReturn(new ArrayList<>());
+        when(eventCrfPort.createImportEventCrf(4, 2, 5, 1, "system", 1))
+                .thenReturn(new Object[]{12, 5, 1});
+        when(itemPort.findImportItemsByOid("I_WEIGHT"))
+                .thenReturn(List.of(new ImportItemPort.ImportItem(77, "I_WEIGHT", 7)));
+        org.mockito.Mockito.doThrow(new RuntimeException("database write failed"))
+                .when(itemDataPort)
+                .upsertImportItemData(
+                        any(Integer.class),
+                        any(Integer.class),
+                        any(Integer.class),
+                        any(Integer.class),
+                        any(Integer.class),
+                        any(String.class));
 
         assertThrows(IllegalStateException.class,
                 () -> adapter.commitImport(new ImportCrfDataAdapter.ParsedOdm(odm), 1, Locale.ENGLISH));
-        verify(itemDataDao).upsert(any(ItemDataBean.class));
+        verify(itemDataPort).upsertImportItemData(
+                any(Integer.class),
+                any(Integer.class),
+                any(Integer.class),
+                any(Integer.class),
+                any(Integer.class),
+                any(String.class));
     }
 
     @Test
     void validateMetadata_whenStudyMissing_returnsLegacyErrorWithoutCallingLegacyService() {
-        IStudyDAO studyDao = mock(IStudyDAO.class);
-        when(studyDao.findByOid("S_MISSING")).thenReturn(null);
+        ImportStudyLookupPort studyLookupPort = mock(ImportStudyLookupPort.class);
+        when(studyLookupPort.findImportStudyByOid("S_MISSING")).thenReturn(null);
 
         ImportCrfDataAdapter adapter = new ImportCrfDataAdapter(
-                mock(IItemDataDAO.class),
-                mock(IItemDAO.class),
-                mock(IItemGroupDAO.class),
-                mock(IItemFormMetadataDAO.class),
-                studyDao,
-                mock(IStudySubjectDAO.class),
-                mock(IStudyEventDAO.class),
-                mock(IStudyEventDefinitionDAO.class),
-                mock(ICrfVersionDAO.class),
-                mock(EventCRFDao.class),
-                mock(ResponseSetDomainDao.class));
+                mock(ImportItemDataPort.class),
+                mock(ImportItemPort.class),
+                mock(ImportItemGroupPort.class),
+                mock(ImportItemFormMetadataPort.class),
+                studyLookupPort,
+                mock(ImportStudySubjectPort.class),
+                mock(ImportStudyEventPort.class),
+                mock(ImportStudyEventDefinitionPort.class),
+                mock(ImportCrfVersionPort.class),
+                mock(ImportEventCrfPort.class),
+                mock(ImportResponseSetPort.class));
 
         ODMContainer odm = new ODMContainer();
         CRFDataPostImportContainer postImport = new CRFDataPostImportContainer();
@@ -194,7 +205,7 @@ class ImportCrfDataAdapterTest {
                 new ImportCrfDataAdapter.ParsedOdm(odm), 1, Locale.ENGLISH);
 
         assertEquals(1, errors.size());
-        verify(studyDao).findByOid("S_MISSING");
+        verify(studyLookupPort).findImportStudyByOid("S_MISSING");
     }
 
     private ODMContainer odmWithOneItem(

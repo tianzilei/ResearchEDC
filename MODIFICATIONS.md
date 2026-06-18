@@ -6,6 +6,24 @@
 
 ---
 
+## 2026-06-19 - Complete shared DAO SPI deletion
+
+- Added `ImportEventCrfPort` and moved `ImportCrfDataAdapter` off the final legacy `EventCRFDao` SPI for import event-CRF lookup and creation.
+- Deleted the remaining shared DAO SPI files after migrating import CRF version, item, item-group, item metadata, item data, study, study-subject, study-event, study-event-definition, response-set, and event-CRF callers to module-owned ports.
+- Regenerated the workflow inventory to 0 active artifacts and updated the Phase 3 ledger to 0/878 module-backed rows, 878 removed rows, and 878/878 removed (100.0%).
+
+## 2026-06-19 - Move study import lookup to module port
+
+- Added `ImportStudyLookupPort` and moved `ImportCrfDataAdapter` off the legacy `IStudyDAO` SPI for study OID lookup during metadata validation and import commit paths.
+- Kept `StudyDaoAdapter` as the repository-backed implementation behind the import port and deleted the shared `IStudyDAO` SPI after repo-wide scans showed no remaining production or test callers.
+- Regenerated the workflow inventory to 9 active DAO SPI artifacts at that checkpoint; the later final DAO SPI deletion slice closed the inventory and moved the Phase 3 ledger to 878/878 removed rows.
+
+## 2026-06-18 - Move response-set import validation to module port
+
+- Added the data-import-owned `ImportResponseSetPort` and moved `ImportCrfDataAdapter` off the legacy `ResponseSetDomainDao` SPI for response-set validation lookups.
+- Kept `ResponseSetDaoAdapter` as the JDBC implementation behind the module port and exposed the data-capture service API as a Modulith named interface for data import.
+- Deleted the legacy `ResponseSetDomainDao` SPI and regenerated the workflow inventory to 10 active DAO SPI artifacts; later `IStudyDAO` deletion reduced the active DAO SPI inventory to 9 and Phase 3 ledger to 307/878 module-backed methods with 571 removed rows.
+
 ## 2026-06-18 - Delete no-caller DAO SPI adapter slice
 
 - Deleted no-caller DAO SPI/adapters for dataset, filter, event-definition CRF, section, and dynamics item metadata after repo-wide scans proved no live caller or bean path remained.
