@@ -100,6 +100,7 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
         entity.setFacilityContactName((String) hm.get("facility_contact_name"));
         entity.setFacilityContactDegree((String) hm.get("facility_contact_degree"));
         entity.setFacilityContactPhone((String) hm.get("facility_contact_phone"));
+        entity.setFacilityContactEmail("");
         entity.setProtocolType((String) hm.get("protocol_type"));
         entity.setProtocolDescription((String) hm.get("protocol_description"));
         entity.setProtocolDateVerification(toLocalDateTime((Date) hm.get("protocol_date_verification")));
@@ -296,6 +297,7 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
         entity.setFacilityContactName(bean.getFacilityContactName());
         entity.setFacilityContactDegree(bean.getFacilityContactDegree());
         entity.setFacilityContactPhone(bean.getFacilityContactPhone());
+        entity.setFacilityContactEmail("");
         entity.setProtocolType(bean.getProtocolType());
         entity.setProtocolDescription(bean.getProtocolDescription());
         entity.setProtocolDateVerification(toLocalDateTime(bean.getProtocolDateVerification()));

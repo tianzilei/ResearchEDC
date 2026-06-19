@@ -60,7 +60,7 @@ public class Study   extends DataMapDomainObject {
 	private String facilityContactName;
 	private String facilityContactDegree;
 	private String facilityContactPhone;
-	private String facilityContactEmail;
+	private String facilityContactEmail = "";
 	private String protocolType;
 	private String protocolDescription;
 	private Date protocolDateVerification;

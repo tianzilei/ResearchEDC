@@ -51,7 +51,7 @@ public class UserAccount extends DataMapDomainObject {
 	private String passwd;
 	private String firstName;
 	private String lastName;
-	private String email;
+	private String email = "";
 	private Study activeStudy;
 	private String institutionalAffiliation;
 	private Date dateCreated;
