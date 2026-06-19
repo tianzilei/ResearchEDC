@@ -2,9 +2,10 @@ package org.researchedc.config;
 
 import java.util.Properties;
 import javax.sql.DataSource;
-import org.researchedc.job.JobExecutionExceptionListener;
-import org.researchedc.job.JobTriggerListener;
-import org.researchedc.job.OpenClinicaSchedulerFactoryBean;
+
+import org.researchedc.config.scheduler.JobExecutionExceptionListener;
+import org.researchedc.config.scheduler.JobTriggerListener;
+import org.researchedc.config.scheduler.OpenClinicaSchedulerFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

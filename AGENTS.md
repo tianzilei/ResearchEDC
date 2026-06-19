@@ -9,7 +9,7 @@
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x. Built on Java 21 with Spring Framework 6.1.5, Hibernate ORM 6.4.4, and Liquibase migrations. Multi-module Maven project supporting Oracle and PostgreSQL.
 
-New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (202 Java files; no `shared/dao` SPI files remain). `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and needed import/validation classes were migrated to `app/`, with later dead leftovers removed. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
+New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (194 Java files; no `shared/dao` SPI files remain). `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and needed import/validation classes were migrated to `app/`, with later dead leftovers removed. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
 
 
 **当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | **Refactor progress 100.0%** ✅ | **Phase 3 DAO ledger 878/878 removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅**
@@ -39,7 +39,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │       ├── filter/          # 过滤器管理 (JPA 实体 + 仓库, 7 文件)
 │       ├── subjectgroup/    # 受试者分组 (JPA 实体 + 仓库, 9 文件)
 │       └── discrepancynote/ # 差异备注管理 (JPA 实体 + 仓库, 7 文件)
-├── shared/                  # 共享领域逻辑与数据访问 — 202 Java files (replaces legacy-core, still legacy-heavy)
+├── shared/                  # 共享领域逻辑与数据访问 — 194 Java files (replaces legacy-core, still legacy-heavy)
 │   ├── bean/                # DTOs (81 Java files)
 │   ├── domain/              # Hibernate 实体 (103 Java files)
 │   ├── job/                 # Quartz infrastructure (4 Java files)
@@ -95,7 +95,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | Liquibase migrations | `shared/.../migration/` | 208 个版本化 schema XML |
 | i18n strings | `shared/.../i18n/*.properties` | 6 种语言 |
 | Bare deploy | `deploy.sh` | single host deployment entry point |
-| Legacy removal plan | `docs/refactor/remove-legacy-code-plan.md` | Current baseline, phases, and deletion gates |
+| Legacy removal roadmap | `docs/refactor/refactor-removal-roadmap.md` | Current source of truth for remaining refactor/removal work |
 | SPA fallback config | `app/.../config/WebMvcConfig.java` | `/app/**` -> React index.html |
 
 ## CONVENTIONS
@@ -253,7 +253,7 @@ python -m pytest app/tests/ -v
 - **StudyGroupClassRepository** enhanced with 4 native SQL queries (`findByStudyOrChildStudy`, `findByStudyOrChildStudyAndStatus`).
 - **PostgreSQL validation:** completed on disposable databases. `shared/src/main/resources/migration/master.xml` applied cleanly, `scripts/ci/check-phase-b-postgres.sh` verified 54 sync functions, 54 sync triggers, representative bidirectional insert/update/delete sync for `study`, `filter`, and `discrepancy_note`, and repeated update convergence without recursion loops.
 - **Discrepancy-note migration fix:** legacy `discrepancy_note` has no `entity_id`; Phase B copy/sync now stores `NULL AS entity_id` module-side and omits that column when writing back to legacy.
-- **Remaining Phase B work:** none. Next work is Phase 0 legacy route/workflow inventory and Phase 1 vertical JSP/servlet deletion slices in `docs/refactor/remove-legacy-code-plan.md`.
+- **Remaining Phase B work:** none. Workflow-level deletion is complete; the next work is compatibility strangulation inside `app/` and `shared/`, tracked in `docs/refactor/refactor-removal-roadmap.md`.
 - **Verification:** `bash scripts/ci/check-phase-b-migrations.sh` ✅ | full Liquibase PostgreSQL update ✅ | `scripts/ci/check-phase-b-postgres.sh` ✅ | commit `0963eec2c`
 
 ## SUBMODULE REFERENCES
@@ -262,6 +262,6 @@ python -m pytest app/tests/ -v
 - [app/AGENTS.md](./app/AGENTS.md) — Spring Boot entry point, config, and Modulith modules
 - [frontend/AGENTS.md](./frontend/AGENTS.md) — React 19 SPA (TypeScript, Vite, Ant Design)
 - [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) — Python FastAPI microservice
-- [LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md) — Remaining legacy refactoring roadmap
-- [Remove Legacy Code Plan](./docs/refactor/remove-legacy-code-plan.md) — Explicit deletion plan and measurable gates
-- [Next Refactor And Removal Plan](./docs/refactor/next-refactor-removal-plan.md) — Current legacy-removal status, import hardening, and post-DAO-deletion guardrails
+- [Refactor And Removal Roadmap](./docs/refactor/refactor-removal-roadmap.md) — Active master plan for remaining legacy reduction
+- [Remove Legacy Code Plan](./docs/refactor/remove-legacy-code-plan.md) — Historical baseline and completed-phase evidence
+- [LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md) — Handoff pointer to the active roadmap

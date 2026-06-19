@@ -1,7 +1,7 @@
 # shared/ - Shared Domain Logic & Data Access
 
 **Module:** Legacy domain logic, data access, entities, and business services
-**Files:** 202 Java files
+**Files:** 194 Java files
 **Package:** `org.researchedc.*`
 
 > Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
@@ -17,8 +17,6 @@ shared/src/main/java/org/researchedc/
 ├── domain/       # Hibernate/domain entities — 103 Java files
 ├── exception/    # Custom exceptions — 2 Java files
 ├── i18n/         # Internationalization utilities + 22 .properties files
-├── job/          # Quartz infrastructure — 4 Java files
-├── patterns/     # Observer pattern infrastructure — 4 Java files
 └── other support # Logging, validation, and compatibility helpers — 0 Java files
 
 shared/src/main/resources/
@@ -34,7 +32,7 @@ shared/src/main/resources/
 | **Domain Entities** | 103 | Hibernate `@Entity` classes mapping to database tables (`datamap/` has 62) |
 | **DTO Beans** | 81 | `EntityBean` subclasses — data transfer objects for legacy servlets |
 | **Liquibase Migrations** | 208 | Versioned schema changes from OpenClinica 3.x through 3.18 |
-| **Quartz Jobs** | 4 | Scheduled tasks (data import, export, cleanup) |
+| **Quartz Jobs** | 0 | Moved to app-owned scheduler support |
 
 ## CONVENTIONS
 

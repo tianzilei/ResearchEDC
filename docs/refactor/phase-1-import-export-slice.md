@@ -1,6 +1,8 @@
 # Phase 1 — Import/Export Compatibility Slice
 
 **Created:** 2026-06-11
+**Historical note (2026-06-19):** this document captures pre-deletion slice analysis. The active
+follow-up plan now lives in [`refactor-removal-roadmap.md`](./refactor-removal-roadmap.md).
 **Status:** INVESTIGATION (gaps documented, parity path not yet built)
 **Artifacts:** 10 (2 legacy servlets, 8 JSP views)
 **Ledger:** `phase-1-import-export-ledger.csv`

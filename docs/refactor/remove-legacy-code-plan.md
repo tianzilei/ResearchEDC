@@ -1,6 +1,8 @@
 # Remove Legacy Code Plan
 
 **Last updated:** 2026-06-19
+**Document role:** historical baseline and completed-phase evidence. The active roadmap now lives in
+[`refactor-removal-roadmap.md`](./refactor-removal-roadmap.md).
 **Status:** Legacy workflow inventory is **closed**. Tracked workflow progress is **100.0%** (963/963 artifacts removed or closed; 0 active artifacts remain). **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 3 DAO SPI deletion COMPLETE** (`shared/dao` is empty; 0 DAO SPI Java files remain). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining compatibility hardening now lives in app/module code, not legacy workflow inventory artifacts. Phase 3 ledger status: 0/878 methods module-backed, 878/878 removed (100.0%), 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 0 unused (0.0%).
 
 ## Current Baseline

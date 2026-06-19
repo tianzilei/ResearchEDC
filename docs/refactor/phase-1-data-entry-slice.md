@@ -1,6 +1,9 @@
 # Phase 1: Data Entry Vertical Slice
 
 **Created:** 2026-06-08
+**Historical note (2026-06-19):** this document captures pre-deletion planning from before `web/`
+was removed. The active follow-up plan now lives in
+[`refactor-removal-roadmap.md`](./refactor-removal-roadmap.md).
 **Status:** Planning
 **Goal:** Unblock Phase 3/4 by retiring web/ routes that have SPA/module-owned replacements
 

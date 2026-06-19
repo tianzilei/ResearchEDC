@@ -23,8 +23,6 @@ import org.researchedc.domain.datamap.StudyEvent;
 import org.researchedc.module.dataimport.service.ImportStudyEventPort;
 import org.researchedc.module.event.entity.StudyEventEntity;
 import org.researchedc.module.event.repository.StudyEventRepository;
-import org.researchedc.patterns.ocobserver.Observer;
-import org.researchedc.patterns.ocobserver.StudyEventContainer;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -268,18 +266,6 @@ public class StudyEventDaoAdapter implements ImportStudyEventPort {
 
     public boolean isThisRepeatingEventScheduledMoreThanOneTime(int studyId, int sed_Id) {
         return false;
-    }
-
-    // --- Listener interface ---
-
-    private Observer observer;
-
-    public void setObserver(Observer o) {
-        this.observer = o;
-    }
-
-    public Observer getObserver() {
-        return observer;
     }
 
     // --- Private helpers ---
