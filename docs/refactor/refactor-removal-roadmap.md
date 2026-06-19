@@ -103,6 +103,7 @@ These are closed and should not be reopened except to fix regressions:
 
 **Current Progress**
 - ODM mapping resource lookup and page-message bundle resolution now live in `module/dataimport/internal/support`, so `ImportCrfDataAdapter` no longer depends directly on shared support classes while preserving the current import validation flow.
+- `ImportCrfDataAdapter` now keeps ODM beans only at its retained external compatibility boundary; internal study/subject/event/CRF lookup and event-CRF status flow use module-local records instead of `shared.bean.*` transport types.
 
 **Exit Gate**
 - `ImportCrfDataAdapter` no longer imports `shared.bean.*` packages except where an explicitly retained external compatibility contract still requires it.

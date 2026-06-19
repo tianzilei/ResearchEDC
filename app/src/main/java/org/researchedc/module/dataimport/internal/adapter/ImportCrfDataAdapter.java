@@ -22,13 +22,6 @@ import org.researchedc.bean.core.ItemDataType;
 import org.researchedc.bean.core.ResponseType;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.SubjectEventStatus;
-import org.researchedc.bean.login.UserAccountBean;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.managestudy.StudyEventBean;
-import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.bean.submit.crfdata.FormDataBean;
 import org.researchedc.bean.submit.crfdata.ImportItemDataBean;
@@ -129,33 +122,29 @@ public class ImportCrfDataAdapter {
                 ImportCompatibilitySupport.pageMessagesBundle(locale));
     }
 
-    private UserAccountBean importUser(int studyId) {
-        UserAccountBean user = new UserAccountBean();
-        user.setActiveStudyId(studyId);
-        user.setId(0);
-        user.setName("system");
-        return user;
+    private ImportUser importUser(int studyId) {
+        return new ImportUser(0, "system");
     }
 
-    private boolean checkStatusesValid(ODMContainer odm, UserAccountBean user) {
+    private boolean checkStatusesValid(ODMContainer odm, ImportUser user) {
         ArrayList<Integer> eventCrfBeanIds = new ArrayList<>();
         UpsertOnBean upsert = odm.getCrfDataPostImportContainer().getUpsertOn();
         if (upsert == null) {
             upsert = new UpsertOnBean();
         }
         String studyOid = odm.getCrfDataPostImportContainer().getStudyOID();
-        StudyBean study = importStudy(studyOid);
+        ImportStudy study = importStudy(studyOid);
         ArrayList<SubjectDataBean> subjectDataBeans = odm.getCrfDataPostImportContainer().getSubjectData();
         for (SubjectDataBean subjectDataBean : subjectDataBeans) {
             ArrayList<StudyEventDataBean> studyEventDataBeans = subjectDataBean.getStudyEventData();
-            StudySubjectBean studySubjectBean =
+            ImportStudySubject studySubjectBean =
                     importStudySubject(subjectDataBean.getSubjectOID(), study.getId());
             for (StudyEventDataBean studyEventDataBean : studyEventDataBeans) {
                 ArrayList<FormDataBean> formDataBeans = studyEventDataBean.getFormData();
                 String sampleOrdinal = studyEventDataBean.getStudyEventRepeatKey() == null
                         ? "1"
                         : studyEventDataBean.getStudyEventRepeatKey();
-                StudyEventDefinitionBean studyEventDefinitionBean =
+                ImportStudyEventDefinition studyEventDefinitionBean =
                         importStudyEventDefinition(
                                 studyEventDataBean.getStudyEventOID(),
                                 study.getId(),
@@ -163,7 +152,7 @@ public class ImportCrfDataAdapter {
                 log.info("find all by def and subject {} study subject {}",
                         studyEventDefinitionBean.getName(), studySubjectBean.getName());
 
-                StudyEventBean studyEventBean =
+                ImportStudyEvent studyEventBean =
                         importStudyEvent(
                                 studySubjectBean.getId(),
                                 studyEventDefinitionBean.getId(),
@@ -174,12 +163,12 @@ public class ImportCrfDataAdapter {
                     return true;
                 }
                 for (FormDataBean formDataBean : formDataBeans) {
-                    List<CRFVersionBean> crfVersionBeans =
+                    List<ImportCrfVersionPort.ImportCrfVersion> crfVersionBeans =
                             findCrfVersionsByOid(formDataBean.getFormOID());
-                    for (CRFVersionBean crfVersionBean : crfVersionBeans) {
-                        ArrayList<EventCRFBean> eventCrfBeans =
+                    for (ImportCrfVersionPort.ImportCrfVersion crfVersionBean : crfVersionBeans) {
+                        ArrayList<ImportEventCrf> eventCrfBeans =
                                 eventCrfBeansByEventSubjectVersion(
-                                        studyEventBean.getId(), studySubjectBean.getId(), crfVersionBean.getId());
+                                        studyEventBean.getId(), studySubjectBean.getId(), crfVersionBean.id());
                         if (eventCrfBeans.isEmpty()) {
                             log.debug("found no event crfs from Study Event id {}, location {}",
                                     studyEventBean.getId(), studyEventBean.getLocation());
@@ -191,7 +180,7 @@ public class ImportCrfDataAdapter {
                                 }
                             }
                         }
-                        for (EventCRFBean eventCrfBean : eventCrfBeans) {
+                        for (ImportEventCrf eventCrfBean : eventCrfBeans) {
                             Integer ecbId = eventCrfBean.getId();
                             if (!(eventCrfBean.getStage().equals(DataEntryStage.INITIAL_DATA_ENTRY)
                                     && upsert.isDataEntryStarted())
@@ -210,26 +199,26 @@ public class ImportCrfDataAdapter {
         return true;
     }
 
-    private List<EventCRFBean> getEventCrfBeans(ODMContainer odm, UserAccountBean user) {
-        ArrayList<EventCRFBean> eventCrfBeansResult = new ArrayList<>();
+    private List<ImportEventCrf> getEventCrfBeans(ODMContainer odm, ImportUser user) {
+        ArrayList<ImportEventCrf> eventCrfBeansResult = new ArrayList<>();
         ArrayList<Integer> eventCrfBeanIds = new ArrayList<>();
         UpsertOnBean upsert = odm.getCrfDataPostImportContainer().getUpsertOn();
         if (upsert == null) {
             upsert = new UpsertOnBean();
         }
         String studyOid = odm.getCrfDataPostImportContainer().getStudyOID();
-        StudyBean study = importStudy(studyOid);
+        ImportStudy study = importStudy(studyOid);
         ArrayList<SubjectDataBean> subjectDataBeans = odm.getCrfDataPostImportContainer().getSubjectData();
         for (SubjectDataBean subjectDataBean : subjectDataBeans) {
             ArrayList<StudyEventDataBean> studyEventDataBeans = subjectDataBean.getStudyEventData();
-            StudySubjectBean studySubjectBean =
+            ImportStudySubject studySubjectBean =
                     importStudySubject(subjectDataBean.getSubjectOID(), study.getId());
             for (StudyEventDataBean studyEventDataBean : studyEventDataBeans) {
                 ArrayList<FormDataBean> formDataBeans = studyEventDataBean.getFormData();
                 String sampleOrdinal = studyEventDataBean.getStudyEventRepeatKey() == null
                         ? "1"
                         : studyEventDataBean.getStudyEventRepeatKey();
-                StudyEventDefinitionBean studyEventDefinitionBean =
+                ImportStudyEventDefinition studyEventDefinitionBean =
                         importStudyEventDefinition(
                                 studyEventDataBean.getStudyEventOID(),
                                 study.getId(),
@@ -237,7 +226,7 @@ public class ImportCrfDataAdapter {
                 log.info("find all by def and subject {} study subject {}",
                         studyEventDefinitionBean.getName(), studySubjectBean.getName());
 
-                StudyEventBean studyEventBean =
+                ImportStudyEvent studyEventBean =
                         importStudyEvent(
                                 studySubjectBean.getId(),
                                 studyEventDefinitionBean.getId(),
@@ -248,19 +237,19 @@ public class ImportCrfDataAdapter {
                     return null;
                 }
                 for (FormDataBean formDataBean : formDataBeans) {
-                    List<CRFVersionBean> crfVersionBeans =
+                    List<ImportCrfVersionPort.ImportCrfVersion> crfVersionBeans =
                             findCrfVersionsByOid(formDataBean.getFormOID());
-                    for (CRFVersionBean crfVersionBean : crfVersionBeans) {
-                        ArrayList<EventCRFBean> eventCrfBeans =
+                    for (ImportCrfVersionPort.ImportCrfVersion crfVersionBean : crfVersionBeans) {
+                        ArrayList<ImportEventCrf> eventCrfBeans =
                                 eventCrfBeansByEventSubjectVersion(
-                                        studyEventBean.getId(), studySubjectBean.getId(), crfVersionBean.getId());
+                                        studyEventBean.getId(), studySubjectBean.getId(), crfVersionBean.id());
 
                         if (eventCrfBeans.isEmpty()) {
                             eventCrfBeans = eventCrfBeansByEventSubjectCrfId(
-                                    studyEventBean.getId(), studySubjectBean.getId(), crfVersionBean.getId());
+                                    studyEventBean.getId(), studySubjectBean.getId(), crfVersionBean.id());
                             if (!eventCrfBeans.isEmpty()) {
-                                for (EventCRFBean eventCrfBean : eventCrfBeans) {
-                                    eventCrfBean.setCRFVersionId(crfVersionBean.getId());
+                                for (ImportEventCrf eventCrfBean : eventCrfBeans) {
+                                    eventCrfBean.setCrfVersionId(crfVersionBean.id());
                                 }
                             }
                         }
@@ -272,23 +261,11 @@ public class ImportCrfDataAdapter {
                                     || studyEventBean.getSubjectEventStatus().equals(SubjectEventStatus.DATA_ENTRY_STARTED)
                                     || studyEventBean.getSubjectEventStatus().equals(SubjectEventStatus.COMPLETED))
                                     && upsert.isNotStarted()) {
-                                EventCRFBean newEventCrfBean = new EventCRFBean();
-                                newEventCrfBean.setStudyEventId(studyEventBean.getId());
-                                newEventCrfBean.setStudySubjectId(studySubjectBean.getId());
-                                newEventCrfBean.setCRFVersionId(crfVersionBean.getId());
-                                newEventCrfBean.setDateInterviewed(new Date());
-                                newEventCrfBean.setOwner(user);
-                                newEventCrfBean.setInterviewerName(user.getName());
-                                newEventCrfBean.setCompletionStatusId(1);
-                                newEventCrfBean.setStatus(Status.AVAILABLE);
-                                newEventCrfBean.setStage(DataEntryStage.INITIAL_DATA_ENTRY);
-                                newEventCrfBean = eventCrfFromRow(eventCrfPort.createImportEventCrf(
-                                        newEventCrfBean.getStudyEventId(),
-                                        newEventCrfBean.getStudySubjectId(),
-                                        newEventCrfBean.getCRFVersionId(),
-                                        user.getId(),
-                                        user.getName(),
-                                        Status.AVAILABLE.getId()));
+                                ImportEventCrf newEventCrfBean = createImportEventCrf(
+                                        studyEventBean,
+                                        studySubjectBean,
+                                        crfVersionBean,
+                                        user);
                                 log.debug("created and added new event crf");
                                 if (!eventCrfBeanIds.contains(newEventCrfBean.getId())) {
                                     eventCrfBeansResult.add(newEventCrfBean);
@@ -297,7 +274,7 @@ public class ImportCrfDataAdapter {
                             }
                         }
 
-                        for (EventCRFBean eventCrfBean : eventCrfBeans) {
+                        for (ImportEventCrf eventCrfBean : eventCrfBeans) {
                             Integer ecbId = eventCrfBean.getId();
                             if ((upsert.isDataEntryStarted()
                                     && eventCrfBean.getStage().equals(DataEntryStage.INITIAL_DATA_ENTRY))
@@ -318,16 +295,16 @@ public class ImportCrfDataAdapter {
 
     public EventCrfValidationResult validateEventCrfs(ParsedOdm parsed, int studyId, Locale locale) {
         ODMContainer odm = parsed.odm();
-        UserAccountBean user = importUser(studyId);
+        ImportUser user = importUser(studyId);
         boolean statusesValid = checkStatusesValid(odm, user);
-        List<EventCRFBean> eventCrfBeans = getEventCrfBeans(odm, user);
+        List<ImportEventCrf> eventCrfBeans = getEventCrfBeans(odm, user);
         return new EventCrfValidationResult(statusesValid, eventCrfBeans != null ? eventCrfBeans.size() : -1);
     }
 
     public CommitResult commitImport(ParsedOdm parsed, int studyId, Locale locale) {
         ODMContainer odm = parsed.odm();
-        UserAccountBean user = importUser(studyId);
-        List<EventCRFBean> eventCrfBeans = getEventCrfBeans(odm, user);
+        ImportUser user = importUser(studyId);
+        List<ImportEventCrf> eventCrfBeans = getEventCrfBeans(odm, user);
         if (eventCrfBeans == null || eventCrfBeans.isEmpty()) {
             return new CommitResult(0, 0);
         }
@@ -384,7 +361,7 @@ public class ImportCrfDataAdapter {
         MessageFormat mf = new MessageFormat("");
 
         String studyOid = odmContainer.getCrfDataPostImportContainer().getStudyOID();
-        StudyBean study = importStudy(studyOid);
+        ImportStudy study = importStudy(studyOid);
         if (study == null) {
             mf.applyPattern(respage.getString("your_study_oid_does_not_reference_an_existing"));
             errors.add(mf.format(new Object[]{studyOid}));
@@ -405,7 +382,7 @@ public class ImportCrfDataAdapter {
 
         for (SubjectDataBean subjectDataBean : subjectDataBeans) {
             String subjectOid = subjectDataBean.getSubjectOID();
-            StudySubjectBean studySubjectBean =
+            ImportStudySubject studySubjectBean =
                     importStudySubject(subjectOid, study.getId());
             if (studySubjectBean == null) {
                 mf.applyPattern(respage.getString("your_subject_oid_does_not_reference"));
@@ -420,7 +397,7 @@ public class ImportCrfDataAdapter {
 
             for (StudyEventDataBean studyEventDataBean : studyEventDataBeans) {
                 String studyEventOid = studyEventDataBean.getStudyEventOID();
-                StudyEventDefinitionBean studyEventDefinitionBean =
+                ImportStudyEventDefinition studyEventDefinitionBean =
                         importStudyEventDefinition(
                                 studyEventOid, study.getId(), study.getParentStudyId());
                 if (studyEventDefinitionBean == null) {
@@ -448,9 +425,9 @@ public class ImportCrfDataAdapter {
     private void validateFormMetadata(FormDataBean formDataBean, String studyEventOid,
                                       List<String> errors, MessageFormat mf, ResourceBundle respage) {
         String formOid = formDataBean.getFormOID();
-        List<CRFVersionBean> crfVersionBeans = findCrfVersionsByOid(formOid);
+        List<ImportCrfVersionPort.ImportCrfVersion> crfVersionBeans = findCrfVersionsByOid(formOid);
         if (crfVersionBeans != null && !crfVersionBeans.isEmpty()) {
-            for (CRFVersionBean crfVersionBean : crfVersionBeans) {
+            for (ImportCrfVersionPort.ImportCrfVersion crfVersionBean : crfVersionBeans) {
                 if (crfVersionBean == null) {
                     mf.applyPattern(respage.getString("your_crf_version_oid_for_study_event_oid"));
                     errors.add(mf.format(new Object[]{formOid, studyEventOid}));
@@ -474,83 +451,73 @@ public class ImportCrfDataAdapter {
         }
     }
 
-    private StudyBean importStudy(String studyOid) {
+    private ImportStudy importStudy(String studyOid) {
         Object[] row = studyLookupPort.findImportStudyByOid(studyOid);
         if (row == null) {
             return null;
         }
-        StudyBean study = new StudyBean();
-        study.setId(toInt(row[0]));
-        study.setParentStudyId(toInt(row[1]));
-        study.setName(row[2] != null ? row[2].toString() : null);
-        return study;
+        return new ImportStudy(
+                toInt(row[0]),
+                toInt(row[1]),
+                row[2] != null ? row[2].toString() : null);
     }
 
-    private StudySubjectBean importStudySubject(String subjectOid, int studyId) {
+    private ImportStudySubject importStudySubject(String subjectOid, int studyId) {
         Object[] row = studySubjectPort.findImportStudySubjectByOidAndStudy(subjectOid, studyId);
         if (row == null) {
             return null;
         }
-        StudySubjectBean subject = new StudySubjectBean();
-        subject.setId(toInt(row[0]));
-        subject.setName(row[1] != null ? row[1].toString() : null);
-        return subject;
+        return new ImportStudySubject(
+                toInt(row[0]),
+                row[1] != null ? row[1].toString() : null);
     }
 
-    private StudyEventDefinitionBean importStudyEventDefinition(String eventOid, int studyId, int parentStudyId) {
+    private ImportStudyEventDefinition importStudyEventDefinition(String eventOid, int studyId, int parentStudyId) {
         Object[] row = studyEventDefinitionPort.findImportStudyEventDefinitionByOidAndStudy(
                 eventOid, studyId, parentStudyId);
         if (row == null) {
             return null;
         }
-        StudyEventDefinitionBean definition = new StudyEventDefinitionBean();
-        definition.setId(toInt(row[0]));
-        definition.setName(row[1] != null ? row[1].toString() : null);
-        return definition;
+        return new ImportStudyEventDefinition(
+                toInt(row[0]),
+                row[1] != null ? row[1].toString() : null);
     }
 
-    private StudyEventBean importStudyEvent(int studySubjectId, int definitionId, int ordinal) {
+    private ImportStudyEvent importStudyEvent(int studySubjectId, int definitionId, int ordinal) {
         Object[] row = studyEventPort.findImportStudyEventBySubjectDefinitionOrdinal(
                 studySubjectId, definitionId, ordinal);
-        StudyEventBean event = new StudyEventBean();
         if (row == null) {
-            return event;
+            return new ImportStudyEvent(0, SubjectEventStatus.INVALID, null);
         }
-        event.setId(toInt(row[0]));
-        event.setSubjectEventStatus(SubjectEventStatus.getFromMap(toInt(row[1])));
-        event.setLocation(row[2] != null ? row[2].toString() : null);
-        return event;
+        return new ImportStudyEvent(
+                toInt(row[0]),
+                SubjectEventStatus.getFromMap(toInt(row[1])),
+                row[2] != null ? row[2].toString() : null);
     }
 
-    private List<CRFVersionBean> findCrfVersionsByOid(String formOid) {
+    private List<ImportCrfVersionPort.ImportCrfVersion> findCrfVersionsByOid(String formOid) {
         List<ImportCrfVersionPort.ImportCrfVersion> versions =
                 crfVersionPort.findAllImportCrfVersionsByOid(formOid);
         if (versions == null) {
             return null;
         }
-        return versions.stream()
-                .map(version -> {
-                    CRFVersionBean bean = new CRFVersionBean();
-                    bean.setId(toInt(version.id()));
-                    return bean;
-                })
-                .toList();
+        return versions;
     }
 
-    private ArrayList<EventCRFBean> eventCrfBeansByEventSubjectVersion(
+    private ArrayList<ImportEventCrf> eventCrfBeansByEventSubjectVersion(
             int studyEventId, int studySubjectId, int crfVersionId) {
         return eventCrfBeansFromRows(eventCrfPort.findImportEventCrfsByEventSubjectVersion(
                 studyEventId, studySubjectId, crfVersionId));
     }
 
-    private ArrayList<EventCRFBean> eventCrfBeansByEventSubjectCrfId(
+    private ArrayList<ImportEventCrf> eventCrfBeansByEventSubjectCrfId(
             int studyEventId, int studySubjectId, int crfVersionId) {
         return eventCrfBeansFromRows(eventCrfPort.findImportEventCrfsByEventSubjectCrfId(
                 studyEventId, studySubjectId, crfVersionId));
     }
 
-    private ArrayList<EventCRFBean> eventCrfBeansFromRows(List<Object[]> rows) {
-        ArrayList<EventCRFBean> beans = new ArrayList<>();
+    private ArrayList<ImportEventCrf> eventCrfBeansFromRows(List<Object[]> rows) {
+        ArrayList<ImportEventCrf> beans = new ArrayList<>();
         if (rows == null) {
             return beans;
         }
@@ -560,15 +527,28 @@ public class ImportCrfDataAdapter {
         return beans;
     }
 
-    private EventCRFBean eventCrfFromRow(Object[] row) {
-        EventCRFBean bean = new EventCRFBean();
+    private ImportEventCrf eventCrfFromRow(Object[] row) {
         if (row == null) {
-            return bean;
+            return new ImportEventCrf(0, 0, Status.INVALID);
         }
-        bean.setId(toInt(row[0]));
-        bean.setCRFVersionId(toInt(row[1]));
-        bean.setStatus(Status.getFromMap(toInt(row[2])));
-        return bean;
+        return new ImportEventCrf(
+                toInt(row[0]),
+                toInt(row[1]),
+                Status.getFromMap(toInt(row[2])));
+    }
+
+    private ImportEventCrf createImportEventCrf(
+            ImportStudyEvent studyEvent,
+            ImportStudySubject studySubject,
+            ImportCrfVersionPort.ImportCrfVersion crfVersion,
+            ImportUser user) {
+        return eventCrfFromRow(eventCrfPort.createImportEventCrf(
+                studyEvent.getId(),
+                studySubject.getId(),
+                crfVersion.id(),
+                user.getId(),
+                user.getName(),
+                Status.AVAILABLE.getId()));
     }
 
     private int toInt(Object value) {
@@ -631,8 +611,8 @@ public class ImportCrfDataAdapter {
     }
 
     private ImportItemData prepareItemDataForCommit(
-            ImportItemDataBean importItem, EventCRFBean eventCrf,
-            UserAccountBean ub, int ordinal) {
+            ImportItemDataBean importItem, ImportEventCrf eventCrf,
+            ImportUser ub, int ordinal) {
         List<ImportItemPort.ImportItem> items = itemPort.findImportItemsByOid(importItem.getItemOID());
         if (items == null || items.isEmpty()) {
             return null;
@@ -793,5 +773,75 @@ public class ImportCrfDataAdapter {
         rsb.setOptions(metadata[2] != null ? metadata[2].toString() : null,
                 metadata[3] != null ? metadata[3].toString() : null);
         return rsb;
+    }
+
+    private record ImportUser(int id, String name) {
+        int getId() { return id; }
+        String getName() { return name; }
+    }
+
+    private record ImportStudy(int id, int parentStudyId, String name) {
+        int getId() { return id; }
+        int getParentStudyId() { return parentStudyId; }
+        String getName() { return name; }
+    }
+
+    private record ImportStudySubject(int id, String name) {
+        int getId() { return id; }
+        String getName() { return name; }
+    }
+
+    private record ImportStudyEventDefinition(int id, String name) {
+        int getId() { return id; }
+        String getName() { return name; }
+    }
+
+    private record ImportStudyEvent(int id, SubjectEventStatus subjectEventStatus, String location) {
+        int getId() { return id; }
+        SubjectEventStatus getSubjectEventStatus() { return subjectEventStatus; }
+        String getLocation() { return location; }
+    }
+
+    private static final class ImportEventCrf {
+        private final int id;
+        private int crfVersionId;
+        private final Status status;
+
+        private ImportEventCrf(int id, int crfVersionId, Status status) {
+            this.id = id;
+            this.crfVersionId = crfVersionId;
+            this.status = status;
+        }
+
+        int getId() {
+            return id;
+        }
+
+        int getCrfVersionId() {
+            return crfVersionId;
+        }
+
+        void setCrfVersionId(int crfVersionId) {
+            this.crfVersionId = crfVersionId;
+        }
+
+        DataEntryStage getStage() {
+            if (status == null) {
+                return DataEntryStage.INVALID;
+            }
+            if (status.equals(Status.AVAILABLE)) {
+                return DataEntryStage.INITIAL_DATA_ENTRY;
+            }
+            if (status.equals(Status.PENDING)) {
+                return DataEntryStage.INITIAL_DATA_ENTRY_COMPLETE;
+            }
+            if (status.equals(Status.UNAVAILABLE)) {
+                return DataEntryStage.DOUBLE_DATA_ENTRY_COMPLETE;
+            }
+            if (status.equals(Status.LOCKED)) {
+                return DataEntryStage.LOCKED;
+            }
+            return DataEntryStage.INVALID;
+        }
     }
 }
