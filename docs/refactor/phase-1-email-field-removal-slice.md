@@ -22,7 +22,7 @@ This slice removes stale product entry points that still implied email-backed ac
 
 - `UserAccountEntity.email` and shared `UserAccount.email`: schema compatibility only.
 - `StudyEntity.facilityContactEmail` and shared `Study.facilityContactEmail`: schema/ODM compatibility only.
-- Existing migration XML, sync trigger SQL, and historical i18n keys: retained per the plan's out-of-scope rules.
+- Existing migration XML, sync trigger SQL, and schema-contract email elements: retained per the plan's out-of-scope rules. Runtime i18n bundles no longer keep unreferenced email label keys.
 - ODM metadata export contact fields: retained until downstream contract review or versioned export contract replacement.
 
 ## Result

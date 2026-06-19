@@ -44,6 +44,10 @@ These are compatibility/schema mappings, not active product requirements.
 - Remove stale mail/Enterprise wording from licensing/footer text.
 - Keep the same resource keys for compatibility, but stop advertising retired capabilities.
 
+Current progress:
+- Runtime i18n bundles no longer expose the unreferenced `confirm_email`, `contact_email`, or `your_email` labels.
+- Rule-management notes and footer/licensing tooltips now describe supported in-app capabilities and neutral vendor-service retirement wording instead of advertising Enterprise or email-action workflows.
+
 ### Slice E2: Compatibility Write Neutralization
 
 **Goal:** ensure compatibility fields remain non-product, non-required, and inert.
@@ -71,7 +75,7 @@ Current progress:
 
 Current progress:
 - Rule import template guidance now marks `EmailAction` as compatibility-only, not an active ResearchEDC feature.
-- Unreferenced legacy i18n keys for `facility_contact_email` and retired Enterprise labels have been deleted from runtime bundles.
+- Unreferenced legacy runtime i18n email labels and retired Enterprise wording have been deleted or neutralized in runtime bundles.
 - ODM and rule XSD contracts now annotate `FacilityContactEmail` and `EmailAction` as compatibility-only legacy surface.
 
 Current blockers:

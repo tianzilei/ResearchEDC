@@ -249,7 +249,7 @@
 
 ### Remaining Compatibility
 
-User-account `email` and study `facility_contact_email` entity fields remain for schema/sync/ODM compatibility. Migration XML, trigger SQL, and historical i18n keys are intentionally retained.
+User-account `email` and study `facility_contact_email` entity fields remain for schema/sync/ODM compatibility. Migration XML, trigger SQL, and schema-contract email elements are intentionally retained, while unreferenced runtime i18n email labels have been removed.
 
 ## 2026-06-10 - CRF metadata boundary slice reconciliation
 
