@@ -155,7 +155,7 @@ public class Study   extends DataMapDomainObject {
 		this.facilityContactName = facilityContactName;
 		this.facilityContactDegree = facilityContactDegree;
 		this.facilityContactPhone = facilityContactPhone;
-		this.facilityContactEmail = facilityContactEmail;
+		this.facilityContactEmail = "";
 		this.protocolType = protocolType;
 		this.protocolDescription = protocolDescription;
 		this.protocolDateVerification = protocolDateVerification;
@@ -426,7 +426,7 @@ public class Study   extends DataMapDomainObject {
 	}
 
 	public void setFacilityContactEmail(String facilityContactEmail) {
-		this.facilityContactEmail = facilityContactEmail;
+		this.facilityContactEmail = "";
 	}
 
 	@Column(name = "protocol_type", length = 30)

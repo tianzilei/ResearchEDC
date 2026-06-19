@@ -171,7 +171,7 @@ public class UserAccount extends DataMapDomainObject {
 	}
 
 	public void setEmail(String email) {
-		this.email = email;
+		this.email = "";
 	}
 
 	
