@@ -349,7 +349,7 @@ public class StudyEntity {
     public void setFacilityContactPhone(String v) { this.facilityContactPhone = v; }
 
     public String getFacilityContactEmail() { return facilityContactEmail; }
-    public void setFacilityContactEmail(String v) { this.facilityContactEmail = v; }
+    public void setFacilityContactEmail(String v) { this.facilityContactEmail = ""; }
 
     public LocalDateTime getProtocolDateVerification() { return protocolDateVerification; }
     public void setProtocolDateVerification(LocalDateTime v) { this.protocolDateVerification = v; }

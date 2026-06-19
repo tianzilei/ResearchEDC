@@ -57,6 +57,7 @@ Current progress:
 - New product-side study creation writes an empty compatibility `facilityContactEmail` value.
 - Questionnaire service auth principal no longer stores or surfaces an `email` claim.
 - Shared legacy user/study entities now default compatibility email fields to empty strings, and `StudyDaoAdapter` neutralizes the legacy study-contact email column on ingress.
+- Module-owned user/study entity setters now neutralize attempted compatibility email writes at the write boundary.
 
 ### Slice E3: Contract And Schema Cleanup
 
