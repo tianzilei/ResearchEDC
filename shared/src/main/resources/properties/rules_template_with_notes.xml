@@ -10,12 +10,13 @@
 		is where you define the variable to which the Rule applies, when 
 		the Rule should be executed, and the action(s) that should occur. -->
 	<RuleAssignment>
-		<!-- Rules are assigned to a particular data item in a CRF via the Target.
-			This defines which variable will display any associated error message. 
-			For DiscrepancyNoteAction or EmailAction, this is the variable that will 
-			be associated with the Discrepancy Note or email. 
-			For EventAction, ShowAction, HideAction, this is the variable that will 
-			trigger the Rule. Within the Target, the Context should always be Context="OC_RULES_V1" -->
+			<!-- Rules are assigned to a particular data item in a CRF via the Target.
+				This defines which variable will display any associated error message.
+				For active actions such as DiscrepancyNoteAction, this is the variable that will
+				be associated with the resulting discrepancy note. EmailAction remains in the
+				schema only for compatibility and should not be used for new ResearchEDC rules.
+				For EventAction, ShowAction, HideAction, this is the variable that will
+				trigger the Rule. Within the Target, the Context should always be Context="OC_RULES_V1" -->
 		<Target Context="OC_RULES_V1"></Target>
 		<!-- OpenClinica can run rules automatically at any hour, on the hour. If 
 			you include this parameter, the time must be entered in 24-hour format (00:00 to 23:59), 

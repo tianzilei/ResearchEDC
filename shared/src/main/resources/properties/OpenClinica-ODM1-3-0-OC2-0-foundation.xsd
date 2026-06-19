@@ -122,7 +122,15 @@
 			<xs:element name="FacilityContactName" type="odm:text" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="FacilityContactDegree" type="odm:text" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="FacilityContactPhone" type="odm:text" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="FacilityContactEmail" type="odm:text" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="FacilityContactEmail" type="odm:text" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						Compatibility-only legacy contact field. ResearchEDC no longer uses email as an
+						active study-contact workflow requirement; new integrations should leave this
+						element empty or omit it unless an older downstream contract still requires it.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:group ref="FacilityInformationElementExtension" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attributeGroup ref="FacilityInformationAttributeDefinition"/>

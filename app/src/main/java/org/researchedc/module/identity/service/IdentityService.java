@@ -125,6 +125,7 @@ public class IdentityService {
         entity.setUserName(request.getUserName());
         entity.setFirstName(request.getFirstName());
         entity.setLastName(request.getLastName());
+        entity.setEmail("");
         entity.setPhone(request.getPhone());
         entity.setInstitutionalAffiliation(request.getInstitutionalAffiliation());
         entity.setStatusId(request.getStatusId());

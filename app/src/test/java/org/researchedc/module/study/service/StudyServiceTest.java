@@ -20,6 +20,7 @@ import org.researchedc.module.study.repository.StudyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -133,7 +134,9 @@ class StudyServiceTest {
 
         assertEquals("New Study", result.getName());
         assertNotNull(result.getDateCreated());
-        verify(studyRepository).save(any(StudyEntity.class));
+        ArgumentCaptor<StudyEntity> entityCaptor = ArgumentCaptor.forClass(StudyEntity.class);
+        verify(studyRepository).save(entityCaptor.capture());
+        assertEquals("", entityCaptor.getValue().getFacilityContactEmail());
     }
 
     @Test

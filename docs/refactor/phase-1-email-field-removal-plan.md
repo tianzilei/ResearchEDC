@@ -24,7 +24,6 @@ ResearchEDC no longer sends email and no longer exposes Enterprise support/conta
 - `shared/domain/user/UserAccount.email`
 - `app/module/study/entity/StudyEntity.facilityContactEmail`
 - `shared/domain/datamap/Study.facilityContactEmail`
-- questionnaire-service auth token parsing still accepts an `email` claim as identity metadata
 
 These are compatibility/schema mappings, not active product requirements.
 
@@ -53,6 +52,11 @@ These are compatibility/schema mappings, not active product requirements.
 - Verify study creation/update paths never require or surface `facilityContactEmail`.
 - Where helpful, explicitly write neutral compatibility values (`NULL` or empty string by contract) instead of accidental user-supplied content.
 
+Current progress:
+- New product-side user creation writes an empty compatibility `email` value.
+- New product-side study creation writes an empty compatibility `facilityContactEmail` value.
+- Questionnaire service auth principal no longer stores or surfaces an `email` claim.
+
 ### Slice E3: Contract And Schema Cleanup
 
 **Goal:** remove remaining email-specific storage/contract surface only after downstream compatibility review.
@@ -61,6 +65,16 @@ These are compatibility/schema mappings, not active product requirements.
 - Review rule schema/docs that still mention `EmailAction`.
 - Review migration-era structures such as `dc_send_email_event` and `rule_action.email_subject`.
 - Only then version or remove schema/contract surface.
+
+Current progress:
+- Rule import template guidance now marks `EmailAction` as compatibility-only, not an active ResearchEDC feature.
+- Remaining `facility_contact_email` labels are marked legacy/compatibility to avoid implying a live contact workflow.
+- ODM and rule XSD contracts now annotate `FacilityContactEmail` and `EmailAction` as compatibility-only legacy surface.
+
+Current blockers:
+- ODM/XSD contracts still structurally define `OpenClinica:FacilityContactEmail`.
+- Rule XSD contracts still structurally define `EmailAction`.
+- Historical Liquibase structures still contain `dc_send_email_event` and `rule_action.email_subject`.
 
 ## In Scope
 

@@ -23,7 +23,6 @@ KEYCLOAK_WELL_KNOWN = (
 class AuthUser:
     id: uuid.UUID
     username: str
-    email: str
     roles: list[str]
     study_roles: dict[str, str]
 
@@ -93,7 +92,6 @@ class KeycloakAuth:
         return AuthUser(
             id=uuid.UUID(payload.get("sub", "00000000-0000-0000-0000-000000000000")),
             username=payload.get("preferred_username", ""),
-            email=payload.get("email", ""),
             roles=realm_roles,
             study_roles=study_roles,
         )

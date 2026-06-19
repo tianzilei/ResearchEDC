@@ -56,7 +56,14 @@
         <xs:attributeGroup ref="DiscrepancyNoteActionAttributeType"/>
     </xs:complexType>
     
-    <xs:element name="EmailAction" type="EmailActionType"/>
+    <xs:element name="EmailAction" type="EmailActionType">
+        <xs:annotation>
+            <xs:documentation>
+                Compatibility-only legacy rule action. ResearchEDC no longer provides active email
+                delivery; new rules should use supported in-app actions instead of EmailAction.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
     <xs:complexType name="EmailActionType">
         <xs:sequence>
             <xs:element name="Run" type="ActionRunType" minOccurs="0"/>
