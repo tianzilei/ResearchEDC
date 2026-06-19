@@ -68,7 +68,7 @@ Current progress:
 
 Current progress:
 - Rule import template guidance now marks `EmailAction` as compatibility-only, not an active ResearchEDC feature.
-- Remaining `facility_contact_email` labels are marked legacy/compatibility to avoid implying a live contact workflow.
+- Unreferenced legacy i18n keys for `facility_contact_email` and retired Enterprise labels have been deleted from runtime bundles.
 - ODM and rule XSD contracts now annotate `FacilityContactEmail` and `EmailAction` as compatibility-only legacy surface.
 
 Current blockers:
