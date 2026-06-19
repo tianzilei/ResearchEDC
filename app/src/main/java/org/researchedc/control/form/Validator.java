@@ -36,10 +36,10 @@ import org.researchedc.bean.core.UserType;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ResponseOptionBean;
 import org.researchedc.bean.submit.ResponseSetBean;
-import org.researchedc.core.form.StringUtil;
-import org.researchedc.i18n.core.LocaleResolver;
-import org.researchedc.i18n.util.I18nFormatUtil;
-import org.researchedc.i18n.util.ResourceBundleProvider;
+import org.researchedc.control.form.support.FormFormatSupport;
+import org.researchedc.control.form.support.FormLocaleSupport;
+import org.researchedc.control.form.support.FormResourceBundleSupport;
+import org.researchedc.control.form.support.FormStringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -340,7 +340,11 @@ public class Validator {
     // ValidatorRegularExpression(
     // "MM/DD/YYYY", "[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}");
     public static ValidatorRegularExpression getDateRegEx() {
-        ResourceBundle resformat = ResourceBundleProvider.getFormatBundle();
+        return getDateRegEx(FormLocaleSupport.getDefaultLocale());
+    }
+
+    private static ValidatorRegularExpression getDateRegEx(Locale locale) {
+        ResourceBundle resformat = FormResourceBundleSupport.getFormatBundle(locale);
         return new ValidatorRegularExpression(resformat.getString("date_format"), resformat.getString("date_regexp"));
     }
 
@@ -350,7 +354,11 @@ public class Validator {
     // [0-9]{1,2}:[0-9]{1,2} [aApP][mM]");
 
     public static ValidatorRegularExpression getDateTimeRegEx() {
-        ResourceBundle resformat = ResourceBundleProvider.getFormatBundle();
+        return getDateTimeRegEx(FormLocaleSupport.getDefaultLocale());
+    }
+
+    private static ValidatorRegularExpression getDateTimeRegEx(Locale locale) {
+        ResourceBundle resformat = FormResourceBundleSupport.getFormatBundle(locale);
         return new ValidatorRegularExpression(resformat.getString("date_time_format"), resformat.getString("date_time_regexp"));
     }
 
@@ -361,7 +369,11 @@ public class Validator {
     // "123-456-7890", "[0-9]{3}[\\-\\.][0-9]{3}[\\-\\.][0-9]{4}");
 
     public static ValidatorRegularExpression getPhoneRegEx() {
-        ResourceBundle resformat = ResourceBundleProvider.getFormatBundle();
+        return getPhoneRegEx(FormLocaleSupport.getDefaultLocale());
+    }
+
+    private static ValidatorRegularExpression getPhoneRegEx(Locale locale) {
+        ResourceBundle resformat = FormResourceBundleSupport.getFormatBundle(locale);
         return new ValidatorRegularExpression(resformat.getString("phone_format"), resformat.getString("phone_regexp"));
     }
 
@@ -452,11 +464,11 @@ public class Validator {
         errors = new HashMap();
         this.request = request;
  //        locale=request.getLocale();
-       locale = LocaleResolver.getLocale(request);
-        resformat = ResourceBundleProvider.getFormatBundle(locale);
-        restext = ResourceBundleProvider.getTextsBundle(locale);
-        resexception = ResourceBundleProvider.getExceptionsBundle(locale);
-        resword = ResourceBundleProvider.getWordsBundle(locale);
+       locale = FormLocaleSupport.getLocale(request);
+        resformat = FormResourceBundleSupport.getFormatBundle(locale);
+        restext = FormResourceBundleSupport.getTextsBundle(locale);
+        resexception = FormResourceBundleSupport.getExceptionsBundle(locale);
+        resword = FormResourceBundleSupport.getWordsBundle(locale);
         lastField = "";
     }
 
@@ -473,10 +485,10 @@ public class Validator {
         this.fieldValues = fieldValues;
         this.request = null;
         this.locale = locale;
-        resformat = ResourceBundleProvider.getFormatBundle(locale);
-        restext = ResourceBundleProvider.getTextsBundle(locale);
-        resexception = ResourceBundleProvider.getExceptionsBundle(locale);
-        resword = ResourceBundleProvider.getWordsBundle(locale);
+        resformat = FormResourceBundleSupport.getFormatBundle(locale);
+        restext = FormResourceBundleSupport.getTextsBundle(locale);
+        resexception = FormResourceBundleSupport.getExceptionsBundle(locale);
+        resword = FormResourceBundleSupport.getWordsBundle(locale);
         lastField = "";
     }
 
@@ -672,9 +684,9 @@ public class Validator {
 
     protected void addError(String fieldName, Validation v) {
         if (fieldValues == null) {
-            locale = LocaleResolver.getLocale(request);
-            resexception = ResourceBundleProvider.getExceptionsBundle(locale);
-            resword = ResourceBundleProvider.getWordsBundle(locale);
+            locale = FormLocaleSupport.getLocale(request);
+            resexception = FormResourceBundleSupport.getExceptionsBundle(locale);
+            resword = FormResourceBundleSupport.getWordsBundle(locale);
         }
 
         String errorMessage = "";
@@ -701,18 +713,18 @@ public class Validator {
                         + Float.valueOf(upperBound).intValue() + ".";
                 break;
             case IS_A_DATE:
-                errorMessage = resexception.getString("input_not_valid_date") + getDateRegEx().getDescription() + " " + resexception.getString("format1") + ".";
+                errorMessage = resexception.getString("input_not_valid_date") + getDateRegEx(locale).getDescription() + " " + resexception.getString("format1") + ".";
                 break;
             case IS_DATE_TIME:
                 errorMessage =
-                    resexception.getString("input_not_valid_date_time") + getDateTimeRegEx().getDescription() + " " + resexception.getString("format2") + ".";
+                    resexception.getString("input_not_valid_date_time") + getDateTimeRegEx(locale).getDescription() + " " + resexception.getString("format2") + ".";
                 break;
             case CHECK_SAME:
                 errorMessage = resexception.getString("anwer_not_match");
                 break;
             case IS_A_PHONE_NUMBER:
                 errorMessage =
-                    resexception.getString("input_not_valid_phone") + getPhoneRegEx().getDescription() + " " + resexception.getString("format4") + ".";
+                    resexception.getString("input_not_valid_phone") + getPhoneRegEx(locale).getDescription() + " " + resexception.getString("format4") + ".";
                 break;
             case IS_AN_INTEGER:
                 errorMessage = resexception.getString("input_not_integer");
@@ -784,7 +796,7 @@ public class Validator {
                 errorMessage = resexception.getString("input_not_match_regular_expression") + v.getString(0) + ".";
                 break;
             case IS_A_DATE_WITHOUT_REQUIRED_CHECK:
-                errorMessage = resexception.getString("input_not_valid_date") + getDateRegEx().getDescription() + " " + resexception.getString("format1") + ".";
+                errorMessage = resexception.getString("input_not_valid_date") + getDateRegEx(locale).getDescription() + " " + resexception.getString("format1") + ".";
                 break;
             case IS_AN_RULE:
                 errorMessage = resexception.getString("input_not_integer");
@@ -1041,8 +1053,8 @@ public class Validator {
             String fieldValue = getFieldValue(fieldName);
             if (fieldValue != null) {
               
-                if (StringUtil.isFormatDate(fieldValue, resformat.getString("date_format_string"), locale) || StringUtil.isPartialYear(fieldValue, "yyyy", locale)
-                    || StringUtil.isPartialYearMonth(fieldValue, resformat.getString("date_format_year_month"),locale)) {
+                if (FormStringSupport.isFormatDate(fieldValue, resformat.getString("date_format_string"), locale) || FormStringSupport.isPartialYear(fieldValue, "yyyy", locale)
+                    || FormStringSupport.isPartialYearMonth(fieldValue, resformat.getString("date_format_year_month"),locale)) {
 
                     isPDate = true;
                 }
@@ -1195,13 +1207,13 @@ public class Validator {
      */
     protected boolean isDate(String fieldName) {
         String fieldValue = getFieldValue(fieldName);
-        if (StringUtil.isBlank(fieldValue)) {
+        if (FormStringSupport.isBlank(fieldValue)) {
             return false;
         }
-        if (!StringUtil.isDateFormatString(fieldValue, resformat.getString("date_format_string"), locale)) {
+        if (!FormStringSupport.isDateFormatString(fieldValue, resformat.getString("date_format_string"), locale)) {
             return false;
         }
-        SimpleDateFormat sdf = I18nFormatUtil.getDateFormat(locale);
+        SimpleDateFormat sdf = FormFormatSupport.getDateFormat(locale);
         sdf.setLenient(false);
         try {
             java.util.Date date = sdf.parse(fieldValue);
@@ -1221,7 +1233,7 @@ public class Validator {
      */
     protected boolean isDateWithoutRequiredCheck(String fieldName) {
         String fieldValue = request.getParameter(fieldName);
-        if (StringUtil.isBlank(fieldValue)) {
+        if (FormStringSupport.isBlank(fieldValue)) {
             return true;
         }
         SimpleDateFormat sdf = new SimpleDateFormat(resformat.getString("date_format_string"), locale);
@@ -1367,7 +1379,7 @@ public class Validator {
     // isEmail removed — email delivery retired (0 active callers, run-66)
 
     protected boolean isPhoneNumber(String fieldName) {
-        return matchesRegex(fieldName, getPhoneRegEx());
+        return matchesRegex(fieldName, getPhoneRegEx(locale));
     }
 
     protected boolean lengthComparesToStaticValue(String fieldName, NumericComparisonOperator operator, int compareTo) {
@@ -1759,7 +1771,7 @@ public class Validator {
 
     public static Validation processCRFValidationFunction(String inputFunction) throws Exception {
 
-        ResourceBundle resexception = ResourceBundleProvider.getExceptionsBundle();
+        ResourceBundle resexception = FormResourceBundleSupport.getExceptionsBundle(FormLocaleSupport.getDefaultLocale());
         Validation v = null;
         if (inputFunction.equals("func: barcode(EAN-13)")) {
             v = new Validation(BARCODE_EAN_13);
@@ -1820,7 +1832,7 @@ public class Validator {
         for (int i = 2; i <= funcMatcher.groupCount(); i++) {
             String arg = funcMatcher.group(i);
 
-            if (StringUtil.isBlank(arg)) {
+            if (FormStringSupport.isBlank(arg)) {
                 continue;
             }
 
@@ -1878,7 +1890,7 @@ public class Validator {
 
     public static Validation processCRFValidationRegex(String inputRegex) throws Exception {
 
-        ResourceBundle resexception = ResourceBundleProvider.getExceptionsBundle();
+        ResourceBundle resexception = FormResourceBundleSupport.getExceptionsBundle(FormLocaleSupport.getDefaultLocale());
 
         Validation v = new Validation(Validator.MATCHES_REGULAR_EXPRESSION);
 
@@ -1889,7 +1901,7 @@ public class Validator {
         finalRegexp = finalRegexp.substring(1, finalRegexp.length() - 1);
         // YW >>
 
-        if (StringUtil.isBlank(finalRegexp)) {
+        if (FormStringSupport.isBlank(finalRegexp)) {
             throw new Exception(resexception.getString("regular_expression_is_blank"));
         }
 
@@ -1915,7 +1927,7 @@ public class Validator {
     // ywang (02-2009)
     public static StringBuffer validateWidthDecimalSetting(String widthDecimal, String dataType, boolean isCalculationItem, Locale locale) {
         StringBuffer message = new StringBuffer();
-        ResourceBundle resException = ResourceBundleProvider.getExceptionsBundle(locale);
+        ResourceBundle resException = FormResourceBundleSupport.getExceptionsBundle(locale);
         if (Validator.validWidthDecimalPattern(widthDecimal, isCalculationItem)) {
             int width = Validator.parseWidth(widthDecimal);
             int decimal = Validator.parseDecimal(widthDecimal);
@@ -2009,7 +2021,7 @@ public class Validator {
         logger.debug("find locale=" + resexception.getLocale());
         StringBuffer message = new StringBuffer();
         String fieldValue = getFieldValue(fieldName);
-        if (StringUtil.isBlank(fieldValue)) {
+        if (FormStringSupport.isBlank(fieldValue)) {
             return message;
         }
         int width = Validator.parseWidth(widthDecimal);
@@ -2052,7 +2064,7 @@ public class Validator {
 
     private static Date parseDate(String date, Locale locale) {
         try {
-            SimpleDateFormat f = I18nFormatUtil.getDateFormat(locale);
+            SimpleDateFormat f = FormFormatSupport.getDateFormat(locale);
             f.setLenient(false);
             return f.parse(date);
         } catch (Exception e) {

@@ -112,6 +112,9 @@ These are closed and should not be reopened except to fix regressions:
 - Move shared localization and formatting dependencies behind app-owned wrappers.
 - Replace shared bean assumptions where practical with narrower app/module contracts.
 
+**Current Progress**
+- `app/control/form/Validator` now resolves locale, bundles, date formats, and string/date checks through app-owned `control/form/support` classes instead of direct `shared/core` or `shared/i18n` imports.
+
 **Exit Gate**
 - `app/control/form/*` no longer depends directly on `shared/core/*` or `shared/i18n/*`.
 
