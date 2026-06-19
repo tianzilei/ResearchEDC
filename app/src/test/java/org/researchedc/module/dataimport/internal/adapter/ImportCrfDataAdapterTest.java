@@ -26,7 +26,6 @@ import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.core.CoreResources;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.module.dataimport.service.ImportCrfVersionPort;
 import org.researchedc.module.dataimport.service.ImportEventCrfPort;
@@ -44,9 +43,6 @@ class ImportCrfDataAdapterTest {
 
     @Test
     void parseOdm_readsRepresentativeClinicalDataFixture() throws Exception {
-        CoreResources.ODM_MAPPING_DIR = Path.of("../shared/src/main/resources/properties")
-                .toAbsolutePath()
-                .toString();
         Path fixture = Files.createTempFile("representative-crf-data", ".xml");
         Files.writeString(fixture, """
                 <?xml version="1.0" encoding="UTF-8"?>

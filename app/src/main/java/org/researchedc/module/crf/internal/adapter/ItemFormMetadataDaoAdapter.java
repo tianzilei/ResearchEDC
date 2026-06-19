@@ -13,7 +13,6 @@ import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.domain.crfdata.InstantOnChangePairContainer;
-import org.researchedc.exception.OpenClinicaException;
 import org.researchedc.module.dataimport.service.ImportItemFormMetadataPort;
 import org.researchedc.module.crf.entity.ItemFormMetadataEntity;
 import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
@@ -257,7 +256,7 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         return new HashMap<>();
     }
 
-    public ArrayList<ItemFormMetadataBean> findByMultiplePKs(ArrayList ints) throws OpenClinicaException {
+    public ArrayList<ItemFormMetadataBean> findByMultiplePKs(ArrayList ints) {
         ArrayList<ItemFormMetadataBean> answer = new ArrayList<>();
         for (Object pk : ints) {
             int id = (pk instanceof Number n) ? n.intValue() : Integer.parseInt(pk.toString());

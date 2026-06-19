@@ -76,6 +76,11 @@ These are closed and should not be reopened except to fix regressions:
 - Move runtime support classes into `app/config`, `app/control/form/support`, or module-local infrastructure packages.
 - Continue shrinking support-style helpers until no app-owned runtime support remains in `shared/`.
 
+**Current Progress**
+- `app/control/form/Validator` now uses app-owned form support for locale/bundle/format behavior.
+- `app/module/dataimport/internal/adapter/ImportCrfDataAdapter` now resolves ODM mapping and page-message bundles through module-owned support instead of direct `shared/core` or `shared/i18n` imports.
+- `app/module/crf/internal/adapter/*` no longer imports `shared/exception` or `shared/core/util` compatibility helper types.
+
 **Exit Gate**
 - No production code outside `shared/` imports `org.researchedc.core.*`, `i18n.*`, or `exception.*`.
 
@@ -95,6 +100,9 @@ These are closed and should not be reopened except to fix regressions:
   - `shared.bean.submit.crfdata.*`
   - `shared.bean.login.*`
 - Preserve current upload/validate/commit behavior while replacing legacy DTO plumbing.
+
+**Current Progress**
+- ODM mapping resource lookup and page-message bundle resolution now live in `module/dataimport/internal/support`, so `ImportCrfDataAdapter` no longer depends directly on shared support classes while preserving the current import validation flow.
 
 **Exit Gate**
 - `ImportCrfDataAdapter` no longer imports `shared.bean.*` packages except where an explicitly retained external compatibility contract still requires it.

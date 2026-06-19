@@ -4,7 +4,6 @@ import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.submit.ItemBean;
-import org.researchedc.core.util.ItemGroupCrvVersionUtil;
 import org.researchedc.module.crf.entity.ItemEntity;
 import org.researchedc.module.crf.repository.ItemRepository;
 import org.researchedc.module.dataimport.service.ImportItemPort;
@@ -212,11 +211,11 @@ public class ItemDaoAdapter implements ImportItemPort {
         return new ArrayList<>();
     }
 
-    public ArrayList<ItemGroupCrvVersionUtil> findAllWithItemGroupCRFVersionMetadataByCRFId(String crfName) {
+    public ArrayList<ItemGroupCrfVersionView> findAllWithItemGroupCRFVersionMetadataByCRFId(String crfName) {
         return new ArrayList<>();
     }
 
-    public ArrayList<ItemGroupCrvVersionUtil> findAllWithItemDetailsGroupCRFVersionMetadataByCRFId(String crfName) {
+    public ArrayList<ItemGroupCrfVersionView> findAllWithItemDetailsGroupCRFVersionMetadataByCRFId(String crfName) {
         return new ArrayList<>();
     }
 

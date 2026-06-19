@@ -1,6 +1,5 @@
 package org.researchedc.module.dataimport.internal.adapter;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -41,8 +40,6 @@ import org.researchedc.bean.submit.crfdata.UpsertOnBean;
 import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.Validator;
-import org.researchedc.core.CoreResources;
-import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.module.dataimport.service.ImportCrfVersionPort;
 import org.researchedc.module.dataimport.service.ImportEventCrfPort;
 import org.researchedc.module.dataimport.service.ImportItemDataPort;
@@ -54,6 +51,7 @@ import org.researchedc.module.dataimport.service.ImportStudyEventDefinitionPort;
 import org.researchedc.module.dataimport.service.ImportStudyEventPort;
 import org.researchedc.module.dataimport.service.ImportStudyLookupPort;
 import org.researchedc.module.dataimport.service.ImportStudySubjectPort;
+import org.researchedc.module.dataimport.internal.support.ImportCompatibilitySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -109,9 +107,8 @@ public class ImportCrfDataAdapter {
 
     private ODMContainer parseOdmContainer(Path filePath) {
         try {
-            String mappingDir = CoreResources.ODM_MAPPING_DIR;
             Mapping mapping = new Mapping();
-            mapping.loadMapping(mappingDir + File.separator + "cd_odm_mapping.xml");
+            mapping.loadMapping(ImportCompatibilitySupport.odmMappingLocation());
             Unmarshaller unmarshaller = new Unmarshaller(mapping);
             try (InputStreamReader reader = new InputStreamReader(
                     new FileInputStream(filePath.toFile()), StandardCharsets.UTF_8)) {
@@ -128,9 +125,8 @@ public class ImportCrfDataAdapter {
     }
 
     public List<String> validateMetadata(ParsedOdm parsed, int studyId, Locale locale) {
-        ResourceBundleProvider.updateLocale(locale);
         return validateStudyMetadata(parsed.odm(), studyId,
-                ResourceBundleProvider.getPageMessagesBundle(locale));
+                ImportCompatibilitySupport.pageMessagesBundle(locale));
     }
 
     private UserAccountBean importUser(int studyId) {
