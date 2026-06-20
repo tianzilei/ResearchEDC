@@ -7,7 +7,6 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.researchedc.domain.datamap.ResponseSet;
-import org.researchedc.domain.datamap.ResponseType;
 import org.researchedc.module.dataimport.service.ImportResponseSetPort;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -42,10 +41,6 @@ public class ResponseSetDaoAdapter implements ImportResponseSetPort {
 
     @Transactional
     public ResponseSet saveOrUpdate(ResponseSet responseSet) {
-        Integer responseTypeId = responseSet.getResponseType() != null
-                ? responseSet.getResponseType().getResponseTypeId()
-                : null;
-
         if (responseSet.getResponseSetId() > 0) {
             String sql = "UPDATE response_set SET label = ?, options_text = ?, options_values = ?,"
                     + " version_id = ?, response_type_id = ?"
@@ -55,7 +50,7 @@ public class ResponseSetDaoAdapter implements ImportResponseSetPort {
                     responseSet.getOptionsText(),
                     responseSet.getOptionsValues(),
                     responseSet.getVersionId(),
-                    responseTypeId,
+                    responseSet.getResponseTypeId(),
                     responseSet.getResponseSetId());
         } else {
             Number newId = jdbcTemplate.queryForObject(
@@ -70,7 +65,7 @@ public class ResponseSetDaoAdapter implements ImportResponseSetPort {
                     responseSet.getOptionsText(),
                     responseSet.getOptionsValues(),
                     responseSet.getVersionId(),
-                    responseTypeId);
+                    responseSet.getResponseTypeId());
 
             responseSet.setResponseSetId(id);
         }
@@ -97,9 +92,7 @@ public class ResponseSetDaoAdapter implements ImportResponseSetPort {
 
         int responseTypeId = rs.getInt("response_type_id");
         if (!rs.wasNull()) {
-            ResponseType stub = new ResponseType();
-            stub.setResponseTypeId(responseTypeId);
-            responseSet.setResponseType(stub);
+            responseSet.setResponseTypeId(responseTypeId);
         }
 
         return responseSet;

@@ -8,8 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -27,7 +25,7 @@ import org.hibernate.annotations.Parameter;
 public class ResponseSet  extends DataMapDomainObject {
 
 	private int responseSetId;
-	private ResponseType responseType;
+	private Integer responseTypeId;
 	private String label;
 	private String optionsText;
 	private String optionsValues;
@@ -41,11 +39,11 @@ public class ResponseSet  extends DataMapDomainObject {
 		this.responseSetId = responseSetId;
 	}
 
-	public ResponseSet(int responseSetId, ResponseType responseType,
+	public ResponseSet(int responseSetId, Integer responseTypeId,
 			String label, String optionsText, String optionsValues,
 			Integer versionId, List<ItemFormMetadata> itemFormMetadatas) {
 		this.responseSetId = responseSetId;
-		this.responseType = responseType;
+		this.responseTypeId = responseTypeId;
 		this.label = label;
 		this.optionsText = optionsText;
 		this.optionsValues = optionsValues;
@@ -64,14 +62,13 @@ public class ResponseSet  extends DataMapDomainObject {
 		this.responseSetId = responseSetId;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "response_type_id")
-	public ResponseType getResponseType() {
-		return this.responseType;
+	@Column(name = "response_type_id")
+	public Integer getResponseTypeId() {
+		return this.responseTypeId;
 	}
 
-	public void setResponseType(ResponseType responseType) {
-		this.responseType = responseType;
+	public void setResponseTypeId(Integer responseTypeId) {
+		this.responseTypeId = responseTypeId;
 	}
 
 	@Column(name = "label", length = 80)

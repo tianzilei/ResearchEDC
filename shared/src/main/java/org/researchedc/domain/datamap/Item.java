@@ -35,9 +35,9 @@ public class Item  extends DataMapDomainObject{
 
 	private int itemId;
 	private UserAccount userAccount;
-	private ItemReferenceType itemReferenceType;
+	private Integer itemReferenceTypeId;
 	private Status status;
-	private ItemDataType itemDataType;
+	private Integer itemDataTypeId;
 	private String name;
 	private String description;
 	private String units;
@@ -56,15 +56,15 @@ public class Item  extends DataMapDomainObject{
 	}
 
 	public Item(int itemId, UserAccount userAccount,
-			ItemReferenceType itemReferenceType, Status status,
-			ItemDataType itemDataType, String name, String description,
+			Integer itemReferenceTypeId, Status status,
+			Integer itemDataTypeId, String name, String description,
 			String units, Boolean phiStatus, Date dateCreated,
 			Date dateUpdated, Integer updateId, String ocOid) {
 		this.itemId = itemId;
 		this.userAccount = userAccount;
-		this.itemReferenceType = itemReferenceType;
+		this.itemReferenceTypeId = itemReferenceTypeId;
 		this.status = status;
-		this.itemDataType = itemDataType;
+		this.itemDataTypeId = itemDataTypeId;
 		this.name = name;
 		this.description = description;
 		this.units = units;
@@ -97,14 +97,13 @@ public class Item  extends DataMapDomainObject{
 		this.userAccount = userAccount;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "item_reference_type_id")
-	public ItemReferenceType getItemReferenceType() {
-		return this.itemReferenceType;
+	@Column(name = "item_reference_type_id")
+	public Integer getItemReferenceTypeId() {
+		return this.itemReferenceTypeId;
 	}
 
-	public void setItemReferenceType(ItemReferenceType itemReferenceType) {
-		this.itemReferenceType = itemReferenceType;
+	public void setItemReferenceTypeId(Integer itemReferenceTypeId) {
+		this.itemReferenceTypeId = itemReferenceTypeId;
 	}
 
 	@Type(value = org.researchedc.domain.enumsupport.CodedEnumType.class, parameters = @org.hibernate.annotations.Parameter(name = "enumClassname", value = "org.researchedc.bean.core.Status"))
@@ -120,14 +119,13 @@ public class Item  extends DataMapDomainObject{
 		this.status = status;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "item_data_type_id")
-	public ItemDataType getItemDataType() {
-		return this.itemDataType;
+	@Column(name = "item_data_type_id")
+	public Integer getItemDataTypeId() {
+		return this.itemDataTypeId;
 	}
 
-	public void setItemDataType(ItemDataType itemDataType) {
-		this.itemDataType = itemDataType;
+	public void setItemDataTypeId(Integer itemDataTypeId) {
+		this.itemDataTypeId = itemDataTypeId;
 	}
 
 	@Column(name = "name")

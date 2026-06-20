@@ -11,7 +11,7 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `109` files
+- Remaining `shared/` Java surface: `106` files
 - Modulith Java surface: `383` files
 - Code balance by file count: `22%` shared legacy / `78%` module modern
 
@@ -35,7 +35,7 @@ This means the workflow-level deletion program is complete. The remaining work i
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
 | `shared/bean` | 52 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
-| `shared/domain` | 49 | Legacy entities and shared mapping model still used by repositories/adapters |
+| `shared/domain` | 46 | Legacy entities and shared mapping model still used by repositories/adapters |
 | `shared/core` | 3 | Resource/config/path and utility support still used by import, form, and shared compatibility code |
 | `shared/i18n` | 3 | Legacy form/import localization support |
 | `shared/exception` | 2 | Compatibility exception types |
@@ -185,6 +185,7 @@ These are closed and should not be reopened except to fix regressions:
 - Discrepancy-note DN link-table mappings (`Dn*Map` and `Dn*MapId`) were removed after confirming the only remaining references were uncalled Hibernate-era reverse collections on `DiscrepancyNote`; the active discrepancy-note module uses module-owned entities/repositories.
 - Retired datamap `EventCrf` and `CompletionStatus` mappings were removed after confirming no app/shared code imports them; `ItemData` now keeps the `event_crf_id` column as a scalar compatibility field.
 - Legacy subject-group datamap graph (`GroupClassTypes`, `StudyGroupClass`, `StudyGroup`, `SubjectGroupMap`) and unused `StudyModuleStatus` were removed after scans confirmed no live Java callers; active subject-group behavior uses module-owned `module_study_group*` entities/repositories.
+- Retired datamap lookup mappings for `ItemReferenceType`, `ItemDataType`, and `ResponseType` were removed after converting retained compatibility entities to scalar id columns.
 
 **Exit Gate**
 - Each removed `shared/domain` file has zero production callers and zero repository/runtime mapping requirements.
