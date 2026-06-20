@@ -1,7 +1,5 @@
 package org.researchedc.domain.datamap;
 import java.util.Date;
-import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,8 +7,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -46,13 +42,7 @@ public class DiscrepancyNote  extends DataMapDomainObject {
 	private Date dateCreated;
 	private Integer parentDnId;
 	private String entityType;
-	private List<DnStudyEventMap> dnStudyEventMaps;
-	private List<DnEventCrfMap> dnEventCrfMaps ;
-	private List<DnItemDataMap> dnItemDataMaps;
-	private List<DnStudySubjectMap> dnStudySubjectMaps;
-	private List<DnSubjectMap> dnSubjectMaps ;
 	private DiscrepancyNote parentDiscrepancyNote;
-	private List<DiscrepancyNote> childDiscrepancyNotes;
 
 	public DiscrepancyNote() {
 	}
@@ -67,8 +57,7 @@ public class DiscrepancyNote  extends DataMapDomainObject {
 			UserAccount userAccount, Study study,
 			ResolutionStatus resolutionStatus, String description,
 			String detailedNotes, Date dateCreated, Integer parentDnId,
-			String entityType, List<DnStudyEventMap> dnStudyEventMaps, List<DnEventCrfMap> dnEventCrfMaps,
-			List<DnItemDataMap> dnItemDataMaps, List<DnStudySubjectMap> dnStudySubjectMaps, List<DnSubjectMap> dnSubjectMaps) {
+			String entityType) {
 		this.discrepancyNoteId = discrepancyNoteId;
 		this.userAccountByOwnerId = userAccountByOwnerId;
 		this.discrepancyNoteType = discrepancyNoteType;
@@ -80,11 +69,6 @@ public class DiscrepancyNote  extends DataMapDomainObject {
 		this.dateCreated = dateCreated;
 		this.parentDnId = parentDnId;
 		this.entityType = entityType;
-		this.dnStudyEventMaps = dnStudyEventMaps;
-		this.dnEventCrfMaps = dnEventCrfMaps;
-		this.dnItemDataMaps = dnItemDataMaps;
-		this.dnStudySubjectMaps = dnStudySubjectMaps;
-		this.dnSubjectMaps = dnSubjectMaps;
 	}
 
 	@Id
@@ -206,64 +190,4 @@ public class DiscrepancyNote  extends DataMapDomainObject {
 	public void setParentDiscrepancyNote(DiscrepancyNote parentDiscrepancyNote){
 		this.parentDiscrepancyNote = parentDiscrepancyNote;
 	}
-	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "parentDiscrepancyNote")
-	@OrderBy("discrepancyNoteId")
-	public List<DiscrepancyNote> getChildDiscrepancyNotes(){
-		return this.childDiscrepancyNotes;
-	}
-	
-	public void setChildDiscrepancyNotes(List<DiscrepancyNote> childDiscrepancyNotes){
-		this.childDiscrepancyNotes = childDiscrepancyNotes;
-	}
-	
-	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "discrepancyNote")
-	public List<DnStudyEventMap> getDnStudyEventMaps() {
-		return this.dnStudyEventMaps;
-	}
-
-	public void setDnStudyEventMaps(List<DnStudyEventMap> dnStudyEventMaps) {
-		this.dnStudyEventMaps = dnStudyEventMaps;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "discrepancyNote")
-	public List<DnEventCrfMap> getDnEventCrfMaps() {
-		return this.dnEventCrfMaps;
-	}
-
-	public void setDnEventCrfMaps(List<DnEventCrfMap> dnEventCrfMaps) {
-		this.dnEventCrfMaps = dnEventCrfMaps;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "discrepancyNote")
-	public List<DnItemDataMap> getDnItemDataMaps() {
-		return this.dnItemDataMaps;
-	}
-
-	public void setDnItemDataMaps(List<DnItemDataMap> dnItemDataMaps) {
-		this.dnItemDataMaps = dnItemDataMaps;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "discrepancyNote")
-	public List<DnStudySubjectMap> getDnStudySubjectMaps() {
-		return this.dnStudySubjectMaps;
-	}
-
-	public void setDnStudySubjectMaps(List<DnStudySubjectMap> dnStudySubjectMaps) {
-		this.dnStudySubjectMaps = dnStudySubjectMaps;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "discrepancyNote")
-	public List<DnSubjectMap> getDnSubjectMaps() {
-		return this.dnSubjectMaps;
-	}
-
-	public void setDnSubjectMaps(List<DnSubjectMap> dnSubjectMaps) {
-		this.dnSubjectMaps = dnSubjectMaps;
-	}
-
-
-	
-
 }
