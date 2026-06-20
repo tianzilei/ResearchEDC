@@ -35,7 +35,7 @@ public class ItemData  extends DataMapDomainObject {
 
 	private int itemDataId;
 	private UserAccount userAccount;
-	private EventCrf eventCrf;
+	private Integer eventCrfId;
 	private Item item;
 	private Status status;
 	private String value;
@@ -54,12 +54,12 @@ public class ItemData  extends DataMapDomainObject {
 		this.item = item;
 	}
 
-	public ItemData(int itemDataId, UserAccount userAccount, EventCrf eventCrf,
+	public ItemData(int itemDataId, UserAccount userAccount, Integer eventCrfId,
 			Item item, Status status, String value, Date dateCreated,
 			Date dateUpdated, Integer updateId, Integer ordinal, Boolean ocformDeleted) {
 		this.itemDataId = itemDataId;
 		this.userAccount = userAccount;
-		this.eventCrf = eventCrf;
+		this.eventCrfId = eventCrfId;
 		this.item = item;
 		this.status = status;
 		this.value = value;
@@ -91,14 +91,13 @@ public class ItemData  extends DataMapDomainObject {
 		this.userAccount = userAccount;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "event_crf_id")
-	public EventCrf getEventCrf() {
-		return this.eventCrf;
+	@Column(name = "event_crf_id")
+	public Integer getEventCrfId() {
+		return this.eventCrfId;
 	}
 
-	public void setEventCrf(EventCrf eventCrf) {
-		this.eventCrf = eventCrf;
+	public void setEventCrfId(Integer eventCrfId) {
+		this.eventCrfId = eventCrfId;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
