@@ -24,7 +24,6 @@ import org.researchedc.domain.datamap.Item;
 import org.researchedc.domain.datamap.ItemGroup;
 import org.researchedc.domain.datamap.Study;
 import org.researchedc.domain.datamap.StudyUserRole;
-import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;

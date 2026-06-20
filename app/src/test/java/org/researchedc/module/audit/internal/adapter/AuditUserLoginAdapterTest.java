@@ -18,10 +18,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
-import org.researchedc.domain.technicaladmin.LoginStatus;
 import org.researchedc.module.audit.dto.AuditUserLoginDTO;
 import org.researchedc.module.audit.dto.AuditUserLoginQuery;
+import org.researchedc.module.audit.entity.AuditLoginStatus;
+import org.researchedc.module.audit.entity.AuditUserLoginEntry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -31,24 +31,24 @@ class AuditUserLoginAdapterTest {
     @Test
     @SuppressWarnings({"unchecked", "rawtypes"})
     void findUserLogins_mapsLegacyRowsToPagedDtos() {
-        AuditUserLoginBean bean = new AuditUserLoginBean();
+        AuditUserLoginEntry bean = new AuditUserLoginEntry();
         bean.setId(42);
         bean.setUserName("sysadmin");
         bean.setUserAccountId(7);
         bean.setLoginAttemptDate(Date.from(Instant.parse("2026-06-07T12:00:00Z")));
-        bean.setLoginStatus(LoginStatus.SUCCESSFUL_LOGIN);
+        bean.setLoginStatusCode(AuditLoginStatus.SUCCESSFUL_LOGIN.code());
         bean.setDetails("login ok");
 
         EntityManager entityManager = org.mockito.Mockito.mock(EntityManager.class);
         CriteriaBuilder cb = org.mockito.Mockito.mock(CriteriaBuilder.class);
         CriteriaQuery<Long> countQuery = org.mockito.Mockito.mock(CriteriaQuery.class);
-        CriteriaQuery<AuditUserLoginBean> rowQuery = org.mockito.Mockito.mock(CriteriaQuery.class);
-        Root<AuditUserLoginBean> countRoot = org.mockito.Mockito.mock(Root.class);
-        Root<AuditUserLoginBean> rowRoot = org.mockito.Mockito.mock(Root.class);
+        CriteriaQuery<AuditUserLoginEntry> rowQuery = org.mockito.Mockito.mock(CriteriaQuery.class);
+        Root<AuditUserLoginEntry> countRoot = org.mockito.Mockito.mock(Root.class);
+        Root<AuditUserLoginEntry> rowRoot = org.mockito.Mockito.mock(Root.class);
         Predicate predicate = org.mockito.Mockito.mock(Predicate.class);
         Order order = org.mockito.Mockito.mock(Order.class);
         TypedQuery<Long> typedCount = org.mockito.Mockito.mock(TypedQuery.class);
-        TypedQuery<AuditUserLoginBean> typedRows = org.mockito.Mockito.mock(TypedQuery.class);
+        TypedQuery<AuditUserLoginEntry> typedRows = org.mockito.Mockito.mock(TypedQuery.class);
         Path stringPath = org.mockito.Mockito.mock(Path.class);
         Expression lowerExpression = org.mockito.Mockito.mock(Expression.class);
         Path datePath = org.mockito.Mockito.mock(Path.class);
@@ -57,22 +57,22 @@ class AuditUserLoginAdapterTest {
 
         when(entityManager.getCriteriaBuilder()).thenReturn(cb);
         when(cb.createQuery(Long.class)).thenReturn(countQuery);
-        when(cb.createQuery(AuditUserLoginBean.class)).thenReturn(rowQuery);
-        when(countQuery.from(AuditUserLoginBean.class)).thenReturn(countRoot);
-        when(rowQuery.from(AuditUserLoginBean.class)).thenReturn(rowRoot);
+        when(cb.createQuery(AuditUserLoginEntry.class)).thenReturn(rowQuery);
+        when(countQuery.from(AuditUserLoginEntry.class)).thenReturn(countRoot);
+        when(rowQuery.from(AuditUserLoginEntry.class)).thenReturn(rowRoot);
         when(countRoot.get("userName")).thenReturn(stringPath);
         when(countRoot.get("details")).thenReturn(stringPath);
-        when(countRoot.get("loginStatus")).thenReturn(statusPath);
+        when(countRoot.get("loginStatusCode")).thenReturn(statusPath);
         when(countRoot.get("loginAttemptDate")).thenReturn(datePath);
         when(rowRoot.get("userName")).thenReturn(stringPath);
         when(rowRoot.get("details")).thenReturn(stringPath);
-        when(rowRoot.get("loginStatus")).thenReturn(statusPath);
+        when(rowRoot.get("loginStatusCode")).thenReturn(statusPath);
         when(rowRoot.get("loginAttemptDate")).thenReturn(datePath);
         when(stringPath.as(String.class)).thenReturn(stringPath);
         when(cb.lower(stringPath)).thenReturn(lowerExpression);
         when(cb.like(lowerExpression, "%sys%")).thenReturn(predicate);
         when(cb.like(lowerExpression, "%login%")).thenReturn(predicate);
-        when(cb.equal(statusPath, LoginStatus.SUCCESSFUL_LOGIN)).thenReturn(predicate);
+        when(cb.equal(statusPath, AuditLoginStatus.SUCCESSFUL_LOGIN.code())).thenReturn(predicate);
         when(cb.between(org.mockito.Mockito.eq(datePath), org.mockito.Mockito.any(Date.class), org.mockito.Mockito.any(Date.class)))
                 .thenReturn(predicate);
         when(cb.or(org.mockito.Mockito.any(Predicate[].class))).thenReturn(predicate);

@@ -1,31 +1,16 @@
-/* 
- * OpenClinica is distributed under the
- * GNU Lesser General Public License (GNU LGPL).
- * For details see: http://www.openclinica.org/license
- *
- * Copyright 2003-2008 Akaza Research 
- */
-package org.researchedc.domain.technicaladmin;
-
-import java.util.Date;
+package org.researchedc.module.audit.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
+import java.util.Date;
 
-/**
- * <p>
- * Does not extend any Super Domain class because it does not follow OpenClinica convention. This table is managed via LiquiBase
- * </p>
- * 
- * @author Krikor Krumlian
- */
 @Entity
 @Table(name = "databasechangelog")
-@IdClass(DatabaseChangeLogBeanPk.class)
-public class DatabaseChangeLogBean {
+@IdClass(DatabaseChangeLogEntryId.class)
+public class DatabaseChangeLogEntry {
 
     private String id;
     private String author;

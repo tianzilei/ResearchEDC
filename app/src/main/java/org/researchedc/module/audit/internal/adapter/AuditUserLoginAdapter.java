@@ -15,10 +15,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
-import org.researchedc.domain.technicaladmin.AuditUserLoginBean;
-import org.researchedc.domain.technicaladmin.LoginStatus;
 import org.researchedc.module.audit.dto.AuditUserLoginDTO;
 import org.researchedc.module.audit.dto.AuditUserLoginQuery;
+import org.researchedc.module.audit.entity.AuditLoginStatus;
+import org.researchedc.module.audit.entity.AuditUserLoginEntry;
 import org.researchedc.module.audit.service.AuditUserLoginPort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -50,7 +50,7 @@ class AuditUserLoginAdapter implements AuditUserLoginPort {
     private int count(AuditUserLoginQuery query) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        Root<AuditUserLoginBean> root = cq.from(AuditUserLoginBean.class);
+        Root<AuditUserLoginEntry> root = cq.from(AuditUserLoginEntry.class);
         Predicate predicate = buildPredicate(cb, root, query);
         if (predicate != null) {
             cq.where(predicate);
@@ -59,10 +59,10 @@ class AuditUserLoginAdapter implements AuditUserLoginPort {
         return entityManager.createQuery(cq).getSingleResult().intValue();
     }
 
-    private List<AuditUserLoginBean> findRows(AuditUserLoginQuery query, int rowStart, int pageSize) {
+    private List<AuditUserLoginEntry> findRows(AuditUserLoginQuery query, int rowStart, int pageSize) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<AuditUserLoginBean> cq = cb.createQuery(AuditUserLoginBean.class);
-        Root<AuditUserLoginBean> root = cq.from(AuditUserLoginBean.class);
+        CriteriaQuery<AuditUserLoginEntry> cq = cb.createQuery(AuditUserLoginEntry.class);
+        Root<AuditUserLoginEntry> root = cq.from(AuditUserLoginEntry.class);
         Predicate predicate = buildPredicate(cb, root, query);
         if (predicate != null) {
             cq.where(predicate);
@@ -71,13 +71,13 @@ class AuditUserLoginAdapter implements AuditUserLoginPort {
         if (!orders.isEmpty()) {
             cq.orderBy(orders);
         }
-        TypedQuery<AuditUserLoginBean> typedQuery = entityManager.createQuery(cq);
+        TypedQuery<AuditUserLoginEntry> typedQuery = entityManager.createQuery(cq);
         typedQuery.setFirstResult(rowStart);
         typedQuery.setMaxResults(pageSize);
         return typedQuery.getResultList();
     }
 
-    private Predicate buildPredicate(CriteriaBuilder cb, Root<AuditUserLoginBean> root, AuditUserLoginQuery query) {
+    private Predicate buildPredicate(CriteriaBuilder cb, Root<AuditUserLoginEntry> root, AuditUserLoginQuery query) {
         List<Predicate> predicates = new ArrayList<>();
         addTextPredicate(cb, root, predicates, "userName", query.userName());
         addDatePredicate(cb, root, predicates, query.loginAttemptDate());
@@ -86,7 +86,7 @@ class AuditUserLoginAdapter implements AuditUserLoginPort {
         return predicates.isEmpty() ? null : cb.and(predicates.toArray(new Predicate[0]));
     }
 
-    private void addTextPredicate(CriteriaBuilder cb, Root<AuditUserLoginBean> root, List<Predicate> predicates,
+    private void addTextPredicate(CriteriaBuilder cb, Root<AuditUserLoginEntry> root, List<Predicate> predicates,
                                   String property, String value) {
         if (value != null && !value.isBlank()) {
             predicates.add(cb.like(cb.lower(root.get(property).as(String.class)),
@@ -94,14 +94,14 @@ class AuditUserLoginAdapter implements AuditUserLoginPort {
         }
     }
 
-    private void addLoginStatusPredicate(CriteriaBuilder cb, Root<AuditUserLoginBean> root,
+    private void addLoginStatusPredicate(CriteriaBuilder cb, Root<AuditUserLoginEntry> root,
                                          List<Predicate> predicates, String value) {
         if (value != null && !value.isBlank()) {
-            predicates.add(cb.equal(root.get("loginStatus"), LoginStatus.getByName(value)));
+            predicates.add(cb.equal(root.get("loginStatusCode"), AuditLoginStatus.fromName(value).code()));
         }
     }
 
-    private void addDatePredicate(CriteriaBuilder cb, Root<AuditUserLoginBean> root,
+    private void addDatePredicate(CriteriaBuilder cb, Root<AuditUserLoginEntry> root,
                                   List<Predicate> predicates, String value) {
         if (value == null || value.isBlank()) {
             return;
@@ -117,7 +117,7 @@ class AuditUserLoginAdapter implements AuditUserLoginPort {
         }
     }
 
-    private void addDateRangePredicate(CriteriaBuilder cb, Root<AuditUserLoginBean> root, String value,
+    private void addDateRangePredicate(CriteriaBuilder cb, Root<AuditUserLoginEntry> root, String value,
                                        String pattern, int plusAmount, List<Predicate> predicates) {
         try {
             DateFormat format = new SimpleDateFormat(pattern);
@@ -136,7 +136,7 @@ class AuditUserLoginAdapter implements AuditUserLoginPort {
         }
     }
 
-    private List<Order> toOrders(CriteriaBuilder cb, Root<AuditUserLoginBean> root, Pageable pageable) {
+    private List<Order> toOrders(CriteriaBuilder cb, Root<AuditUserLoginEntry> root, Pageable pageable) {
         Sort requestedSort = pageable.getSort().isSorted() ? pageable.getSort() : DEFAULT_SORT;
         List<Order> orders = new ArrayList<>();
         requestedSort.forEach(order -> orders.add(order.isAscending()
@@ -149,14 +149,15 @@ class AuditUserLoginAdapter implements AuditUserLoginPort {
         this.entityManager = entityManager;
     }
 
-    private AuditUserLoginDTO toDto(AuditUserLoginBean bean) {
+    private AuditUserLoginDTO toDto(AuditUserLoginEntry bean) {
+        AuditLoginStatus loginStatus = bean.loginStatus();
         return new AuditUserLoginDTO(
                 bean.getId(),
                 bean.getUserName(),
                 bean.getUserAccountId(),
                 bean.getLoginAttemptDate() != null ? bean.getLoginAttemptDate().toInstant().toString() : null,
-                bean.getLoginStatus() != null ? bean.getLoginStatus().name() : null,
-                bean.getLoginStatus() != null ? bean.getLoginStatus().getCode().toString() : null,
+                loginStatus != null ? loginStatus.name() : null,
+                bean.getLoginStatusCode() != null ? bean.getLoginStatusCode().toString() : null,
                 bean.getDetails());
     }
 }

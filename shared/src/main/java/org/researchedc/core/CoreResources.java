@@ -6,11 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.researchedc.bean.extract.ExtractPropertyBean;
 import org.researchedc.exception.OpenClinicaSystemException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -46,7 +44,6 @@ public class CoreResources implements ResourceLoaderAware {
     private static String webapp;
     protected final static Logger logger = LoggerFactory.getLogger(CoreResources.class);
     // private MessageSource messageSource;
-    private static ArrayList<ExtractPropertyBean> extractProperties;
 
     public static String ODM_MAPPING_DIR;
 
@@ -157,8 +154,6 @@ public class CoreResources implements ResourceLoaderAware {
                 copyBaseToDest(resourceLoader);
                 // @pgawade 18-April-2011 Fix for issue 8394
                 copyODMMappingXMLtoResources(resourceLoader);
-                // JN: this is in for junits to run without extract props
-                copyImportRulesFiles();
                 copyConfig();
             }
 
@@ -457,37 +452,6 @@ public class CoreResources implements ResourceLoaderAware {
         }
     }
 
-    private void copyImportRulesFiles() throws IOException {
-        ByteArrayInputStream listSrcFiles[] = new ByteArrayInputStream[3];
-        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(resourceLoader);
-        String[] fileNames = { "rules.xsd", "rules_template.xml", "rules_template_with_notes.xml" };
-        Resource[] resources = null;
-        FileOutputStream out = null;
-
-        resources = resolver.getResources("classpath*:properties/rules_template*.xml");
-
-        File dest = new File(getField("filePath") + "rules");
-        if (!dest.exists()) {
-            if (!dest.mkdirs()) {
-                throw new OpenClinicaSystemException("Copying files, Could not create direcotry: " + dest.getAbsolutePath() + ".");
-            }
-        }
-        for (Resource r : resources) {
-            File f = new File(dest, r.getFilename());
-
-            out = new FileOutputStream(f);
-            IOUtils.copy(r.getInputStream(), out);
-            out.close();
-
-        }
-        Resource[] r1 = resolver.getResources("classpath*:properties/" + fileNames[0]);
-        File f1 = new File(dest, r1[0].getFilename());
-        out = new FileOutputStream(f1);
-        IOUtils.copy(r1[0].getInputStream(), out);
-        out.close();
-
-    }
-
     private void copyConfig() throws IOException {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(resourceLoader);
         Resource[] resources = null;
@@ -620,11 +584,6 @@ public class CoreResources implements ResourceLoaderAware {
     public ResourceLoader getResourceLoader() {
         return resourceLoader;
     }
-
-    public void setExtractProperties(ArrayList extractProperties) {
-        CoreResources.extractProperties = extractProperties;
-    }
-
 
     public InputStream getInputStream(String fileName) throws IOException {
         return resourceLoader.getResource("classpath:properties/" + fileName).getInputStream();

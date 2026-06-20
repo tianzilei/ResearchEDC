@@ -92,7 +92,7 @@
             <version>2.12.0</version>
         </dependency>
 
-        <!-- Apache Commons DBCP - kept for ExtendedBasicDataSource compatibility -->
+        <!-- Apache Commons DBCP - kept for legacy extract/import compatibility -->
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
@@ -155,22 +155,6 @@
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
             <version>2.1.1</version>
-        </dependency>
-
-        <!-- Castor XML -->
-        <dependency>
-            <groupId>org.codehaus.castor</groupId>
-            <artifactId>castor-xml</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.codehaus.castor</groupId>
-                    <artifactId>castor-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.castor</groupId>
-            <artifactId>castor-core</artifactId>
         </dependency>
 
         <!-- Apache XML Graphics Commons -->

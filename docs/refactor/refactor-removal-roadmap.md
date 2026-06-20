@@ -1,6 +1,6 @@
 # Refactor And Removal Roadmap
 
-**Updated:** 2026-06-19
+**Updated:** 2026-06-20
 **Purpose:** single source of truth for the remaining legacy refactor/removal work.
 
 ## Current Verified State
@@ -11,9 +11,9 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `194` files
-- Modulith Java surface: `377` files
-- Code balance by file count: `35%` shared legacy / `65%` module modern
+- Remaining `shared/` Java surface: `134` files
+- Modulith Java surface: `383` files
+- Code balance by file count: `29%` shared legacy / `71%` module modern
 
 This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup.
 
@@ -34,9 +34,9 @@ This means the workflow-level deletion program is complete. The remaining work i
 
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
-| `shared/bean` | 81 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
-| `shared/domain` | 103 | Legacy entities, rules, technical admin types, and shared mapping model still used by repositories/adapters |
-| `shared/core` | 5 | Resource/config/path and utility support still used by import, form, and config code |
+| `shared/bean` | 52 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
+| `shared/domain` | 74 | Legacy entities and shared mapping model still used by repositories/adapters |
+| `shared/core` | 3 | Resource/config/path and utility support still used by import, form, and shared compatibility code |
 | `shared/i18n` | 3 | Legacy form/import localization support |
 | `shared/exception` | 2 | Compatibility exception types |
 
@@ -80,6 +80,10 @@ These are closed and should not be reopened except to fix regressions:
 - `app/control/form/Validator` now uses app-owned form support for locale/bundle/format behavior.
 - `app/module/dataimport/internal/adapter/ImportCrfDataAdapter` now resolves ODM mapping and page-message bundles through module-owned support instead of direct `shared/core` or `shared/i18n` imports.
 - `app/module/crf/internal/adapter/*` no longer imports `shared/exception` or `shared/core/util` compatibility helper types.
+- `app/config/DbConfig` now uses an app-owned DBCP compatibility wrapper, allowing the old `shared/core/ExtendedBasicDataSource` class to be removed.
+- Legacy `CoreResources` Spring initialization now lives in `shared/core`, leaving app-side configuration free of direct `shared/core` imports while preserving shared compatibility static resource setup.
+- Retired extract post-processing helpers (`Processing*`, `Pdf/Sas/SqlProcessingFunction`, `ScriptRunner`) were removed after zero-caller scans and compile/test verification.
+- The unused `shared/core/util/ItemGroupCrvVersionUtil` view-helper residue was removed; no `shared/core/util` Java callers remain.
 
 **Exit Gate**
 - No production code outside `shared/` imports `org.researchedc.core.*`, `i18n.*`, or `exception.*`.
@@ -162,6 +166,20 @@ These are closed and should not be reopened except to fix regressions:
 - Audit each domain package for remaining active imports.
 - Convert retained behavior to module-owned entities or module-local bridge types where feasible.
 - Do not delete JPA mappings that are still needed by repositories, import compatibility, or schema sync code.
+
+**Current Progress**
+- Unused `domain/technicaladmin/ConfigurationBean` was removed after repository-wide caller scans confirmed no production references and no module repository binding.
+- `DatabaseChangeLogBean` and its composite key were replaced by audit-module owned read-only JPA entities for the changelog API, removing another `shared/domain/technicaladmin` mapping from the shared surface.
+- `AuditUserLoginBean` and `LoginStatus` were replaced by audit-module owned read-only login audit entities/enums, completing removal of `shared/domain/technicaladmin`.
+- Verified package state: `shared/src/main/java/org/researchedc/domain/technicaladmin` has `0` Java files remaining.
+- Unused `domain/crfdata/DynamicsItemFormMetadataBean` and `DynamicsItemGroupMetadataBean` mappings were removed after scans showed no active production callers, repositories, or retained runtime query paths.
+- Retired Hibernate-era `domain/rule` mappings were removed after scans confirmed active rule workflows use module-owned `module_rule*` repositories and no Java callers still import `org.researchedc.domain.rule.*`.
+- Retired `shared/bean/rule` DTOs and obsolete rule Castor mapping/template resources (`mapping*.xml`, `rules.xsd`, `rules_template*.xml`) were removed; `CoreResources` no longer copies retired rule import templates.
+- Retired `shared/src/main/resources/properties/*_dao.xml` SQL mapping resources were removed after confirming active query loading uses `classpath:queries/<db>/**/*.properties` and no code loads the old XML files.
+- Retired extract compatibility DTO/support classes (`ExtractPropertyBean` plus old post-processing function types) were removed; `CoreResources` no longer retains the unused extract-property static field.
+- Retired dataset/filter extract DTOs (`DatasetBean`, `FilterBean`, `FilterObjectBean`) and their unused `DatasetItemStatus` enum-like term were removed after source/test scans showed no active app or module callers.
+- Orphaned audit and study-parameter DTO beans (`bean/admin/Audit*`, `bean/service/StudyParameter*`) were removed after full import/instantiation scans confirmed no active callers.
+- ODM import DTOs were narrowed to fields mapped by `cd_odm_mapping.xml`; unused audit/discrepancy/measurement-unit companion beans under `bean/odmbeans` were removed after import parser tests passed.
 
 **Exit Gate**
 - Each removed `shared/domain` file has zero production callers and zero repository/runtime mapping requirements.

@@ -2,20 +2,13 @@ package org.researchedc.bean.submit.crfdata;
 
 import java.util.ArrayList;
 
-import org.researchedc.bean.odmbeans.AuditLogsBean;
-import org.researchedc.bean.odmbeans.DiscrepancyNotesBean;
-
 public class FormDataBean {
     private ArrayList<ImportItemGroupDataBean> itemGroupData;
-    private AuditLogsBean auditLogs;
-    private DiscrepancyNotesBean discrepancyNotes;
     private String formOID;
     private String EventCRFStatus;
 
     public FormDataBean() {
         itemGroupData = new ArrayList<ImportItemGroupDataBean>();
-        auditLogs = new AuditLogsBean();
-        discrepancyNotes = new DiscrepancyNotesBean();
     }
 
     public String getFormOID() {
@@ -40,21 +33,5 @@ public class FormDataBean {
 
     public void setItemGroupData(ArrayList<ImportItemGroupDataBean> itemGroupData) {
         this.itemGroupData = itemGroupData;
-    }
-
-    public AuditLogsBean getAuditLogs() {
-        return auditLogs;
-    }
-
-    public void setAuditLogs(AuditLogsBean auditLogs) {
-        this.auditLogs = auditLogs;
-    }
-
-    public DiscrepancyNotesBean getDiscrepancyNotes() {
-        return discrepancyNotes;
-    }
-
-    public void setDiscrepancyNotes(DiscrepancyNotesBean discrepancyNotes) {
-        this.discrepancyNotes = discrepancyNotes;
     }
 }

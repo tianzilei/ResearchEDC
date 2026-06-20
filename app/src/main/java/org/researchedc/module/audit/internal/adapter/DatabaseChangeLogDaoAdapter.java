@@ -6,7 +6,7 @@ import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
-import org.researchedc.domain.technicaladmin.DatabaseChangeLogBean;
+import org.researchedc.module.audit.entity.DatabaseChangeLogEntry;
 import org.researchedc.module.audit.dto.DatabaseChangeLogDTO;
 import org.researchedc.module.audit.service.DatabaseChangeLogPort;
 
@@ -25,9 +25,9 @@ public class DatabaseChangeLogDaoAdapter implements DatabaseChangeLogPort {
 
     @Override
     public List<DatabaseChangeLogDTO> findChangeLogs() {
-        TypedQuery<DatabaseChangeLogBean> query = entityManager.createQuery(
-                "FROM DatabaseChangeLogBean dcl ORDER BY dcl.id DESC",
-                DatabaseChangeLogBean.class);
+        TypedQuery<DatabaseChangeLogEntry> query = entityManager.createQuery(
+                "FROM DatabaseChangeLogEntry dcl ORDER BY dcl.id DESC",
+                DatabaseChangeLogEntry.class);
         return query.getResultList().stream()
                 .map(this::toDto)
                 .toList();
@@ -37,7 +37,7 @@ public class DatabaseChangeLogDaoAdapter implements DatabaseChangeLogPort {
         this.entityManager = entityManager;
     }
 
-    private DatabaseChangeLogDTO toDto(DatabaseChangeLogBean bean) {
+    private DatabaseChangeLogDTO toDto(DatabaseChangeLogEntry bean) {
         return new DatabaseChangeLogDTO(
                 bean.getId(),
                 bean.getAuthor(),

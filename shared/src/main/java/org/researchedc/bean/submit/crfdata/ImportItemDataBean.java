@@ -1,18 +1,11 @@
 package org.researchedc.bean.submit.crfdata;
 
-import org.researchedc.bean.odmbeans.AuditLogsBean;
-import org.researchedc.bean.odmbeans.DiscrepancyNotesBean;
-import org.researchedc.bean.odmbeans.ElementRefBean;
-
 public class ImportItemDataBean {
     private String itemOID;
     private String transactionType;
     private String value;
     private String isNull; // boolean, tbh?
-    private ElementRefBean measurementUnitRef = new ElementRefBean();
     private String reasonForNull;
-    private AuditLogsBean auditLogs = new AuditLogsBean();
-    private DiscrepancyNotesBean discrepancyNotes = new DiscrepancyNotesBean();
     
     private boolean hasValueWithNull; //this is just a flag, it is not an attribute/element
 
@@ -48,36 +41,12 @@ public class ImportItemDataBean {
         this.isNull = isNull;
     }
 
-    public ElementRefBean getMeasurementUnitRef() {
-        return measurementUnitRef;
-    }
-
-    public void setMeasurementUnitRef(ElementRefBean measurementUnitRef) {
-        this.measurementUnitRef = measurementUnitRef;
-    }
-
     public String getReasonForNull() {
         return reasonForNull;
     }
 
     public void setReasonForNull(String reasonForNull) {
         this.reasonForNull = reasonForNull;
-    }
-    
-    public AuditLogsBean getAuditLogs() {
-        return auditLogs;
-    }
-
-    public void setAuditLogs(AuditLogsBean auditLogs) {
-        this.auditLogs = auditLogs;
-    }
-
-    public DiscrepancyNotesBean getDiscrepancyNotes() {
-        return discrepancyNotes;
-    }
-
-    public void setDiscrepancyNotes(DiscrepancyNotesBean discrepancyNotes) {
-        this.discrepancyNotes = discrepancyNotes;
     }
 
     public boolean isHasValueWithNull() {

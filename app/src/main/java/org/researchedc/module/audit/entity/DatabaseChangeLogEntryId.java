@@ -1,12 +1,8 @@
-package org.researchedc.domain.technicaladmin;
+package org.researchedc.module.audit.entity;
 
 import java.io.Serializable;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-
-@Embeddable
-public class DatabaseChangeLogBeanPk implements Serializable {
+public class DatabaseChangeLogEntryId implements Serializable {
 
     private String id;
     private String author;
@@ -28,7 +24,6 @@ public class DatabaseChangeLogBeanPk implements Serializable {
         this.author = author;
     }
 
-    @Column(name = "filename")
     public String getFileName() {
         return fileName;
     }
@@ -36,5 +31,4 @@ public class DatabaseChangeLogBeanPk implements Serializable {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-
 }

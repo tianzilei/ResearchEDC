@@ -1,7 +1,7 @@
 # shared/ - Shared Domain Logic & Data Access
 
 **Module:** Legacy domain logic, data access, entities, and business services
-**Files:** 194 Java files
+**Files:** 134 Java files
 **Package:** `org.researchedc.*`
 
 > Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
@@ -12,16 +12,16 @@
 
 ```
 shared/src/main/java/org/researchedc/
-├── bean/         # DTOs — 81 Java files
-├── core/         # Core resources/utilities — 5 Java files
-├── domain/       # Hibernate/domain entities — 103 Java files
+├── bean/         # DTOs — 52 Java files
+├── core/         # Core resources/utilities — 3 Java files
+├── domain/       # Hibernate/domain entities — 74 Java files
 ├── exception/    # Custom exceptions — 2 Java files
 ├── i18n/         # Internationalization utilities + 22 .properties files
 └── other support # Logging, validation, and compatibility helpers — 0 Java files
 
 shared/src/main/resources/
 ├── migration/    # Liquibase schema migrations (208 XML files)
-└── *.properties  # i18n resource bundles (22 files)
+└── properties/   # ODM/XSD/XSLT/CRF-template compatibility resources (27 top-level files)
 ```
 
 ## KEY COMPONENTS
@@ -29,9 +29,10 @@ shared/src/main/resources/
 | Area | Files | Description |
 |------|-------|-------------|
 | **DAO (SPI)** | 0 | Deleted; compatibility data access now uses module-owned ports/repositories |
-| **Domain Entities** | 103 | Hibernate `@Entity` classes mapping to database tables (`datamap/` has 62) |
-| **DTO Beans** | 81 | `EntityBean` subclasses — data transfer objects for legacy servlets |
-| **Liquibase Migrations** | 208 | Versioned schema changes from OpenClinica 3.x through 3.18 |
+| **Domain Entities** | 74 | Hibernate `@Entity` classes mapping to database tables (`datamap/` has 62); former technical admin and retired rule mappings have been removed |
+| **DTO Beans** | 52 | `EntityBean` subclasses — data transfer objects for compatibility paths |
+| **Liquibase Migrations** | 209 | Versioned schema changes from OpenClinica 3.x through 3.18 |
+| **Legacy DAO XML** | 0 | Retired `properties/*_dao.xml` SQL maps were removed; active query loading uses `classpath:queries/<db>/**/*.properties` |
 | **Quartz Jobs** | 0 | Moved to app-owned scheduler support |
 
 ## CONVENTIONS

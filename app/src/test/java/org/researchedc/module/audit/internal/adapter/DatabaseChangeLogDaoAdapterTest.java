@@ -11,14 +11,14 @@ import jakarta.persistence.TypedQuery;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.researchedc.domain.technicaladmin.DatabaseChangeLogBean;
 import org.researchedc.module.audit.dto.DatabaseChangeLogDTO;
+import org.researchedc.module.audit.entity.DatabaseChangeLogEntry;
 
 class DatabaseChangeLogDaoAdapterTest {
 
     @Test
     void findChangeLogs_mapsJpaBeansToDtos() {
-        DatabaseChangeLogBean bean = new DatabaseChangeLogBean();
+        DatabaseChangeLogEntry bean = new DatabaseChangeLogEntry();
         bean.setId("2026-06-07-phase-b");
         bean.setAuthor("codex");
         bean.setFileName("migration.xml");
@@ -30,10 +30,10 @@ class DatabaseChangeLogDaoAdapterTest {
         bean.setLiquibase("4.3.5");
         EntityManager entityManager = Mockito.mock(EntityManager.class);
         @SuppressWarnings("unchecked")
-        TypedQuery<DatabaseChangeLogBean> query = Mockito.mock(TypedQuery.class);
+        TypedQuery<DatabaseChangeLogEntry> query = Mockito.mock(TypedQuery.class);
         Mockito.when(entityManager.createQuery(
-                "FROM DatabaseChangeLogBean dcl ORDER BY dcl.id DESC",
-                DatabaseChangeLogBean.class)).thenReturn(query);
+                "FROM DatabaseChangeLogEntry dcl ORDER BY dcl.id DESC",
+                DatabaseChangeLogEntry.class)).thenReturn(query);
         Mockito.when(query.getResultList()).thenReturn(List.of(bean));
 
         DatabaseChangeLogDaoAdapter adapter = new DatabaseChangeLogDaoAdapter();

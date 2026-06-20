@@ -147,7 +147,7 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
     }
 
     public ArrayList<ItemFormMetadataBean> findAllByCRFVersionIdAndResponseTypeId(int crfVersionId, int responseTypeId) {
-        // Native SQL from item_form_metadata_dao.xml: findAllByCRFVersionIdAndResponseTypeId
+        // Legacy item-form-metadata SQL lineage: findAllByCRFVersionIdAndResponseTypeId
         String sql = "SELECT m.*, rs.response_type_id, rs.label, rs.options_text, rs.options_values "
             + "FROM item_form_metadata m, response_set rs "
             + "WHERE m.crf_version_id = ? AND m.response_set_id = rs.response_set_id AND rs.response_type_id = ?";
@@ -155,19 +155,19 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
     }
 
     public ArrayList<ItemFormMetadataBean> findAllItemsRequiredAndShownByCrfVersionId(int crfVersionId) {
-        // Native SQL from item_form_metadata_dao.xml: findAllItemsRequiredAndShownByCrfVersionId
+        // Legacy item-form-metadata SQL lineage: findAllItemsRequiredAndShownByCrfVersionId
         String sql = "SELECT * FROM item_form_metadata WHERE crf_version_id = ? AND required = true AND show_item = true";
         return findAllBySql(sql, crfVersionId);
     }
 
     public ArrayList<ItemFormMetadataBean> findAllItemsRequiredAndHiddenByCrfVersionId(int crfVersionId) {
-        // Native SQL from item_form_metadata_dao.xml: findAllItemsRequiredAndHiddenByCrfVersionId
+        // Legacy item-form-metadata SQL lineage: findAllItemsRequiredAndHiddenByCrfVersionId
         String sql = "SELECT * FROM item_form_metadata WHERE crf_version_id = ? AND required = true AND show_item = false";
         return findAllBySql(sql, crfVersionId);
     }
 
     public ArrayList<ItemFormMetadataBean> findAllByCRFIdItemIdAndHasValidations(int crfId, int itemId) {
-        // Native SQL from item_form_metadata_dao.xml: findAllByCRFIdItemIdAndHasValidations
+        // Legacy item-form-metadata SQL lineage: findAllByCRFIdItemIdAndHasValidations
         String sql = "SELECT m.*, rs.response_type_id, rs.label, rs.options_text, rs.options_values "
             + "FROM item_form_metadata m, response_set rs "
             + "WHERE m.crf_version_id IN (SELECT crf_version_id FROM crf_version WHERE crf_id = ?) "
@@ -178,7 +178,7 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
     }
 
     public ArrayList<ItemFormMetadataBean> findAllByItemId(int itemId) {
-        // Native SQL from item_form_metadata_dao.xml: findAllByItemId — 6-table join
+        // Legacy item-form-metadata SQL lineage: findAllByItemId — 6-table join
         String sql = "SELECT DISTINCT m.*, rs.response_type_id, rs.label, rs.options_text, "
             + "rs.options_values, cv.name AS cvname, "
             + "ig.name AS group_label, igm.repeat_max, sec.title AS section_name "
@@ -215,7 +215,7 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
     }
 
     public ArrayList<ItemFormMetadataBean> findAllByItemIdAndHasValidations(int itemId) {
-        // Native SQL from item_form_metadata_dao.xml: findAllByItemIdAndHasValidations
+        // Legacy item-form-metadata SQL lineage: findAllByItemIdAndHasValidations
         String sql = "SELECT DISTINCT m.*, rs.response_type_id, rs.label, rs.options_text, "
             + "rs.options_values, cv.name AS cvname, "
             + "ig.name AS group_label, igm.repeat_max, sec.title AS section_name "
@@ -232,7 +232,7 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
     }
 
     public ArrayList<ItemFormMetadataBean> findSCDItemsBySectionId(Integer sectionId) {
-        // Native SQL from item_form_metadata_dao.xml: findSCDItemsBySectionId
+        // Legacy item-form-metadata SQL lineage: findSCDItemsBySectionId
         String sql = "SELECT ifm.* FROM item_form_metadata ifm "
             + "WHERE ifm.section_id = ? "
             + "AND EXISTS (SELECT s.scd_item_form_metadata_id FROM scd_item_metadata s "
@@ -241,7 +241,7 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
     }
 
     public boolean instantTypeExistsInSection(int sectionId) {
-        // Native SQL from item_form_metadata_dao.xml: instantTypeExistsInSection
+        // Legacy item-form-metadata SQL lineage: instantTypeExistsInSection
         String sql = "SELECT ifm.item_form_metadata_id FROM item_form_metadata ifm, response_set rs "
             + "WHERE rs.response_type_id = 10 AND ifm.section_id = ? "
             + "AND ifm.response_set_id = rs.response_set_id LIMIT 1";
