@@ -88,7 +88,6 @@ class SharedRetiredEmailCompatibilityFieldsTest {
                 null,
                 null,
                 null,
-                null,
                 null
         );
 

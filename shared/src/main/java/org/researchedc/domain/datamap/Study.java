@@ -96,7 +96,6 @@ public class Study   extends DataMapDomainObject {
 	private List<StudyUserRole> studyUserRoles;
 	//private Set datasets = new HashSet(0);
 	private List<StudyParameterValue> studyParameterValues;
-	private List<StudyModuleStatus> studyModuleStatuses ;
 	private Integer version;
 
 	public Study() {
@@ -129,8 +128,7 @@ public class Study   extends DataMapDomainObject {
 			String officialTitle, Boolean resultsReference, String ocOid,
 			Integer oldStatusId, List<CrfBean> crfs,
 			List<StudyUserRole> studyUserRoles, Set datasets,
-			List<StudyParameterValue> studyParameterValues,
-			List<StudyModuleStatus> studyModuleStatuses) {
+			List<StudyParameterValue> studyParameterValues) {
 		this.studyId = studyId;
 		this.userAccount = userAccount;
 		this.studyType = studyType;
@@ -191,7 +189,6 @@ public class Study   extends DataMapDomainObject {
 		this.studyUserRoles = studyUserRoles;
 	//	this.datasets = datasets;
 		this.studyParameterValues = studyParameterValues;
-		this.studyModuleStatuses = studyModuleStatuses;
 	}
 
 	@Id
