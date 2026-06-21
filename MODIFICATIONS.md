@@ -6,11 +6,17 @@
 
 ---
 
+## 2026-06-22 - Remove final shared i18n Java helper
+
+- Replaced retained term/admin bundle lookups in legacy DTO/term beans with direct `ResourceBundle` access.
+- Removed the final `shared/i18n` Java helper, `ResourceBundleProvider`, after source/test scans confirmed no callers remained.
+- Updated refactor docs to the 38-file shared Java surface: remaining shared Java is DTO/term beans only.
+
 ## 2026-06-22 - Move retained property loading out of shared
 
 - Moved the remaining `datainfo.properties` bean into app-owned `CoreResourcesConfig`, preserving the `dataInfoProperties` dependency used by attachment storage.
 - Removed the final `shared/core` and `shared/exception` Java support classes after scans confirmed no production callers remained.
-- Updated refactor docs to the 39-file shared Java surface: 38 DTO beans plus the remaining i18n `ResourceBundleProvider` compatibility helper.
+- Updated refactor docs for that checkpoint: 38 DTO beans plus the then-remaining i18n `ResourceBundleProvider` compatibility helper.
 
 ## 2026-06-22 - Retire final shared domain mappings
 

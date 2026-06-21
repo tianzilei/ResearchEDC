@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyType;
-import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.module.study.entity.StudyEntity;
 import org.researchedc.module.study.repository.StudyRepository;
 
@@ -39,7 +37,6 @@ class StudyDaoAdapterTest {
 
     @BeforeEach
     void setUp() {
-        ResourceBundleProvider.updateLocale(Locale.getDefault());
         adapter = new StudyDaoAdapter(repository);
     }
 

@@ -7,22 +7,14 @@ import static org.mockito.Mockito.when;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Locale;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.researchedc.i18n.util.ResourceBundleProvider;
 import org.researchedc.module.audit.dto.AuditUserEventDTO;
 import org.researchedc.module.audit.dto.AuditUserEventsDTO;
 
 class AuditUserEventAdapterTest {
-
-    @BeforeEach
-    void setUpLocale() {
-        ResourceBundleProvider.updateLocale(Locale.of("us"));
-    }
 
     @Test
     void findUserEvents_mapsNativeUserAndAuditRows() {

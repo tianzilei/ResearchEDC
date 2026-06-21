@@ -10,7 +10,6 @@ package org.researchedc.bean.login;
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
-import org.researchedc.i18n.util.ResourceBundleProvider;
 
 import java.util.ResourceBundle;
 
@@ -103,7 +102,7 @@ public class StudyUserRoleBean extends AuditableEntityBean {
     public void setRoleName(String roleName) {
         Role role = Role.getByName(roleName);
         if(role == null || role.getId()==0) {
-            ResourceBundle resterm = ResourceBundleProvider.getTermsBundle();
+            ResourceBundle resterm = ResourceBundle.getBundle("org.researchedc.i18n.terms");
             if(resterm.getString("site_investigator").equals(roleName)) {
                 role = Role.INVESTIGATOR;
             } else if("Data Specialist".equals(roleName)) {

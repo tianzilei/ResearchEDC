@@ -9,10 +9,11 @@ package org.researchedc.bean.managestudy;
 
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.Status;
-import org.researchedc.i18n.util.ResourceBundleProvider;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 /**
@@ -64,7 +65,7 @@ public class StudyBean extends AuditableEntityBean {
     private Date protocolDateVerification;
     private String phase = "";
     private int expectedTotalEnrollment = 0;
-    private String sponsor = "n_a";// ResourceBundleProvider.getAdminBundle().getString("n_a");
+    private String sponsor = "n_a";
     private String collaborators = "";
     private String medlineIdentifier = "";
     private boolean resultsReference = false;
@@ -174,7 +175,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the allocation.
      */
     public String getAllocation() {
-        return ResourceBundleProvider.getResAdmin(allocation);
+        return getResAdmin(allocation);
     }
 
     /**
@@ -189,7 +190,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the assignment.
      */
     public String getAssignment() {
-        return ResourceBundleProvider.getResAdmin(assignment);
+        return getResAdmin(assignment);
     }
 
     /**
@@ -234,7 +235,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the control.
      */
     public String getControl() {
-        return ResourceBundleProvider.getResAdmin(control);
+        return getResAdmin(control);
     }
 
     /**
@@ -279,7 +280,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the duration.
      */
     public String getDuration() {
-        return ResourceBundleProvider.getResAdmin(duration);
+        return getResAdmin(duration);
     }
 
     /**
@@ -309,7 +310,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the endpoint.
      */
     public String getEndpoint() {
-        return ResourceBundleProvider.getResAdmin(endpoint);
+        return getResAdmin(endpoint);
     }
 
     /**
@@ -429,7 +430,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the facilityRecruitmentStatus.
      */
     public String getFacilityRecruitmentStatus() {
-        return ResourceBundleProvider.getResAdmin(facilityRecruitmentStatus);
+        return getResAdmin(facilityRecruitmentStatus);
     }
 
     /**
@@ -474,7 +475,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the gender.
      */
     public String getGender() {
-        return ResourceBundleProvider.getResAdmin(gender);
+        return getResAdmin(gender);
     }
 
     /**
@@ -511,7 +512,7 @@ public class StudyBean extends AuditableEntityBean {
         while (st.hasMoreElements()) {
             StringTokenizer inter = new StringTokenizer(st.nextToken().toString(), "/");
             intervention = inter.nextToken();
-            sb.append(ResourceBundleProvider.getResAdmin(intervention));
+            sb.append(getResAdmin(intervention));
             sb.append("/");
             name = inter.nextToken();
             sb.append(name);
@@ -549,7 +550,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the masking.
      */
     public String getMasking() {
-        return ResourceBundleProvider.getResAdmin(masking);
+        return getResAdmin(masking);
     }
 
     /**
@@ -613,7 +614,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the phase.
      */
     public String getPhase() {
-        return ResourceBundleProvider.getResAdmin(phase);
+        return getResAdmin(phase);
     }
 
     /**
@@ -673,7 +674,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the purpose.
      */
     public String getPurpose() {
-        return ResourceBundleProvider.getResAdmin(purpose);
+        return getResAdmin(purpose);
     }
 
     /**
@@ -688,7 +689,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the selection.
      */
     public String getSelection() {
-        return ResourceBundleProvider.getResAdmin(selection);
+        return getResAdmin(selection);
     }
 
     /**
@@ -738,7 +739,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the timing.
      */
     public String getTiming() {
-        return ResourceBundleProvider.getResAdmin(timing);
+        return getResAdmin(timing);
     }
 
     /**
@@ -753,7 +754,7 @@ public class StudyBean extends AuditableEntityBean {
      * @return Returns the type.
      */
     public String getProtocolType() {
-        return ResourceBundleProvider.getResAdmin(protocolType);
+        return getResAdmin(protocolType);
     }
 
     /**
@@ -895,6 +896,14 @@ public class StudyBean extends AuditableEntityBean {
 
     public void setOid(String oid) {
         this.oid = oid;
+    }
+
+    private String getResAdmin(String key) {
+        try {
+            return ResourceBundle.getBundle("org.researchedc.i18n.admin").getString(key);
+        } catch (MissingResourceException e) {
+            return key;
+        }
     }
 
 }

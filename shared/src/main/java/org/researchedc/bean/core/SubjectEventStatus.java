@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.researchedc.i18n.util.ResourceBundleProvider;
-
 /**
  * @author Jun Xu
  *
@@ -156,7 +154,7 @@ public class SubjectEventStatus extends Term implements Comparable {
      * @return An int id, like 1 for "scheduled"
      */
     public static int getSubjectEventStatusIdByName(String name) {
-        ResourceBundle resterm = ResourceBundleProvider.getTermsBundle();
+        ResourceBundle resterm = ResourceBundle.getBundle("org.researchedc.i18n.terms");
 
         if (name == null || "".equalsIgnoreCase(name)) {
             return 0;

@@ -7,8 +7,6 @@
  */
 package org.researchedc.bean.core;
 
-import org.researchedc.i18n.util.ResourceBundleProvider;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -46,7 +44,7 @@ public class Term extends EntityBean {
      */
     public String getDescription() {
         if (!this.description.equals("")) {
-            resterm = ResourceBundleProvider.getTermsBundle();
+            resterm = ResourceBundle.getBundle("org.researchedc.i18n.terms");
             return resterm.getString(this.description).trim();
         } else
             return null;
@@ -98,7 +96,7 @@ public class Term extends EntityBean {
     @Override
     public String getName() {
         // *
-        resterm = ResourceBundleProvider.getTermsBundle();
+        resterm = ResourceBundle.getBundle("org.researchedc.i18n.terms");
         String name = resterm.getString(this.name);
         if(name != null) {
            return name.trim();

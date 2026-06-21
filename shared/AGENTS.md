@@ -1,7 +1,7 @@
 # shared/ - Shared Domain Logic & Data Access
 
-**Module:** Legacy compatibility DTO and resource support
-**Files:** 39 Java files
+**Module:** Legacy compatibility DTO and term beans
+**Files:** 38 Java files
 **Package:** `org.researchedc.*`
 
 > Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
@@ -12,8 +12,7 @@
 
 ```
 shared/src/main/java/org/researchedc/
-├── bean/         # DTOs — 38 Java files
-└── i18n/         # ResourceBundleProvider compatibility helper — 1 Java file
+└── bean/         # DTOs and term beans — 38 Java files
 
 shared/src/main/resources/
 ├── migration/    # Liquibase schema migrations (208 XML files)
@@ -28,6 +27,7 @@ shared/src/main/resources/
 | **Domain Entities** | 0 | Retired; active mappings live in module-owned entities and repositories |
 | **DTO Beans** | 38 | `EntityBean` subclasses — data transfer objects for compatibility paths |
 | **Core/Exception Support** | 0 | Retired; app-owned config loads retained properties |
+| **i18n Java Support** | 0 | Retired; term beans use standard `ResourceBundle` directly |
 | **Liquibase Migrations** | 209 | Versioned schema changes from OpenClinica 3.x through 3.18 |
 | **Legacy DAO XML** | 0 | Retired `properties/*_dao.xml` SQL maps were removed; active query loading uses `classpath:queries/<db>/**/*.properties` |
 | **Quartz Jobs** | 0 | Moved to app-owned scheduler support |
@@ -57,7 +57,7 @@ test methods awaiting reactivation.
 | Annotations | ✅ `@Repository`/`@Service` applied to all DAOs and services |
 | SPI interfaces | ✅ Deleted; caller migration to module-owned ports complete |
 | Liquibase migrations | ✅ 208 XML files, versioned from 3.x through 3.18 |
-| Strangulation target | 🔶 Active — remaining shared DTO/resource support should keep shrinking; new code goes to `app/module/` |
+| Strangulation target | 🔶 Active — remaining shared DTO/term beans should keep shrinking; new code goes to `app/module/` |
 | DAO deletion | ✅ `DaoProvider`, direct `new XxxDAO(...)` / `new StudyConfigService(...)`, LegacyDaoFactory, EntityDAO infrastructure, and shared DAO SPI files are removed. Phase 3 ledger: 878/878 rows removed; 0 unused, fallback-SQL, legacy-only, or adapter-gap rows remain. |
 
 ## ANTI-PATTERNS

@@ -2,7 +2,6 @@ package org.researchedc.module.legacy;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -13,16 +12,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.ResourceBundle;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.researchedc.config.CurrentUserUtils;
@@ -63,25 +58,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @ExtendWith(MockitoExtension.class)
 class LegacyGatewayContractTest {
 
-    private static MockedStatic<org.researchedc.i18n.util.ResourceBundleProvider> resourceBundleProviderMock;
-
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    @BeforeAll
-    static void setUpResourceBundle() {
-        ResourceBundle mockBundle = mock(ResourceBundle.class);
-        when(mockBundle.getString(anyString())).thenAnswer(invocation -> invocation.getArgument(0));
-        resourceBundleProviderMock = mockStatic(org.researchedc.i18n.util.ResourceBundleProvider.class);
-        resourceBundleProviderMock.when(org.researchedc.i18n.util.ResourceBundleProvider::getTermsBundle)
-                .thenReturn(mockBundle);
-    }
-
-    @AfterAll
-    static void tearDownResourceBundle() {
-        if (resourceBundleProviderMock != null) {
-            resourceBundleProviderMock.close();
-        }
-    }
 
     // ─── DAO mocks (shared across controller tests) ──────────────
 
