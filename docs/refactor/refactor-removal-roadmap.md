@@ -11,7 +11,7 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `89` files
+- Remaining `shared/` Java surface: `87` files
 - Modulith Java surface: `383` files
 - Code balance by file count: `19%` shared legacy / `81%` module modern
 
@@ -34,8 +34,8 @@ This means the workflow-level deletion program is complete. The remaining work i
 
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
-| `shared/bean` | 45 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
-| `shared/domain` | 36 | Legacy entities and shared mapping model still used by repositories/adapters |
+| `shared/bean` | 44 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
+| `shared/domain` | 35 | Legacy entities and shared mapping model still used by repositories/adapters |
 | `shared/core` | 3 | Resource/config/path and utility support still used by import, form, and shared compatibility code |
 | `shared/i18n` | 3 | Legacy form/import localization support |
 | `shared/exception` | 2 | Compatibility exception types |
@@ -192,6 +192,7 @@ These are closed and should not be reopened except to fix regressions:
 - Retired datamap `ItemGroupMetadata` mapping was removed after scans confirmed no direct Java callers; active item-group metadata access uses the module-owned `module_item_group_metadata` entity/repository while compatibility DTO paths retain `ItemGroupMetadataBean`.
 - Zero-caller shared domain residues `AuthoritiesBean`, `AuditableMutableDomainObject`, and `AbstractAuditableMutableDomainObject` were removed after source scans confirmed only historical ledger text referenced them.
 - The `SourceDataVerification` enum was removed with its only Java caller, the retired `EventDefinitionCRFBean`; ODM XSD schema attributes remain resource-only and do not depend on the Java enum.
+- Retired compatibility term residues `NullValue` and `EventCRFStatus` were removed after scans confirmed no active Java callers; ODM import `FormDataBean.EventCRFStatus` remains a string field mapped by `cd_odm_mapping.xml`.
 
 **Exit Gate**
 - Each removed `shared/domain` file has zero production callers and zero repository/runtime mapping requirements.

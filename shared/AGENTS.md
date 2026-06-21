@@ -1,7 +1,7 @@
 # shared/ - Shared Domain Logic & Data Access
 
 **Module:** Legacy domain logic, data access, entities, and business services
-**Files:** 89 Java files
+**Files:** 87 Java files
 **Package:** `org.researchedc.*`
 
 > Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
@@ -12,9 +12,9 @@
 
 ```
 shared/src/main/java/org/researchedc/
-├── bean/         # DTOs — 45 Java files
+├── bean/         # DTOs — 44 Java files
 ├── core/         # Core resources/utilities — 3 Java files
-├── domain/       # Hibernate/domain entities — 36 Java files
+├── domain/       # Hibernate/domain entities — 35 Java files
 ├── exception/    # Custom exceptions — 2 Java files
 ├── i18n/         # Internationalization utilities + 22 .properties files
 └── other support # Logging, validation, and compatibility helpers — 0 Java files
@@ -29,8 +29,8 @@ shared/src/main/resources/
 | Area | Files | Description |
 |------|-------|-------------|
 | **DAO (SPI)** | 0 | Deleted; compatibility data access now uses module-owned ports/repositories |
-| **Domain Entities** | 36 | Hibernate `@Entity` classes mapping to database tables (`datamap/` has 22 Java files); former duplicate admin/managestudy, technical admin, retired crfdata, retired rule, DN/subjectgroup map, and unused datamap mappings have been removed |
-| **DTO Beans** | 45 | `EntityBean` subclasses — data transfer objects for compatibility paths |
+| **Domain Entities** | 35 | Hibernate `@Entity` classes mapping to database tables (`datamap/` has 22 Java files); former duplicate admin/managestudy, technical admin, retired crfdata, retired rule, DN/subjectgroup map, and unused datamap mappings have been removed |
+| **DTO Beans** | 44 | `EntityBean` subclasses — data transfer objects for compatibility paths |
 | **Liquibase Migrations** | 209 | Versioned schema changes from OpenClinica 3.x through 3.18 |
 | **Legacy DAO XML** | 0 | Retired `properties/*_dao.xml` SQL maps were removed; active query loading uses `classpath:queries/<db>/**/*.properties` |
 | **Quartz Jobs** | 0 | Moved to app-owned scheduler support |
