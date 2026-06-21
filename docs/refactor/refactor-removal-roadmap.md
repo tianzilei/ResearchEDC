@@ -11,9 +11,9 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `103` files
+- Remaining `shared/` Java surface: `97` files
 - Modulith Java surface: `383` files
-- Code balance by file count: `21%` shared legacy / `79%` module modern
+- Code balance by file count: `20%` shared legacy / `80%` module modern
 
 This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup.
 
@@ -35,7 +35,7 @@ This means the workflow-level deletion program is complete. The remaining work i
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
 | `shared/bean` | 52 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
-| `shared/domain` | 43 | Legacy entities and shared mapping model still used by repositories/adapters |
+| `shared/domain` | 37 | Legacy entities and shared mapping model still used by repositories/adapters |
 | `shared/core` | 3 | Resource/config/path and utility support still used by import, form, and shared compatibility code |
 | `shared/i18n` | 3 | Legacy form/import localization support |
 | `shared/exception` | 2 | Compatibility exception types |
@@ -173,6 +173,7 @@ These are closed and should not be reopened except to fix regressions:
 - `AuditUserLoginBean` and `LoginStatus` were replaced by audit-module owned read-only login audit entities/enums, completing removal of `shared/domain/technicaladmin`.
 - Verified package state: `shared/src/main/java/org/researchedc/domain/technicaladmin` has `0` Java files remaining.
 - Unused `domain/crfdata/DynamicsItemFormMetadataBean` and `DynamicsItemGroupMetadataBean` mappings were removed after scans showed no active production callers, repositories, or retained runtime query paths.
+- Remaining `domain/crfdata` SCD/instant-on-change compatibility models were moved behind CRF module-local adapter records, completing removal of `shared/domain/crfdata`.
 - Retired Hibernate-era `domain/rule` mappings were removed after scans confirmed active rule workflows use module-owned `module_rule*` repositories and no Java callers still import `org.researchedc.domain.rule.*`.
 - Retired `shared/bean/rule` DTOs and obsolete rule Castor mapping/template resources (`mapping*.xml`, `rules.xsd`, `rules_template*.xml`) were removed; `CoreResources` no longer copies retired rule import templates.
 - Retired `shared/src/main/resources/properties/*_dao.xml` SQL mapping resources were removed after confirming active query loading uses `classpath:queries/<db>/**/*.properties` and no code loads the old XML files.
@@ -188,6 +189,7 @@ These are closed and should not be reopened except to fix regressions:
 - Retired datamap lookup mappings for `ItemReferenceType`, `ItemDataType`, and `ResponseType` were removed after converting retained compatibility entities to scalar id columns.
 - Retired datamap `StudyParameter` and `StudyParameterValue` mappings were removed after scans confirmed they were only referenced by an unused `Study` constructor field path; active study configuration uses module-owned adapters/repositories.
 - Retired datamap `ItemGroupMetadata` mapping was removed after scans confirmed no direct Java callers; active item-group metadata access uses the module-owned `module_item_group_metadata` entity/repository while compatibility DTO paths retain `ItemGroupMetadataBean`.
+- Zero-caller shared domain residues `AuthoritiesBean`, `AuditableMutableDomainObject`, and `AbstractAuditableMutableDomainObject` were removed after source scans confirmed only historical ledger text referenced them.
 
 **Exit Gate**
 - Each removed `shared/domain` file has zero production callers and zero repository/runtime mapping requirements.

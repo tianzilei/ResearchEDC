@@ -140,7 +140,7 @@ class ItemFormMetadataDaoAdapterTest {
 
     @Test
     void sectionInstantMapInSameSection_returnsEmptyMap() {
-        Map<Integer, List<org.researchedc.domain.crfdata.InstantOnChangePairContainer>> result =
+        Map<Integer, List<ItemFormMetadataDaoAdapter.InstantOnChangePair>> result =
                 adapter.sectionInstantMapInSameSection(5);
 
         assertNotNull(result);

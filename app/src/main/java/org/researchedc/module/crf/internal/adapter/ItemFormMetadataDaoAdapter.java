@@ -12,7 +12,6 @@ import javax.sql.DataSource;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ResponseSetBean;
-import org.researchedc.domain.crfdata.InstantOnChangePairContainer;
 import org.researchedc.module.dataimport.service.ImportItemFormMetadataPort;
 import org.researchedc.module.crf.entity.ItemFormMetadataEntity;
 import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
@@ -27,6 +26,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Primary
 @Transactional(readOnly = true)
 public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
+
+    public record InstantOnChangePair(Integer destItemFormMetadataId,
+                                      Integer destSectionId,
+                                      String destItemGroupOid,
+                                      Integer destItemId,
+                                      Boolean destRepeating,
+                                      Boolean destUngrouped,
+                                      String optionValue,
+                                      Integer originSectionId,
+                                      String originItemGroupOid,
+                                      Integer originItemId,
+                                      Boolean originRepeating,
+                                      Boolean originUngrouped) {
+    }
 
     private final ItemFormMetadataRepository repository;
     private final DataSource dataSource;
@@ -249,7 +262,7 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         return !results.isEmpty() && results.get(0) > 0;
     }
 
-    public Map<Integer, List<InstantOnChangePairContainer>> sectionInstantMapInSameSection(int crfVersionId) {
+    public Map<Integer, List<InstantOnChangePair>> sectionInstantMapInSameSection(int crfVersionId) {
         // Stub — blocked on Phase 1 P8 removing DataEntryServlet callers.
         // This is the most complex inherited method (10 joins, 5 params).
         // TODO: implement with JPA native query after Phase 1 P8 data entry servlet deletion.
