@@ -6,6 +6,12 @@
 
 ---
 
+## 2026-06-22 - Remove retired shared domain base infrastructure
+
+- Removed zero-caller shared domain base contracts (`DomainObject`, `MutableDomainObject`, `CompositeIdDomainObject`) and the unused `AbstractMutableDomainObject` superclass after scans confirmed no active subclasses or consumers remained.
+- Simplified `DataMapDomainObject` to a serializable marker base and deleted redundant package-level Hibernate generator declarations; retained entities carry their own identifiers/generators.
+- Updated refactor docs to the 65-file shared Java surface, 23 shared domain files, and 16 remaining datamap mappings.
+
 ## 2026-06-22 - Delete retired study-user-role datamap graph
 
 - Removed the obsolete shared datamap `StudyUserRole` composite mapping and `StudyUserRoleId` after scans showed only dead reverse fields in shared `Study` and `UserAccount` referenced them.
