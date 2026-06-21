@@ -86,7 +86,9 @@ INSERT INTO phase_b_expected_functions(function_name) VALUES
   ('sync_study_group_class_to_module_study_group_class'),
   ('sync_module_study_group_class_to_study_group_class'),
   ('sync_study_group_to_module_study_group'),
-  ('sync_module_study_group_to_study_group');
+  ('sync_module_study_group_to_study_group'),
+  ('neutralize_retired_user_account_email'),
+  ('neutralize_retired_study_contact_email');
 
 DO $$
 DECLARE missing text;
@@ -156,7 +158,11 @@ INSERT INTO phase_b_expected_triggers(table_name, trigger_name) VALUES
   ('study_group_class', 'trg_sync_study_group_class_to_module'),
   ('module_study_group_class', 'trg_sync_module_study_group_class'),
   ('study_group', 'trg_sync_study_group_to_module'),
-  ('module_study_group', 'trg_sync_module_study_group');
+  ('module_study_group', 'trg_sync_module_study_group'),
+  ('user_account', 'trg_neutralize_user_account_email'),
+  ('module_user_account', 'trg_neutralize_module_user_account_email'),
+  ('study', 'trg_neutralize_study_contact_email'),
+  ('module_study', 'trg_neutralize_module_study_contact_email');
 
 DO $$
 DECLARE missing text;
@@ -189,6 +195,8 @@ BEGIN
   DELETE FROM discrepancy_note WHERE discrepancy_note_id IN (legacy_id, module_id, loop_id);
   DELETE FROM module_filter WHERE filter_id IN (legacy_id, module_id, loop_id);
   DELETE FROM filter WHERE filter_id IN (legacy_id, module_id, loop_id);
+  DELETE FROM module_user_account WHERE user_id IN (legacy_id, module_id, loop_id);
+  DELETE FROM user_account WHERE user_id IN (legacy_id, module_id, loop_id);
   DELETE FROM module_study WHERE study_id IN (legacy_id, module_id, loop_id);
   DELETE FROM study WHERE study_id IN (legacy_id, module_id, loop_id);
 
@@ -219,6 +227,44 @@ BEGIN
   IF EXISTS (SELECT 1 FROM study WHERE study_id = module_id) THEN
     RAISE EXCEPTION 'module_study -> study delete did not sync';
   END IF;
+
+  INSERT INTO study (study_id, unique_identifier, name, owner_id, status_id, type_id, oc_oid, facility_contact_email, feature_flags)
+  VALUES (legacy_id, 'phase-b-legacy-email', 'Phase B legacy email study', 1, 1, 1, 'S_PHASE_B_LEGACY_EMAIL', 'legacy@example.com', '{}'::jsonb);
+  IF EXISTS (SELECT 1 FROM study WHERE study_id = legacy_id AND facility_contact_email <> '') THEN
+    RAISE EXCEPTION 'study facility_contact_email was not neutralized';
+  END IF;
+  IF EXISTS (SELECT 1 FROM module_study WHERE study_id = legacy_id AND facility_contact_email <> '') THEN
+    RAISE EXCEPTION 'neutralized study facility_contact_email did not propagate to module_study';
+  END IF;
+  UPDATE module_study SET facility_contact_email = 'module@example.com' WHERE study_id = legacy_id;
+  IF EXISTS (SELECT 1 FROM module_study WHERE study_id = legacy_id AND facility_contact_email <> '') THEN
+    RAISE EXCEPTION 'module_study facility_contact_email was not neutralized';
+  END IF;
+  IF EXISTS (SELECT 1 FROM study WHERE study_id = legacy_id AND facility_contact_email <> '') THEN
+    RAISE EXCEPTION 'neutralized module_study facility_contact_email did not propagate to study';
+  END IF;
+  DELETE FROM study WHERE study_id = legacy_id;
+
+  INSERT INTO user_account (
+    user_id, user_name, first_name, last_name, email, status_id, user_type_id, owner_id
+  )
+  VALUES (
+    legacy_id, 'phase-b-legacy-user', 'Phase', 'Legacy', 'legacy-user@example.com', 1, 1, 1
+  );
+  IF EXISTS (SELECT 1 FROM user_account WHERE user_id = legacy_id AND email <> '') THEN
+    RAISE EXCEPTION 'user_account email was not neutralized';
+  END IF;
+  IF EXISTS (SELECT 1 FROM module_user_account WHERE user_id = legacy_id AND email <> '') THEN
+    RAISE EXCEPTION 'neutralized user_account email did not propagate to module_user_account';
+  END IF;
+  UPDATE module_user_account SET email = 'module-user@example.com' WHERE user_id = legacy_id;
+  IF EXISTS (SELECT 1 FROM module_user_account WHERE user_id = legacy_id AND email <> '') THEN
+    RAISE EXCEPTION 'module_user_account email was not neutralized';
+  END IF;
+  IF EXISTS (SELECT 1 FROM user_account WHERE user_id = legacy_id AND email <> '') THEN
+    RAISE EXCEPTION 'neutralized module_user_account email did not propagate to user_account';
+  END IF;
+  DELETE FROM user_account WHERE user_id = legacy_id;
 
   INSERT INTO filter (filter_id, name, description, sql_statement, status_id, date_created, owner_id)
   VALUES (legacy_id, 'phase-b-legacy-filter', 'legacy filter', 'select 1', 1, now(), 1);

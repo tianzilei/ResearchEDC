@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.26.xsd">
+
+    <changeSet id="2026-06-21-retire-dc-send-email-event" author="research-edc">
+        <comment>Retire the legacy data-condition email event table after mail delivery removal</comment>
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="dc_send_email_event"/>
+        </preConditions>
+        <dropTable tableName="dc_send_email_event" cascadeConstraints="true"/>
+    </changeSet>
+
+    <changeSet id="2026-06-21-retire-dc-send-email-event-sequence" author="research-edc">
+        <comment>Retire the Oracle sequence that backed the removed email event table</comment>
+        <preConditions onFail="MARK_RAN">
+            <sequenceExists sequenceName="DC_SEND_EMAIL_EVENT_ID_SEQ"/>
+        </preConditions>
+        <dropSequence sequenceName="DC_SEND_EMAIL_EVENT_ID_SEQ"/>
+    </changeSet>
+
+    <changeSet id="2026-06-21-retire-rule-action-email-to" author="research-edc">
+        <comment>Remove retired rule email-recipient storage after rule email delivery removal</comment>
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="rule_action" columnName="email_to"/>
+        </preConditions>
+        <dropColumn tableName="rule_action" columnName="email_to"/>
+    </changeSet>
+
+    <changeSet id="2026-06-21-retire-rule-action-email-subject" author="research-edc">
+        <comment>Remove retired rule email-subject storage after rule email delivery removal</comment>
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="rule_action" columnName="email_subject"/>
+        </preConditions>
+        <dropColumn tableName="rule_action" columnName="email_subject"/>
+    </changeSet>
+
+    <changeSet id="2026-06-21-neutralize-email-compatibility-columns-postgresql" author="research-edc" dbms="postgresql">
+        <comment>Force retired user/study email compatibility columns to remain empty at the database write boundary</comment>
+        <sql splitStatements="false"><![CDATA[
+            CREATE OR REPLACE FUNCTION neutralize_retired_user_account_email()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                NEW.email := '';
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_neutralize_user_account_email ON user_account;
+            CREATE TRIGGER trg_neutralize_user_account_email
+            BEFORE INSERT OR UPDATE ON user_account
+            FOR EACH ROW EXECUTE FUNCTION neutralize_retired_user_account_email();
+
+            DROP TRIGGER IF EXISTS trg_neutralize_module_user_account_email ON module_user_account;
+            CREATE TRIGGER trg_neutralize_module_user_account_email
+            BEFORE INSERT OR UPDATE ON module_user_account
+            FOR EACH ROW EXECUTE FUNCTION neutralize_retired_user_account_email();
+
+            CREATE OR REPLACE FUNCTION neutralize_retired_study_contact_email()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                NEW.facility_contact_email := '';
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            DROP TRIGGER IF EXISTS trg_neutralize_study_contact_email ON study;
+            CREATE TRIGGER trg_neutralize_study_contact_email
+            BEFORE INSERT OR UPDATE ON study
+            FOR EACH ROW EXECUTE FUNCTION neutralize_retired_study_contact_email();
+
+            DROP TRIGGER IF EXISTS trg_neutralize_module_study_contact_email ON module_study;
+            CREATE TRIGGER trg_neutralize_module_study_contact_email
+            BEFORE INSERT OR UPDATE ON module_study
+            FOR EACH ROW EXECUTE FUNCTION neutralize_retired_study_contact_email();
+        ]]></sql>
+        <rollback>
+            <sql splitStatements="false"><![CDATA[
+                DROP TRIGGER IF EXISTS trg_neutralize_user_account_email ON user_account;
+                DROP TRIGGER IF EXISTS trg_neutralize_module_user_account_email ON module_user_account;
+                DROP FUNCTION IF EXISTS neutralize_retired_user_account_email();
+
+                DROP TRIGGER IF EXISTS trg_neutralize_study_contact_email ON study;
+                DROP TRIGGER IF EXISTS trg_neutralize_module_study_contact_email ON module_study;
+                DROP FUNCTION IF EXISTS neutralize_retired_study_contact_email();
+            ]]></sql>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

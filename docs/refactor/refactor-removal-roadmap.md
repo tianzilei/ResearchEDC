@@ -205,6 +205,9 @@ These are closed and should not be reopened except to fix regressions:
 **Active Follow-Up**
 - `docs/refactor/phase-1-email-field-removal-plan.md`
 
+**Current Progress**
+- Email-field cleanup now includes a forward migration that retires historical mail-event/rule-email storage and PostgreSQL write-boundary triggers that keep retained user/study compatibility email columns inert.
+
 **Potential Additional Follow-Ups**
 - import/export compatibility contract tightening
 - OpenRosa compatibility boundary review

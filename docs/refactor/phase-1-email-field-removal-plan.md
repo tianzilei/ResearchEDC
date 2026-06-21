@@ -63,6 +63,7 @@ Current progress:
 - Shared legacy user/study entities now default compatibility email fields to empty strings, and `StudyDaoAdapter` neutralizes the legacy study-contact email column on ingress.
 - Module-owned user/study entity setters now neutralize attempted compatibility email writes at the write boundary.
 - Shared legacy user/study setters now neutralize attempted compatibility email writes, and the shared `Study` constructor no longer preserves a legacy facility-contact email payload.
+- PostgreSQL write-boundary triggers now force retained `user_account.email`, `module_user_account.email`, `study.facility_contact_email`, and `module_study.facility_contact_email` compatibility columns to empty strings before Phase B sync propagates writes.
 
 ### Slice E3: Contract And Schema Cleanup
 
@@ -77,11 +78,12 @@ Current progress:
 - Rule import template guidance now marks `EmailAction` as compatibility-only, not an active ResearchEDC feature.
 - Unreferenced legacy runtime i18n email labels and retired Enterprise wording have been deleted or neutralized in runtime bundles.
 - ODM and rule XSD contracts now annotate `FacilityContactEmail` and `EmailAction` as compatibility-only legacy surface.
+- New 3.18 forward migration retires the historical `dc_send_email_event` table, its legacy Oracle sequence, and the old `rule_action.email_to` / `rule_action.email_subject` storage columns after source scans confirmed no active Java/runtime mappings.
 
 Current blockers:
 - ODM/XSD contracts still structurally define `OpenClinica:FacilityContactEmail`.
 - Rule XSD contracts still structurally define `EmailAction`.
-- Historical Liquibase structures still contain `dc_send_email_event` and `rule_action.email_subject`.
+- Historical pre-3.18 Liquibase files still document the original email-era table/columns, but forward migrations now retire the runtime storage surface.
 
 ## In Scope
 
