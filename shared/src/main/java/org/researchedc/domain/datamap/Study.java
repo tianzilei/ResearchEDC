@@ -3,7 +3,6 @@
 package org.researchedc.domain.datamap;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -92,8 +91,6 @@ public class Study   extends DataMapDomainObject {
 	private String oc_oid;
 	private Integer oldStatusId;
 	private List<CrfBean> crfs ;
-	private List<StudyUserRole> studyUserRoles;
-	//private Set datasets = new HashSet(0);
 	private Integer version;
 
 	public Study() {
@@ -124,8 +121,7 @@ public class Study   extends DataMapDomainObject {
 			String assignment, String endpoint, String interventions,
 			String duration, String selection, String timing,
 			String officialTitle, Boolean resultsReference, String ocOid,
-			Integer oldStatusId, List<CrfBean> crfs,
-			List<StudyUserRole> studyUserRoles, Set datasets) {
+			Integer oldStatusId, List<CrfBean> crfs) {
 		this.studyId = studyId;
 		this.userAccount = userAccount;
 		this.studyType = studyType;
@@ -182,8 +178,6 @@ public class Study   extends DataMapDomainObject {
 		this.oc_oid = ocOid;
 		this.oldStatusId = oldStatusId;
 		this.crfs = crfs;
-		this.studyUserRoles = studyUserRoles;
-	//	this.datasets = datasets;
 	}
 
 	@Id

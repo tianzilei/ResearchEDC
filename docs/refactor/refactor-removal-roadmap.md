@@ -11,7 +11,7 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `74` files
+- Remaining `shared/` Java surface: `72` files
 - Modulith Java surface: `391` files
 - Code balance by file count: `16%` shared legacy / `84%` module modern
 
@@ -35,7 +35,7 @@ This means the workflow-level deletion program is complete. The remaining work i
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
 | `shared/bean` | 38 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
-| `shared/domain` | 32 | Legacy entities and shared mapping model still used by repositories/adapters |
+| `shared/domain` | 30 | Legacy entities and shared mapping model still used by repositories/adapters |
 | `shared/core` | 2 | Resource/config/path support still used by shared compatibility initialization |
 | `shared/i18n` | 1 | Legacy term/resource-bundle compatibility support |
 | `shared/exception` | 1 | Compatibility exception type still used by `CoreResources` |
@@ -198,6 +198,7 @@ These are closed and should not be reopened except to fix regressions:
 - The `SourceDataVerification` enum was removed with its only Java caller, the retired `EventDefinitionCRFBean`; ODM XSD schema attributes remain resource-only and do not depend on the Java enum.
 - Retired compatibility term residues `NullValue` and `EventCRFStatus` were removed after scans confirmed no active Java callers; ODM import `FormDataBean.EventCRFStatus` remains a string field mapped by `cd_odm_mapping.xml`.
 - Retired discrepancy-note datamap graph (`DiscrepancyNote`, `DiscrepancyNoteType`, and `ResolutionStatus`) was removed after package-qualified scans confirmed no active Java callers outside the self-contained old mapping cycle; active discrepancy-note behavior uses module-owned scalar fields and `module_discrepancy_note` entities.
+- Retired study-user-role datamap composite mapping (`StudyUserRole` and `StudyUserRoleId`) was removed after scans showed only dead reverse fields in `Study`/`UserAccount` referenced it; active identity behavior uses module-owned `module_study_user_role` / `RoleEntity`.
 
 **Exit Gate**
 - Each removed `shared/domain` file has zero production callers and zero repository/runtime mapping requirements.

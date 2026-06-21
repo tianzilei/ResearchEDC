@@ -6,6 +6,12 @@
 
 ---
 
+## 2026-06-22 - Delete retired study-user-role datamap graph
+
+- Removed the obsolete shared datamap `StudyUserRole` composite mapping and `StudyUserRoleId` after scans showed only dead reverse fields in shared `Study` and `UserAccount` referenced them.
+- Simplified those shared entities by removing the unused study-user-role reverse collection plumbing; active identity behavior remains on module-owned `RoleEntity` and `module_study_user_role`.
+- Updated refactor docs to the 72-file shared Java surface, 30 shared domain files, and 17 remaining datamap mappings.
+
 ## 2026-06-22 - Delete retired discrepancy-note datamap graph
 
 - Removed the no-caller shared datamap discrepancy-note entity cycle (`DiscrepancyNote`, `DiscrepancyNoteType`, `ResolutionStatus`) after package-qualified scans showed no active app or shared callers outside the obsolete mappings.
