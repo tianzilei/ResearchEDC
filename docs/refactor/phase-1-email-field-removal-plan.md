@@ -70,19 +70,19 @@ Current progress:
 **Goal:** remove remaining email-specific storage/contract surface only after downstream compatibility review.
 
 - Review ODM/export reliance on `FacilityContactEmail`.
-- Review rule schema/docs that still mention `EmailAction`.
+- Verify rule schema/docs no longer expose `EmailAction`.
 - Review migration-era structures such as `dc_send_email_event` and `rule_action.email_subject`.
 - Only then version or remove schema/contract surface.
 
 Current progress:
-- Rule import template guidance now marks `EmailAction` as compatibility-only, not an active ResearchEDC feature.
+- Rule import template guidance first marked `EmailAction` as compatibility-only, and the runtime rule XSD now removes that action from the accepted contract.
 - Unreferenced legacy runtime i18n email labels and retired Enterprise wording have been deleted or neutralized in runtime bundles.
-- ODM and rule XSD contracts now annotate `FacilityContactEmail` and `EmailAction` as compatibility-only legacy surface.
+- ODM XSD contracts now annotate `FacilityContactEmail` as compatibility-only legacy surface.
 - New 3.18 forward migration retires the historical `dc_send_email_event` table, its legacy Oracle sequence, and the old `rule_action.email_to` / `rule_action.email_subject` storage columns after source scans confirmed no active Java/runtime mappings.
+- Runtime rule XSD no longer defines `EmailAction` or `EmailActionType`; source scans confirmed no active app/shared Java callers or rule import wiring still depend on that legacy action structure.
 
 Current blockers:
 - ODM/XSD contracts still structurally define `OpenClinica:FacilityContactEmail`.
-- Rule XSD contracts still structurally define `EmailAction`.
 - Historical pre-3.18 Liquibase files still document the original email-era table/columns, but forward migrations now retire the runtime storage surface.
 
 ## In Scope

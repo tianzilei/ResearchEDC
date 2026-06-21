@@ -30,7 +30,6 @@
     <xs:complexType name="RuleRefType">
         <xs:sequence>
             <xs:element ref="DiscrepancyNoteAction" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element ref="EmailAction" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element ref="ShowAction" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element ref="HideAction" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element ref="InsertAction" minOccurs="0" maxOccurs="unbounded"/>
@@ -56,24 +55,7 @@
         </xs:sequence>
         <xs:attributeGroup ref="DiscrepancyNoteActionAttributeType"/>
     </xs:complexType>
-    
-    <xs:element name="EmailAction" type="EmailActionType">
-        <xs:annotation>
-            <xs:documentation>
-                Compatibility-only legacy rule action. ResearchEDC no longer provides active email
-                delivery; new rules should use supported in-app actions instead of EmailAction.
-            </xs:documentation>
-        </xs:annotation>
-    </xs:element>
-    <xs:complexType name="EmailActionType">
-        <xs:sequence>
-            <xs:element name="Run" type="ActionRunType" minOccurs="0"/>
-            <xs:element name="Message" type="xs:string"/>
-            <xs:element name="To" type="xs:string"/>
-        </xs:sequence>
-        <xs:attributeGroup ref="DiscrepancyNoteActionAttributeType"/>
-    </xs:complexType>
-    
+
     <xs:element name="NotificationAction" type="NotificationActionType"/>
     <xs:complexType name="NotificationActionType">
         <xs:sequence>

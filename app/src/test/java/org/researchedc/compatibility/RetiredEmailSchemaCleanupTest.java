@@ -1,6 +1,7 @@
 package org.researchedc.compatibility;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -25,6 +26,15 @@ class RetiredEmailSchemaCleanupTest {
         assertTrue(migrationXml.contains("trg_neutralize_module_user_account_email"));
         assertTrue(migrationXml.contains("trg_neutralize_study_contact_email"));
         assertTrue(migrationXml.contains("trg_neutralize_module_study_contact_email"));
+    }
+
+    @Test
+    void ruleXsdNoLongerExposesRetiredEmailActionContract() throws IOException {
+        String rulesXsd = loadResource("properties/rules-ODM.xsd");
+
+        assertFalse(rulesXsd.contains("EmailAction"));
+        assertTrue(rulesXsd.contains("DiscrepancyNoteAction"));
+        assertTrue(rulesXsd.contains("NotificationAction"));
     }
 
     private String loadResource(String resourcePath) throws IOException {
