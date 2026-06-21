@@ -186,6 +186,7 @@ These are closed and should not be reopened except to fix regressions:
 - Retired datamap `EventCrf` and `CompletionStatus` mappings were removed after confirming no app/shared code imports them; `ItemData` now keeps the `event_crf_id` column as a scalar compatibility field.
 - Legacy subject-group datamap graph (`GroupClassTypes`, `StudyGroupClass`, `StudyGroup`, `SubjectGroupMap`) and unused `StudyModuleStatus` were removed after scans confirmed no live Java callers; active subject-group behavior uses module-owned `module_study_group*` entities/repositories.
 - Retired datamap lookup mappings for `ItemReferenceType`, `ItemDataType`, and `ResponseType` were removed after converting retained compatibility entities to scalar id columns.
+- Retired datamap `StudyParameter` and `StudyParameterValue` mappings were removed after scans confirmed they were only referenced by an unused `Study` constructor field path; active study configuration uses module-owned adapters/repositories.
 
 **Exit Gate**
 - Each removed `shared/domain` file has zero production callers and zero repository/runtime mapping requirements.
