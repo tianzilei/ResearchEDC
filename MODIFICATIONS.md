@@ -6,6 +6,12 @@
 
 ---
 
+## 2026-06-22 - Delete no-caller legacy DTO residue
+
+- Removed retired shared bean DTO/term types for discrepancy-note display, item-group metadata display, and section display paths after package-qualified scans showed no active app or shared callers.
+- Simplified `FormDiscrepancyNotes`, `StudyEventBean`, `ItemGroupBean`, and `ItemDataDaoAdapter` so those legacy DTOs no longer remain reachable.
+- Updated refactor docs to the 77-file shared Java surface and 38 shared DTO beans.
+
 ## 2026-06-22 - Move attachment path support out of shared
 
 - Added data-capture owned attachment storage path support and moved `AttachmentStorageAdapter` off `shared.bean.core.Utils`.

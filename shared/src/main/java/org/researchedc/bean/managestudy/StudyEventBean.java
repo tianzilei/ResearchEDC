@@ -64,18 +64,6 @@ public class StudyEventBean extends AuditableEntityBean {
     private boolean startTimeFlag = false;
     private boolean endTimeFlag = false;
 
-    //BWP: for display discrepancy notes in a matrix-type study/event grid; 5/2/2008
-      private ArrayList<DiscrepancyNoteBean>  discBeanList = new ArrayList<DiscrepancyNoteBean>();
-
-      public ArrayList<DiscrepancyNoteBean> getDiscBeanList() {
-          return discBeanList;
-      }
-
-      public void setDiscBeanList(ArrayList<DiscrepancyNoteBean> discBeanList) {
-          this.discBeanList = discBeanList;
-      }
-    
-
     /**
      * @return startTimeFlag
      */

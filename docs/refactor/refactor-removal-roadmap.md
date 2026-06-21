@@ -11,9 +11,9 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `82` files
+- Remaining `shared/` Java surface: `77` files
 - Modulith Java surface: `391` files
-- Code balance by file count: `17%` shared legacy / `83%` module modern
+- Code balance by file count: `16%` shared legacy / `84%` module modern
 
 This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup.
 
@@ -34,7 +34,7 @@ This means the workflow-level deletion program is complete. The remaining work i
 
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
-| `shared/bean` | 43 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
+| `shared/bean` | 38 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
 | `shared/domain` | 35 | Legacy entities and shared mapping model still used by repositories/adapters |
 | `shared/core` | 2 | Resource/config/path support still used by shared compatibility initialization |
 | `shared/i18n` | 1 | Legacy term/resource-bundle compatibility support |
@@ -86,6 +86,7 @@ These are closed and should not be reopened except to fix regressions:
 - The unused `shared/core/util/ItemGroupCrvVersionUtil` view-helper residue was removed; no `shared/core/util` Java callers remain.
 - Zero-caller shared support residues (`i18n/core/LocaleResolver`, `i18n/util/I18nFormatUtil`, and `exception/OpenClinicaException`) were removed after source/resource scans confirmed no app, test, shared, or resource callers.
 - Data-capture attachment storage now resolves `attached_file_location` through module-owned support, allowing the retired `shared/bean/core/Utils` path helper and the final `shared/core/form/StringUtil` caller to be removed.
+- Retired no-caller DTO residue for discrepancy-note display, item-group metadata display, and section display paths was removed; `FormDiscrepancyNotes`, `StudyEventBean`, `ItemGroupBean`, and `ItemDataDaoAdapter` no longer keep those legacy bean types alive.
 
 **Exit Gate**
 - No production code outside `shared/` imports `org.researchedc.core.*`, `i18n.*`, or `exception.*`.

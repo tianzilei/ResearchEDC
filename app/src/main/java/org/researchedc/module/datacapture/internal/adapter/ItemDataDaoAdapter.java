@@ -16,7 +16,6 @@ import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ItemGroupBean;
-import org.researchedc.bean.submit.SectionBean;
 import org.researchedc.module.dataimport.service.ImportItemDataPort;
 import org.researchedc.module.datacapture.entity.ItemDataEntity;
 import org.researchedc.module.datacapture.repository.ItemDataRepository;
@@ -159,10 +158,6 @@ public class ItemDataDaoAdapter implements ImportItemDataPort {
     }
 
     public int findAllRequiredByEventCRFId(EventCRFBean ecb) {
-        return 0;
-    }
-
-    public int getMaxOrdinalForGroup(EventCRFBean ecb, SectionBean sb, ItemGroupBean igb) {
         return 0;
     }
 

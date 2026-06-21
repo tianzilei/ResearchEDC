@@ -7,11 +7,7 @@
  */
 package org.researchedc.control.form;
 
-import org.researchedc.bean.managestudy.DiscrepancyNoteBean;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author jxu
@@ -21,62 +17,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class FormDiscrepancyNotes {
     private HashMap fieldNotes;
     private HashMap numExistingFieldNotes;
-    private HashMap idNotes;
 
     public FormDiscrepancyNotes() {
         fieldNotes = new HashMap();
         numExistingFieldNotes = new HashMap();
-        idNotes = new HashMap();
-    }
-
-    public void addNote(String field, DiscrepancyNoteBean note) {
-        ArrayList notes;
-        if (fieldNotes.containsKey(field)) {
-            notes = (ArrayList) fieldNotes.get(field);
-        } else {
-            notes = new ArrayList();
-        }
-
-        notes.add(note);
-        //System.out.println("after adding note:" + notes.size());
-        fieldNotes.put(field, notes);
-    }
-
-    /** want to map entity Id with field names
-     * So we know if an entity has discrepancy note giving entity id
-     * @param entityId
-     * @param field
-     */
-    public void addIdNote(int entityId, String field) {
-        ArrayList notes;
-        if (idNotes.containsKey(entityId)) {
-            notes = (ArrayList) fieldNotes.get(entityId);
-        } else {
-            notes = new ArrayList();
-        }
-        if (notes != null) {
-            notes.add(field);
-        }
-        idNotes.put(Integer.valueOf(entityId), notes);
     }
 
     public boolean hasNote(String field) {
-        ArrayList notes;
         if (fieldNotes.containsKey(field)) {
-            notes = (ArrayList) fieldNotes.get(field);
-            return notes != null && notes.size() > 0;
+            Object notes = fieldNotes.get(field);
+            if (notes instanceof java.util.Collection collection) {
+                return !collection.isEmpty();
+            }
+            return notes != null;
         }
         return false;
-    }
-
-    public ArrayList getNotes(String field) {
-        ArrayList notes;
-        if (fieldNotes.containsKey(field)) {
-            notes = (ArrayList) fieldNotes.get(field);
-        } else {
-            notes = new ArrayList();
-        }
-        return notes;
     }
 
     public void setNumExistingFieldNotes(String field, int num) {
@@ -121,17 +76,4 @@ public class FormDiscrepancyNotes {
         this.numExistingFieldNotes = numExistingFieldNotes;
     }
 
-    /**
-     * @return the idNotes
-     */
-    public HashMap getIdNotes() {
-        return idNotes;
-    }
-
-    /**
-     * @param idNotes the idNotes to set
-     */
-    public void setIdNotes(HashMap idNotes) {
-        this.idNotes = idNotes;
-    }
 }

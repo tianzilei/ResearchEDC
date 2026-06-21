@@ -11,7 +11,6 @@ import org.researchedc.bean.core.AuditableEntityBean;
 public class ItemGroupBean extends AuditableEntityBean implements Serializable{
 
     private Integer crfId = 0;
-    private ItemGroupMetadataBean meta = new ItemGroupMetadataBean();
     private ArrayList itemGroupMetaBeans = new ArrayList();
     // change 07-08-07, tbh
     private ArrayList items = new ArrayList();
@@ -21,7 +20,6 @@ public class ItemGroupBean extends AuditableEntityBean implements Serializable{
         super();
         crfId = 0;
         name = "";
-        meta = new ItemGroupMetadataBean();
     }
 
     
@@ -41,21 +39,6 @@ public class ItemGroupBean extends AuditableEntityBean implements Serializable{
      */
     public void setCrfId(Integer crfId) {
         this.crfId = crfId;
-    }
-
-    /**
-     * @return the meta
-     */
-    public ItemGroupMetadataBean getMeta() {
-        return meta;
-    }
-
-    /**
-     * @param meta
-     *            the meta to set
-     */
-    public void setMeta(ItemGroupMetadataBean meta) {
-        this.meta = meta;
     }
 
     public String getOid() {
