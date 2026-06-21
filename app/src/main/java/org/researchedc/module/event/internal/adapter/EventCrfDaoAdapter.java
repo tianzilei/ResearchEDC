@@ -21,6 +21,7 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.module.dataimport.service.ImportEventCrfPort;
+import org.researchedc.module.dataimport.dto.ImportEventCrf;
 import org.researchedc.module.event.entity.EventCrfEntity;
 import org.researchedc.module.event.repository.EventCrfRepository;
 import org.springframework.context.annotation.Primary;
@@ -164,7 +165,7 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
                 studyEvent.getId(), studySubject.getId(), crfVersion.getId()));
     }
 
-    public List<Object[]> findImportEventCrfsByEventSubjectVersion(
+    public List<ImportEventCrf> findImportEventCrfsByEventSubjectVersion(
             int studyEventId, int studySubjectId, int crfVersionId) {
         return eventCrfRepository.findByStudyEventIdAndStudySubjectIdAndCrfVersionId(
                         studyEventId, studySubjectId, crfVersionId).stream()
@@ -210,7 +211,7 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
                 studyEvent.getId(), studySubject.getId(), crfVersion.getId()));
     }
 
-    public List<Object[]> findImportEventCrfsByEventSubjectCrfId(
+    public List<ImportEventCrf> findImportEventCrfsByEventSubjectCrfId(
             int studyEventId, int studySubjectId, int crfVersionId) {
         return eventCrfRepository.findByStudyEventIdAndStudySubjectIdAndCrfVersionId(
                         studyEventId, studySubjectId, crfVersionId).stream()
@@ -219,7 +220,7 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
     }
 
     @Transactional
-    public Object[] createImportEventCrf(
+    public ImportEventCrf createImportEventCrf(
             int studyEventId,
             int studySubjectId,
             int crfVersionId,
@@ -327,12 +328,11 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
         return beans;
     }
 
-    private Object[] toImportRow(EventCrfEntity entity) {
-        return new Object[]{
+    private ImportEventCrf toImportRow(EventCrfEntity entity) {
+        return new ImportEventCrf(
                 valueOrZero(entity.getEventCrfId()),
                 valueOrZero(entity.getCrfVersionId()),
-                valueOrZero(entity.getStatusId())
-        };
+                valueOrZero(entity.getStatusId()));
     }
 
     private EventCRFBean toBean(EventCrfEntity entity) {

@@ -1,7 +1,9 @@
 package org.researchedc.module.dataimport.service;
 
+import org.researchedc.module.dataimport.dto.ImportStudyEvent;
+
 public interface ImportStudyEventPort {
 
-    Object[] findImportStudyEventBySubjectDefinitionOrdinal(
+    ImportStudyEvent findImportStudyEventBySubjectDefinitionOrdinal(
             int studySubjectId, int studyEventDefinitionId, int ordinal);
 }

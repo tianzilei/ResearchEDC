@@ -13,6 +13,7 @@ import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.module.dataimport.service.ImportItemGroupPort;
+import org.researchedc.module.dataimport.dto.ImportItemGroup;
 import org.researchedc.module.datacapture.entity.ItemGroupEntity;
 import org.researchedc.module.datacapture.repository.ItemGroupRepository;
 import org.springframework.context.annotation.Primary;
@@ -121,10 +122,10 @@ public class ItemGroupDaoAdapter implements ImportItemGroupPort {
         return beans;
     }
 
-    public List<Object[]> findImportItemGroupsByOid(String oid) {
+    public List<ImportItemGroup> findImportItemGroupsByOid(String oid) {
         return repository.findByOcOid(oid).stream()
                 .sorted(Comparator.comparing(ItemGroupEntity::getItemGroupId, Comparator.nullsLast(Integer::compareTo)))
-                .map(entity -> new Object[]{entity.getItemGroupId()})
+                .map(entity -> new ImportItemGroup(entity.getItemGroupId()))
                 .toList();
     }
 

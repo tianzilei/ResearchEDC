@@ -13,6 +13,7 @@ import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
 import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.module.dataimport.service.ImportItemFormMetadataPort;
+import org.researchedc.module.dataimport.dto.ImportItemFormMetadata;
 import org.researchedc.module.crf.entity.ItemFormMetadataEntity;
 import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
 import org.slf4j.Logger;
@@ -206,7 +207,7 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         return findAllByItemIdSql(sql, itemId);
     }
 
-    public List<Object[]> findImportItemFormMetadataByItemId(int itemId) {
+    public List<ImportItemFormMetadata> findImportItemFormMetadataByItemId(int itemId) {
         String sql = "SELECT DISTINCT m.width_decimal, rs.response_type_id, rs.options_text, rs.options_values "
             + "FROM item_form_metadata m, response_set rs, crf_version cv, "
             + "item_group_metadata igm, item_group ig, section sec "
@@ -218,12 +219,11 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
             + "AND sec.section_id = m.section_id";
         return getJdbcTemplate().query(
                 sql,
-                (rs, rowNum) -> new Object[]{
+                (rs, rowNum) -> new ImportItemFormMetadata(
                         rs.getString("width_decimal"),
-                        rs.getObject("response_type_id"),
+                        rs.getObject("response_type_id", Integer.class),
                         rs.getString("options_text"),
-                        rs.getString("options_values")
-                },
+                        rs.getString("options_values")),
                 itemId);
     }
 

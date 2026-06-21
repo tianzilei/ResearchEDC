@@ -13,6 +13,7 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyType;
 import org.researchedc.module.dataimport.service.ImportStudyLookupPort;
+import org.researchedc.module.dataimport.dto.ImportStudy;
 import org.researchedc.module.study.entity.StudyEntity;
 import org.researchedc.module.study.repository.StudyRepository;
 import org.springframework.context.annotation.Primary;
@@ -239,12 +240,12 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
     }
 
     @Override
-    public Object[] findImportStudyByOid(String oid) {
+    public ImportStudy findImportStudyByOid(String oid) {
         StudyBean study = findByOid(oid);
         if (study == null) {
             return null;
         }
-        return new Object[]{study.getId(), study.getParentStudyId(), study.getName()};
+        return new ImportStudy(study.getId(), study.getParentStudyId(), study.getName());
     }
 
     public StudyBean findByUniqueIdentifier(String uniqueIdentifier) {

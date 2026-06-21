@@ -1,6 +1,8 @@
 package org.researchedc.module.dataimport.service;
 
+import org.researchedc.module.dataimport.dto.ImportStudySubject;
+
 public interface ImportStudySubjectPort {
 
-    Object[] findImportStudySubjectByOidAndStudy(String oid, int studyId);
+    ImportStudySubject findImportStudySubjectByOidAndStudy(String oid, int studyId);
 }

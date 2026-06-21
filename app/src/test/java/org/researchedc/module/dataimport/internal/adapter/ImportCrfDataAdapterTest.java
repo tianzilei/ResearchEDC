@@ -29,15 +29,20 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.module.dataimport.service.ImportCrfVersionPort;
 import org.researchedc.module.dataimport.service.ImportEventCrfPort;
+import org.researchedc.module.dataimport.dto.ImportEventCrf;
 import org.researchedc.module.dataimport.service.ImportItemDataPort;
 import org.researchedc.module.dataimport.service.ImportItemFormMetadataPort;
 import org.researchedc.module.dataimport.service.ImportItemGroupPort;
 import org.researchedc.module.dataimport.service.ImportItemPort;
 import org.researchedc.module.dataimport.service.ImportResponseSetPort;
 import org.researchedc.module.dataimport.service.ImportStudyEventDefinitionPort;
+import org.researchedc.module.dataimport.dto.ImportStudyEventDefinition;
 import org.researchedc.module.dataimport.service.ImportStudyEventPort;
+import org.researchedc.module.dataimport.dto.ImportStudyEvent;
 import org.researchedc.module.dataimport.service.ImportStudyLookupPort;
+import org.researchedc.module.dataimport.dto.ImportStudy;
 import org.researchedc.module.dataimport.service.ImportStudySubjectPort;
+import org.researchedc.module.dataimport.dto.ImportStudySubject;
 
 class ImportCrfDataAdapterTest {
 
@@ -136,21 +141,22 @@ class ImportCrfDataAdapterTest {
         CRFVersionBean version = new CRFVersionBean();
         version.setId(5);
 
-        when(studyLookupPort.findImportStudyByOid("S_DEMO")).thenReturn(new Object[]{1, 0, "Demo Study"});
+        when(studyLookupPort.findImportStudyByOid("S_DEMO"))
+                .thenReturn(new ImportStudy(1, 0, "Demo Study"));
         when(studySubjectPort.findImportStudySubjectByOidAndStudy("SS_DEMO", 1))
-                .thenReturn(new Object[]{2, "SS_DEMO"});
+                .thenReturn(new ImportStudySubject(2, "SS_DEMO"));
         when(studyEventDefinitionPort.findImportStudyEventDefinitionByOidAndStudy("SE_BASELINE", 1, 0))
-                .thenReturn(new Object[]{3, "Baseline"});
+                .thenReturn(new ImportStudyEventDefinition(3, "Baseline"));
         when(studyEventPort.findImportStudyEventBySubjectDefinitionOrdinal(2, 3, 1))
-                .thenReturn(new Object[]{4, SubjectEventStatus.SCHEDULED.getId(), ""});
+                .thenReturn(new ImportStudyEvent(4, SubjectEventStatus.SCHEDULED.getId(), ""));
         when(crfVersionPort.findAllImportCrfVersionsByOid("F_VITALS_V1"))
                 .thenReturn(List.of(new ImportCrfVersionPort.ImportCrfVersion(5)));
         when(eventCrfPort.findImportEventCrfsByEventSubjectVersion(4, 2, 5))
                 .thenReturn(new ArrayList<>());
         when(eventCrfPort.findImportEventCrfsByEventSubjectCrfId(4, 2, 5))
                 .thenReturn(new ArrayList<>());
-        when(eventCrfPort.createImportEventCrf(4, 2, 5, 1, "system", 1))
-                .thenReturn(new Object[]{12, 5, 1});
+        when(eventCrfPort.createImportEventCrf(4, 2, 5, 0, "system", 1))
+                .thenReturn(new ImportEventCrf(12, 5, 1));
         when(itemPort.findImportItemsByOid("I_WEIGHT"))
                 .thenReturn(List.of(new ImportItemPort.ImportItem(77, "I_WEIGHT", 7)));
         org.mockito.Mockito.doThrow(new RuntimeException("database write failed"))

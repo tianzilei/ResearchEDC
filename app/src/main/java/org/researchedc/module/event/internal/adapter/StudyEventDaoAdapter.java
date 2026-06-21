@@ -21,6 +21,7 @@ import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.domain.datamap.StudyEvent;
 import org.researchedc.module.dataimport.service.ImportStudyEventPort;
+import org.researchedc.module.dataimport.dto.ImportStudyEvent;
 import org.researchedc.module.event.entity.StudyEventEntity;
 import org.researchedc.module.event.repository.StudyEventRepository;
 import org.springframework.context.annotation.Primary;
@@ -153,17 +154,17 @@ public class StudyEventDaoAdapter implements ImportStudyEventPort {
         return toBean(results.get(0));
     }
 
-    public Object[] findImportStudyEventBySubjectDefinitionOrdinal(
+    public ImportStudyEvent findImportStudyEventBySubjectDefinitionOrdinal(
             int studySubjectId, int studyEventDefinitionId, int ordinal) {
         return studyEventRepository
                 .findByStudySubjectIdAndStudyEventDefinitionIdAndSampleOrdinal(
                         studySubjectId, studyEventDefinitionId, ordinal)
                 .stream()
                 .findFirst()
-                .map(entity -> new Object[]{
+                .map(entity -> new ImportStudyEvent(
                         entity.getStudyEventId(),
                         entity.getSubjectEventStatusId(),
-                        entity.getLocation()})
+                        entity.getLocation()))
                 .orElse(null);
     }
 

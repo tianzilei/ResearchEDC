@@ -2,7 +2,9 @@ package org.researchedc.module.dataimport.service;
 
 import java.util.List;
 
+import org.researchedc.module.dataimport.dto.ImportItemGroup;
+
 public interface ImportItemGroupPort {
 
-    List<Object[]> findImportItemGroupsByOid(String oid);
+    List<ImportItemGroup> findImportItemGroupsByOid(String oid);
 }

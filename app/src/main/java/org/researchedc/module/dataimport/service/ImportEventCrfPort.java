@@ -2,15 +2,17 @@ package org.researchedc.module.dataimport.service;
 
 import java.util.List;
 
+import org.researchedc.module.dataimport.dto.ImportEventCrf;
+
 public interface ImportEventCrfPort {
 
-    List<Object[]> findImportEventCrfsByEventSubjectVersion(
+    List<ImportEventCrf> findImportEventCrfsByEventSubjectVersion(
             int studyEventId, int studySubjectId, int crfVersionId);
 
-    List<Object[]> findImportEventCrfsByEventSubjectCrfId(
+    List<ImportEventCrf> findImportEventCrfsByEventSubjectCrfId(
             int studyEventId, int studySubjectId, int crfVersionId);
 
-    Object[] createImportEventCrf(
+    ImportEventCrf createImportEventCrf(
             int studyEventId,
             int studySubjectId,
             int crfVersionId,

@@ -16,6 +16,7 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.module.dataimport.service.ImportStudyEventDefinitionPort;
+import org.researchedc.module.dataimport.dto.ImportStudyEventDefinition;
 import org.researchedc.module.event.entity.StudyEventDefinitionEntity;
 import org.researchedc.module.event.repository.StudyEventDefinitionRepository;
 import org.springframework.context.annotation.Primary;
@@ -116,7 +117,7 @@ public class StudyEventDefinitionDaoAdapter implements ImportStudyEventDefinitio
         return bean;
     }
 
-    public Object[] findImportStudyEventDefinitionByOidAndStudy(
+    public ImportStudyEventDefinition findImportStudyEventDefinitionByOidAndStudy(
             String oid, int studyId, int parentStudyId) {
         StudyEventDefinitionEntity entity = repository.findByOcOidAndStudyId(oid, studyId)
                 .or(() -> repository.findByOcOidAndStudyId(oid, parentStudyId))
@@ -124,7 +125,7 @@ public class StudyEventDefinitionDaoAdapter implements ImportStudyEventDefinitio
         if (entity == null) {
             return null;
         }
-        return new Object[]{entity.getStudyEventDefinitionId(), entity.getName()};
+        return new ImportStudyEventDefinition(entity.getStudyEventDefinitionId(), entity.getName());
     }
 
     private StudyEventDefinitionBean findByOidAndStudy(String oid, int studyId) {

@@ -17,15 +17,20 @@ import org.researchedc.bean.submit.crfdata.SubjectDataBean;
 import org.researchedc.bean.submit.crfdata.UpsertOnBean;
 import org.researchedc.module.dataimport.service.ImportCrfVersionPort;
 import org.researchedc.module.dataimport.service.ImportEventCrfPort;
+import org.researchedc.module.dataimport.dto.ImportEventCrf;
 import org.researchedc.module.dataimport.service.ImportItemDataPort;
 import org.researchedc.module.dataimport.service.ImportItemFormMetadataPort;
 import org.researchedc.module.dataimport.service.ImportItemGroupPort;
 import org.researchedc.module.dataimport.service.ImportItemPort;
 import org.researchedc.module.dataimport.service.ImportResponseSetPort;
 import org.researchedc.module.dataimport.service.ImportStudyEventDefinitionPort;
+import org.researchedc.module.dataimport.dto.ImportStudyEventDefinition;
 import org.researchedc.module.dataimport.service.ImportStudyEventPort;
+import org.researchedc.module.dataimport.dto.ImportStudyEvent;
 import org.researchedc.module.dataimport.service.ImportStudyLookupPort;
+import org.researchedc.module.dataimport.dto.ImportStudy;
 import org.researchedc.module.dataimport.service.ImportStudySubjectPort;
+import org.researchedc.module.dataimport.dto.ImportStudySubject;
 
 class ImportCrfDataAdapterPureTest {
 
@@ -55,30 +60,30 @@ class ImportCrfDataAdapterPureTest {
     @Test
     void validateEventCrfs_usesModuleOwnedInternalLookupRecords() {
         ImportCrfDataAdapter adapter = adapter(
-            oid -> new Object[]{1, 0, "Demo Study"},
-            (oid, studyId) -> new Object[]{2, "SS_DEMO"},
+            oid -> new ImportStudy(1, 0, "Demo Study"),
+            (oid, studyId) -> new ImportStudySubject(2, "SS_DEMO"),
             (studySubjectId, studyEventDefinitionId, ordinal) ->
-                new Object[]{4, SubjectEventStatus.SCHEDULED.getId(), "HQ"},
-            (oid, studyId, parentStudyId) -> new Object[]{3, "Baseline"},
+                new ImportStudyEvent(4, SubjectEventStatus.SCHEDULED.getId(), "HQ"),
+            (oid, studyId, parentStudyId) -> new ImportStudyEventDefinition(3, "Baseline"),
             oid -> List.of(new ImportCrfVersionPort.ImportCrfVersion(5)),
             new ImportEventCrfPort() {
                 @Override
-                public List<Object[]> findImportEventCrfsByEventSubjectVersion(
+                public List<ImportEventCrf> findImportEventCrfsByEventSubjectVersion(
                         int studyEventId, int studySubjectId, int crfVersionId) {
-                    return List.<Object[]>of(new Object[]{12, 5, Status.AVAILABLE.getId()});
+                    return List.of(new ImportEventCrf(12, 5, Status.AVAILABLE.getId()));
                 }
 
                 @Override
-                public List<Object[]> findImportEventCrfsByEventSubjectCrfId(
+                public List<ImportEventCrf> findImportEventCrfsByEventSubjectCrfId(
                         int studyEventId, int studySubjectId, int crfVersionId) {
                     return List.of();
                 }
 
                 @Override
-                public Object[] createImportEventCrf(
+                public ImportEventCrf createImportEventCrf(
                         int studyEventId, int studySubjectId, int crfVersionId,
                         int ownerId, String interviewerName, int statusId) {
-                    return new Object[]{99, crfVersionId, statusId};
+                    return new ImportEventCrf(99, crfVersionId, statusId);
                 }
             }
         );
@@ -140,22 +145,22 @@ class ImportCrfDataAdapterPureTest {
 
     private static final class NoopEventCrfPort implements ImportEventCrfPort {
         @Override
-        public List<Object[]> findImportEventCrfsByEventSubjectVersion(
+        public List<ImportEventCrf> findImportEventCrfsByEventSubjectVersion(
                 int studyEventId, int studySubjectId, int crfVersionId) {
             return List.of();
         }
 
         @Override
-        public List<Object[]> findImportEventCrfsByEventSubjectCrfId(
+        public List<ImportEventCrf> findImportEventCrfsByEventSubjectCrfId(
                 int studyEventId, int studySubjectId, int crfVersionId) {
             return List.of();
         }
 
         @Override
-        public Object[] createImportEventCrf(
+        public ImportEventCrf createImportEventCrf(
                 int studyEventId, int studySubjectId, int crfVersionId,
                 int ownerId, String interviewerName, int statusId) {
-            return new Object[]{0, crfVersionId, statusId};
+            return new ImportEventCrf(0, crfVersionId, statusId);
         }
     }
 

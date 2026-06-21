@@ -18,6 +18,7 @@ import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.domain.datamap.StudySubject;
 import org.researchedc.module.dataimport.service.ImportStudySubjectPort;
+import org.researchedc.module.dataimport.dto.ImportStudySubject;
 import org.researchedc.module.subject.entity.StudySubjectEntity;
 import org.researchedc.module.subject.repository.StudySubjectRepository;
 import org.springframework.context.annotation.Primary;
@@ -145,9 +146,9 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
                 .orElse(null);
     }
 
-    public Object[] findImportStudySubjectByOidAndStudy(String oid, int studyId) {
+    public ImportStudySubject findImportStudySubjectByOidAndStudy(String oid, int studyId) {
         return repository.findByOcOidAndStudyId(oid, studyId)
-                .map(entity -> new Object[]{entity.getStudySubjectId(), entity.getLabel()})
+                .map(entity -> new ImportStudySubject(entity.getStudySubjectId(), entity.getLabel()))
                 .orElse(null);
     }
 
