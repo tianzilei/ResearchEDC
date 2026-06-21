@@ -11,9 +11,9 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `97` files
+- Remaining `shared/` Java surface: `89` files
 - Modulith Java surface: `383` files
-- Code balance by file count: `20%` shared legacy / `80%` module modern
+- Code balance by file count: `19%` shared legacy / `81%` module modern
 
 This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup.
 
@@ -34,8 +34,8 @@ This means the workflow-level deletion program is complete. The remaining work i
 
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
-| `shared/bean` | 52 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
-| `shared/domain` | 37 | Legacy entities and shared mapping model still used by repositories/adapters |
+| `shared/bean` | 45 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
+| `shared/domain` | 36 | Legacy entities and shared mapping model still used by repositories/adapters |
 | `shared/core` | 3 | Resource/config/path and utility support still used by import, form, and shared compatibility code |
 | `shared/i18n` | 3 | Legacy form/import localization support |
 | `shared/exception` | 2 | Compatibility exception types |
@@ -180,6 +180,7 @@ These are closed and should not be reopened except to fix regressions:
 - Retired extract compatibility DTO/support classes (`ExtractPropertyBean` plus old post-processing function types) were removed; `CoreResources` no longer retains the unused extract-property static field.
 - Retired dataset/filter extract DTOs (`DatasetBean`, `FilterBean`, `FilterObjectBean`) and their unused `DatasetItemStatus` enum-like term were removed after source/test scans showed no active app or module callers.
 - Orphaned audit and study-parameter DTO beans (`bean/admin/Audit*`, `bean/service/StudyParameter*`) were removed after full import/instantiation scans confirmed no active callers.
+- Retired data-entry/import display DTOs (`DisplayItemBean*`, `EventDefinitionCRFBean`, `SubjectBean`) and unused subject-group DTO/term types (`StudyGroup*Bean`, `GroupClassType`) were removed after source and resource scans confirmed no active app/shared callers; module-owned CRF, subject, and subject-group entities remain the runtime paths.
 - ODM import DTOs were narrowed to fields mapped by `cd_odm_mapping.xml`; unused audit/discrepancy/measurement-unit companion beans under `bean/odmbeans` were removed after import parser tests passed.
 - Duplicate unreferenced JPA mappings for `measurement_unit` and `study_module_status` under `domain/admin` and `domain/managestudy` were removed.
 - Unused `domain/datamap` mappings for retired DAO/SPI surfaces (`CrfVersionMedia`, `EventDefinitionCrfTag`, `MeasurementUnit`, `Tag`, and `VersioningMap` plus its embedded id) were removed after live Java caller scans found no remaining repositories, adapters, or entity relationships requiring them.
@@ -190,6 +191,7 @@ These are closed and should not be reopened except to fix regressions:
 - Retired datamap `StudyParameter` and `StudyParameterValue` mappings were removed after scans confirmed they were only referenced by an unused `Study` constructor field path; active study configuration uses module-owned adapters/repositories.
 - Retired datamap `ItemGroupMetadata` mapping was removed after scans confirmed no direct Java callers; active item-group metadata access uses the module-owned `module_item_group_metadata` entity/repository while compatibility DTO paths retain `ItemGroupMetadataBean`.
 - Zero-caller shared domain residues `AuthoritiesBean`, `AuditableMutableDomainObject`, and `AbstractAuditableMutableDomainObject` were removed after source scans confirmed only historical ledger text referenced them.
+- The `SourceDataVerification` enum was removed with its only Java caller, the retired `EventDefinitionCRFBean`; ODM XSD schema attributes remain resource-only and do not depend on the Java enum.
 
 **Exit Gate**
 - Each removed `shared/domain` file has zero production callers and zero repository/runtime mapping requirements.
