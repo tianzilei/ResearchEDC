@@ -1,7 +1,7 @@
 # shared/ - Shared Domain Logic & Data Access
 
-**Module:** Legacy domain logic, data access, entities, and business services
-**Files:** 62 Java files
+**Module:** Legacy compatibility DTO and resource support
+**Files:** 42 Java files
 **Package:** `org.researchedc.*`
 
 > Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
@@ -14,10 +14,8 @@
 shared/src/main/java/org/researchedc/
 ├── bean/         # DTOs — 38 Java files
 ├── core/         # Core resources/configuration — 2 Java files
-├── domain/       # Hibernate/domain entities — 20 Java files
 ├── exception/    # Custom exceptions — 1 Java file
-├── i18n/         # Internationalization utilities + 22 .properties files
-└── other support # Logging, validation, and compatibility helpers — 0 Java files
+└── i18n/         # Internationalization utilities + 22 .properties files
 
 shared/src/main/resources/
 ├── migration/    # Liquibase schema migrations (208 XML files)
@@ -29,7 +27,7 @@ shared/src/main/resources/
 | Area | Files | Description |
 |------|-------|-------------|
 | **DAO (SPI)** | 0 | Deleted; compatibility data access now uses module-owned ports/repositories |
-| **Domain Entities** | 20 | Hibernate `@Entity` classes mapping to database tables (`datamap/` has 13 Java files); former duplicate admin/managestudy, technical admin, retired crfdata, retired rule, old domain base interfaces, DN/subjectgroup/discrepancy-note/study-user-role/event map, and unused datamap mappings have been removed |
+| **Domain Entities** | 0 | Retired; active mappings live in module-owned entities and repositories |
 | **DTO Beans** | 38 | `EntityBean` subclasses — data transfer objects for compatibility paths |
 | **Liquibase Migrations** | 209 | Versioned schema changes from OpenClinica 3.x through 3.18 |
 | **Legacy DAO XML** | 0 | Retired `properties/*_dao.xml` SQL maps were removed; active query loading uses `classpath:queries/<db>/**/*.properties` |
@@ -39,7 +37,7 @@ shared/src/main/resources/
 
 - **Beans:** `*Bean` suffix for DTOs, extend `EntityBean<K>` with audit fields (id, createdDate, ownerId...)
 - **DAOs:** do not add shared DAO SPI files; module implementations live under `app/module/*/internal/adapter/` and module repositories.
-- **Entities:** Hibernate `@Entity` classes in `domain/datamap/` (13 Java files)
+- **Entities:** do not add shared Hibernate entities; use module-owned `@Entity(name = "Module<Name>")` mappings.
 - **DAO access:** Prefer Spring-injected DAO/SPI collaborators in managed beans; keep remaining legacy manual construction isolated behind local adapters/helpers until each path is strangulated.
 - **Package:** All classes in `org.researchedc.*` (migrated from `org.akaza.openclinica`)
 
@@ -60,7 +58,7 @@ test methods awaiting reactivation.
 | Annotations | ✅ `@Repository`/`@Service` applied to all DAOs and services |
 | SPI interfaces | ✅ Deleted; caller migration to module-owned ports complete |
 | Liquibase migrations | ✅ 208 XML files, versioned from 3.x through 3.18 |
-| Strangulation target | 🔶 Active — new code goes to `app/module/` |
+| Strangulation target | 🔶 Active — remaining shared DTO/resource support should keep shrinking; new code goes to `app/module/` |
 | DAO deletion | ✅ `DaoProvider`, direct `new XxxDAO(...)` / `new StudyConfigService(...)`, LegacyDaoFactory, EntityDAO infrastructure, and shared DAO SPI files are removed. Phase 3 ledger: 878/878 rows removed; 0 unused, fallback-SQL, legacy-only, or adapter-gap rows remain. |
 
 ## ANTI-PATTERNS

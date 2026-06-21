@@ -6,6 +6,12 @@
 
 ---
 
+## 2026-06-22 - Retire final shared domain mappings
+
+- Removed the remaining 20 Java files under `shared/domain` after scans showed no production callers once `ResponseSetDaoAdapter` was narrowed to the module-owned `ImportResponseSetPort`.
+- Dropped the unused `EventCRFBean` next-generation status field and removed the obsolete shared-entity email compatibility reflection test.
+- Narrowed Boot and Hibernate entity scanning to `org.researchedc.module`, leaving active persistence mappings module-owned and reducing `shared` to 42 Java files.
+
 ## 2026-06-22 - Delete retired event and subject datamap graph
 
 - Removed no-caller shared datamap mappings for `EventDefinitionCrf`, `StudyEvent`, and `StudySubject` after scans showed only stale imports and reverse collections referenced them.

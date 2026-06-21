@@ -1,7 +1,7 @@
 # app/ - Spring Boot Modular Monolith Entry Point
 
 **Module:** Application entry point, configuration, and Modulith modules  
-**Files:** 430 Java files total, including 402 under `module/`; 17 Modulith modules
+**Files:** 417 Java files total, including 391 under `module/`; 17 Modulith modules
 
 > Entry point: `OpenClinicaApplication.java` — Spring Boot WAR packaging.  
 > Config classes in `org.researchedc.config.*` handle Hibernate, security (Spring Security form login + CSRF), scheduling, and OpenAPI.
@@ -40,7 +40,7 @@ app/src/main/java/org/researchedc/
 
 - **Package base:** `org.researchedc`
 - **Module structure:** `module/<name>/{entity,repository,service,dto,controller}/` — some modules add `event/`, `enums/`, `internal/adapter/`
-- **Entities:** `@Entity(name = "Module<Name>")` avoids name collision with legacy `domain/datamap/` entities
+- **Entities:** `@Entity(name = "Module<Name>")` keeps module mappings explicit and stable
 - **FKs:** Plain `Integer`/`Long` columns, NOT JPA `@ManyToOne` (follows randomization pattern as reference)
 - **Anti-corruption layer:** Legacy DAO access restricted to `module/<name>/internal/adapter/` only
 - **Legacy removal:** adapters are temporary containment boundaries, not proof that legacy code is removed. Keep public module APIs free of `shared/` types and retire adapters only after repository-backed behavior and tests replace the delegated legacy methods.
@@ -52,7 +52,7 @@ app/src/main/java/org/researchedc/
 | Config | File | Purpose |
 |--------|------|---------|
 | Security | `config/SecurityConfig.java` | Spring Security form login, CSRF, session management |
-| Hibernate | `config/HibernateConfig.java` | Dual DataSource: legacy + module entities |
+| Hibernate | `config/HibernateConfig.java` | Module-owned JPA entities and Hibernate `SessionFactory` |
 | SPA Routes | `config/WebMvcConfig.java` | `/app/**` → React `index.html` fallback |
 | OpenAPI | `config/OpenApiConfig.java` | Swagger UI at `/swagger-ui.html` |
 

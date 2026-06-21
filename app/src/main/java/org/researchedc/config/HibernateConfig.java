@@ -18,8 +18,8 @@ import org.springframework.transaction.PlatformTransactionManager;
  * Java @Configuration replacing applicationContext-core-hibernate.xml.
  *
  * <p>Legacy DAO beans have been replaced by module-owned primary adapters.
- * This class now only keeps the shared JPA and Hibernate infrastructure that
- * remaining compatibility code still needs.</p>
+ * This class now keeps the module-owned JPA and Hibernate infrastructure used
+ * by repositories and compatibility adapters.</p>
  */
 @Configuration
 public class HibernateConfig {
@@ -34,7 +34,7 @@ public class HibernateConfig {
             DataSource dataSource, JpaProperties jpaProperties) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("org.researchedc.domain", "org.researchedc.module");
+        em.setPackagesToScan("org.researchedc.module");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         em.setJpaPropertyMap(jpaProperties.getProperties());
         return em;

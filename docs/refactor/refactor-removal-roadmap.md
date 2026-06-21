@@ -11,9 +11,9 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `62` files
+- Remaining `shared/` Java surface: `42` files
 - Modulith Java surface: `391` files
-- Code balance by file count: `14%` shared legacy / `86%` module modern
+- Code balance by file count: `10%` shared legacy / `90%` module modern
 
 This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup.
 
@@ -35,7 +35,7 @@ This means the workflow-level deletion program is complete. The remaining work i
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
 | `shared/bean` | 38 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
-| `shared/domain` | 20 | Legacy entities and shared mapping model still used by repositories/adapters |
+| `shared/domain` | 0 | Retired; active mappings live in module-owned entities/repositories |
 | `shared/core` | 2 | Resource/config/path support still used by shared compatibility initialization |
 | `shared/i18n` | 1 | Legacy term/resource-bundle compatibility support |
 | `shared/exception` | 1 | Compatibility exception type still used by `CoreResources` |
@@ -47,7 +47,7 @@ This means the workflow-level deletion program is complete. The remaining work i
 | `app/module/dataimport/internal/adapter/ImportCrfDataAdapter` | Largest remaining consumer of `shared.bean.*`, ODM compatibility types, and `shared` resource/i18n support |
 | `app/control/form/Validator` | Major anchor for `shared.core`, `shared.i18n`, and legacy form DTO assumptions |
 | `app/control/form/FormDiscrepancyNotes` | Couples discrepancy workflows to legacy form/bean model |
-| `app/module/*/internal/adapter/*.java` | 20 module adapters still translate to/from legacy `shared` DTOs/entities |
+| `app/module/*/internal/adapter/*.java` | Module adapters still translate to/from legacy `shared` DTOs at retained compatibility edges |
 | `app/module/event/internal/adapter/StudyEventDaoAdapter` | Still carries legacy bean/entity translation logic after observer cleanup |
 
 ## Completed Workstreams
@@ -201,9 +201,10 @@ These are closed and should not be reopened except to fix regressions:
 - Retired study-user-role datamap composite mapping (`StudyUserRole` and `StudyUserRoleId`) was removed after scans showed only dead reverse fields in `Study`/`UserAccount` referenced it; active identity behavior uses module-owned `module_study_user_role` / `RoleEntity`.
 - Retired shared domain base infrastructure (`DomainObject`, `MutableDomainObject`, `CompositeIdDomainObject`, `AbstractMutableDomainObject`, and package-level generator declarations) was removed after scans confirmed no active callers or subclasses; retained datamap entities have class-local identifiers/generators and now use `DataMapDomainObject` only as a serializable marker base.
 - Retired event/subject datamap mappings (`EventDefinitionCrf`, `StudyEvent`, and `StudySubject`) were removed after scans showed only stale imports and reverse collections referenced them; active event, subject, and event-definition CRF behavior uses module-owned entities/repositories.
+- The final retired shared domain graph was removed after `ResponseSetDaoAdapter` was narrowed to the module-owned `ImportResponseSetPort`, `EventCRFBean` dropped its no-caller next-generation status field, and app/Hibernate entity scanning was narrowed to `org.researchedc.module`; `shared/src/main/java/org/researchedc/domain` now has `0` Java files.
 
 **Exit Gate**
-- Each removed `shared/domain` file has zero production callers and zero repository/runtime mapping requirements.
+- `shared/domain` stays at `0` Java files; new persistence mappings belong in module-owned entity packages.
 
 ### Workstream 6: Product Contract Cleanup
 
@@ -229,7 +230,7 @@ These are closed and should not be reopened except to fix regressions:
 
 - Reintroducing DAO SPI interfaces
 - Recreating `web/` or JSP compatibility layers
-- Deleting `shared/domain` entities just because they look legacy
+- Reintroducing shared-domain Hibernate mappings
 - Modifying released Liquibase migrations retroactively
 
 ## Guardrails

@@ -31,7 +31,6 @@ public class EventCRFBean extends AuditableEntityBean {
     private int completionStatusId = 0;
     // private int statusId =1;
     private Status status;
-    private org.researchedc.domain.Status nexGenStatus;
     private String annotations = "";
     private Date dateCompleted;
     private int validatorId = 0;
@@ -61,7 +60,6 @@ public class EventCRFBean extends AuditableEntityBean {
     public EventCRFBean() {
         stage = DataEntryStage.INVALID;
         status = Status.INVALID;
-        nexGenStatus = org.researchedc.domain.Status.INVALID;
     }
 
     public boolean isSdvStatus() {
@@ -70,14 +68,6 @@ public class EventCRFBean extends AuditableEntityBean {
 
     public void setSdvStatus(boolean sdvStatus) {
         this.sdvStatus = sdvStatus;
-    }
-
-    public org.researchedc.domain.Status getNexGenStatus() {
-        return nexGenStatus;
-    }
-
-    public void setNexGenStatus(org.researchedc.domain.Status nexGenStatus) {
-        this.nexGenStatus = nexGenStatus;
     }
 
     /**

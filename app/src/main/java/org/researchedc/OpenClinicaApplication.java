@@ -41,7 +41,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     }
 )
 @EntityScan(basePackages = {
-    "org.researchedc.domain",
     "org.researchedc.module"
 })
 @EnableTransactionManagement
