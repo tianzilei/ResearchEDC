@@ -19,7 +19,6 @@ import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.domain.datamap.StudyEvent;
 import org.researchedc.module.dataimport.service.ImportStudyEventPort;
 import org.researchedc.module.dataimport.dto.ImportStudyEvent;
 import org.researchedc.module.event.entity.StudyEventEntity;

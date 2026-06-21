@@ -6,6 +6,12 @@
 
 ---
 
+## 2026-06-22 - Delete retired event and subject datamap graph
+
+- Removed no-caller shared datamap mappings for `EventDefinitionCrf`, `StudyEvent`, and `StudySubject` after scans showed only stale imports and reverse collections referenced them.
+- Simplified `CrfBean` and `StudyEventDefinition` by removing obsolete reverse collection plumbing; active event, subject, and event-definition CRF behavior stays on module-owned entities/repositories.
+- Updated refactor docs to the 62-file shared Java surface, 20 shared domain files, and 13 remaining datamap mappings.
+
 ## 2026-06-22 - Remove retired shared domain base infrastructure
 
 - Removed zero-caller shared domain base contracts (`DomainObject`, `MutableDomainObject`, `CompositeIdDomainObject`) and the unused `AbstractMutableDomainObject` superclass after scans confirmed no active subclasses or consumers remained.

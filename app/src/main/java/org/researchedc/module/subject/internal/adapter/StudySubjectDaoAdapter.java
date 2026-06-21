@@ -16,7 +16,6 @@ import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
 import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.domain.datamap.StudySubject;
 import org.researchedc.module.dataimport.service.ImportStudySubjectPort;
 import org.researchedc.module.dataimport.dto.ImportStudySubject;
 import org.researchedc.module.subject.entity.StudySubjectEntity;

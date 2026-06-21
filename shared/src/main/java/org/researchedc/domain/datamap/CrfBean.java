@@ -14,7 +14,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 
 import org.researchedc.domain.DataMapDomainObject;
@@ -46,7 +45,6 @@ public class CrfBean  extends DataMapDomainObject {
 	private Integer updateId;
 	private String ocOid;
 	private List<ItemGroup> itemGroups ;
-	private List<EventDefinitionCrf> eventDefinitionCrfs;
 	private List<CrfVersion> crfVersions;
 	private Integer version;
 
@@ -61,7 +59,7 @@ public class CrfBean  extends DataMapDomainObject {
 	public CrfBean(int crfId, UserAccount userAccount, Study study, Status status,
 			String name, String description, Date dateCreated,
 			Date dateUpdated, Integer updateId, String ocOid, List<ItemGroup> itemGroups,
-			List<EventDefinitionCrf> eventDefinitionCrfs, List<CrfVersion> crfVersions) {
+			List<CrfVersion> crfVersions) {
 		this.crfId = crfId;
 		this.userAccount = userAccount;
 		this.study = study;
@@ -73,7 +71,6 @@ public class CrfBean  extends DataMapDomainObject {
 		this.updateId = updateId;
 		this.ocOid = ocOid;
 		this.itemGroups = itemGroups;
-		this.eventDefinitionCrfs = eventDefinitionCrfs;
 		this.crfVersions = crfVersions;
 	}
 
@@ -185,15 +182,6 @@ public class CrfBean  extends DataMapDomainObject {
 
 	public void setItemGroups(List<ItemGroup> itemGroups) {
 		this.itemGroups = itemGroups;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "crf")
-	public List<EventDefinitionCrf> getEventDefinitionCrfs() {
-		return this.eventDefinitionCrfs;
-	}
-
-	public void setEventDefinitionCrfs(List<EventDefinitionCrf> eventDefinitionCrfs) {
-		this.eventDefinitionCrfs = eventDefinitionCrfs;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "crf")

@@ -1,6 +1,5 @@
 package org.researchedc.domain.datamap;
 import java.util.Date;
-import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,9 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
-import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -50,8 +46,6 @@ public class StudyEventDefinition  extends DataMapDomainObject {
 	private Integer updateId;
 	private Integer ordinal;
 	private String oc_oid;
-	private List<EventDefinitionCrf> eventDefinitionCrfs ;
-	private List<StudyEvent> studyEvents ;
 	public StudyEventDefinition() {
 	}
 
@@ -64,8 +58,7 @@ public class StudyEventDefinition  extends DataMapDomainObject {
 			UserAccount userAccount, Study study, Status status, String name,
 			String description, Boolean repeating, String type,
 			String category, Date dateCreated, Date dateUpdated,
-			Integer updateId, Integer ordinal, String ocOid,
-			List<EventDefinitionCrf> eventDefinitionCrfs, List<StudyEvent> studyEvents) {
+			Integer updateId, Integer ordinal, String ocOid) {
 		
 		this.studyEventDefinitionId = studyEventDefinitionId;
 		this.userAccount = userAccount;
@@ -81,8 +74,6 @@ public class StudyEventDefinition  extends DataMapDomainObject {
 		this.updateId = updateId;
 		this.ordinal = ordinal;
 		this.oc_oid = ocOid;
-		this.eventDefinitionCrfs = eventDefinitionCrfs;
-		this.studyEvents = studyEvents;
 	}
 
 	@Id
@@ -223,25 +214,4 @@ public class StudyEventDefinition  extends DataMapDomainObject {
 		this.oc_oid = ocOid;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "studyEventDefinition")
-	@OrderBy("ordinal asc")
-	public List<EventDefinitionCrf> getEventDefinitionCrfs() {
-		return this.eventDefinitionCrfs;
-	}
-
-	public void setEventDefinitionCrfs(List<EventDefinitionCrf> eventDefinitionCrfs) {
-		this.eventDefinitionCrfs = eventDefinitionCrfs;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "studyEventDefinition")
-	
-	public List<StudyEvent> getStudyEvents() {
-		return this.studyEvents;
-	}
-
-	public void setStudyEvents(List<StudyEvent> studyEvents) {
-		this.studyEvents = studyEvents;
-	}
-
-	
 }
