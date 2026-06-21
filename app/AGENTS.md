@@ -59,7 +59,7 @@ app/src/main/java/org/researchedc/
 ## TESTING
 
 - **ModulithVerificationTest** — Validates no circular module dependencies (no DB needed)
-- **Module tests** — 55 Java test files under `app/src/test`, covering service, controller, adapter, and boundary behavior
+- **Module tests** — 54 Java test files under `app/src/test`, covering service, controller, adapter, and boundary behavior
 - **LegacyGatewayContractTest** — Contract test for `/api/v1/legacy/*` endpoints
 - **TestDataFactory** — Shared test data builder in `testutil/`
 

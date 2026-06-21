@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Updated:** 2026-06-19
+> **Updated:** 2026-06-22
 > **Role:** handoff pointer retained for continuity.
 
 ## Current Source Of Truth
@@ -17,7 +17,8 @@
 - `shared/dao`: empty
 - `web/`: deleted
 - `ws/`: absent
-- remaining `shared/`: `194` Java files
+- remaining `shared/`: `38` Java files, all under `shared/bean`
+- shared support/domain/DAO Java packages: `0` files
 
 ## Active Direction
 
@@ -26,8 +27,8 @@ workflow inventory cleanup.
 
 Use `docs/refactor/refactor-removal-roadmap.md` for:
 
-1. shared support extraction
+1. DTO/term bean contraction at retained compatibility edges
 2. data-import compatibility migration
 3. form validation/discrepancy isolation
 4. module adapter DTO contraction
-5. gradual `shared/domain` reduction
+5. guard shared support/domain/DAO packages against reintroduction

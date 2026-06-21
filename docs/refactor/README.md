@@ -1,8 +1,9 @@
 # Refactor Docs Index
 
-**Updated:** 2026-06-19
+**Updated:** 2026-06-22
 
 This directory now has a single active roadmap plus supporting baseline, ledger, and slice documents.
+Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed, `web/` and `ws/` absent, and `shared/src/main/java/org/researchedc` reduced to 38 DTO/term bean files.
 
 ## Primary Entry Points
 

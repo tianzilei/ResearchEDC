@@ -1,6 +1,6 @@
 # Next Refactor And Removal Plan
 
-**Updated:** 2026-06-19
+**Updated:** 2026-06-22
 **Status:** retained as a short continuity snapshot. The active master plan is now
 [`refactor-removal-roadmap.md`](./refactor-removal-roadmap.md).
 
@@ -11,17 +11,18 @@
 - `shared/dao`: `0` files
 - `web/`: deleted
 - `ws/`: absent
-- remaining `shared/`: `202` Java files
-- code balance by file count: `35%` shared legacy / `65%` module modern
+- remaining `shared/`: `38` Java files, all under `shared/bean`
+- shared support/domain/DAO Java packages: `0` files
+- code balance by file count: `9%` shared legacy / `91%` module modern
 
 ## Active Next Step
 
 The next stage is no longer workflow deletion. It is compatibility strangulation inside `app/` and `shared/`, especially:
 
-1. shared support extraction (`core`, `i18n`, `job`, `patterns`, `exception`)
+1. DTO/term bean contraction at retained compatibility edges
 2. data-import compatibility model migration
 3. form validation/discrepancy compatibility isolation
 4. module adapter DTO contraction
-5. gradual `shared/domain` reduction after caller migration
+5. guard shared support/domain/DAO packages against reintroduction
 
 See [`refactor-removal-roadmap.md`](./refactor-removal-roadmap.md) for sequencing, exit gates, and verification.

@@ -1,7 +1,7 @@
 # questionnaire-service/ - Python FastAPI Microservice
 
 **Module:** Standalone questionnaire scoring and management microservice  
-**Files:** ~76 Python files  
+**Files:** 77 Python files
 
 > Python FastAPI application providing questionnaire CRUD, assignment management, scoring (ISI/GAD-7/PHQ-9/ESS/PSQI), and export. Deployed by the root bare host `deploy.sh` script.
 

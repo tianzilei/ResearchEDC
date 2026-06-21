@@ -45,8 +45,8 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │   ├── job/                 # Quartz infrastructure removed
 │   ├── core/                # retired; app-owned config loads remaining properties
 │   └── i18n/                # retired; resource bundles remain under resources
-├── frontend/                # React 19 + TypeScript SPA (pnpm workspace, 102 src TS/TSX files)
-├── questionnaire-service/   # Python FastAPI 问卷微服务 (独立部署, 76 Python files)
+├── frontend/                # React 19 + TypeScript SPA (pnpm workspace, 106 src TS/TSX files)
+├── questionnaire-service/   # Python FastAPI 问卷微服务 (独立部署, 77 Python files)
 ├── deploy/                  # Bare host reverse proxy / observability configs
 ├── deploy.sh                # Single bare host deploy shell
 ├── pom.xml                  # Maven parent
@@ -92,7 +92,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | Data import ports | `app/.../module/dataimport/service/` | module-owned ports replacing import-time legacy SPI callers |
 | Legacy Hibernate entities | retired | `shared/domain` Java mappings removed; active mappings live in module-owned entities |
 | Import/validation classes | `app/.../control/form/` | Validator, DiscrepancyValidator, FormDiscrepancyNotes (migrated from web/) |
-| Liquibase migrations | `shared/.../migration/` | 209 个版本化 schema XML |
+| Liquibase migrations | `shared/.../migration/` | 210 个版本化 schema XML |
 | i18n strings | `shared/.../i18n/*.properties` | 6 种语言 |
 | Legacy DAO XML | retired | Old `shared/src/main/resources/properties/*_dao.xml` maps are removed; active SQL lives in module repositories/adapters or `queries/<db>/**/*.properties` |
 | Bare deploy | `deploy.sh` | single host deployment entry point |
@@ -235,7 +235,7 @@ python -m pytest app/tests/ -v
   - ✅ **StudyGroupClassDAO → StudyGroupClassDao** — 4 shared/ consumers all SPI-typed
   - ✅ **StudyGroupDAO → StudyGroupDao** — 3 shared/ consumers all SPI-typed
   - ✅ **ArchivedDatasetFileDAO → ArchivedDatasetFileDao** — `58278d68b`; 8 consumer files converted
-- **Refactor progress snapshot (2026-06-19):** active workflow inventory is 963/963 closed (**100.0%**), Phase 3 DAO method ledger is 878/878 removed (**100%**), DAO method blockers are 0/878 unused rows (**0%**), shared/ reduced from 793 to 202 files (**74.5%**), DAO-surface deletion is 186/186 files (**100.0%**), LegacyDaoFactory eliminated, EntityDAO infrastructure deleted, dead code cleanup complete.
+- **Refactor progress snapshot (2026-06-22):** active workflow inventory is 963/963 closed (**100.0%**), Phase 3 DAO method ledger is 878/878 removed (**100%**), DAO method blockers are 0/878 unused rows (**0%**), shared/ reduced from 793 to 38 Java files (**95.2%**), DAO-surface deletion is 186/186 files (**100.0%**), LegacyDaoFactory eliminated, EntityDAO infrastructure deleted, shared domain/support Java retired, and dead code cleanup complete.
 - **Phase 3 ledger status (2026-06-19):** `docs/refactor/phase-3-dao-replacement-ledger.{md,csv}` tracks 878 SPI methods: 0 `module-backed`, 0 `fallback-sql`, 0 `legacy-only`, 0 `adapter-gap`, 0 `unused`, and 878 `removed`.
 - **Remaining work:** no active legacy workflow inventory artifacts remain. Further hardening is compatibility work inside app/module code and must use module-owned ports/repositories rather than reintroducing shared DAO SPI names.
 - **Gauntlet commands:**

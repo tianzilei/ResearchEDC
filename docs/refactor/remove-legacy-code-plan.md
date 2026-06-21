@@ -1,24 +1,26 @@
 # Remove Legacy Code Plan
 
-**Last updated:** 2026-06-19
+**Last updated:** 2026-06-22
 **Document role:** historical baseline and completed-phase evidence. The active roadmap now lives in
 [`refactor-removal-roadmap.md`](./refactor-removal-roadmap.md).
-**Status:** Legacy workflow inventory is **closed**. Tracked workflow progress is **100.0%** (963/963 artifacts removed or closed; 0 active artifacts remain). **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 3 DAO SPI deletion COMPLETE** (`shared/dao` is empty; 0 DAO SPI Java files remain). **Phase 4 dead code scavenging EXHAUSTED** (73 files, -8570L across runs 93-95). **Phase 5 EXHAUSTED.** Remaining compatibility hardening now lives in app/module code, not legacy workflow inventory artifacts. Phase 3 ledger status: 0/878 methods module-backed, 878/878 removed (100.0%), 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 0 unused (0.0%).
+**Status:** Legacy workflow inventory is **closed**. Tracked workflow progress is **100.0%** (963/963 artifacts removed or closed; 0 active artifacts remain). **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 3 DAO SPI deletion COMPLETE** (`shared/dao` is empty; 0 DAO SPI Java files remain). Shared Java is now reduced to **38 DTO/term bean files**; shared DAO, domain, core, i18n Java support, and exception packages are retired. **Phase 5 EXHAUSTED.** Remaining compatibility hardening now lives in app/module code and DTO contraction, not legacy workflow inventory artifacts. Phase 3 ledger status: 0/878 methods module-backed, 878/878 removed (100.0%), 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 0 unused (0.0%).
 
 ## Current Baseline
 
-These counts come from the current repository tree and regenerated inventory (updated 2026-06-19):
+These counts come from the current repository tree and regenerated inventory (updated 2026-06-22):
 
 | Surface | Count (before) | Count (after) | Meaning |
 |---------|----------------|---------------|---------|
-| `shared/src/main/java/org/researchedc` | 793 | 202 | Legacy beans, entities, jobs, exceptions, utilities (-591) |
+| `shared/src/main/java/org/researchedc` | 793 | 38 | Remaining compatibility DTO/term beans only (-755) |
 | `shared/src/main/java/org/researchedc/dao` | 186 | 0 | DAO SPI surface deleted (-186) |
+| `shared/src/main/java/org/researchedc/domain` | 160+ | 0 | Shared Hibernate mappings retired; active mappings are module-owned |
+| `shared/core`, `shared/i18n`, `shared/exception` Java support | mixed | 0 | Runtime support moved to app/module-owned helpers or removed |
 | `web/` | 480 | 0 | **ENTIRE DIRECTORY DELETED** — 102 files migrated to app/ or deleted (-480) |
 | Legacy servlet inventory artifacts | 186 | 0 | No active servlet artifacts; `web/` is absent (-186) |
 | `ws/` | 75 | 0 | SOAP module directory is absent in the current tree (-75) |
 | Active legacy workflow inventory | 963 | 0 | Regenerated inventory has no active artifacts (-963) |
 
-Progress snapshot: active workflow inventory is **963/963 closed (100.0%)**; DAO method replacement/removal coverage is **878/878 removed (100%)**; remaining unused DAO SPI rows are **0/878 (0%)**; DAO-surface file deletion is **186/186 (100.0%)**.
+Progress snapshot: active workflow inventory is **963/963 closed (100.0%)**; DAO method replacement/removal coverage is **878/878 removed (100%)**; remaining unused DAO SPI rows are **0/878 (0%)**; DAO-surface file deletion is **186/186 (100.0%)**; shared Java reduction is **793 -> 38 files (95.2%)**.
 
 ### Phase 1 Deletion Summary (8 slices completed)
 
@@ -334,7 +336,7 @@ High-risk DAO groups:
 
 ### Phase 4 Progress (2026-06-11, runs 81-95)
 
-**Conclusively exhausted.** All 509 remaining shared Java files have at least one active caller:
+**Historical checkpoint.** This 2026-06-11 scan found all 509 then-remaining shared Java files had at least one active caller:
 - Runs 81-82: 8 dead DTOs in bean/login/ deleted (-513L)
 - Run 93: XmlSchemaValidationHelper deleted (-175L)
 - Run 94: UserDTO + HideCRFManager ×2 deleted (-418L)
@@ -342,7 +344,7 @@ High-risk DAO groups:
 - 47 additional dead web/ classes deleted (spreadsheet validators, admin stats, Preview, JAX-RS, job helpers, etc.)
 - Run 95 final scan: **0 dead classes found** across shared/ and web/. Every remaining file has verifiable callers.
 
-No more low-risk Phase 4 deletions possible. Remaining 509 shared files are either: (a) actively used by legacy servlets, (b) referenced by module adapters, (c) Spring infrastructure, or (d) entity/DAO/domain classes gated on Phase 3.
+This checkpoint was later superseded by the Phase 3 DAO deletion and support/domain retirement work. Current shared Java is 38 DTO/term bean files; shared DAO, domain, core, i18n Java support, and exception packages remain at 0 files.
 
 ## Phase 5: Dependency And Build Cleanup
 

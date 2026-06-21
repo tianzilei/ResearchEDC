@@ -13,7 +13,7 @@
 - JSP surface: `0` files
 - Remaining `shared/` Java surface: `38` files
 - Modulith Java surface: `391` files
-- Code balance by file count: `10%` shared legacy / `90%` module modern
+- Code balance by file count: `9%` shared legacy / `91%` module modern
 
 This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup.
 

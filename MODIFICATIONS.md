@@ -6,6 +6,12 @@
 
 ---
 
+## 2026-06-22 - Synchronize refactor handoff documentation
+
+- Updated root and module handoff docs to current file counts: `shared` 38 Java files, `app` 417 Java files with 391 under Modulith modules, `frontend/src` 106 TypeScript/TSX files, `questionnaire-service` 77 Python files, and 210 Liquibase migration XML files.
+- Refreshed refactor roadmap, continuity snapshots, and historical baseline notes so the active state reflects `shared/dao`, `shared/domain`, `shared/core`, `shared/i18n` Java support, and `shared/exception` at 0 files.
+- Marked older Phase 4 dead-code conclusions as historical checkpoints superseded by the later DAO/support/domain retirement slices.
+
 ## 2026-06-22 - Remove final shared i18n Java helper
 
 - Replaced retained term/admin bundle lookups in legacy DTO/term beans with direct `ResourceBundle` access.
