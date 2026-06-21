@@ -1,7 +1,7 @@
 # shared/ - Shared Domain Logic & Data Access
 
 **Module:** Legacy domain logic, data access, entities, and business services
-**Files:** 87 Java files
+**Files:** 84 Java files
 **Package:** `org.researchedc.*`
 
 > Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
@@ -15,7 +15,7 @@ shared/src/main/java/org/researchedc/
 ├── bean/         # DTOs — 44 Java files
 ├── core/         # Core resources/utilities — 3 Java files
 ├── domain/       # Hibernate/domain entities — 35 Java files
-├── exception/    # Custom exceptions — 2 Java files
+├── exception/    # Custom exceptions — 1 Java file
 ├── i18n/         # Internationalization utilities + 22 .properties files
 └── other support # Logging, validation, and compatibility helpers — 0 Java files
 

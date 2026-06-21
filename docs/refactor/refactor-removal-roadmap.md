@@ -11,7 +11,7 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `87` files
+- Remaining `shared/` Java surface: `84` files
 - Modulith Java surface: `383` files
 - Code balance by file count: `19%` shared legacy / `81%` module modern
 
@@ -37,8 +37,8 @@ This means the workflow-level deletion program is complete. The remaining work i
 | `shared/bean` | 44 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
 | `shared/domain` | 35 | Legacy entities and shared mapping model still used by repositories/adapters |
 | `shared/core` | 3 | Resource/config/path and utility support still used by import, form, and shared compatibility code |
-| `shared/i18n` | 3 | Legacy form/import localization support |
-| `shared/exception` | 2 | Compatibility exception types |
+| `shared/i18n` | 1 | Legacy term/resource-bundle compatibility support |
+| `shared/exception` | 1 | Compatibility exception type still used by `CoreResources` |
 
 ### Highest-Weight Callers
 
@@ -84,6 +84,7 @@ These are closed and should not be reopened except to fix regressions:
 - Legacy `CoreResources` Spring initialization now lives in `shared/core`, leaving app-side configuration free of direct `shared/core` imports while preserving shared compatibility static resource setup.
 - Retired extract post-processing helpers (`Processing*`, `Pdf/Sas/SqlProcessingFunction`, `ScriptRunner`) were removed after zero-caller scans and compile/test verification.
 - The unused `shared/core/util/ItemGroupCrvVersionUtil` view-helper residue was removed; no `shared/core/util` Java callers remain.
+- Zero-caller shared support residues (`i18n/core/LocaleResolver`, `i18n/util/I18nFormatUtil`, and `exception/OpenClinicaException`) were removed after source/resource scans confirmed no app, test, shared, or resource callers.
 
 **Exit Gate**
 - No production code outside `shared/` imports `org.researchedc.core.*`, `i18n.*`, or `exception.*`.
