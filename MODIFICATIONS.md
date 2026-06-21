@@ -6,6 +6,12 @@
 
 ---
 
+## 2026-06-22 - Delete retired discrepancy-note datamap graph
+
+- Removed the no-caller shared datamap discrepancy-note entity cycle (`DiscrepancyNote`, `DiscrepancyNoteType`, `ResolutionStatus`) after package-qualified scans showed no active app or shared callers outside the obsolete mappings.
+- Kept the active discrepancy-note module path intact; runtime compatibility uses module-owned scalar fields and `module_discrepancy_note` entities.
+- Updated refactor docs to the 74-file shared Java surface, 32 shared domain files, and 19 remaining datamap mappings.
+
 ## 2026-06-22 - Delete no-caller legacy DTO residue
 
 - Removed retired shared bean DTO/term types for discrepancy-note display, item-group metadata display, and section display paths after package-qualified scans showed no active app or shared callers.
