@@ -22,9 +22,6 @@ public class UserAccountEntity {
     @Column(name = "last_name", length = 60)
     private String lastName;
 
-    @Column(length = 255)
-    private String email = ""; // compatibility field; email delivery retired, new accounts write empty string
-
     @Column(name = "phone", length = 255)
     private String phone;
 
@@ -69,8 +66,6 @@ public class UserAccountEntity {
     public void setFirstName(String v) { this.firstName = v; }
     public String getLastName() { return lastName; }
     public void setLastName(String v) { this.lastName = v; }
-    public String getEmail() { return email; }
-    public void setEmail(String v) { this.email = ""; }
     public String getPhone() { return phone; }
     public void setPhone(String v) { this.phone = v; }
     public String getInstitutionalAffiliation() { return institutionalAffiliation; }

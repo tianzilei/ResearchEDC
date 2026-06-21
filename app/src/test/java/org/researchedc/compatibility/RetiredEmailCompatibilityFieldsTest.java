@@ -1,6 +1,6 @@
 package org.researchedc.compatibility;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.researchedc.module.identity.entity.UserAccountEntity;
@@ -9,20 +9,15 @@ import org.researchedc.module.study.entity.StudyEntity;
 class RetiredEmailCompatibilityFieldsTest {
 
     @Test
-    void userAccountEntitySetter_neutralizesRetiredEmailWrites() {
-        UserAccountEntity entity = new UserAccountEntity();
+    void moduleEntities_doNotExposeRetiredEmailFields() {
+        assertNoMethod(UserAccountEntity.class, "getEmail");
+        assertNoMethod(UserAccountEntity.class, "setEmail", String.class);
 
-        entity.setEmail("legacy@example.com");
-
-        assertEquals("", entity.getEmail());
+        assertNoMethod(StudyEntity.class, "getFacilityContactEmail");
+        assertNoMethod(StudyEntity.class, "setFacilityContactEmail", String.class);
     }
 
-    @Test
-    void studyEntitySetter_neutralizesRetiredFacilityContactEmailWrites() {
-        StudyEntity entity = new StudyEntity();
-
-        entity.setFacilityContactEmail("legacy@example.com");
-
-        assertEquals("", entity.getFacilityContactEmail());
+    private void assertNoMethod(Class<?> type, String name, Class<?>... parameterTypes) {
+        assertThrows(NoSuchMethodException.class, () -> type.getMethod(name, parameterTypes));
     }
 }

@@ -1,6 +1,6 @@
 package org.researchedc.compatibility;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.researchedc.domain.datamap.Study;
@@ -9,87 +9,15 @@ import org.researchedc.domain.user.UserAccount;
 class SharedRetiredEmailCompatibilityFieldsTest {
 
     @Test
-    void sharedUserAccountSetter_neutralizesRetiredEmailWrites() {
-        UserAccount account = new UserAccount();
+    void sharedEntities_doNotExposeRetiredEmailFields() {
+        assertNoMethod(UserAccount.class, "getEmail");
+        assertNoMethod(UserAccount.class, "setEmail", String.class);
 
-        account.setEmail("legacy@example.com");
-
-        assertEquals("", account.getEmail());
+        assertNoMethod(Study.class, "getFacilityContactEmail");
+        assertNoMethod(Study.class, "setFacilityContactEmail", String.class);
     }
 
-    @Test
-    void sharedStudySetter_neutralizesRetiredFacilityContactEmailWrites() {
-        Study study = new Study();
-
-        study.setFacilityContactEmail("legacy@example.com");
-
-        assertEquals("", study.getFacilityContactEmail());
-    }
-
-    @Test
-    void sharedStudyConstructor_neutralizesRetiredFacilityContactEmailWrites() {
-        Study study = new Study(
-                1,
-                null,
-                null,
-                null,
-                null,
-                "ID",
-                null,
-                "Name",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "legacy@example.com",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-
-        assertEquals("", study.getFacilityContactEmail());
+    private void assertNoMethod(Class<?> type, String name, Class<?>... parameterTypes) {
+        assertThrows(NoSuchMethodException.class, () -> type.getMethod(name, parameterTypes));
     }
 }

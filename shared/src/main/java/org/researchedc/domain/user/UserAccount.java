@@ -50,7 +50,6 @@ public class UserAccount extends DataMapDomainObject {
 	private String passwd;
 	private String firstName;
 	private String lastName;
-	private String email = "";
 	private Study activeStudy;
 	private String institutionalAffiliation;
 	private Date dateCreated;
@@ -164,16 +163,6 @@ public class UserAccount extends DataMapDomainObject {
 		this.lastName = lastName;
 	}
 
-	@Column(name = "email", length = 120)
-	public String getEmail() {
-		return this.email;
-	}
-
-	public void setEmail(String email) {
-		this.email = "";
-	}
-
-	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "active_study")
 	public Study getActiveStudy() {

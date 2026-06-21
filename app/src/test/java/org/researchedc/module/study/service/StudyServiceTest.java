@@ -136,7 +136,7 @@ class StudyServiceTest {
         assertNotNull(result.getDateCreated());
         ArgumentCaptor<StudyEntity> entityCaptor = ArgumentCaptor.forClass(StudyEntity.class);
         verify(studyRepository).save(entityCaptor.capture());
-        assertEquals("", entityCaptor.getValue().getFacilityContactEmail());
+        assertEquals("New Study", entityCaptor.getValue().getName());
     }
 
     @Test

@@ -100,7 +100,6 @@ class StudyDaoAdapterTest {
             assertEquals("created summary", e.getSummary());
             assertEquals(StudyType.GENETIC.getId(), e.getTypeId());
             assertEquals(Status.AVAILABLE.getId(), e.getStatusId());
-            assertEquals("", e.getFacilityContactEmail());
             assertEquals("OID_CREATED", e.getOcOid());
             assertEquals(31, e.getOwnerId());
             return true;

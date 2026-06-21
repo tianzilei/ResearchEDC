@@ -84,9 +84,6 @@ public class StudyEntity {
     @Column(name = "facility_contact_phone", length = 255)
     private String facilityContactPhone;
 
-    @Column(name = "facility_contact_email", length = 255)
-    private String facilityContactEmail = ""; // compatibility field; email delivery retired
-
     @Column(name = "protocol_type", length = 30)
     private String protocolType;
 
@@ -347,9 +344,6 @@ public class StudyEntity {
 
     public String getFacilityContactPhone() { return facilityContactPhone; }
     public void setFacilityContactPhone(String v) { this.facilityContactPhone = v; }
-
-    public String getFacilityContactEmail() { return facilityContactEmail; }
-    public void setFacilityContactEmail(String v) { this.facilityContactEmail = ""; }
 
     public LocalDateTime getProtocolDateVerification() { return protocolDateVerification; }
     public void setProtocolDateVerification(LocalDateTime v) { this.protocolDateVerification = v; }

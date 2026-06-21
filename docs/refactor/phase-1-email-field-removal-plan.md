@@ -20,12 +20,11 @@ ResearchEDC no longer sends email and no longer exposes Enterprise support/conta
 
 ### Remaining Active Compatibility References
 
-- `app/module/identity/entity/UserAccountEntity.email`
-- `shared/domain/user/UserAccount.email`
-- `app/module/study/entity/StudyEntity.facilityContactEmail`
-- `shared/domain/datamap/Study.facilityContactEmail`
+- Historical database columns `user_account.email` and `module_user_account.email`
+- Historical database columns `study.facility_contact_email` and `module_study.facility_contact_email`
+- ODM/XSD `OpenClinica:FacilityContactEmail`
 
-These are compatibility/schema mappings, not active product requirements.
+These are schema/contract compatibility surfaces, not active Java product requirements. The app/shared Java entity APIs no longer expose the retired email fields.
 
 ### Remaining Content / Historical Residue
 
@@ -57,13 +56,14 @@ Current progress:
 - Where helpful, explicitly write neutral compatibility values (`NULL` or empty string by contract) instead of accidental user-supplied content.
 
 Current progress:
-- New product-side user creation writes an empty compatibility `email` value.
-- New product-side study creation writes an empty compatibility `facilityContactEmail` value.
+- New product-side user creation no longer maps the retired compatibility `email` value in Java.
+- New product-side study creation no longer maps the retired compatibility `facilityContactEmail` value in Java.
 - Questionnaire service auth principal no longer stores or surfaces an `email` claim.
 - Shared legacy user/study entities now default compatibility email fields to empty strings, and `StudyDaoAdapter` neutralizes the legacy study-contact email column on ingress.
-- Module-owned user/study entity setters now neutralize attempted compatibility email writes at the write boundary.
-- Shared legacy user/study setters now neutralize attempted compatibility email writes, and the shared `Study` constructor no longer preserves a legacy facility-contact email payload.
+- Module-owned and shared user/study entities no longer expose retired email setters/getters.
+- The shared `Study` constructor accepts the historical positional argument for binary/source compatibility but no longer preserves a legacy facility-contact email payload.
 - PostgreSQL write-boundary triggers now force retained `user_account.email`, `module_user_account.email`, `study.facility_contact_email`, and `module_study.facility_contact_email` compatibility columns to empty strings before Phase B sync propagates writes.
+- App module and shared Hibernate entities no longer map or expose retired user/study email compatibility fields; neutralization is now handled at the database boundary.
 
 ### Slice E3: Contract And Schema Cleanup
 

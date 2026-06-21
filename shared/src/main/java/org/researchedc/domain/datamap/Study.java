@@ -60,7 +60,6 @@ public class Study   extends DataMapDomainObject {
 	private String facilityContactName;
 	private String facilityContactDegree;
 	private String facilityContactPhone;
-	private String facilityContactEmail = "";
 	private String protocolType;
 	private String protocolDescription;
 	private Date protocolDateVerification;
@@ -114,7 +113,7 @@ public class Study   extends DataMapDomainObject {
 			String facilityZip, String facilityCountry,
 			String facilityRecruitmentStatus, String facilityContactName,
 			String facilityContactDegree, String facilityContactPhone,
-			String facilityContactEmail, String protocolType,
+			String retiredFacilityContactEmail, String protocolType,
 			String protocolDescription, Date protocolDateVerification,
 			String phase, Integer expectedTotalEnrollment, String sponsor,
 			String collaborators, String medlineIdentifier, String url,
@@ -151,7 +150,6 @@ public class Study   extends DataMapDomainObject {
 		this.facilityContactName = facilityContactName;
 		this.facilityContactDegree = facilityContactDegree;
 		this.facilityContactPhone = facilityContactPhone;
-		this.facilityContactEmail = "";
 		this.protocolType = protocolType;
 		this.protocolDescription = protocolDescription;
 		this.protocolDateVerification = protocolDateVerification;
@@ -412,15 +410,6 @@ public class Study   extends DataMapDomainObject {
 
 	public void setFacilityContactPhone(String facilityContactPhone) {
 		this.facilityContactPhone = facilityContactPhone;
-	}
-
-	@Column(name = "facility_contact_email")
-	public String getFacilityContactEmail() {
-		return this.facilityContactEmail;
-	}
-
-	public void setFacilityContactEmail(String facilityContactEmail) {
-		this.facilityContactEmail = "";
 	}
 
 	@Column(name = "protocol_type", length = 30)

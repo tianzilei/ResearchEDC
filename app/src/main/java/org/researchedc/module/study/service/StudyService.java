@@ -155,7 +155,6 @@ public class StudyService {
         entity.setFacilityCity(r.getFacilityCity());
         entity.setFacilityState(r.getFacilityState());
         entity.setFacilityCountry(r.getFacilityCountry());
-        entity.setFacilityContactEmail("");
         entity.setProtocolType(r.getProtocolType());
         entity.setProtocolDescription(r.getProtocolDescription());
         entity.setPhase(r.getPhase());

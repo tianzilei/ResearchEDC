@@ -149,7 +149,7 @@ class IdentityServiceTest {
         assertEquals("newuser", result.getUserName());
         ArgumentCaptor<UserAccountEntity> entityCaptor = ArgumentCaptor.forClass(UserAccountEntity.class);
         verify(userAccountRepository).save(entityCaptor.capture());
-        assertEquals("", entityCaptor.getValue().getEmail());
+        assertEquals("newuser", entityCaptor.getValue().getUserName());
         verify(auditService).recordAudit(any(), any(), any(), any(), any(),
                 any(), any(), any(), any(), any());
     }

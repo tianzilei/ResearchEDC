@@ -1,6 +1,6 @@
 # Phase 1 Email Field Removal Slice
 
-**Status:** product-facing request/contact and email-field paths retired; compatibility mappings remain.
+**Status:** product-facing request/contact and email-field paths retired; Java entity mappings removed; database/ODM compatibility surfaces remain.
 **Plan:** `docs/refactor/phase-1-email-field-removal-plan.md`.
 
 ## Scope
@@ -20,11 +20,9 @@ This slice removes stale product entry points that still implied email-backed ac
 
 ## Compatibility References Kept
 
-- `UserAccountEntity.email` and shared `UserAccount.email`: schema compatibility only.
-- `StudyEntity.facilityContactEmail` and shared `Study.facilityContactEmail`: schema/ODM compatibility only.
-- Existing migration XML, sync trigger SQL, and schema-contract email elements: retained per the plan's out-of-scope rules. Runtime i18n bundles no longer keep unreferenced email label keys.
+- Existing migration XML, sync trigger SQL, and database email columns: retained per the plan's out-of-scope rules and kept inert by database write-boundary triggers. Runtime i18n bundles no longer keep unreferenced email label keys.
 - ODM metadata export contact fields: retained until downstream contract review or versioned export contract replacement.
 
 ## Result
 
-No frontend source file now references email fields, request-account routes, request-study routes, contact SPA routes, or the retired `/api/v1/legacy/request-study` endpoint. Remaining email references in active Java code are compatibility entity mappings or retired-code comments.
+No frontend source file now references email fields, request-account routes, request-study routes, contact SPA routes, or the retired `/api/v1/legacy/request-study` endpoint. Active Java entity APIs no longer expose retired email compatibility fields.
