@@ -1,5 +1,8 @@
 package org.researchedc.config;
 
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,5 +34,24 @@ public class CoreResourcesConfig {
     @Bean
     public SessionLocaleResolver localeResolver() {
         return new SessionLocaleResolver();
+    }
+
+    @Bean
+    public Properties dataInfoProperties() {
+        return loadProperties("datainfo.properties");
+    }
+
+    private static Properties loadProperties(String resourceName) {
+        Properties properties = new Properties();
+        try (InputStream inputStream = Thread.currentThread()
+                .getContextClassLoader()
+                .getResourceAsStream(resourceName)) {
+            if (inputStream != null) {
+                properties.load(inputStream);
+            }
+            return properties;
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to load " + resourceName, e);
+        }
     }
 }

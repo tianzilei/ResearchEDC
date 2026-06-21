@@ -9,7 +9,7 @@
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x. Built on Java 21 with Spring Framework 6.1.5, Hibernate ORM 6.4.4, and Liquibase migrations. Multi-module Maven project supporting Oracle and PostgreSQL.
 
-New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (42 Java files; no `shared/dao` SPI files and no `shared/domain` Java mappings remain). `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and needed import/validation classes were migrated to `app/`, with later dead leftovers removed. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
+New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (39 Java files; no `shared/dao` SPI files, no `shared/domain` Java mappings, and no `shared/core` or `shared/exception` Java support remain). `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and needed import/validation classes were migrated to `app/`, with later dead leftovers removed. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
 
 
 **当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | **Refactor progress 100.0%** ✅ | **Phase 3 DAO ledger 878/878 removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅**
@@ -39,12 +39,12 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │       ├── filter/          # 过滤器管理 (JPA 实体 + 仓库, 7 文件)
 │       ├── subjectgroup/    # 受试者分组 (JPA 实体 + 仓库, 9 文件)
 │       └── discrepancynote/ # 差异备注管理 (JPA 实体 + 仓库, 7 文件)
-├── shared/                  # 共享兼容 DTO/resource 支持 — 42 Java files (replaces legacy-core, still legacy-heavy)
+├── shared/                  # 共享兼容 DTO/resource 支持 — 39 Java files (replaces legacy-core, still legacy-heavy)
 │   ├── bean/                # DTOs (38 Java files)
 │   ├── domain/              # retired; no Java mappings remain
 │   ├── job/                 # Quartz infrastructure removed
-│   ├── core/                # Core resources/configuration (2 Java files)
-│   └── ...                  # job, exception, validator, i18n, patterns, config
+│   ├── core/                # retired; app-owned config loads remaining properties
+│   └── i18n/                # ResourceBundleProvider compatibility support (1 Java file)
 ├── frontend/                # React 19 + TypeScript SPA (pnpm workspace, 102 src TS/TSX files)
 ├── questionnaire-service/   # Python FastAPI 问卷微服务 (独立部署, 76 Python files)
 ├── deploy/                  # Bare host reverse proxy / observability configs
@@ -169,7 +169,7 @@ Tests live in `app/src/test` (20 files):
 - **NEVER** bypass `SecureController` for session/auth checks
 - **DO NOT** write SQL directly in servlets - use DAO layer
 - **AVOID** modifying migration files after they've been released
-- **NEVER** hardcode file paths - use `CoreResources.getField()`
+- **NEVER** hardcode file paths - use app/module-owned configuration support
 - **DO NOT** ignore transaction boundaries - use `@Transactional` or `TransactionTemplate`
 
 ### Modulith Modules

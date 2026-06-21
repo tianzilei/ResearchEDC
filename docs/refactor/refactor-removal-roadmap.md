@@ -11,7 +11,7 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `42` files
+- Remaining `shared/` Java surface: `39` files
 - Modulith Java surface: `391` files
 - Code balance by file count: `10%` shared legacy / `90%` module modern
 
@@ -36,9 +36,9 @@ This means the workflow-level deletion program is complete. The remaining work i
 |---|---:|---|
 | `shared/bean` | 38 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
 | `shared/domain` | 0 | Retired; active mappings live in module-owned entities/repositories |
-| `shared/core` | 2 | Resource/config/path support still used by shared compatibility initialization |
+| `shared/core` | 0 | Retired; app-owned config loads retained property resources |
 | `shared/i18n` | 1 | Legacy term/resource-bundle compatibility support |
-| `shared/exception` | 1 | Compatibility exception type still used by `CoreResources` |
+| `shared/exception` | 0 | Retired with the final shared core support |
 
 ### Highest-Weight Callers
 
@@ -81,7 +81,7 @@ These are closed and should not be reopened except to fix regressions:
 - `app/module/dataimport/internal/adapter/ImportCrfDataAdapter` now resolves ODM mapping and page-message bundles through module-owned support instead of direct `shared/core` or `shared/i18n` imports.
 - `app/module/crf/internal/adapter/*` no longer imports `shared/exception` or `shared/core/util` compatibility helper types.
 - `app/config/DbConfig` now uses an app-owned DBCP compatibility wrapper, allowing the old `shared/core/ExtendedBasicDataSource` class to be removed.
-- Legacy `CoreResources` Spring initialization now lives in `shared/core`, leaving app-side configuration free of direct `shared/core` imports while preserving shared compatibility static resource setup.
+- Retained `datainfo.properties` loading now lives in app-owned `CoreResourcesConfig`, allowing the final `shared/core` and `shared/exception` Java support classes to be retired.
 - Retired extract post-processing helpers (`Processing*`, `Pdf/Sas/SqlProcessingFunction`, `ScriptRunner`) were removed after zero-caller scans and compile/test verification.
 - The unused `shared/core/util/ItemGroupCrvVersionUtil` view-helper residue was removed; no `shared/core/util` Java callers remain.
 - Zero-caller shared support residues (`i18n/core/LocaleResolver`, `i18n/util/I18nFormatUtil`, and `exception/OpenClinicaException`) were removed after source/resource scans confirmed no app, test, shared, or resource callers.
@@ -89,7 +89,7 @@ These are closed and should not be reopened except to fix regressions:
 - Retired no-caller DTO residue for discrepancy-note display, item-group metadata display, and section display paths was removed; `FormDiscrepancyNotes`, `StudyEventBean`, `ItemGroupBean`, and `ItemDataDaoAdapter` no longer keep those legacy bean types alive.
 
 **Exit Gate**
-- No production code outside `shared/` imports `org.researchedc.core.*`, `i18n.*`, or `exception.*`.
+- `shared/core` and `shared/exception` stay at `0` Java files; the remaining `shared/i18n` helper is removed after term/localization DTO callers are contracted.
 
 ### Workstream 2: Data Import Compatibility Strangulation
 

@@ -40,7 +40,7 @@ Current high-level status:
 
 - Overall tracked legacy-removal progress is **100.0%** by active workflow inventory: 963 of 963 artifacts are removed or closed, with 0 active artifacts remaining. DAO method replacement/removal coverage is **100.0%**: 878 of 878 tracked SPI methods are removed, with 0 unused method-level blockers remaining.
 - `legacy-core/` has been consolidated into `shared/` with package rename to `org.researchedc`.
-- Legacy code is **not fully removed**. Current baseline still includes `shared/` legacy DTO/resource support. The `web/` JSP/SecureController module, `ws/` SOAP module, `shared/domain` Java mappings, and `shared/dao` SPI surface are absent from the current tree.
+- Legacy code is **not fully removed**. Current baseline still includes `shared/` legacy DTO/resource-bundle compatibility support. The `web/` JSP/SecureController module, `ws/` SOAP module, `shared/domain` Java mappings, `shared/core` Java support, `shared/exception` Java support, and `shared/dao` SPI surface are absent from the current tree.
 - Spring XML and Ehcache-era configuration have largely been replaced by Java configuration and modern cache/security wiring.
 - Modulith modules exist for study, subject, event, data capture, identity, CRF, export, audit, randomization, dashboard, rule, dataset, filter, subject group, discrepancy note, OpenRosa, and legacy gateway functions.
 - React SPA covers major workflows. The legacy frame component remains in the SPA for compatibility, but there are no current `web/` JSP views in the repository.
@@ -55,8 +55,9 @@ Current legacy removal baseline:
 
 | Surface | Current Count | Removal Gate |
 |---------|---------------|--------------|
-| `shared/src/main/java/org/researchedc` | 42 Java files | Shared compatibility DTOs and resource support still needed by retained compatibility paths |
+| `shared/src/main/java/org/researchedc` | 39 Java files | Shared compatibility DTOs and resource-bundle support still needed by retained compatibility paths |
 | `shared/domain` | 0 Java files | Shared Hibernate mappings retired; active mappings live in module-owned entities |
+| `shared/core`, `shared/exception` | 0 Java files | Retired; app-owned config loads retained properties |
 | `shared/dao` | 0 files | DAO SPI surface deleted; Phase 3 ledger is 878/878 removed |
 | `web/` Java | 0 files | Directory deleted; needed compatibility classes migrated to `app/` |
 | JSP pages | 0 files | `web/` views deleted |

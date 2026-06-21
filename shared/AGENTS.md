@@ -1,7 +1,7 @@
 # shared/ - Shared Domain Logic & Data Access
 
 **Module:** Legacy compatibility DTO and resource support
-**Files:** 42 Java files
+**Files:** 39 Java files
 **Package:** `org.researchedc.*`
 
 > Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
@@ -13,9 +13,7 @@
 ```
 shared/src/main/java/org/researchedc/
 ├── bean/         # DTOs — 38 Java files
-├── core/         # Core resources/configuration — 2 Java files
-├── exception/    # Custom exceptions — 1 Java file
-└── i18n/         # Internationalization utilities + 22 .properties files
+└── i18n/         # ResourceBundleProvider compatibility helper — 1 Java file
 
 shared/src/main/resources/
 ├── migration/    # Liquibase schema migrations (208 XML files)
@@ -29,6 +27,7 @@ shared/src/main/resources/
 | **DAO (SPI)** | 0 | Deleted; compatibility data access now uses module-owned ports/repositories |
 | **Domain Entities** | 0 | Retired; active mappings live in module-owned entities and repositories |
 | **DTO Beans** | 38 | `EntityBean` subclasses — data transfer objects for compatibility paths |
+| **Core/Exception Support** | 0 | Retired; app-owned config loads retained properties |
 | **Liquibase Migrations** | 209 | Versioned schema changes from OpenClinica 3.x through 3.18 |
 | **Legacy DAO XML** | 0 | Retired `properties/*_dao.xml` SQL maps were removed; active query loading uses `classpath:queries/<db>/**/*.properties` |
 | **Quartz Jobs** | 0 | Moved to app-owned scheduler support |
