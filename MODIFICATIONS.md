@@ -6,6 +6,12 @@
 
 ---
 
+## 2026-06-22 - Move attachment path support out of shared
+
+- Added data-capture owned attachment storage path support and moved `AttachmentStorageAdapter` off `shared.bean.core.Utils`.
+- Replaced the final `shared/core/form/StringUtil` caller with an inline blank check and deleted the zero-caller `Utils`, `StringUtil`, and empty `core/form` package residue.
+- Added focused tests for the attachment root path behavior and updated refactor docs to the 82-file shared Java surface.
+
 ## 2026-06-19 - Complete shared DAO SPI deletion
 
 - Added `ImportEventCrfPort` and moved `ImportCrfDataAdapter` off the final legacy `EventCRFDao` SPI for import event-CRF lookup and creation.

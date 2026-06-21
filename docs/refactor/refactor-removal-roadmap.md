@@ -1,6 +1,6 @@
 # Refactor And Removal Roadmap
 
-**Updated:** 2026-06-21
+**Updated:** 2026-06-22
 **Purpose:** single source of truth for the remaining legacy refactor/removal work.
 
 ## Current Verified State
@@ -11,9 +11,9 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `84` files
-- Modulith Java surface: `383` files
-- Code balance by file count: `19%` shared legacy / `81%` module modern
+- Remaining `shared/` Java surface: `82` files
+- Modulith Java surface: `391` files
+- Code balance by file count: `17%` shared legacy / `83%` module modern
 
 This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup.
 
@@ -34,9 +34,9 @@ This means the workflow-level deletion program is complete. The remaining work i
 
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
-| `shared/bean` | 44 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
+| `shared/bean` | 43 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
 | `shared/domain` | 35 | Legacy entities and shared mapping model still used by repositories/adapters |
-| `shared/core` | 3 | Resource/config/path and utility support still used by import, form, and shared compatibility code |
+| `shared/core` | 2 | Resource/config/path support still used by shared compatibility initialization |
 | `shared/i18n` | 1 | Legacy term/resource-bundle compatibility support |
 | `shared/exception` | 1 | Compatibility exception type still used by `CoreResources` |
 
@@ -85,6 +85,7 @@ These are closed and should not be reopened except to fix regressions:
 - Retired extract post-processing helpers (`Processing*`, `Pdf/Sas/SqlProcessingFunction`, `ScriptRunner`) were removed after zero-caller scans and compile/test verification.
 - The unused `shared/core/util/ItemGroupCrvVersionUtil` view-helper residue was removed; no `shared/core/util` Java callers remain.
 - Zero-caller shared support residues (`i18n/core/LocaleResolver`, `i18n/util/I18nFormatUtil`, and `exception/OpenClinicaException`) were removed after source/resource scans confirmed no app, test, shared, or resource callers.
+- Data-capture attachment storage now resolves `attached_file_location` through module-owned support, allowing the retired `shared/bean/core/Utils` path helper and the final `shared/core/form/StringUtil` caller to be removed.
 
 **Exit Gate**
 - No production code outside `shared/` imports `org.researchedc.core.*`, `i18n.*`, or `exception.*`.

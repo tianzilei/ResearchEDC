@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.researchedc.bean.core.Utils;
 import org.researchedc.bean.login.StudyUserRoleBean;
+import org.researchedc.module.datacapture.internal.support.AttachmentStorageProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,9 +18,11 @@ public class AttachmentStorageAdapter {
     private static final Logger log = LoggerFactory.getLogger(AttachmentStorageAdapter.class);
 
     private final JdbcTemplate jdbc;
+    private final AttachmentStorageProperties storageProperties;
 
-    public AttachmentStorageAdapter(JdbcTemplate jdbc) {
+    public AttachmentStorageAdapter(JdbcTemplate jdbc, AttachmentStorageProperties storageProperties) {
         this.jdbc = jdbc;
+        this.storageProperties = storageProperties;
     }
 
     public String getStudyOidByEventCrf(int eventCrfId) {
@@ -216,7 +218,7 @@ public class AttachmentStorageAdapter {
             return new File("");
         }
         String safeName = new File(fileName).getName();
-        String rootPath = Utils.getAttachedFileRootPath();
+        String rootPath = storageProperties.attachedFileRootPath();
         File resolved = new File(rootPath, studyOid + File.separator + safeName);
         try {
             String canonical = resolved.getCanonicalPath();
@@ -233,6 +235,6 @@ public class AttachmentStorageAdapter {
     }
 
     public File studyDirectory(String studyOid) {
-        return new File(Utils.getAttachedFileRootPath(), studyOid);
+        return new File(storageProperties.attachedFileRootPath(), studyOid);
     }
 }

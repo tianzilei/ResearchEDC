@@ -8,7 +8,6 @@
 package org.researchedc.bean.submit;
 
 import org.researchedc.bean.core.EntityBean;
-import org.researchedc.core.form.StringUtil;
 
 /**
  * @author ssachs
@@ -267,7 +266,7 @@ public class ItemFormMetadataBean extends EntityBean {
      */
     public void setDefaultValue(String defaults) {
 
-        if (!StringUtil.isBlank(defaults)) {
+        if (defaults != null && !defaults.trim().isEmpty()) {
             String[] defaults2 = defaults.split(",", -1);
 
             for (int i = 0; i < defaults2.length; i++) {
