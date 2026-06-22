@@ -19,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.core.SubjectEventStatus;
 import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
@@ -28,6 +27,8 @@ import org.researchedc.module.event.repository.StudyEventRepository;
 
 @ExtendWith(MockitoExtension.class)
 class StudyEventDaoAdapterTest {
+    private static final int SUBJECT_EVENT_STATUS_SCHEDULED = 1;
+    private static final int SUBJECT_EVENT_STATUS_COMPLETED = 4;
 
     @Mock
     private StudyEventRepository studyEventRepository;
@@ -42,7 +43,7 @@ class StudyEventDaoAdapterTest {
     @Test
     void findByPK_whenFound_mapsEntityToLegacyBean() {
         LocalDateTime start = LocalDateTime.now().minusDays(2);
-        StudyEventEntity entity = event(7, 3, 4, Status.AVAILABLE.getId(), SubjectEventStatus.SCHEDULED.getId(), 2);
+        StudyEventEntity entity = event(7, 3, 4, Status.AVAILABLE.getId(), SUBJECT_EVENT_STATUS_SCHEDULED, 2);
         entity.setLocation("Clinic A");
         entity.setDateStart(start);
         entity.setDateEnd(start.plusHours(1));
@@ -59,7 +60,7 @@ class StudyEventDaoAdapterTest {
         assertEquals(3, bean.getStudySubjectId());
         assertEquals(4, bean.getStudyEventDefinitionId());
         assertEquals(Status.AVAILABLE, bean.getStatus());
-        assertEquals(SubjectEventStatus.SCHEDULED, bean.getSubjectEventStatus());
+        assertEquals(SUBJECT_EVENT_STATUS_SCHEDULED, bean.getSubjectEventStatusId());
         assertEquals("Clinic A", bean.getLocation());
         assertEquals(2, bean.getSampleOrdinal());
         assertEquals(true, bean.getStartTimeFlag());
@@ -136,12 +137,12 @@ class StudyEventDaoAdapterTest {
 
     @Test
     void create_mapsLegacyBeanToModuleEntity() {
-        StudyEventEntity saved = event(11, 30, 40, Status.AVAILABLE.getId(), SubjectEventStatus.SCHEDULED.getId(), 1);
+        StudyEventEntity saved = event(11, 30, 40, Status.AVAILABLE.getId(), SUBJECT_EVENT_STATUS_SCHEDULED, 1);
         when(studyEventRepository.save(argThat(e -> {
             assertEquals(30, e.getStudySubjectId());
             assertEquals(40, e.getStudyEventDefinitionId());
             assertEquals(Status.AVAILABLE.getId(), e.getStatusId());
-            assertEquals(SubjectEventStatus.SCHEDULED.getId(), e.getSubjectEventStatusId());
+            assertEquals(SUBJECT_EVENT_STATUS_SCHEDULED, e.getSubjectEventStatusId());
             assertEquals("Clinic", e.getLocation());
             assertEquals(1, e.getSampleOrdinal());
             assertEquals(31, e.getOwnerId());
@@ -152,7 +153,7 @@ class StudyEventDaoAdapterTest {
         input.setStudySubjectId(30);
         input.setStudyEventDefinitionId(40);
         input.setStatus(Status.AVAILABLE);
-        input.setSubjectEventStatus(SubjectEventStatus.SCHEDULED);
+        input.setSubjectEventStatusId(SUBJECT_EVENT_STATUS_SCHEDULED);
         input.setLocation("Clinic");
         input.setSampleOrdinal(1);
         input.setOwnerId(31);
@@ -170,7 +171,7 @@ class StudyEventDaoAdapterTest {
         row.put("study_subject_id", 51);
         row.put("study_event_definition_id", 52);
         row.put("status_id", Status.AVAILABLE.getId());
-        row.put("subject_event_status_id", SubjectEventStatus.COMPLETED.getId());
+        row.put("subject_event_status_id", SUBJECT_EVENT_STATUS_COMPLETED);
         row.put("location", "Row clinic");
         row.put("sample_ordinal", 3);
         row.put("date_start", now);
@@ -187,7 +188,7 @@ class StudyEventDaoAdapterTest {
         assertEquals(51, bean.getStudySubjectId());
         assertEquals(52, bean.getStudyEventDefinitionId());
         assertEquals(Status.AVAILABLE, bean.getStatus());
-        assertEquals(SubjectEventStatus.COMPLETED, bean.getSubjectEventStatus());
+        assertEquals(SUBJECT_EVENT_STATUS_COMPLETED, bean.getSubjectEventStatusId());
         assertEquals("Row clinic", bean.getLocation());
         assertEquals(3, bean.getSampleOrdinal());
         assertEquals(true, bean.getStartTimeFlag());

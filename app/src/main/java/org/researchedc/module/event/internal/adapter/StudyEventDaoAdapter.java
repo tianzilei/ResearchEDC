@@ -14,7 +14,6 @@ import java.util.Optional;
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.core.SubjectEventStatus;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
@@ -31,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Primary
 @Transactional(readOnly = true)
 public class StudyEventDaoAdapter implements ImportStudyEventPort {
+    private static final int SUBJECT_EVENT_STATUS_SCHEDULED = 1;
 
     private final StudyEventRepository studyEventRepository;
 
@@ -246,7 +246,7 @@ public class StudyEventDaoAdapter implements ImportStudyEventPort {
         return 0;
     }
 
-    public Integer getCountofEventsBasedOnEventStatus(StudyBean currentStudy, SubjectEventStatus subjectEventStatus) {
+    public Integer getCountofEventsBasedOnEventStatus(StudyBean currentStudy, int subjectEventStatusId) {
         return 0;
     }
 
@@ -275,7 +275,7 @@ public class StudyEventDaoAdapter implements ImportStudyEventPort {
         entity.setStudySubjectId(bean.getStudySubjectId());
         entity.setStatusId(bean.getStatus() != null ? bean.getStatus().getId() : Status.INVALID.getId());
         entity.setSubjectEventStatusId(
-                bean.getSubjectEventStatus() != null ? bean.getSubjectEventStatus().getId() : SubjectEventStatus.SCHEDULED.getId());
+                bean.getSubjectEventStatusId() != 0 ? bean.getSubjectEventStatusId() : SUBJECT_EVENT_STATUS_SCHEDULED);
         entity.setLocation(bean.getLocation());
         entity.setSampleOrdinal(bean.getSampleOrdinal());
         entity.setDateStart(toLocalDateTime(bean.getDateStarted()));
@@ -303,7 +303,7 @@ public class StudyEventDaoAdapter implements ImportStudyEventPort {
         bean.setStudySubjectId(valueOrZero(entity.getStudySubjectId()));
         bean.setStudyEventDefinitionId(valueOrZero(entity.getStudyEventDefinitionId()));
         bean.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
-        bean.setSubjectEventStatus(SubjectEventStatus.getFromMap(valueOrZero(entity.getSubjectEventStatusId())));
+        bean.setSubjectEventStatusId(valueOrZero(entity.getSubjectEventStatusId()));
         bean.setLocation(entity.getLocation() != null ? entity.getLocation() : "");
         bean.setSampleOrdinal(valueOrZero(entity.getSampleOrdinal()));
         bean.setDateStarted(toDate(entity.getDateStart()));

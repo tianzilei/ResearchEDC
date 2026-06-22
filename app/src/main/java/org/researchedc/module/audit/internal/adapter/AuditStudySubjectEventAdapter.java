@@ -8,7 +8,6 @@ import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.core.SubjectEventStatus;
 import org.researchedc.module.audit.dto.AuditEventCrfDTO;
 import org.researchedc.module.audit.dto.AuditStudyDTO;
 import org.researchedc.module.audit.dto.AuditStudyEventDTO;
@@ -25,6 +24,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional(readOnly = true)
 class AuditStudySubjectEventAdapter implements AuditStudySubjectEventPort {
+    private static final String[] SUBJECT_EVENT_STATUS_NAMES = {
+            "invalid",
+            "scheduled",
+            "not_scheduled",
+            "data_entry_started",
+            "completed",
+            "stopped",
+            "skipped",
+            "locked",
+            "signed"
+    };
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -286,6 +296,12 @@ class AuditStudySubjectEventAdapter implements AuditStudySubjectEventPort {
     }
 
     private String subjectEventStatusName(Object value) {
-        return value instanceof Number number ? SubjectEventStatus.getFromMap(number.intValue()).getName() : null;
+        if (!(value instanceof Number number)) {
+            return null;
+        }
+        int id = number.intValue();
+        return id >= 0 && id < SUBJECT_EVENT_STATUS_NAMES.length
+                ? SUBJECT_EVENT_STATUS_NAMES[id]
+                : "invalid";
     }
 }

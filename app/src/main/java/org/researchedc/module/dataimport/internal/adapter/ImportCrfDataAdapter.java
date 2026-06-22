@@ -18,7 +18,6 @@ import java.util.ResourceBundle;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Unmarshaller;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.core.SubjectEventStatus;
 import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.module.dataimport.internal.odm.FormDataBean;
 import org.researchedc.module.dataimport.internal.odm.ImportItemDataBean;
@@ -70,6 +69,13 @@ public class ImportCrfDataAdapter {
     private static final int STAGE_INITIAL_DATA_ENTRY_COMPLETE = 3;
     private static final int STAGE_DOUBLE_DATA_ENTRY_COMPLETE = 5;
     private static final int STAGE_LOCKED = 7;
+    private static final int SUBJECT_EVENT_STATUS_INVALID = 0;
+    private static final int SUBJECT_EVENT_STATUS_SCHEDULED = 1;
+    private static final int SUBJECT_EVENT_STATUS_DATA_ENTRY_STARTED = 3;
+    private static final int SUBJECT_EVENT_STATUS_COMPLETED = 4;
+    private static final int SUBJECT_EVENT_STATUS_STOPPED = 5;
+    private static final int SUBJECT_EVENT_STATUS_LOCKED = 7;
+    private static final int SUBJECT_EVENT_STATUS_SIGNED = 8;
     private static final int ITEM_DATA_TYPE_INTEGER = 6;
     private static final int ITEM_DATA_TYPE_REAL = 7;
     private static final int ITEM_DATA_TYPE_DATE = 9;
@@ -169,10 +175,8 @@ public class ImportCrfDataAdapter {
                                 studySubjectBean.id(),
                                 studyEventDefinitionBean.id(),
                                 Integer.parseInt(sampleOrdinal));
-                SubjectEventStatus subjectEventStatus = subjectEventStatus(studyEventBean);
-                if (subjectEventStatus.equals(SubjectEventStatus.LOCKED)
-                        || subjectEventStatus.equals(SubjectEventStatus.SIGNED)
-                        || subjectEventStatus.equals(SubjectEventStatus.STOPPED)) {
+                int subjectEventStatusId = subjectEventStatusId(studyEventBean);
+                if (isImportBlockedSubjectEventStatus(subjectEventStatusId)) {
                     return true;
                 }
                 for (FormDataBean formDataBean : formDataBeans) {
@@ -185,9 +189,7 @@ public class ImportCrfDataAdapter {
                         if (eventCrfBeans.isEmpty()) {
                             log.debug("found no event crfs from Study Event id {}, location {}",
                                     studyEventBean.id(), studyEventBean.location());
-                            if (subjectEventStatus.equals(SubjectEventStatus.SCHEDULED)
-                                    || subjectEventStatus.equals(SubjectEventStatus.DATA_ENTRY_STARTED)
-                                    || subjectEventStatus.equals(SubjectEventStatus.COMPLETED)) {
+                            if (isNotStartedCompatibleSubjectEventStatus(subjectEventStatusId)) {
                                 if (!upsert.isNotStarted()) {
                                     return false;
                                 }
@@ -244,10 +246,8 @@ public class ImportCrfDataAdapter {
                                 studySubjectBean.id(),
                                 studyEventDefinitionBean.id(),
                                 Integer.parseInt(sampleOrdinal));
-                SubjectEventStatus subjectEventStatus = subjectEventStatus(studyEventBean);
-                if (subjectEventStatus.equals(SubjectEventStatus.LOCKED)
-                        || subjectEventStatus.equals(SubjectEventStatus.SIGNED)
-                        || subjectEventStatus.equals(SubjectEventStatus.STOPPED)) {
+                int subjectEventStatusId = subjectEventStatusId(studyEventBean);
+                if (isImportBlockedSubjectEventStatus(subjectEventStatusId)) {
                     return null;
                 }
                 for (FormDataBean formDataBean : formDataBeans) {
@@ -270,9 +270,7 @@ public class ImportCrfDataAdapter {
                         if (eventCrfBeans.isEmpty()) {
                             log.debug("found no event crfs from Study Event id {}, location {}",
                                     studyEventBean.id(), studyEventBean.location());
-                            if ((subjectEventStatus.equals(SubjectEventStatus.SCHEDULED)
-                                    || subjectEventStatus.equals(SubjectEventStatus.DATA_ENTRY_STARTED)
-                                    || subjectEventStatus.equals(SubjectEventStatus.COMPLETED))
+                            if (isNotStartedCompatibleSubjectEventStatus(subjectEventStatusId)
                                     && upsert.isNotStarted()) {
                                 ImportEventCrf newEventCrfBean = createImportEventCrf(
                                         studyEventBean,
@@ -481,7 +479,7 @@ public class ImportCrfDataAdapter {
         ImportStudyEvent row = studyEventPort.findImportStudyEventBySubjectDefinitionOrdinal(
                 studySubjectId, definitionId, ordinal);
         if (row == null) {
-            return new ImportStudyEvent(0, SubjectEventStatus.INVALID.getId(), null);
+            return new ImportStudyEvent(0, SUBJECT_EVENT_STATUS_INVALID, null);
         }
         return row;
     }
@@ -763,8 +761,20 @@ public class ImportCrfDataAdapter {
         };
     }
 
-    private SubjectEventStatus subjectEventStatus(ImportStudyEvent event) {
-        return SubjectEventStatus.getFromMap(toInt(event.subjectEventStatusId()));
+    private int subjectEventStatusId(ImportStudyEvent event) {
+        return toInt(event.subjectEventStatusId());
+    }
+
+    private boolean isImportBlockedSubjectEventStatus(int subjectEventStatusId) {
+        return subjectEventStatusId == SUBJECT_EVENT_STATUS_LOCKED
+                || subjectEventStatusId == SUBJECT_EVENT_STATUS_SIGNED
+                || subjectEventStatusId == SUBJECT_EVENT_STATUS_STOPPED;
+    }
+
+    private boolean isNotStartedCompatibleSubjectEventStatus(int subjectEventStatusId) {
+        return subjectEventStatusId == SUBJECT_EVENT_STATUS_SCHEDULED
+                || subjectEventStatusId == SUBJECT_EVENT_STATUS_DATA_ENTRY_STARTED
+                || subjectEventStatusId == SUBJECT_EVENT_STATUS_COMPLETED;
     }
 
     private int stage(ImportEventCrf eventCrf) {

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
-import org.researchedc.bean.core.SubjectEventStatus;
 import org.researchedc.module.dataimport.internal.odm.CRFDataPostImportContainer;
 import org.researchedc.module.dataimport.internal.odm.FormDataBean;
 import org.researchedc.module.dataimport.internal.odm.ImportItemDataBean;
@@ -45,6 +44,7 @@ import org.researchedc.module.dataimport.service.ImportStudySubjectPort;
 import org.researchedc.module.dataimport.dto.ImportStudySubject;
 
 class ImportCrfDataAdapterTest {
+    private static final int SUBJECT_EVENT_STATUS_SCHEDULED = 1;
 
     @Test
     void parseOdm_readsRepresentativeClinicalDataFixture() throws Exception {
@@ -137,7 +137,7 @@ class ImportCrfDataAdapterTest {
         definition.setName("Baseline");
         StudyEventBean event = new StudyEventBean();
         event.setId(4);
-        event.setSubjectEventStatus(SubjectEventStatus.SCHEDULED);
+        event.setSubjectEventStatusId(SUBJECT_EVENT_STATUS_SCHEDULED);
         CRFVersionBean version = new CRFVersionBean();
         version.setId(5);
 
@@ -148,7 +148,7 @@ class ImportCrfDataAdapterTest {
         when(studyEventDefinitionPort.findImportStudyEventDefinitionByOidAndStudy("SE_BASELINE", 1, 0))
                 .thenReturn(new ImportStudyEventDefinition(3, "Baseline"));
         when(studyEventPort.findImportStudyEventBySubjectDefinitionOrdinal(2, 3, 1))
-                .thenReturn(new ImportStudyEvent(4, SubjectEventStatus.SCHEDULED.getId(), ""));
+                .thenReturn(new ImportStudyEvent(4, SUBJECT_EVENT_STATUS_SCHEDULED, ""));
         when(crfVersionPort.findAllImportCrfVersionsByOid("F_VITALS_V1"))
                 .thenReturn(List.of(new ImportCrfVersionPort.ImportCrfVersion(5)));
         when(eventCrfPort.findImportEventCrfsByEventSubjectVersion(4, 2, 5))

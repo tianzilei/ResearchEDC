@@ -9,7 +9,6 @@ package org.researchedc.bean.managestudy;
 
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.core.SubjectEventStatus;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +21,7 @@ public class StudyEventBean extends AuditableEntityBean {
     public static final int STAGE_UNCOMPLETED = 1;
     public static final int STAGE_INITIAL_DATA_ENTRY_COMPLETE = 3;
     public static final int STAGE_DOUBLE_DATA_ENTRY_COMPLETE = 5;
+    public static final int SUBJECT_EVENT_STATUS_SCHEDULED = 1;
 
     // STUDY_EVENT_ID STUDY_EVENT_DEFINITION_ID SUBJECT_ID
     // LOCATION SAMPLE_ORDINAL DATE_START DATE_END
@@ -49,7 +49,7 @@ public class StudyEventBean extends AuditableEntityBean {
 
     private int stageId = STAGE_UNCOMPLETED;
 
-    private SubjectEventStatus subjectEventStatus;
+    private int subjectEventStatusId = SUBJECT_EVENT_STATUS_SCHEDULED;
 
     private String studySubjectLabel;
 
@@ -144,23 +144,22 @@ public class StudyEventBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the subjectEventStatus.
+     * @return Returns the subjectEventStatusId.
      */
-    public SubjectEventStatus getSubjectEventStatus() {
-        return subjectEventStatus;
+    public int getSubjectEventStatusId() {
+        return subjectEventStatusId;
     }
 
     /**
-     * @param subjectEventStatus
-     *            The subjectEventStatus to set.
+     * @param subjectEventStatusId
+     *            The subjectEventStatusId to set.
      */
-    public void setSubjectEventStatus(SubjectEventStatus subjectEventStatus) {
-        this.subjectEventStatus = subjectEventStatus;
+    public void setSubjectEventStatusId(int subjectEventStatusId) {
+        this.subjectEventStatusId = subjectEventStatusId;
     }
 
     public StudyEventBean() {
         stageId = STAGE_UNCOMPLETED;
-        subjectEventStatus = SubjectEventStatus.SCHEDULED;
     }
 
     /**

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.core.SubjectEventStatus;
 import org.researchedc.module.dataimport.internal.odm.CRFDataPostImportContainer;
 import org.researchedc.module.dataimport.internal.odm.FormDataBean;
 import org.researchedc.module.dataimport.internal.odm.ODMContainer;
@@ -33,6 +32,7 @@ import org.researchedc.module.dataimport.service.ImportStudySubjectPort;
 import org.researchedc.module.dataimport.dto.ImportStudySubject;
 
 class ImportCrfDataAdapterPureTest {
+    private static final int SUBJECT_EVENT_STATUS_SCHEDULED = 1;
 
     @Test
     void validateMetadata_whenStudyMissing_returnsSingleLegacyError() {
@@ -63,7 +63,7 @@ class ImportCrfDataAdapterPureTest {
             oid -> new ImportStudy(1, 0, "Demo Study"),
             (oid, studyId) -> new ImportStudySubject(2, "SS_DEMO"),
             (studySubjectId, studyEventDefinitionId, ordinal) ->
-                new ImportStudyEvent(4, SubjectEventStatus.SCHEDULED.getId(), "HQ"),
+                new ImportStudyEvent(4, SUBJECT_EVENT_STATUS_SCHEDULED, "HQ"),
             (oid, studyId, parentStudyId) -> new ImportStudyEventDefinition(3, "Baseline"),
             oid -> List.of(new ImportCrfVersionPort.ImportCrfVersion(5)),
             new ImportEventCrfPort() {
