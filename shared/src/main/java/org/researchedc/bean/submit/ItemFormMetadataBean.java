@@ -9,10 +9,115 @@ package org.researchedc.bean.submit;
 
 import org.researchedc.bean.core.EntityBean;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * @author ssachs
  */
 public class ItemFormMetadataBean extends EntityBean {
+    public static class ResponseSetBean extends EntityBean {
+        public static final int RESPONSE_TYPE_TEXT = 1;
+        public static final int RESPONSE_TYPE_CHECKBOX = 3;
+        public static final int RESPONSE_TYPE_RADIO = 5;
+        public static final int RESPONSE_TYPE_SELECT = 6;
+        public static final int RESPONSE_TYPE_SELECT_MULTI = 7;
+
+        private int responseTypeId;
+        private ArrayList<Option> options;
+        private HashMap optionIndexesByValue;
+        private String value;
+
+        public ResponseSetBean() {
+            super();
+            setResponseTypeId(RESPONSE_TYPE_TEXT);
+            options = new ArrayList();
+            optionIndexesByValue = new HashMap();
+        }
+
+        public String getLabel() {
+            return getName();
+        }
+
+        public void setLabel(String label) {
+            setName(label);
+        }
+
+        public ArrayList<Option> getOptions() {
+            return options;
+        }
+
+        public int getResponseTypeId() {
+            return responseTypeId;
+        }
+
+        public void setResponseTypeId(int responseTypeId) {
+            this.responseTypeId = responseTypeId;
+        }
+
+        public void setOptions(String optionsText, String optionsValues) {
+            String text1 = optionsText.replaceAll("\\\\,", "##");
+            String value1 = optionsValues.replaceAll("\\\\,", "##");
+
+            String[] texts = text1.split(",", -1);
+            String[] values = value1.split(",", -1);
+
+            if (values == null) {
+                return;
+            }
+
+            if (texts == null) {
+                texts = new String[0];
+            }
+
+            for (int i = 0; i < values.length; i++) {
+                if (values[i] == null) {
+                    continue;
+                }
+
+                String value = values[i].trim();
+                value = value.replaceAll("##", ",");
+
+                String text;
+                if (texts.length <= i || texts[i] == null) {
+                    text = value;
+                } else {
+                    String t = texts[i].trim();
+                    text = t.replaceAll("##", ",");
+                }
+
+                options.add(new Option(text, value));
+                optionIndexesByValue.put(value, Integer.valueOf(options.size() - 1));
+            }
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public static class Option implements java.io.Serializable {
+            private final String text;
+            private final String value;
+
+            public Option(String text, String value) {
+                this.text = text;
+                this.value = value;
+            }
+
+            public String getText() {
+                return text;
+            }
+
+            public String getValue() {
+                return value;
+            }
+        }
+    }
+
     //
     private int itemId;
     private int crfVersionId;

@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.submit.ItemFormMetadataBean;
-import org.researchedc.bean.submit.ResponseSetBean;
+import org.researchedc.bean.submit.ItemFormMetadataBean.ResponseSetBean;
 import org.researchedc.module.dataimport.service.ImportItemFormMetadataPort;
 import org.researchedc.module.dataimport.dto.ImportItemFormMetadata;
 import org.researchedc.module.crf.entity.ItemFormMetadataEntity;

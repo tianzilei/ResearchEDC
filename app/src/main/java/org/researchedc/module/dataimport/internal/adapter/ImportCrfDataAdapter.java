@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Unmarshaller;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.submit.ResponseSetBean;
+import org.researchedc.bean.submit.ItemFormMetadataBean.ResponseSetBean;
 import org.researchedc.module.dataimport.internal.odm.FormDataBean;
 import org.researchedc.module.dataimport.internal.odm.ImportItemDataBean;
 import org.researchedc.module.dataimport.internal.odm.ImportItemGroupDataBean;

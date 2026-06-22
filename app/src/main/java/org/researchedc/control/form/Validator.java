@@ -29,7 +29,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.submit.ItemDataBean;
-import org.researchedc.bean.submit.ResponseSetBean;
+import org.researchedc.bean.submit.ItemFormMetadataBean.ResponseSetBean;
 import org.researchedc.control.form.support.FormTermType;
 import org.researchedc.control.form.support.FormFormatSupport;
 import org.researchedc.control.form.support.FormLocaleSupport;
