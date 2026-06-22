@@ -27,9 +27,7 @@ import java.util.regex.PatternSyntaxException;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.core.UserType;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ResponseOptionBean;
 import org.researchedc.bean.submit.ResponseSetBean;
@@ -333,6 +331,8 @@ public class Validator {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
     private static final Set<Integer> ENTITY_ACTION_IDS = Set.of(1, 2, 3, 4, 5);
+    private static final Set<Integer> ROLE_IDS = Set.of(1, 2, 3, 4, 5, 6, 7);
+    private static final Set<Integer> USER_TYPE_IDS = Set.of(0, 1, 2, 3);
     Locale locale;
     ResourceBundle restext, resexception, resword;
 
@@ -1452,11 +1452,11 @@ public class Validator {
             if (termType.equals(FormTermType.ENTITY_ACTION)) {
                 return ENTITY_ACTION_IDS.contains(i);
             } else if (termType.equals(FormTermType.ROLE)) {
-                return Role.contains(i);
+                return ROLE_IDS.contains(i);
             } else if (termType.equals(FormTermType.STATUS)) {
                 return Status.contains(i);
             } else if (termType.equals(FormTermType.USER_TYPE)) {
-                return UserType.contains(i);
+                return USER_TYPE_IDS.contains(i);
             }
             return false;
         } catch (Exception e) {

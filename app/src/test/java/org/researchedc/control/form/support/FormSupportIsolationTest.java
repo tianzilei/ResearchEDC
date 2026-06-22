@@ -53,8 +53,11 @@ class FormSupportIsolationTest {
 
     @Test
     void validator_usesAppOwnedTermAndComparisonSupport() {
-        Validator validator = new Validator(Map.of("roleId", "2", "password", "abcd"), Locale.ENGLISH);
+        Validator validator = new Validator(
+                Map.of("roleId", "2", "userTypeId", "3", "password", "abcd"),
+                Locale.ENGLISH);
         validator.addValidation("roleId", Validator.IS_VALID_TERM, FormTermType.ROLE);
+        validator.addValidation("userTypeId", Validator.IS_VALID_TERM, FormTermType.USER_TYPE);
         validator.addValidation(
                 "password",
                 Validator.LENGTH_NUMERIC_COMPARISON,
@@ -62,5 +65,17 @@ class FormSupportIsolationTest {
                 4);
 
         assertTrue(validator.validate().isEmpty());
+    }
+
+    @Test
+    void validator_rejectsRetiredSharedRoleAndUserTypeTerms() {
+        Validator validator = new Validator(Map.of("roleId", "0", "userTypeId", "9"), Locale.ENGLISH);
+        validator.addValidation("roleId", Validator.IS_VALID_TERM, FormTermType.ROLE);
+        validator.addValidation("userTypeId", Validator.IS_VALID_TERM, FormTermType.USER_TYPE);
+
+        HashMap errors = validator.validate();
+
+        assertTrue(errors.containsKey("roleId"));
+        assertTrue(errors.containsKey("userTypeId"));
     }
 }

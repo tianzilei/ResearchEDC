@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import org.researchedc.bean.login.StudyUserRoleBean;
 import org.researchedc.module.datacapture.internal.support.AttachmentStorageProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +16,16 @@ import org.springframework.stereotype.Component;
 public class AttachmentStorageAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(AttachmentStorageAdapter.class);
+    private static final int STATUS_AVAILABLE = 1;
+    private static final Set<String> VALID_STUDY_ROLE_NAMES = Set.of(
+            "admin",
+            "coordinator",
+            "director",
+            "Investigator",
+            "ra",
+            "monitor",
+            "ra2",
+            "Data Specialist");
 
     private final JdbcTemplate jdbc;
     private final AttachmentStorageProperties storageProperties;
@@ -59,14 +69,14 @@ public class AttachmentStorageAdapter {
                 return false;
             }
 
-            StudyUserRoleBean directRole = roleByStudy(user.userName(), study.id());
-            if (directRole != null && directRole.isActive() && !directRole.isInvalid()) {
+            AttachmentRole directRole = roleByStudy(user.userName(), study.id());
+            if (directRole.canAccess()) {
                 return true;
             }
 
             if (study.parentStudyId() > 0) {
-                StudyUserRoleBean parentRole = roleByStudy(user.userName(), study.parentStudyId());
-                return parentRole != null && parentRole.isActive() && !parentRole.isInvalid();
+                AttachmentRole parentRole = roleByStudy(user.userName(), study.parentStudyId());
+                return parentRole.canAccess();
             }
             return false;
         } catch (Exception e) {
@@ -108,7 +118,7 @@ public class AttachmentStorageAdapter {
         }, userId);
     }
 
-    private StudyUserRoleBean roleByStudy(String userName, int studyId) {
+    private AttachmentRole roleByStudy(String userName, int studyId) {
         String sql = """
                 SELECT study_user_role_id, user_name, role_name, study_id, status_id
                 FROM module_study_user_role
@@ -118,16 +128,13 @@ public class AttachmentStorageAdapter {
                 """;
         return jdbc.query(sql, rs -> {
             if (!rs.next()) {
-                return new StudyUserRoleBean();
+                return AttachmentRole.none();
             }
-            StudyUserRoleBean bean = new StudyUserRoleBean();
-            bean.setId(rs.getInt("study_user_role_id"));
-            bean.setName(rs.getString("user_name"));
-            bean.setUserName(rs.getString("user_name"));
-            bean.setRoleName(rs.getString("role_name"));
-            bean.setStudyId(rs.getInt("study_id"));
-            bean.setStatus(org.researchedc.bean.core.Status.get(rs.getInt("status_id")));
-            return bean;
+            return new AttachmentRole(
+                    rs.getInt("study_user_role_id"),
+                    rs.getString("role_name"),
+                    rs.getInt("study_id"),
+                    rs.getInt("status_id"));
         }, userName, studyId);
     }
 
@@ -204,6 +211,16 @@ public class AttachmentStorageAdapter {
     private record AttachmentUser(int id, String userName, int userTypeId) {
         boolean isAdmin() {
             return userTypeId == 1 || userTypeId == 3;
+        }
+    }
+
+    private record AttachmentRole(int id, String roleName, int studyId, int statusId) {
+        static AttachmentRole none() {
+            return new AttachmentRole(0, null, 0, 0);
+        }
+
+        boolean canAccess() {
+            return id > 0 && studyId > 0 && statusId == STATUS_AVAILABLE && VALID_STUDY_ROLE_NAMES.contains(roleName);
         }
     }
 

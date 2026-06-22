@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.researchedc.bean.login.UserAccountBean;
 import org.researchedc.module.dataimport.dto.ImportJobDTO;
 import org.researchedc.module.dataimport.enums.ImportJobStatus;
 import org.researchedc.module.dataimport.enums.ImportType;
@@ -46,9 +45,7 @@ class ImportUploadControllerTest {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "legacy-data.xml", MediaType.TEXT_XML_VALUE, "<ODM/>".getBytes());
         MockHttpSession session = new MockHttpSession();
-        UserAccountBean user = new UserAccountBean();
-        user.setId(77);
-        session.setAttribute("userBean", user);
+        session.setAttribute("userBean", new SessionUser(77));
 
         ImportJobDTO job = job();
         when(importService.uploadFile(any(MultipartFile.class), eq("CRF_DATA"), eq(5), eq("legacy-data.xml"), eq(77)))
@@ -131,5 +128,17 @@ class ImportUploadControllerTest {
         dto.setRequestedBy(77);
         dto.setRetryCount(0);
         return dto;
+    }
+
+    static final class SessionUser {
+        private final int id;
+
+        SessionUser(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return id;
+        }
     }
 }

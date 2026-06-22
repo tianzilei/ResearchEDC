@@ -7,8 +7,6 @@
  */
 package org.researchedc.bean.core;
 
-import org.researchedc.bean.login.UserAccountBean;
-
 import java.util.Date;
 
 /**
@@ -36,11 +34,11 @@ public class AuditableEntityBean extends EntityBean {
 
     protected int ownerId;
 
-    protected UserAccountBean owner;
+    protected Object owner;
 
     protected int updaterId;
 
-    protected UserAccountBean updater;
+    protected Object updater;
 
     protected Status status;
 
@@ -59,7 +57,7 @@ public class AuditableEntityBean extends EntityBean {
     /**
      * @return Returns the owner.
      */
-    public UserAccountBean getOwner() {
+    public Object getOwner() {
         return owner;
     }
 
@@ -67,9 +65,9 @@ public class AuditableEntityBean extends EntityBean {
      * @param owner
      *            The owner to set.
      */
-    public void setOwner(UserAccountBean owner) {
+    public void setOwner(Object owner) {
         this.owner = owner;
-        ownerId = owner.getId();
+        ownerId = readId(owner);
     }
 
     /**
@@ -79,7 +77,7 @@ public class AuditableEntityBean extends EntityBean {
         if (owner == null) {
             return ownerId;
         }
-        return owner.getId();
+        return readId(owner);
     }
 
     /**
@@ -100,9 +98,9 @@ public class AuditableEntityBean extends EntityBean {
      * @param updater
      *            The updater to set.
      */
-    public void setUpdater(UserAccountBean updater) {
+    public void setUpdater(Object updater) {
         this.updater = updater;
-        updaterId = updater.getId();
+        updaterId = readId(updater);
     }
 
     /**
@@ -112,7 +110,7 @@ public class AuditableEntityBean extends EntityBean {
         if (updater == null) {
             return updaterId;
         }
-        return updater.getId();
+        return readId(updater);
     }
 
     /**
@@ -174,5 +172,23 @@ public class AuditableEntityBean extends EntityBean {
 
     public void setOldStatus(Status oldStatus) {
         this.oldStatus = oldStatus;
+    }
+
+    private int readId(Object candidate) {
+        if (candidate == null) {
+            return 0;
+        }
+        if (candidate instanceof EntityBean entity) {
+            return entity.getId();
+        }
+        try {
+            Object value = candidate.getClass().getMethod("getId").invoke(candidate);
+            if (value instanceof Number number) {
+                return number.intValue();
+            }
+        } catch (ReflectiveOperationException | SecurityException e) {
+            return 0;
+        }
+        return 0;
     }
 }
