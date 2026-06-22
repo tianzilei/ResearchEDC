@@ -8,7 +8,6 @@
 package org.researchedc.bean.submit;
 
 import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.core.ItemDataType;
 
 import java.util.ArrayList;
 
@@ -19,20 +18,21 @@ import java.util.ArrayList;
  * @author thickerson
  */
 public class ItemBean extends AuditableEntityBean {
+    private static final int ITEM_DATA_TYPE_ST = 5;
+
     private String description = "";
 
     private String units = "";
 
     private boolean phiStatus = false;
 
-    private int itemDataTypeId = 0;
+    private int itemDataTypeId = ITEM_DATA_TYPE_ST;
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((crfName == null) ? 0 : crfName.hashCode());
-        result = prime * result + ((dataType == null) ? 0 : dataType.hashCode());
         result = prime * result + ((datasetItemMapKey == null) ? 0 : datasetItemMapKey.hashCode());
         result = prime * result + defId;
         result = prime * result + ((defName == null) ? 0 : defName.hashCode());
@@ -63,11 +63,6 @@ public class ItemBean extends AuditableEntityBean {
             if (other.crfName != null)
                 return false;
         } else if (!crfName.equals(other.crfName))
-            return false;
-        if (dataType == null) {
-            if (other.dataType != null)
-                return false;
-        } else if (!dataType.equals(other.dataType))
             return false;
         if (datasetItemMapKey == null) {
             if (other.datasetItemMapKey != null)
@@ -120,9 +115,6 @@ public class ItemBean extends AuditableEntityBean {
             return false;
         return true;
     }
-
-    private ItemDataType dataType;
-
     private int itemReferenceTypeId = 0;
 
     private int statusId = 1;
@@ -146,7 +138,6 @@ public class ItemBean extends AuditableEntityBean {
     // not in DB - YW 3-7-2008
 
     public ItemBean() {
-        dataType = ItemDataType.ST;
         itemMetas = new ArrayList();
     }
 
@@ -169,7 +160,7 @@ public class ItemBean extends AuditableEntityBean {
      * @return Returns the itemDataTypeId.
      */
     public int getItemDataTypeId() {
-        return dataType.getId();
+        return itemDataTypeId;
     }
 
     /**
@@ -177,8 +168,7 @@ public class ItemBean extends AuditableEntityBean {
      *            The itemDataTypeId to set.
      */
     public void setItemDataTypeId(int itemDataTypeId) {
-        dataType = ItemDataType.get(itemDataTypeId);
-        // this.itemDataTypeId = itemDataTypeId;
+        this.itemDataTypeId = itemDataTypeId;
     }
 
     /**
@@ -239,21 +229,6 @@ public class ItemBean extends AuditableEntityBean {
      */
     public void setUnits(String units) {
         this.units = units;
-    }
-
-    /**
-     * @return Returns the dataType.
-     */
-    public ItemDataType getDataType() {
-        return dataType;
-    }
-
-    /**
-     * @param dataType
-     *            The dataType to set.
-     */
-    public void setDataType(ItemDataType dataType) {
-        this.dataType = dataType;
     }
 
     /**

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.core.ItemDataType;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.bean.submit.EventCRFBean;
@@ -27,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Primary
 @Transactional(readOnly = true)
 public class ItemDataDaoAdapter implements ImportItemDataPort {
+    private static final int ITEM_DATA_TYPE_ST = 5;
 
     private final ItemDataRepository repository;
 
@@ -273,7 +273,7 @@ public class ItemDataDaoAdapter implements ImportItemDataPort {
         return eb;
     }
 
-    public ItemDataBean setItemDataBeanIfDateOrPdate(ItemDataBean idb, String currentDfString, ItemDataType dataType) {
+    public ItemDataBean setItemDataBeanIfDateOrPdate(ItemDataBean idb, String currentDfString, int dataTypeId) {
         return idb;
     }
 
@@ -287,8 +287,8 @@ public class ItemDataDaoAdapter implements ImportItemDataPort {
         return eb;
     }
 
-    public ItemDataType getDataType(int itemId) {
-        return ItemDataType.ST;
+    public int getDataType(int itemId) {
+        return ITEM_DATA_TYPE_ST;
     }
 
     public String formatPDate(String pDate) {

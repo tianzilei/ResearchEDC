@@ -55,7 +55,7 @@ Current legacy removal baseline:
 
 | Surface | Current Count | Removal Gate |
 |---------|---------------|--------------|
-| `shared/src/main/java/org/researchedc` | 17 Java files | Shared compatibility DTO/term beans still needed by retained compatibility paths |
+| `shared/src/main/java/org/researchedc` | 16 Java files | Shared compatibility DTO/term beans still needed by retained compatibility paths |
 | `shared/domain` | 0 Java files | Shared Hibernate mappings retired; active mappings live in module-owned entities |
 | `shared/core`, `shared/exception` | 0 Java files | Retired; app-owned config loads retained properties |
 | `shared/dao` | 0 files | DAO SPI surface deleted; Phase 3 ledger is 878/878 removed |

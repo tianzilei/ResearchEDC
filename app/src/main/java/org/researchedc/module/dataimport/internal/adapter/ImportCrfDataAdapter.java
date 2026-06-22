@@ -17,7 +17,6 @@ import java.util.ResourceBundle;
 
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Unmarshaller;
-import org.researchedc.bean.core.ItemDataType;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.SubjectEventStatus;
 import org.researchedc.bean.submit.ResponseSetBean;
@@ -71,6 +70,10 @@ public class ImportCrfDataAdapter {
     private static final int STAGE_INITIAL_DATA_ENTRY_COMPLETE = 3;
     private static final int STAGE_DOUBLE_DATA_ENTRY_COMPLETE = 5;
     private static final int STAGE_LOCKED = 7;
+    private static final int ITEM_DATA_TYPE_INTEGER = 6;
+    private static final int ITEM_DATA_TYPE_REAL = 7;
+    private static final int ITEM_DATA_TYPE_DATE = 9;
+    private static final int ITEM_DATA_TYPE_PDATE = 10;
 
     private final ImportItemDataPort itemDataPort;
     private final ImportItemPort itemPort;
@@ -636,8 +639,8 @@ public class ImportCrfDataAdapter {
                 if (items != null && !items.isEmpty()) {
                     ImportItemPort.ImportItem item = items.get(0);
                     itemCache.put(oid, item);
-                    ItemDataType dt = ItemDataType.get(toInt(item.dataTypeId()));
-                    if (dt == ItemDataType.DATE) {
+                    int dataTypeId = toInt(item.dataTypeId());
+                    if (dataTypeId == ITEM_DATA_TYPE_DATE) {
                         String value = fieldValues.get(oid);
                         if (value != null && !value.isEmpty()) {
                             try {
@@ -665,15 +668,16 @@ public class ImportCrfDataAdapter {
 
             ImportItemPort.ImportItem item = itemCache.get(oid);
             if (item != null) {
-                ItemDataType dt = ItemDataType.get(toInt(item.dataTypeId()));
-                if (dt != null) {
-                    if (dt == ItemDataType.REAL) {
+                int dataTypeId = toInt(item.dataTypeId());
+                String dataTypeName = itemDataTypeName(dataTypeId);
+                if (dataTypeName != null) {
+                    if (dataTypeId == ITEM_DATA_TYPE_REAL) {
                         dv.addValidation(oid, Validator.IS_A_NUMBER);
-                    } else if (dt == ItemDataType.INTEGER) {
+                    } else if (dataTypeId == ITEM_DATA_TYPE_INTEGER) {
                         dv.addValidation(oid, Validator.IS_AN_INTEGER);
-                    } else if (dt == ItemDataType.DATE) {
+                    } else if (dataTypeId == ITEM_DATA_TYPE_DATE) {
                         dv.addValidation(oid, Validator.IS_A_DATE);
-                    } else if (dt == ItemDataType.PDATE) {
+                    } else if (dataTypeId == ITEM_DATA_TYPE_PDATE) {
                         dv.addValidation(oid, Validator.IS_PARTIAL_DATE);
                     }
 
@@ -685,7 +689,7 @@ public class ImportCrfDataAdapter {
                             String wd = metadata.widthDecimal();
                             if (wd != null && !wd.isEmpty() && !"w(d)".equals(wd)) {
                                 ArrayList<String> params = new ArrayList<>();
-                                params.add(dt.getName());
+                                params.add(dataTypeName);
                                 params.add(wd);
                                 dv.addValidation(oid, Validator.IS_VALID_WIDTH_DECIMAL, params);
                             }
@@ -740,6 +744,23 @@ public class ImportCrfDataAdapter {
         rsb.setResponseTypeId(metadata.responseTypeId());
         rsb.setOptions(metadata.optionsText(), metadata.optionsValues());
         return rsb;
+    }
+
+    private String itemDataTypeName(int dataTypeId) {
+        return switch (dataTypeId) {
+            case 1 -> "bl";
+            case 2 -> "bln";
+            case 3 -> "ed";
+            case 4 -> "tel";
+            case 5 -> "st";
+            case ITEM_DATA_TYPE_INTEGER -> "int";
+            case ITEM_DATA_TYPE_REAL -> "real";
+            case 8 -> "set";
+            case ITEM_DATA_TYPE_DATE -> "date";
+            case ITEM_DATA_TYPE_PDATE -> "pdate";
+            case 11 -> "file";
+            default -> null;
+        };
     }
 
     private SubjectEventStatus subjectEventStatus(ImportStudyEvent event) {
