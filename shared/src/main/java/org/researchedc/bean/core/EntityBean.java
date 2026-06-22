@@ -14,8 +14,7 @@ package org.researchedc.bean.core;
  */
 public class EntityBean implements java.io.Serializable {
 
-    // ss - changed visibility of these fields so Term could see them
-    // think we should change all fields to protected here
+    // ss - changed visibility of these fields for legacy controlled vocabulary beans
     protected String name;
     protected int id;
 

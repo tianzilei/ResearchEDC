@@ -11,11 +11,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
-// Internationalized name and description in Term.getName and
-// Term.getDescription()
-
-public class Status extends Term {
+public class Status extends EntityBean {
     // waiting for the db to come in sync with our set of terms...
     public static final Status INVALID = new Status(0, "invalid");
     public static final Status AVAILABLE = new Status(1, "available");
@@ -32,19 +30,19 @@ public class Status extends Term {
 
     private static final Status[] members =
         { INVALID, AVAILABLE, PENDING, PRIVATE, UNAVAILABLE, LOCKED, DELETED, AUTO_DELETED, SIGNED, FROZEN, SOURCE_DATA_VERIFICATION,RESET };
-    private static List list = Arrays.asList(members);  
+    private static List<Status> list = Arrays.asList(members);
 
     private static final Status[] activeMembers = { AVAILABLE, SIGNED, DELETED, AUTO_DELETED };
-    private static List activeList = Arrays.asList(activeMembers);  
+    private static List<Status> activeList = Arrays.asList(activeMembers);
 
     private static final Status[] studySubjectDropDownMembers = { AVAILABLE, SIGNED, DELETED, AUTO_DELETED };
-    private static List studySubjectDropDownList = Arrays.asList(studySubjectDropDownMembers);
+    private static List<Status> studySubjectDropDownList = Arrays.asList(studySubjectDropDownMembers);
 
     private static final Status[] subjectDropDownMembers = { AVAILABLE, DELETED };
-    private static List subjectDropDownList = Arrays.asList(subjectDropDownMembers);
+    private static List<Status> subjectDropDownList = Arrays.asList(subjectDropDownMembers);
 
     private static final Status[] studyUpdateMembers = { PENDING, AVAILABLE, FROZEN, LOCKED };
-    private static List studyUpdateMembersList = Arrays.asList(studyUpdateMembers);
+    private static List<Status> studyUpdateMembersList = Arrays.asList(studyUpdateMembers);
 
     //Solve the problem with the get() method...
     private static final Map<Integer, String> membersMap = new HashMap<Integer, String>();
@@ -64,27 +62,52 @@ public class Status extends Term {
     }
 
     private Status(int id, String name) {
-        super(id, name);
+        setId(id);
+        setName(name);
     }
 
     private Status() {
     }
 
     public static boolean contains(int id) {
-        return Term.contains(id, list);
+        return find(id) != INVALID;
     }
 
     public static Status get(int id) {
-        return (Status) Term.get(id, list);
+        return find(id);
     }
 
     public static Status getFromMap(int id) {
         if (id < 0 || id > membersMap.size() - 1) {
             return Status.INVALID;
         }
-        return (Status) get(id, list);
+        return get(id);
     }
-    
+
+    public boolean equals(Status status) {
+        return status != null && id == status.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
+    public String getName() {
+        ResourceBundle resterm = ResourceBundle.getBundle("org.researchedc.i18n.terms");
+        String localized = resterm.getString(this.name);
+        return localized != null ? localized.trim() : "";
+    }
+
+    private static Status find(int id) {
+        for (Status status : list) {
+            if (status.getId() == id) {
+                return status;
+            }
+        }
+        return INVALID;
+    }
 
     /* public static void main(String[] args) {
          int[] nums = {0,1,2,3,4,5,6,7,8,9};
