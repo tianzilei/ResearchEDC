@@ -11,7 +11,7 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `18` files
+- Remaining `shared/` Java surface: `17` files
 - Modulith Java surface: `399` files
 - Code balance by file count: `5%` shared legacy / `95%` module modern
 
@@ -34,7 +34,7 @@ This means the workflow-level deletion program is complete. The remaining work i
 
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
-| `shared/bean` | 18 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
+| `shared/bean` | 17 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
 | `shared/domain` | 0 | Retired; active mappings live in module-owned entities/repositories |
 | `shared/core` | 0 | Retired; app-owned config loads retained property resources |
 | `shared/i18n` | 0 | Retired; resource files remain, Java helper removed |

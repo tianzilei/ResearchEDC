@@ -17,7 +17,6 @@ import java.util.ResourceBundle;
 
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Unmarshaller;
-import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.ItemDataType;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.SubjectEventStatus;
@@ -67,6 +66,11 @@ public class ImportCrfDataAdapter {
     }
 
     private static final Logger log = LoggerFactory.getLogger(ImportCrfDataAdapter.class);
+    private static final int STAGE_INVALID = 0;
+    private static final int STAGE_INITIAL_DATA_ENTRY = 2;
+    private static final int STAGE_INITIAL_DATA_ENTRY_COMPLETE = 3;
+    private static final int STAGE_DOUBLE_DATA_ENTRY_COMPLETE = 5;
+    private static final int STAGE_LOCKED = 7;
 
     private final ImportItemDataPort itemDataPort;
     private final ImportItemPort itemPort;
@@ -188,9 +192,9 @@ public class ImportCrfDataAdapter {
                         }
                         for (ImportEventCrf eventCrfBean : eventCrfBeans) {
                             Integer ecbId = eventCrfBean.id();
-                            if (!(stage(eventCrfBean).equals(DataEntryStage.INITIAL_DATA_ENTRY)
+                            if (!(stage(eventCrfBean) == STAGE_INITIAL_DATA_ENTRY
                                     && upsert.isDataEntryStarted())
-                                    && !(stage(eventCrfBean).equals(DataEntryStage.DOUBLE_DATA_ENTRY_COMPLETE)
+                                    && !(stage(eventCrfBean) == STAGE_DOUBLE_DATA_ENTRY_COMPLETE
                                     && upsert.isDataEntryComplete())) {
                                 return false;
                             }
@@ -283,9 +287,9 @@ public class ImportCrfDataAdapter {
                         for (ImportEventCrf eventCrfBean : eventCrfBeans) {
                             Integer ecbId = eventCrfBean.id();
                             if ((upsert.isDataEntryStarted()
-                                    && stage(eventCrfBean).equals(DataEntryStage.INITIAL_DATA_ENTRY))
+                                    && stage(eventCrfBean) == STAGE_INITIAL_DATA_ENTRY)
                                     || (upsert.isDataEntryComplete()
-                                    && stage(eventCrfBean).equals(DataEntryStage.DOUBLE_DATA_ENTRY_COMPLETE))) {
+                                    && stage(eventCrfBean) == STAGE_DOUBLE_DATA_ENTRY_COMPLETE)) {
                                 if (!eventCrfBeanIds.contains(ecbId)) {
                                     eventCrfBeansResult.add(eventCrfBean);
                                     eventCrfBeanIds.add(ecbId);
@@ -742,24 +746,24 @@ public class ImportCrfDataAdapter {
         return SubjectEventStatus.getFromMap(toInt(event.subjectEventStatusId()));
     }
 
-    private DataEntryStage stage(ImportEventCrf eventCrf) {
+    private int stage(ImportEventCrf eventCrf) {
         Status status = Status.getFromMap(toInt(eventCrf.statusId()));
         if (status == null) {
-            return DataEntryStage.INVALID;
+            return STAGE_INVALID;
         }
         if (status.equals(Status.AVAILABLE)) {
-            return DataEntryStage.INITIAL_DATA_ENTRY;
+            return STAGE_INITIAL_DATA_ENTRY;
         }
         if (status.equals(Status.PENDING)) {
-            return DataEntryStage.INITIAL_DATA_ENTRY_COMPLETE;
+            return STAGE_INITIAL_DATA_ENTRY_COMPLETE;
         }
         if (status.equals(Status.UNAVAILABLE)) {
-            return DataEntryStage.DOUBLE_DATA_ENTRY_COMPLETE;
+            return STAGE_DOUBLE_DATA_ENTRY_COMPLETE;
         }
         if (status.equals(Status.LOCKED)) {
-            return DataEntryStage.LOCKED;
+            return STAGE_LOCKED;
         }
-        return DataEntryStage.INVALID;
+        return STAGE_INVALID;
     }
 
     private record ImportUser(int id, String name) {

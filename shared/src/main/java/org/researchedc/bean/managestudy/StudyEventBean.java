@@ -8,7 +8,6 @@
 package org.researchedc.bean.managestudy;
 
 import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.SubjectEventStatus;
 
@@ -20,6 +19,10 @@ import java.util.Date;
  *
  */
 public class StudyEventBean extends AuditableEntityBean {
+    public static final int STAGE_UNCOMPLETED = 1;
+    public static final int STAGE_INITIAL_DATA_ENTRY_COMPLETE = 3;
+    public static final int STAGE_DOUBLE_DATA_ENTRY_COMPLETE = 5;
+
     // STUDY_EVENT_ID STUDY_EVENT_DEFINITION_ID SUBJECT_ID
     // LOCATION SAMPLE_ORDINAL DATE_START DATE_END
     // OWNER_ID STATUS_ID DATE_CREATED DATE_UPDATED
@@ -44,7 +47,7 @@ public class StudyEventBean extends AuditableEntityBean {
 
     private ArrayList eventCRFs = new ArrayList();// not in DB
 
-    private DataEntryStage stage;
+    private int stageId = STAGE_UNCOMPLETED;
 
     private SubjectEventStatus subjectEventStatus;
 
@@ -156,7 +159,7 @@ public class StudyEventBean extends AuditableEntityBean {
     }
 
     public StudyEventBean() {
-        stage = DataEntryStage.UNCOMPLETED;
+        stageId = STAGE_UNCOMPLETED;
         subjectEventStatus = SubjectEventStatus.SCHEDULED;
     }
 
@@ -283,8 +286,12 @@ public class StudyEventBean extends AuditableEntityBean {
     /**
      * @return Returns the stage.
      */
-    public DataEntryStage getStage() {
-        return stage;
+    public String getStage() {
+        return stageName(stageId);
+    }
+
+    public int getStageId() {
+        return stageId;
     }
 
     /*
@@ -297,15 +304,15 @@ public class StudyEventBean extends AuditableEntityBean {
         this.status = s;
 
         if (s.equals(Status.AVAILABLE)) {
-            stage = DataEntryStage.UNCOMPLETED;
+            stageId = STAGE_UNCOMPLETED;
         }
 
         else if (s.equals(Status.PENDING)) {
-            stage = DataEntryStage.INITIAL_DATA_ENTRY_COMPLETE;
+            stageId = STAGE_INITIAL_DATA_ENTRY_COMPLETE;
         }
 
         else if (s.equals(Status.UNAVAILABLE)) {
-            stage = DataEntryStage.DOUBLE_DATA_ENTRY_COMPLETE;
+            stageId = STAGE_DOUBLE_DATA_ENTRY_COMPLETE;
         }
     }
 
@@ -313,8 +320,8 @@ public class StudyEventBean extends AuditableEntityBean {
      * @param stage
      *            The stage to set.
      */
-    public void setStage(DataEntryStage stage) {
-        this.stage = stage;
+    public void setStageId(int stageId) {
+        this.stageId = stageId;
     }
 
     public StudySubjectBean getStudySubject() {
@@ -325,4 +332,12 @@ public class StudyEventBean extends AuditableEntityBean {
         this.studySubject = studySubject;
     }
 
+    private String stageName(int stageId) {
+        return switch (stageId) {
+            case STAGE_UNCOMPLETED -> "not_started";
+            case STAGE_INITIAL_DATA_ENTRY_COMPLETE -> "initial_data_entry_complete";
+            case STAGE_DOUBLE_DATA_ENTRY_COMPLETE -> "data_entry_complete";
+            default -> "invalid";
+        };
+    }
 }

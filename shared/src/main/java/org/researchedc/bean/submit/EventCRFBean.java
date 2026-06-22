@@ -8,7 +8,6 @@
 package org.researchedc.bean.submit;
 
 import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyEventBean;
@@ -24,6 +23,14 @@ import java.util.Date;
  * @author thickerson
  */
 public class EventCRFBean extends AuditableEntityBean {
+    public static final int STAGE_INVALID = 0;
+    public static final int STAGE_UNCOMPLETED = 1;
+    public static final int STAGE_INITIAL_DATA_ENTRY = 2;
+    public static final int STAGE_INITIAL_DATA_ENTRY_COMPLETE = 3;
+    public static final int STAGE_DOUBLE_DATA_ENTRY = 4;
+    public static final int STAGE_DOUBLE_DATA_ENTRY_COMPLETE = 5;
+    public static final int STAGE_LOCKED = 7;
+
     private int studyEventId = 0;
     private int CRFVersionId = 0;
     private Date dateInterviewed;
@@ -55,10 +62,9 @@ public class EventCRFBean extends AuditableEntityBean {
     // convenience
     private EntityBean crf = new EntityBean();
     private CRFVersionBean crfVersion = new CRFVersionBean();
-    private DataEntryStage stage;
+    private int stageId = STAGE_INVALID;
 
     public EventCRFBean() {
-        stage = DataEntryStage.INVALID;
         status = Status.INVALID;
     }
 
@@ -288,38 +294,40 @@ public class EventCRFBean extends AuditableEntityBean {
      *
      * @return The Event CRF's data entry stage.
      */
-    public DataEntryStage getStage() {
-        if (stage != null) {
-            if (!stage.equals(DataEntryStage.INVALID)) {
-                return stage;
-            }
+    public String getStage() {
+        return stageName(getStageId());
+    }
+
+    public int getStageId() {
+        if (stageId != STAGE_INVALID) {
+            return stageId;
         }
 
         if (!active || !status.isActive()) {
-            stage = DataEntryStage.UNCOMPLETED;
+            stageId = STAGE_UNCOMPLETED;
         }
 
         if (status.equals(Status.AVAILABLE)) {
-            stage = DataEntryStage.INITIAL_DATA_ENTRY;
+            stageId = STAGE_INITIAL_DATA_ENTRY;
         }
 
         if (status.equals(Status.PENDING)) {
             if (validatorId != 0) {
-                stage = DataEntryStage.DOUBLE_DATA_ENTRY;
+                stageId = STAGE_DOUBLE_DATA_ENTRY;
             } else {
-                stage = DataEntryStage.INITIAL_DATA_ENTRY_COMPLETE;
+                stageId = STAGE_INITIAL_DATA_ENTRY_COMPLETE;
             }
         }
 
         if (status.equals(Status.UNAVAILABLE)) {
-            stage = DataEntryStage.DOUBLE_DATA_ENTRY_COMPLETE;
+            stageId = STAGE_DOUBLE_DATA_ENTRY_COMPLETE;
         }
 
         if (status.equals(Status.LOCKED)) {
-            stage = DataEntryStage.LOCKED;
+            stageId = STAGE_LOCKED;
         }
 
-        return stage;
+        return stageId;
     }
 
     /**
@@ -328,19 +336,19 @@ public class EventCRFBean extends AuditableEntityBean {
      *
      *            invalidate, allowing us to invalidate the stage again
      */
-    // public DataEntryStage getStage(boolean invalidate) {
-    // if (stage != null) {
+    // public String getStage(boolean invalidate) {
+    // if (stageId != STAGE_INVALID) {
     // if (invalidate) {
-    // stage = DataEntryStage.INVALID;
-    // return stage;
+    // stageId = STAGE_INVALID;
+    // return stageName(stageId);
     // } else {
-    // return stage;
+    // return stageName(stageId);
     // }
     // }
     // return getStage();
     // }
-    public void setStage(DataEntryStage stage) {
-        this.stage = stage;
+    public void setStageId(int stageId) {
+        this.stageId = stageId;
     }
 
     /**
@@ -461,5 +469,17 @@ public class EventCRFBean extends AuditableEntityBean {
 	public void setStudyEvent(StudyEventBean studyEvent) {
 		this.studyEvent = studyEvent;
 	}
+
+    private String stageName(int stageId) {
+        return switch (stageId) {
+            case STAGE_UNCOMPLETED -> "not_started";
+            case STAGE_INITIAL_DATA_ENTRY -> "initial_data_entry";
+            case STAGE_INITIAL_DATA_ENTRY_COMPLETE -> "initial_data_entry_complete";
+            case STAGE_DOUBLE_DATA_ENTRY -> "double_data_entry";
+            case STAGE_DOUBLE_DATA_ENTRY_COMPLETE -> "data_entry_complete";
+            case STAGE_LOCKED -> "locked";
+            default -> "invalid";
+        };
+    }
 
 }
