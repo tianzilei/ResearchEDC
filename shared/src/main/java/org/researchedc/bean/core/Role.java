@@ -7,7 +7,11 @@
  */
 package org.researchedc.bean.core;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 // Internationalized name and description in Term.getName and
 // Term.getDescription()
@@ -45,11 +49,8 @@ public class Role extends Term {
         siteRoleMap.put(7, "site_Data_Entry_Person2");
     }
 
-    private List privileges;
-
-    private Role(int id, String name, String description, Privilege[] myPrivs) {
+    private Role(int id, String name, String description, Object[] myPrivs) {
         super(id, name, description);
-        // privileges = Arrays.asList(myPrivs);
     }
 
     private Role() {
@@ -75,18 +76,6 @@ public class Role extends Term {
 
     public static ArrayList toArrayList() {
         return new ArrayList(list);
-    }
-
-    public boolean hasPrivilege(Privilege p) {
-        Iterator it = privileges.iterator();
-
-        while (it.hasNext()) {
-            Privilege myPriv = (Privilege) it.next();
-            if (myPriv.equals(p)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

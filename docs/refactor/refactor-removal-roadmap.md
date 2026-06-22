@@ -1,6 +1,6 @@
 # Refactor And Removal Roadmap
 
-**Updated:** 2026-06-22
+**Updated:** 2026-06-23
 **Purpose:** single source of truth for the remaining legacy refactor/removal work.
 
 ## Current Verified State
@@ -11,9 +11,9 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `38` files
+- Remaining `shared/` Java surface: `34` files
 - Modulith Java surface: `391` files
-- Code balance by file count: `9%` shared legacy / `91%` module modern
+- Code balance by file count: `8%` shared legacy / `92%` module modern
 
 This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup.
 
@@ -34,7 +34,7 @@ This means the workflow-level deletion program is complete. The remaining work i
 
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
-| `shared/bean` | 38 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
+| `shared/bean` | 34 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
 | `shared/domain` | 0 | Retired; active mappings live in module-owned entities/repositories |
 | `shared/core` | 0 | Retired; app-owned config loads retained property resources |
 | `shared/i18n` | 0 | Retired; resource files remain, Java helper removed |
@@ -88,6 +88,7 @@ These are closed and should not be reopened except to fix regressions:
 - Zero-caller shared support residues (`i18n/core/LocaleResolver`, `i18n/util/I18nFormatUtil`, and `exception/OpenClinicaException`) were removed after source/resource scans confirmed no app, test, shared, or resource callers.
 - Data-capture attachment storage now resolves `attached_file_location` through module-owned support, allowing the retired `shared/bean/core/Utils` path helper and the final `shared/core/form/StringUtil` caller to be removed.
 - Retired no-caller DTO residue for discrepancy-note display, item-group metadata display, and section display paths was removed; `FormDiscrepancyNotes`, `StudyEventBean`, `ItemGroupBean`, and `ItemDataDaoAdapter` no longer keep those legacy bean types alive.
+- Form-validation-only controlled vocabulary types (`EntityAction`, `TermType`, and `NumericComparisonOperator`) now live under app-owned `control/form/support`, and the no-caller `Privilege` term plus retired package Javadoc stubs were removed from `shared`.
 
 **Exit Gate**
 - `shared/core`, `shared/exception`, and `shared/i18n` stay at `0` Java files.
@@ -132,6 +133,7 @@ These are closed and should not be reopened except to fix regressions:
 
 **Current Progress**
 - `app/control/form/Validator` now resolves locale, bundles, date formats, and string/date checks through app-owned `control/form/support` classes instead of direct `shared/core` or `shared/i18n` imports.
+- `Validator` now uses app-owned form term/comparison support for `IS_VALID_TERM` and numeric comparison validation, removing the former shared form-validation-only term classes from `shared/bean/core`.
 
 **Exit Gate**
 - `app/control/form/*` no longer depends directly on `shared/core/*` or `shared/i18n/*`.

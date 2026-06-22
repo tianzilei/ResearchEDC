@@ -348,27 +348,6 @@ public class UserAccountBean extends AuditableEntityBean {
         return new StudyUserRoleBean();
     }
 
-    // public boolean hasPrivilege(Privilege p) {
-    // boolean returnMe = false;
-    // Iterator it = userPrivileges.iterator();
-    // while (it.hasNext()) {
-    // Privilege myPriv = (Privilege)it.next();
-    // if (myPriv.equals(p)) {
-    // returnMe = true;
-    // }
-    // } // end of iterator
-    // return returnMe;
-    // }
-    //
-    // public Privilege getPrivilege(Privilege p) {
-    // if (this.hasPrivilege(p)) {
-    // return p;
-    // }
-    // else {
-    // return Privilege.get(0);
-    // }
-    // }
-
     /**
      * @return Returns the notes.
      */

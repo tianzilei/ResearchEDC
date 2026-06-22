@@ -26,20 +26,19 @@ import java.util.regex.PatternSyntaxException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.researchedc.bean.core.EntityAction;
 import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.core.NumericComparisonOperator;
 import org.researchedc.bean.core.Role;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.core.TermType;
 import org.researchedc.bean.core.UserType;
 import org.researchedc.bean.submit.ItemDataBean;
 import org.researchedc.bean.submit.ResponseOptionBean;
 import org.researchedc.bean.submit.ResponseSetBean;
+import org.researchedc.control.form.support.FormTermType;
 import org.researchedc.control.form.support.FormFormatSupport;
 import org.researchedc.control.form.support.FormLocaleSupport;
 import org.researchedc.control.form.support.FormResourceBundleSupport;
 import org.researchedc.control.form.support.FormStringSupport;
+import org.researchedc.control.form.support.NumericComparisonOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -197,11 +196,11 @@ import org.slf4j.LoggerFactory;
  * vocabulary term
  * <ul>
  * <li> addValidation(fieldname, Validator.IS_VALID_TERM, termType);
- * <li> termType is a TermType object
- * <li> TermType is a controlled vocabulary of controlled vocabularies, e.g. it
+ * <li> termType is a FormTermType object
+ * <li> FormTermType is a controlled vocabulary of controlled vocabularies, e.g. it
  * lists all of the controlled vocabularies
  * <li> e.g. addValidation( statusId , Validator.IS_VALID_TERM,
- * TermType.STATUS);
+ * FormTermType.STATUS);
  * </ul>
  * <li> COMPARES_TO_STATIC_VALUE   test that an input field is an integer which
  * matches a Boolean comparison to some fixed integer value
@@ -333,6 +332,7 @@ import org.slf4j.LoggerFactory;
 public class Validator {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
+    private static final Set<Integer> ENTITY_ACTION_IDS = Set.of(1, 2, 3, 4, 5);
     Locale locale;
     ResourceBundle restext, resexception, resword;
 
@@ -586,7 +586,7 @@ public class Validator {
     /*
      * use for: IS_VALID_TERM
      */
-    public void addValidation(String fieldName, int type, TermType termType) {
+    public void addValidation(String fieldName, int type, FormTermType termType) {
         // assert type == is_valid_term
 
         Validation v = new Validation(type);
@@ -939,7 +939,7 @@ public class Validator {
             }
             break;
         case IS_VALID_TERM:
-            TermType termType = (TermType) v.getArg(0);
+            FormTermType termType = (FormTermType) v.getArg(0);
 
             if (!isValidTerm(fieldName, termType)) {
                 addError(fieldName, v);
@@ -1439,7 +1439,7 @@ public class Validator {
         return false;
     }
 
-    protected boolean isValidTerm(String fieldName, TermType termType) {
+    protected boolean isValidTerm(String fieldName, FormTermType termType) {
         String fieldValue = getFieldValue(fieldName);
 
         if (fieldValue == null) {
@@ -1449,13 +1449,13 @@ public class Validator {
         try {
             int i = Integer.parseInt(fieldValue);
 
-            if (termType.equals(TermType.ENTITY_ACTION)) {
-                return EntityAction.contains(i);
-            } else if (termType.equals(TermType.ROLE)) {
+            if (termType.equals(FormTermType.ENTITY_ACTION)) {
+                return ENTITY_ACTION_IDS.contains(i);
+            } else if (termType.equals(FormTermType.ROLE)) {
                 return Role.contains(i);
-            } else if (termType.equals(TermType.STATUS)) {
+            } else if (termType.equals(FormTermType.STATUS)) {
                 return Status.contains(i);
-            } else if (termType.equals(TermType.USER_TYPE)) {
+            } else if (termType.equals(FormTermType.USER_TYPE)) {
                 return UserType.contains(i);
             }
             return false;

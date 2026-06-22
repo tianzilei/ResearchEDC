@@ -50,4 +50,17 @@ class FormSupportIsolationTest {
         assertTrue(errors.containsKey("startDate"));
         assertTrue(errors.get("startDate").toString().contains("DD-MMM-YYYY"));
     }
+
+    @Test
+    void validator_usesAppOwnedTermAndComparisonSupport() {
+        Validator validator = new Validator(Map.of("roleId", "2", "password", "abcd"), Locale.ENGLISH);
+        validator.addValidation("roleId", Validator.IS_VALID_TERM, FormTermType.ROLE);
+        validator.addValidation(
+                "password",
+                Validator.LENGTH_NUMERIC_COMPARISON,
+                NumericComparisonOperator.GREATER_THAN_OR_EQUAL_TO,
+                4);
+
+        assertTrue(validator.validate().isEmpty());
+    }
 }
