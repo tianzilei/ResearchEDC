@@ -1,4 +1,4 @@
-package org.researchedc.bean.submit.crfdata;
+package org.researchedc.module.dataimport.internal.odm;
 
 /**
  * ODM Container, the surrounding tag for Clinical Data together with meta data

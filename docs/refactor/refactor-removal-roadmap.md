@@ -11,9 +11,9 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `34` files
-- Modulith Java surface: `391` files
-- Code balance by file count: `8%` shared legacy / `92%` module modern
+- Remaining `shared/` Java surface: `26` files
+- Modulith Java surface: `399` files
+- Code balance by file count: `6%` shared legacy / `94%` module modern
 
 This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup.
 
@@ -34,7 +34,7 @@ This means the workflow-level deletion program is complete. The remaining work i
 
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
-| `shared/bean` | 34 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
+| `shared/bean` | 26 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
 | `shared/domain` | 0 | Retired; active mappings live in module-owned entities/repositories |
 | `shared/core` | 0 | Retired; app-owned config loads retained property resources |
 | `shared/i18n` | 0 | Retired; resource files remain, Java helper removed |
@@ -106,13 +106,13 @@ These are closed and should not be reopened except to fix regressions:
 - Shrink or eliminate imports from:
   - `shared.bean.managestudy.*`
   - `shared.bean.submit.*`
-  - `shared.bean.submit.crfdata.*`
   - `shared.bean.login.*`
 - Preserve current upload/validate/commit behavior while replacing legacy DTO plumbing.
 
 **Current Progress**
 - ODM mapping resource lookup and page-message bundle resolution now live in `module/dataimport/internal/support`, so `ImportCrfDataAdapter` no longer depends directly on shared support classes while preserving the current import validation flow.
-- `ImportCrfDataAdapter` now keeps ODM beans only at its retained external compatibility boundary; internal study/subject/event/CRF lookup and event-CRF status flow use module-local records instead of `shared.bean.*` transport types.
+- ODM import POJOs and the Castor mapping now live under `module/dataimport/internal/odm`, so the retained ODM parser no longer keeps `shared.bean.submit.crfdata.*` alive.
+- `ImportCrfDataAdapter` now keeps ODM beans only at its retained dataimport-owned compatibility boundary; internal study/subject/event/CRF lookup and event-CRF status flow use module-local records instead of `shared.bean.*` transport types.
 - Data-import lookup/event-CRF/item metadata ports now return typed module-owned records instead of positional `Object[]` rows, removing raw row plumbing from `ImportCrfDataAdapter` and its study, subject, event, CRF, and data-capture adapters.
 
 **Exit Gate**

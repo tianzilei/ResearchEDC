@@ -2,26 +2,26 @@
 <!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN" "http://castor.org/mapping.dtd">
 <mapping xmlns:OpenClinica="http://www.openclinica.org/ns/odm_ext_v130/v3.1">
 
-	<class name="org.researchedc.bean.submit.crfdata.ODMContainer">
+	<class name="org.researchedc.module.dataimport.internal.odm.ODMContainer">
         <map-to xml="ODM"/>
         
         <field name="CrfDataPostImportContainer"
-            type="org.researchedc.bean.submit.crfdata.CRFDataPostImportContainer">
+            type="org.researchedc.module.dataimport.internal.odm.CRFDataPostImportContainer">
             <bind-xml name="ClinicalData"/>
         </field>
     </class>
     
-	<class name="org.researchedc.bean.submit.crfdata.CRFDataPostImportContainer">
+	<class name="org.researchedc.module.dataimport.internal.odm.CRFDataPostImportContainer">
         <map-to xml="ClinicalData"/>
         
         <field name="SubjectData"
-            type="org.researchedc.bean.submit.crfdata.SubjectDataBean"
+            type="org.researchedc.module.dataimport.internal.odm.SubjectDataBean"
             collection="arraylist">
             <bind-xml name="SubjectData"/>
         </field>
         
         <field name="UpsertOn"
-            type="org.researchedc.bean.submit.crfdata.UpsertOnBean">
+            type="org.researchedc.module.dataimport.internal.odm.UpsertOnBean">
             <bind-xml name="UpsertOn"/>
         </field>
         
@@ -31,7 +31,7 @@
         </field>                
     </class>
 
-    <class name="org.researchedc.bean.submit.crfdata.UpsertOnBean"> 
+    <class name="org.researchedc.module.dataimport.internal.odm.UpsertOnBean"> 
         <map-to xml="UpsertOn"/>
         
         <field name="NotStarted"
@@ -50,7 +50,7 @@
        </field>
        
     </class>
-    <class name="org.researchedc.bean.submit.crfdata.SubjectDataBean"> 
+    <class name="org.researchedc.module.dataimport.internal.odm.SubjectDataBean"> 
         <map-to xml="SubjectData"/>
         
         <field name="SubjectOID"
@@ -59,13 +59,13 @@
        </field>
        
        <field name="StudyEventData"
-            type="org.researchedc.bean.submit.crfdata.StudyEventDataBean"
+            type="org.researchedc.module.dataimport.internal.odm.StudyEventDataBean"
             collection="arraylist">
             <bind-xml name="StudyEventData"/>
         </field>
     </class>
     
-    <class name="org.researchedc.bean.submit.crfdata.StudyEventDataBean">
+    <class name="org.researchedc.module.dataimport.internal.odm.StudyEventDataBean">
     	<map-to xml="StudyEventData"/>
 		
 		<field name="StudyEventOID"
@@ -79,13 +79,13 @@
        </field>
        
        <field name="FormData"
-       		type="org.researchedc.bean.submit.crfdata.FormDataBean"
+       		type="org.researchedc.module.dataimport.internal.odm.FormDataBean"
        		collection="arraylist">
        		<bind-xml name="FormData"/>
        	</field>
     </class>
     
-    <class name="org.researchedc.bean.submit.crfdata.FormDataBean">
+    <class name="org.researchedc.module.dataimport.internal.odm.FormDataBean">
         <map-to xml="FormData"/>
 
         <field name="FormOID" type="java.lang.String">
@@ -97,13 +97,13 @@
         </field>
        
         <field name="ItemGroupData"
-       		type="org.researchedc.bean.submit.crfdata.ImportItemGroupDataBean"
+       		type="org.researchedc.module.dataimport.internal.odm.ImportItemGroupDataBean"
        		collection="arraylist">
        		<bind-xml name="ItemGroupData"/>
         </field>
     </class>
     
-    <class name="org.researchedc.bean.submit.crfdata.ImportItemGroupDataBean">
+    <class name="org.researchedc.module.dataimport.internal.odm.ImportItemGroupDataBean">
     	<map-to xml="ItemGroupData"/>
 		<field name="ItemGroupOID"
                type="java.lang.String">
@@ -116,13 +116,13 @@
        </field>
        
        <field name="ItemData"
-       		type="org.researchedc.bean.submit.crfdata.ImportItemDataBean"
+       		type="org.researchedc.module.dataimport.internal.odm.ImportItemDataBean"
        		collection="arraylist">
        		<bind-xml name="ItemData"/>
        	</field>
     </class>
     
-    <class name="org.researchedc.bean.submit.crfdata.ImportItemDataBean">
+    <class name="org.researchedc.module.dataimport.internal.odm.ImportItemDataBean">
        <map-to xml="ItemData"/>
 	   <field name="ItemOID"
                type="java.lang.String">

@@ -1,4 +1,4 @@
-package org.researchedc.bean.submit.crfdata;
+package org.researchedc.module.dataimport.internal.odm;
 
 public class ImportItemDataBean {
     private String itemOID;

@@ -9,11 +9,11 @@ import java.nio.file.Path;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import org.junit.jupiter.api.Test;
-import org.researchedc.bean.submit.crfdata.FormDataBean;
-import org.researchedc.bean.submit.crfdata.ImportItemGroupDataBean;
-import org.researchedc.bean.submit.crfdata.ODMContainer;
-import org.researchedc.bean.submit.crfdata.StudyEventDataBean;
-import org.researchedc.bean.submit.crfdata.SubjectDataBean;
+import org.researchedc.module.dataimport.internal.odm.FormDataBean;
+import org.researchedc.module.dataimport.internal.odm.ImportItemGroupDataBean;
+import org.researchedc.module.dataimport.internal.odm.ODMContainer;
+import org.researchedc.module.dataimport.internal.odm.StudyEventDataBean;
+import org.researchedc.module.dataimport.internal.odm.SubjectDataBean;
 import org.researchedc.module.dataimport.internal.support.ImportCompatibilitySupport;
 
 class ImportCompatibilitySupportTest {
