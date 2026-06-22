@@ -31,8 +31,6 @@ public class StudyEventBean extends AuditableEntityBean {
 
     private int studySubjectId;
 
-    private StudySubjectBean studySubject;
-
     private String location = "";
 
     private int sampleOrdinal;
@@ -40,10 +38,6 @@ public class StudyEventBean extends AuditableEntityBean {
     private Date dateStarted;
 
     private Date dateEnded;
-
-    // not in database
-    private StudyEventDefinitionBean studyEventDefinition =
-      new StudyEventDefinitionBean();
 
     private ArrayList eventCRFs = new ArrayList();// not in DB
 
@@ -253,21 +247,6 @@ public class StudyEventBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the studyEventDefinition.
-     */
-    public StudyEventDefinitionBean getStudyEventDefinition() {
-        return studyEventDefinition;
-    }
-
-    /**
-     * @param studyEventDefinition
-     *            The studyEventDefinition to set.
-     */
-    public void setStudyEventDefinition(StudyEventDefinitionBean studyEventDefinition) {
-        this.studyEventDefinition = studyEventDefinition;
-    }
-
-    /**
      * @return Returns the eventCRFs.
      */
     public ArrayList getEventCRFs() {
@@ -321,14 +300,6 @@ public class StudyEventBean extends AuditableEntityBean {
      */
     public void setStageId(int stageId) {
         this.stageId = stageId;
-    }
-
-    public StudySubjectBean getStudySubject() {
-        return studySubject;
-    }
-
-    public void setStudySubject(StudySubjectBean studySubject) {
-        this.studySubject = studySubject;
     }
 
     private String stageName(int stageId) {

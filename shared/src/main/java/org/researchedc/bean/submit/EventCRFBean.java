@@ -8,10 +8,7 @@
 package org.researchedc.bean.submit;
 
 import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.managestudy.StudyEventBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
 
 import java.util.Date;
 
@@ -55,13 +52,6 @@ public class EventCRFBean extends AuditableEntityBean {
     private String studyName = "";
     private int eventOrdinal = 1;
 
-    private StudySubjectBean studySubject;
-    private StudyEventBean studyEvent;
-    
-    // the following properties are not in the table; they are meant for
-    // convenience
-    private EntityBean crf = new EntityBean();
-    private CRFVersionBean crfVersion = new CRFVersionBean();
     private int stageId = STAGE_INVALID;
 
     public EventCRFBean() {
@@ -352,36 +342,6 @@ public class EventCRFBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the crf.
-     */
-    public EntityBean getCrf() {
-        return crf;
-    }
-
-    /**
-     * @param crf
-     *            The crf to set.
-     */
-    public void setCrf(EntityBean crf) {
-        this.crf = crf;
-    }
-
-    /**
-     * @return Returns the crfVersion.
-     */
-    public CRFVersionBean getCrfVersion() {
-        return crfVersion;
-    }
-
-    /**
-     * @param crfVersion
-     *            The crfVersion to set.
-     */
-    public void setCrfVersion(CRFVersionBean crfVersion) {
-        this.crfVersion = crfVersion;
-    }
-
-    /**
      * @return Returns the electronicSignatureStatus.
      */
     public boolean isElectronicSignatureStatus() {
@@ -453,22 +413,6 @@ public class EventCRFBean extends AuditableEntityBean {
     public void setSdvUpdateId(int sdvUpdateId) {
         this.sdvUpdateId = sdvUpdateId;
     }
-
-	public StudySubjectBean getStudySubject() {
-		return studySubject;
-	}
-
-	public void setStudySubject(StudySubjectBean studySubject) {
-		this.studySubject = studySubject;
-	}
-
-	public StudyEventBean getStudyEvent() {
-		return studyEvent;
-	}
-
-	public void setStudyEvent(StudyEventBean studyEvent) {
-		this.studyEvent = studyEvent;
-	}
 
     private String stageName(int stageId) {
         return switch (stageId) {
