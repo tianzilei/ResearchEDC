@@ -16,15 +16,19 @@ import java.util.HashMap;
  * @author ssachs
  */
 public class ResponseSetBean extends EntityBean {
-    private int responseTypeId;
+    public static final int RESPONSE_TYPE_TEXT = 1;
+    public static final int RESPONSE_TYPE_CHECKBOX = 3;
+    public static final int RESPONSE_TYPE_RADIO = 5;
+    public static final int RESPONSE_TYPE_SELECT = 6;
+    public static final int RESPONSE_TYPE_SELECT_MULTI = 7;
 
-    private org.researchedc.bean.core.ResponseType responseType;
+    private int responseTypeId;
 
     /**
      * A set of options to display to the user. The elements are
-     * ResponseOptionBean objects.
+     * response option values.
      */
-    private ArrayList options;
+    private ArrayList<Option> options;
 
     /**
      * A HashMap which tells us, for a given value, what is the index in the
@@ -41,7 +45,7 @@ public class ResponseSetBean extends EntityBean {
 
     public ResponseSetBean() {
         super();
-        setResponseType(org.researchedc.bean.core.ResponseType.TEXT);
+        setResponseTypeId(RESPONSE_TYPE_TEXT);
         options = new ArrayList();
         optionIndexesByValue = new HashMap();
     }
@@ -64,30 +68,15 @@ public class ResponseSetBean extends EntityBean {
     /**
      * @return Returns the options.
      */
-    public ArrayList getOptions() {
+    public ArrayList<Option> getOptions() {
         return options;
-    }
-
-    /**
-     * @return Returns the responseType.
-     */
-    public org.researchedc.bean.core.ResponseType getResponseType() {
-        return responseType;
-    }
-
-    /**
-     * @param responseType
-     *            The responseType to set.
-     */
-    public void setResponseType(org.researchedc.bean.core.ResponseType responseType) {
-        this.responseType = responseType;
     }
 
     /**
      * @return Returns the responseTypeId.
      */
     public int getResponseTypeId() {
-        return responseType.getId();
+        return responseTypeId;
     }
 
     /**
@@ -95,7 +84,7 @@ public class ResponseSetBean extends EntityBean {
      *            The responseTypeId to set.
      */
     public void setResponseTypeId(int responseTypeId) {
-        responseType = org.researchedc.bean.core.ResponseType.get(responseTypeId);
+        this.responseTypeId = responseTypeId;
     }
 
     public void setOptions(String optionsText, String optionsValues) {
@@ -115,25 +104,22 @@ public class ResponseSetBean extends EntityBean {
         }
 
         for (int i = 0; i < values.length; i++) {
-            ResponseOptionBean ro = new ResponseOptionBean();
-
             if (values[i] == null) {
                 continue;
             }
 
             String value = values[i].trim();
-            value.replaceAll("##", ",");
-            ro.setValue(value);
+            value = value.replaceAll("##", ",");
 
+            String text;
             if (texts.length <= i || texts[i] == null) {
-                ro.setText(value);
+                text = value;
             } else {
                 String t = texts[i].trim();
-                String t1 = t.replaceAll("##", ",");
-                ro.setText(t1);
+                text = t.replaceAll("##", ",");
             }
 
-            options.add(ro);
+            options.add(new Option(text, value));
             optionIndexesByValue.put(value, Integer.valueOf(options.size() - 1));
         }
 
@@ -153,5 +139,23 @@ public class ResponseSetBean extends EntityBean {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public static class Option implements java.io.Serializable {
+        private final String text;
+        private final String value;
+
+        public Option(String text, String value) {
+            this.text = text;
+            this.value = value;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 }

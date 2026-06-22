@@ -19,7 +19,6 @@ import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Unmarshaller;
 import org.researchedc.bean.core.DataEntryStage;
 import org.researchedc.bean.core.ItemDataType;
-import org.researchedc.bean.core.ResponseType;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.core.SubjectEventStatus;
 import org.researchedc.bean.submit.ResponseSetBean;
@@ -700,12 +699,13 @@ public class ImportCrfDataAdapter {
                                 }
                             }
                             if (rsb != null) {
-                                ResponseType rt = rsb.getResponseType();
-                                if (rt == ResponseType.RADIO || rt == ResponseType.SELECT) {
+                                int rt = rsb.getResponseTypeId();
+                                if (rt == ResponseSetBean.RESPONSE_TYPE_RADIO
+                                        || rt == ResponseSetBean.RESPONSE_TYPE_SELECT) {
                                     dv.addValidation(oid,
                                             Validator.IN_RESPONSE_SET_SINGLE_VALUE, rsb);
-                                } else if (rt == ResponseType.CHECKBOX
-                                        || rt == ResponseType.SELECTMULTI) {
+                                } else if (rt == ResponseSetBean.RESPONSE_TYPE_CHECKBOX
+                                        || rt == ResponseSetBean.RESPONSE_TYPE_SELECT_MULTI) {
                                     dv.addValidation(oid,
                                             Validator.IN_RESPONSE_SET_COMMA_SEPERATED, rsb);
                                 }

@@ -29,7 +29,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.submit.ItemDataBean;
-import org.researchedc.bean.submit.ResponseOptionBean;
 import org.researchedc.bean.submit.ResponseSetBean;
 import org.researchedc.control.form.support.FormTermType;
 import org.researchedc.control.form.support.FormFormatSupport;
@@ -1580,9 +1579,9 @@ public class Validator {
         // prep work - makes checking for a value in the set very fast
         HashMap values = new HashMap();
 
-        ArrayList options = set.getOptions();
+        ArrayList<ResponseSetBean.Option> options = set.getOptions();
         for (int i = 0; i < options.size(); i++) {
-            ResponseOptionBean rob = (ResponseOptionBean) options.get(i);
+            ResponseSetBean.Option rob = options.get(i);
             values.put(rob.getValue(), Boolean.TRUE);
         }
 
@@ -1623,9 +1622,9 @@ public class Validator {
         // prep work - makes checking for a value in the set very fast
         HashMap values = new HashMap();
 
-        ArrayList options = set.getOptions();
+        ArrayList<ResponseSetBean.Option> options = set.getOptions();
         for (int i = 0; i < options.size(); i++) {
-            ResponseOptionBean rob = (ResponseOptionBean) options.get(i);
+            ResponseSetBean.Option rob = options.get(i);
             values.put(rob.getValue(), Boolean.TRUE);
         }
 
