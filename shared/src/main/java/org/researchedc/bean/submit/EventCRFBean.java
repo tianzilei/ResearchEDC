@@ -7,9 +7,9 @@
  */
 package org.researchedc.bean.submit;
 
-import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.DataEntryStage;
+import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyEventBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
@@ -53,7 +53,7 @@ public class EventCRFBean extends AuditableEntityBean {
     
     // the following properties are not in the table; they are meant for
     // convenience
-    private CRFBean crf = new CRFBean();
+    private EntityBean crf = new EntityBean();
     private CRFVersionBean crfVersion = new CRFVersionBean();
     private DataEntryStage stage;
 
@@ -346,7 +346,7 @@ public class EventCRFBean extends AuditableEntityBean {
     /**
      * @return Returns the crf.
      */
-    public CRFBean getCrf() {
+    public EntityBean getCrf() {
         return crf;
     }
 
@@ -354,7 +354,7 @@ public class EventCRFBean extends AuditableEntityBean {
      * @param crf
      *            The crf to set.
      */
-    public void setCrf(CRFBean crf) {
+    public void setCrf(EntityBean crf) {
         this.crf = crf;
     }
 

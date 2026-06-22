@@ -1,6 +1,5 @@
 package org.researchedc.module.crf.internal.adapter;
 
-import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.submit.ItemBean;
@@ -153,7 +152,7 @@ public class ItemDaoAdapter implements ImportItemPort {
         return null;
     }
 
-    public ArrayList findAllActiveByCRF(CRFBean crf) {
+    public ArrayList findAllActiveByCRF(EntityBean crf) {
         return new ArrayList();
     }
 

@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.researchedc.bean.admin.CRFBean;
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
@@ -145,7 +144,7 @@ public class StudyEventDefinitionDaoAdapter implements ImportStudyEventDefinitio
         return new ArrayList();
     }
 
-    public ArrayList<StudyEventDefinitionBean> findAllByCrf(CRFBean crf) {
+    public ArrayList<StudyEventDefinitionBean> findAllByCrf(EntityBean crf) {
         return new ArrayList<StudyEventDefinitionBean>();
     }
 

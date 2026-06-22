@@ -23,7 +23,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.managestudy.StudyType;
 import org.researchedc.module.study.entity.StudyEntity;
 import org.researchedc.module.study.repository.StudyRepository;
 
@@ -50,7 +49,7 @@ class StudyDaoAdapterTest {
         entity.setDateUpdated(created.plusDays(1));
         entity.setOwnerId(20);
         entity.setUpdateId(21);
-        entity.setTypeId(StudyType.NONGENETIC.getId());
+        entity.setTypeId(StudyBean.TYPE_NON_GENETIC);
         entity.setPrincipalInvestigator("PI");
         entity.setFacilityName("Clinic");
         entity.setExpectedTotalEnrollment(100);
@@ -66,7 +65,7 @@ class StudyDaoAdapterTest {
         assertEquals("PARENT", bean.getIdentifier());
         assertEquals("S1", bean.getSecondaryIdentifier());
         assertEquals(Status.AVAILABLE, bean.getStatus());
-        assertEquals(StudyType.NONGENETIC, bean.getType());
+        assertEquals(StudyBean.TYPE_NON_GENETIC, bean.getTypeId());
         assertEquals(20, bean.getOwnerId());
         assertEquals(21, bean.getUpdaterId());
         assertEquals("PI", bean.getPrincipalInvestigator());
@@ -95,7 +94,7 @@ class StudyDaoAdapterTest {
             assertEquals("Created", e.getName());
             assertEquals("CREATED", e.getUniqueIdentifier());
             assertEquals("created summary", e.getSummary());
-            assertEquals(StudyType.GENETIC.getId(), e.getTypeId());
+            assertEquals(StudyBean.TYPE_GENETIC, e.getTypeId());
             assertEquals(Status.AVAILABLE.getId(), e.getStatusId());
             assertEquals("OID_CREATED", e.getOcOid());
             assertEquals(31, e.getOwnerId());
@@ -107,7 +106,7 @@ class StudyDaoAdapterTest {
         input.setIdentifier("CREATED");
         input.setSummary("created summary");
         input.setStatus(Status.DELETED);
-        input.setType(StudyType.GENETIC);
+        input.setTypeId(StudyBean.TYPE_GENETIC);
         input.setOid("OID_CREATED");
         input.setOwnerId(31);
 
@@ -212,7 +211,7 @@ class StudyDaoAdapterTest {
         row.put("date_created", now);
         row.put("owner_id", 21);
         row.put("update_id", 22);
-        row.put("type_id", StudyType.GENETIC.getId());
+        row.put("type_id", StudyBean.TYPE_GENETIC);
         row.put("status_id", Status.AVAILABLE.getId());
         row.put("principal_investigator", "Row PI");
         row.put("facility_name", "Row Clinic");
@@ -227,7 +226,7 @@ class StudyDaoAdapterTest {
         assertEquals(10, bean.getParentStudyId());
         assertEquals("ROW", bean.getIdentifier());
         assertEquals("From row", bean.getName());
-        assertEquals(StudyType.GENETIC, bean.getType());
+        assertEquals(StudyBean.TYPE_GENETIC, bean.getTypeId());
         assertEquals(Status.AVAILABLE, bean.getStatus());
         assertEquals("Row PI", bean.getPrincipalInvestigator());
         assertEquals("Row Clinic", bean.getFacilityName());

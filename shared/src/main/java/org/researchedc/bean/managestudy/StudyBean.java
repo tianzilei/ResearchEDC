@@ -37,13 +37,17 @@ public class StudyBean extends AuditableEntityBean {
     private Date datePlannedStart;
     private Date datePlannedEnd;
 
+    public static final int TYPE_GENETIC = 1;
+    public static final int TYPE_NON_GENETIC = 2;
+    private static final String TYPE_GENETIC_NAME = "genetic";
+    private static final String TYPE_NON_GENETIC_NAME = "non_genetic";
+
     // to designate genetic/non-genetic:
-    private StudyType type = StudyType.NONGENETIC;// default type
-    // private int typeId = 1;
+    private int typeId = TYPE_NON_GENETIC;
 
     /**
      * <code>true</code> if the study manages pedigrees, <code>false</code>
-     * otherwise Always equal to type.equals(StudyType.GENETIC). Not in the
+     * otherwise Always equal to typeId == TYPE_GENETIC. Not in the
      * database.
      */
     private boolean genetic = false;
@@ -768,51 +772,30 @@ public class StudyBean extends AuditableEntityBean {
     /**
      * @return Returns the type.
      */
-    public StudyType getType() {
-        return type;
+    public String getType() {
+        return typeId == TYPE_GENETIC ? TYPE_GENETIC_NAME : TYPE_NON_GENETIC_NAME;
     }
 
     /**
      * @param type
-     *            The type to set. <B>Note that this should be of type
-     *            managestudy.StudyType, not core.StudyType.</B>
+     *            The type name to set.
      */
-    public void setType(StudyType type) {
-        this.type = type;
-
-        if (type.equals(StudyType.GENETIC)) {
-            genetic = true;
-        }
+    public void setType(String type) {
+        setTypeId(TYPE_GENETIC_NAME.equals(type) ? TYPE_GENETIC : TYPE_NON_GENETIC);
     }
 
-    /**
-     * @deprecated
-     * @return Returns the typeId.
-     */
-    @Deprecated
     public int getTypeId() {
-        return type.getId();
+        return typeId;
     }
 
-    /**
-     * @deprecated
-     * @param typeId
-     *            The typeId to set.
-     */
-    @Deprecated
     public void setTypeId(int typeId) {
-        StudyType t = StudyType.get(typeId);
-        setType(t);
+        this.typeId = typeId == TYPE_GENETIC ? TYPE_GENETIC : TYPE_NON_GENETIC;
+        this.genetic = this.typeId == TYPE_GENETIC;
     }
 
     public void setGenetic(boolean genetic) {
         this.genetic = genetic;
-
-        if (genetic) {
-            type = StudyType.GENETIC;
-        } else {
-            type = StudyType.NONGENETIC;
-        }
+        this.typeId = genetic ? TYPE_GENETIC : TYPE_NON_GENETIC;
     }
 
     /**

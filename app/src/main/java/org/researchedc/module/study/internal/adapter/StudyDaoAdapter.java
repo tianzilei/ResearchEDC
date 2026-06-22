@@ -11,7 +11,6 @@ import java.util.List;
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.managestudy.StudyType;
 import org.researchedc.module.dataimport.service.ImportStudyLookupPort;
 import org.researchedc.module.dataimport.dto.ImportStudy;
 import org.researchedc.module.study.entity.StudyEntity;
@@ -285,7 +284,7 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
         entity.setSummary(bean.getSummary());
         entity.setDatePlannedStart(toLocalDateTime(bean.getDatePlannedStart()));
         entity.setDatePlannedEnd(toLocalDateTime(bean.getDatePlannedEnd()));
-        entity.setTypeId(bean.getType() != null ? bean.getType().getId() : 1);
+        entity.setTypeId(bean.getTypeId());
         entity.setStatusId(bean.getStatus() != null ? bean.getStatus().getId() : Status.INVALID.getId());
         entity.setPrincipalInvestigator(bean.getPrincipalInvestigator());
         entity.setFacilityName(bean.getFacilityName());
@@ -356,7 +355,7 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
         bean.setCreatedDate(toDate(entity.getDateCreated()));
         bean.setUpdatedDate(toDate(entity.getDateUpdated()));
         bean.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
-        bean.setType(entity.getTypeId() != null ? StudyType.get(entity.getTypeId()) : StudyType.NONGENETIC);
+        bean.setTypeId(entity.getTypeId() != null ? entity.getTypeId() : StudyBean.TYPE_NON_GENETIC);
         bean.setPrincipalInvestigator(entity.getPrincipalInvestigator());
         bean.setFacilityName(entity.getFacilityName());
         bean.setFacilityCity(entity.getFacilityCity());
