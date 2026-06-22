@@ -64,7 +64,6 @@ public class ItemDataBean extends AuditableEntityBean {
 
     private int eventCRFId;
     private int itemId;
-    private ItemBean item;
     private String value;// name will be null
     
     private int ordinal;// for repeating items
@@ -153,12 +152,4 @@ public class ItemDataBean extends AuditableEntityBean {
 		this.deleted = deleted;
 	}
 
-	public ItemBean getItem() {
-		return item;
-	}
-
-	public void setItem(ItemBean item) {
-		this.item = item;
-	}
-    
 }

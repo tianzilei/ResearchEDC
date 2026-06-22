@@ -9,8 +9,6 @@ package org.researchedc.bean.submit;
 
 import org.researchedc.bean.core.AuditableEntityBean;
 
-import java.util.ArrayList;
-
 /**
  * <P>
  * ItemBean.java.
@@ -38,9 +36,6 @@ public class ItemBean extends AuditableEntityBean {
         result = prime * result + ((defName == null) ? 0 : defName.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + itemDataTypeId;
-        result = prime * result + ((itemMeta == null) ? 0 : itemMeta.hashCode());
-        result = prime * result + ((itemMetas == null) ? 0 : itemMetas.hashCode());
-        result = prime * result + ((itemDataElements == null) ? 0 : itemDataElements.hashCode());
         result = prime * result + itemReferenceTypeId;
         result = prime * result + ((oid == null) ? 0 : oid.hashCode());
         result = prime * result + (phiStatus ? 1231 : 1237);
@@ -83,18 +78,6 @@ public class ItemBean extends AuditableEntityBean {
             return false;
         if (itemDataTypeId != other.itemDataTypeId)
             return false;
-        if (itemMeta == null) {
-            if (other.itemMeta != null)
-                return false;
-        } else if (!itemMeta.equals(other.itemMeta))
-            return false;
-        if (itemMetas == null) {
-            if (other.itemMetas != null)
-                return false;
-        } else if (!itemMetas.equals(other.itemMetas))
-            return false;
-        
-        
         if (itemReferenceTypeId != other.itemReferenceTypeId)
             return false;
         if (oid == null) {
@@ -119,11 +102,6 @@ public class ItemBean extends AuditableEntityBean {
 
     private int statusId = 1;
 
-    private ItemFormMetadataBean itemMeta;// not in DB, for display
-
-    private ArrayList itemMetas;// not in DB, one item can have multiple meta
-    private ArrayList<ItemDataBean>  itemDataElements;
-
     private boolean selected = false; // not in DB, used for creating dataset
 
     private String defName = ""; // not in DB
@@ -138,7 +116,6 @@ public class ItemBean extends AuditableEntityBean {
     // not in DB - YW 3-7-2008
 
     public ItemBean() {
-        itemMetas = new ArrayList();
     }
 
     /**
@@ -231,50 +208,6 @@ public class ItemBean extends AuditableEntityBean {
         this.units = units;
     }
 
-    /**
-     * @return Returns the itemMeta.
-     */
-    public ItemFormMetadataBean getItemMeta() {
-        return itemMeta;
-    }
-
-    /**
-     * @param itemMeta
-     *            The itemMeta to set.
-     */
-    public void setItemMeta(ItemFormMetadataBean itemMeta) {
-        this.itemMeta = itemMeta;
-    }
-
-    /**
-     * @return Returns the itemMetas.
-     */
-    public ArrayList getItemMetas() {
-        return itemMetas;
-    }
-
-    /**
-     * @param itemMetas
-     *            The itemMetas to set.
-     */
-    public void setItemMetas(ArrayList itemMetas) {
-        this.itemMetas = itemMetas;
-    }
-    /**
-     * @return Returns the itemMetas.
-     */
-    public ArrayList<ItemDataBean> getItemDataElements() {
-        return itemDataElements;
-    }
-    /**
-     * @param itemMetas
-     *            The itemMetas to set.
-     */
-    public void setItemDataElements(ArrayList<ItemDataBean> itemDataElements) {
-        this.itemDataElements = itemDataElements;
-    }
-
-    
     /**
      * @return Returns the defName.
      */
