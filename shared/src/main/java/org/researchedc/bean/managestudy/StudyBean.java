@@ -10,7 +10,6 @@ package org.researchedc.bean.managestudy;
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.Status;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -23,12 +22,6 @@ import java.util.StringTokenizer;
  */
 public class StudyBean extends AuditableEntityBean {
     private int parentStudyId = 0;
-    // YW << The original reason to add this is being able to list on
-    // userbox.jsp the study name to which a site belong.
-    // This property doesn't exist in the database table <Study>, so it might
-    // not has value if it hasn't been assigned
-    private String parentStudyName = "";
-    // >> YW 06-12-2007
     private String officialTitle = "";
     private String identifier = "";
     private String secondaryIdentifier = "";
@@ -39,18 +32,9 @@ public class StudyBean extends AuditableEntityBean {
 
     public static final int TYPE_GENETIC = 1;
     public static final int TYPE_NON_GENETIC = 2;
-    private static final String TYPE_GENETIC_NAME = "genetic";
-    private static final String TYPE_NON_GENETIC_NAME = "non_genetic";
 
     // to designate genetic/non-genetic:
     private int typeId = TYPE_NON_GENETIC;
-
-    /**
-     * <code>true</code> if the study manages pedigrees, <code>false</code>
-     * otherwise Always equal to typeId == TYPE_GENETIC. Not in the
-     * database.
-     */
-    private boolean genetic = false;
 
     // private int statusId = 0;//?
 
@@ -77,23 +61,6 @@ public class StudyBean extends AuditableEntityBean {
     // private boolean usingDOB = false;
     // private boolean discrepancyManagement = false;
     private String oid;
-
-    private ArrayList studyParameters = new ArrayList();
-
-    /**
-     * @return Returns the studyParameters.
-     */
-    public ArrayList getStudyParameters() {
-        return studyParameters;
-    }
-
-    /**
-     * @param studyParameters
-     *            The studyParameters to set.
-     */
-    public void setStudyParameters(ArrayList studyParameters) {
-        this.studyParameters = studyParameters;
-    }
 
     /**
      * @return Returns the officialTitle.
@@ -600,21 +567,6 @@ public class StudyBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the parentStudyName
-     */
-    public String getParentStudyName() {
-        return parentStudyName;
-    }
-
-    /**
-     * @param parentStudyName
-     *            String
-     */
-    public void setParentStudyName(String parentStudyName) {
-        this.parentStudyName = parentStudyName;
-    }
-
-    /**
      * @return Returns the phase.
      */
     public String getPhase() {
@@ -769,33 +721,12 @@ public class StudyBean extends AuditableEntityBean {
         this.protocolType = type;
     }
 
-    /**
-     * @return Returns the type.
-     */
-    public String getType() {
-        return typeId == TYPE_GENETIC ? TYPE_GENETIC_NAME : TYPE_NON_GENETIC_NAME;
-    }
-
-    /**
-     * @param type
-     *            The type name to set.
-     */
-    public void setType(String type) {
-        setTypeId(TYPE_GENETIC_NAME.equals(type) ? TYPE_GENETIC : TYPE_NON_GENETIC);
-    }
-
     public int getTypeId() {
         return typeId;
     }
 
     public void setTypeId(int typeId) {
         this.typeId = typeId == TYPE_GENETIC ? TYPE_GENETIC : TYPE_NON_GENETIC;
-        this.genetic = this.typeId == TYPE_GENETIC;
-    }
-
-    public void setGenetic(boolean genetic) {
-        this.genetic = genetic;
-        this.typeId = genetic ? TYPE_GENETIC : TYPE_NON_GENETIC;
     }
 
     /**
