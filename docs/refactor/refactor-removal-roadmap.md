@@ -170,6 +170,7 @@ These are closed and should not be reopened except to fix regressions:
 - `ItemDaoAdapter` no longer carries no-caller legacy CRF/item DAO compatibility stubs for retired parent/group/permission/required-item helper paths, and the orphan `ItemGroupCrfVersionView` helper was removed.
 - `StudyEventDefinitionBean` no longer carries retired CRF list/count, lock/populated UI flags, or default-version matrix residue.
 - `Status` no longer carries no-caller JSP-era dropdown/list caches or the redundant status-id name map.
+- `StudyDaoAdapter` no longer exposes zero-caller legacy DAO stubs for retired sorted search, permission-filtered study lists, limit filtering, parent-child map assembly, or test-only deletion paths.
 
 **Exit Gate**
 - No module/internal adapter exposes more legacy DTO types than strictly required by a retained compatibility contract.

@@ -3,6 +3,7 @@ package org.researchedc.module.study.internal.adapter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
@@ -246,6 +247,20 @@ class StudyDaoAdapterTest {
 
         assertEquals(2, results.size());
         verify(repository).findByUserNameNotRemoved("alice");
+    }
+
+    @Test
+    void retiredLegacyDaoStubs_areNotExposed() {
+        assertNoMethod("findAll", String.class, boolean.class, String.class);
+        assertNoMethod("findAllByPermission", Object.class, int.class, String.class, boolean.class, String.class);
+        assertNoMethod("findAllByPermission", Object.class, int.class);
+        assertNoMethod("findAllByLimit", boolean.class);
+        assertNoMethod("getChildrenByParentIds", ArrayList.class);
+        assertNoMethod("deleteTestOnly", String.class);
+    }
+
+    private static void assertNoMethod(String name, Class<?>... parameterTypes) {
+        assertThrows(NoSuchMethodException.class, () -> StudyDaoAdapter.class.getDeclaredMethod(name, parameterTypes));
     }
 
     private static StudyEntity study(Integer id, String name, String identifier, Integer parentStudyId,

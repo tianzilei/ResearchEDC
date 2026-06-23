@@ -61,19 +61,6 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
         return toBeans(repository.findAll());
     }
 
-    public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
-    }
-
-    public Collection findAllByPermission(Object objCurrentUser, int intActionType,
-                                          String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
-    }
-
-    public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
-        return new ArrayList();
-    }
-
     public Object getEntityFromHashMap(HashMap hm) {
         StudyEntity entity = new StudyEntity();
         entity.setStudyId((Integer) hm.get("study_id"));
@@ -146,10 +133,6 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
             return new ArrayList();
         }
         return toBeans(repository.findByStatusIdOrderByName(status.getId()));
-    }
-
-    public Collection findAllByLimit(boolean isLimited) {
-        return new ArrayList();
     }
 
     public Collection findAllParents() {
@@ -228,10 +211,6 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
         return sb;
     }
 
-    public HashMap getChildrenByParentIds(ArrayList allStudies) {
-        return new HashMap();
-    }
-
     public StudyBean findByOid(String oid) {
         return repository.findByOcOid(oid)
                 .map(this::toBean)
@@ -266,10 +245,6 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
     public EntityBean findByName(String name) {
         List<StudyEntity> results = repository.findByNameContainingIgnoreCase(name);
         return results.isEmpty() ? new StudyBean() : toBean(results.get(0));
-    }
-
-    public void deleteTestOnly(String name) {
-        // no-op: test-only method
     }
 
     public ArrayList<Integer> getStudyIdsByCRF(int crfId) {
