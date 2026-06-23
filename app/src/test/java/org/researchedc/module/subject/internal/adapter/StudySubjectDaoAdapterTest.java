@@ -3,6 +3,7 @@ package org.researchedc.module.subject.internal.adapter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
+import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.module.subject.entity.StudySubjectEntity;
 import org.researchedc.module.subject.repository.StudySubjectRepository;
 
@@ -192,6 +194,24 @@ class StudySubjectDaoAdapterTest {
         assertEquals(53, bean.getOwnerId());
         assertEquals(54, bean.getUpdaterId());
         assertEquals(Status.AVAILABLE, bean.getStatus());
+    }
+
+    @Test
+    void retiredLegacyDaoStubs_areNotExposed() {
+        assertNoMethod("findAll", String.class, boolean.class, String.class);
+        assertNoMethod("findAllByPermission", Object.class, int.class, String.class, boolean.class, String.class);
+        assertNoMethod("findAllByPermission", Object.class, int.class);
+        assertNoMethod("findAllWithStudyEvent", StudyBean.class);
+        assertNoMethod("getGroupByStudySubject", int.class, int.class, int.class);
+        assertNoMethod("getTotalEventCrfCountForCrfMigration", CRFVersionBean.class, CRFVersionBean.class,
+                ArrayList.class, ArrayList.class);
+        assertNoMethod("getTotalCountStudySubjectForCrfMigration", CRFVersionBean.class, CRFVersionBean.class,
+                ArrayList.class, ArrayList.class);
+    }
+
+    private static void assertNoMethod(String name, Class<?>... parameterTypes) {
+        assertThrows(NoSuchMethodException.class,
+                () -> StudySubjectDaoAdapter.class.getDeclaredMethod(name, parameterTypes));
     }
 
     private static StudySubjectEntity studySubject(Integer id, Integer studyId, Integer subjectId, String label,

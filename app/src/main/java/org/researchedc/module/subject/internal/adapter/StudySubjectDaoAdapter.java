@@ -15,7 +15,6 @@ import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
 import org.researchedc.bean.managestudy.StudyBean;
 import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.module.dataimport.service.ImportStudySubjectPort;
 import org.researchedc.module.dataimport.dto.ImportStudySubject;
 import org.researchedc.module.subject.entity.StudySubjectEntity;
@@ -69,19 +68,6 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
         return toBeans(repository.findAll());
     }
 
-    public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
-    }
-
-    public Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn,
-                                          boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
-    }
-
-    public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
-        return new ArrayList();
-    }
-
     public Object getEntityFromHashMap(HashMap hm) {
         StudySubjectEntity entity = new StudySubjectEntity();
         entity.setStudySubjectId((Integer) hm.get("study_subject_id"));
@@ -105,10 +91,6 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
 
     public ArrayList findAllActiveByStudyOrderByLabel(StudyBean sb) {
         return toBeans(repository.findByStudyIdAndStatusIdOrderByLabel(sb.getId(), Status.AVAILABLE.getId()));
-    }
-
-    public ArrayList findAllWithStudyEvent(StudyBean currentStudy) {
-        return new ArrayList();
     }
 
     public ArrayList findAllBySubjectId(int subjectId) {
@@ -215,24 +197,6 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
     @Transactional
     public EntityBean update(EntityBean eb, Connection con) {
         return update(eb);
-    }
-
-    public ArrayList getGroupByStudySubject(int studySubjectId, int studyId, int parentStudyId) {
-        return new ArrayList();
-    }
-
-    public Integer getTotalEventCrfCountForCrfMigration(CRFVersionBean sourceCrfVersionBean,
-                                                        CRFVersionBean targetCrfVersionBean,
-                                                        ArrayList<String> studyEventDefnlist,
-                                                        ArrayList<String> sitelist) {
-        return 0;
-    }
-
-    public Integer getTotalCountStudySubjectForCrfMigration(CRFVersionBean sourceCrfVersionBean,
-                                                            CRFVersionBean targetCrfVersionBean,
-                                                            ArrayList<String> studyEventDefnlist,
-                                                            ArrayList<String> sitelist) {
-        return 0;
     }
 
     public Integer getCountofStudySubjectsAtStudyOrSite(StudyBean currentStudy) {
