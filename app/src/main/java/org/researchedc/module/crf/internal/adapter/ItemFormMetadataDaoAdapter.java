@@ -50,9 +50,6 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         this.dataSource = dataSource;
     }
 
-    public void setTypesExpected() {
-    }
-
     public Object getEntityFromHashMap(HashMap hm) {
         ItemFormMetadataEntity entity = new ItemFormMetadataEntity();
         entity.setItemFormMetadataId(asInteger(hm.get("item_form_metadata_id")));
@@ -72,10 +69,6 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
 
     public Collection findAll() {
         return toBeans(repository.findAll());
-    }
-
-    public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
     }
 
     public EntityBean findByPK(int id) {
@@ -121,33 +114,6 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         entity.setItemFormMetadataId(bean.getId() > 0 ? bean.getId() : null);
         apply(bean, entity);
         return toBean(repository.save(entity));
-    }
-
-    public Collection findAllByPermission(Object objCurrentUser, int intActionType,
-                                           String strOrderByColumn, boolean blnAscendingSort,
-                                           String strSearchPhrase) {
-        return new ArrayList();
-    }
-
-    public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
-        return new ArrayList();
-    }
-
-    // ── Stub overrides for inherited methods with zero callers ──────────
-
-    public int findCountAllHiddenByCRFVersionId(int crfVersionId) {
-        // No callers — method was used by legacy CRF workflow only
-        return 0;
-    }
-
-    public int findCountAllHiddenButShownByEventCRFId(int eventCrfId) {
-        // No callers — method was used by legacy CRF workflow only
-        return 0;
-    }
-
-    public ItemFormMetadataBean findByItemIdAndCRFVersionIdNotInIGM(int itemId, int crfVersionId) {
-        // No callers — returns empty bean
-        return new ItemFormMetadataBean();
     }
 
     // ── Simple JPA native query methods ─────────────────────────────────

@@ -173,6 +173,7 @@ These are closed and should not be reopened except to fix regressions:
 - `StudyDaoAdapter` no longer exposes zero-caller legacy DAO stubs for retired sorted search, permission-filtered study lists, limit filtering, parent-child map assembly, or test-only deletion paths.
 - `ItemGroupDaoAdapter` no longer exposes zero-caller legacy DAO stubs for retired type registration, sorted/permission-filtered lists, OID generation, test-only deletion, or repeating-group helper paths.
 - `StudySubjectDaoAdapter` no longer exposes zero-caller legacy DAO stubs for retired sorted/permission-filtered lists, with-event subject lists, subject-group lookup, or CRF-migration count paths.
+- `ItemFormMetadataDaoAdapter` no longer exposes zero-caller legacy DAO stubs for retired type registration, sorted/permission-filtered lists, hidden-item counts, or item/group metadata fallback lookup paths.
 
 **Exit Gate**
 - No module/internal adapter exposes more legacy DTO types than strictly required by a retained compatibility contract.

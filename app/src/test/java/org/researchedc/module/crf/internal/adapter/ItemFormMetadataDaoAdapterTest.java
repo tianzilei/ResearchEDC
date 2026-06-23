@@ -3,6 +3,7 @@ package org.researchedc.module.crf.internal.adapter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -44,11 +45,6 @@ class ItemFormMetadataDaoAdapterTest {
     @BeforeEach
     void setUp() {
         adapter = new ItemFormMetadataDaoAdapter(repository, dataSource);
-    }
-
-    @Test
-    void setTypesExpected_doesNotThrow() {
-        adapter.setTypesExpected();
     }
 
     @Test
@@ -159,6 +155,22 @@ class ItemFormMetadataDaoAdapterTest {
         ArrayList<ItemFormMetadataBean> result = adapter.findByMultiplePKs(pks);
 
         assertEquals(2, result.size());
+    }
+
+    @Test
+    void retiredLegacyDaoStubs_areNotExposed() {
+        assertNoMethod("setTypesExpected");
+        assertNoMethod("findAll", String.class, boolean.class, String.class);
+        assertNoMethod("findAllByPermission", Object.class, int.class, String.class, boolean.class, String.class);
+        assertNoMethod("findAllByPermission", Object.class, int.class);
+        assertNoMethod("findCountAllHiddenByCRFVersionId", int.class);
+        assertNoMethod("findCountAllHiddenButShownByEventCRFId", int.class);
+        assertNoMethod("findByItemIdAndCRFVersionIdNotInIGM", int.class, int.class);
+    }
+
+    private static void assertNoMethod(String name, Class<?>... parameterTypes) {
+        assertThrows(NoSuchMethodException.class,
+                () -> ItemFormMetadataDaoAdapter.class.getDeclaredMethod(name, parameterTypes));
     }
 
     private static ItemFormMetadataEntity ifmEntity(Integer id, Integer itemId, Integer crfVersionId) {
