@@ -163,6 +163,7 @@ These are closed and should not be reopened except to fix regressions:
 - Retained study/event DTOs were narrowed further: `StudySubjectBean` no longer carries subject display/group/timezone residue, `StudyEventBean` no longer carries event list/repeat/display/UI residue, and `EventCRFBean` no longer carries display-only names, event ordinal, or obsolete validation/completion residue.
 - `StudyEventBean` and `EventCRFBean` no longer carry no-caller legacy stage-display helpers; data-import compatibility now uses its module-local status-to-stage calculation directly.
 - `StudyBean` no longer carries no-caller JSP-era study-parameter state, parent-study display names, or redundant genetic/string type accessors; retained compatibility uses the mapped `typeId` contract only.
+- `AuditableEntityBean` no longer carries no-caller object owner/updater references or reflective `getId()` extraction; retained audit compatibility uses scalar owner/updater ids only.
 - `StudyEventDefinitionBean` no longer carries retired CRF list/count, lock/populated UI flags, or default-version matrix residue.
 - `Status` no longer carries no-caller JSP-era dropdown/list caches or the redundant status-id name map.
 
