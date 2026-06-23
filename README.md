@@ -65,7 +65,7 @@ Current legacy removal baseline:
 | Active legacy workflow inventory | 0 artifacts | 963/963 artifacts removed or closed (100.0%); current regenerated inventory has no active rows |
 | `ws/` Java | 0 files | SOAP module is absent; keep compatibility audit if endpoints reappear |
 
-For detailed handoff notes, see [AGENTS.md](./AGENTS.md), [.sisyphus/LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md), and [docs/refactor/remove-legacy-code-plan.md](./docs/refactor/remove-legacy-code-plan.md).
+For detailed handoff notes, see [AGENTS.md](./AGENTS.md), [docs/refactor/refactor-removal-roadmap.md](./docs/refactor/refactor-removal-roadmap.md), and [docs/refactor/remove-legacy-code-plan.md](./docs/refactor/remove-legacy-code-plan.md).
 
 ## Verification Snapshot
 
@@ -95,7 +95,8 @@ Current baseline from project notes:
 ## Documentation
 
 - [AGENTS.md](./AGENTS.md) — project knowledge base and current refactor handoff
-- [.sisyphus/LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md) — legacy strangulation plan and progress
+- [docs/refactor/refactor-removal-roadmap.md](./docs/refactor/refactor-removal-roadmap.md) — active legacy strangulation roadmap
+- [docs/refactor/next-refactor-removal-plan.md](./docs/refactor/next-refactor-removal-plan.md) — short continuity snapshot for the remaining compatibility work
 - [docs/refactor/remove-legacy-code-plan.md](./docs/refactor/remove-legacy-code-plan.md) — current legacy baseline and deletion plan
 - [MODIFICATIONS.md](./MODIFICATIONS.md) — chronological change log
 - [app/AGENTS.md](./app/AGENTS.md) — Spring Boot entry point and Modulith notes

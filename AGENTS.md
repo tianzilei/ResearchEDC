@@ -56,8 +56,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 ├── scripts/                 # CI helper scripts
 ├── shared/                  # 共享模块 (AGENTS.md)
 ├── AGENTS.md
-├── MODIFICATIONS.md
-└── .sisyphus/               # AI work plans
+└── MODIFICATIONS.md
 ```
 
 ## WHERE TO LOOK
@@ -265,4 +264,4 @@ python -m pytest app/tests/ -v
 - [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) — Python FastAPI microservice
 - [Refactor And Removal Roadmap](./docs/refactor/refactor-removal-roadmap.md) — Active master plan for remaining legacy reduction
 - [Remove Legacy Code Plan](./docs/refactor/remove-legacy-code-plan.md) — Historical baseline and completed-phase evidence
-- [LEGACY_REFACTOR_PLAN.md](./.sisyphus/LEGACY_REFACTOR_PLAN.md) — Handoff pointer to the active roadmap
+- [Next Refactor And Removal Plan](./docs/refactor/next-refactor-removal-plan.md) — Short continuity snapshot retained alongside the active roadmap
