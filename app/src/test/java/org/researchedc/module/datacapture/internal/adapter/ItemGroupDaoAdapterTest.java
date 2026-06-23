@@ -3,6 +3,7 @@ package org.researchedc.module.datacapture.internal.adapter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -200,6 +201,22 @@ class ItemGroupDaoAdapterTest {
         assertEquals(Status.AVAILABLE, bean.getStatus());
         assertEquals(52, bean.getOwnerId());
         assertEquals(53, bean.getUpdaterId());
+    }
+
+    @Test
+    void retiredLegacyDaoStubs_areNotExposed() {
+        assertNoMethod("setTypesExpected");
+        assertNoMethod("findAll", String.class, boolean.class, String.class);
+        assertNoMethod("findAllByPermission", Object.class, int.class, String.class, boolean.class, String.class);
+        assertNoMethod("findAllByPermission", Object.class, int.class);
+        assertNoMethod("getValidOid", ItemGroupBean.class, String.class, String.class, ArrayList.class);
+        assertNoMethod("deleteTestGroup", String.class);
+        assertNoMethod("isItemGroupRepeatingBasedOnAllCrfVersions", String.class);
+        assertNoMethod("isItemGroupRepeatingBasedOnCrfVersion", String.class, Integer.class);
+    }
+
+    private static void assertNoMethod(String name, Class<?>... parameterTypes) {
+        assertThrows(NoSuchMethodException.class, () -> ItemGroupDaoAdapter.class.getDeclaredMethod(name, parameterTypes));
     }
 
     private static ItemGroupEntity group(Integer id, String name, Integer crfId, Integer statusId) {

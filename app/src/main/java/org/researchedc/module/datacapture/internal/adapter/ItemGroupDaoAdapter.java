@@ -31,9 +31,6 @@ public class ItemGroupDaoAdapter implements ImportItemGroupPort {
         this.repository = repository;
     }
 
-    public void setTypesExpected() {
-    }
-
     public EntityBean findByPK(int ID) {
         return repository.findById(ID)
                 .map(this::toBean)
@@ -62,20 +59,6 @@ public class ItemGroupDaoAdapter implements ImportItemGroupPort {
 
     public Collection findAll() {
         return toBeans(repository.findAll());
-    }
-
-    public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
-    }
-
-    public Collection findAllByPermission(Object objCurrentUser, int intActionType,
-                                          String strOrderByColumn, boolean blnAscendingSort,
-                                          String strSearchPhrase) {
-        return new ArrayList();
-    }
-
-    public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
-        return new ArrayList();
     }
 
     public Object getEntityFromHashMap(HashMap hm) {
@@ -129,11 +112,6 @@ public class ItemGroupDaoAdapter implements ImportItemGroupPort {
                 .toList();
     }
 
-    public String getValidOid(ItemGroupBean itemGroup, String crfName, String itemGroupLabel,
-                              ArrayList<String> oidList) {
-        return "";
-    }
-
     public List<ItemGroupBean> findGroupByCRFVersionID(int Id) {
         return toBeans(repository.findGroupByCRFVersionIdNative(Id));
     }
@@ -181,17 +159,6 @@ public class ItemGroupDaoAdapter implements ImportItemGroupPort {
                 .findFirst()
                 .map(this::toBean)
                 .orElseGet(ItemGroupBean::new);
-    }
-
-    public void deleteTestGroup(String name) {
-    }
-
-    public Boolean isItemGroupRepeatingBasedOnAllCrfVersions(String groupOid) {
-        return false;
-    }
-
-    public Boolean isItemGroupRepeatingBasedOnCrfVersion(String groupOid, Integer crfVersion) {
-        return false;
     }
 
     private void apply(ItemGroupBean bean, ItemGroupEntity entity) {
