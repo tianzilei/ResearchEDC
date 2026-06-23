@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component("itemDAO")
 @Primary
@@ -29,9 +28,6 @@ public class ItemDaoAdapter implements ImportItemPort {
 
     public ItemDaoAdapter(ItemRepository itemRepository) {
         this.itemRepository = itemRepository;
-    }
-
-    public void setTypesExpected() {
     }
 
     @Transactional
@@ -52,14 +48,6 @@ public class ItemDaoAdapter implements ImportItemPort {
         apply(bean, entity);
         entity.setDateUpdated(LocalDateTime.now());
         return toBean(itemRepository.save(entity));
-    }
-
-    public Integer getCountofActiveItems() {
-        return 0;
-    }
-
-    public String getValidOid(ItemBean itemBean, String crfName, String itemLabel, ArrayList<String> oidList) {
-        return "";
     }
 
     public Object getEntityFromHashMap(HashMap hm) {
@@ -100,60 +88,12 @@ public class ItemDaoAdapter implements ImportItemPort {
         return toBeans(itemRepository.findByStatusId(Status.AVAILABLE.getId()));
     }
 
-    public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
-    }
-
-    public ArrayList findAllParentsBySectionId(int sectionId) {
-        return new ArrayList();
-    }
-
-    public ArrayList findAllNonRepeatingParentsBySectionId(int sectionId) {
-        return new ArrayList();
-    }
-
     public ArrayList findAllBySectionId(int sectionId) {
         return toBeans(itemRepository.findBySectionId(sectionId));
     }
 
     public ArrayList findAllBySectionIdOrderedByItemFormMetadataOrdinal(int sectionId) {
         return toBeans(itemRepository.findBySectionIdOrderedByOrdinal(sectionId));
-    }
-
-    public ArrayList findAllUngroupedParentsBySectionId(int sectionId, int crfVersionId) {
-        return new ArrayList();
-    }
-
-    public ArrayList findAllItemsByVersionId(int versionId) {
-        return new ArrayList();
-    }
-
-    public ArrayList findAllVersionsByItemId(int itemId) {
-        return new ArrayList();
-    }
-
-    public List<ItemBean> findAllItemsByGroupId(int id, int crfVersionId) {
-        return new ArrayList<>();
-    }
-
-    public List<ItemBean> findAllItemsByGroupIdOrdered(int id, int crfVersionId) {
-        return new ArrayList<>();
-    }
-
-    public List<ItemBean> findAllItemsByGroupIdAndSectionIdOrdered(int id, int crfVersionId, int sectionId) {
-        return new ArrayList<>();
-    }
-
-    public List<ItemBean> findAllItemsByGroupIdForPrint(int id, int crfVersionId, int sectionId) {
-        return new ArrayList<>();
-    }
-
-    public ItemBean findItemByGroupIdandItemOid(int id, String itemOid) {
-        return null;
-    }
-
-    public ArrayList findAllActiveByCRF(EntityBean crf) {
-        return new ArrayList();
     }
 
     public EntityBean findByPK(int ID) {
@@ -176,46 +116,8 @@ public class ItemDaoAdapter implements ImportItemPort {
                 .orElseGet(ItemBean::new);
     }
 
-    public Collection findAllByPermission(Object objCurrentUser, int intActionType,
-                                          String strOrderByColumn, boolean blnAscendingSort,
-                                          String strSearchPhrase) {
-        return new ArrayList();
-    }
-
-    public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
-        return new ArrayList();
-    }
-
     public ArrayList findAllByParentIdAndCRFVersionId(int parentId, int crfVersionId) {
         return toBeans(itemRepository.findByParentIdAndCrfVersionId(parentId, crfVersionId));
-    }
-
-    public int findAllRequiredByCRFVersionId(int crfVersionId) {
-        return 0;
-    }
-
-    public ArrayList findAllRequiredBySectionId(int sectionId) {
-        return new ArrayList();
-    }
-
-    public Map<String, Integer> mapAllItemNameAndItemIdInSection(Integer sectionId) {
-        return new HashMap<>();
-    }
-
-    public Map<String, String> mapAllChildAndParentNameInSection(Integer sectionId) {
-        return new HashMap<>();
-    }
-
-    public ArrayList<ItemBean> findAllWithItemDataByCRFVersionId(int crfVersionId, int eventCRFId) {
-        return new ArrayList<>();
-    }
-
-    public ArrayList<ItemGroupCrfVersionView> findAllWithItemGroupCRFVersionMetadataByCRFId(String crfName) {
-        return new ArrayList<>();
-    }
-
-    public ArrayList<ItemGroupCrfVersionView> findAllWithItemDetailsGroupCRFVersionMetadataByCRFId(String crfName) {
-        return new ArrayList<>();
     }
 
     private void apply(ItemBean bean, ItemEntity entity) {
