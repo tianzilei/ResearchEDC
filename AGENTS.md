@@ -2,14 +2,14 @@
 
 **Derived from:** OpenClinica v3.x
 **Generated:** 2026-05-25
-**Updated:** 2026-06-22
+**Updated:** 2026-06-23
 **Branch:** master
 
 ## OVERVIEW
 
 ResearchEDC is an independently maintained research electronic data capture (EDC) and clinical data management (CDM) platform derived from OpenClinica v3.x. Built on Java 21 with Spring Framework 6.1.5, Hibernate ORM 6.4.4, and Liquibase migrations. Multi-module Maven project supporting Oracle and PostgreSQL.
 
-New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (13 Java files; only DTO/term beans remain; no `shared/dao` SPI files, no `shared/domain` Java mappings, and no `shared/core`, `shared/exception`, or `shared/i18n` Java support remain). `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and needed import/validation classes were migrated to `app/`, with later dead leftovers removed. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
+New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, but legacy code has **not** been fully removed. Current legacy surface: `shared/` (13 Java files; only DTO/term beans remain; no `shared/dao` SPI files, no `shared/domain` Java mappings, and no `shared/core`, `shared/exception`, or `shared/i18n` Java support remain). `Validator` and `ImportCrfDataAdapter` now use app-owned response-set/status compatibility support instead of direct `shared.bean.*` validation helpers. `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and needed import/validation classes were migrated to `app/`, with later dead leftovers removed. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; email/contact fields remain as compatibility data pending `docs/refactor/phase-1-email-field-removal-plan.md`.
 
 
 **当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | **Refactor progress 100.0%** ✅ | **Phase 3 DAO ledger 878/878 removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅**
@@ -237,7 +237,7 @@ python -m pytest app/tests/ -v
   - ✅ **ArchivedDatasetFileDAO → ArchivedDatasetFileDao** — `58278d68b`; 8 consumer files converted
 - **Refactor progress snapshot (2026-06-23):** active workflow inventory is 963/963 closed (**100.0%**), Phase 3 DAO method ledger is 878/878 removed (**100%**), DAO method blockers are 0/878 unused rows (**0%**), shared/ reduced from 793 to 13 Java files (**98.4%**), DAO-surface deletion is 186/186 files (**100.0%**), LegacyDaoFactory eliminated, EntityDAO infrastructure deleted, shared domain/support Java retired, and dead code cleanup complete.
 - **Phase 3 ledger status (2026-06-19):** `docs/refactor/phase-3-dao-replacement-ledger.{md,csv}` tracks 878 SPI methods: 0 `module-backed`, 0 `fallback-sql`, 0 `legacy-only`, 0 `adapter-gap`, 0 `unused`, and 878 `removed`.
-- **Remaining work:** no active legacy workflow inventory artifacts remain. Further hardening is compatibility work inside app/module code and must use module-owned ports/repositories rather than reintroducing shared DAO SPI names.
+- **Remaining work:** no active legacy workflow inventory artifacts remain. Further hardening is compatibility work inside app/module code and must use module-owned ports/repositories rather than reintroducing shared DAO SPI names. Current removal estimate for the remaining `shared/bean` surface is roughly 5 focused slices (4 active adapter clusters plus 1 shared-bean/core retirement pass).
 - **Gauntlet commands:**
   - `git status --short`
   - `mvn -pl app -am compile -DskipTests && mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`

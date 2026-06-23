@@ -1,6 +1,6 @@
 # Next Refactor And Removal Plan
 
-**Updated:** 2026-06-22
+**Updated:** 2026-06-23
 **Status:** retained as a short continuity snapshot. The active master plan is now
 [`refactor-removal-roadmap.md`](./refactor-removal-roadmap.md).
 
@@ -11,9 +11,9 @@
 - `shared/dao`: `0` files
 - `web/`: deleted
 - `ws/`: absent
-- remaining `shared/`: `38` Java files, all under `shared/bean`
+- remaining `shared/`: `13` Java files, all under `shared/bean`
 - shared support/domain/DAO Java packages: `0` files
-- code balance by file count: `9%` shared legacy / `91%` module modern
+- code balance by file count: `5%` shared legacy / `95%` module modern
 
 ## Active Next Step
 

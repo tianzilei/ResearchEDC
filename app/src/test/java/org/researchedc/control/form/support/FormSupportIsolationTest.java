@@ -78,4 +78,27 @@ class FormSupportIsolationTest {
         assertTrue(errors.containsKey("roleId"));
         assertTrue(errors.containsKey("userTypeId"));
     }
+
+    @Test
+    void validator_usesAppOwnedResponseSetSupport() {
+        Validator valid = new Validator(Map.of("sex", "1"), Locale.ENGLISH);
+        valid.addValidation(
+                "sex",
+                Validator.IN_RESPONSE_SET_SINGLE_VALUE,
+                FormResponseSet.fromDelimitedOptions(
+                        FormResponseSet.RESPONSE_TYPE_SELECT,
+                        "Male,Female",
+                        "1,2"));
+        assertTrue(valid.validate().isEmpty());
+
+        Validator invalid = new Validator(Map.of("sex", "9"), Locale.ENGLISH);
+        invalid.addValidation(
+                "sex",
+                Validator.IN_RESPONSE_SET_SINGLE_VALUE,
+                FormResponseSet.fromDelimitedOptions(
+                        FormResponseSet.RESPONSE_TYPE_SELECT,
+                        "Male,Female",
+                        "1,2"));
+        assertTrue(invalid.validate().containsKey("sex"));
+    }
 }

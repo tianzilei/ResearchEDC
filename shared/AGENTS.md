@@ -7,6 +7,8 @@
 > Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
 > and package rename from `org.akaza.openclinica` to `org.researchedc`. This module is the target of
 > the Strangler Fig pattern — new functionality goes into `app/module/` Modulith modules.
+> Recent contraction: app-owned form/data-import support now covers response-set and status validation,
+> so `Validator` and `ImportCrfDataAdapter` no longer import `shared.bean.*` directly for those behaviors.
 
 ## STRUCTURE
 
@@ -57,7 +59,7 @@ test methods awaiting reactivation.
 | Annotations | ✅ `@Repository`/`@Service` applied to all DAOs and services |
 | SPI interfaces | ✅ Deleted; caller migration to module-owned ports complete |
 | Liquibase migrations | ✅ 210 XML files, versioned from 3.x through 3.18 |
-| Strangulation target | 🔶 Active — remaining shared DTO/term beans should keep shrinking; new code goes to `app/module/` |
+| Strangulation target | 🔶 Active — remaining shared DTO/term beans should keep shrinking; primary remaining adapters live under event/study/subject/crf/datacapture compatibility edges. |
 | DAO deletion | ✅ `DaoProvider`, direct `new XxxDAO(...)` / `new StudyConfigService(...)`, LegacyDaoFactory, EntityDAO infrastructure, and shared DAO SPI files are removed. Phase 3 ledger: 878/878 rows removed; 0 unused, fallback-SQL, legacy-only, or adapter-gap rows remain. |
 
 ## ANTI-PATTERNS

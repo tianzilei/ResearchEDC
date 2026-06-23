@@ -17,8 +17,6 @@ import java.util.ResourceBundle;
 
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Unmarshaller;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.submit.ItemFormMetadataBean.ResponseSetBean;
 import org.researchedc.module.dataimport.internal.odm.FormDataBean;
 import org.researchedc.module.dataimport.internal.odm.ImportItemDataBean;
 import org.researchedc.module.dataimport.internal.odm.ImportItemGroupDataBean;
@@ -29,6 +27,7 @@ import org.researchedc.module.dataimport.internal.odm.UpsertOnBean;
 import org.researchedc.control.form.DiscrepancyValidator;
 import org.researchedc.control.form.FormDiscrepancyNotes;
 import org.researchedc.control.form.Validator;
+import org.researchedc.control.form.support.FormResponseSet;
 import org.researchedc.module.dataimport.service.ImportCrfVersionPort;
 import org.researchedc.module.dataimport.service.ImportEventCrfPort;
 import org.researchedc.module.dataimport.dto.ImportEventCrf;
@@ -80,6 +79,11 @@ public class ImportCrfDataAdapter {
     private static final int ITEM_DATA_TYPE_REAL = 7;
     private static final int ITEM_DATA_TYPE_DATE = 9;
     private static final int ITEM_DATA_TYPE_PDATE = 10;
+    private static final int STATUS_INVALID = 0;
+    private static final int STATUS_AVAILABLE = 1;
+    private static final int STATUS_UNAVAILABLE = 2;
+    private static final int STATUS_PENDING = 4;
+    private static final int STATUS_LOCKED = 6;
 
     private final ImportItemDataPort itemDataPort;
     private final ImportItemPort itemPort;
@@ -516,7 +520,7 @@ public class ImportCrfDataAdapter {
                 crfVersion.id(),
                 user.id(),
                 user.name(),
-                Status.AVAILABLE.getId());
+                STATUS_AVAILABLE);
     }
 
     private int toInt(Object value) {
@@ -591,7 +595,7 @@ public class ImportCrfDataAdapter {
                 toInt(eventCrf.id()),
                 ordinal,
                 ub.id(),
-                Status.UNAVAILABLE.getId(),
+                STATUS_UNAVAILABLE,
                 importItem.getValue());
     }
 
@@ -693,25 +697,23 @@ public class ImportCrfDataAdapter {
                             }
 
                             // Response-set validation for controlled-vocabulary items
-                            ResponseSetBean rsb = responseSetFromMetadata(metadata);
+                            FormResponseSet rsb = responseSetFromMetadata(metadata);
                             if (rsb == null) {
                                 List<ImportResponseSetPort.ImportResponseSet> domainRsList =
                                         responseSetPort.findAllByItemId(toInt(item.id()));
                                 if (domainRsList != null && !domainRsList.isEmpty()) {
                                     ImportResponseSetPort.ImportResponseSet domainRs = domainRsList.get(0);
-                                    rsb = new ResponseSetBean();
-                                    rsb.setResponseTypeId(domainRs.responseTypeId());
-                                    rsb.setOptions(domainRs.optionsText(), domainRs.optionsValues());
+                                    rsb = FormResponseSet.fromDelimitedOptions(
+                                            domainRs.responseTypeId(),
+                                            domainRs.optionsText(),
+                                            domainRs.optionsValues());
                                 }
                             }
                             if (rsb != null) {
-                                int rt = rsb.getResponseTypeId();
-                                if (rt == ResponseSetBean.RESPONSE_TYPE_RADIO
-                                        || rt == ResponseSetBean.RESPONSE_TYPE_SELECT) {
+                                if (rsb.isSingleValueType()) {
                                     dv.addValidation(oid,
                                             Validator.IN_RESPONSE_SET_SINGLE_VALUE, rsb);
-                                } else if (rt == ResponseSetBean.RESPONSE_TYPE_CHECKBOX
-                                        || rt == ResponseSetBean.RESPONSE_TYPE_SELECT_MULTI) {
+                                } else if (rsb.isMultiValueType()) {
                                     dv.addValidation(oid,
                                             Validator.IN_RESPONSE_SET_COMMA_SEPERATED, rsb);
                                 }
@@ -734,14 +736,11 @@ public class ImportCrfDataAdapter {
         return "{\"total\":" + totalItems + ",\"errors\":" + errorCount + "}";
     }
 
-    private ResponseSetBean responseSetFromMetadata(ImportItemFormMetadata metadata) {
-        if (metadata.responseTypeId() == null) {
-            return null;
-        }
-        ResponseSetBean rsb = new ResponseSetBean();
-        rsb.setResponseTypeId(metadata.responseTypeId());
-        rsb.setOptions(metadata.optionsText(), metadata.optionsValues());
-        return rsb;
+    private FormResponseSet responseSetFromMetadata(ImportItemFormMetadata metadata) {
+        return FormResponseSet.fromDelimitedOptions(
+                metadata.responseTypeId(),
+                metadata.optionsText(),
+                metadata.optionsValues());
     }
 
     private String itemDataTypeName(int dataTypeId) {
@@ -778,23 +777,13 @@ public class ImportCrfDataAdapter {
     }
 
     private int stage(ImportEventCrf eventCrf) {
-        Status status = Status.getFromMap(toInt(eventCrf.statusId()));
-        if (status == null) {
-            return STAGE_INVALID;
-        }
-        if (status.equals(Status.AVAILABLE)) {
-            return STAGE_INITIAL_DATA_ENTRY;
-        }
-        if (status.equals(Status.PENDING)) {
-            return STAGE_INITIAL_DATA_ENTRY_COMPLETE;
-        }
-        if (status.equals(Status.UNAVAILABLE)) {
-            return STAGE_DOUBLE_DATA_ENTRY_COMPLETE;
-        }
-        if (status.equals(Status.LOCKED)) {
-            return STAGE_LOCKED;
-        }
-        return STAGE_INVALID;
+        return switch (toInt(eventCrf.statusId())) {
+            case STATUS_AVAILABLE -> STAGE_INITIAL_DATA_ENTRY;
+            case STATUS_PENDING -> STAGE_INITIAL_DATA_ENTRY_COMPLETE;
+            case STATUS_UNAVAILABLE -> STAGE_DOUBLE_DATA_ENTRY_COMPLETE;
+            case STATUS_LOCKED -> STAGE_LOCKED;
+            default -> STAGE_INVALID;
+        };
     }
 
     private record ImportUser(int id, String name) {

@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -26,14 +27,12 @@ import java.util.regex.PatternSyntaxException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.submit.ItemDataBean;
-import org.researchedc.bean.submit.ItemFormMetadataBean.ResponseSetBean;
 import org.researchedc.control.form.support.FormTermType;
 import org.researchedc.control.form.support.FormFormatSupport;
 import org.researchedc.control.form.support.FormLocaleSupport;
+import org.researchedc.control.form.support.FormResponseSet;
 import org.researchedc.control.form.support.FormResourceBundleSupport;
+import org.researchedc.control.form.support.FormStatusSupport;
 import org.researchedc.control.form.support.FormStringSupport;
 import org.researchedc.control.form.support.NumericComparisonOperator;
 import org.slf4j.Logger;
@@ -606,7 +605,7 @@ public class Validator {
      * @param set
      *            The response set to check for membership.
      */
-    public void addValidation(String fieldName, int type, ResponseSetBean set) {
+    public void addValidation(String fieldName, int type, FormResponseSet set) {
         Validation v = new Validation(type);
         v.addArgument(set);
         addValidation(fieldName, v);
@@ -621,16 +620,16 @@ public class Validator {
      * @param type
      *            The type of validation. Should be
      *            MATCHES_INITIAL_DATA_ENTRY_VALUE.
-     * @param idb
-     *            The bean representing the value from initial data entry.
+     * @param initialValue
+     *            The initial data entry value to match against.
      */
-    public void addValidation(String fieldName, int type, ItemDataBean idb, boolean isMultiple) {
+    public void addValidation(String fieldName, int type, String initialValue, boolean isMultiple) {
         Validation v = new Validation(type);
         // we have to make this a a new String
-        // to ensure that if someone calls idb.setValue()
+        // to ensure that if someone mutates the original value
         // before we get around to validating, we will still use the original
         // value
-        v.addArgument(new String(idb.getValue()));
+        v.addArgument(initialValue == null ? null : new String(initialValue));
         v.addArgument(isMultiple);
         lastField = fieldName;
         // added tbh, 112007
@@ -973,21 +972,21 @@ public class Validator {
             }
             break;
         case IN_RESPONSE_SET:
-            ResponseSetBean rsb = (ResponseSetBean) v.getArg(0);
+            FormResponseSet rsb = (FormResponseSet) v.getArg(0);
 
             if (!isInResponseSet(fieldName, rsb, true)) {
                 addError(fieldName, v);
             }
             break;
         case IN_RESPONSE_SET_COMMA_SEPERATED:
-            ResponseSetBean rsbs = (ResponseSetBean) v.getArg(0);
+            FormResponseSet rsbs = (FormResponseSet) v.getArg(0);
 
             if (!isInResponseSetCommaSeperated(fieldName, rsbs, true)) {
                 addError(fieldName, v);
             }
             break;
         case IN_RESPONSE_SET_SINGLE_VALUE:
-            ResponseSetBean rsbSingle = (ResponseSetBean) v.getArg(0);
+            FormResponseSet rsbSingle = (FormResponseSet) v.getArg(0);
 
             if (!isInResponseSet(fieldName, rsbSingle, false)) {
                 addError(fieldName, v);
@@ -1453,7 +1452,7 @@ public class Validator {
             } else if (termType.equals(FormTermType.ROLE)) {
                 return ROLE_IDS.contains(i);
             } else if (termType.equals(FormTermType.STATUS)) {
-                return Status.contains(i);
+                return FormStatusSupport.isValidStatusId(i);
             } else if (termType.equals(FormTermType.USER_TYPE)) {
                 return USER_TYPE_IDS.contains(i);
             }
@@ -1575,14 +1574,14 @@ public class Validator {
         return false;
     }
 
-    protected boolean isInResponseSet(String fieldName, ResponseSetBean set, boolean multValues) {
+    protected boolean isInResponseSet(String fieldName, FormResponseSet set, boolean multValues) {
         // prep work - makes checking for a value in the set very fast
         HashMap values = new HashMap();
 
-        ArrayList<ResponseSetBean.Option> options = set.getOptions();
+        List<FormResponseSet.Option> options = set.options();
         for (int i = 0; i < options.size(); i++) {
-            ResponseSetBean.Option rob = options.get(i);
-            values.put(rob.getValue(), Boolean.TRUE);
+            FormResponseSet.Option rob = options.get(i);
+            values.put(rob.value(), Boolean.TRUE);
         }
 
         String fieldValues[];
@@ -1618,14 +1617,14 @@ public class Validator {
         return true;
     }
 
-    protected boolean isInResponseSetCommaSeperated(String fieldName, ResponseSetBean set, boolean multValues) {
+    protected boolean isInResponseSetCommaSeperated(String fieldName, FormResponseSet set, boolean multValues) {
         // prep work - makes checking for a value in the set very fast
         HashMap values = new HashMap();
 
-        ArrayList<ResponseSetBean.Option> options = set.getOptions();
+        List<FormResponseSet.Option> options = set.options();
         for (int i = 0; i < options.size(); i++) {
-            ResponseSetBean.Option rob = options.get(i);
-            values.put(rob.getValue(), Boolean.TRUE);
+            FormResponseSet.Option rob = options.get(i);
+            values.put(rob.value(), Boolean.TRUE);
         }
 
         String fieldValues[];

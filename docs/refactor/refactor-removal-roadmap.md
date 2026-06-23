@@ -11,7 +11,7 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `17` files
+- Remaining `shared/` Java surface: `13` files
 - Modulith Java surface: `399` files
 - Code balance by file count: `5%` shared legacy / `95%` module modern
 
@@ -34,7 +34,7 @@ This means the workflow-level deletion program is complete. The remaining work i
 
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
-| `shared/bean` | 17 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
+| `shared/bean` | 13 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
 | `shared/domain` | 0 | Retired; active mappings live in module-owned entities/repositories |
 | `shared/core` | 0 | Retired; app-owned config loads retained property resources |
 | `shared/i18n` | 0 | Retired; resource files remain, Java helper removed |
@@ -44,11 +44,11 @@ This means the workflow-level deletion program is complete. The remaining work i
 
 | Caller | Why It Matters |
 |---|---|
-| `app/module/dataimport/internal/adapter/ImportCrfDataAdapter` | Largest remaining consumer of `shared.bean.*`, ODM compatibility types, and `shared` resource/i18n support |
-| `app/control/form/Validator` | Major anchor for `shared.core`, `shared.i18n`, and legacy form DTO assumptions |
+| `app/module/event/internal/adapter/EventCrfDaoAdapter` | Broadest remaining production adapter bridge across `EventCRFBean`, `StudyEventBean`, `StudySubjectBean`, and `CRFVersionBean` |
+| `app/module/event/internal/adapter/StudyEventDaoAdapter` | Still carries dense legacy bean/entity translation logic and shared status/audit semantics |
 | `app/control/form/FormDiscrepancyNotes` | Couples discrepancy workflows to legacy form/bean model |
 | `app/module/*/internal/adapter/*.java` | Module adapters still translate to/from legacy `shared` DTOs at retained compatibility edges |
-| `app/module/event/internal/adapter/StudyEventDaoAdapter` | Still carries legacy bean/entity translation logic after observer cleanup |
+| `app/module/datacapture/internal/adapter/ItemDataDaoAdapter` | Still exposes shared item/event CRF compatibility beans across data-capture boundaries |
 
 ## Completed Workstreams
 
@@ -114,6 +114,7 @@ These are closed and should not be reopened except to fix regressions:
 - ODM import POJOs and the Castor mapping now live under `module/dataimport/internal/odm`, so the retained ODM parser no longer keeps `shared.bean.submit.crfdata.*` alive.
 - `ImportCrfDataAdapter` now keeps ODM beans only at its retained dataimport-owned compatibility boundary; internal study/subject/event/CRF lookup and event-CRF status flow use module-local records instead of `shared.bean.*` transport types.
 - Data-import lookup/event-CRF/item metadata ports now return typed module-owned records instead of positional `Object[]` rows, removing raw row plumbing from `ImportCrfDataAdapter` and its study, subject, event, CRF, and data-capture adapters.
+- `ImportCrfDataAdapter` now uses app-owned response-set validation support and local compatibility status ids, so the adapter no longer imports `shared.bean.*` directly for edit-check or stage validation behavior.
 
 **Exit Gate**
 - `ImportCrfDataAdapter` no longer imports `shared.bean.*` packages except where an explicitly retained external compatibility contract still requires it.
@@ -134,6 +135,7 @@ These are closed and should not be reopened except to fix regressions:
 **Current Progress**
 - `app/control/form/Validator` now resolves locale, bundles, date formats, and string/date checks through app-owned `control/form/support` classes instead of direct `shared/core` or `shared/i18n` imports.
 - `Validator` now uses app-owned form term/comparison support for `IS_VALID_TERM` and numeric comparison validation, removing the former shared form-validation-only term classes from `shared/bean/core`.
+- `Validator` now uses app-owned response-set and status validation support, removing its last direct `shared.bean.*` imports from form validation.
 
 **Exit Gate**
 - `app/control/form/*` no longer depends directly on `shared/core/*` or `shared/i18n/*`.

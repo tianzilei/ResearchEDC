@@ -1,6 +1,6 @@
 # OpenClinica Legacy Code Refactoring Plan
 
-> **Updated:** 2026-06-22
+> **Updated:** 2026-06-23
 > **Role:** handoff pointer retained for continuity.
 
 ## Current Source Of Truth
@@ -17,13 +17,14 @@
 - `shared/dao`: empty
 - `web/`: deleted
 - `ws/`: absent
-- remaining `shared/`: `38` Java files, all under `shared/bean`
+- remaining `shared/`: `13` Java files, all under `shared/bean`
 - shared support/domain/DAO Java packages: `0` files
 
 ## Active Direction
 
 The remaining effort is compatibility strangulation inside `app/` and `shared/`, not additional
-workflow inventory cleanup.
+workflow inventory cleanup. Current execution estimate is roughly 5 focused slices to retire the
+remaining shared DTO/term bean surface.
 
 Use `docs/refactor/refactor-removal-roadmap.md` for:
 

@@ -22,10 +22,6 @@ import org.researchedc.module.dataimport.internal.odm.ImportItemGroupDataBean;
 import org.researchedc.module.dataimport.internal.odm.ODMContainer;
 import org.researchedc.module.dataimport.internal.odm.StudyEventDataBean;
 import org.researchedc.module.dataimport.internal.odm.SubjectDataBean;
-import org.researchedc.bean.managestudy.StudyEventBean;
-import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.bean.submit.CRFVersionBean;
 import org.researchedc.module.dataimport.service.ImportCrfVersionPort;
 import org.researchedc.module.dataimport.service.ImportEventCrfPort;
 import org.researchedc.module.dataimport.dto.ImportEventCrf;
@@ -45,6 +41,7 @@ import org.researchedc.module.dataimport.dto.ImportStudySubject;
 
 class ImportCrfDataAdapterTest {
     private static final int SUBJECT_EVENT_STATUS_SCHEDULED = 1;
+    private static final int STATUS_AVAILABLE = 1;
 
     @Test
     void parseOdm_readsRepresentativeClinicalDataFixture() throws Exception {
@@ -129,18 +126,6 @@ class ImportCrfDataAdapterTest {
                 mock(ImportResponseSetPort.class));
 
         ODMContainer odm = odmWithOneItem("S_DEMO", "SS_DEMO", "SE_BASELINE", "F_VITALS_V1", "I_WEIGHT", "70");
-        StudySubjectBean subject = new StudySubjectBean();
-        subject.setId(2);
-        subject.setName("SS_DEMO");
-        StudyEventDefinitionBean definition = new StudyEventDefinitionBean();
-        definition.setId(3);
-        definition.setName("Baseline");
-        StudyEventBean event = new StudyEventBean();
-        event.setId(4);
-        event.setSubjectEventStatusId(SUBJECT_EVENT_STATUS_SCHEDULED);
-        CRFVersionBean version = new CRFVersionBean();
-        version.setId(5);
-
         when(studyLookupPort.findImportStudyByOid("S_DEMO"))
                 .thenReturn(new ImportStudy(1, 0, "Demo Study"));
         when(studySubjectPort.findImportStudySubjectByOidAndStudy("SS_DEMO", 1))
@@ -208,6 +193,46 @@ class ImportCrfDataAdapterTest {
 
         assertEquals(1, errors.size());
         verify(studyLookupPort).findImportStudyByOid("S_MISSING");
+    }
+
+    @Test
+    void validateEditChecks_usesModuleOwnedResponseSetValidation() {
+        ImportItemPort itemPort = mock(ImportItemPort.class);
+        ImportItemFormMetadataPort metadataPort = mock(ImportItemFormMetadataPort.class);
+
+        when(itemPort.findImportItemsByOid("I_SEX"))
+                .thenReturn(List.of(new ImportItemPort.ImportItem(77, "I_SEX", 5)));
+        when(metadataPort.findImportItemFormMetadataByItemId(77))
+                .thenReturn(List.of(new org.researchedc.module.dataimport.dto.ImportItemFormMetadata(
+                        null,
+                        6,
+                        "Male,Female",
+                        "1,2")));
+
+        ImportCrfDataAdapter adapter = new ImportCrfDataAdapter(
+                mock(ImportItemDataPort.class),
+                itemPort,
+                mock(ImportItemGroupPort.class),
+                metadataPort,
+                mock(ImportStudyLookupPort.class),
+                mock(ImportStudySubjectPort.class),
+                mock(ImportStudyEventPort.class),
+                mock(ImportStudyEventDefinitionPort.class),
+                mock(ImportCrfVersionPort.class),
+                mock(ImportEventCrfPort.class),
+                mock(ImportResponseSetPort.class));
+
+        String valid = adapter.validateEditChecks(
+                new ImportCrfDataAdapter.ParsedOdm(
+                        odmWithOneItem("S_DEMO", "SS_DEMO", "SE_BASELINE", "F_VITALS_V1", "I_SEX", "1")),
+                1);
+        String invalid = adapter.validateEditChecks(
+                new ImportCrfDataAdapter.ParsedOdm(
+                        odmWithOneItem("S_DEMO", "SS_DEMO", "SE_BASELINE", "F_VITALS_V1", "I_SEX", "9")),
+                1);
+
+        assertEquals("{\"total\":1,\"errors\":0}", valid);
+        assertEquals("{\"total\":1,\"errors\":1}", invalid);
     }
 
     private ODMContainer odmWithOneItem(
