@@ -9,7 +9,6 @@ package org.researchedc.bean.managestudy;
 
 import org.researchedc.bean.core.AuditableEntityBean;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -26,43 +25,16 @@ public class StudySubjectBean extends AuditableEntityBean {
 
     private int studyId;
     
-    /**
-     * @vbc 08/06/2008 NEW EXTRACT DATA IMPLEMENTATION 
-     * - add dob_collected
-     */
-    private boolean isDobCollected;
-    
-    // private int studyGroupId;
-
     private Date enrollmentDate;
 
     private String secondaryLabel = "";
 
-    private String uniqueIdentifier = "";// not in the table, for display
-    // purpose
-
-    private String studyName = "";// not in the table, for display purpose
-
-    private char gender = 'm';// not in the table, for display purpose
-
-    private Date dateOfBirth;// not in the db
-
-    /**
-     * An array of the groups this subject belongs to. Each element is a
-     * StudyGroupMapBean object. Not in the database.
-     */
-    private ArrayList studyGroupMaps;
-    
-    private Date eventStartDate;//not in DB, for adding subject from subject matrix
-    
     /**
      * The OID, used for export and import of data.
      */
     private String oid;
-    private String time_zone;
     	
 	public StudySubjectBean() {
-        studyGroupMaps = new ArrayList();
     }
 
 	public String getOid() {
@@ -72,51 +44,6 @@ public class StudySubjectBean extends AuditableEntityBean {
 	public void setOid(String oid) {
 		this.oid = oid;
 	}
-
-    /**
-     * @return Returns the uniqueIndentifier.
-     */
-    public String getUniqueIdentifier() {
-        return uniqueIdentifier;
-    }
-
-    /**
-     * @param uniqueIdentifier
-     *            The uniqueIdentifier to set.
-     */
-    public void setUniqueIdentifier(String uniqueIdentifier) {
-        this.uniqueIdentifier = uniqueIdentifier;
-    }
-
-    /**
-     * @return Returns the studyName.
-     */
-    public String getStudyName() {
-        return studyName;
-    }
-
-    /**
-     * @param studyName
-     *            The studyName to set.
-     */
-    public void setStudyName(String studyName) {
-        this.studyName = studyName;
-    }
-
-    /**
-     * @return Returns the gender.
-     */
-    public char getGender() {
-        return gender;
-    }
-
-    /**
-     * @param gender
-     *            The gender to set.
-     */
-    public void setGender(char gender) {
-        this.gender = gender;
-    }
 
     /**
      * @return Returns the label.
@@ -203,72 +130,5 @@ public class StudySubjectBean extends AuditableEntityBean {
     public void setName(String name) {
         setLabel(name);
     }
-
-    /**
-     * @return Returns the studyGroupMaps.
-     */
-    public ArrayList getStudyGroupMaps() {
-        return studyGroupMaps;
-    }
-
-    /**
-     * @param studyGroupMaps
-     *            The studyGroupMaps to set.
-     */
-    public void setStudyGroupMaps(ArrayList studyGroupMaps) {
-        this.studyGroupMaps = studyGroupMaps;
-    }
-
-    /**
-     * @return Returns the dateOfBirth.
-     */
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    /**
-     * @param dateOfBirth
-     *            The dateOfBirth to set.
-     */
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    /**
-     * @return the eventStartDate
-     */
-    public Date getEventStartDate() {
-        return eventStartDate;
-    }
-
-    /**
-     * @param eventStartDate the eventStartDate to set
-     */
-    public void setEventStartDate(Date eventStartDate) {
-        this.eventStartDate = eventStartDate;
-    }
-
-	/**
-	 * @return the isDobCollected
-	 */
-	public boolean isDobCollected() {
-		return isDobCollected;
-	}
-
-	/**
-	 * @param isDobCollected the isDobCollected to set
-	 */
-	public void setDobCollected(boolean isDobCollected) {
-		this.isDobCollected = isDobCollected;
-	}
-
-	public String getTime_zone() {
-		return time_zone;
-	}
-
-	public void setTime_zone(String time_zone) {
-		this.time_zone = time_zone;
-	}
-    
 
 }

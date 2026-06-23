@@ -6,6 +6,13 @@
 
 ---
 
+## 2026-06-24 - Narrow study subject and event DTO residue
+
+- Removed no-caller display/group/timezone residue from `StudySubjectBean`; retained only the fields still mapped by `StudySubjectDaoAdapter`.
+- Removed no-caller event-CRF list, repeat-event, subject-label, and UI flag residue from `StudyEventBean`; retained only event adapter transport fields and stage/status behavior.
+- Removed no-caller display/validation residue from `EventCRFBean`; retained event-CRF fields still mapped by `EventCrfDaoAdapter`.
+- Kept subject and event module-owned DTO/entity surfaces unchanged.
+
 ## 2026-06-24 - Trim no-caller shared DTO residue
 
 - Removed no-caller compatibility fields from retained shared DTO beans: `ItemDataBean` dropped obsolete `selected`/`auditLog` equality state, `ItemBean` dropped retired dataset/definition display residue, `CRFVersionBean` dropped unused `date_created`/download/Enketo residue, and `ItemGroupBean` dropped retired display collection plumbing.

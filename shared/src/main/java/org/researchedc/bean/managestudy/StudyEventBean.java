@@ -10,7 +10,6 @@ package org.researchedc.bean.managestudy;
 import org.researchedc.bean.core.AuditableEntityBean;
 import org.researchedc.bean.core.Status;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -39,23 +38,9 @@ public class StudyEventBean extends AuditableEntityBean {
 
     private Date dateEnded;
 
-    private ArrayList eventCRFs = new ArrayList();// not in DB
-
     private int stageId = STAGE_UNCOMPLETED;
 
     private int subjectEventStatusId = SUBJECT_EVENT_STATUS_SCHEDULED;
-
-    private String studySubjectLabel;
-
-    private boolean scheduledDatePast = false;// not in DB
-
-    private int repeatingNum = 1;
-
-    private ArrayList<StudyEventBean> repeatEvents = new ArrayList<StudyEventBean>();
-
-    // A. Hamid.
-    // will the edit icon be appeared
-    private boolean editable = true;
 
     // YW 08-17-2007
     private boolean startTimeFlag = false;
@@ -90,51 +75,6 @@ public class StudyEventBean extends AuditableEntityBean {
      */
     public void setEndTimeFlag(boolean endTimeFlag) {
         this.endTimeFlag = endTimeFlag;
-    }
-
-    /**
-     * @return the repeatEvents
-     */
-    public ArrayList<StudyEventBean> getRepeatEvents() {
-        return repeatEvents;
-    }
-
-    /**
-     * @param repeatEvents
-     *            the repeatEvents to set
-     */
-    public void setRepeatEvents(ArrayList<StudyEventBean> repeatEvents) {
-        this.repeatEvents = repeatEvents;
-    }
-
-    /**
-     * @return Returns the repeatingNum.
-     */
-    public int getRepeatingNum() {
-        return repeatingNum;
-    }
-
-    /**
-     * @param repeatingNum
-     *            The repeatingNum to set.
-     */
-    public void setRepeatingNum(int repeatingNum) {
-        this.repeatingNum = repeatingNum;
-    }
-
-    /**
-     * @return Returns the studySubjectLabel.
-     */
-    public String getStudySubjectLabel() {
-        return studySubjectLabel;
-    }
-
-    /**
-     * @param studySubjectLabel
-     *            The studySubjectLabel to set.
-     */
-    public void setStudySubjectLabel(String studySubjectLabel) {
-        this.studySubjectLabel = studySubjectLabel;
     }
 
     /**
@@ -244,21 +184,6 @@ public class StudyEventBean extends AuditableEntityBean {
      */
     public void setStudySubjectId(int studySubjectId) {
         this.studySubjectId = studySubjectId;
-    }
-
-    /**
-     * @return Returns the eventCRFs.
-     */
-    public ArrayList getEventCRFs() {
-        return eventCRFs;
-    }
-
-    /**
-     * @param eventCRFs
-     *            The eventCRFs to set.
-     */
-    public void setEventCRFs(ArrayList eventCRFs) {
-        this.eventCRFs = eventCRFs;
     }
 
     /**

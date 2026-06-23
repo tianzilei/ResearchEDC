@@ -32,7 +32,6 @@ public class EventCRFBean extends AuditableEntityBean {
     private int CRFVersionId = 0;
     private Date dateInterviewed;
     private String interviewerName = "";
-    private int completionStatusId = 0;
     // private int statusId =1;
     private Status status;
     private String annotations = "";
@@ -41,16 +40,10 @@ public class EventCRFBean extends AuditableEntityBean {
     private Date dateValidate;
     private Date dateValidateCompleted;
     private String validatorAnnotations = "";
-    private String validateString = "";
     private int studySubjectId = 0;
     private boolean electronicSignatureStatus = false;
     private boolean sdvStatus = false;
     private int sdvUpdateId = 0;
-    //the following are not in the table
-    private String studySubjectName = "";
-    private String eventName = "";
-    private String studyName = "";
-    private int eventOrdinal = 1;
 
     private int stageId = STAGE_INVALID;
 
@@ -79,21 +72,6 @@ public class EventCRFBean extends AuditableEntityBean {
      */
     public void setAnnotations(String annotations) {
         this.annotations = annotations;
-    }
-
-    /**
-     * @return Returns the completionStatusId.
-     */
-    public int getCompletionStatusId() {
-        return completionStatusId;
-    }
-
-    /**
-     * @param completionStatusId
-     *            The completionStatusId to set.
-     */
-    public void setCompletionStatusId(int completionStatusId) {
-        this.completionStatusId = completionStatusId;
     }
 
     /**
@@ -234,21 +212,6 @@ public class EventCRFBean extends AuditableEntityBean {
     }
 
     /**
-     * @return Returns the validateString.
-     */
-    public String getValidateString() {
-        return validateString;
-    }
-
-    /**
-     * @param validateString
-     *            The validateString to set.
-     */
-    public void setValidateString(String validateString) {
-        this.validateString = validateString;
-    }
-
-    /**
      * @return Returns the validatorAnnotations.
      */
     public String getValidatorAnnotations() {
@@ -354,56 +317,6 @@ public class EventCRFBean extends AuditableEntityBean {
      */
     public void setElectronicSignatureStatus(boolean electronicSignatureStatus) {
         this.electronicSignatureStatus = electronicSignatureStatus;
-    }
-
-    /**
-     * @return the eventName
-     */
-    public String getEventName() {
-        return eventName;
-    }
-
-    /**
-     * @param eventName the eventName to set
-     */
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
-    }
-
-    /**
-     * @return the studyName
-     */
-    public String getStudyName() {
-        return studyName;
-    }
-
-    /**
-     * @param studyName the studyName to set
-     */
-    public void setStudyName(String studyName) {
-        this.studyName = studyName;
-    }
-
-    /**
-     * @return the studySubjectName
-     */
-    public String getStudySubjectName() {
-        return studySubjectName;
-    }
-
-    /**
-     * @param studySubjectName the studySubjectName to set
-     */
-    public void setStudySubjectName(String studySubjectName) {
-        this.studySubjectName = studySubjectName;
-    }
-
-    public void setEventOrdinal(int i) {
-        this.eventOrdinal = i;
-    }
-
-    public int getEventOrdinal() {
-        return this.eventOrdinal;
     }
 
     public int getSdvUpdateId() {
