@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-24 - Trim event definition DTO display residue
+
+- Removed no-caller CRF list, CRF count, lock/populated UI flags, and default-version matrix residue from `StudyEventDefinitionBean`.
+- Retained only the study-event-definition fields still mapped by `StudyEventDefinitionDaoAdapter`.
+
 ## 2026-06-24 - Narrow study subject and event DTO residue
 
 - Removed no-caller display/group/timezone residue from `StudySubjectBean`; retained only the fields still mapped by `StudySubjectDaoAdapter`.

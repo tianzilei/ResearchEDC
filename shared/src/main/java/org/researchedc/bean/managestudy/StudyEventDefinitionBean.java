@@ -9,9 +9,6 @@ package org.researchedc.bean.managestudy;
 
 import org.researchedc.bean.core.AuditableEntityBean;
 
-import java.util.ArrayList;
-import java.util.Map;
-
 /**
  * @author thickerson
  *
@@ -28,21 +25,7 @@ public class StudyEventDefinitionBean extends AuditableEntityBean {
 
     private int studyId;// fk for study table
 
-    private ArrayList crfs = new ArrayList();
-
-    private int crfNum = 0; // number of crfs, not in DB
-
     private int ordinal = 1;
-
-    private boolean lockable = false;// not in the DB, check whether we can
-    // show
-    // lock link on the JSP
-
-    private boolean populated = false;// not in DB
-
-    // Will be used to show CRFs and their default version in the Event
-    // Definition matrix
-    private Map crfsWithDefaultVersion;
 
     private String oid;
 
@@ -70,21 +53,6 @@ public class StudyEventDefinitionBean extends AuditableEntityBean {
      */
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    /**
-     * @return Returns the crfs.
-     */
-    public ArrayList getCrfs() {
-        return crfs;
-    }
-
-    /**
-     * @param crfs
-     *            The crfs to set.
-     */
-    public void setCrfs(ArrayList crfs) {
-        this.crfs = crfs;
     }
 
     /**
@@ -160,29 +128,6 @@ public class StudyEventDefinitionBean extends AuditableEntityBean {
      */
     public void setOrdinal(int ordinal) {
         this.ordinal = ordinal;
-    }
-
-    /**
-     * @return Returns the crfNum.
-     */
-    public int getCrfNum() {
-        return crfNum;
-    }
-
-    /**
-     * @param crfNum
-     *            The crfNum to set.
-     */
-    public void setCrfNum(int crfNum) {
-        this.crfNum = crfNum;
-    }
-
-    public Map getCrfsWithDefaultVersion() {
-        return crfsWithDefaultVersion;
-    }
-
-    public void setCrfsWithDefaultVersion(Map crfsWithDefaultVersion) {
-        this.crfsWithDefaultVersion = crfsWithDefaultVersion;
     }
 
     /*

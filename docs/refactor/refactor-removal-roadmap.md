@@ -160,6 +160,7 @@ These are closed and should not be reopened except to fix regressions:
 **Current Progress**
 - Retained submit DTOs were trimmed for no-caller compatibility residue: `ItemDataBean` no longer carries obsolete `selected`/`auditLog` equality state, `ItemBean` no longer carries retired dataset/definition display fields, `CRFVersionBean` no longer carries unused `date_created`/download/Enketo residue, `ItemGroupBean` no longer carries retired display collections, and `ResponseSetBean` no longer keeps an unused option-index cache.
 - Retained study/event DTOs were narrowed further: `StudySubjectBean` no longer carries subject display/group/timezone residue, `StudyEventBean` no longer carries event list/repeat/display/UI residue, and `EventCRFBean` no longer carries display-only names, event ordinal, or obsolete validation/completion residue.
+- `StudyEventDefinitionBean` no longer carries retired CRF list/count, lock/populated UI flags, or default-version matrix residue.
 
 **Exit Gate**
 - No module/internal adapter exposes more legacy DTO types than strictly required by a retained compatibility contract.
