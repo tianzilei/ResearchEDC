@@ -20,14 +20,6 @@ import java.util.Date;
  * @author thickerson
  */
 public class EventCRFBean extends AuditableEntityBean {
-    public static final int STAGE_INVALID = 0;
-    public static final int STAGE_UNCOMPLETED = 1;
-    public static final int STAGE_INITIAL_DATA_ENTRY = 2;
-    public static final int STAGE_INITIAL_DATA_ENTRY_COMPLETE = 3;
-    public static final int STAGE_DOUBLE_DATA_ENTRY = 4;
-    public static final int STAGE_DOUBLE_DATA_ENTRY_COMPLETE = 5;
-    public static final int STAGE_LOCKED = 7;
-
     private int studyEventId = 0;
     private int CRFVersionId = 0;
     private Date dateInterviewed;
@@ -44,8 +36,6 @@ public class EventCRFBean extends AuditableEntityBean {
     private boolean electronicSignatureStatus = false;
     private boolean sdvStatus = false;
     private int sdvUpdateId = 0;
-
-    private int stageId = STAGE_INVALID;
 
     public EventCRFBean() {
         status = Status.INVALID;
@@ -242,69 +232,6 @@ public class EventCRFBean extends AuditableEntityBean {
     }
 
     /**
-     * Uses the status and created/updated dates to determine which stage the
-     * Event CRF is in.
-     *
-     * @return The Event CRF's data entry stage.
-     */
-    public String getStage() {
-        return stageName(getStageId());
-    }
-
-    public int getStageId() {
-        if (stageId != STAGE_INVALID) {
-            return stageId;
-        }
-
-        if (!active || !status.isActive()) {
-            stageId = STAGE_UNCOMPLETED;
-        }
-
-        if (status.equals(Status.AVAILABLE)) {
-            stageId = STAGE_INITIAL_DATA_ENTRY;
-        }
-
-        if (status.equals(Status.PENDING)) {
-            if (validatorId != 0) {
-                stageId = STAGE_DOUBLE_DATA_ENTRY;
-            } else {
-                stageId = STAGE_INITIAL_DATA_ENTRY_COMPLETE;
-            }
-        }
-
-        if (status.equals(Status.UNAVAILABLE)) {
-            stageId = STAGE_DOUBLE_DATA_ENTRY_COMPLETE;
-        }
-
-        if (status.equals(Status.LOCKED)) {
-            stageId = STAGE_LOCKED;
-        }
-
-        return stageId;
-    }
-
-    /**
-     * The problem with the above data entry stage getter is that you can never
-     * set the stage back to 'invalid'.
-     *
-     *            invalidate, allowing us to invalidate the stage again
-     */
-    // public String getStage(boolean invalidate) {
-    // if (stageId != STAGE_INVALID) {
-    // if (invalidate) {
-    // stageId = STAGE_INVALID;
-    // return stageName(stageId);
-    // } else {
-    // return stageName(stageId);
-    // }
-    // }
-    // return getStage();
-    // }
-    public void setStageId(int stageId) {
-        this.stageId = stageId;
-    }
-
-    /**
      * @return Returns the electronicSignatureStatus.
      */
     public boolean isElectronicSignatureStatus() {
@@ -325,18 +252,6 @@ public class EventCRFBean extends AuditableEntityBean {
 
     public void setSdvUpdateId(int sdvUpdateId) {
         this.sdvUpdateId = sdvUpdateId;
-    }
-
-    private String stageName(int stageId) {
-        return switch (stageId) {
-            case STAGE_UNCOMPLETED -> "not_started";
-            case STAGE_INITIAL_DATA_ENTRY -> "initial_data_entry";
-            case STAGE_INITIAL_DATA_ENTRY_COMPLETE -> "initial_data_entry_complete";
-            case STAGE_DOUBLE_DATA_ENTRY -> "double_data_entry";
-            case STAGE_DOUBLE_DATA_ENTRY_COMPLETE -> "data_entry_complete";
-            case STAGE_LOCKED -> "locked";
-            default -> "invalid";
-        };
     }
 
 }

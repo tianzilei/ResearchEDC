@@ -17,9 +17,6 @@ import java.util.Date;
  *
  */
 public class StudyEventBean extends AuditableEntityBean {
-    public static final int STAGE_UNCOMPLETED = 1;
-    public static final int STAGE_INITIAL_DATA_ENTRY_COMPLETE = 3;
-    public static final int STAGE_DOUBLE_DATA_ENTRY_COMPLETE = 5;
     public static final int SUBJECT_EVENT_STATUS_SCHEDULED = 1;
 
     // STUDY_EVENT_ID STUDY_EVENT_DEFINITION_ID SUBJECT_ID
@@ -37,8 +34,6 @@ public class StudyEventBean extends AuditableEntityBean {
     private Date dateStarted;
 
     private Date dateEnded;
-
-    private int stageId = STAGE_UNCOMPLETED;
 
     private int subjectEventStatusId = SUBJECT_EVENT_STATUS_SCHEDULED;
 
@@ -90,10 +85,6 @@ public class StudyEventBean extends AuditableEntityBean {
      */
     public void setSubjectEventStatusId(int subjectEventStatusId) {
         this.subjectEventStatusId = subjectEventStatusId;
-    }
-
-    public StudyEventBean() {
-        stageId = STAGE_UNCOMPLETED;
     }
 
     /**
@@ -186,17 +177,6 @@ public class StudyEventBean extends AuditableEntityBean {
         this.studySubjectId = studySubjectId;
     }
 
-    /**
-     * @return Returns the stage.
-     */
-    public String getStage() {
-        return stageName(stageId);
-    }
-
-    public int getStageId() {
-        return stageId;
-    }
-
     /*
      * (non-Javadoc)
      *
@@ -205,34 +185,5 @@ public class StudyEventBean extends AuditableEntityBean {
     @Override
     public void setStatus(Status s) {
         this.status = s;
-
-        if (s.equals(Status.AVAILABLE)) {
-            stageId = STAGE_UNCOMPLETED;
-        }
-
-        else if (s.equals(Status.PENDING)) {
-            stageId = STAGE_INITIAL_DATA_ENTRY_COMPLETE;
-        }
-
-        else if (s.equals(Status.UNAVAILABLE)) {
-            stageId = STAGE_DOUBLE_DATA_ENTRY_COMPLETE;
-        }
-    }
-
-    /**
-     * @param stage
-     *            The stage to set.
-     */
-    public void setStageId(int stageId) {
-        this.stageId = stageId;
-    }
-
-    private String stageName(int stageId) {
-        return switch (stageId) {
-            case STAGE_UNCOMPLETED -> "not_started";
-            case STAGE_INITIAL_DATA_ENTRY_COMPLETE -> "initial_data_entry_complete";
-            case STAGE_DOUBLE_DATA_ENTRY_COMPLETE -> "data_entry_complete";
-            default -> "invalid";
-        };
     }
 }
