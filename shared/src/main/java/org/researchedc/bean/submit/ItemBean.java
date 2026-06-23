@@ -26,54 +26,6 @@ public class ItemBean extends AuditableEntityBean {
 
     private int itemDataTypeId = ITEM_DATA_TYPE_ST;
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + itemDataTypeId;
-        result = prime * result + itemReferenceTypeId;
-        result = prime * result + ((oid == null) ? 0 : oid.hashCode());
-        result = prime * result + (phiStatus ? 1231 : 1237);
-        result = prime * result + statusId;
-        result = prime * result + ((units == null) ? 0 : units.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ItemBean other = (ItemBean) obj;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (itemDataTypeId != other.itemDataTypeId)
-            return false;
-        if (itemReferenceTypeId != other.itemReferenceTypeId)
-            return false;
-        if (oid == null) {
-            if (other.oid != null)
-                return false;
-        } else if (!oid.equals(other.oid))
-            return false;
-        if (phiStatus != other.phiStatus)
-            return false;
-        if (statusId != other.statusId)
-            return false;
-        if (units == null) {
-            if (other.units != null)
-                return false;
-        } else if (!units.equals(other.units))
-            return false;
-        return true;
-    }
     private int itemReferenceTypeId = 0;
 
     private int statusId = 1;

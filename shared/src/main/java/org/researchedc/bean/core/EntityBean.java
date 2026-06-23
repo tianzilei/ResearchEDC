@@ -30,12 +30,6 @@ public class EntityBean implements java.io.Serializable {
      */
     protected boolean active = false;
 
-    /*
-     * private java.util.Date createdDate; private java.util.Date updatedDate;
-     * private Object owner;//to be replaced by UserBean, when written private
-     * Object updater;//to be replaced by UserBean
-     */
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -100,14 +94,4 @@ public class EntityBean implements java.io.Serializable {
         return this.id;
     }
 
-    /*
-     * public void setCreatedDate(Date date) { this.createdDate = date; } public
-     * Date getCreatedDate() { return this.createdDate; } public void
-     * setUpdatedDate(Date date) { this.updatedDate = date; } public Date
-     * getUpdatedDate() { return this.updatedDate; } public void setOwner(Object
-     * user) { this.owner = user;//to be replaced by userbean } public Object
-     * getOwner() { return this.owner; } public void setUpdater(Object user) {
-     * this.updater = user; } public Object getUpdater() { return this.updater; }
-     */
-    // the above will now be part of auditable entity bean, tbh
 }

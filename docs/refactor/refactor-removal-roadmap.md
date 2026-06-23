@@ -164,6 +164,7 @@ These are closed and should not be reopened except to fix regressions:
 - `StudyEventBean` and `EventCRFBean` no longer carry no-caller legacy stage-display helpers; data-import compatibility now uses its module-local status-to-stage calculation directly.
 - `StudyBean` no longer carries no-caller JSP-era study-parameter state, parent-study display names, or redundant genetic/string type accessors; retained compatibility uses the mapped `typeId` contract only.
 - `AuditableEntityBean` no longer carries no-caller object owner/updater references or reflective `getId()` extraction; retained audit compatibility uses scalar owner/updater ids only.
+- Retained submit/event-definition DTOs no longer carry self-contained no-caller equality/hash snapshots, and `Status`/`EntityBean` no longer carry unused helper/comment residue.
 - `StudyEventDefinitionBean` no longer carries retired CRF list/count, lock/populated UI flags, or default-version matrix residue.
 - `Status` no longer carries no-caller JSP-era dropdown/list caches or the redundant status-id name map.
 

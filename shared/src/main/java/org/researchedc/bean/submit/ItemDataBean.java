@@ -19,43 +19,6 @@ import org.researchedc.bean.core.AuditableEntityBean;
  *
  */
 public class ItemDataBean extends AuditableEntityBean {
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + eventCRFId;
-        result = prime * result + itemId;
-        result = prime * result + ordinal;
-        result = prime * result + (deleted ? 1231 : 1237);
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ItemDataBean other = (ItemDataBean) obj;
-        if (eventCRFId != other.eventCRFId)
-            return false;
-        if (itemId != other.itemId)
-            return false;
-        if (ordinal != other.ordinal)
-            return false;
-        if (deleted != other.deleted)
-            return false;
-        if (value == null) {
-            if (other.value != null)
-                return false;
-        } else if (!value.equals(other.value))
-            return false;
-        return true;
-    }
-
     private int eventCRFId;
     private int itemId;
     private String value;// name will be null

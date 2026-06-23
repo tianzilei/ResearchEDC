@@ -130,27 +130,4 @@ public class StudyEventDefinitionBean extends AuditableEntityBean {
         this.ordinal = ordinal;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null || !obj.getClass().equals(this.getClass())) {
-            return false;
-        }
-        StudyEventDefinitionBean sed = (StudyEventDefinitionBean) obj;
-        return sed.id == id;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        return id;
-    }
 }

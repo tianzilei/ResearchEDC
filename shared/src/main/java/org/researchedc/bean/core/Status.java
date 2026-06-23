@@ -38,10 +38,6 @@ public class Status extends EntityBean {
     private Status() {
     }
 
-    public static boolean contains(int id) {
-        return find(id) != INVALID;
-    }
-
     public static Status get(int id) {
         return find(id);
     }
@@ -77,14 +73,4 @@ public class Status extends EntityBean {
         }
         return INVALID;
     }
-
-    /* public static void main(String[] args) {
-         int[] nums = {0,1,2,3,4,5,6,7,8,9};
-         Status stat;
-
-         for(int tmp : nums){
-              stat = (Status) get(tmp);
-         }
-     }*/
-
 }
