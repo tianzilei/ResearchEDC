@@ -9,8 +9,6 @@ package org.researchedc.bean.submit;
 
 import org.researchedc.bean.core.AuditableEntityBean;
 
-import java.util.Date;
-
 /**
  * The object to carry CRF versions in the application.
  * 
@@ -23,12 +21,6 @@ public class CRFVersionBean extends AuditableEntityBean {
     private int crfId = 0;
     private int statusId = 1;
     private String revisionNotes = "";
-    private Date date_created;
-
-    // not in DB, tells whether the spreadsheet is downloadable
-    private boolean downloadable = false;
-    // not in DB, stores a URL for displaying the CRF in Enketo
-    private String enketoURL = "";
 
     private String oid;
 
@@ -36,7 +28,6 @@ public class CRFVersionBean extends AuditableEntityBean {
     private String xformName;
 
     public CRFVersionBean() {
-        date_created = new Date();
     }
 
     /**

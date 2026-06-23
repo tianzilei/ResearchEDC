@@ -6,6 +6,12 @@
 
 ---
 
+## 2026-06-24 - Trim no-caller shared DTO residue
+
+- Removed no-caller compatibility fields from retained shared DTO beans: `ItemDataBean` dropped obsolete `selected`/`auditLog` equality state, `ItemBean` dropped retired dataset/definition display residue, `CRFVersionBean` dropped unused `date_created`/download/Enketo residue, and `ItemGroupBean` dropped retired display collection plumbing.
+- Removed the unused `ResponseSetBean` option-index cache after scans confirmed retained callers only use ordered response options.
+- Kept adapter-facing DTO fields intact for event CRF, item data, item group, CRF version, and response-set compatibility paths.
+
 ## 2026-06-22 - Synchronize refactor handoff documentation
 
 - Updated root and module handoff docs to current file counts: `shared` 38 Java files, `app` 417 Java files with 391 under Modulith modules, `frontend/src` 106 TypeScript/TSX files, `questionnaire-service` 77 Python files, and 210 Liquibase migration XML files.

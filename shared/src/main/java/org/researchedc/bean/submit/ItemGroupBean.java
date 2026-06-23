@@ -1,8 +1,6 @@
 package org.researchedc.bean.submit;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-
 import org.researchedc.bean.core.AuditableEntityBean;
 
 /**
@@ -11,9 +9,6 @@ import org.researchedc.bean.core.AuditableEntityBean;
 public class ItemGroupBean extends AuditableEntityBean implements Serializable{
 
     private Integer crfId = 0;
-    private ArrayList itemGroupMetaBeans = new ArrayList();
-    // change 07-08-07, tbh
-    private ArrayList items = new ArrayList();
     private String oid;
     
     public ItemGroupBean() {
@@ -49,20 +44,4 @@ public class ItemGroupBean extends AuditableEntityBean implements Serializable{
         this.oid = oid;
     }
 
-    public ArrayList getItemGroupMetaBeans() {
-        return itemGroupMetaBeans;
-    }
-
-    public void setItemGroupMetaBeans(ArrayList itemGroupMetaBeans) {
-        this.itemGroupMetaBeans = itemGroupMetaBeans;
-    }
-
-	public ArrayList getItems() {
-		return items;
-	}
-
-	public void setItems(ArrayList items) {
-		this.items = items;
-	}
-    
 }

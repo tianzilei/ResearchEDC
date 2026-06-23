@@ -30,16 +30,11 @@ public class ItemBean extends AuditableEntityBean {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((crfName == null) ? 0 : crfName.hashCode());
-        result = prime * result + ((datasetItemMapKey == null) ? 0 : datasetItemMapKey.hashCode());
-        result = prime * result + defId;
-        result = prime * result + ((defName == null) ? 0 : defName.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + itemDataTypeId;
         result = prime * result + itemReferenceTypeId;
         result = prime * result + ((oid == null) ? 0 : oid.hashCode());
         result = prime * result + (phiStatus ? 1231 : 1237);
-        result = prime * result + (selected ? 1231 : 1237);
         result = prime * result + statusId;
         result = prime * result + ((units == null) ? 0 : units.hashCode());
         return result;
@@ -54,23 +49,6 @@ public class ItemBean extends AuditableEntityBean {
         if (getClass() != obj.getClass())
             return false;
         ItemBean other = (ItemBean) obj;
-        if (crfName == null) {
-            if (other.crfName != null)
-                return false;
-        } else if (!crfName.equals(other.crfName))
-            return false;
-        if (datasetItemMapKey == null) {
-            if (other.datasetItemMapKey != null)
-                return false;
-        } else if (!datasetItemMapKey.equals(other.datasetItemMapKey))
-            return false;
-        if (defId != other.defId)
-            return false;
-        if (defName == null) {
-            if (other.defName != null)
-                return false;
-        } else if (!defName.equals(other.defName))
-            return false;
         if (description == null) {
             if (other.description != null)
                 return false;
@@ -87,8 +65,6 @@ public class ItemBean extends AuditableEntityBean {
             return false;
         if (phiStatus != other.phiStatus)
             return false;
-        if (selected != other.selected)
-            return false;
         if (statusId != other.statusId)
             return false;
         if (units == null) {
@@ -102,18 +78,7 @@ public class ItemBean extends AuditableEntityBean {
 
     private int statusId = 1;
 
-    private boolean selected = false; // not in DB, used for creating dataset
-
-    private String defName = ""; // not in DB
-    private int defId; //not in DB
-    private String crfName = ""; // not in DB
-
     private String oid;
-
-    private String datasetItemMapKey = ""; // which is
-
-    // study_event_defintion_id+"_"+item_id;
-    // not in DB - YW 3-7-2008
 
     public ItemBean() {
     }
@@ -208,36 +173,6 @@ public class ItemBean extends AuditableEntityBean {
         this.units = units;
     }
 
-    /**
-     * @return Returns the defName.
-     */
-    public String getDefName() {
-        return defName;
-    }
-
-    /**
-     * @param defName
-     *            The defName to set.
-     */
-    public void setDefName(String defName) {
-        this.defName = defName;
-    }
-
-    /**
-     * @return Returns the crfName.
-     */
-    public String getCrfName() {
-        return crfName;
-    }
-
-    /**
-     * @param crfName
-     *            The crfName to set.
-     */
-    public void setCrfName(String crfName) {
-        this.crfName = crfName;
-    }
-
     public String getOid() {
         return oid;
     }
@@ -246,19 +181,4 @@ public class ItemBean extends AuditableEntityBean {
         this.oid = oid;
     }
 
-    public String getDatasetItemMapKey() {
-        return datasetItemMapKey;
-    }
-
-    public void setDatasetItemMapKey(String key) {
-        this.datasetItemMapKey = key;
-    }
-
-    public int getDefId() {
-        return defId;
-    }
-
-    public void setDefId(int defId) {
-        this.defId = defId;
-    }
 }

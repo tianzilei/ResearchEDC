@@ -157,6 +157,9 @@ These are closed and should not be reopened except to fix regressions:
 - Keep legacy DTO conversion at the narrowest possible edge.
 - Prefer repository/entity-to-module DTO conversion over legacy bean propagation.
 
+**Current Progress**
+- Retained submit DTOs were trimmed for no-caller compatibility residue: `ItemDataBean` no longer carries obsolete `selected`/`auditLog` equality state, `ItemBean` no longer carries retired dataset/definition display fields, `CRFVersionBean` no longer carries unused `date_created`/download/Enketo residue, `ItemGroupBean` no longer carries retired display collections, and `ResponseSetBean` no longer keeps an unused option-index cache.
+
 **Exit Gate**
 - No module/internal adapter exposes more legacy DTO types than strictly required by a retained compatibility contract.
 

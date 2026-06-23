@@ -23,12 +23,10 @@ public class ItemDataBean extends AuditableEntityBean {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + (auditLog ? 1231 : 1237);
         result = prime * result + eventCRFId;
         result = prime * result + itemId;
         result = prime * result + ordinal;
         result = prime * result + (deleted ? 1231 : 1237);
-        result = prime * result + (selected ? 1231 : 1237);
         result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
     }
@@ -42,8 +40,6 @@ public class ItemDataBean extends AuditableEntityBean {
         if (getClass() != obj.getClass())
             return false;
         ItemDataBean other = (ItemDataBean) obj;
-        if (auditLog != other.auditLog)
-            return false;
         if (eventCRFId != other.eventCRFId)
             return false;
         if (itemId != other.itemId)
@@ -51,8 +47,6 @@ public class ItemDataBean extends AuditableEntityBean {
         if (ordinal != other.ordinal)
             return false;
         if (deleted != other.deleted)
-            return false;
-        if (selected != other.selected)
             return false;
         if (value == null) {
             if (other.value != null)
@@ -70,18 +64,12 @@ public class ItemDataBean extends AuditableEntityBean {
     
     private boolean deleted;
 
-    private boolean selected;// for construct data only
-
-    private boolean auditLog = false;
-
     public ItemDataBean() {
         eventCRFId = 0;
         itemId = 0;
         value = "";
         ordinal = 1;
         deleted = false;
-        selected = false;
-        auditLog = false;
     }
 
     /**

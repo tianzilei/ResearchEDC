@@ -10,7 +10,6 @@ package org.researchedc.bean.submit;
 import org.researchedc.bean.core.EntityBean;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * @author ssachs
@@ -25,14 +24,12 @@ public class ItemFormMetadataBean extends EntityBean {
 
         private int responseTypeId;
         private ArrayList<Option> options;
-        private HashMap optionIndexesByValue;
         private String value;
 
         public ResponseSetBean() {
             super();
             setResponseTypeId(RESPONSE_TYPE_TEXT);
             options = new ArrayList();
-            optionIndexesByValue = new HashMap();
         }
 
         public String getLabel() {
@@ -87,7 +84,6 @@ public class ItemFormMetadataBean extends EntityBean {
                 }
 
                 options.add(new Option(text, value));
-                optionIndexesByValue.put(value, Integer.valueOf(options.size() - 1));
             }
         }
 
