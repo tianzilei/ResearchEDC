@@ -166,6 +166,7 @@ These are closed and should not be reopened except to fix regressions:
 - `AuditableEntityBean` no longer carries no-caller object owner/updater references or reflective `getId()` extraction; retained audit compatibility uses scalar owner/updater ids only.
 - Retained submit/event-definition DTOs no longer carry self-contained no-caller equality/hash snapshots, and `Status`/`EntityBean` no longer carry unused helper/comment residue.
 - `StudyBean` no longer carries no-caller deprecated status-id accessors, `Status` no longer keeps typed equality/list-conversion residue, and `ItemGroupBean` no longer redeclares redundant serialization.
+- `ItemDataDaoAdapter` no longer carries no-caller legacy DAO compatibility stubs for retired item-data view/date/permission/key/status helper paths.
 - `StudyEventDefinitionBean` no longer carries retired CRF list/count, lock/populated UI flags, or default-version matrix residue.
 - `Status` no longer carries no-caller JSP-era dropdown/list caches or the redundant status-id name map.
 

@@ -7,14 +7,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import org.researchedc.bean.core.EntityBean;
 import org.researchedc.bean.core.Status;
-import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.bean.submit.EventCRFBean;
 import org.researchedc.bean.submit.ItemDataBean;
-import org.researchedc.bean.submit.ItemGroupBean;
 import org.researchedc.module.dataimport.service.ImportItemDataPort;
 import org.researchedc.module.datacapture.entity.ItemDataEntity;
 import org.researchedc.module.datacapture.repository.ItemDataRepository;
@@ -26,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Primary
 @Transactional(readOnly = true)
 public class ItemDataDaoAdapter implements ImportItemDataPort {
-    private static final int ITEM_DATA_TYPE_ST = 5;
-
     private final ItemDataRepository repository;
 
     public ItemDataDaoAdapter(ItemDataRepository repository) {
@@ -103,32 +97,6 @@ public class ItemDataDaoAdapter implements ImportItemDataPort {
         return toBeans(repository.findByEventCrfIdAndItemId(eventCRFId, itemId));
     }
 
-    public ArrayList<ItemDataBean> findAllByEventCRFIdAndItemGroupId(int eventCRFId, int itemGroupId) {
-        return toBeans(repository.findByEventCrfId(eventCRFId));
-    }
-
-    public ArrayList<ItemDataBean> findAllBySectionIdAndEventCRFId(int sectionId, int eventCRFId) {
-        return toBeans(repository.findByEventCrfId(eventCRFId));
-    }
-
-    public ArrayList<ItemDataBean> findAllActiveBySectionIdAndEventCRFId(int sectionId, int eventCRFId) {
-        List<ItemDataEntity> all = repository.findByEventCrfId(eventCRFId);
-        ArrayList<ItemDataBean> result = new ArrayList<>();
-        for (ItemDataEntity entity : all) {
-            if (entity.getDeleted() == null || !entity.getDeleted()) {
-                if (entity.getStatusId() == null ||
-                        (entity.getStatusId() != Status.DELETED.getId() && entity.getStatusId() != Status.AUTO_DELETED.getId())) {
-                    result.add(toBean(entity));
-                }
-            }
-        }
-        return result;
-    }
-
-    public ArrayList<ItemDataBean> findAllBlankRequiredByEventCRFId(int eventCRFId, int crfVersionId) {
-        return new ArrayList<>();
-    }
-
     public ItemDataBean findByItemIdAndEventCRFId(int itemId, int eventCRFId) {
         List<ItemDataEntity> entities = repository.findByItemIdAndEventCrfId(itemId, eventCRFId);
         if (entities.isEmpty()) {
@@ -143,43 +111,6 @@ public class ItemDataDaoAdapter implements ImportItemDataPort {
             return new ItemDataBean();
         }
         return toBean(entities.get(0));
-    }
-
-    public ItemDataBean findByItemIdAndEventCRFIdAndOrdinalRaw(int itemId, int eventCRFId, int ordinal) {
-        List<ItemDataEntity> entities = repository.findByItemIdAndEventCrfIdAndOrdinal(itemId, eventCRFId, ordinal);
-        if (entities.isEmpty()) {
-            return new ItemDataBean();
-        }
-        return toBean(entities.get(0));
-    }
-
-    public ItemDataBean findByEventCRFIdAndItemName(EventCRFBean eventCrfBean, String itemName) {
-        return null;
-    }
-
-    public int findAllRequiredByEventCRFId(EventCRFBean ecb) {
-        return 0;
-    }
-
-    public int getMaxOrdinalForGroupByGroupOID(String itemGroupOid, int eventCrfId) {
-        return 0;
-    }
-
-    public int getMaxOrdinalForGroupByItemAndEventCrf(Integer itemId, EventCRFBean ec) {
-        return 0;
-    }
-
-    public boolean isItemExists(int itemId, int ordinalForRepeatingGroupField, int eventCrfId) {
-        List<ItemDataEntity> entities = repository.findByItemIdAndEventCrfIdAndOrdinal(itemId, eventCrfId, ordinalForRepeatingGroupField);
-        return !entities.isEmpty();
-    }
-
-    public int getGroupSize(int itemId, int eventcrfId) {
-        return 0;
-    }
-
-    public List<String> findValuesByItemOID(String itoid) {
-        return new ArrayList<>();
     }
 
     public Object getEntityFromHashMap(HashMap hm) {
@@ -220,121 +151,8 @@ public class ItemDataDaoAdapter implements ImportItemDataPort {
         return bean;
     }
 
-    public Object getKeyFromHashMap(HashMap hm) {
-        StringBuilder key = new StringBuilder();
-        if (hm.get("study_event_id") != null) {
-            key.append(hm.get("study_event_id"));
-        }
-        if (hm.get("ig_ocoid") != null) {
-            key.append(hm.get("ig_ocoid"));
-        }
-        if (hm.get("item_ocoid") != null) {
-            key.append(hm.get("item_ocoid"));
-        }
-        return key.toString();
-    }
-
-    public boolean isFormatDates() {
-        return false;
-    }
-
-    public void setFormatDates(boolean formatDates) {
-    }
-
-    public Collection findMinMaxDates() {
-        return new ArrayList<>();
-    }
-
-    public void setTypesExpected() {
-    }
-
-    public void setExtraTypesExpected() {
-    }
-
-    public HashMap findByStudySubjectAndOids(Integer studyId, String itemOid, String itemGroupOid, int studySubjectId) {
-        return new HashMap();
-    }
-
-    public void setExtraTypesExpectedForStudyLevelSql() {
-    }
-
-    @Transactional
-    public EntityBean updateValue(EntityBean eb) {
-        return eb;
-    }
-
-    @Transactional
-    public EntityBean updateValueForRemoved(EntityBean eb) {
-        return eb;
-    }
-
-    @Transactional
-    public EntityBean updateStatus(EntityBean eb) {
-        return eb;
-    }
-
-    public ItemDataBean setItemDataBeanIfDateOrPdate(ItemDataBean idb, String currentDfString, int dataTypeId) {
-        return idb;
-    }
-
-    @Transactional
-    public EntityBean updateValue(EntityBean eb, String currentDfString) {
-        return eb;
-    }
-
-    @Transactional
-    public EntityBean updateUser(EntityBean eb) {
-        return eb;
-    }
-
-    public int getDataType(int itemId) {
-        return ITEM_DATA_TYPE_ST;
-    }
-
-    public String formatPDate(String pDate) {
-        return pDate;
-    }
-
-    public String reFormatPDate(String pDate) {
-        return pDate;
-    }
-
-    public List<ItemDataBean> findByStudyEventAndOids(Integer studyEventId, String itemOid, String itemGroupOid) {
-        return new ArrayList<>();
-    }
-
-    public HashMap findCountByStudyEventAndOIDs(Integer studyId, String itemOid, String itemGroupOid) {
-        return new HashMap();
-    }
-
-    public Collection findAll(String strOrderByColumn, boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
-    }
-
-    public Collection findAllByPermission(Object objCurrentUser, int intActionType, String strOrderByColumn,
-                                          boolean blnAscendingSort, String strSearchPhrase) {
-        return new ArrayList();
-    }
-
-    public Collection findAllByPermission(Object objCurrentUser, int intActionType) {
-        return new ArrayList();
-    }
-
     public void delete(int itemDataId) {
         repository.deleteById(itemDataId);
-    }
-
-    public void deleteDnMap(int itemDataId) {
-    }
-
-    public ArrayList<ItemDataBean> findByCRFVersion(CRFVersionBean crfVersionBean) {
-        return new ArrayList<>();
-    }
-
-    public void updateStatusByEventCRF(EventCRFBean eventCRF, Status s) {
-    }
-
-    public void undelete(int itemDataId, int updaterId) {
     }
 
     private void apply(ItemDataBean bean, ItemDataEntity entity) {
