@@ -6,6 +6,11 @@
 
 ---
 
+## 2026-06-24 - Remove retired Status dropdown caches
+
+- Removed no-caller JSP-era dropdown/list arrays and the redundant status-id map from `Status`.
+- Kept public status constants plus `get`, `getFromMap`, and localized `getName` behavior intact.
+
 ## 2026-06-24 - Trim event definition DTO display residue
 
 - Removed no-caller CRF list, CRF count, lock/populated UI flags, and default-version matrix residue from `StudyEventDefinitionBean`.

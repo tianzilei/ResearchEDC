@@ -8,9 +8,7 @@
 package org.researchedc.bean.core;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class Status extends EntityBean {
@@ -32,35 +30,6 @@ public class Status extends EntityBean {
         { INVALID, AVAILABLE, PENDING, PRIVATE, UNAVAILABLE, LOCKED, DELETED, AUTO_DELETED, SIGNED, FROZEN, SOURCE_DATA_VERIFICATION,RESET };
     private static List<Status> list = Arrays.asList(members);
 
-    private static final Status[] activeMembers = { AVAILABLE, SIGNED, DELETED, AUTO_DELETED };
-    private static List<Status> activeList = Arrays.asList(activeMembers);
-
-    private static final Status[] studySubjectDropDownMembers = { AVAILABLE, SIGNED, DELETED, AUTO_DELETED };
-    private static List<Status> studySubjectDropDownList = Arrays.asList(studySubjectDropDownMembers);
-
-    private static final Status[] subjectDropDownMembers = { AVAILABLE, DELETED };
-    private static List<Status> subjectDropDownList = Arrays.asList(subjectDropDownMembers);
-
-    private static final Status[] studyUpdateMembers = { PENDING, AVAILABLE, FROZEN, LOCKED };
-    private static List<Status> studyUpdateMembersList = Arrays.asList(studyUpdateMembers);
-
-    //Solve the problem with the get() method...
-    private static final Map<Integer, String> membersMap = new HashMap<Integer, String>();
-    static {
-        membersMap.put(0, "invalid");
-        membersMap.put(1, "available");
-        membersMap.put(2, "unavailable");
-        membersMap.put(3, "private");
-        membersMap.put(4, "pending");
-        membersMap.put(5, "removed");
-        membersMap.put(6, "locked");
-        membersMap.put(7, "auto-removed");
-        membersMap.put(8, "signed");
-        membersMap.put(9, "frozen");
-        membersMap.put(10, "source_data_verification");
-        membersMap.put(11, "reset");
-    }
-
     private Status(int id, String name) {
         setId(id);
         setName(name);
@@ -78,7 +47,7 @@ public class Status extends EntityBean {
     }
 
     public static Status getFromMap(int id) {
-        if (id < 0 || id > membersMap.size() - 1) {
+        if (id < 0 || id >= members.length) {
             return Status.INVALID;
         }
         return get(id);
