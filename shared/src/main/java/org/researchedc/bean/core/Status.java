@@ -7,8 +7,6 @@
  */
 package org.researchedc.bean.core;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class Status extends EntityBean {
@@ -28,14 +26,10 @@ public class Status extends EntityBean {
 
     private static final Status[] members =
         { INVALID, AVAILABLE, PENDING, PRIVATE, UNAVAILABLE, LOCKED, DELETED, AUTO_DELETED, SIGNED, FROZEN, SOURCE_DATA_VERIFICATION,RESET };
-    private static List<Status> list = Arrays.asList(members);
 
     private Status(int id, String name) {
         setId(id);
         setName(name);
-    }
-
-    private Status() {
     }
 
     public static Status get(int id) {
@@ -47,10 +41,6 @@ public class Status extends EntityBean {
             return Status.INVALID;
         }
         return get(id);
-    }
-
-    public boolean equals(Status status) {
-        return status != null && id == status.id;
     }
 
     @Override
@@ -66,7 +56,7 @@ public class Status extends EntityBean {
     }
 
     private static Status find(int id) {
-        for (Status status : list) {
+        for (Status status : members) {
             if (status.getId() == id) {
                 return status;
             }

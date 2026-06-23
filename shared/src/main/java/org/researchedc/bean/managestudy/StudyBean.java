@@ -8,7 +8,6 @@
 package org.researchedc.bean.managestudy;
 
 import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.core.Status;
 
 import java.util.Date;
 import java.util.MissingResourceException;
@@ -669,26 +668,6 @@ public class StudyBean extends AuditableEntityBean {
      */
     public void setSponsor(String sponsor) {
         this.sponsor = sponsor;
-    }
-
-    /**
-     * @deprecated
-     * @return Returns the statusId.
-     */
-    @Deprecated
-    public int getStatusId() {
-        return status.getId();
-    }
-
-    /**
-     * @deprecated
-     * @param statusId
-     *            The statusId to set.
-     */
-    @Deprecated
-    public void setStatusId(int statusId) {
-        Status s = Status.get(statusId);
-        setStatus(s);
     }
 
     /**

@@ -1,12 +1,11 @@
 package org.researchedc.bean.submit;
 
-import java.io.Serializable;
 import org.researchedc.bean.core.AuditableEntityBean;
 
 /**
  * Created by IntelliJ IDEA. User: bruceperry Date: May 7, 2007
  */
-public class ItemGroupBean extends AuditableEntityBean implements Serializable{
+public class ItemGroupBean extends AuditableEntityBean {
 
     private Integer crfId = 0;
     private String oid;
@@ -17,10 +16,6 @@ public class ItemGroupBean extends AuditableEntityBean implements Serializable{
         name = "";
     }
 
-    
-    
-    
-    
     /**
      * @return the crfId
      */
