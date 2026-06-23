@@ -192,19 +192,12 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
     }
 
     public ArrayList<ItemFormMetadataBean> findAllByItemId(int itemId) {
-        // Legacy item-form-metadata SQL lineage: findAllByItemId — 6-table join
-        String sql = "SELECT DISTINCT m.*, rs.response_type_id, rs.label, rs.options_text, "
-            + "rs.options_values, cv.name AS cvname, "
-            + "ig.name AS group_label, igm.repeat_max, sec.title AS section_name "
-            + "FROM item_form_metadata m, response_set rs, crf_version cv, "
-            + "item_group_metadata igm, item_group ig, section sec "
+        // Legacy item-form-metadata SQL lineage: findAllByItemId
+        String sql = "SELECT DISTINCT m.*, rs.response_type_id, rs.label, rs.options_text, rs.options_values "
+            + "FROM item_form_metadata m, response_set rs "
             + "WHERE m.item_id = ? "
-            + "AND m.response_set_id = rs.response_set_id "
-            + "AND cv.crf_version_id = m.crf_version_id "
-            + "AND igm.item_id = m.item_id "
-            + "AND ig.item_group_id = igm.item_group_id "
-            + "AND sec.section_id = m.section_id";
-        return findAllByItemIdSql(sql, itemId);
+            + "AND m.response_set_id = rs.response_set_id";
+        return findAllBySql(sql, itemId);
     }
 
     public List<ImportItemFormMetadata> findImportItemFormMetadataByItemId(int itemId) {
@@ -229,19 +222,12 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
 
     public ArrayList<ItemFormMetadataBean> findAllByItemIdAndHasValidations(int itemId) {
         // Legacy item-form-metadata SQL lineage: findAllByItemIdAndHasValidations
-        String sql = "SELECT DISTINCT m.*, rs.response_type_id, rs.label, rs.options_text, "
-            + "rs.options_values, cv.name AS cvname, "
-            + "ig.name AS group_label, igm.repeat_max, sec.title AS section_name "
-            + "FROM item_form_metadata m, response_set rs, crf_version cv, "
-            + "item_group_metadata igm, item_group ig, section sec "
+        String sql = "SELECT DISTINCT m.*, rs.response_type_id, rs.label, rs.options_text, rs.options_values "
+            + "FROM item_form_metadata m, response_set rs "
             + "WHERE m.item_id = ? "
             + "AND m.response_set_id = rs.response_set_id "
-            + "AND cv.crf_version_id = m.crf_version_id "
-            + "AND igm.item_id = m.item_id "
-            + "AND ig.item_group_id = igm.item_group_id "
-            + "AND sec.section_id = m.section_id "
             + "AND m.regexp != ''";
-        return findAllByItemIdSql(sql, itemId);
+        return findAllBySql(sql, itemId);
     }
 
     public ArrayList<ItemFormMetadataBean> findSCDItemsBySectionId(Integer sectionId) {
@@ -364,25 +350,6 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
             HashMap hm = new HashMap();
             hm.putAll(row);
             beans.add(ifmBeanFromRow(hm));
-        }
-        return beans;
-    }
-
-    /**
-     * Execute the 6-table findAllByItemId SQL variant and convert rows.
-     */
-    private ArrayList<ItemFormMetadataBean> findAllByItemIdSql(String sql, int itemId) {
-        List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, itemId);
-        ArrayList<ItemFormMetadataBean> beans = new ArrayList<>();
-        for (Map<String, Object> row : rows) {
-            HashMap hm = new HashMap();
-            hm.putAll(row);
-            ItemFormMetadataBean bean = ifmBeanFromRow(hm);
-            if (row.get("cvname") != null) bean.setCrfVersionName((String) row.get("cvname"));
-            if (row.get("group_label") != null) bean.setGroupLabel((String) row.get("group_label"));
-            if (row.get("section_name") != null) bean.setSectionName((String) row.get("section_name"));
-            if (row.get("repeat_max") != null) bean.setRepeatMax(((Number) row.get("repeat_max")).intValue());
-            beans.add(bean);
         }
         return beans;
     }
