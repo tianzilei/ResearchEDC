@@ -16,6 +16,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 ✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
+✅ **ODM 导出测试:** 21/21 ✅ (schema validation, namespace, structure, contract behavior)
 
 ## STRUCTURE
 

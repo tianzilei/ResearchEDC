@@ -2,7 +2,7 @@
 
 **Created:** 2026-06-24
 **Updated:** 2026-06-24
-**Status:** ✅ Phases 0-2 Complete (2026-06-24); Phase 3 active
+**Status:** ✅ Phases 0-3B Complete (2026-06-24); Phase 3C-3D active
 **Purpose:** record the stabilization work that followed the first post-refactor hardening wave, then define the next execution plan from the verified repository state.
 **Supersedes:** `docs/refactor/post-refactor-product-hardening-plan.md`
 
@@ -36,7 +36,31 @@
 - Removed reliance on runtime self-attach for inline mocking on newer JDKs
 - **Result:** export-targeted tests now pass on Java 26 instead of failing during mock creation
 
-### Phase 3: Export Regression And Documentation Follow-up (active)
+### Phase 3A: Confirm Recovered Test Baseline ✅
+
+- Verified `ModulithVerificationTest` passes (1/0/0)
+- Verified export-targeted gate passes: `ExportServiceTest` 15/0/0, `OdmExportExecutionServiceTest` 5/0/0, `OdmExportGeneratorTest` 6/0/0, `ExportControllerTest` 5/0/0
+- Verified `ImportServiceTest` passes (35/0/0)
+- **Result:** 67/0/0 baseline confirmed
+
+### Phase 3B: ODM Schema Validation Tests ✅
+
+- Expanded `OdmExportGeneratorTest` from 6 to 21 tests
+- Added root attribute tests (FileType, FileOID, ODMVersion, CreationDateTime)
+- Added schemaLocation format tests for both OC2_0_COMPAT and OC2_1
+- Added namespace declaration tests (xmlns:oc, xmlns:xsi)
+- Added study element structure tests (OID, StudyName, StudyDescription, ProtocolName)
+- Added protocol name fallback test (defaults to StudyName when null)
+- Added MetaDataVersion OID/Name tests
+- Added ClinicalData hierarchy tests (StudyOID, MetaDataVersionOID)
+- Added multiple subjects test
+- Added empty item value test
+- Added EventRepeatKey presence/absence tests
+- Added OC2_0_COMPAT StudyDetails tests (FacilityName, FacilityContactEmail)
+- Added empty facility element tests
+- **Result:** 21/0/0 pass; full gate 82/0/0
+
+### Phase 3C: Export Artifact / Download Regressions (active)
 
 ## Current Verified State
 
