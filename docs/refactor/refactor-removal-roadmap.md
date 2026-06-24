@@ -243,9 +243,9 @@ These are closed and should not be reopened except to fix regressions:
 - ODM contract versioning: OC2-0 frozen as compatibility-only (deprecated `FacilityContactEmail` retained), OC2-1 email-free schema family introduced. `OdmContractVersion` enum and `OdmSchemaResourceResolver` added to export module. Guardrail tests verify both schema families. ExportJob entity now carries `odm_contract_version` column defaulting to `OC2_1`.
 
 **Potential Additional Follow-Ups**
-- import/export compatibility contract tightening
-- OpenRosa compatibility boundary review
-- residual legacy REST gateway reduction
+- ~~import/export compatibility contract tightening~~ ✅ — import/export modules have 0 shared Java dependencies
+- ~~OpenRosa compatibility boundary review~~ ✅ — clean active product module, 0 shared/legacy references
+- ~~residual legacy REST gateway reduction~~ ✅ — gateway actively used by SPA frontend (20+ frontend API calls), cannot remove
 
 **Exit Gate**
 - Deferred compatibility fields and contracts are either removed, versioned, or explicitly retained.
