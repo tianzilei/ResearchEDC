@@ -113,7 +113,7 @@ These are closed and should not be reopened except to fix regressions:
 - `ImportCrfDataAdapter` now uses app-owned response-set validation support and local compatibility status ids, so the adapter no longer imports `shared.bean.*` directly for edit-check or stage validation behavior.
 
 **Exit Gate**
-- `ImportCrfDataAdapter` no longer imports `shared.bean.*` packages except where an explicitly retained external compatibility contract still requires it.
+- ✅ `ImportCrfDataAdapter` no longer imports `shared.bean.*` packages.
 
 ### Workstream 3: Form Validation Compatibility Isolation
 
@@ -134,7 +134,7 @@ These are closed and should not be reopened except to fix regressions:
 - `Validator` now uses app-owned response-set and status validation support, removing its last direct `shared.bean.*` imports from form validation.
 
 **Exit Gate**
-- `app/control/form/*` no longer depends directly on `shared/core/*` or `shared/i18n/*`.
+- ✅ `app/control/form/*` no longer depends on `shared/core/*` or `shared/i18n/*`.
 
 ### Workstream 4: Adapter DTO Contraction
 
