@@ -127,6 +127,11 @@
   "export.empty": "No export jobs. Create one to start.",
   "export.selectStudy": "Please select a study",
   "export.created": "Export job created",
+  "export.column.contract": "Contract",
+  "export.modal.contractVersion": "ODM Contract Version",
+  "export.modal.contractHint": "OC2-1 is the current standard. OC2-0 includes legacy FacilityContactEmail for backward compatibility.",
+  "export.tooltip.download": "Download export file",
+  "export.error.downloadFailed": "Download failed. Please try again.",
 
   "dataset.title": "Datasets",
   "dataset.new": "New Dataset",

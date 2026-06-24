@@ -241,6 +241,7 @@ python -m pytest app/tests/ -v
 - **Phase 3 ledger status (2026-06-19):** `docs/refactor/phase-3-dao-replacement-ledger.{md,csv}` tracks 878 SPI methods: 0 `module-backed`, 0 `fallback-sql`, 0 `legacy-only`, 0 `adapter-gap`, 0 `unused`, and 878 `removed`.
 - **Remaining work:** no active legacy workflow inventory artifacts remain. All 6 refactor workstreams are COMPLETE. The `shared/` module is resource-only (0 Java files), all `shared/bean` DTOs are retired, and no `app/` code imports `shared.*` Java packages. ODM contract versioning (OC2-0 frozen / OC2-1 email-free) is implemented with `OdmContractVersion` enum, `OdmSchemaResourceResolver`, and guardrail tests. The legacy REST gateway (`/api/v1/legacy/*`) is retained as the active SPA API bridge.
 - **Gauntlet commands:**
+  - `bash scripts/ci/daily-gauntlet.sh` (consolidated daily gate: git status, frontend lint, frontend typecheck, modulith verification, import tests, export backend tests)
   - `git status --short`
   - `mvn -pl app -am compile -DskipTests && mvn test -pl app -am -Dtest=ModulithVerificationTest,OdmExportGeneratorTest,ExportArtifactWriterTest -Dsurefire.failIfNoSpecifiedTests=false`
   - `mvn test -pl app -am 2>&1 | grep "Tests run:"`

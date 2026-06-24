@@ -2,9 +2,13 @@
 
 **Created:** 2026-06-24
 **Updated:** 2026-06-24
-**Status:** ✅ Phases 0-3D Complete (2026-06-24)
-**Purpose:** record the stabilization work that followed the first post-refactor hardening wave, then define the next execution plan from the verified repository state.
+**Status:** ✅ Completed / historical (2026-06-24)
+**Purpose:** historical record of the stabilization work that followed the first post-refactor hardening wave.
 **Supersedes:** `docs/refactor/post-refactor-product-hardening-plan.md`
+
+> Status note:
+> This plan is complete and now historical.
+> The active follow-up plan is [`phase-4-export-productization-plan.md`](./phase-4-export-productization-plan.md).
 
 ## Completion Summary (2026-06-24)
 
@@ -101,13 +105,10 @@ Expected/verified outcomes after Phase 2:
 - export-targeted backend tests pass under Java 26
 - the previous `Mockito cannot mock this class` / `Byte Buddy ... Java 26 (70) is not supported` errors are gone
 
-## Why This Plan Still Exists
+## Historical Scope
 
-The first hardening wave is complete, and the most urgent stabilization blockers are now resolved. What remains is narrower and more product-focused:
-
-1. widen the recovered backend test baseline beyond the export slice,
-2. add schema-backed regression coverage around ODM export,
-3. refresh the docs so they describe the verified baseline rather than the earlier failure state.
+This document records the completed stabilization phase.
+Forward-looking planning has moved to `phase-4-export-productization-plan.md`.
 
 ## Working Diagnosis
 

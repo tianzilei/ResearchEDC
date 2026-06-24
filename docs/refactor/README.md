@@ -16,7 +16,8 @@ Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed
 | `phase-1-email-field-removal-plan.md` | Active follow-up slice for compatibility email/contact field cleanup | Active follow-up |
 | `phase-1-email-contract-versioning-plan.md` | Detailed E3 execution plan for versioned ODM contract cleanup | ✅ Complete |
 | `post-refactor-product-hardening-plan.md` | Historical plan for the first post-refactor hardening phase | ✅ Complete / historical |
-| `post-hardening-stabilization-plan.md` | Stabilization plan: Phases 0-3C complete, Phase 3D active | ✅ Phases 0-3C Complete |
+| `post-hardening-stabilization-plan.md` | Historical record for the completed stabilization phase | ✅ Complete / historical |
+| `phase-4-export-productization-plan.md` | Active next-step plan for export productization, broader verification, and Java 26 tooling follow-up | Active |
 
 ## Historical Phase Documents
 

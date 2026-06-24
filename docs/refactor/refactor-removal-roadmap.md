@@ -299,4 +299,39 @@ mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifie
 cd frontend && pnpm typecheck
 ```
 
+Or use the consolidated daily gauntlet:
+
+```bash
+bash scripts/ci/daily-gauntlet.sh
+```
+
 Add targeted backend/frontend tests whenever a compatibility boundary is narrowed.
+
+## Phase 4: Export Productization
+
+**Plan:** `docs/refactor/phase-4-export-productization-plan.md`
+**Status:** Active — Phase 4A ✅, 4B ✅, 4C documented, 4D in progress
+
+### Completed
+
+- **4A ✅ Export UX Productization:**
+  - ODM contract version (OC2_1 / OC2_0_COMPAT) surfaced in frontend ExportCenter
+  - Contract version selector in create modal (ODM XML only)
+  - Ant Design `Tag` status display with color coding and error tooltips
+  - Download button wired to backend endpoint with blob download
+  - `requestedBy` uses authenticated user instead of hardcoded 0
+  - en/zh locale keys added
+  - 25/25 frontend tests pass, 0 typecheck errors, 0 lint errors
+
+- **4B ✅ Verification Gate Consolidation:**
+  - `scripts/ci/daily-gauntlet.sh` created with 6 checks: git status, frontend lint, frontend typecheck, modulith verification, import tests, export backend tests
+  - Follows existing `scripts/ci/` conventions
+
+- **4C ⚠️ Java 26 Toolchain Hardening:**
+  - ArchUnit 1.1.1 (via Modulith 1.1.4) emits `Unsupported class file major version 70` warnings for JDK classes — non-fatal, test passes
+  - Upgrade to Modulith 1.4.1/ArchUnit 1.4.1 requires Spring Boot 3.2.5 → 3.5.x — tracked as deferred follow-up
+  - Explicit Mockito/Surefire toolchain ownership preserved
+
+### Known Limitations
+
+- ArchUnit JDK import warnings (non-fatal) — requires Spring Boot major version bump to resolve

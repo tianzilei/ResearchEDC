@@ -127,6 +127,11 @@
   "export.empty": "暂无导出任务，请创建一个。",
   "export.selectStudy": "请先选择一个研究项目",
   "export.created": "导出任务已创建",
+  "export.column.contract": "契约版本",
+  "export.modal.contractVersion": "ODM 契约版本",
+  "export.modal.contractHint": "OC2-1 为当前标准版本。OC2-0 为向后兼容版本，包含已弃用的 FacilityContactEmail。",
+  "export.tooltip.download": "下载导出文件",
+  "export.error.downloadFailed": "下载失败，请重试。",
 
   "dataset.title": "数据集",
   "dataset.new": "新建数据集",
