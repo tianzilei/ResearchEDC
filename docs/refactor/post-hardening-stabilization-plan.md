@@ -2,7 +2,7 @@
 
 **Created:** 2026-06-24
 **Updated:** 2026-06-24
-**Status:** ✅ Phases 0-3C Complete (2026-06-24); Phase 3D active
+**Status:** ✅ Phases 0-3D Complete (2026-06-24)
 **Purpose:** record the stabilization work that followed the first post-refactor hardening wave, then define the next execution plan from the verified repository state.
 **Supersedes:** `docs/refactor/post-refactor-product-hardening-plan.md`
 
@@ -67,7 +67,13 @@
 - Added service tests: null file path rejection, error message storage, null message handling, completed date setting
 - **Result:** 32/0/0 export tests pass; full gate 94/0/0
 
-### Phase 3D: Documentation Refresh (active)
+### Phase 3D: Documentation Refresh ✅
+
+- Updated AGENTS.md: test counts (21/21), gauntlet commands, export gate
+- Updated README.md: plan status reflects Phases 0-3C complete
+- Updated stabilization plan: verification standard includes ExportArtifactWriterTest
+- Updated roadmap: expanded test counts and artifact regression tests noted
+- **Result:** all docs describe verified post-fix baseline
 
 ## Current Verified State
 
@@ -248,7 +254,7 @@ git status --short
 pnpm -C frontend lint
 mvn -pl app -am compile -DskipTests
 mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false
-mvn -pl app -am test -Dtest=ExportServiceTest,OdmExportExecutionServiceTest,OdmExportGeneratorTest,ExportControllerTest -Dsurefire.failIfNoSpecifiedTests=false
+mvn -pl app -am test -Dtest=ExportServiceTest,OdmExportExecutionServiceTest,OdmExportGeneratorTest,ExportControllerTest,ExportArtifactWriterTest -Dsurefire.failIfNoSpecifiedTests=false
 ```
 
 ## Recommended Delivery Order
