@@ -274,7 +274,7 @@ export default function EventList() {
           locale={{ emptyText: "No scheduled events for this subject" }}
           expandable={{
             expandedRowRender: (record: StudyEventDTO) => (
-              <EventCrfRow eventId={record.id} subjectId={subjectId!} />
+              <EventCrfRow eventId={record.id} subjectId={subjectId ?? ""} />
             ),
             rowExpandable: () => true,
           }}

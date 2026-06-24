@@ -58,7 +58,7 @@ export default function SubjectList() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          studyId: currentStudy!.id,
+          studyId: currentStudy?.id,
           subjectId: newSubject.subjectId,
           label: vals.label ?? newSubject.uniqueIdentifier,
           enrollmentDate: vals.enrollmentDate?.toISOString?.() ?? null,
@@ -70,7 +70,7 @@ export default function SubjectList() {
       message.success("受试者已创建并入组");
       setCreateOpen(false);
       form.resetFields();
-      const r = await fetch(`/api/v1/subjects/by-study?studyId=${currentStudy!.id}`);
+      const r = await fetch(`/api/v1/subjects/by-study?studyId=${currentStudy?.id}`);
       if (r.ok) setSubjects(await r.json());
     } catch { /* form validation error */ }
   };

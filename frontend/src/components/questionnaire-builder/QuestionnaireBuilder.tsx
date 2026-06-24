@@ -244,9 +244,11 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
     const newIdx = idx + direction;
     if (newIdx < 0 || newIdx >= page.elements.length) return;
     const elements = [...page.elements];
-    const temp = elements[idx]!;
-    elements[idx] = elements[newIdx]!;
-    elements[newIdx] = temp;
+    const a = elements[idx];
+    const b = elements[newIdx];
+    if (a == null || b == null) return;
+    elements[idx] = b;
+    elements[newIdx] = a;
     const pages = [...survey.pages];
     const updatedPage: PageDef = { ...page, elements };
     pages[selectedPageIdx] = updatedPage;
@@ -385,7 +387,9 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
       </Sider>
 
       <Content style={{ padding: 16, overflow: "auto", maxHeight: 600 }}>
-        {selectedQ ? (
+        {selectedQ && selectedQIdx != null ? (() => {
+          const qIdx = selectedQIdx;
+          return (
           <Space direction="vertical" style={{ width: "100%" }}>
             <Text strong>Question: {selectedQ.name}</Text>
 
@@ -393,7 +397,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
               <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>{t("builder.questionType")}</Text>
               <Select
                 value={selectedQ.type}
-                onChange={(v) => updateQuestion(selectedQIdx!, { type: v, choices: v !== selectedQ.type ? defaultChoices(v) : selectedQ.choices })}
+                onChange={(v) => updateQuestion(qIdx, { type: v, choices: v !== selectedQ.type ? defaultChoices(v) : selectedQ.choices })}
                 style={{ width: "100%" }}
                 options={QUESTION_TYPES.map((qt) => ({ ...qt, label: t(qt.label) }))}
               />
@@ -401,12 +405,12 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
 
             <div>
               <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>{t("builder.title")}</Text>
-              <Input value={selectedQ.title} onChange={(e) => updateQuestion(selectedQIdx!, { title: e.target.value })} />
+              <Input value={selectedQ.title} onChange={(e) => updateQuestion(qIdx, { title: e.target.value })} />
             </div>
 
             <div>
               <Space>
-                <Switch checked={selectedQ.isRequired} onChange={(v) => updateQuestion(selectedQIdx!, { isRequired: v })} />
+                <Switch checked={selectedQ.isRequired} onChange={(v) => updateQuestion(qIdx, { isRequired: v })} />
                 <Text style={{ fontSize: 12 }}>{t("builder.required")}</Text>
               </Space>
             </div>
@@ -420,7 +424,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                       size="small"
                       value={choice.value}
                       onChange={(e) => {
-                        updateQuestion(selectedQIdx!, {
+                        updateQuestion(qIdx, {
                           choices: selectedQ.choices.map((ch, i) =>
                             i === ci ? { ...ch, value: e.target.value } : ch,
                           ),
@@ -433,7 +437,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                       size="small"
                       value={choice.text}
                       onChange={(e) => {
-                        updateQuestion(selectedQIdx!, {
+                        updateQuestion(qIdx, {
                           choices: selectedQ.choices.map((ch, i) =>
                             i === ci ? { ...ch, text: e.target.value } : ch,
                           ),
@@ -447,7 +451,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                       danger
                       onClick={() => {
                         const c = selectedQ.choices.filter((_, i) => i !== ci);
-                        updateQuestion(selectedQIdx!, { choices: c });
+                        updateQuestion(qIdx, { choices: c });
                       }}
                     >
                       {t("common.delete")}
@@ -459,7 +463,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
                   type="dashed"
                   onClick={() => {
                     const c = [...selectedQ.choices, { value: String(selectedQ.choices.length + 1), text: `${t("builder.option")} ${selectedQ.choices.length + 1}` }];
-                    updateQuestion(selectedQIdx!, { choices: c });
+                    updateQuestion(qIdx, { choices: c });
                   }}
                 >
                   {t("builder.addChoice")}
@@ -479,12 +483,13 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
               <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>{t("builder.visibleWhen")}</Text>
               <Input
                 value={selectedQ.visibleIf}
-                onChange={(e) => updateQuestion(selectedQIdx!, { visibleIf: e.target.value })}
+                onChange={(e) => updateQuestion(qIdx, { visibleIf: e.target.value })}
                 placeholder={t("builder.visibleWhenPlaceholder")}
               />
             </div>
           </Space>
-        ) : currentPage ? (
+          );
+        })() : currentPage ? (
           <Space direction="vertical" style={{ width: "100%" }}>
             <Text style={{ fontSize: 12, display: "block", marginBottom: 4 }}>{t("builder.surveyTitle")}</Text>
             <Input value={survey.title} onChange={(e) => updateTitle(e.target.value)} />

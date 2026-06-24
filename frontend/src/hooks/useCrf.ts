@@ -88,7 +88,7 @@ export function useAllSectionItems(crfVersion: CrfVersion | null | undefined, en
       queryKey: ["crf-section-items", crfVersion?.crfVersionId, section.sectionId],
       queryFn: () =>
         apiClient.get<ItemDTO[]>(
-          `/api/v1/crfs/versions/${crfVersion!.crfVersionId}/sections/${section.sectionId}/items`,
+          `/api/v1/crfs/versions/${crfVersion?.crfVersionId}/sections/${section.sectionId}/items`,
         ),
       enabled: enabled && !!crfVersion && !!(section.sectionId),
     })),

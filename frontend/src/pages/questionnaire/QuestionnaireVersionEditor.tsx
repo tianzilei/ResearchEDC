@@ -59,7 +59,7 @@ export default function QuestionnaireVersionEditor() {
   const { templateId } = useParams<{ templateId: string }>();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { data: versions, isLoading } = useVersions(templateId!);
+  const { data: versions, isLoading } = useVersions(templateId ?? "");
   const [previewVersion, setPreviewVersion] = useState<Version | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
