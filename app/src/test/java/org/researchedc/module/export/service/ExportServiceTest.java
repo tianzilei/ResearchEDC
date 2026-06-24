@@ -278,4 +278,55 @@ class ExportServiceTest {
 
         assertThrows(IllegalStateException.class, () -> service.getDownload(1L));
     }
+
+    @Test
+    void getDownload_nullFilePath_throwsException() {
+        ExportJob job = new ExportJob();
+        job.setId(1L);
+        job.setStatus(ExportJobStatus.COMPLETED);
+        job.setFilePath(null);
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+
+        assertThrows(IllegalStateException.class, () -> service.getDownload(1L));
+    }
+
+    @Test
+    void markFailed_storesMessageAsProvided() {
+        ExportJob job = new ExportJob();
+        job.setId(1L);
+        job.setStatus(ExportJobStatus.RUNNING);
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+
+        service.markFailed(1L, "Disk full");
+
+        verify(jobRepository).save(argThat(j -> "Disk full".equals(j.getErrorMessage())));
+    }
+
+    @Test
+    void markFailed_nullMessage_storesNull() {
+        ExportJob job = new ExportJob();
+        job.setId(1L);
+        job.setStatus(ExportJobStatus.RUNNING);
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+
+        service.markFailed(1L, null);
+
+        verify(jobRepository).save(argThat(j -> j.getErrorMessage() == null));
+    }
+
+    @Test
+    void markFailed_setsCompletedDate() {
+        ExportJob job = new ExportJob();
+        job.setId(1L);
+        job.setStatus(ExportJobStatus.RUNNING);
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+
+        service.markFailed(1L, "Error");
+
+        verify(jobRepository).save(argThat(j -> j.getCompletedDate() != null));
+    }
 }

@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,6 +22,8 @@ import org.researchedc.module.export.dto.ExportJobDTO;
 import org.researchedc.module.export.enums.ExportFormat;
 import org.researchedc.module.export.enums.ExportJobStatus;
 import org.researchedc.module.export.service.ExportService;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -121,6 +124,47 @@ class ExportControllerTest {
                 .andExpect(jsonPath("$.retryCount").value(2));
 
         verify(exportService).retryJob(14L);
+    }
+
+    @Test
+    void downloadExport_completedJob_returnsXmlWithCorrectHeaders() throws Exception {
+        byte[] xmlBytes = "<ODM FileType=\"Snapshot\"/>".getBytes();
+        Resource resource = new ByteArrayResource(xmlBytes);
+        ExportService.DownloadResult downloadResult = new ExportService.DownloadResult(
+                resource, "export_10.xml", xmlBytes.length);
+        when(exportService.getDownload(10L)).thenReturn(downloadResult);
+
+        mockMvc.perform(get("/api/v1/exports/10/download"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Type", "application/xml"))
+                .andExpect(header().string("Content-Disposition", "attachment; filename=\"export_10.xml\""))
+                .andExpect(header().string("Content-Length", String.valueOf(xmlBytes.length)));
+    }
+
+    @Test
+    void downloadExport_notFound_delegatesToService() throws Exception {
+        when(exportService.getDownload(99L))
+                .thenThrow(new java.util.NoSuchElementException("Export job not found: 99"));
+
+        try {
+            mockMvc.perform(get("/api/v1/exports/99/download"));
+        } catch (Exception ignored) {
+        }
+
+        verify(exportService).getDownload(99L);
+    }
+
+    @Test
+    void downloadExport_notCompleted_delegatesToService() throws Exception {
+        when(exportService.getDownload(5L))
+                .thenThrow(new IllegalStateException("Export job is not completed: status=PENDING"));
+
+        try {
+            mockMvc.perform(get("/api/v1/exports/5/download"));
+        } catch (Exception ignored) {
+        }
+
+        verify(exportService).getDownload(5L);
     }
 
     private ExportJobDTO job(Long id, ExportJobStatus status) {

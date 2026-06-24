@@ -2,7 +2,7 @@
 
 **Created:** 2026-06-24
 **Updated:** 2026-06-24
-**Status:** ✅ Phases 0-3B Complete (2026-06-24); Phase 3C-3D active
+**Status:** ✅ Phases 0-3C Complete (2026-06-24); Phase 3D active
 **Purpose:** record the stabilization work that followed the first post-refactor hardening wave, then define the next execution plan from the verified repository state.
 **Supersedes:** `docs/refactor/post-refactor-product-hardening-plan.md`
 
@@ -60,7 +60,14 @@
 - Added empty facility element tests
 - **Result:** 21/0/0 pass; full gate 82/0/0
 
-### Phase 3C: Export Artifact / Download Regressions (active)
+### Phase 3C: Export Artifact / Download Regressions ✅
+
+- Added `ExportArtifactWriterTest` (5 tests): file creation, directory structure, byte length, UTF-8 encoding, empty content
+- Added controller download tests: content type, Content-Disposition header, Content-Length, service delegation for not-found/not-completed
+- Added service tests: null file path rejection, error message storage, null message handling, completed date setting
+- **Result:** 32/0/0 export tests pass; full gate 94/0/0
+
+### Phase 3D: Documentation Refresh (active)
 
 ## Current Verified State
 

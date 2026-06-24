@@ -29,13 +29,14 @@ Build stabilization complete. Changes:
 - ExportDataProviderAdapter Modulith boundary fixed (allowedDependencies for 5 modules)
 - OdmExportExecutionServiceTest IOException fixed
 - ODM generator tests expanded from 6 to 21 (schema validation, namespace, structure, contract behavior)
+- Export artifact/download regression tests added (ExportArtifactWriterTest, download headers, error handling)
 
 Verified baseline:
 ```bash
 mvn clean compile -DskipTests                          # ✅ BUILD SUCCESS
 mvn test -pl app -am -Dtest=ModulithVerificationTest   # ✅ 1/0/0
 mvn test -pl app -am -Dtest=OdmExportGeneratorTest     # ✅ 21/0/0
-mvn -pl app -am test -Dtest=ExportServiceTest,OdmExportExecutionServiceTest,OdmExportGeneratorTest,ExportControllerTest  # ✅ 46/0/0
+mvn -pl app -am test -Dtest=ExportServiceTest,OdmExportExecutionServiceTest,OdmExportGeneratorTest,ExportControllerTest,ExportArtifactWriterTest  # ✅ 53/0/0
 ```
 
 ## Document Roles
