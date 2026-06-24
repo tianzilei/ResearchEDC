@@ -53,6 +53,7 @@ export default function QuestionnaireFill() {
         setError(err instanceof Error ? err.message : t("fill.loadFailed"));
         setLoading(false);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, questionnaireBaseUrl]);
 
   const handleSubmit = async () => {

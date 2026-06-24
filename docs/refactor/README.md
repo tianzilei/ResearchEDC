@@ -15,6 +15,7 @@ Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed
 | `phase-3-dao-replacement-ledger.{md,csv}` | Final DAO SPI deletion ledger | Generated evidence |
 | `phase-1-email-field-removal-plan.md` | Active follow-up slice for compatibility email/contact field cleanup | Active follow-up |
 | `phase-1-email-contract-versioning-plan.md` | Detailed E3 execution plan for versioned ODM contract cleanup | ✅ Complete |
+| `post-refactor-product-hardening-plan.md` | Detailed next-step plan for export execution, frontend lint recovery, and baseline refresh | Active follow-up |
 
 ## Historical Phase Documents
 

@@ -4,7 +4,10 @@ import java.util.List;
 import org.researchedc.module.export.dto.CreateExportJobRequest;
 import org.researchedc.module.export.dto.ExportJobDTO;
 import org.researchedc.module.export.service.ExportService;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,5 +44,16 @@ public class ExportController {
     @PostMapping("/{id}/retry")
     public ResponseEntity<ExportJobDTO> retryJob(@PathVariable Long id) {
         return ResponseEntity.ok(exportService.retryJob(id));
+    }
+
+    @GetMapping("/{id}/download")
+    public ResponseEntity<Resource> downloadExport(@PathVariable Long id) {
+        ExportService.DownloadResult result = exportService.getDownload(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_XML)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + result.filename() + "\"")
+                .contentLength(result.fileSize())
+                .body(result.resource());
     }
 }

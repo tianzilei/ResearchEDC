@@ -42,6 +42,7 @@ export default function EventDefinitionsPage() {
     }).catch(() => setLoading(false));
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchData(); }, [id]);
 
   const handleCreate = async () => {

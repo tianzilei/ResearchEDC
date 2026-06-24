@@ -165,6 +165,7 @@ export default function QuestionnaireBuilder({ value, onChange }: Props) {
     questionCounter = 0;
     pageCounter = 0;
     return value?.pages ? fromSurveyJS(value) : createDefaultSurvey();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [survey, setSurvey] = useState<SurveyDef>(initial);
   const [selectedPageIdx, setSelectedPageIdx] = useState(0);

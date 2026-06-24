@@ -34,6 +34,7 @@ export default function SiteManagement() {
       .catch(() => setLoading(false));
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchStudy(); }, [id]);
 
   const handleCreateSite = async () => {

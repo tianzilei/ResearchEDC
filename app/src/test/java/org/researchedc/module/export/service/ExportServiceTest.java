@@ -23,11 +23,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ExportServiceTest {
 
     @Mock private ExportJobRepository jobRepository;
+    @Mock private OdmExportExecutionService odmExecutionService;
     private ExportService service;
 
     @BeforeEach
     void setUp() {
-        service = new ExportService(jobRepository);
+        service = new ExportService(jobRepository, odmExecutionService);
     }
 
     @Test
@@ -195,5 +196,86 @@ class ExportServiceTest {
         verify(jobRepository).save(argThat(j ->
                 j.getStatus() == ExportJobStatus.FAILED
                 && "Out of disk space".equals(j.getErrorMessage())));
+    }
+
+    @Test
+    void createJob_odmXml_triggersExecution() {
+        CreateExportJobRequest request = new CreateExportJobRequest();
+        request.setStudyId(1);
+        request.setName("ODM Export");
+        request.setExportFormat(ExportFormat.ODM_XML);
+        request.setRequestedBy(100);
+
+        ExportJob savedJob = new ExportJob();
+        savedJob.setId(1L);
+        savedJob.setStudyId(1);
+        savedJob.setName("ODM Export");
+        savedJob.setExportFormat(ExportFormat.ODM_XML);
+        savedJob.setRequestedBy(100);
+        savedJob.setStatus(ExportJobStatus.PENDING);
+
+        ExportJob completedJob = new ExportJob();
+        completedJob.setId(1L);
+        completedJob.setStatus(ExportJobStatus.COMPLETED);
+        completedJob.setFilePath("/exports/odm/1/export_1.xml");
+        completedJob.setFileSize(200L);
+
+        when(jobRepository.save(any())).thenReturn(savedJob);
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(savedJob), Optional.of(completedJob));
+
+        ExportJobDTO result = service.createJob(request);
+
+        verify(odmExecutionService).execute(1L);
+        assertEquals(ExportJobStatus.COMPLETED, result.getStatus());
+    }
+
+    @Test
+    void createJob_csv_doesNotTriggerExecution() {
+        CreateExportJobRequest request = new CreateExportJobRequest();
+        request.setStudyId(1);
+        request.setName("CSV Export");
+        request.setExportFormat(ExportFormat.CSV);
+        request.setRequestedBy(100);
+
+        ExportJob savedJob = new ExportJob();
+        savedJob.setId(1L);
+        savedJob.setStudyId(1);
+        savedJob.setName("CSV Export");
+        savedJob.setExportFormat(ExportFormat.CSV);
+        savedJob.setStatus(ExportJobStatus.PENDING);
+
+        when(jobRepository.save(any())).thenReturn(savedJob);
+
+        service.createJob(request);
+
+        verify(odmExecutionService, never()).execute(anyLong());
+    }
+
+    @Test
+    void getDownload_completedJob_returnsResource() {
+        ExportJob job = new ExportJob();
+        job.setId(1L);
+        job.setStatus(ExportJobStatus.COMPLETED);
+        job.setFilePath("/exports/odm/1/export_1.xml");
+        job.setFileSize(500L);
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+
+        ExportService.DownloadResult result = service.getDownload(1L);
+
+        assertNotNull(result.resource());
+        assertEquals("export_1.xml", result.filename());
+        assertEquals(500L, result.fileSize());
+    }
+
+    @Test
+    void getDownload_notCompleted_throwsException() {
+        ExportJob job = new ExportJob();
+        job.setId(1L);
+        job.setStatus(ExportJobStatus.PENDING);
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+
+        assertThrows(IllegalStateException.class, () -> service.getDownload(1L));
     }
 }

@@ -90,7 +90,7 @@ export default function ImportManager() {
   const { data: jobs, isLoading: jobsLoading } = useImportJobs(studyId);
 
   const validateJob = useAppMutation<ImportPreview, number>({
-    mutationFn: (id) => apiClient.post<ImportPreview>("/api/v1/imports/" + id + "/validate"),
+    mutationFn: (id) => apiClient.post<ImportPreview>(`/api/v1/imports/${String(id)}/validate`),
     onSuccess: (preview, id) => {
       setPreviews((current) => ({ ...current, [id]: preview }));
       qc.invalidateQueries({ queryKey: ["imports", studyId] });
@@ -106,7 +106,7 @@ export default function ImportManager() {
   });
 
   const commitJob = useAppMutation<ImportResult, number>({
-    mutationFn: (id) => apiClient.post<ImportResult>("/api/v1/imports/" + id + "/commit"),
+    mutationFn: (id) => apiClient.post<ImportResult>(`/api/v1/imports/${String(id)}/commit`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["imports", studyId] });
       message.success("导入提交成功");

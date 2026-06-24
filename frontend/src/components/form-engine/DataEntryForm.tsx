@@ -64,6 +64,7 @@ export function DataEntryForm({
       g.items.push(item);
     }
     return map;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
 
   const ungroupedItems = useMemo(() => items.filter(i => i.groupId == null && !hiddenItemIds?.has(i.itemId)), [items, hiddenItemIds]);

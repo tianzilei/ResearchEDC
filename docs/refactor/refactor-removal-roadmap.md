@@ -241,6 +241,7 @@ These are closed and should not be reopened except to fix regressions:
 - Runtime rule XSD no longer exposes the retired `EmailAction` contract; retained rule compatibility now covers non-email actions only.
 - App/shared Java entities no longer map or expose retired user-account email or study facility-contact-email compatibility fields; retained surfaces are now database/ODM compatibility only.
 - ODM contract versioning: OC2-0 frozen as compatibility-only (deprecated `FacilityContactEmail` retained), OC2-1 email-free schema family introduced. `OdmContractVersion` enum and `OdmSchemaResourceResolver` added to export module. Guardrail tests verify both schema families. ExportJob entity now carries `odm_contract_version` column defaulting to `OC2_1`.
+- ODM export execution pipeline: `OdmExportGenerator` builds ODM 1.3.0 XML, `ExportArtifactWriter` persists files, `OdmExportExecutionService` orchestrates state transitions (PENDING → RUNNING → COMPLETED/FAILED). `ExportDataProviderAdapter` bridges study/subject/event/CRF/item data from module repositories. Download endpoint at `GET /api/v1/exports/{id}/download`. Frontend lint restored to 0 errors.
 
 **Potential Additional Follow-Ups**
 - ~~import/export compatibility contract tightening~~ ✅ — import/export modules have 0 shared Java dependencies

@@ -9,7 +9,7 @@ import { useEventCrfRules } from "@/hooks/useCrf";
 import { useTranslation } from "react-i18next";
 
 interface SectionTabsProps {
-  sections: Array<{ sectionId?: number; title?: string; label?: string }>;
+  sections: { sectionId?: number; title?: string; label?: string }[];
   activeSectionIdx: number;
   onTabChange: (key: string) => void;
   loadingSectionItems: boolean;
@@ -48,7 +48,7 @@ export function SectionTabs({
   isAdminEdit,
 }: SectionTabsProps) {
   const { t } = useTranslation();
-  const [attachmentFiles, setAttachmentFiles] = useState<Array<{ id: string; fileName: string; size: number }>>([]);
+  const [attachmentFiles, setAttachmentFiles] = useState<{ id: string; fileName: string; size: number }[]>([]);
   const [loadingAttachments, setLoadingAttachments] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: ruleData, isLoading: loadingRules } = useEventCrfRules(parsedEventCrfId);
@@ -66,6 +66,7 @@ export function SectionTabs({
 
   useEffect(() => {
     refreshAttachments();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parsedEventCrfId]);
 
   const handleUploadOk = async (file: File) => {
@@ -83,7 +84,7 @@ export function SectionTabs({
 
   const sectionTabItems = sections.map((section, idx) => ({
     key: String(idx),
-    label: section.title || section.label || `Section ${idx + 1}`,
+    label: section.title ?? section.label ?? `Section ${idx + 1}`,
     children: loadingSectionItems ? (
       <div style={{ padding: 40, textAlign: "center" }}>
         <Spin />

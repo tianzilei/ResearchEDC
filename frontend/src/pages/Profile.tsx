@@ -259,7 +259,7 @@ export default function Profile() {
         confirmLoading={changingPassword}
         okText="确认修改"
         cancelText="取消"
-        destroyOnClose
+        destroyOnHidden
       >
         <Form form={passwordForm} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item

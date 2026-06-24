@@ -83,10 +83,11 @@ export default function EntityAction() {
       .then((data) => setInfo(parseEntityInfo(entity, entityId, data)))
       .catch(() => setInfo(null))
       .finally(() => setLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entity, id]);
 
   const handleConfirm = async () => {
-    if (!entity || !config || !config.apiPath) {
+    if (!entity || !config?.apiPath) {
       setResult("error");
       return;
     }

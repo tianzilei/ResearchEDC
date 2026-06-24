@@ -29,7 +29,7 @@ function PrintField({ item, value }: { item: ItemDTO; value: string | undefined 
         {item.units && <Text type="secondary"> ({item.units})</Text>}
       </Text>
       <Text style={{ flex: 1, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-        {value || "\u2014"}
+        {value ?? "\u2014"}
       </Text>
     </div>
   );
@@ -85,7 +85,7 @@ export default function DataEntryPrintView({
         for (const item of visibleItems) {
           const g = groupMap.get(item.itemId);
           if (g) {
-            const arr = grouped.get(g.groupId) || [];
+            const arr = grouped.get(g.groupId) ?? [];
             arr.push(item);
             grouped.set(g.groupId, arr);
           } else {

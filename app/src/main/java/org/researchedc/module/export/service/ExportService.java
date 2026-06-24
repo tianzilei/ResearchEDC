@@ -6,11 +6,14 @@ import java.util.NoSuchElementException;
 import org.researchedc.module.export.dto.CreateExportJobRequest;
 import org.researchedc.module.export.dto.ExportJobDTO;
 import org.researchedc.module.export.entity.ExportJob;
+import org.researchedc.module.export.enums.ExportFormat;
 import org.researchedc.module.export.enums.ExportJobStatus;
 import org.researchedc.module.export.enums.OdmContractVersion;
 import org.researchedc.module.export.repository.ExportJobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +24,12 @@ public class ExportService {
     private static final Logger log = LoggerFactory.getLogger(ExportService.class);
 
     private final ExportJobRepository jobRepository;
+    private final OdmExportExecutionService odmExecutionService;
 
-    public ExportService(ExportJobRepository jobRepository) {
+    public ExportService(ExportJobRepository jobRepository,
+                         OdmExportExecutionService odmExecutionService) {
         this.jobRepository = jobRepository;
+        this.odmExecutionService = odmExecutionService;
     }
 
     public ExportJobDTO createJob(CreateExportJobRequest request) {
@@ -40,6 +46,16 @@ public class ExportService {
 
         log.info("Export job created: id={}, study={}, format={}, contract={}",
                 job.getId(), job.getStudyId(), job.getExportFormat(), job.getOdmContractVersion());
+
+        if (job.getExportFormat() == ExportFormat.ODM_XML) {
+            try {
+                odmExecutionService.execute(job.getId());
+                job = jobRepository.findById(job.getId()).orElse(job);
+            } catch (Exception e) {
+                log.error("Failed to execute ODM export job {}: {}", job.getId(), e.getMessage());
+                job = jobRepository.findById(job.getId()).orElse(job);
+            }
+        }
 
         return toDTO(job);
     }
@@ -105,6 +121,23 @@ public class ExportService {
             jobRepository.save(job);
             log.error("Export job failed: id={}, error={}", id, errorMessage);
         });
+    }
+
+    public record DownloadResult(Resource resource, String filename, long fileSize) {
+    }
+
+    public DownloadResult getDownload(Long id) {
+        ExportJob job = jobRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Export job not found: " + id));
+        if (job.getStatus() != ExportJobStatus.COMPLETED) {
+            throw new IllegalStateException("Export job is not completed: status=" + job.getStatus());
+        }
+        if (job.getFilePath() == null) {
+            throw new IllegalStateException("Export job has no file path");
+        }
+        FileSystemResource resource = new FileSystemResource(job.getFilePath());
+        String filename = "export_" + job.getId() + ".xml";
+        return new DownloadResult(resource, filename, job.getFileSize() != null ? job.getFileSize() : 0);
     }
 
     private ExportJobDTO toDTO(ExportJob job) {

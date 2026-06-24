@@ -12,7 +12,6 @@ export function useUnsavedChanges(isDirty: boolean): void {
 
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
-      event.returnValue = "";
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);

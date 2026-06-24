@@ -73,7 +73,7 @@ export default function StudySwitcher() {
         })),
       ])}
       optionRender={(option) => {
-        const item = option.data.item as Study;
+        const item = option.data.item;
         return (
           <Space>
             <span>{item.name}</span>

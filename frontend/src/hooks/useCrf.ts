@@ -95,7 +95,7 @@ export function useAllSectionItems(crfVersion: CrfVersion | null | undefined, en
     combine: (results) => {
       const data = new Map<number, ItemDTO[]>();
       sections.forEach((section, i) => {
-        data.set(section.sectionId, (results[i]?.data as ItemDTO[]) ?? []);
+        data.set(section.sectionId, results[i]?.data ?? []);
       });
       return {
         data,

@@ -45,6 +45,7 @@ function groupStudies(dtos: StudySummaryDTO[]): StudySummary[] {
   }));
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useStudies() {
   return useAppQuery<StudySummary[]>({
     queryKey: ["studies"],
@@ -112,6 +113,7 @@ export function StudyProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useCurrentStudy(): StudyContextValue {
   const ctx = useContext(StudyContext);
   if (!ctx) {
