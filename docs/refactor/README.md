@@ -1,9 +1,9 @@
 # Refactor Docs Index
 
-**Updated:** 2026-06-23
+**Updated:** 2026-06-24
 
 This directory now has a single active roadmap plus supporting baseline, ledger, and slice documents.
-Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed, `web/` and `ws/` absent, and `shared/src/main/java/org/researchedc` reduced to 13 DTO/term bean files.
+Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed, `web/` and `ws/` absent, and `shared/src/main/java` reduced to `0` Java files.
 
 ## Primary Entry Points
 
@@ -14,6 +14,7 @@ Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed
 | `legacy-workflow-inventory.{md,csv}` | Generated inventory showing the workflow-level legacy surface | Generated evidence |
 | `phase-3-dao-replacement-ledger.{md,csv}` | Final DAO SPI deletion ledger | Generated evidence |
 | `phase-1-email-field-removal-plan.md` | Active follow-up slice for compatibility email/contact field cleanup | Active follow-up |
+| `phase-1-email-contract-versioning-plan.md` | Detailed E3 execution plan for versioned ODM contract cleanup | ✅ Complete |
 
 ## Historical Phase Documents
 

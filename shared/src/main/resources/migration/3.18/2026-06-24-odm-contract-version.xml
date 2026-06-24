@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet id="2026-06-24-odm-contract-version-column" author="mimocode">
+        <preconditions onFail="MARK_RAN">
+            <tableExists tableName="export_job"/>
+            <not>
+                <columnExists tableName="export_job" columnName="odm_contract_version"/>
+            </not>
+        </preconditions>
+        <addColumn tableName="export_job">
+            <column name="odm_contract_version" type="VARCHAR(20)" defaultValue="OC2_1">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <sql>UPDATE export_job SET odm_contract_version = 'OC2_1' WHERE odm_contract_version IS NULL</sql>
+    </changeSet>
+
+</databaseChangeLog>

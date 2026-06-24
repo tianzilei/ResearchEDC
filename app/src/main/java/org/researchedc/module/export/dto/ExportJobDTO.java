@@ -3,6 +3,7 @@ package org.researchedc.module.export.dto;
 import java.time.LocalDateTime;
 import org.researchedc.module.export.enums.ExportFormat;
 import org.researchedc.module.export.enums.ExportJobStatus;
+import org.researchedc.module.export.enums.OdmContractVersion;
 
 public class ExportJobDTO {
 
@@ -10,6 +11,7 @@ public class ExportJobDTO {
     private Integer studyId;
     private String name;
     private ExportFormat exportFormat;
+    private OdmContractVersion odmContractVersion;
     private ExportJobStatus status;
     private Integer requestedBy;
     private LocalDateTime requestedDate;
@@ -31,6 +33,9 @@ public class ExportJobDTO {
 
     public ExportFormat getExportFormat() { return exportFormat; }
     public void setExportFormat(ExportFormat exportFormat) { this.exportFormat = exportFormat; }
+
+    public OdmContractVersion getOdmContractVersion() { return odmContractVersion; }
+    public void setOdmContractVersion(OdmContractVersion odmContractVersion) { this.odmContractVersion = odmContractVersion; }
 
     public ExportJobStatus getStatus() { return status; }
     public void setStatus(ExportJobStatus status) { this.status = status; }

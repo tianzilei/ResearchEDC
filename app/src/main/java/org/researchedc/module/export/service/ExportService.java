@@ -7,6 +7,7 @@ import org.researchedc.module.export.dto.CreateExportJobRequest;
 import org.researchedc.module.export.dto.ExportJobDTO;
 import org.researchedc.module.export.entity.ExportJob;
 import org.researchedc.module.export.enums.ExportJobStatus;
+import org.researchedc.module.export.enums.OdmContractVersion;
 import org.researchedc.module.export.repository.ExportJobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +31,15 @@ public class ExportService {
         job.setStudyId(request.getStudyId());
         job.setName(request.getName());
         job.setExportFormat(request.getExportFormat());
+        job.setOdmContractVersion(request.getOdmContractVersion() != null
+                ? request.getOdmContractVersion() : OdmContractVersion.OC2_1);
         job.setRequestedBy(request.getRequestedBy());
         job.setCriteriaJson(request.getCriteriaJson());
         job.setStatus(ExportJobStatus.PENDING);
         job = jobRepository.save(job);
 
-        log.info("Export job created: id={}, study={}, format={}", job.getId(), job.getStudyId(), job.getExportFormat());
+        log.info("Export job created: id={}, study={}, format={}, contract={}",
+                job.getId(), job.getStudyId(), job.getExportFormat(), job.getOdmContractVersion());
 
         return toDTO(job);
     }
@@ -109,6 +113,7 @@ public class ExportService {
         dto.setStudyId(job.getStudyId());
         dto.setName(job.getName());
         dto.setExportFormat(job.getExportFormat());
+        dto.setOdmContractVersion(job.getOdmContractVersion());
         dto.setStatus(job.getStatus());
         dto.setRequestedBy(job.getRequestedBy());
         dto.setRequestedDate(job.getRequestedDate());

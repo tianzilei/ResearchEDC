@@ -234,11 +234,13 @@ These are closed and should not be reopened except to fix regressions:
 
 **Active Follow-Up**
 - `docs/refactor/phase-1-email-field-removal-plan.md`
+- `docs/refactor/phase-1-email-contract-versioning-plan.md`
 
 **Current Progress**
 - Email-field cleanup now includes a forward migration that retires historical mail-event/rule-email storage and PostgreSQL write-boundary triggers that keep retained user/study compatibility email columns inert.
 - Runtime rule XSD no longer exposes the retired `EmailAction` contract; retained rule compatibility now covers non-email actions only.
 - App/shared Java entities no longer map or expose retired user-account email or study facility-contact-email compatibility fields; retained surfaces are now database/ODM compatibility only.
+- ODM contract versioning: OC2-0 frozen as compatibility-only (deprecated `FacilityContactEmail` retained), OC2-1 email-free schema family introduced. `OdmContractVersion` enum and `OdmSchemaResourceResolver` added to export module. Guardrail tests verify both schema families. ExportJob entity now carries `odm_contract_version` column defaulting to `OC2_1`.
 
 **Potential Additional Follow-Ups**
 - import/export compatibility contract tightening

@@ -38,17 +38,58 @@ class RetiredEmailSchemaCleanupTest {
     }
 
     @Test
-    void odmFoundationXsdMarksFacilityContactEmailAsDeprecated() throws IOException {
+    void oc20FoundationRetainsDeprecatedFacilityContactEmail() throws IOException {
         String xsd = loadResource("properties/OpenClinica-ODM1-3-0-OC2-0-foundation.xsd");
 
         assertTrue(xsd.contains("FacilityContactEmail"),
-                "FacilityContactEmail element must remain for downstream schema compatibility");
+                "OC2-0 compatibility schema must retain FacilityContactEmail for downstream validators");
         assertTrue(xsd.contains("DEPRECATED"),
-                "FacilityContactEmail must carry DEPRECATED annotation");
+                "FacilityContactEmail must carry DEPRECATED annotation in OC2-0");
         assertTrue(xsd.contains("will be removed in a future version"),
-                "FacilityContactEmail must state removal intent");
+                "FacilityContactEmail must state removal intent in OC2-0");
         assertTrue(xsd.contains("write-neutralized"),
-                "FacilityContactEmail must document trigger-based neutralization");
+                "FacilityContactEmail must document trigger-based neutralization in OC2-0");
+    }
+
+    @Test
+    void oc21FoundationRemovesFacilityContactEmail() throws IOException {
+        String xsd = loadResource("properties/OpenClinica-ODM1-3-0-OC2-1-foundation.xsd");
+
+        assertFalse(xsd.contains("FacilityContactEmail"),
+                "OC2-1 email-free schema must not contain FacilityContactEmail");
+        assertTrue(xsd.contains("FacilityContactName"),
+                "OC2-1 must retain FacilityContactName in FacilityInformation");
+        assertTrue(xsd.contains("FacilityContactDegree"),
+                "OC2-1 must retain FacilityContactDegree in FacilityInformation");
+        assertTrue(xsd.contains("FacilityContactPhone"),
+                "OC2-1 must retain FacilityContactPhone in FacilityInformation");
+    }
+
+    @Test
+    void oc21FoundationFileExistsOnClasspath() throws IOException {
+        String xsd = loadResource("properties/OpenClinica-ODM1-3-0-OC2-1-foundation.xsd");
+        assertNotNull(xsd, "OC2-1 foundation XSD must be on classpath");
+
+        String mainXsd = loadResource("properties/OpenClinica-ODM1-3-0-OC2-1.xsd");
+        assertNotNull(mainXsd, "OC2-1 main XSD must be on classpath");
+
+        String toOdmXsd = loadResource("properties/OpenClinica-ToODM1-3-0-OC2-1.xsd");
+        assertNotNull(toOdmXsd, "OC2-1 ToODM XSD must be on classpath");
+    }
+
+    @Test
+    void odmContractVersionResolvesToCorrectSchemaFiles() throws IOException {
+        var resolver = new org.researchedc.module.export.service.OdmSchemaResourceResolver();
+
+        var compatPaths = resolver.resolve(org.researchedc.module.export.enums.OdmContractVersion.OC2_0_COMPAT);
+        assertNotNull(loadResource(compatPaths.mainXsd()), "OC2-0 main XSD must resolve");
+        assertNotNull(loadResource(compatPaths.toOdmXsd()), "OC2-0 ToODM XSD must resolve");
+        assertNotNull(loadResource(compatPaths.foundationXsd()), "OC2-0 foundation XSD must resolve");
+
+        var newPaths = resolver.resolve(org.researchedc.module.export.enums.OdmContractVersion.OC2_1);
+        assertNotNull(loadResource(newPaths.mainXsd()), "OC2-1 main XSD must resolve");
+        assertNotNull(loadResource(newPaths.toOdmXsd()), "OC2-1 ToODM XSD must resolve");
+        assertNotNull(loadResource(newPaths.foundationXsd()), "OC2-1 foundation XSD must resolve");
     }
 
     private String loadResource(String resourcePath) throws IOException {

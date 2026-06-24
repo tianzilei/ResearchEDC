@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import org.researchedc.module.export.enums.ExportFormat;
 import org.researchedc.module.export.enums.ExportJobStatus;
+import org.researchedc.module.export.enums.OdmContractVersion;
 
 @Entity
 @Table(name = "export_job")
@@ -22,6 +23,10 @@ public class ExportJob {
     @Column(name = "export_format", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private ExportFormat exportFormat;
+
+    @Column(name = "odm_contract_version", length = 20)
+    @Enumerated(EnumType.STRING)
+    private OdmContractVersion odmContractVersion = OdmContractVersion.OC2_1;
 
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
@@ -67,6 +72,9 @@ public class ExportJob {
 
     public ExportFormat getExportFormat() { return exportFormat; }
     public void setExportFormat(ExportFormat exportFormat) { this.exportFormat = exportFormat; }
+
+    public OdmContractVersion getOdmContractVersion() { return odmContractVersion; }
+    public void setOdmContractVersion(OdmContractVersion odmContractVersion) { this.odmContractVersion = odmContractVersion; }
 
     public ExportJobStatus getStatus() { return status; }
     public void setStatus(ExportJobStatus status) { this.status = status; }

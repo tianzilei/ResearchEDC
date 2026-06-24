@@ -88,4 +88,6 @@
     <include file="migration/3.18/2026-06-11-import-tables.xml"/>
     <!-- Product cleanup: retired email storage and database write-boundary neutralization -->
     <include file="migration/3.18/2026-06-21-retire-email-storage.xml"/>
+    <!-- Export module: ODM contract version column for schema version selection -->
+    <include file="migration/3.18/2026-06-24-odm-contract-version.xml"/>
 </databaseChangeLog>

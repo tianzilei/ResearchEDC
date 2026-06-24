@@ -69,6 +69,8 @@ Current progress:
 
 **Goal:** remove remaining email-specific storage/contract surface only after downstream compatibility review.
 
+**Execution detail:** `docs/refactor/phase-1-email-contract-versioning-plan.md`
+
 - Review ODM/export reliance on `FacilityContactEmail`.
 - Verify rule schema/docs no longer expose `EmailAction`.
 - Review migration-era structures such as `dc_send_email_event` and `rule_action.email_subject`.
@@ -85,6 +87,12 @@ Current progress:
 Current blockers:
 - ODM/XSD contracts still structurally define `OpenClinica:FacilityContactEmail` (deprecated, annotated, will be removed in a future version).
 - Historical pre-3.18 Liquibase files still document the original email-era table/columns, but forward migrations now retire the runtime storage surface.
+
+**Planned next step:**
+- Preserve `OC2-0` as the compatibility ODM contract and introduce a versioned successor schema that removes `FacilityContactEmail` instead of mutating the existing schema in place.
+
+**Versioned contract execution:**
+- `docs/refactor/phase-1-email-contract-versioning-plan.md` — Slice A (Contract Scaffolding) completed: OC2-0 frozen as compatibility-only, OC2-1 email-free schema family added, `OdmContractVersion` enum and `OdmSchemaResourceResolver` introduced, guardrail tests added.
 
 ## In Scope
 
