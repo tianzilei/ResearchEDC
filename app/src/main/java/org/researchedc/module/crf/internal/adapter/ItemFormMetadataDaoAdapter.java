@@ -9,9 +9,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.submit.ItemFormMetadataBean;
-import org.researchedc.bean.submit.ItemFormMetadataBean.ResponseSetBean;
+import org.researchedc.module.crf.dto.ItemFormMetadataDto;
+import org.researchedc.module.crf.dto.ItemFormMetadataDto.ResponseSetDto;
 import org.researchedc.module.dataimport.service.ImportItemFormMetadataPort;
 import org.researchedc.module.dataimport.dto.ImportItemFormMetadata;
 import org.researchedc.module.crf.entity.ItemFormMetadataEntity;
@@ -71,48 +70,46 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         return toBeans(repository.findAll());
     }
 
-    public EntityBean findByPK(int id) {
+    public ItemFormMetadataDto findByPK(int id) {
         return repository.findById(id)
                 .map(this::toBean)
-                .orElseGet(ItemFormMetadataBean::new);
+                .orElseGet(ItemFormMetadataDto::new);
     }
 
-    public ArrayList<ItemFormMetadataBean> findAllByCRFVersionId(int crfVersionId) {
+    public ArrayList<ItemFormMetadataDto> findAllByCRFVersionId(int crfVersionId) {
         return toBeans(repository.findByCrfVersionIdOrderByOrdinal(crfVersionId));
     }
 
-    public ArrayList<ItemFormMetadataBean> findAllBySectionId(int sectionId) {
+    public ArrayList<ItemFormMetadataDto> findAllBySectionId(int sectionId) {
         return toBeans(repository.findBySectionIdOrderByOrdinal(sectionId));
     }
 
-    public ArrayList<ItemFormMetadataBean> findAllByCRFVersionIdAndSectionId(int crfVersionId, int sectionId) {
+    public ArrayList<ItemFormMetadataDto> findAllByCRFVersionIdAndSectionId(int crfVersionId, int sectionId) {
         return toBeans(repository.findByCrfVersionIdAndSectionIdOrderByOrdinal(crfVersionId, sectionId));
     }
 
-    public ItemFormMetadataBean findByItemIdAndCRFVersionId(int itemId, int crfVersionId) {
+    public ItemFormMetadataDto findByItemIdAndCRFVersionId(int itemId, int crfVersionId) {
         return repository.findByItemIdAndCrfVersionId(itemId, crfVersionId).stream()
                 .findFirst()
                 .map(this::toBean)
-                .orElseGet(ItemFormMetadataBean::new);
+                .orElseGet(ItemFormMetadataDto::new);
     }
 
     @Transactional
-    public EntityBean create(EntityBean eb) {
-        ItemFormMetadataBean bean = (ItemFormMetadataBean) eb;
+    public ItemFormMetadataDto create(ItemFormMetadataDto dto) {
         ItemFormMetadataEntity entity = new ItemFormMetadataEntity();
-        apply(bean, entity);
-        ItemFormMetadataBean saved = toBean(repository.save(entity));
-        eb.setId(saved.getId());
+        apply(dto, entity);
+        ItemFormMetadataDto saved = toBean(repository.save(entity));
+        dto.setId(saved.getId());
         return saved;
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb) {
-        ItemFormMetadataBean bean = (ItemFormMetadataBean) eb;
-        ItemFormMetadataEntity entity = repository.findById(bean.getId())
+    public ItemFormMetadataDto update(ItemFormMetadataDto dto) {
+        ItemFormMetadataEntity entity = repository.findById(dto.getId())
                 .orElseGet(ItemFormMetadataEntity::new);
-        entity.setItemFormMetadataId(bean.getId() > 0 ? bean.getId() : null);
-        apply(bean, entity);
+        entity.setItemFormMetadataId(dto.getId() > 0 ? dto.getId() : null);
+        apply(dto, entity);
         return toBean(repository.save(entity));
     }
 
@@ -126,28 +123,24 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         return result != null ? result : 0;
     }
 
-    public ArrayList<ItemFormMetadataBean> findAllByCRFVersionIdAndResponseTypeId(int crfVersionId, int responseTypeId) {
-        // Legacy item-form-metadata SQL lineage: findAllByCRFVersionIdAndResponseTypeId
+    public ArrayList<ItemFormMetadataDto> findAllByCRFVersionIdAndResponseTypeId(int crfVersionId, int responseTypeId) {
         String sql = "SELECT m.*, rs.response_type_id, rs.label, rs.options_text, rs.options_values "
             + "FROM item_form_metadata m, response_set rs "
             + "WHERE m.crf_version_id = ? AND m.response_set_id = rs.response_set_id AND rs.response_type_id = ?";
         return findAllBySql(sql, crfVersionId, responseTypeId);
     }
 
-    public ArrayList<ItemFormMetadataBean> findAllItemsRequiredAndShownByCrfVersionId(int crfVersionId) {
-        // Legacy item-form-metadata SQL lineage: findAllItemsRequiredAndShownByCrfVersionId
+    public ArrayList<ItemFormMetadataDto> findAllItemsRequiredAndShownByCrfVersionId(int crfVersionId) {
         String sql = "SELECT * FROM item_form_metadata WHERE crf_version_id = ? AND required = true AND show_item = true";
         return findAllBySql(sql, crfVersionId);
     }
 
-    public ArrayList<ItemFormMetadataBean> findAllItemsRequiredAndHiddenByCrfVersionId(int crfVersionId) {
-        // Legacy item-form-metadata SQL lineage: findAllItemsRequiredAndHiddenByCrfVersionId
+    public ArrayList<ItemFormMetadataDto> findAllItemsRequiredAndHiddenByCrfVersionId(int crfVersionId) {
         String sql = "SELECT * FROM item_form_metadata WHERE crf_version_id = ? AND required = true AND show_item = false";
         return findAllBySql(sql, crfVersionId);
     }
 
-    public ArrayList<ItemFormMetadataBean> findAllByCRFIdItemIdAndHasValidations(int crfId, int itemId) {
-        // Legacy item-form-metadata SQL lineage: findAllByCRFIdItemIdAndHasValidations
+    public ArrayList<ItemFormMetadataDto> findAllByCRFIdItemIdAndHasValidations(int crfId, int itemId) {
         String sql = "SELECT m.*, rs.response_type_id, rs.label, rs.options_text, rs.options_values "
             + "FROM item_form_metadata m, response_set rs "
             + "WHERE m.crf_version_id IN (SELECT crf_version_id FROM crf_version WHERE crf_id = ?) "
@@ -157,8 +150,7 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         return findAllBySql(sql, crfId, itemId);
     }
 
-    public ArrayList<ItemFormMetadataBean> findAllByItemId(int itemId) {
-        // Legacy item-form-metadata SQL lineage: findAllByItemId
+    public ArrayList<ItemFormMetadataDto> findAllByItemId(int itemId) {
         String sql = "SELECT DISTINCT m.*, rs.response_type_id, rs.label, rs.options_text, rs.options_values "
             + "FROM item_form_metadata m, response_set rs "
             + "WHERE m.item_id = ? "
@@ -186,8 +178,7 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
                 itemId);
     }
 
-    public ArrayList<ItemFormMetadataBean> findAllByItemIdAndHasValidations(int itemId) {
-        // Legacy item-form-metadata SQL lineage: findAllByItemIdAndHasValidations
+    public ArrayList<ItemFormMetadataDto> findAllByItemIdAndHasValidations(int itemId) {
         String sql = "SELECT DISTINCT m.*, rs.response_type_id, rs.label, rs.options_text, rs.options_values "
             + "FROM item_form_metadata m, response_set rs "
             + "WHERE m.item_id = ? "
@@ -196,8 +187,7 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         return findAllBySql(sql, itemId);
     }
 
-    public ArrayList<ItemFormMetadataBean> findSCDItemsBySectionId(Integer sectionId) {
-        // Legacy item-form-metadata SQL lineage: findSCDItemsBySectionId
+    public ArrayList<ItemFormMetadataDto> findSCDItemsBySectionId(Integer sectionId) {
         String sql = "SELECT ifm.* FROM item_form_metadata ifm "
             + "WHERE ifm.section_id = ? "
             + "AND EXISTS (SELECT s.scd_item_form_metadata_id FROM scd_item_metadata s "
@@ -221,16 +211,16 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         return new HashMap<>();
     }
 
-    public ArrayList<ItemFormMetadataBean> findByMultiplePKs(ArrayList ints) {
-        ArrayList<ItemFormMetadataBean> answer = new ArrayList<>();
+    public ArrayList<ItemFormMetadataDto> findByMultiplePKs(ArrayList ints) {
+        ArrayList<ItemFormMetadataDto> answer = new ArrayList<>();
         for (Object pk : ints) {
             int id = (pk instanceof Number n) ? n.intValue() : Integer.parseInt(pk.toString());
-            answer.add((ItemFormMetadataBean) findByPK(id));
+            answer.add(findByPK(id));
         }
         return answer;
     }
 
-    public ResponseSetBean findResponseSetByPK(int id) {
+    public ResponseSetDto findResponseSetByPK(int id) {
         String sql = "SELECT rs.*, rt.* FROM response_set rs, response_type rt "
             + "WHERE rs.response_type_id = rt.response_type_id AND rs.response_set_id = ?";
         List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, id);
@@ -239,7 +229,7 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
             hm.putAll(rows.get(0));
             return responseSetFromRow(hm);
         }
-        return new ResponseSetBean();
+        return new ResponseSetDto();
     }
 
     // ── JdbcTemplate-backed native SQL helpers ──────────────────────────
@@ -248,32 +238,22 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         return new JdbcTemplate(dataSource);
     }
 
-    private ItemFormMetadataBean ifmBeanFromRow(HashMap hm) {
-        ItemFormMetadataBean answer = new ItemFormMetadataBean();
+    private ItemFormMetadataDto ifmBeanFromRow(HashMap hm) {
+        ItemFormMetadataDto answer = new ItemFormMetadataDto();
         answer.setId(getInt(hm, "item_form_metadata_id"));
         answer.setItemId(getInt(hm, "item_id"));
         answer.setCrfVersionId(getInt(hm, "crf_version_id"));
-        answer.setHeader(getString(hm, "header"));
-        answer.setSubHeader(getString(hm, "subheader"));
-        answer.setParentId(getInt(hm, "parent_id"));
-        answer.setParentLabel(getString(hm, "parent_label"));
-        answer.setColumnNumber(getInt(hm, "column_number"));
-        answer.setPageNumberLabel(getString(hm, "page_number_label"));
-        answer.setQuestionNumberLabel(getString(hm, "question_number_label"));
-        answer.setLeftItemText(getString(hm, "left_item_text"));
-        answer.setRightItemText(getString(hm, "right_item_text"));
         answer.setSectionId(getInt(hm, "section_id"));
-        answer.setDescisionConditionId(getInt(hm, "decision_condition_id"));
-        answer.setResponseSetId(getInt(hm, "response_set_id"));
-        answer.setRegexp(getString(hm, "regexp"));
-        answer.setRegexpErrorMsg(getString(hm, "regexp_error_msg"));
         answer.setOrdinal(getInt(hm, "ordinal"));
         answer.setRequired(getBoolean(hm, "required"));
         answer.setDefaultValue(getString(hm, "default_value"));
+        answer.setRegexp(getString(hm, "regexp"));
+        answer.setRegexpErrorMsg(getString(hm, "regexp_error_msg"));
         answer.setResponseLayout(getString(hm, "response_layout"));
         answer.setWidthDecimal(getString(hm, "width_decimal"));
         answer.setShowItem(getBoolean(hm, "show_item"));
-        ResponseSetBean rsb = new ResponseSetBean();
+        answer.setResponseSetId(getInt(hm, "response_set_id"));
+        ResponseSetDto rsb = new ResponseSetDto();
         rsb.setId(getInt(hm, "response_set_id"));
         rsb.setLabel(getString(hm, "label"));
         rsb.setResponseTypeId(getInt(hm, "response_type_id"));
@@ -282,8 +262,8 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         return answer;
     }
 
-    private ResponseSetBean responseSetFromRow(HashMap hm) {
-        ResponseSetBean rsb = new ResponseSetBean();
+    private ResponseSetDto responseSetFromRow(HashMap hm) {
+        ResponseSetDto rsb = new ResponseSetDto();
         rsb.setId(getInt(hm, "response_set_id"));
         rsb.setLabel(getString(hm, "label"));
         rsb.setResponseTypeId(getInt(hm, "response_type_id"));
@@ -306,60 +286,57 @@ public class ItemFormMetadataDaoAdapter implements ImportItemFormMetadataPort {
         return val != null ? val.toString() : "";
     }
 
-    /**
-     * Execute a native SQL query and convert rows to ItemFormMetadataBean list.
-     */
-    private ArrayList<ItemFormMetadataBean> findAllBySql(String sql, Object... params) {
+    private ArrayList<ItemFormMetadataDto> findAllBySql(String sql, Object... params) {
         List<Map<String, Object>> rows = getJdbcTemplate().queryForList(sql, params);
-        ArrayList<ItemFormMetadataBean> beans = new ArrayList<>();
+        ArrayList<ItemFormMetadataDto> dtos = new ArrayList<>();
         for (Map<String, Object> row : rows) {
             HashMap hm = new HashMap();
             hm.putAll(row);
-            beans.add(ifmBeanFromRow(hm));
+            dtos.add(ifmBeanFromRow(hm));
         }
-        return beans;
+        return dtos;
     }
 
-    private void apply(ItemFormMetadataBean bean, ItemFormMetadataEntity entity) {
-        entity.setItemId(bean.getItemId());
-        entity.setCrfVersionId(bean.getCrfVersionId());
-        entity.setSectionId(bean.getSectionId());
-        entity.setOrdinal(bean.getOrdinal());
-        entity.setRequired(bean.isRequired());
-        entity.setDefaultValue(bean.getDefaultValue());
-        entity.setRegexp(bean.getRegexp());
-        entity.setRegexpErrorMsg(bean.getRegexpErrorMsg());
-        entity.setResponseLayout(bean.getResponseLayout());
-        entity.setWidthDecimal(bean.getWidthDecimal());
-        entity.setShowItem(bean.isShowItem());
+    private void apply(ItemFormMetadataDto dto, ItemFormMetadataEntity entity) {
+        entity.setItemId(dto.getItemId());
+        entity.setCrfVersionId(dto.getCrfVersionId());
+        entity.setSectionId(dto.getSectionId());
+        entity.setOrdinal(dto.getOrdinal());
+        entity.setRequired(dto.isRequired());
+        entity.setDefaultValue(dto.getDefaultValue());
+        entity.setRegexp(dto.getRegexp());
+        entity.setRegexpErrorMsg(dto.getRegexpErrorMsg());
+        entity.setResponseLayout(dto.getResponseLayout());
+        entity.setWidthDecimal(dto.getWidthDecimal());
+        entity.setShowItem(dto.isShowItem());
     }
 
-    private ArrayList<ItemFormMetadataBean> toBeans(List<ItemFormMetadataEntity> entities) {
-        ArrayList<ItemFormMetadataBean> beans = new ArrayList<>();
+    private ArrayList<ItemFormMetadataDto> toBeans(List<ItemFormMetadataEntity> entities) {
+        ArrayList<ItemFormMetadataDto> dtos = new ArrayList<>();
         entities.stream()
                 .sorted(Comparator.comparing(ItemFormMetadataEntity::getOrdinal, Comparator.nullsLast(Integer::compareTo)))
                 .map(this::toBean)
-                .forEach(beans::add);
-        return beans;
+                .forEach(dtos::add);
+        return dtos;
     }
 
-    private ItemFormMetadataBean toBean(ItemFormMetadataEntity entity) {
-        ItemFormMetadataBean bean = new ItemFormMetadataBean();
+    private ItemFormMetadataDto toBean(ItemFormMetadataEntity entity) {
+        ItemFormMetadataDto dto = new ItemFormMetadataDto();
         if (entity.getItemFormMetadataId() != null) {
-            bean.setId(entity.getItemFormMetadataId());
+            dto.setId(entity.getItemFormMetadataId());
         }
-        bean.setItemId(valueOrZero(entity.getItemId()));
-        bean.setCrfVersionId(valueOrZero(entity.getCrfVersionId()));
-        bean.setSectionId(valueOrZero(entity.getSectionId()));
-        bean.setOrdinal(valueOrZero(entity.getOrdinal()));
-        bean.setRequired(valueOrFalse(entity.getRequired()));
-        bean.setDefaultValue(valueOrEmpty(entity.getDefaultValue()));
-        bean.setRegexp(valueOrEmpty(entity.getRegexp()));
-        bean.setRegexpErrorMsg(valueOrEmpty(entity.getRegexpErrorMsg()));
-        bean.setResponseLayout(valueOrEmpty(entity.getResponseLayout()));
-        bean.setWidthDecimal(valueOrEmpty(entity.getWidthDecimal()));
-        bean.setShowItem(valueOrFalse(entity.getShowItem()));
-        return bean;
+        dto.setItemId(valueOrZero(entity.getItemId()));
+        dto.setCrfVersionId(valueOrZero(entity.getCrfVersionId()));
+        dto.setSectionId(valueOrZero(entity.getSectionId()));
+        dto.setOrdinal(valueOrZero(entity.getOrdinal()));
+        dto.setRequired(valueOrFalse(entity.getRequired()));
+        dto.setDefaultValue(valueOrEmpty(entity.getDefaultValue()));
+        dto.setRegexp(valueOrEmpty(entity.getRegexp()));
+        dto.setRegexpErrorMsg(valueOrEmpty(entity.getRegexpErrorMsg()));
+        dto.setResponseLayout(valueOrEmpty(entity.getResponseLayout()));
+        dto.setWidthDecimal(valueOrEmpty(entity.getWidthDecimal()));
+        dto.setShowItem(valueOrFalse(entity.getShowItem()));
+        return dto;
     }
 
     private Integer asInteger(Object value) {

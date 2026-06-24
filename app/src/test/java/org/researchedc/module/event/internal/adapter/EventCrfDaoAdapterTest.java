@@ -20,11 +20,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.managestudy.StudyEventBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.bean.submit.EventCRFBean;
+import org.researchedc.app.dto.Status;
+import org.researchedc.app.dto.StudyEventDto;
+import org.researchedc.app.dto.StudySubjectDTO;
+import org.researchedc.app.dto.CrfVersionDTO;
+import org.researchedc.app.dto.EventCrfDto;
 import org.researchedc.module.event.entity.EventCrfEntity;
 import org.researchedc.module.event.repository.EventCrfRepository;
 
@@ -59,7 +59,7 @@ class EventCrfDaoAdapterTest {
         entity.setSdvUpdateId(23);
         when(eventCrfRepository.findById(7)).thenReturn(Optional.of(entity));
 
-        EventCRFBean bean = (EventCRFBean) adapter.findByPK(7);
+        EventCrfDto bean = (EventCrfDto) adapter.findByPK(7);
 
         assertEquals(7, bean.getId());
         assertEquals(3, bean.getStudyEventId());
@@ -83,13 +83,13 @@ class EventCrfDaoAdapterTest {
 
         Object bean = adapter.findByPK(404);
 
-        assertInstanceOf(EventCRFBean.class, bean);
-        assertEquals(0, ((EventCRFBean) bean).getId());
+        assertInstanceOf(EventCrfDto.class, bean);
+        assertEquals(0, ((EventCrfDto) bean).getId());
     }
 
     @Test
     void findAllByStudyEventAndStatus_usesStudyEventAndStatusRepositoryLookup() {
-        StudyEventBean studyEvent = new StudyEventBean();
+        StudyEventDto studyEvent = new StudyEventDto();
         studyEvent.setId(3);
         when(eventCrfRepository.findByStudyEventIdAndStatusId(3, Status.AVAILABLE.getId()))
                 .thenReturn(List.of(eventCrf(8, 3, 4, 5, Status.AVAILABLE.getId())));
@@ -102,7 +102,7 @@ class EventCrfDaoAdapterTest {
 
     @Test
     void findAllByStudyEventAndCrfOrCrfVersionOid_parsesNumericVersionId() {
-        StudyEventBean studyEvent = new StudyEventBean();
+        StudyEventDto studyEvent = new StudyEventDto();
         studyEvent.setId(3);
         when(eventCrfRepository.findByStudyEventIdAndCrfVersionId(3, 5))
                 .thenReturn(List.of(eventCrf(8, 3, 4, 5, Status.AVAILABLE.getId())));
@@ -115,7 +115,7 @@ class EventCrfDaoAdapterTest {
 
     @Test
     void findAllByStudyEventAndCrfOrCrfVersionOid_returnsEmptyForNonNumericOid() {
-        StudyEventBean studyEvent = new StudyEventBean();
+        StudyEventDto studyEvent = new StudyEventDto();
         studyEvent.setId(3);
 
         ArrayList result = adapter.findAllByStudyEventAndCrfOrCrfVersionOid(studyEvent, "CV_1");
@@ -125,11 +125,11 @@ class EventCrfDaoAdapterTest {
 
     @Test
     void findByEventSubjectVersion_usesCompositeRepositoryLookup() {
-        StudyEventBean studyEvent = new StudyEventBean();
+        StudyEventDto studyEvent = new StudyEventDto();
         studyEvent.setId(3);
-        StudySubjectBean studySubject = new StudySubjectBean();
+        StudySubjectDTO studySubject = new StudySubjectDTO();
         studySubject.setId(4);
-        CRFVersionBean version = new CRFVersionBean();
+        CrfVersionDTO version = new CrfVersionDTO();
         version.setId(5);
         when(eventCrfRepository.findByStudyEventIdAndStudySubjectIdAndCrfVersionId(3, 4, 5))
                 .thenReturn(List.of(eventCrf(9, 3, 4, 5, Status.AVAILABLE.getId())));
@@ -142,23 +142,23 @@ class EventCrfDaoAdapterTest {
 
     @Test
     void findByEventCrfVersion_returnsFirstMatchOrNull() {
-        StudyEventBean studyEvent = new StudyEventBean();
+        StudyEventDto studyEvent = new StudyEventDto();
         studyEvent.setId(3);
-        CRFVersionBean version = new CRFVersionBean();
+        CrfVersionDTO version = new CrfVersionDTO();
         version.setId(5);
         when(eventCrfRepository.findByStudyEventIdAndCrfVersionId(3, 5))
                 .thenReturn(List.of(eventCrf(10, 3, 4, 5, Status.AVAILABLE.getId())));
 
-        EventCRFBean bean = adapter.findByEventCrfVersion(studyEvent, version);
+        EventCrfDto bean = adapter.findByEventCrfVersion(studyEvent, version);
 
         assertEquals(10, bean.getId());
     }
 
     @Test
     void findByEventCrfVersion_whenMissing_returnsNullLikeLegacyDao() {
-        StudyEventBean studyEvent = new StudyEventBean();
+        StudyEventDto studyEvent = new StudyEventDto();
         studyEvent.setId(3);
-        CRFVersionBean version = new CRFVersionBean();
+        CrfVersionDTO version = new CrfVersionDTO();
         version.setId(5);
         when(eventCrfRepository.findByStudyEventIdAndCrfVersionId(3, 5)).thenReturn(List.of());
 
@@ -175,7 +175,7 @@ class EventCrfDaoAdapterTest {
         ArrayList result = adapter.findUndeletedWithStudySubjectsByCRFVersion(5);
 
         assertEquals(1, result.size());
-        assertEquals(1, ((EventCRFBean) result.get(0)).getId());
+        assertEquals(1, ((EventCrfDto) result.get(0)).getId());
     }
 
     @Test
@@ -195,7 +195,7 @@ class EventCrfDaoAdapterTest {
             return e.getDateCreated() != null;
         }))).thenReturn(saved);
 
-        EventCRFBean input = new EventCRFBean();
+        EventCrfDto input = new EventCrfDto();
         input.setStudyEventId(3);
         input.setStudySubjectId(4);
         input.setCRFVersionId(5);
@@ -207,7 +207,7 @@ class EventCrfDaoAdapterTest {
         input.setElectronicSignatureStatus(true);
         input.setSdvStatus(true);
 
-        EventCRFBean result = (EventCRFBean) adapter.create(input);
+        EventCrfDto result = (EventCrfDto) adapter.create(input);
 
         assertEquals(11, result.getId());
     }
@@ -234,7 +234,7 @@ class EventCrfDaoAdapterTest {
         row.put("sdv_status", true);
         row.put("sdv_update_id", 57);
 
-        EventCRFBean bean = (EventCRFBean) adapter.getEntityFromHashMap(row);
+        EventCrfDto bean = (EventCrfDto) adapter.getEntityFromHashMap(row);
 
         assertEquals(50, bean.getId());
         assertEquals(51, bean.getStudyEventId());

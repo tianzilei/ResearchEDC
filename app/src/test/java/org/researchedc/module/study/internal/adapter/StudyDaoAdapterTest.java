@@ -22,8 +22,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.managestudy.StudyBean;
+import org.researchedc.app.dto.Status;
+import org.researchedc.app.dto.StudyDto;
 import org.researchedc.module.study.entity.StudyEntity;
 import org.researchedc.module.study.repository.StudyRepository;
 
@@ -50,7 +50,7 @@ class StudyDaoAdapterTest {
         entity.setDateUpdated(created.plusDays(1));
         entity.setOwnerId(20);
         entity.setUpdateId(21);
-        entity.setTypeId(StudyBean.TYPE_NON_GENETIC);
+        entity.setTypeId(StudyDto.TYPE_NON_GENETIC);
         entity.setPrincipalInvestigator("PI");
         entity.setFacilityName("Clinic");
         entity.setExpectedTotalEnrollment(100);
@@ -59,14 +59,14 @@ class StudyDaoAdapterTest {
         entity.setOcOid("S_OID");
         when(repository.findById(7)).thenReturn(Optional.of(entity));
 
-        StudyBean bean = (StudyBean) adapter.findByPK(7);
+        StudyDto bean = (StudyDto) adapter.findByPK(7);
 
         assertEquals(7, bean.getId());
         assertEquals("Parent", bean.getName());
         assertEquals("PARENT", bean.getIdentifier());
         assertEquals("S1", bean.getSecondaryIdentifier());
         assertEquals(Status.AVAILABLE, bean.getStatus());
-        assertEquals(StudyBean.TYPE_NON_GENETIC, bean.getTypeId());
+        assertEquals(StudyDto.TYPE_NON_GENETIC, bean.getTypeId());
         assertEquals(20, bean.getOwnerId());
         assertEquals(21, bean.getUpdaterId());
         assertEquals("PI", bean.getPrincipalInvestigator());
@@ -84,8 +84,8 @@ class StudyDaoAdapterTest {
 
         Object bean = adapter.findByPK(404);
 
-        assertInstanceOf(StudyBean.class, bean);
-        assertEquals(0, ((StudyBean) bean).getId());
+        assertInstanceOf(StudyDto.class, bean);
+        assertEquals(0, ((StudyDto) bean).getId());
     }
 
     @Test
@@ -95,23 +95,23 @@ class StudyDaoAdapterTest {
             assertEquals("Created", e.getName());
             assertEquals("CREATED", e.getUniqueIdentifier());
             assertEquals("created summary", e.getSummary());
-            assertEquals(StudyBean.TYPE_GENETIC, e.getTypeId());
+            assertEquals(StudyDto.TYPE_GENETIC, e.getTypeId());
             assertEquals(Status.AVAILABLE.getId(), e.getStatusId());
             assertEquals("OID_CREATED", e.getOcOid());
             assertEquals(31, e.getOwnerId());
             return true;
         }))).thenReturn(saved);
 
-        StudyBean input = new StudyBean();
+        StudyDto input = new StudyDto();
         input.setName("Created");
         input.setIdentifier("CREATED");
         input.setSummary("created summary");
         input.setStatus(Status.DELETED);
-        input.setTypeId(StudyBean.TYPE_GENETIC);
+        input.setTypeId(StudyDto.TYPE_GENETIC);
         input.setOid("OID_CREATED");
         input.setOwnerId(31);
 
-        StudyBean result = (StudyBean) adapter.create(input);
+        StudyDto result = (StudyDto) adapter.create(input);
 
         assertEquals(11, result.getId());
         verify(repository).save(argThat(e -> e.getDateCreated() != null));
@@ -124,7 +124,7 @@ class StudyDaoAdapterTest {
         when(repository.findByUniqueIdentifier("PARENT")).thenReturn(Optional.of(parent));
         when(repository.findByParentStudyIdAndUniqueIdentifier(1, "SITE")).thenReturn(Optional.of(site));
 
-        StudyBean result = adapter.findSiteByUniqueIdentifier("PARENT", "SITE");
+        StudyDto result = adapter.findSiteByUniqueIdentifier("PARENT", "SITE");
 
         assertEquals(2, result.getId());
         assertEquals(1, result.getParentStudyId());
@@ -147,12 +147,12 @@ class StudyDaoAdapterTest {
                 && e.getUpdateId().equals(77)
                 && e.getDateUpdated() != null))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        StudyBean input = new StudyBean();
+        StudyDto input = new StudyDto();
         input.setId(1);
         input.setStatus(Status.LOCKED);
         input.setUpdaterId(77);
 
-        StudyBean result = adapter.updateSitesStatus(input);
+        StudyDto result = adapter.updateSitesStatus(input);
 
         assertEquals(1, result.getId());
         verify(repository).save(siteA);
@@ -171,13 +171,13 @@ class StudyDaoAdapterTest {
             return e.getDateUpdated() != null;
         }))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        StudyBean input = new StudyBean();
+        StudyDto input = new StudyDto();
         input.setId(8);
         input.setStatus(Status.DELETED);
         input.setOldStatus(Status.AVAILABLE);
         input.setUpdaterId(91);
 
-        StudyBean result = adapter.updateStudyStatus(input);
+        StudyDto result = adapter.updateStudyStatus(input);
 
         assertEquals(8, result.getId());
     }
@@ -212,7 +212,7 @@ class StudyDaoAdapterTest {
         row.put("date_created", now);
         row.put("owner_id", 21);
         row.put("update_id", 22);
-        row.put("type_id", StudyBean.TYPE_GENETIC);
+        row.put("type_id", StudyDto.TYPE_GENETIC);
         row.put("status_id", Status.AVAILABLE.getId());
         row.put("principal_investigator", "Row PI");
         row.put("facility_name", "Row Clinic");
@@ -221,13 +221,13 @@ class StudyDaoAdapterTest {
         row.put("results_reference", true);
         row.put("oc_oid", "ROW_OID");
 
-        StudyBean bean = (StudyBean) adapter.getEntityFromHashMap(row);
+        StudyDto bean = (StudyDto) adapter.getEntityFromHashMap(row);
 
         assertEquals(20, bean.getId());
         assertEquals(10, bean.getParentStudyId());
         assertEquals("ROW", bean.getIdentifier());
         assertEquals("From row", bean.getName());
-        assertEquals(StudyBean.TYPE_GENETIC, bean.getTypeId());
+        assertEquals(StudyDto.TYPE_GENETIC, bean.getTypeId());
         assertEquals(Status.AVAILABLE, bean.getStatus());
         assertEquals("Row PI", bean.getPrincipalInvestigator());
         assertEquals("Row Clinic", bean.getFacilityName());

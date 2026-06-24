@@ -7,7 +7,7 @@ import java.util.List;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.researchedc.bean.core.Status;
+import org.researchedc.app.dto.Status;
 import org.researchedc.module.audit.dto.AuditEventCrfDTO;
 import org.researchedc.module.audit.dto.AuditStudyDTO;
 import org.researchedc.module.audit.dto.AuditStudyEventDTO;

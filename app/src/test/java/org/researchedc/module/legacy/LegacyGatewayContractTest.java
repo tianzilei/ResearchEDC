@@ -37,7 +37,7 @@ import org.researchedc.module.legacy.controller.LegacySubjectGroupController;
 import org.researchedc.module.study.dto.StudyDetailDTO;
 import org.researchedc.module.study.dto.StudySummaryDTO;
 import org.researchedc.module.study.service.StudyService;
-import org.researchedc.module.subject.dto.StudySubjectDTO;
+import org.researchedc.app.dto.StudySubjectDTO;
 import org.researchedc.module.subject.service.SubjectService;
 import org.researchedc.module.legacy.dto.CreateCrfRequest;
 import org.researchedc.module.legacy.dto.CreateDiscrepancyNoteRequest;

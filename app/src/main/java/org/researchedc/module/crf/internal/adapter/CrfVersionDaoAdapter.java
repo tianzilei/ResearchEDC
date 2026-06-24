@@ -10,12 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.submit.CRFVersionBean;
+import org.researchedc.app.dto.CrfVersionDTO;
 import org.researchedc.module.crf.entity.CrfVersionEntity;
 import org.researchedc.module.crf.repository.CrfRepository;
 import org.researchedc.module.crf.repository.CrfVersionRepository;
+import org.researchedc.app.dto.Status;
 import org.researchedc.module.dataimport.service.ImportCrfVersionPort;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -35,28 +34,26 @@ public class CrfVersionDaoAdapter implements ImportCrfVersionPort {
         this.crfRepository = crfRepository;
     }
 
-    public EntityBean findByPK(int ID) {
+    public CrfVersionDTO findByPK(int ID) {
         return crfVersionRepository.findById(ID)
                 .map(this::toBean)
-                .orElseGet(CRFVersionBean::new);
+                .orElseGet(CrfVersionDTO::new);
     }
 
     @Transactional
-    public EntityBean create(EntityBean eb) {
-        CRFVersionBean bean = (CRFVersionBean) eb;
+    public CrfVersionDTO create(CrfVersionDTO dto) {
         CrfVersionEntity entity = new CrfVersionEntity();
-        apply(bean, entity);
+        apply(dto, entity);
         entity.setDateCreated(LocalDateTime.now());
         return toBean(crfVersionRepository.save(entity));
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb) {
-        CRFVersionBean bean = (CRFVersionBean) eb;
-        CrfVersionEntity entity = crfVersionRepository.findById(bean.getId())
+    public CrfVersionDTO update(CrfVersionDTO dto) {
+        CrfVersionEntity entity = crfVersionRepository.findById(dto.getId())
                 .orElseGet(CrfVersionEntity::new);
-        entity.setCrfVersionId(bean.getId() > 0 ? bean.getId() : null);
-        apply(bean, entity);
+        entity.setCrfVersionId(dto.getId() > 0 ? dto.getId() : null);
+        apply(dto, entity);
         entity.setDateUpdated(LocalDateTime.now());
         return toBean(crfVersionRepository.save(entity));
     }
@@ -65,19 +62,19 @@ public class CrfVersionDaoAdapter implements ImportCrfVersionPort {
     }
 
     public Object getEntityFromHashMap(HashMap hm) {
-        CRFVersionBean bean = new CRFVersionBean();
-        bean.setId(valueOrZero((Integer) hm.get("crf_version_id")));
-        bean.setCrfId(valueOrZero((Integer) hm.get("crf_id")));
-        bean.setName((String) hm.get("name"));
-        bean.setDescription((String) hm.get("description"));
-        bean.setRevisionNotes((String) hm.get("revision_notes"));
-        bean.setOid((String) hm.get("oc_oid"));
-        bean.setOwnerId(valueOrZero((Integer) hm.get("owner_id")));
-        bean.setUpdaterId(valueOrZero((Integer) hm.get("update_id")));
-        bean.setCreatedDate((Date) hm.get("date_created"));
-        bean.setUpdatedDate((Date) hm.get("date_updated"));
-        bean.setStatus(Status.getFromMap(valueOrZero((Integer) hm.get("status_id"))));
-        return bean;
+        CrfVersionDTO dto = new CrfVersionDTO();
+        dto.setId(valueOrZero((Integer) hm.get("crf_version_id")));
+        dto.setCrfId(valueOrZero((Integer) hm.get("crf_id")));
+        dto.setName((String) hm.get("name"));
+        dto.setDescription((String) hm.get("description"));
+        dto.setRevisionNotes((String) hm.get("revision_notes"));
+        dto.setOid((String) hm.get("oc_oid"));
+        dto.setOwnerId(valueOrZero((Integer) hm.get("owner_id")));
+        dto.setUpdaterId(valueOrZero((Integer) hm.get("update_id")));
+        dto.setCreatedDate((Date) hm.get("date_created"));
+        dto.setUpdatedDate((Date) hm.get("date_updated"));
+        dto.setStatusName(Status.getFromMap(valueOrZero((Integer) hm.get("status_id"))).getName());
+        return dto;
     }
 
     public Collection findAll() {
@@ -120,11 +117,11 @@ public class CrfVersionDaoAdapter implements ImportCrfVersionPort {
         return false;
     }
 
-    public EntityBean findByFullName(String version, String crfName) {
+    public CrfVersionDTO findByFullName(String version, String crfName) {
         return crfRepository.findByName(crfName)
                 .flatMap(crf -> crfVersionRepository.findByNameAndCrfId(version, crf.getCrfId()))
                 .map(this::toBean)
-                .orElseGet(CRFVersionBean::new);
+                .orElseGet(CrfVersionDTO::new);
     }
 
     @Transactional
@@ -135,7 +132,7 @@ public class CrfVersionDaoAdapter implements ImportCrfVersionPort {
         return new ArrayList();
     }
 
-    public String getValidOid(CRFVersionBean crfVersion, String crfName, String crfVersionName) {
+    public String getValidOid(CrfVersionDTO crfVersion, String crfName, String crfVersionName) {
         return "";
     }
 
@@ -177,56 +174,56 @@ public class CrfVersionDaoAdapter implements ImportCrfVersionPort {
                 .orElse(null);
     }
 
-    public CRFVersionBean findByOid(String oid) {
+    public CrfVersionDTO findByOid(String oid) {
         return crfVersionRepository.findByOcOid(oid)
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    public Map<Integer, CRFVersionBean> buildCrfVersionById(Integer studySubjectId) {
+    public Map<Integer, CrfVersionDTO> buildCrfVersionById(Integer studySubjectId) {
         return new HashMap<>();
     }
 
-    private void apply(CRFVersionBean bean, CrfVersionEntity entity) {
-        entity.setCrfId(bean.getCrfId() > 0 ? bean.getCrfId() : null);
-        entity.setName(bean.getName());
-        entity.setDescription(bean.getDescription());
-        entity.setRevisionNotes(bean.getRevisionNotes());
-        entity.setOcOid(bean.getOid());
-        entity.setStatusId(bean.getStatus() != null ? bean.getStatus().getId() : Status.INVALID.getId());
-        entity.setOwnerId(bean.getOwnerId());
-        entity.setUpdateId(bean.getUpdaterId());
-        entity.setXform(bean.getXform());
-        entity.setXformName(bean.getXformName());
+    private void apply(CrfVersionDTO dto, CrfVersionEntity entity) {
+        entity.setCrfId(dto.getCrfId() > 0 ? dto.getCrfId() : null);
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setRevisionNotes(dto.getRevisionNotes());
+        entity.setOcOid(dto.getOid());
+        entity.setStatusId(dto.getStatus() != null ? dto.getStatus().getId() : Status.INVALID.getId());
+        entity.setOwnerId(dto.getOwnerId());
+        entity.setUpdateId(dto.getUpdaterId());
+        entity.setXform(dto.getXform());
+        entity.setXformName(dto.getXformName());
     }
 
-    private ArrayList<CRFVersionBean> toBeans(List<CrfVersionEntity> entities) {
-        ArrayList<CRFVersionBean> beans = new ArrayList<>();
+    private ArrayList<CrfVersionDTO> toBeans(List<CrfVersionEntity> entities) {
+        ArrayList<CrfVersionDTO> dtos = new ArrayList<>();
         entities.stream()
                 .sorted(Comparator.comparing(CrfVersionEntity::getCrfVersionId, Comparator.nullsLast(Integer::compareTo)))
                 .map(this::toBean)
-                .forEach(beans::add);
-        return beans;
+                .forEach(dtos::add);
+        return dtos;
     }
 
-    private CRFVersionBean toBean(CrfVersionEntity entity) {
-        CRFVersionBean bean = new CRFVersionBean();
+    private CrfVersionDTO toBean(CrfVersionEntity entity) {
+        CrfVersionDTO dto = new CrfVersionDTO();
         if (entity.getCrfVersionId() != null) {
-            bean.setId(entity.getCrfVersionId());
+            dto.setId(entity.getCrfVersionId());
         }
-        bean.setCrfId(valueOrZero(entity.getCrfId()));
-        bean.setName(entity.getName() != null ? entity.getName() : "");
-        bean.setDescription(entity.getDescription() != null ? entity.getDescription() : "");
-        bean.setRevisionNotes(entity.getRevisionNotes() != null ? entity.getRevisionNotes() : "");
-        bean.setOid(entity.getOcOid());
-        bean.setOwnerId(valueOrZero(entity.getOwnerId()));
-        bean.setUpdaterId(valueOrZero(entity.getUpdateId()));
-        bean.setCreatedDate(toDate(entity.getDateCreated()));
-        bean.setUpdatedDate(toDate(entity.getDateUpdated()));
-        bean.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
-        bean.setXform(entity.getXform());
-        bean.setXformName(entity.getXformName());
-        return bean;
+        dto.setCrfId(valueOrZero(entity.getCrfId()));
+        dto.setName(entity.getName() != null ? entity.getName() : "");
+        dto.setDescription(entity.getDescription() != null ? entity.getDescription() : "");
+        dto.setRevisionNotes(entity.getRevisionNotes() != null ? entity.getRevisionNotes() : "");
+        dto.setOid(entity.getOcOid());
+        dto.setOwnerId(valueOrZero(entity.getOwnerId()));
+        dto.setUpdaterId(valueOrZero(entity.getUpdateId()));
+        dto.setCreatedDate(toDate(entity.getDateCreated()));
+        dto.setUpdatedDate(toDate(entity.getDateUpdated()));
+        dto.setStatusName(Status.getFromMap(valueOrZero(entity.getStatusId())).getName());
+        dto.setXform(entity.getXform());
+        dto.setXformName(entity.getXformName());
+        return dto;
     }
 
     private int valueOrZero(Integer value) {

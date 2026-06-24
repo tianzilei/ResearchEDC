@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.researchedc.module.crf.dto.CrfSummaryDTO;
-import org.researchedc.module.crf.dto.CrfVersionDTO;
+import org.researchedc.app.dto.CrfVersionDTO;
 import org.researchedc.module.crf.dto.ItemDTO;
 import org.researchedc.module.crf.dto.SectionDTO;
 import org.researchedc.module.crf.entity.CrfEntity;
@@ -68,7 +68,7 @@ public class LegacyCrfAdapter {
         dto.setDescription(version.getDescription());
         dto.setRevisionNotes(version.getRevisionNotes());
         dto.setOcOid(version.getOcOid());
-        dto.setStatus(String.valueOf(version.getStatusId()));
+        dto.setStatusName(String.valueOf(version.getStatusId()));
         dto.setSections(findSectionsByVersionId(crfVersionId));
         return dto;
     }

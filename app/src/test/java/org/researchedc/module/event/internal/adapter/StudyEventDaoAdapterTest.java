@@ -18,10 +18,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.managestudy.StudyEventBean;
-import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
+import org.researchedc.app.dto.Status;
+import org.researchedc.app.dto.StudyEventDto;
+import org.researchedc.app.dto.StudyEventDefinitionDto;
+import org.researchedc.app.dto.StudySubjectDTO;
 import org.researchedc.module.event.entity.StudyEventEntity;
 import org.researchedc.module.event.repository.StudyEventRepository;
 
@@ -54,7 +54,7 @@ class StudyEventDaoAdapterTest {
         entity.setUpdateId(21);
         when(studyEventRepository.findById(7)).thenReturn(Optional.of(entity));
 
-        StudyEventBean bean = (StudyEventBean) adapter.findByPK(7);
+        StudyEventDto bean = (StudyEventDto) adapter.findByPK(7);
 
         assertEquals(7, bean.getId());
         assertEquals(3, bean.getStudySubjectId());
@@ -70,13 +70,13 @@ class StudyEventDaoAdapterTest {
     }
 
     @Test
-    void findByPK_whenMissing_returnsEmptyStudyEventBean() {
+    void findByPK_whenMissing_returnsEmptyStudyEventDto() {
         when(studyEventRepository.findById(404)).thenReturn(Optional.empty());
 
         Object bean = adapter.findByPK(404);
 
-        assertInstanceOf(StudyEventBean.class, bean);
-        assertEquals(0, ((StudyEventBean) bean).getId());
+        assertInstanceOf(StudyEventDto.class, bean);
+        assertEquals(0, ((StudyEventDto) bean).getId());
     }
 
     @Test
@@ -84,7 +84,7 @@ class StudyEventDaoAdapterTest {
         when(studyEventRepository.findByStudySubjectIdAndStudyEventDefinitionIdAndSampleOrdinal(10, 20, 2))
                 .thenReturn(List.of(event(8, 10, 20, 1, 1, 2)));
 
-        StudyEventBean bean = (StudyEventBean) adapter.findByStudySubjectIdAndDefinitionIdAndOrdinal(10, 20, 2);
+        StudyEventDto bean = (StudyEventDto) adapter.findByStudySubjectIdAndDefinitionIdAndOrdinal(10, 20, 2);
 
         assertEquals(8, bean.getId());
         verify(studyEventRepository).findByStudySubjectIdAndStudyEventDefinitionIdAndSampleOrdinal(10, 20, 2);
@@ -92,9 +92,9 @@ class StudyEventDaoAdapterTest {
 
     @Test
     void findAllByDefinitionAndSubjectOrderByOrdinal_delegatesToOrderedRepositoryMethod() {
-        StudyEventDefinitionBean definition = new StudyEventDefinitionBean();
+        StudyEventDefinitionDto definition = new StudyEventDefinitionDto();
         definition.setId(20);
-        StudySubjectBean subject = new StudySubjectBean();
+        StudySubjectDTO subject = new StudySubjectDTO();
         subject.setId(10);
         when(studyEventRepository.findByStudyEventDefinitionIdAndStudySubjectIdOrderBySampleOrdinal(20, 10))
                 .thenReturn(List.of(event(2, 10, 20, 1, 1, 1), event(3, 10, 20, 1, 1, 2)));
@@ -107,9 +107,9 @@ class StudyEventDaoAdapterTest {
 
     @Test
     void getMaxSampleOrdinal_returnsTopOrdinalOrZero() {
-        StudyEventDefinitionBean definition = new StudyEventDefinitionBean();
+        StudyEventDefinitionDto definition = new StudyEventDefinitionDto();
         definition.setId(20);
-        StudySubjectBean subject = new StudySubjectBean();
+        StudySubjectDTO subject = new StudySubjectDTO();
         subject.setId(10);
         when(studyEventRepository.findTopByStudyEventDefinitionIdAndStudySubjectIdOrderBySampleOrdinalDesc(20, 10))
                 .thenReturn(Optional.of(event(5, 10, 20, 1, 1, 7)));
@@ -149,7 +149,7 @@ class StudyEventDaoAdapterTest {
             return e.getDateCreated() != null;
         }))).thenReturn(saved);
 
-        StudyEventBean input = new StudyEventBean();
+        StudyEventDto input = new StudyEventDto();
         input.setStudySubjectId(30);
         input.setStudyEventDefinitionId(40);
         input.setStatus(Status.AVAILABLE);
@@ -158,7 +158,7 @@ class StudyEventDaoAdapterTest {
         input.setSampleOrdinal(1);
         input.setOwnerId(31);
 
-        StudyEventBean result = (StudyEventBean) adapter.create(input);
+        StudyEventDto result = (StudyEventDto) adapter.create(input);
 
         assertEquals(11, result.getId());
     }
@@ -182,7 +182,7 @@ class StudyEventDaoAdapterTest {
         row.put("owner_id", 53);
         row.put("update_id", 54);
 
-        StudyEventBean bean = (StudyEventBean) adapter.getEntityFromHashMap(row);
+        StudyEventDto bean = (StudyEventDto) adapter.getEntityFromHashMap(row);
 
         assertEquals(50, bean.getId());
         assertEquals(51, bean.getStudySubjectId());

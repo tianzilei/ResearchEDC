@@ -1,10 +1,9 @@
 package org.researchedc.module.crf.internal.adapter;
 
-import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.submit.ItemBean;
+import org.researchedc.module.crf.dto.ItemDTO;
 import org.researchedc.module.crf.entity.ItemEntity;
 import org.researchedc.module.crf.repository.ItemRepository;
+import org.researchedc.app.dto.Status;
 import org.researchedc.module.dataimport.service.ImportItemPort;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -31,21 +30,19 @@ public class ItemDaoAdapter implements ImportItemPort {
     }
 
     @Transactional
-    public EntityBean create(EntityBean eb) {
-        ItemBean bean = (ItemBean) eb;
+    public ItemDTO create(ItemDTO dto) {
         ItemEntity entity = new ItemEntity();
-        apply(bean, entity);
+        apply(dto, entity);
         entity.setDateCreated(LocalDateTime.now());
         return toBean(itemRepository.save(entity));
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb) {
-        ItemBean bean = (ItemBean) eb;
-        ItemEntity entity = itemRepository.findById(bean.getId())
+    public ItemDTO update(ItemDTO dto) {
+        ItemEntity entity = itemRepository.findById(dto.getId())
                 .orElseGet(ItemEntity::new);
-        entity.setItemId(bean.getId() > 0 ? bean.getId() : null);
-        apply(bean, entity);
+        entity.setItemId(dto.getId() > 0 ? dto.getId() : null);
+        apply(dto, entity);
         entity.setDateUpdated(LocalDateTime.now());
         return toBean(itemRepository.save(entity));
     }
@@ -67,13 +64,13 @@ public class ItemDaoAdapter implements ImportItemPort {
         return toBean(entity);
     }
 
-    public List<ItemBean> findByOid(String oid) {
-        List<ItemBean> beans = new ArrayList<>();
+    public List<ItemDTO> findByOid(String oid) {
+        List<ItemDTO> dtos = new ArrayList<>();
         itemRepository.findByOcOid(oid).stream()
                 .sorted(Comparator.comparing(ItemEntity::getItemId, Comparator.nullsLast(Integer::compareTo)))
                 .map(this::toBean)
-                .forEach(beans::add);
-        return beans;
+                .forEach(dtos::add);
+        return dtos;
     }
 
     @Override
@@ -96,69 +93,69 @@ public class ItemDaoAdapter implements ImportItemPort {
         return toBeans(itemRepository.findBySectionIdOrderedByOrdinal(sectionId));
     }
 
-    public EntityBean findByPK(int ID) {
+    public ItemDTO findByPK(int ID) {
         return itemRepository.findById(ID)
                 .map(this::toBean)
-                .orElseGet(ItemBean::new);
+                .orElseGet(ItemDTO::new);
     }
 
-    public EntityBean findByName(String name) {
+    public ItemDTO findByName(String name) {
         return itemRepository.findByName(name).stream()
                 .findFirst()
                 .map(this::toBean)
-                .orElseGet(ItemBean::new);
+                .orElseGet(ItemDTO::new);
     }
 
-    public EntityBean findByNameAndCRFId(String name, int crfId) {
+    public ItemDTO findByNameAndCRFId(String name, int crfId) {
         return itemRepository.findByNameAndCrfId(name, crfId).stream()
                 .findFirst()
                 .map(this::toBean)
-                .orElseGet(ItemBean::new);
+                .orElseGet(ItemDTO::new);
     }
 
     public ArrayList findAllByParentIdAndCRFVersionId(int parentId, int crfVersionId) {
         return toBeans(itemRepository.findByParentIdAndCrfVersionId(parentId, crfVersionId));
     }
 
-    private void apply(ItemBean bean, ItemEntity entity) {
-        entity.setName(bean.getName());
-        entity.setDescription(bean.getDescription());
-        entity.setUnits(bean.getUnits());
-        entity.setItemDataTypeId(bean.getItemDataTypeId());
-        entity.setOcOid(bean.getOid());
-        entity.setPhiStatus(bean.isPhiStatus());
-        entity.setStatusId(bean.getStatus() != null ? bean.getStatus().getId() : Status.INVALID.getId());
-        entity.setOwnerId(bean.getOwnerId());
-        entity.setUpdateId(bean.getUpdaterId());
+    private void apply(ItemDTO dto, ItemEntity entity) {
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setUnits(dto.getUnits());
+        entity.setItemDataTypeId(dto.getItemDataTypeId());
+        entity.setOcOid(dto.getOid());
+        entity.setPhiStatus(dto.isPhiStatus());
+        entity.setStatusId(dto.getStatus() != null ? dto.getStatus().getId() : Status.INVALID.getId());
+        entity.setOwnerId(dto.getOwnerId());
+        entity.setUpdateId(dto.getUpdaterId());
     }
 
-    private ArrayList toBeans(List<ItemEntity> entities) {
-        ArrayList beans = new ArrayList();
+    private ArrayList<ItemDTO> toBeans(List<ItemEntity> entities) {
+        ArrayList<ItemDTO> dtos = new ArrayList<>();
         entities.stream()
                 .sorted(Comparator.comparing(ItemEntity::getItemId, Comparator.nullsLast(Integer::compareTo)))
                 .map(this::toBean)
-                .forEach(beans::add);
-        return beans;
+                .forEach(dtos::add);
+        return dtos;
     }
 
-    private ItemBean toBean(ItemEntity entity) {
-        ItemBean bean = new ItemBean();
+    private ItemDTO toBean(ItemEntity entity) {
+        ItemDTO dto = new ItemDTO();
         if (entity.getItemId() != null) {
-            bean.setId(entity.getItemId());
+            dto.setId(entity.getItemId());
         }
-        bean.setName(entity.getName());
-        bean.setDescription(entity.getDescription());
-        bean.setUnits(entity.getUnits());
-        bean.setItemDataTypeId(valueOrZero(entity.getItemDataTypeId()));
-        bean.setOid(entity.getOcOid());
-        bean.setPhiStatus(entity.getPhiStatus() != null && entity.getPhiStatus());
-        bean.setStatusId(valueOrZero(entity.getStatusId()));
-        bean.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
-        bean.setOwnerId(valueOrZero(entity.getOwnerId()));
-        bean.setCreatedDate(toDate(entity.getDateCreated()));
-        bean.setUpdatedDate(toDate(entity.getDateUpdated()));
-        bean.setUpdaterId(valueOrZero(entity.getUpdateId()));
-        return bean;
+        dto.setName(entity.getName());
+        dto.setDescription(entity.getDescription());
+        dto.setUnits(entity.getUnits());
+        dto.setItemDataTypeId(valueOrZero(entity.getItemDataTypeId()));
+        dto.setOid(entity.getOcOid());
+        dto.setPhiStatus(entity.getPhiStatus() != null && entity.getPhiStatus());
+        dto.setStatusId(valueOrZero(entity.getStatusId()));
+        dto.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
+        dto.setOwnerId(valueOrZero(entity.getOwnerId()));
+        dto.setCreatedDate(toDate(entity.getDateCreated()));
+        dto.setUpdatedDate(toDate(entity.getDateUpdated()));
+        dto.setUpdaterId(valueOrZero(entity.getUpdateId()));
+        return dto;
     }
 
     private int valueOrZero(Integer value) {

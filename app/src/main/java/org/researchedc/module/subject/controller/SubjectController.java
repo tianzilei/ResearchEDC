@@ -6,7 +6,7 @@ import org.researchedc.module.subject.dto.CreateSubjectRequest;
 import org.researchedc.module.subject.dto.EnrollSubjectRequest;
 import org.researchedc.module.subject.dto.ReassignStudySubjectRequest;
 import org.researchedc.module.subject.dto.SignSubjectRequest;
-import org.researchedc.module.subject.dto.StudySubjectDTO;
+import org.researchedc.app.dto.StudySubjectDTO;
 import org.researchedc.module.subject.dto.SubjectDTO;
 import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.subject.service.SubjectService;

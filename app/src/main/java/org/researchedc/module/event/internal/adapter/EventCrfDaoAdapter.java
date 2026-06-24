@@ -12,16 +12,14 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
 
-import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.managestudy.StudyEventBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.bean.submit.CRFVersionBean;
-import org.researchedc.bean.submit.EventCRFBean;
+import org.researchedc.app.dto.EventCrfDto;
+import org.researchedc.app.dto.Status;
+import org.researchedc.app.dto.StudyDto;
+import org.researchedc.app.dto.StudyEventDto;
+import org.researchedc.app.dto.CrfVersionDTO;
 import org.researchedc.module.dataimport.service.ImportEventCrfPort;
 import org.researchedc.module.dataimport.dto.ImportEventCrf;
+import org.researchedc.app.dto.StudySubjectDTO;
 import org.researchedc.module.event.entity.EventCrfEntity;
 import org.researchedc.module.event.repository.EventCrfRepository;
 import org.springframework.context.annotation.Primary;
@@ -39,28 +37,26 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
         this.eventCrfRepository = eventCrfRepository;
     }
 
-    public EntityBean findByPK(int ID) {
+    public EventCrfDto findByPK(int ID) {
         return eventCrfRepository.findById(ID)
                 .map(this::toBean)
-                .orElseGet(EventCRFBean::new);
+                .orElseGet(EventCrfDto::new);
     }
 
     @Transactional
-    public EntityBean create(EntityBean eb) {
-        EventCRFBean bean = (EventCRFBean) eb;
+    public EventCrfDto create(EventCrfDto dto) {
         EventCrfEntity entity = new EventCrfEntity();
-        apply(bean, entity);
+        apply(dto, entity);
         entity.setDateCreated(LocalDateTime.now());
         return toBean(eventCrfRepository.save(entity));
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb) {
-        EventCRFBean bean = (EventCRFBean) eb;
-        EventCrfEntity entity = eventCrfRepository.findById(bean.getId())
+    public EventCrfDto update(EventCrfDto dto) {
+        EventCrfEntity entity = eventCrfRepository.findById(dto.getId())
                 .orElseGet(EventCrfEntity::new);
-        entity.setEventCrfId(bean.getId() > 0 ? bean.getId() : null);
-        apply(bean, entity);
+        entity.setEventCrfId(dto.getId() > 0 ? dto.getId() : null);
+        apply(dto, entity);
         entity.setDateUpdated(LocalDateTime.now());
         return toBean(eventCrfRepository.save(entity));
     }
@@ -108,20 +104,20 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
         return toBean(entity);
     }
 
-    public ArrayList findAllByStudyEvent(StudyEventBean studyEvent) {
+    public ArrayList findAllByStudyEvent(StudyEventDto studyEvent) {
         return toBeans(eventCrfRepository.findByStudyEventId(studyEvent.getId()));
     }
 
-    public ArrayList findAllByStudyEventAndStatus(StudyEventBean studyEvent, Status status) {
+    public ArrayList findAllByStudyEventAndStatus(StudyEventDto studyEvent, Status status) {
         return toBeans(eventCrfRepository.findByStudyEventIdAndStatusId(
                 studyEvent.getId(), status.getId()));
     }
 
-    public ArrayList<EventCRFBean> findAllByStudySubject(int studySubjectId) {
+    public ArrayList<EventCrfDto> findAllByStudySubject(int studySubjectId) {
         return toBeans(eventCrfRepository.findByStudySubjectId(studySubjectId));
     }
 
-    public ArrayList findAllByStudyEventAndCrfOrCrfVersionOid(StudyEventBean studyEvent, String crfVersionOrCrfOID) {
+    public ArrayList findAllByStudyEventAndCrfOrCrfVersionOid(StudyEventDto studyEvent, String crfVersionOrCrfOID) {
         try {
             return toBeans(eventCrfRepository.findByStudyEventIdAndCrfVersionId(
                     studyEvent.getId(), Integer.parseInt(crfVersionOrCrfOID)));
@@ -130,12 +126,12 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
         }
     }
 
-    public ArrayList<EventCRFBean> findAllByStudyEventInParticipantForm(StudyEventBean studyEvent,
+    public ArrayList<EventCrfDto> findAllByStudyEventInParticipantForm(StudyEventDto studyEvent,
                                                                         int sed_Id, int studyId) {
         return new ArrayList();
     }
 
-    public ArrayList<EventCRFBean> findAllByStudyEventDefinition(int sed_Id, int studyId) {
+    public ArrayList<EventCrfDto> findAllByStudyEventDefinition(int sed_Id, int studyId) {
         return new ArrayList();
     }
 
@@ -159,8 +155,8 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
                 .collect(Collectors.toList()));
     }
 
-    public ArrayList findByEventSubjectVersion(StudyEventBean studyEvent, StudySubjectBean studySubject,
-                                               CRFVersionBean crfVersion) {
+    public ArrayList findByEventSubjectVersion(StudyEventDto studyEvent, StudySubjectDTO studySubject,
+                                               CrfVersionDTO crfVersion) {
         return toBeans(eventCrfRepository.findByStudyEventIdAndStudySubjectIdAndCrfVersionId(
                 studyEvent.getId(), studySubject.getId(), crfVersion.getId()));
     }
@@ -173,7 +169,7 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
                 .toList();
     }
 
-    public EventCRFBean findByEventCrfVersion(StudyEventBean studyEvent, CRFVersionBean crfVersion) {
+    public EventCrfDto findByEventCrfVersion(StudyEventDto studyEvent, CrfVersionDTO crfVersion) {
         return eventCrfRepository.findByStudyEventIdAndCrfVersionId(
                         studyEvent.getId(), crfVersion.getId()).stream()
                 .findFirst()
@@ -181,7 +177,7 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
                 .orElse(null);
     }
 
-    public ArrayList<EventCRFBean> findByCrfVersion(CRFVersionBean crfVersion) {
+    public ArrayList<EventCrfDto> findByCrfVersion(CrfVersionDTO crfVersion) {
         return toBeans(eventCrfRepository.findByCrfVersionId(crfVersion.getId()));
     }
 
@@ -194,7 +190,7 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
     }
 
     @Transactional
-    public void markComplete(EventCRFBean ecb, boolean ide) {
+    public void markComplete(EventCrfDto ecb, boolean ide) {
     }
 
     @Transactional
@@ -205,8 +201,8 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
     public void updateCRFVersionID(int event_crf_id, int crf_version_id, int user_id, java.sql.Connection con) {
     }
 
-    public ArrayList findByEventSubjectCRFid(StudyEventBean studyEvent, StudySubjectBean studySubject,
-                                             CRFVersionBean crfVersion) {
+    public ArrayList findByEventSubjectCRFid(StudyEventDto studyEvent, StudySubjectDTO studySubject,
+                                             CrfVersionDTO crfVersion) {
         return toBeans(eventCrfRepository.findByStudyEventIdAndStudySubjectIdAndCrfVersionId(
                 studyEvent.getId(), studySubject.getId(), crfVersion.getId()));
     }
@@ -239,7 +235,7 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
         return toImportRow(eventCrfRepository.save(entity));
     }
 
-    public EventCRFBean findByEventCrfID(StudyEventBean studyEvent, CRFVersionBean crfVersion) {
+    public EventCrfDto findByEventCrfID(StudyEventDto studyEvent, CrfVersionDTO crfVersion) {
         return eventCrfRepository.findByStudyEventIdAndCrfVersionId(
                         studyEvent.getId(), crfVersion.getId()).stream()
                 .findFirst()
@@ -247,7 +243,7 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
                 .orElse(null);
     }
 
-    public Map<Integer, SortedSet<EventCRFBean>> buildEventCrfListByStudyEvent(Integer studySubjectId) {
+    public Map<Integer, SortedSet<EventCrfDto>> buildEventCrfListByStudyEvent(Integer studySubjectId) {
         return new HashMap();
     }
 
@@ -255,8 +251,8 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
         return new java.util.LinkedHashSet();
     }
 
-    public List<EventCRFBean> findAllCRFMigrationReportList(CRFVersionBean sourceCrfVersionBean,
-                                                            CRFVersionBean targetCrfVersionBean,
+    public List<EventCrfDto> findAllCRFMigrationReportList(CrfVersionDTO sourceCrfVersionBean,
+                                                            CrfVersionDTO targetCrfVersionBean,
                                                             ArrayList<String> studyEventDefnlist,
                                                             ArrayList<String> sitelist) {
         return new ArrayList();
@@ -266,7 +262,7 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
         return 0;
     }
 
-    public AuditableEntityBean findByPKAndStudy(int id, StudyBean study) {
+    public EventCrfDto findByPKAndStudy(int id, StudyDto study) {
         return null;
     }
 
@@ -300,32 +296,32 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
         return 0;
     }
 
-    private void apply(EventCRFBean bean, EventCrfEntity entity) {
-        entity.setStudyEventId(bean.getStudyEventId() > 0 ? bean.getStudyEventId() : null);
-        entity.setStudySubjectId(bean.getStudySubjectId() > 0 ? bean.getStudySubjectId() : null);
-        entity.setCrfVersionId(bean.getCRFVersionId() > 0 ? bean.getCRFVersionId() : null);
-        entity.setStatusId(bean.getStatus() != null ? bean.getStatus().getId() : Status.INVALID.getId());
-        entity.setDateInterviewed(toLocalDateTime(bean.getDateInterviewed()));
-        entity.setInterviewerName(bean.getInterviewerName());
-        entity.setAnnotations(bean.getAnnotations());
-        entity.setDateCompleted(toLocalDateTime(bean.getDateCompleted()));
-        entity.setValidatorId(bean.getValidatorId() > 0 ? bean.getValidatorId() : null);
-        entity.setDateValidate(toLocalDateTime(bean.getDateValidate()));
-        entity.setDateValidateCompleted(toLocalDateTime(bean.getDateValidateCompleted()));
-        entity.setValidatorAnnotations(bean.getValidatorAnnotations());
-        entity.setOwnerId(bean.getOwnerId() > 0 ? bean.getOwnerId() : null);
-        entity.setUpdateId(bean.getUpdaterId() > 0 ? bean.getUpdaterId() : null);
-        entity.setElectronicSignatureStatus(bean.isElectronicSignatureStatus());
-        entity.setSdvStatus(bean.isSdvStatus());
-        entity.setSdvUpdateId(bean.getSdvUpdateId() > 0 ? bean.getSdvUpdateId() : null);
+    private void apply(EventCrfDto dto, EventCrfEntity entity) {
+        entity.setStudyEventId(dto.getStudyEventId() > 0 ? dto.getStudyEventId() : null);
+        entity.setStudySubjectId(dto.getStudySubjectId() > 0 ? dto.getStudySubjectId() : null);
+        entity.setCrfVersionId(dto.getCRFVersionId() > 0 ? dto.getCRFVersionId() : null);
+        entity.setStatusId(dto.getStatus() != null ? dto.getStatus().getId() : Status.INVALID.getId());
+        entity.setDateInterviewed(toLocalDateTime(dto.getDateInterviewed()));
+        entity.setInterviewerName(dto.getInterviewerName());
+        entity.setAnnotations(dto.getAnnotations());
+        entity.setDateCompleted(toLocalDateTime(dto.getDateCompleted()));
+        entity.setValidatorId(dto.getValidatorId() > 0 ? dto.getValidatorId() : null);
+        entity.setDateValidate(toLocalDateTime(dto.getDateValidate()));
+        entity.setDateValidateCompleted(toLocalDateTime(dto.getDateValidateCompleted()));
+        entity.setValidatorAnnotations(dto.getValidatorAnnotations());
+        entity.setOwnerId(dto.getOwnerId() > 0 ? dto.getOwnerId() : null);
+        entity.setUpdateId(dto.getUpdaterId() > 0 ? dto.getUpdaterId() : null);
+        entity.setElectronicSignatureStatus(dto.isElectronicSignatureStatus());
+        entity.setSdvStatus(dto.isSdvStatus());
+        entity.setSdvUpdateId(dto.getSdvUpdateId() > 0 ? dto.getSdvUpdateId() : null);
     }
 
-    private ArrayList<EventCRFBean> toBeans(List<EventCrfEntity> entities) {
-        ArrayList<EventCRFBean> beans = new ArrayList();
+    private ArrayList<EventCrfDto> toBeans(List<EventCrfEntity> entities) {
+        ArrayList<EventCrfDto> dtos = new ArrayList<>();
         entities.stream()
                 .map(this::toBean)
-                .forEach(beans::add);
-        return beans;
+                .forEach(dtos::add);
+        return dtos;
     }
 
     private ImportEventCrf toImportRow(EventCrfEntity entity) {
@@ -335,32 +331,32 @@ public class EventCrfDaoAdapter implements ImportEventCrfPort {
                 valueOrZero(entity.getStatusId()));
     }
 
-    private EventCRFBean toBean(EventCrfEntity entity) {
-        EventCRFBean bean = new EventCRFBean();
+    private EventCrfDto toBean(EventCrfEntity entity) {
+        EventCrfDto dto = new EventCrfDto();
         if (entity.getEventCrfId() != null) {
-            bean.setId(entity.getEventCrfId());
+            dto.setId(entity.getEventCrfId());
         }
-        bean.setStudyEventId(valueOrZero(entity.getStudyEventId()));
-        bean.setStudySubjectId(valueOrZero(entity.getStudySubjectId()));
-        bean.setCRFVersionId(valueOrZero(entity.getCrfVersionId()));
-        bean.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
-        bean.setDateInterviewed(toDate(entity.getDateInterviewed()));
-        bean.setInterviewerName(entity.getInterviewerName() != null ? entity.getInterviewerName() : "");
-        bean.setAnnotations(entity.getAnnotations() != null ? entity.getAnnotations() : "");
-        bean.setDateCompleted(toDate(entity.getDateCompleted()));
-        bean.setValidatorId(valueOrZero(entity.getValidatorId()));
-        bean.setDateValidate(toDate(entity.getDateValidate()));
-        bean.setDateValidateCompleted(toDate(entity.getDateValidateCompleted()));
-        bean.setValidatorAnnotations(entity.getValidatorAnnotations() != null ? entity.getValidatorAnnotations() : "");
-        bean.setCreatedDate(toDate(entity.getDateCreated()));
-        bean.setUpdatedDate(toDate(entity.getDateUpdated()));
-        bean.setOwnerId(valueOrZero(entity.getOwnerId()));
-        bean.setUpdaterId(valueOrZero(entity.getUpdateId()));
-        bean.setElectronicSignatureStatus(entity.getElectronicSignatureStatus() != null
+        dto.setStudyEventId(valueOrZero(entity.getStudyEventId()));
+        dto.setStudySubjectId(valueOrZero(entity.getStudySubjectId()));
+        dto.setCRFVersionId(valueOrZero(entity.getCrfVersionId()));
+        dto.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
+        dto.setDateInterviewed(toDate(entity.getDateInterviewed()));
+        dto.setInterviewerName(entity.getInterviewerName() != null ? entity.getInterviewerName() : "");
+        dto.setAnnotations(entity.getAnnotations() != null ? entity.getAnnotations() : "");
+        dto.setDateCompleted(toDate(entity.getDateCompleted()));
+        dto.setValidatorId(valueOrZero(entity.getValidatorId()));
+        dto.setDateValidate(toDate(entity.getDateValidate()));
+        dto.setDateValidateCompleted(toDate(entity.getDateValidateCompleted()));
+        dto.setValidatorAnnotations(entity.getValidatorAnnotations() != null ? entity.getValidatorAnnotations() : "");
+        dto.setCreatedDate(toDate(entity.getDateCreated()));
+        dto.setUpdatedDate(toDate(entity.getDateUpdated()));
+        dto.setOwnerId(valueOrZero(entity.getOwnerId()));
+        dto.setUpdaterId(valueOrZero(entity.getUpdateId()));
+        dto.setElectronicSignatureStatus(entity.getElectronicSignatureStatus() != null
                 && entity.getElectronicSignatureStatus());
-        bean.setSdvStatus(entity.getSdvStatus() != null && entity.getSdvStatus());
-        bean.setSdvUpdateId(valueOrZero(entity.getSdvUpdateId()));
-        return bean;
+        dto.setSdvStatus(entity.getSdvStatus() != null && entity.getSdvStatus());
+        dto.setSdvUpdateId(valueOrZero(entity.getSdvUpdateId()));
+        return dto;
     }
 
     private int valueOrZero(Integer value) {

@@ -20,10 +20,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
-import org.researchedc.bean.submit.CRFVersionBean;
+import org.researchedc.app.dto.Status;
+import org.researchedc.app.dto.StudyDto;
+import org.researchedc.app.dto.StudySubjectDTO;
+import org.researchedc.app.dto.CrfVersionDTO;
 import org.researchedc.module.subject.entity.StudySubjectEntity;
 import org.researchedc.module.subject.repository.StudySubjectRepository;
 
@@ -53,7 +53,7 @@ class StudySubjectDaoAdapterTest {
         entity.setUpdateId(21);
         when(repository.findById(7)).thenReturn(Optional.of(entity));
 
-        StudySubjectBean bean = (StudySubjectBean) adapter.findByPK(7);
+        StudySubjectDTO bean = (StudySubjectDTO) adapter.findByPK(7);
 
         assertEquals(7, bean.getId());
         assertEquals(3, bean.getStudyId());
@@ -67,18 +67,18 @@ class StudySubjectDaoAdapterTest {
     }
 
     @Test
-    void findByPK_whenMissing_returnsEmptyStudySubjectBean() {
+    void findByPK_whenMissing_returnsEmptyStudySubjectDTO() {
         when(repository.findById(404)).thenReturn(Optional.empty());
 
         Object bean = adapter.findByPK(404);
 
-        assertInstanceOf(StudySubjectBean.class, bean);
-        assertEquals(0, ((StudySubjectBean) bean).getId());
+        assertInstanceOf(StudySubjectDTO.class, bean);
+        assertEquals(0, ((StudySubjectDTO) bean).getId());
     }
 
     @Test
     void findAllActiveByStudyOrderByLabel_usesAvailableStatus() {
-        StudyBean study = new StudyBean();
+        StudyDto study = new StudyDto();
         study.setId(10);
         when(repository.findByStudyIdAndStatusIdOrderByLabel(10, Status.AVAILABLE.getId()))
                 .thenReturn(List.of(studySubject(1, 10, 20, "A", 1)));
@@ -95,7 +95,7 @@ class StudySubjectDaoAdapterTest {
                 studySubject(5, 9, 30, "SUBJ", 1),
                 studySubject(6, 9, 31, "SUBJ", 1)));
 
-        StudySubjectBean bean = (StudySubjectBean) adapter.findAnotherBySameLabel("SUBJ", 9, 5);
+        StudySubjectDTO bean = (StudySubjectDTO) adapter.findAnotherBySameLabel("SUBJ", 9, 5);
 
         assertEquals(6, bean.getId());
     }
@@ -132,7 +132,7 @@ class StudySubjectDaoAdapterTest {
 
     @Test
     void countByStudyAndStatus_delegatesToRepository() {
-        StudyBean study = new StudyBean();
+        StudyDto study = new StudyDto();
         study.setId(17);
         when(repository.countByStudyIdAndStatusId(17, Status.LOCKED.getId())).thenReturn(5L);
 
@@ -153,7 +153,7 @@ class StudySubjectDaoAdapterTest {
             return e.getDateCreated() != null;
         }))).thenReturn(saved);
 
-        StudySubjectBean input = new StudySubjectBean();
+        StudySubjectDTO input = new StudySubjectDTO();
         input.setStudyId(9);
         input.setSubjectId(30);
         input.setLabel("CREATED");
@@ -162,7 +162,7 @@ class StudySubjectDaoAdapterTest {
         input.setStatus(Status.AVAILABLE);
         input.setOwnerId(31);
 
-        StudySubjectBean result = (StudySubjectBean) adapter.create(input);
+        StudySubjectDTO result = (StudySubjectDTO) adapter.create(input);
 
         assertEquals(15, result.getId());
     }
@@ -183,7 +183,7 @@ class StudySubjectDaoAdapterTest {
         row.put("update_id", 54);
         row.put("status_id", Status.AVAILABLE.getId());
 
-        StudySubjectBean bean = (StudySubjectBean) adapter.getEntityFromHashMap(row);
+        StudySubjectDTO bean = (StudySubjectDTO) adapter.getEntityFromHashMap(row);
 
         assertEquals(50, bean.getId());
         assertEquals(51, bean.getStudyId());
@@ -201,11 +201,11 @@ class StudySubjectDaoAdapterTest {
         assertNoMethod("findAll", String.class, boolean.class, String.class);
         assertNoMethod("findAllByPermission", Object.class, int.class, String.class, boolean.class, String.class);
         assertNoMethod("findAllByPermission", Object.class, int.class);
-        assertNoMethod("findAllWithStudyEvent", StudyBean.class);
+        assertNoMethod("findAllWithStudyEvent", StudyDto.class);
         assertNoMethod("getGroupByStudySubject", int.class, int.class, int.class);
-        assertNoMethod("getTotalEventCrfCountForCrfMigration", CRFVersionBean.class, CRFVersionBean.class,
+        assertNoMethod("getTotalEventCrfCountForCrfMigration", CrfVersionDTO.class, CrfVersionDTO.class,
                 ArrayList.class, ArrayList.class);
-        assertNoMethod("getTotalCountStudySubjectForCrfMigration", CRFVersionBean.class, CRFVersionBean.class,
+        assertNoMethod("getTotalCountStudySubjectForCrfMigration", CrfVersionDTO.class, CrfVersionDTO.class,
                 ArrayList.class, ArrayList.class);
     }
 

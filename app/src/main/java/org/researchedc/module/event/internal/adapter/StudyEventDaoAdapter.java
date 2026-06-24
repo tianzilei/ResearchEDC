@@ -11,15 +11,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import org.researchedc.bean.core.AuditableEntityBean;
-import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.managestudy.StudyEventBean;
-import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
+import org.researchedc.app.dto.Status;
+import org.researchedc.app.dto.StudyDto;
+import org.researchedc.app.dto.StudyEventDefinitionDto;
+import org.researchedc.app.dto.StudyEventDto;
 import org.researchedc.module.dataimport.service.ImportStudyEventPort;
 import org.researchedc.module.dataimport.dto.ImportStudyEvent;
+import org.researchedc.app.dto.StudySubjectDTO;
 import org.researchedc.module.event.entity.StudyEventEntity;
 import org.researchedc.module.event.repository.StudyEventRepository;
 import org.springframework.context.annotation.Primary;
@@ -38,56 +36,54 @@ public class StudyEventDaoAdapter implements ImportStudyEventPort {
         this.studyEventRepository = studyEventRepository;
     }
 
-    public EntityBean findByPK(int ID) {
+    public StudyEventDto findByPK(int ID) {
         return studyEventRepository.findById(ID)
                 .map(this::toBean)
-                .orElseGet(StudyEventBean::new);
+                .orElseGet(StudyEventDto::new);
     }
 
-    public EntityBean findByPKCached(int ID) {
+    public StudyEventDto findByPKCached(int ID) {
         return findByPK(ID);
     }
 
     @Transactional
-    public EntityBean create(EntityBean eb) {
-        StudyEventBean bean = (StudyEventBean) eb;
+    public StudyEventDto create(StudyEventDto dto) {
         StudyEventEntity entity = new StudyEventEntity();
-        apply(bean, entity);
+        apply(dto, entity);
         entity.setDateCreated(LocalDateTime.now());
         return toBean(studyEventRepository.save(entity));
     }
 
     @Transactional
-    public EntityBean create(EntityBean eb, boolean isTransaction) {
-        return create(eb);
+    public StudyEventDto create(StudyEventDto dto, boolean isTransaction) {
+        return create(dto);
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb) {
-        StudyEventBean bean = (StudyEventBean) eb;
-        StudyEventEntity entity = studyEventRepository.findById(bean.getId())
+    public StudyEventDto update(StudyEventDto dto) {
+        StudyEventEntity entity = studyEventRepository.findById(dto.getId())
                 .orElseGet(StudyEventEntity::new);
-        if (bean.getId() > 0) {
-            entity.setStudyEventId(bean.getId());
+        if (dto.getId() > 0) {
+            entity.setStudyEventId(dto.getId());
         }
-        apply(bean, entity);
+        apply(dto, entity);
         entity.setDateUpdated(LocalDateTime.now());
         return toBean(studyEventRepository.save(entity));
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb, boolean isTransaction) {
-        return update(eb);
+    public StudyEventDto update(StudyEventDto dto, boolean isTransaction) {
+        return update(dto);
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb, Connection con) {
-        return update(eb);
+    public StudyEventDto update(StudyEventDto dto, Connection con) {
+        return update(dto);
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb, Connection con, boolean isTransaction) {
-        return update(eb);
+    public StudyEventDto update(StudyEventDto dto, Connection con, boolean isTransaction) {
+        return update(dto);
     }
 
     public Collection findAll() {
@@ -140,15 +136,15 @@ public class StudyEventDaoAdapter implements ImportStudyEventPort {
         return new ArrayList();
     }
 
-    public ArrayList findAllWithSubjectLabelByStudySubjectAndDefinition(StudySubjectBean studySubject, int definitionId) {
+    public ArrayList findAllWithSubjectLabelByStudySubjectAndDefinition(StudySubjectDTO studySubject, int definitionId) {
         return new ArrayList();
     }
 
-    public EntityBean findByStudySubjectIdAndDefinitionIdAndOrdinal(int ssbid, int sedid, int ord) {
+    public StudyEventDto findByStudySubjectIdAndDefinitionIdAndOrdinal(int ssbid, int sedid, int ord) {
         List<StudyEventEntity> results = studyEventRepository
                 .findByStudySubjectIdAndStudyEventDefinitionIdAndSampleOrdinal(ssbid, sedid, ord);
         if (results.isEmpty()) {
-            return new StudyEventBean();
+            return new StudyEventDto();
         }
         return toBean(results.get(0));
     }
@@ -167,36 +163,36 @@ public class StudyEventDaoAdapter implements ImportStudyEventPort {
                 .orElse(null);
     }
 
-    public ArrayList findAllByDefinitionAndSubject(StudyEventDefinitionBean definition, StudySubjectBean subject) {
+    public ArrayList findAllByDefinitionAndSubject(StudyEventDefinitionDto definition, StudySubjectDTO subject) {
         return toBeans(studyEventRepository
                 .findByStudyEventDefinitionIdAndStudySubjectId(definition.getId(), subject.getId()));
     }
 
-    public ArrayList findAllByDefinitionAndSubjectOrderByOrdinal(StudyEventDefinitionBean definition, StudySubjectBean subject) {
+    public ArrayList findAllByDefinitionAndSubjectOrderByOrdinal(StudyEventDefinitionDto definition, StudySubjectDTO subject) {
         return toBeans(studyEventRepository
                 .findByStudyEventDefinitionIdAndStudySubjectIdOrderBySampleOrdinal(definition.getId(), subject.getId()));
     }
 
-    public ArrayList findAllByStudyAndStudySubjectId(StudyBean study, int studySubjectId) {
+    public ArrayList findAllByStudyAndStudySubjectId(StudyDto study, int studySubjectId) {
         return toBeans(studyEventRepository.findByStudySubjectId(studySubjectId));
     }
 
-    public ArrayList findAllByStudyAndEventDefinitionId(StudyBean study, int eventDefinitionId) {
+    public ArrayList findAllByStudyAndEventDefinitionId(StudyDto study, int eventDefinitionId) {
         return toBeans(studyEventRepository.findByStudyEventDefinitionId(eventDefinitionId));
     }
 
-    public int getMaxSampleOrdinal(StudyEventDefinitionBean sedb, StudySubjectBean studySubject) {
+    public int getMaxSampleOrdinal(StudyEventDefinitionDto sedb, StudySubjectDTO studySubject) {
         Optional<StudyEventEntity> result = studyEventRepository
                 .findTopByStudyEventDefinitionIdAndStudySubjectIdOrderBySampleOrdinalDesc(
                         sedb.getId(), studySubject.getId());
         return result.map(e -> valueOrZero(e.getSampleOrdinal())).orElse(0);
     }
 
-    public AuditableEntityBean findByPKAndStudy(int id, StudyBean study) {
-        return (AuditableEntityBean) findByPK(id);
+    public StudyEventDto findByPKAndStudy(int id, StudyDto study) {
+        return findByPK(id);
     }
 
-    public ArrayList findAllByStudy(StudyBean study) {
+    public ArrayList findAllByStudy(StudyDto study) {
         return new ArrayList();
     }
 
@@ -212,11 +208,11 @@ public class StudyEventDaoAdapter implements ImportStudyEventPort {
         return toBeans(studyEventRepository.findByStudySubjectIdOrderByDateStart(subjectId));
     }
 
-    public HashMap findCRFsByStudy(StudyBean sb) {
+    public HashMap findCRFsByStudy(StudyDto sb) {
         return new HashMap();
     }
 
-    public HashMap findCRFsByStudyEvent(StudyEventBean seb) {
+    public HashMap findCRFsByStudyEvent(StudyEventDto seb) {
         return new HashMap();
     }
 
@@ -226,15 +222,15 @@ public class StudyEventDaoAdapter implements ImportStudyEventPort {
                 .orElse(0);
     }
 
-    public EntityBean getNextScheduledEvent(String studySubjectOID) {
-        return new StudyEventBean();
+    public StudyEventDto getNextScheduledEvent(String studySubjectOID) {
+        return new StudyEventDto();
     }
 
-    public ArrayList findAllByStudySubject(StudySubjectBean ssb) {
+    public ArrayList findAllByStudySubject(StudySubjectDTO ssb) {
         return toBeans(studyEventRepository.findByStudySubjectId(ssb.getId()));
     }
 
-    public ArrayList findAllByStudySubjectAndDefinition(StudySubjectBean ssb, StudyEventDefinitionBean sed) {
+    public ArrayList findAllByStudySubjectAndDefinition(StudySubjectDTO ssb, StudyEventDefinitionDto sed) {
         return new ArrayList();
     }
 
@@ -246,21 +242,21 @@ public class StudyEventDaoAdapter implements ImportStudyEventPort {
         return 0;
     }
 
-    public Integer getCountofEventsBasedOnEventStatus(StudyBean currentStudy, int subjectEventStatusId) {
+    public Integer getCountofEventsBasedOnEventStatus(StudyDto currentStudy, int subjectEventStatusId) {
         return 0;
     }
 
-    public Integer getCountofEvents(StudyBean currentStudy) {
+    public Integer getCountofEvents(StudyDto currentStudy) {
         return 0;
     }
 
-    public StudyEventBean findAllByStudyEventDefinitionAndCrfOidsAndOrdinal(
+    public StudyEventDto findAllByStudyEventDefinitionAndCrfOidsAndOrdinal(
             String studyEventDefinitionOid, String crfOrCrfVersionOid, String ordinal, String studySubjectId) {
-        return new StudyEventBean();
+        return new StudyEventDto();
     }
 
-    public HashMap getStudySubjectCRFData(StudyBean sb, int studySubjectId, int eventDefId,
-                                          String crfVersionOID, int eventOrdinal) {
+    public HashMap getStudySubjectCRFData(StudyDto sb, int studySubjectId, int eventDefId,
+                                           String crfVersionOid) {
         return new HashMap();
     }
 
@@ -270,51 +266,51 @@ public class StudyEventDaoAdapter implements ImportStudyEventPort {
 
     // --- Private helpers ---
 
-    private void apply(StudyEventBean bean, StudyEventEntity entity) {
-        entity.setStudyEventDefinitionId(bean.getStudyEventDefinitionId());
-        entity.setStudySubjectId(bean.getStudySubjectId());
-        entity.setStatusId(bean.getStatus() != null ? bean.getStatus().getId() : Status.INVALID.getId());
+    private void apply(StudyEventDto dto, StudyEventEntity entity) {
+        entity.setStudyEventDefinitionId(dto.getStudyEventDefinitionId());
+        entity.setStudySubjectId(dto.getStudySubjectId());
+        entity.setStatusId(dto.getStatus() != null ? dto.getStatus().getId() : Status.INVALID.getId());
         entity.setSubjectEventStatusId(
-                bean.getSubjectEventStatusId() != 0 ? bean.getSubjectEventStatusId() : SUBJECT_EVENT_STATUS_SCHEDULED);
-        entity.setLocation(bean.getLocation());
-        entity.setSampleOrdinal(bean.getSampleOrdinal());
-        entity.setDateStart(toLocalDateTime(bean.getDateStarted()));
-        entity.setDateEnd(toLocalDateTime(bean.getDateEnded()));
-        entity.setStartTimeFlag(bean.getStartTimeFlag());
-        entity.setEndTimeFlag(bean.getEndTimeFlag());
-        entity.setOwnerId(bean.getOwnerId());
-        entity.setUpdateId(bean.getUpdaterId());
+                dto.getSubjectEventStatusId() != 0 ? dto.getSubjectEventStatusId() : SUBJECT_EVENT_STATUS_SCHEDULED);
+        entity.setLocation(dto.getLocation());
+        entity.setSampleOrdinal(dto.getSampleOrdinal());
+        entity.setDateStart(toLocalDateTime(dto.getDateStarted()));
+        entity.setDateEnd(toLocalDateTime(dto.getDateEnded()));
+        entity.setStartTimeFlag(dto.getStartTimeFlag());
+        entity.setEndTimeFlag(dto.getEndTimeFlag());
+        entity.setOwnerId(dto.getOwnerId());
+        entity.setUpdateId(dto.getUpdaterId());
     }
 
-    private ArrayList toBeans(List<StudyEventEntity> entities) {
-        ArrayList beans = new ArrayList();
+    private ArrayList<StudyEventDto> toBeans(List<StudyEventEntity> entities) {
+        ArrayList<StudyEventDto> dtos = new ArrayList<>();
         entities.stream()
                 .sorted(Comparator.comparing(StudyEventEntity::getStudyEventId, Comparator.nullsLast(Integer::compareTo)))
                 .map(this::toBean)
-                .forEach(beans::add);
-        return beans;
+                .forEach(dtos::add);
+        return dtos;
     }
 
-    private StudyEventBean toBean(StudyEventEntity entity) {
-        StudyEventBean bean = new StudyEventBean();
+    private StudyEventDto toBean(StudyEventEntity entity) {
+        StudyEventDto dto = new StudyEventDto();
         if (entity.getStudyEventId() != null) {
-            bean.setId(entity.getStudyEventId());
+            dto.setId(entity.getStudyEventId());
         }
-        bean.setStudySubjectId(valueOrZero(entity.getStudySubjectId()));
-        bean.setStudyEventDefinitionId(valueOrZero(entity.getStudyEventDefinitionId()));
-        bean.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
-        bean.setSubjectEventStatusId(valueOrZero(entity.getSubjectEventStatusId()));
-        bean.setLocation(entity.getLocation() != null ? entity.getLocation() : "");
-        bean.setSampleOrdinal(valueOrZero(entity.getSampleOrdinal()));
-        bean.setDateStarted(toDate(entity.getDateStart()));
-        bean.setDateEnded(toDate(entity.getDateEnd()));
-        bean.setStartTimeFlag(entity.getStartTimeFlag() != null && entity.getStartTimeFlag());
-        bean.setEndTimeFlag(entity.getEndTimeFlag() != null && entity.getEndTimeFlag());
-        bean.setCreatedDate(toDate(entity.getDateCreated()));
-        bean.setUpdatedDate(toDate(entity.getDateUpdated()));
-        bean.setOwnerId(valueOrZero(entity.getOwnerId()));
-        bean.setUpdaterId(valueOrZero(entity.getUpdateId()));
-        return bean;
+        dto.setStudySubjectId(valueOrZero(entity.getStudySubjectId()));
+        dto.setStudyEventDefinitionId(valueOrZero(entity.getStudyEventDefinitionId()));
+        dto.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
+        dto.setSubjectEventStatusId(valueOrZero(entity.getSubjectEventStatusId()));
+        dto.setLocation(entity.getLocation() != null ? entity.getLocation() : "");
+        dto.setSampleOrdinal(valueOrZero(entity.getSampleOrdinal()));
+        dto.setDateStarted(toDate(entity.getDateStart()));
+        dto.setDateEnded(toDate(entity.getDateEnd()));
+        dto.setStartTimeFlag(entity.getStartTimeFlag() != null && entity.getStartTimeFlag());
+        dto.setEndTimeFlag(entity.getEndTimeFlag() != null && entity.getEndTimeFlag());
+        dto.setCreatedDate(toDate(entity.getDateCreated()));
+        dto.setUpdatedDate(toDate(entity.getDateUpdated()));
+        dto.setOwnerId(valueOrZero(entity.getOwnerId()));
+        dto.setUpdaterId(valueOrZero(entity.getUpdateId()));
+        return dto;
     }
 
     private int valueOrZero(Integer value) {

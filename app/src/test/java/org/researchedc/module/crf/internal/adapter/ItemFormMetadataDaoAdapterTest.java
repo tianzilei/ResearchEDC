@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.researchedc.bean.submit.ItemFormMetadataBean;
+import org.researchedc.module.crf.dto.ItemFormMetadataDto;
 import org.researchedc.module.crf.entity.ItemFormMetadataEntity;
 import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -48,7 +48,7 @@ class ItemFormMetadataDaoAdapterTest {
     }
 
     @Test
-    void getEntityFromHashMap_mapsRowToItemFormMetadataBean() {
+    void getEntityFromHashMap_mapsRowToItemFormMetadataDto() {
         HashMap row = new HashMap();
         row.put("item_form_metadata_id", 10);
         row.put("item_id", 20);
@@ -74,7 +74,7 @@ class ItemFormMetadataDaoAdapterTest {
         row.put("width_decimal", "10");
         row.put("show_item", true);
 
-        ItemFormMetadataBean bean = (ItemFormMetadataBean) adapter.getEntityFromHashMap(row);
+        ItemFormMetadataDto bean = (ItemFormMetadataDto) adapter.getEntityFromHashMap(row);
 
         assertEquals(10, bean.getId());
         assertEquals(20, bean.getItemId());
@@ -82,11 +82,11 @@ class ItemFormMetadataDaoAdapterTest {
     }
 
     @Test
-    void findByPK_whenFound_returnsItemFormMetadataBean() {
+    void findByPK_whenFound_returnsItemFormMetadataDto() {
         ItemFormMetadataEntity entity = ifmEntity(7, 20, 5);
         when(repository.findById(7)).thenReturn(Optional.of(entity));
 
-        ItemFormMetadataBean bean = (ItemFormMetadataBean) adapter.findByPK(7);
+        ItemFormMetadataDto bean = (ItemFormMetadataDto) adapter.findByPK(7);
 
         assertEquals(7, bean.getId());
         assertEquals(20, bean.getItemId());
@@ -97,7 +97,7 @@ class ItemFormMetadataDaoAdapterTest {
     void findByPK_whenMissing_returnsEmptyBean() {
         when(repository.findById(404)).thenReturn(Optional.empty());
 
-        ItemFormMetadataBean bean = (ItemFormMetadataBean) adapter.findByPK(404);
+        ItemFormMetadataDto bean = (ItemFormMetadataDto) adapter.findByPK(404);
 
         assertEquals(0, bean.getId());
     }
@@ -107,11 +107,11 @@ class ItemFormMetadataDaoAdapterTest {
         ItemFormMetadataEntity saved = ifmEntity(11, 20, 5);
         when(repository.save(any(ItemFormMetadataEntity.class))).thenReturn(saved);
 
-        ItemFormMetadataBean input = new ItemFormMetadataBean();
+        ItemFormMetadataDto input = new ItemFormMetadataDto();
         input.setItemId(20);
         input.setCrfVersionId(5);
 
-        ItemFormMetadataBean result = (ItemFormMetadataBean) adapter.create(input);
+        ItemFormMetadataDto result = (ItemFormMetadataDto) adapter.create(input);
 
         assertEquals(11, result.getId());
         verify(repository).save(any(ItemFormMetadataEntity.class));
@@ -124,11 +124,11 @@ class ItemFormMetadataDaoAdapterTest {
         ItemFormMetadataEntity saved = ifmEntity(7, 21, 5);
         when(repository.save(any(ItemFormMetadataEntity.class))).thenReturn(saved);
 
-        ItemFormMetadataBean input = new ItemFormMetadataBean();
+        ItemFormMetadataDto input = new ItemFormMetadataDto();
         input.setId(7);
         input.setItemId(21);
 
-        ItemFormMetadataBean result = (ItemFormMetadataBean) adapter.update(input);
+        ItemFormMetadataDto result = (ItemFormMetadataDto) adapter.update(input);
 
         assertEquals(7, result.getId());
         verify(repository).save(any(ItemFormMetadataEntity.class));
@@ -152,7 +152,7 @@ class ItemFormMetadataDaoAdapterTest {
         pks.add(1);
         pks.add(2);
 
-        ArrayList<ItemFormMetadataBean> result = adapter.findByMultiplePKs(pks);
+        ArrayList<ItemFormMetadataDto> result = adapter.findByMultiplePKs(pks);
 
         assertEquals(2, result.size());
     }

@@ -1,34 +1,99 @@
 package org.researchedc.module.datacapture.dto;
 
-import java.time.LocalDateTime;
+import org.researchedc.app.dto.AuditableEntity;
 
-public class ItemDataDTO {
+public class ItemDataDTO extends AuditableEntity {
     private Integer itemDataId;
-    private Integer itemId;
-    private Integer eventCrfId;
+    private int eventCRFId;
+    private int itemId;
     private String value;
-    private Integer ordinal;
+    private int ordinal;
+    private boolean deleted;
     private Integer statusId;
-    private Boolean deleted;
-    private LocalDateTime dateCreated;
-    private LocalDateTime dateUpdated;
+    private java.time.LocalDateTime dateCreated;
+    private java.time.LocalDateTime dateUpdated;
 
-    public Integer getItemDataId() { return itemDataId; }
-    public void setItemDataId(Integer v) { this.itemDataId = v; }
-    public Integer getItemId() { return itemId; }
-    public void setItemId(Integer v) { this.itemId = v; }
-    public Integer getEventCrfId() { return eventCrfId; }
-    public void setEventCrfId(Integer v) { this.eventCrfId = v; }
-    public String getValue() { return value; }
-    public void setValue(String v) { this.value = v; }
-    public Integer getOrdinal() { return ordinal; }
-    public void setOrdinal(Integer v) { this.ordinal = v; }
-    public Integer getStatusId() { return statusId; }
-    public void setStatusId(Integer v) { this.statusId = v; }
-    public Boolean getDeleted() { return deleted; }
-    public void setDeleted(Boolean v) { this.deleted = v; }
-    public LocalDateTime getDateCreated() { return dateCreated; }
-    public void setDateCreated(LocalDateTime v) { this.dateCreated = v; }
-    public LocalDateTime getDateUpdated() { return dateUpdated; }
-    public void setDateUpdated(LocalDateTime v) { this.dateUpdated = v; }
+    public ItemDataDTO() {
+        eventCRFId = 0;
+        itemId = 0;
+        value = "";
+        ordinal = 1;
+        deleted = false;
+    }
+
+    public Integer getItemDataId() {
+        return itemDataId;
+    }
+
+    public void setItemDataId(Integer itemDataId) {
+        this.itemDataId = itemDataId;
+    }
+
+    public int getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
+
+    public int getEventCRFId() {
+        return eventCRFId;
+    }
+
+    public void setEventCRFId(int eventCRFId) {
+        this.eventCRFId = eventCRFId;
+    }
+
+    public void setEventCrfId(Integer eventCrfId) {
+        this.eventCRFId = eventCrfId != null ? eventCrfId : 0;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public int getOrdinal() {
+        return ordinal;
+    }
+
+    public void setOrdinal(int ordinal) {
+        this.ordinal = ordinal;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public Integer getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
+    }
+
+    public java.time.LocalDateTime getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(java.time.LocalDateTime dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public java.time.LocalDateTime getDateUpdated() {
+        return dateUpdated;
+    }
+
+    public void setDateUpdated(java.time.LocalDateTime dateUpdated) {
+        this.dateUpdated = dateUpdated;
+    }
 }

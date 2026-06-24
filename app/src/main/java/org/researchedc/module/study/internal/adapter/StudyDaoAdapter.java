@@ -8,11 +8,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.managestudy.StudyBean;
+import org.researchedc.app.dto.Status;
 import org.researchedc.module.dataimport.service.ImportStudyLookupPort;
 import org.researchedc.module.dataimport.dto.ImportStudy;
+import org.researchedc.app.dto.StudyDto;
 import org.researchedc.module.study.entity.StudyEntity;
 import org.researchedc.module.study.repository.StudyRepository;
 import org.springframework.context.annotation.Primary;
@@ -30,30 +29,28 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
         this.repository = repository;
     }
 
-    public EntityBean findByPK(int ID) {
+    public StudyDto findByPK(int ID) {
         return repository.findById(ID)
                 .map(this::toBean)
-                .orElseGet(StudyBean::new);
+                .orElseGet(StudyDto::new);
     }
 
     @Transactional
-    public EntityBean create(EntityBean eb) {
-        StudyBean bean = (StudyBean) eb;
+    public StudyDto create(StudyDto dto) {
         StudyEntity entity = new StudyEntity();
-        apply(bean, entity);
+        apply(dto, entity);
         entity.setStatusId(Status.AVAILABLE.getId());
         entity.setDateCreated(LocalDateTime.now());
         return toBean(repository.save(entity));
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb) {
-        StudyBean bean = (StudyBean) eb;
-        StudyEntity entity = repository.findById(bean.getId()).orElseGet(StudyEntity::new);
-        entity.setStudyId(bean.getId() > 0 ? bean.getId() : null);
-        apply(bean, entity);
+    public StudyDto update(StudyDto dto) {
+        StudyEntity entity = repository.findById(dto.getId()).orElseGet(StudyEntity::new);
+        entity.setStudyId(dto.getId() > 0 ? dto.getId() : null);
+        apply(dto, entity);
         entity.setDateUpdated(LocalDateTime.now());
-        entity.setUpdateId(bean.getUpdaterId());
+        entity.setUpdateId(dto.getUpdaterId());
         return toBean(repository.save(entity));
     }
 
@@ -154,21 +151,21 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
     public Collection findAll(int studyId) {
         return repository.findById(studyId)
                 .map(e -> {
-                    ArrayList<StudyBean> list = new ArrayList<>();
+                    ArrayList<StudyDto> list = new ArrayList<>();
                     list.add(toBean(e));
                     return (Collection) list;
                 })
                 .orElseGet(ArrayList::new);
     }
 
-    public Collection<Integer> findAllSiteIdsByStudy(StudyBean study) {
+    public Collection<Integer> findAllSiteIdsByStudy(StudyDto study) {
         if (study == null || study.getId() <= 0) {
             return new ArrayList<>();
         }
         return new ArrayList<>(repository.findSiteIdsByParentStudyId(study.getId()));
     }
 
-    public Collection<Integer> findOlnySiteIdsByStudy(StudyBean study) {
+    public Collection<Integer> findOlnySiteIdsByStudy(StudyDto study) {
         if (study == null || study.getId() <= 0) {
             return new ArrayList<>();
         }
@@ -179,14 +176,14 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
         return toBeans(repository.findByParentStudyIdOrderByName(parentStudyId));
     }
 
-    public StudyBean findByStudySubjectId(int studySubjectId) {
+    public StudyDto findByStudySubjectId(int studySubjectId) {
         return repository.findByStudySubjectId(studySubjectId)
                 .map(this::toBean)
                 .orElse(null);
     }
 
     @Transactional
-    public StudyBean updateSitesStatus(StudyBean sb) {
+    public StudyDto updateSitesStatus(StudyDto sb) {
         List<StudyEntity> sites = repository.findByParentStudyIdOrderByName(sb.getId());
         for (StudyEntity site : sites) {
             site.setStatusId(sb.getStatus() != null ? sb.getStatus().getId() : site.getStatusId());
@@ -198,7 +195,7 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
     }
 
     @Transactional
-    public StudyBean updateStudyStatus(StudyBean sb) {
+    public StudyDto updateStudyStatus(StudyDto sb) {
         StudyEntity entity = repository.findById(sb.getId()).orElse(null);
         if (entity == null) {
             return sb;
@@ -211,7 +208,7 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
         return sb;
     }
 
-    public StudyBean findByOid(String oid) {
+    public StudyDto findByOid(String oid) {
         return repository.findByOcOid(oid)
                 .map(this::toBean)
                 .orElse(null);
@@ -219,20 +216,20 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
 
     @Override
     public ImportStudy findImportStudyByOid(String oid) {
-        StudyBean study = findByOid(oid);
+        StudyDto study = findByOid(oid);
         if (study == null) {
             return null;
         }
         return new ImportStudy(study.getId(), study.getParentStudyId(), study.getName());
     }
 
-    public StudyBean findByUniqueIdentifier(String uniqueIdentifier) {
+    public StudyDto findByUniqueIdentifier(String uniqueIdentifier) {
         return repository.findByUniqueIdentifier(uniqueIdentifier)
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    public StudyBean findSiteByUniqueIdentifier(String parentUniqueIdentifier, String siteUniqueIdentifier) {
+    public StudyDto findSiteByUniqueIdentifier(String parentUniqueIdentifier, String siteUniqueIdentifier) {
         StudyEntity parent = repository.findByUniqueIdentifier(parentUniqueIdentifier).orElse(null);
         if (parent == null) {
             return null;
@@ -242,136 +239,136 @@ public class StudyDaoAdapter implements ImportStudyLookupPort {
                 .orElse(null);
     }
 
-    public EntityBean findByName(String name) {
+    public StudyDto findByName(String name) {
         List<StudyEntity> results = repository.findByNameContainingIgnoreCase(name);
-        return results.isEmpty() ? new StudyBean() : toBean(results.get(0));
+        return results.isEmpty() ? new StudyDto() : toBean(results.get(0));
     }
 
     public ArrayList<Integer> getStudyIdsByCRF(int crfId) {
         return new ArrayList<>(repository.findStudyIdsByCrfId(crfId));
     }
 
-    private void apply(StudyBean bean, StudyEntity entity) {
-        entity.setParentStudyId(bean.getParentStudyId() > 0 ? bean.getParentStudyId() : null);
-        entity.setUniqueIdentifier(bean.getIdentifier());
-        entity.setSecondaryIdentifier(bean.getSecondaryIdentifier());
-        entity.setName(bean.getName());
-        entity.setSummary(bean.getSummary());
-        entity.setDatePlannedStart(toLocalDateTime(bean.getDatePlannedStart()));
-        entity.setDatePlannedEnd(toLocalDateTime(bean.getDatePlannedEnd()));
-        entity.setTypeId(bean.getTypeId());
-        entity.setStatusId(bean.getStatus() != null ? bean.getStatus().getId() : Status.INVALID.getId());
-        entity.setPrincipalInvestigator(bean.getPrincipalInvestigator());
-        entity.setFacilityName(bean.getFacilityName());
-        entity.setFacilityCity(bean.getFacilityCity());
-        entity.setFacilityState(bean.getFacilityState());
-        entity.setFacilityZip(bean.getFacilityZip());
-        entity.setFacilityCountry(bean.getFacilityCountry());
-        entity.setFacilityRecruitmentStatus(bean.getFacilityRecruitmentStatus());
-        entity.setFacilityContactName(bean.getFacilityContactName());
-        entity.setFacilityContactDegree(bean.getFacilityContactDegree());
-        entity.setFacilityContactPhone(bean.getFacilityContactPhone());
-        entity.setProtocolType(bean.getProtocolType());
-        entity.setProtocolDescription(bean.getProtocolDescription());
-        entity.setProtocolDateVerification(toLocalDateTime(bean.getProtocolDateVerification()));
-        entity.setPhase(bean.getPhase());
-        entity.setExpectedTotalEnrollment(bean.getExpectedTotalEnrollment());
-        entity.setSponsor(bean.getSponsor());
-        entity.setCollaborators(bean.getCollaborators());
-        entity.setMedlineIdentifier(bean.getMedlineIdentifier());
-        entity.setUrl(bean.getUrl());
-        entity.setUrlDescription(bean.getUrlDescription());
-        entity.setConditions(bean.getConditions());
-        entity.setKeywords(bean.getKeywords());
-        entity.setEligibility(bean.getEligibility());
-        entity.setGender(bean.getGender());
-        entity.setAgeMin(bean.getAgeMin());
-        entity.setAgeMax(bean.getAgeMax());
-        entity.setHealthyVolunteerAccepted(bean.getHealthyVolunteerAccepted());
-        entity.setPurpose(bean.getPurpose());
-        entity.setAllocation(bean.getAllocation());
-        entity.setMasking(bean.getMasking());
-        entity.setControl(bean.getControl());
-        entity.setAssignment(bean.getAssignment());
-        entity.setEndpoint(bean.getEndpoint());
-        entity.setInterventions(bean.getInterventions());
-        entity.setDuration(bean.getDuration());
-        entity.setSelection(bean.getSelection());
-        entity.setTiming(bean.getTiming());
-        entity.setOfficialTitle(bean.getOfficialTitle());
-        entity.setResultsReference(bean.isResultsReference());
-        entity.setOcOid(bean.getOid());
-        entity.setOwnerId(bean.getOwnerId());
-        entity.setUpdateId(bean.getUpdaterId());
+    private void apply(StudyDto dto, StudyEntity entity) {
+        entity.setParentStudyId(dto.getParentStudyId() > 0 ? dto.getParentStudyId() : null);
+        entity.setUniqueIdentifier(dto.getIdentifier());
+        entity.setSecondaryIdentifier(dto.getSecondaryIdentifier());
+        entity.setName(dto.getName());
+        entity.setSummary(dto.getSummary());
+        entity.setDatePlannedStart(toLocalDateTime(dto.getDatePlannedStart()));
+        entity.setDatePlannedEnd(toLocalDateTime(dto.getDatePlannedEnd()));
+        entity.setTypeId(dto.getTypeId());
+        entity.setStatusId(dto.getStatus() != null ? dto.getStatus().getId() : Status.INVALID.getId());
+        entity.setPrincipalInvestigator(dto.getPrincipalInvestigator());
+        entity.setFacilityName(dto.getFacilityName());
+        entity.setFacilityCity(dto.getFacilityCity());
+        entity.setFacilityState(dto.getFacilityState());
+        entity.setFacilityZip(dto.getFacilityZip());
+        entity.setFacilityCountry(dto.getFacilityCountry());
+        entity.setFacilityRecruitmentStatus(dto.getFacilityRecruitmentStatus());
+        entity.setFacilityContactName(dto.getFacilityContactName());
+        entity.setFacilityContactDegree(dto.getFacilityContactDegree());
+        entity.setFacilityContactPhone(dto.getFacilityContactPhone());
+        entity.setProtocolType(dto.getProtocolType());
+        entity.setProtocolDescription(dto.getProtocolDescription());
+        entity.setProtocolDateVerification(toLocalDateTime(dto.getProtocolDateVerification()));
+        entity.setPhase(dto.getPhase());
+        entity.setExpectedTotalEnrollment(dto.getExpectedTotalEnrollment());
+        entity.setSponsor(dto.getSponsor());
+        entity.setCollaborators(dto.getCollaborators());
+        entity.setMedlineIdentifier(dto.getMedlineIdentifier());
+        entity.setUrl(dto.getUrl());
+        entity.setUrlDescription(dto.getUrlDescription());
+        entity.setConditions(dto.getConditions());
+        entity.setKeywords(dto.getKeywords());
+        entity.setEligibility(dto.getEligibility());
+        entity.setGender(dto.getGender());
+        entity.setAgeMin(dto.getAgeMin());
+        entity.setAgeMax(dto.getAgeMax());
+        entity.setHealthyVolunteerAccepted(dto.getHealthyVolunteerAccepted());
+        entity.setPurpose(dto.getPurpose());
+        entity.setAllocation(dto.getAllocation());
+        entity.setMasking(dto.getMasking());
+        entity.setControl(dto.getControl());
+        entity.setAssignment(dto.getAssignment());
+        entity.setEndpoint(dto.getEndpoint());
+        entity.setInterventions(dto.getInterventions());
+        entity.setDuration(dto.getDuration());
+        entity.setSelection(dto.getSelection());
+        entity.setTiming(dto.getTiming());
+        entity.setOfficialTitle(dto.getOfficialTitle());
+        entity.setResultsReference(dto.isResultsReference());
+        entity.setOcOid(dto.getOid());
+        entity.setOwnerId(dto.getOwnerId());
+        entity.setUpdateId(dto.getUpdaterId());
     }
 
-    private ArrayList<StudyBean> toBeans(List<StudyEntity> entities) {
-        ArrayList<StudyBean> beans = new ArrayList<>();
+    private ArrayList<StudyDto> toBeans(List<StudyEntity> entities) {
+        ArrayList<StudyDto> dtos = new ArrayList<>();
         entities.stream()
                 .map(this::toBean)
-                .forEach(beans::add);
-        return beans;
+                .forEach(dtos::add);
+        return dtos;
     }
 
-    private StudyBean toBean(StudyEntity entity) {
-        StudyBean bean = new StudyBean();
+    private StudyDto toBean(StudyEntity entity) {
+        StudyDto dto = new StudyDto();
         if (entity.getStudyId() != null) {
-            bean.setId(entity.getStudyId());
+            dto.setId(entity.getStudyId());
         }
-        bean.setParentStudyId(valueOrZero(entity.getParentStudyId()));
-        bean.setIdentifier(entity.getUniqueIdentifier());
-        bean.setSecondaryIdentifier(entity.getSecondaryIdentifier());
-        bean.setName(entity.getName());
-        bean.setSummary(entity.getSummary());
-        bean.setDatePlannedStart(toDate(entity.getDatePlannedStart()));
-        bean.setDatePlannedEnd(toDate(entity.getDatePlannedEnd()));
-        bean.setOwnerId(valueOrZero(entity.getOwnerId()));
-        bean.setUpdaterId(valueOrZero(entity.getUpdateId()));
-        bean.setCreatedDate(toDate(entity.getDateCreated()));
-        bean.setUpdatedDate(toDate(entity.getDateUpdated()));
-        bean.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
-        bean.setTypeId(entity.getTypeId() != null ? entity.getTypeId() : StudyBean.TYPE_NON_GENETIC);
-        bean.setPrincipalInvestigator(entity.getPrincipalInvestigator());
-        bean.setFacilityName(entity.getFacilityName());
-        bean.setFacilityCity(entity.getFacilityCity());
-        bean.setFacilityState(entity.getFacilityState());
-        bean.setFacilityZip(entity.getFacilityZip());
-        bean.setFacilityCountry(entity.getFacilityCountry());
-        bean.setFacilityRecruitmentStatus(entity.getFacilityRecruitmentStatus());
-        bean.setFacilityContactName(entity.getFacilityContactName());
-        bean.setFacilityContactDegree(entity.getFacilityContactDegree());
-        bean.setFacilityContactPhone(entity.getFacilityContactPhone());
-        bean.setProtocolType(entity.getProtocolType());
-        bean.setProtocolDescription(entity.getProtocolDescription());
-        bean.setProtocolDateVerification(toDate(entity.getProtocolDateVerification()));
-        bean.setPhase(entity.getPhase());
-        bean.setExpectedTotalEnrollment(valueOrZero(entity.getExpectedTotalEnrollment()));
-        bean.setSponsor(entity.getSponsor());
-        bean.setCollaborators(entity.getCollaborators());
-        bean.setMedlineIdentifier(entity.getMedlineIdentifier());
-        bean.setUrl(entity.getUrl());
-        bean.setUrlDescription(entity.getUrlDescription());
-        bean.setConditions(entity.getConditions());
-        bean.setKeywords(entity.getKeywords());
-        bean.setEligibility(entity.getEligibility());
-        bean.setGender(entity.getGender());
-        bean.setAgeMin(entity.getAgeMin());
-        bean.setAgeMax(entity.getAgeMax());
-        bean.setHealthyVolunteerAccepted(Boolean.TRUE.equals(entity.getHealthyVolunteerAccepted()));
-        bean.setPurpose(entity.getPurpose());
-        bean.setAllocation(entity.getAllocation());
-        bean.setMasking(entity.getMasking());
-        bean.setControl(entity.getControl());
-        bean.setAssignment(entity.getAssignment());
-        bean.setEndpoint(entity.getEndpoint());
-        bean.setInterventions(entity.getInterventions());
-        bean.setDuration(entity.getDuration());
-        bean.setSelection(entity.getSelection());
-        bean.setTiming(entity.getTiming());
-        bean.setOfficialTitle(entity.getOfficialTitle());
-        bean.setResultsReference(Boolean.TRUE.equals(entity.getResultsReference()));
-        bean.setOid(entity.getOcOid());
-        return bean;
+        dto.setParentStudyId(valueOrZero(entity.getParentStudyId()));
+        dto.setIdentifier(entity.getUniqueIdentifier());
+        dto.setSecondaryIdentifier(entity.getSecondaryIdentifier());
+        dto.setName(entity.getName());
+        dto.setSummary(entity.getSummary());
+        dto.setDatePlannedStart(toDate(entity.getDatePlannedStart()));
+        dto.setDatePlannedEnd(toDate(entity.getDatePlannedEnd()));
+        dto.setOwnerId(valueOrZero(entity.getOwnerId()));
+        dto.setUpdaterId(valueOrZero(entity.getUpdateId()));
+        dto.setCreatedDate(toDate(entity.getDateCreated()));
+        dto.setUpdatedDate(toDate(entity.getDateUpdated()));
+        dto.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
+        dto.setTypeId(entity.getTypeId() != null ? entity.getTypeId() : StudyDto.TYPE_NON_GENETIC);
+        dto.setPrincipalInvestigator(entity.getPrincipalInvestigator());
+        dto.setFacilityName(entity.getFacilityName());
+        dto.setFacilityCity(entity.getFacilityCity());
+        dto.setFacilityState(entity.getFacilityState());
+        dto.setFacilityZip(entity.getFacilityZip());
+        dto.setFacilityCountry(entity.getFacilityCountry());
+        dto.setFacilityRecruitmentStatus(entity.getFacilityRecruitmentStatus());
+        dto.setFacilityContactName(entity.getFacilityContactName());
+        dto.setFacilityContactDegree(entity.getFacilityContactDegree());
+        dto.setFacilityContactPhone(entity.getFacilityContactPhone());
+        dto.setProtocolType(entity.getProtocolType());
+        dto.setProtocolDescription(entity.getProtocolDescription());
+        dto.setProtocolDateVerification(toDate(entity.getProtocolDateVerification()));
+        dto.setPhase(entity.getPhase());
+        dto.setExpectedTotalEnrollment(valueOrZero(entity.getExpectedTotalEnrollment()));
+        dto.setSponsor(entity.getSponsor());
+        dto.setCollaborators(entity.getCollaborators());
+        dto.setMedlineIdentifier(entity.getMedlineIdentifier());
+        dto.setUrl(entity.getUrl());
+        dto.setUrlDescription(entity.getUrlDescription());
+        dto.setConditions(entity.getConditions());
+        dto.setKeywords(entity.getKeywords());
+        dto.setEligibility(entity.getEligibility());
+        dto.setGender(entity.getGender());
+        dto.setAgeMin(entity.getAgeMin());
+        dto.setAgeMax(entity.getAgeMax());
+        dto.setHealthyVolunteerAccepted(Boolean.TRUE.equals(entity.getHealthyVolunteerAccepted()));
+        dto.setPurpose(entity.getPurpose());
+        dto.setAllocation(entity.getAllocation());
+        dto.setMasking(entity.getMasking());
+        dto.setControl(entity.getControl());
+        dto.setAssignment(entity.getAssignment());
+        dto.setEndpoint(entity.getEndpoint());
+        dto.setInterventions(entity.getInterventions());
+        dto.setDuration(entity.getDuration());
+        dto.setSelection(entity.getSelection());
+        dto.setTiming(entity.getTiming());
+        dto.setOfficialTitle(entity.getOfficialTitle());
+        dto.setResultsReference(Boolean.TRUE.equals(entity.getResultsReference()));
+        dto.setOid(entity.getOcOid());
+        return dto;
     }
 
     private int valueOrZero(Integer value) {

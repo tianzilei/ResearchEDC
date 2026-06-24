@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.researchedc.module.crf.dto.CrfSummaryDTO;
-import org.researchedc.module.crf.dto.CrfVersionDTO;
+import org.researchedc.app.dto.CrfVersionDTO;
 import org.researchedc.module.crf.dto.ItemDTO;
 import org.researchedc.module.crf.entity.CrfEntity;
 import org.researchedc.module.crf.entity.CrfVersionEntity;

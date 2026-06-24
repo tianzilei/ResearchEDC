@@ -19,9 +19,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.managestudy.StudyEventDefinitionBean;
+import org.researchedc.app.dto.Status;
+import org.researchedc.app.dto.StudyDto;
+import org.researchedc.app.dto.StudyEventDefinitionDto;
 import org.researchedc.module.event.entity.StudyEventDefinitionEntity;
 import org.researchedc.module.event.repository.StudyEventDefinitionRepository;
 
@@ -54,7 +54,7 @@ class StudyEventDefinitionDaoAdapterTest {
         entity.setUpdateId(21);
         when(studyEventDefinitionRepository.findById(7)).thenReturn(Optional.of(entity));
 
-        StudyEventDefinitionBean bean = (StudyEventDefinitionBean) adapter.findByPK(7);
+        StudyEventDefinitionDto bean = (StudyEventDefinitionDto) adapter.findByPK(7);
 
         assertEquals(7, bean.getId());
         assertEquals(3, bean.getStudyId());
@@ -71,23 +71,23 @@ class StudyEventDefinitionDaoAdapterTest {
     }
 
     @Test
-    void findByPK_whenMissing_returnsEmptyStudyEventDefinitionBean() {
+    void findByPK_whenMissing_returnsEmptyStudyEventDefinitionDto() {
         when(studyEventDefinitionRepository.findById(404)).thenReturn(Optional.empty());
 
         Object bean = adapter.findByPK(404);
 
-        assertInstanceOf(StudyEventDefinitionBean.class, bean);
-        assertEquals(0, ((StudyEventDefinitionBean) bean).getId());
+        assertInstanceOf(StudyEventDefinitionDto.class, bean);
+        assertEquals(0, ((StudyEventDefinitionDto) bean).getId());
     }
 
     @Test
     void findByPKAndStudy_requiresMatchingStudyId() {
-        StudyBean study = new StudyBean();
+        StudyDto study = new StudyDto();
         study.setId(5);
         when(studyEventDefinitionRepository.findById(7))
                 .thenReturn(Optional.of(definition(7, 6, "Mismatch", Status.AVAILABLE.getId())));
 
-        StudyEventDefinitionBean bean = (StudyEventDefinitionBean) adapter.findByPKAndStudy(7, study);
+        StudyEventDefinitionDto bean = (StudyEventDefinitionDto) adapter.findByPKAndStudy(7, study);
 
         assertEquals(0, bean.getId());
     }
@@ -98,7 +98,7 @@ class StudyEventDefinitionDaoAdapterTest {
         when(studyEventDefinitionRepository.findByOcOidAndStudyId("SE1", 10))
                 .thenReturn(Optional.of(definition(8, 10, "Parent", Status.AVAILABLE.getId())));
 
-        StudyEventDefinitionBean bean = adapter.findByOidAndStudy("SE1", 11, 10);
+        StudyEventDefinitionDto bean = adapter.findByOidAndStudy("SE1", 11, 10);
 
         assertEquals(8, bean.getId());
         verify(studyEventDefinitionRepository).findByOcOidAndStudyId("SE1", 11);
@@ -114,7 +114,7 @@ class StudyEventDefinitionDaoAdapterTest {
 
     @Test
     void findAllByStudy_usesParentStudyForSitesAndSortsById() {
-        StudyBean site = new StudyBean();
+        StudyDto site = new StudyDto();
         site.setId(11);
         site.setParentStudyId(10);
         when(studyEventDefinitionRepository.findByStudyIdOrderByName(10))
@@ -123,14 +123,14 @@ class StudyEventDefinitionDaoAdapterTest {
         ArrayList definitions = adapter.findAllByStudy(site);
 
         assertEquals(2, definitions.size());
-        assertEquals(1, ((StudyEventDefinitionBean) definitions.get(0)).getId());
-        assertEquals(3, ((StudyEventDefinitionBean) definitions.get(1)).getId());
+        assertEquals(1, ((StudyEventDefinitionDto) definitions.get(0)).getId());
+        assertEquals(3, ((StudyEventDefinitionDto) definitions.get(1)).getId());
         verify(studyEventDefinitionRepository).findByStudyIdOrderByName(10);
     }
 
     @Test
     void findAllActiveByStudy_usesAvailableStatusAndParentStudyForSites() {
-        StudyBean site = new StudyBean();
+        StudyDto site = new StudyDto();
         site.setId(11);
         site.setParentStudyId(10);
         when(studyEventDefinitionRepository.findByStatusIdAndStudyId(Status.AVAILABLE.getId(), 10))
@@ -147,7 +147,7 @@ class StudyEventDefinitionDaoAdapterTest {
         when(studyEventDefinitionRepository.findByName("Visit"))
                 .thenReturn(List.of(definition(12, 4, "Visit", Status.AVAILABLE.getId())));
 
-        StudyEventDefinitionBean bean = (StudyEventDefinitionBean) adapter.findByName("Visit");
+        StudyEventDefinitionDto bean = (StudyEventDefinitionDto) adapter.findByName("Visit");
 
         assertEquals(12, bean.getId());
     }
@@ -170,7 +170,7 @@ class StudyEventDefinitionDaoAdapterTest {
             return e.getDateCreated() != null;
         }))).thenReturn(saved);
 
-        StudyEventDefinitionBean input = new StudyEventDefinitionBean();
+        StudyEventDefinitionDto input = new StudyEventDefinitionDto();
         input.setStudyId(4);
         input.setName("Created");
         input.setDescription("created desc");
@@ -183,7 +183,7 @@ class StudyEventDefinitionDaoAdapterTest {
         input.setOwnerId(40);
         input.setUpdaterId(41);
 
-        StudyEventDefinitionBean result = (StudyEventDefinitionBean) adapter.create(input);
+        StudyEventDefinitionDto result = (StudyEventDefinitionDto) adapter.create(input);
 
         assertEquals(15, result.getId());
     }
@@ -207,7 +207,7 @@ class StudyEventDefinitionDaoAdapterTest {
         row.put("update_id", 53);
         row.put("status_id", Status.AVAILABLE.getId());
 
-        StudyEventDefinitionBean bean = (StudyEventDefinitionBean) adapter.getEntityFromHashMap(row);
+        StudyEventDefinitionDto bean = (StudyEventDefinitionDto) adapter.getEntityFromHashMap(row);
 
         assertEquals(50, bean.getId());
         assertEquals(51, bean.getStudyId());

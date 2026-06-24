@@ -11,12 +11,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.managestudy.StudyBean;
-import org.researchedc.bean.managestudy.StudySubjectBean;
+import org.researchedc.app.dto.Status;
 import org.researchedc.module.dataimport.service.ImportStudySubjectPort;
 import org.researchedc.module.dataimport.dto.ImportStudySubject;
+import org.researchedc.app.dto.StudyDto;
+import org.researchedc.app.dto.StudySubjectDTO;
 import org.researchedc.module.subject.entity.StudySubjectEntity;
 import org.researchedc.module.subject.repository.StudySubjectRepository;
 import org.springframework.context.annotation.Primary;
@@ -34,32 +33,30 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
         this.repository = repository;
     }
 
-    public EntityBean findByPK(int ID) {
+    public StudySubjectDTO findByPK(int ID) {
         return repository.findById(ID)
                 .map(this::toBean)
-                .orElseGet(StudySubjectBean::new);
+                .orElseGet(StudySubjectDTO::new);
     }
 
-    public ArrayList findAllByStudy(StudyBean study) {
+    public ArrayList findAllByStudy(StudyDto study) {
         return toBeans(repository.findByStudyId(study.getId()));
     }
 
     @Transactional
-    public EntityBean create(EntityBean eb) {
-        StudySubjectBean bean = (StudySubjectBean) eb;
+    public StudySubjectDTO create(StudySubjectDTO dto) {
         StudySubjectEntity entity = new StudySubjectEntity();
-        apply(bean, entity);
+        apply(dto, entity);
         entity.setDateCreated(LocalDateTime.now());
         return toBean(repository.save(entity));
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb) {
-        StudySubjectBean bean = (StudySubjectBean) eb;
-        StudySubjectEntity entity = repository.findById(bean.getId())
+    public StudySubjectDTO update(StudySubjectDTO dto) {
+        StudySubjectEntity entity = repository.findById(dto.getId())
                 .orElseGet(StudySubjectEntity::new);
-        entity.setStudySubjectId(bean.getId() > 0 ? bean.getId() : null);
-        apply(bean, entity);
+        entity.setStudySubjectId(dto.getId() > 0 ? dto.getId() : null);
+        apply(dto, entity);
         entity.setDateUpdated(LocalDateTime.now());
         return toBean(repository.save(entity));
     }
@@ -85,11 +82,11 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
         return toBean(entity);
     }
 
-    public ArrayList findAllByStudyOrderByLabel(StudyBean sb) {
+    public ArrayList findAllByStudyOrderByLabel(StudyDto sb) {
         return toBeans(repository.findByStudyIdOrderByLabel(sb.getId()));
     }
 
-    public ArrayList findAllActiveByStudyOrderByLabel(StudyBean sb) {
+    public ArrayList findAllActiveByStudyOrderByLabel(StudyDto sb) {
         return toBeans(repository.findByStudyIdAndStatusIdOrderByLabel(sb.getId(), Status.AVAILABLE.getId()));
     }
 
@@ -97,7 +94,7 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
         return toBeans(repository.findBySubjectId(subjectId));
     }
 
-    public EntityBean findAnotherBySameLabel(String label, int studyId, int studySubjectId) {
+    public StudySubjectDTO findAnotherBySameLabel(String label, int studyId, int studySubjectId) {
         return repository.findByLabelAndStudyId(label, studyId).stream()
                 .filter(e -> !e.getStudySubjectId().equals(studySubjectId))
                 .findFirst()
@@ -105,7 +102,7 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
                 .orElse(null);
     }
 
-    public EntityBean findAnotherBySameLabelInSites(String label, int studyId, int studySubjectId) {
+    public StudySubjectDTO findAnotherBySameLabelInSites(String label, int studyId, int studySubjectId) {
         return repository.findByLabelContainingIgnoreCase(label).stream()
                 .filter(e -> !e.getStudySubjectId().equals(studySubjectId))
                 .findFirst()
@@ -113,7 +110,7 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
                 .orElse(null);
     }
 
-    public StudySubjectBean findSameByLabelAndStudy(String label, int studyId, int id) {
+    public StudySubjectDTO findSameByLabelAndStudy(String label, int studyId, int id) {
         return repository.findByLabelAndStudyId(label, studyId).stream()
                 .filter(e -> !e.getStudySubjectId().equals(id))
                 .findFirst()
@@ -121,7 +118,7 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
                 .orElse(null);
     }
 
-    public StudySubjectBean findByOidAndStudy(String oid, int studyId) {
+    public StudySubjectDTO findByOidAndStudy(String oid, int studyId) {
         return repository.findByOcOidAndStudyId(oid, studyId)
                 .map(this::toBean)
                 .orElse(null);
@@ -133,7 +130,7 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
                 .orElse(null);
     }
 
-    public StudySubjectBean findByOid(String oid) {
+    public StudySubjectDTO findByOid(String oid) {
         return repository.findByOcOid(oid)
                 .map(this::toBean)
                 .orElse(null);
@@ -153,7 +150,7 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
                 .collect(Collectors.joining(","));
     }
 
-    public StudySubjectBean findBySubjectIdAndStudy(int subjectId, StudyBean study) {
+    public StudySubjectDTO findBySubjectIdAndStudy(int subjectId, StudyDto study) {
         return repository.findBySubjectIdAndStudyId(subjectId, study.getId())
                 .map(this::toBean)
                 .orElse(null);
@@ -180,78 +177,78 @@ public class StudySubjectDaoAdapter implements ImportStudySubjectPort {
     }
 
     @Transactional
-    public StudySubjectBean create(StudySubjectBean sb, boolean withGroup) {
-        return (StudySubjectBean) create((EntityBean) sb);
+    public StudySubjectDTO create(StudySubjectDTO sb, boolean withGroup) {
+        return create(sb);
     }
 
     @Transactional
-    public StudySubjectBean createWithGroup(StudySubjectBean sb) {
+    public StudySubjectDTO createWithGroup(StudySubjectDTO sb) {
         return create(sb, true);
     }
 
     @Transactional
-    public StudySubjectBean createWithoutGroup(StudySubjectBean sb) {
+    public StudySubjectDTO createWithoutGroup(StudySubjectDTO sb) {
         return create(sb, false);
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb, Connection con) {
-        return update(eb);
+    public StudySubjectDTO update(StudySubjectDTO dto, Connection con) {
+        return update(dto);
     }
 
-    public Integer getCountofStudySubjectsAtStudyOrSite(StudyBean currentStudy) {
+    public Integer getCountofStudySubjectsAtStudyOrSite(StudyDto currentStudy) {
         return (int) repository.countByStudyId(currentStudy.getId());
     }
 
-    public Integer getCountofStudySubjectsAtStudy(StudyBean currentStudy) {
+    public Integer getCountofStudySubjectsAtStudy(StudyDto currentStudy) {
         return (int) repository.countByStudyId(currentStudy.getId());
     }
 
-    public Integer getCountofStudySubjects(StudyBean currentStudy) {
+    public Integer getCountofStudySubjects(StudyDto currentStudy) {
         return (int) repository.countByStudyId(currentStudy.getId());
     }
 
-    public Integer getCountofStudySubjectsBasedOnStatus(StudyBean currentStudy, Status status) {
+    public Integer getCountofStudySubjectsBasedOnStatus(StudyDto currentStudy, Status status) {
         return (int) repository.countByStudyIdAndStatusId(currentStudy.getId(), status.getId());
     }
 
-    private void apply(StudySubjectBean bean, StudySubjectEntity entity) {
-        entity.setStudyId(bean.getStudyId());
-        entity.setSubjectId(bean.getSubjectId());
-        entity.setLabel(bean.getLabel());
-        entity.setSecondaryLabel(bean.getSecondaryLabel());
-        entity.setEnrollmentDate(toLocalDateTime(bean.getEnrollmentDate()));
-        entity.setOcOid(bean.getOid());
-        entity.setOwnerId(bean.getOwnerId());
-        entity.setUpdateId(bean.getUpdaterId());
-        entity.setStatusId(bean.getStatus() != null ? bean.getStatus().getId() : Status.AVAILABLE.getId());
+    private void apply(StudySubjectDTO dto, StudySubjectEntity entity) {
+        entity.setStudyId(dto.getStudyId());
+        entity.setSubjectId(dto.getSubjectId());
+        entity.setLabel(dto.getLabel());
+        entity.setSecondaryLabel(dto.getSecondaryLabel());
+        entity.setEnrollmentDate(dto.getEnrollmentDate());
+        entity.setOcOid(dto.getOid());
+        entity.setOwnerId(dto.getOwnerId());
+        entity.setUpdateId(dto.getUpdaterId());
+        entity.setStatusId(dto.getStatus() != null ? dto.getStatus().getId() : Status.AVAILABLE.getId());
     }
 
-    private ArrayList toBeans(List<StudySubjectEntity> entities) {
-        ArrayList beans = new ArrayList();
+    private ArrayList<StudySubjectDTO> toBeans(List<StudySubjectEntity> entities) {
+        ArrayList<StudySubjectDTO> dtos = new ArrayList<>();
         entities.stream()
                 .map(this::toBean)
-                .forEach(beans::add);
-        return beans;
+                .forEach(dtos::add);
+        return dtos;
     }
 
-    private StudySubjectBean toBean(StudySubjectEntity entity) {
-        StudySubjectBean bean = new StudySubjectBean();
+    private StudySubjectDTO toBean(StudySubjectEntity entity) {
+        StudySubjectDTO dto = new StudySubjectDTO();
         if (entity.getStudySubjectId() != null) {
-            bean.setId(entity.getStudySubjectId());
+            dto.setId(entity.getStudySubjectId());
         }
-        bean.setStudyId(valueOrZero(entity.getStudyId()));
-        bean.setSubjectId(valueOrZero(entity.getSubjectId()));
-        bean.setLabel(entity.getLabel() != null ? entity.getLabel() : "");
-        bean.setSecondaryLabel(entity.getSecondaryLabel() != null ? entity.getSecondaryLabel() : "");
-        bean.setEnrollmentDate(toDate(entity.getEnrollmentDate()));
-        bean.setOid(entity.getOcOid());
-        bean.setCreatedDate(toDate(entity.getDateCreated()));
-        bean.setUpdatedDate(toDate(entity.getDateUpdated()));
-        bean.setOwnerId(valueOrZero(entity.getOwnerId()));
-        bean.setUpdaterId(valueOrZero(entity.getUpdateId()));
-        bean.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
-        return bean;
+        dto.setStudyId(valueOrZero(entity.getStudyId()));
+        dto.setSubjectId(valueOrZero(entity.getSubjectId()));
+        dto.setLabel(entity.getLabel() != null ? entity.getLabel() : "");
+        dto.setSecondaryLabel(entity.getSecondaryLabel() != null ? entity.getSecondaryLabel() : "");
+        dto.setEnrollmentDate(entity.getEnrollmentDate());
+        dto.setOid(entity.getOcOid());
+        dto.setCreatedDate(toDate(entity.getDateCreated()));
+        dto.setUpdatedDate(toDate(entity.getDateUpdated()));
+        dto.setOwnerId(valueOrZero(entity.getOwnerId()));
+        dto.setUpdaterId(valueOrZero(entity.getUpdateId()));
+        dto.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
+        return dto;
     }
 
     private int valueOrZero(Integer value) {

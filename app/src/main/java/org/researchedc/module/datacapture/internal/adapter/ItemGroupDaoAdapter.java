@@ -9,11 +9,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.submit.ItemGroupBean;
+import org.researchedc.module.datacapture.dto.ItemGroupDTO;
 import org.researchedc.module.dataimport.service.ImportItemGroupPort;
 import org.researchedc.module.dataimport.dto.ImportItemGroup;
+import org.researchedc.app.dto.Status;
 import org.researchedc.module.datacapture.entity.ItemGroupEntity;
 import org.researchedc.module.datacapture.repository.ItemGroupRepository;
 import org.springframework.context.annotation.Primary;
@@ -31,28 +30,26 @@ public class ItemGroupDaoAdapter implements ImportItemGroupPort {
         this.repository = repository;
     }
 
-    public EntityBean findByPK(int ID) {
+    public ItemGroupDTO findByPK(int ID) {
         return repository.findById(ID)
                 .map(this::toBean)
-                .orElseGet(ItemGroupBean::new);
+                .orElseGet(ItemGroupDTO::new);
     }
 
     @Transactional
-    public EntityBean create(EntityBean eb) {
-        ItemGroupBean bean = (ItemGroupBean) eb;
+    public ItemGroupDTO create(ItemGroupDTO dto) {
         ItemGroupEntity entity = new ItemGroupEntity();
-        apply(bean, entity);
+        apply(dto, entity);
         entity.setDateCreated(LocalDateTime.now());
         return toBean(repository.save(entity));
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb) {
-        ItemGroupBean bean = (ItemGroupBean) eb;
-        ItemGroupEntity entity = repository.findById(bean.getId())
+    public ItemGroupDTO update(ItemGroupDTO dto) {
+        ItemGroupEntity entity = repository.findById(dto.getId())
                 .orElseGet(ItemGroupEntity::new);
-        entity.setItemGroupId(bean.getId() > 0 ? bean.getId() : null);
-        apply(bean, entity);
+        entity.setItemGroupId(dto.getId() > 0 ? dto.getId() : null);
+        apply(dto, entity);
         entity.setDateUpdated(LocalDateTime.now());
         return toBean(repository.save(entity));
     }
@@ -75,34 +72,34 @@ public class ItemGroupDaoAdapter implements ImportItemGroupPort {
         return toBean(entity);
     }
 
-    public EntityBean findByName(String name) {
+    public ItemGroupDTO findByName(String name) {
         return repository.findByName(name).stream()
                 .findFirst()
                 .map(this::toBean)
-                .orElseGet(ItemGroupBean::new);
+                .orElseGet(ItemGroupDTO::new);
     }
 
-    public ItemGroupBean findByOid(String oid) {
+    public ItemGroupDTO findByOid(String oid) {
         return repository.findByOcOid(oid).stream()
                 .findFirst()
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    public ItemGroupBean findByOidAndCrf(String oid, int crfId) {
+    public ItemGroupDTO findByOidAndCrf(String oid, int crfId) {
         return repository.findByOcOidAndCrfId(oid, crfId).stream()
                 .findFirst()
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    public List<ItemGroupBean> findAllByOid(String oid) {
-        List<ItemGroupBean> beans = new ArrayList<>();
+    public List<ItemGroupDTO> findAllByOid(String oid) {
+        List<ItemGroupDTO> dtos = new ArrayList<>();
         repository.findByOcOid(oid).stream()
                 .sorted(Comparator.comparing(ItemGroupEntity::getItemGroupId, Comparator.nullsLast(Integer::compareTo)))
                 .map(this::toBean)
-                .forEach(beans::add);
-        return beans;
+                .forEach(dtos::add);
+        return dtos;
     }
 
     public List<ImportItemGroup> findImportItemGroupsByOid(String oid) {
@@ -112,38 +109,38 @@ public class ItemGroupDaoAdapter implements ImportItemGroupPort {
                 .toList();
     }
 
-    public List<ItemGroupBean> findGroupByCRFVersionID(int Id) {
+    public List<ItemGroupDTO> findGroupByCRFVersionID(int Id) {
         return toBeans(repository.findGroupByCRFVersionIdNative(Id));
     }
 
-    public List<ItemGroupBean> findGroupByCRFVersionIDMap(int Id) {
+    public List<ItemGroupDTO> findGroupByCRFVersionIDMap(int Id) {
         return toBeans(repository.findGroupByCRFVersionIdNative(Id));
     }
 
-    public List<ItemGroupBean> findOnlyGroupsByCRFVersionID(int Id) {
+    public List<ItemGroupDTO> findOnlyGroupsByCRFVersionID(int Id) {
         return toBeans(repository.findOnlyGroupsByCRFVersionIdNative(Id));
     }
 
-    public List<ItemGroupBean> findGroupBySectionId(int sectionId) {
+    public List<ItemGroupDTO> findGroupBySectionId(int sectionId) {
         return toBeans(repository.findGroupBySectionIdNative(sectionId));
     }
 
-    public List<ItemGroupBean> findLegitGroupBySectionId(int sectionId) {
+    public List<ItemGroupDTO> findLegitGroupBySectionId(int sectionId) {
         return toBeans(repository.findLegitGroupBySectionIdNative(sectionId));
     }
 
-    public List<ItemGroupBean> findLegitGroupAllBySectionId(int sectionId) {
+    public List<ItemGroupDTO> findLegitGroupAllBySectionId(int sectionId) {
         return toBeans(repository.findLegitGroupAllBySectionIdNative(sectionId));
     }
 
-    public ItemGroupBean findGroupByGroupNameAndCrfVersionId(String groupName, int crfVersionId) {
+    public ItemGroupDTO findGroupByGroupNameAndCrfVersionId(String groupName, int crfVersionId) {
         return repository.findGroupByGroupNameAndCrfVersionIdNative(crfVersionId, groupName).stream()
                 .findFirst()
                 .map(this::toBean)
                 .orElse(null);
     }
 
-    public ItemGroupBean findGroupByItemIdCrfVersionId(int itemId, int crfVersionId) {
+    public ItemGroupDTO findGroupByItemIdCrfVersionId(int itemId, int crfVersionId) {
         return repository.findGroupByItemIdCrfVersionIdNative(crfVersionId, itemId).stream()
                 .findFirst()
                 .map(this::toBean)
@@ -154,45 +151,45 @@ public class ItemGroupDaoAdapter implements ImportItemGroupPort {
         return toBeans(repository.findGroupsByItemIdNative(ID));
     }
 
-    public ItemGroupBean findTopOneGroupBySectionId(int sectionId) {
+    public ItemGroupDTO findTopOneGroupBySectionId(int sectionId) {
         return repository.findTopOneGroupBySectionIdNative(sectionId).stream()
                 .findFirst()
                 .map(this::toBean)
-                .orElseGet(ItemGroupBean::new);
+                .orElseGet(ItemGroupDTO::new);
     }
 
-    private void apply(ItemGroupBean bean, ItemGroupEntity entity) {
-        entity.setName(bean.getName());
-        entity.setCrfId(bean.getCrfId());
-        entity.setOcOid(bean.getOid());
-        entity.setStatusId(bean.getStatus() != null ? bean.getStatus().getId() : Status.INVALID.getId());
-        entity.setOwnerId(bean.getOwnerId());
-        entity.setUpdateId(bean.getUpdaterId());
+    private void apply(ItemGroupDTO dto, ItemGroupEntity entity) {
+        entity.setName(dto.getName());
+        entity.setCrfId(dto.getCrfId());
+        entity.setOcOid(dto.getOid());
+        entity.setStatusId(dto.getStatus() != null ? dto.getStatus().getId() : Status.INVALID.getId());
+        entity.setOwnerId(dto.getOwnerId());
+        entity.setUpdateId(dto.getUpdaterId());
     }
 
-    private ArrayList toBeans(List<ItemGroupEntity> entities) {
-        ArrayList beans = new ArrayList();
+    private ArrayList<ItemGroupDTO> toBeans(List<ItemGroupEntity> entities) {
+        ArrayList<ItemGroupDTO> dtos = new ArrayList<>();
         entities.stream()
                 .sorted(Comparator.comparing(ItemGroupEntity::getItemGroupId, Comparator.nullsLast(Integer::compareTo)))
                 .map(this::toBean)
-                .forEach(beans::add);
-        return beans;
+                .forEach(dtos::add);
+        return dtos;
     }
 
-    private ItemGroupBean toBean(ItemGroupEntity entity) {
-        ItemGroupBean bean = new ItemGroupBean();
+    private ItemGroupDTO toBean(ItemGroupEntity entity) {
+        ItemGroupDTO dto = new ItemGroupDTO();
         if (entity.getItemGroupId() != null) {
-            bean.setId(entity.getItemGroupId());
+            dto.setId(entity.getItemGroupId());
         }
-        bean.setName(entity.getName());
-        bean.setCrfId(entity.getCrfId());
-        bean.setOid(entity.getOcOid());
-        bean.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
-        bean.setCreatedDate(toDate(entity.getDateCreated()));
-        bean.setUpdatedDate(toDate(entity.getDateUpdated()));
-        bean.setOwnerId(valueOrZero(entity.getOwnerId()));
-        bean.setUpdaterId(valueOrZero(entity.getUpdateId()));
-        return bean;
+        dto.setName(entity.getName());
+        dto.setCrfId(entity.getCrfId());
+        dto.setOid(entity.getOcOid());
+        dto.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
+        dto.setCreatedDate(toDate(entity.getDateCreated()));
+        dto.setUpdatedDate(toDate(entity.getDateUpdated()));
+        dto.setOwnerId(valueOrZero(entity.getOwnerId()));
+        dto.setUpdaterId(valueOrZero(entity.getUpdateId()));
+        return dto;
     }
 
     private int valueOrZero(Integer value) {

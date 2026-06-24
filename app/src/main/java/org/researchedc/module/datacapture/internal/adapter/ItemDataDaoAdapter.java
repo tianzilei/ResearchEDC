@@ -8,9 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.researchedc.bean.core.EntityBean;
-import org.researchedc.bean.core.Status;
-import org.researchedc.bean.submit.ItemDataBean;
+import org.researchedc.module.datacapture.dto.ItemDataDTO;
+import org.researchedc.app.dto.Status;
 import org.researchedc.module.dataimport.service.ImportItemDataPort;
 import org.researchedc.module.datacapture.entity.ItemDataEntity;
 import org.researchedc.module.datacapture.repository.ItemDataRepository;
@@ -28,34 +27,32 @@ public class ItemDataDaoAdapter implements ImportItemDataPort {
         this.repository = repository;
     }
 
-    public EntityBean findByPK(int ID) {
+    public ItemDataDTO findByPK(int ID) {
         return repository.findById(ID)
                 .map(this::toBean)
-                .orElseGet(ItemDataBean::new);
+                .orElseGet(ItemDataDTO::new);
     }
 
     @Transactional
-    public EntityBean create(EntityBean eb) {
-        ItemDataBean bean = (ItemDataBean) eb;
+    public ItemDataDTO create(ItemDataDTO dto) {
         ItemDataEntity entity = new ItemDataEntity();
-        apply(bean, entity);
+        apply(dto, entity);
         entity.setDateCreated(LocalDateTime.now());
         return toBean(repository.save(entity));
     }
 
     @Transactional
-    public EntityBean update(EntityBean eb) {
-        return upsert(eb);
+    public ItemDataDTO update(ItemDataDTO dto) {
+        return upsert(dto);
     }
 
     @Transactional
-    public EntityBean upsert(EntityBean eb) {
-        ItemDataBean bean = (ItemDataBean) eb;
-        ItemDataEntity entity = repository.findById(bean.getId())
+    public ItemDataDTO upsert(ItemDataDTO dto) {
+        ItemDataEntity entity = repository.findById(dto.getId())
                 .orElseGet(ItemDataEntity::new);
-        entity.setItemDataId(bean.getId() > 0 ? bean.getId() : null);
-        apply(bean, entity);
-        if (bean.getId() > 0 && entity.getDateCreated() == null) {
+        entity.setItemDataId(dto.getId() > 0 ? dto.getId() : null);
+        apply(dto, entity);
+        if (dto.getId() > 0 && entity.getDateCreated() == null) {
             entity.setDateUpdated(LocalDateTime.now());
         } else {
             entity.setDateCreated(LocalDateTime.now());
@@ -71,125 +68,125 @@ public class ItemDataDaoAdapter implements ImportItemDataPort {
             int ownerId,
             int statusId,
             String value) {
-        ItemDataBean bean = new ItemDataBean();
-        bean.setItemId(itemId);
-        bean.setEventCRFId(eventCrfId);
-        bean.setOrdinal(ordinal);
-        bean.setOwnerId(ownerId);
-        bean.setStatus(Status.getFromMap(statusId));
-        bean.setValue(value);
-        upsert(bean);
+        ItemDataDTO dto = new ItemDataDTO();
+        dto.setItemId(itemId);
+        dto.setEventCRFId(eventCrfId);
+        dto.setOrdinal(ordinal);
+        dto.setOwnerId(ownerId);
+        dto.setStatus(Status.getFromMap(statusId));
+        dto.setValue(value);
+        upsert(dto);
     }
 
-    public Collection<ItemDataBean> findAll() {
+    public Collection<ItemDataDTO> findAll() {
         return toBeans(repository.findAll());
     }
 
-    public ArrayList<ItemDataBean> findAllByEventCRFId(int eventCRFId) {
+    public ArrayList<ItemDataDTO> findAllByEventCRFId(int eventCRFId) {
         return toBeans(repository.findByEventCrfId(eventCRFId));
     }
 
-    public ArrayList<ItemDataBean> findAllByEventCRFIdAndItemId(int eventCRFId, int itemId) {
+    public ArrayList<ItemDataDTO> findAllByEventCRFIdAndItemId(int eventCRFId, int itemId) {
         return toBeans(repository.findByEventCrfIdAndItemId(eventCRFId, itemId));
     }
 
-    public ArrayList<ItemDataBean> findAllByEventCRFIdAndItemIdNoStatus(int eventCRFId, int itemId) {
+    public ArrayList<ItemDataDTO> findAllByEventCRFIdAndItemIdNoStatus(int eventCRFId, int itemId) {
         return toBeans(repository.findByEventCrfIdAndItemId(eventCRFId, itemId));
     }
 
-    public ItemDataBean findByItemIdAndEventCRFId(int itemId, int eventCRFId) {
+    public ItemDataDTO findByItemIdAndEventCRFId(int itemId, int eventCRFId) {
         List<ItemDataEntity> entities = repository.findByItemIdAndEventCrfId(itemId, eventCRFId);
         if (entities.isEmpty()) {
-            return new ItemDataBean();
+            return new ItemDataDTO();
         }
         return toBean(entities.get(0));
     }
 
-    public ItemDataBean findByItemIdAndEventCRFIdAndOrdinal(int itemId, int eventCRFId, int ordinal) {
+    public ItemDataDTO findByItemIdAndEventCRFIdAndOrdinal(int itemId, int eventCRFId, int ordinal) {
         List<ItemDataEntity> entities = repository.findByItemIdAndEventCrfIdAndOrdinal(itemId, eventCRFId, ordinal);
         if (entities.isEmpty()) {
-            return new ItemDataBean();
+            return new ItemDataDTO();
         }
         return toBean(entities.get(0));
     }
 
     public Object getEntityFromHashMap(HashMap hm) {
-        ItemDataBean bean = new ItemDataBean();
+        ItemDataDTO dto = new ItemDataDTO();
         if (hm.get("item_data_id") instanceof Integer) {
-            bean.setId((Integer) hm.get("item_data_id"));
+            dto.setId((Integer) hm.get("item_data_id"));
         }
         if (hm.get("event_crf_id") instanceof Integer) {
-            bean.setEventCRFId((Integer) hm.get("event_crf_id"));
+            dto.setEventCRFId((Integer) hm.get("event_crf_id"));
         }
         if (hm.get("item_id") instanceof Integer) {
-            bean.setItemId((Integer) hm.get("item_id"));
+            dto.setItemId((Integer) hm.get("item_id"));
         }
         if (hm.get("value") instanceof String) {
-            bean.setValue((String) hm.get("value"));
+            dto.setValue((String) hm.get("value"));
         }
         if (hm.get("status_id") instanceof Integer) {
-            bean.setStatus(Status.get((Integer) hm.get("status_id")));
+            dto.setStatus(Status.get((Integer) hm.get("status_id")));
         }
         if (hm.get("ordinal") instanceof Integer) {
-            bean.setOrdinal((Integer) hm.get("ordinal"));
+            dto.setOrdinal((Integer) hm.get("ordinal"));
         }
         if (hm.get("deleted") instanceof Boolean) {
-            bean.setDeleted((Boolean) hm.get("deleted"));
+            dto.setDeleted((Boolean) hm.get("deleted"));
         }
         if (hm.get("date_created") instanceof Date) {
-            bean.setCreatedDate((Date) hm.get("date_created"));
+            dto.setCreatedDate((Date) hm.get("date_created"));
         }
         if (hm.get("date_updated") instanceof Date) {
-            bean.setUpdatedDate((Date) hm.get("date_updated"));
+            dto.setUpdatedDate((Date) hm.get("date_updated"));
         }
         if (hm.get("owner_id") instanceof Integer) {
-            bean.setOwnerId((Integer) hm.get("owner_id"));
+            dto.setOwnerId((Integer) hm.get("owner_id"));
         }
         if (hm.get("update_id") instanceof Integer) {
-            bean.setUpdaterId((Integer) hm.get("update_id"));
+            dto.setUpdaterId((Integer) hm.get("update_id"));
         }
-        return bean;
+        return dto;
     }
 
     public void delete(int itemDataId) {
         repository.deleteById(itemDataId);
     }
 
-    private void apply(ItemDataBean bean, ItemDataEntity entity) {
-        entity.setEventCrfId(bean.getEventCRFId());
-        entity.setItemId(bean.getItemId());
-        entity.setValue(bean.getValue());
-        entity.setOrdinal(bean.getOrdinal());
-        entity.setStatusId(bean.getStatus() != null ? bean.getStatus().getId() : Status.INVALID.getId());
-        entity.setDeleted(bean.isDeleted());
-        entity.setOwnerId(bean.getOwnerId() > 0 ? bean.getOwnerId() : null);
-        entity.setUpdateId(bean.getUpdaterId() > 0 ? bean.getUpdaterId() : null);
+    private void apply(ItemDataDTO dto, ItemDataEntity entity) {
+        entity.setEventCrfId(dto.getEventCRFId());
+        entity.setItemId(dto.getItemId());
+        entity.setValue(dto.getValue());
+        entity.setOrdinal(dto.getOrdinal());
+        entity.setStatusId(dto.getStatus() != null ? dto.getStatus().getId() : Status.INVALID.getId());
+        entity.setDeleted(dto.isDeleted());
+        entity.setOwnerId(dto.getOwnerId() > 0 ? dto.getOwnerId() : null);
+        entity.setUpdateId(dto.getUpdaterId() > 0 ? dto.getUpdaterId() : null);
     }
 
-    private ItemDataBean toBean(ItemDataEntity entity) {
-        ItemDataBean bean = new ItemDataBean();
+    private ItemDataDTO toBean(ItemDataEntity entity) {
+        ItemDataDTO dto = new ItemDataDTO();
         if (entity.getItemDataId() != null) {
-            bean.setId(entity.getItemDataId());
+            dto.setId(entity.getItemDataId());
         }
-        bean.setEventCRFId(valueOrZero(entity.getEventCrfId()));
-        bean.setItemId(valueOrZero(entity.getItemId()));
-        bean.setValue(entity.getValue() != null ? entity.getValue() : "");
-        bean.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
-        bean.setOrdinal(valueOrZero(entity.getOrdinal()));
-        bean.setDeleted(entity.getDeleted() != null && entity.getDeleted());
-        bean.setCreatedDate(toDate(entity.getDateCreated()));
-        bean.setUpdatedDate(toDate(entity.getDateUpdated()));
-        bean.setOwnerId(valueOrZero(entity.getOwnerId()));
-        bean.setUpdaterId(valueOrZero(entity.getUpdateId()));
-        return bean;
+        dto.setEventCRFId(valueOrZero(entity.getEventCrfId()));
+        dto.setItemId(valueOrZero(entity.getItemId()));
+        dto.setValue(entity.getValue() != null ? entity.getValue() : "");
+        dto.setStatus(Status.getFromMap(valueOrZero(entity.getStatusId())));
+        dto.setOrdinal(valueOrZero(entity.getOrdinal()));
+        dto.setDeleted(entity.getDeleted() != null && entity.getDeleted());
+        dto.setCreatedDate(toDate(entity.getDateCreated()));
+        dto.setUpdatedDate(toDate(entity.getDateUpdated()));
+        dto.setOwnerId(valueOrZero(entity.getOwnerId()));
+        dto.setUpdaterId(valueOrZero(entity.getUpdateId()));
+        return dto;
     }
 
-    private ArrayList<ItemDataBean> toBeans(List<ItemDataEntity> entities) {
-        ArrayList<ItemDataBean> beans = new ArrayList<>();
+    private ArrayList<ItemDataDTO> toBeans(List<ItemDataEntity> entities) {
+        ArrayList<ItemDataDTO> dtos = new ArrayList<>();
         for (ItemDataEntity entity : entities) {
-            beans.add(toBean(entity));
+            dtos.add(toBean(entity));
         }
-        return beans;
+        return dtos;
     }
 
     private int valueOrZero(Integer value) {

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.researchedc.module.legacy.dto.SubjectDTO;
-import org.researchedc.module.subject.dto.StudySubjectDTO;
+import org.researchedc.app.dto.StudySubjectDTO;
 import org.researchedc.module.subject.service.SubjectService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

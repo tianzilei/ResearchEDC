@@ -8,7 +8,7 @@ import org.researchedc.module.event.dto.ScheduleEventRequest;
 import org.researchedc.module.event.service.EventService;
 import org.researchedc.module.subject.dto.CreateSubjectRequest;
 import org.researchedc.module.subject.dto.EnrollSubjectRequest;
-import org.researchedc.module.subject.dto.StudySubjectDTO;
+import org.researchedc.app.dto.StudySubjectDTO;
 import org.researchedc.module.subject.dto.SubjectDTO;
 import org.researchedc.module.subject.entity.StudySubjectEntity;
 import org.researchedc.module.subject.entity.SubjectEntity;

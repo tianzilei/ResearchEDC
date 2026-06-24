@@ -9,7 +9,7 @@ import org.researchedc.module.subject.application.command.EnrollSubjectCommand;
 import org.researchedc.module.subject.domain.SubjectPolicy;
 import org.researchedc.module.subject.dto.CreateSubjectRequest;
 import org.researchedc.module.subject.dto.EnrollSubjectRequest;
-import org.researchedc.module.subject.dto.StudySubjectDTO;
+import org.researchedc.app.dto.StudySubjectDTO;
 import org.researchedc.module.subject.dto.SubjectDTO;
 import org.researchedc.module.subject.event.SubjectEnrolledEvent;
 import org.researchedc.module.subject.service.SubjectService;
