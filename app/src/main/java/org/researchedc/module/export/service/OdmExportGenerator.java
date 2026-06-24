@@ -30,6 +30,7 @@ public class OdmExportGenerator {
     private static final Logger log = LoggerFactory.getLogger(OdmExportGenerator.class);
     private static final String ODM_NS = "http://www.cdisc.org/ns/odm/v1.3";
     private static final String OC_NS = "http://www.openclinica.org/ns/odm_ext_v130/v3.1";
+    private static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
     private static final DateTimeFormatter ODM_DT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     private final OdmSchemaResourceResolver schemaResolver;
@@ -50,8 +51,9 @@ public class OdmExportGenerator {
             root.setAttribute("FileOID", fileOid);
             root.setAttribute("CreationDateTime", LocalDateTime.now().format(ODM_DT));
             root.setAttribute("ODMVersion", "1.3.2");
-            root.setAttribute("SchemaLocation", resolveSchemaLocation(contractVersion));
+            root.setAttributeNS(XSI_NS, "xsi:schemaLocation", resolveSchemaLocation(contractVersion));
             root.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:oc", OC_NS);
+            root.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xsi", XSI_NS);
             doc.appendChild(root);
 
             Element studyElement = buildStudyElement(doc, studySnapshot, contractVersion);
@@ -105,11 +107,11 @@ public class OdmExportGenerator {
         studyEl.appendChild(metaVersion);
 
         if (contractVersion == OdmContractVersion.OC2_0_COMPAT) {
-            Element facility = doc.createElementNS(OC_NS, "oc:StudyDetails");
-            Element facilityName = doc.createElementNS(OC_NS, "oc:FacilityName");
+            Element facility = doc.createElementNS(OC_NS, "StudyDetails");
+            Element facilityName = doc.createElementNS(OC_NS, "FacilityName");
             facilityName.setTextContent(studySnapshot.facilityName() != null ? studySnapshot.facilityName() : "");
             facility.appendChild(facilityName);
-            Element facilityContact = doc.createElementNS(OC_NS, "oc:FacilityContactEmail");
+            Element facilityContact = doc.createElementNS(OC_NS, "FacilityContactEmail");
             facilityContact.setTextContent(studySnapshot.facilityContactEmail() != null ? studySnapshot.facilityContactEmail() : "");
             facility.appendChild(facilityContact);
             metaVersion.appendChild(facility);
@@ -152,7 +154,7 @@ public class OdmExportGenerator {
                         item.setAttribute("ItemOID", itemData.itemOid());
                         item.setAttribute("Value", itemData.value() != null ? itemData.value() : "");
                         if (itemData.isMonitored()) {
-                            item.setAttribute("OC:Monitored", "Yes");
+                            item.setAttributeNS(OC_NS, "oc:Monitored", "Yes");
                         }
                         itemGroup.appendChild(item);
                     }

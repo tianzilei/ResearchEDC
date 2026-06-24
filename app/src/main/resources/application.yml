@@ -31,6 +31,18 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
       - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  datasource:
+    url: jdbc:postgresql://${RESEARCHEDC_DB_HOST:localhost}:${RESEARCHEDC_DB_PORT:5432}/${RESEARCHEDC_DB_NAME:researchedc}
+    username: ${RESEARCHEDC_DB_USER:researchedc}
+    password: ${RESEARCHEDC_DB_PASS:researchedc}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 12
+      minimum-idle: 2
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 5000
+      leak-detection-threshold: 60000
   jpa:
     hibernate:
       ddl-auto: none
@@ -50,12 +62,6 @@ spring:
 
 # Database configuration (overridable via env vars: RESEARCHEDC_DB_*)
 researchedc:
-  db:
-    host: ${RESEARCHEDC_DB_HOST:localhost}
-    port: ${RESEARCHEDC_DB_PORT:5432}
-    name: ${RESEARCHEDC_DB_NAME:researchedc}
-    user: ${RESEARCHEDC_DB_USER:researchedc}
-    pass: ${RESEARCHEDC_DB_PASS:researchedc}
 
   servlet:
     multipart:

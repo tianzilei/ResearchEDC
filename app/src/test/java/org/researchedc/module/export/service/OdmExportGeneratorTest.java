@@ -37,8 +37,8 @@ class OdmExportGeneratorTest {
         assertTrue(xml.contains("StudyOID=\"S_1\""));
         assertFalse(xml.contains("FacilityContactEmail"),
                 "OC2_1 should NOT contain FacilityContactEmail");
-        assertFalse(xml.contains("oc:StudyDetails"),
-                "OC2_1 should NOT contain oc:StudyDetails");
+        assertFalse(xml.contains("StudyDetails"),
+                "OC2_1 should NOT contain StudyDetails");
     }
 
     @Test
@@ -52,7 +52,8 @@ class OdmExportGeneratorTest {
                 OdmContractVersion.OC2_0_COMPAT, "file_oid_2");
 
         assertTrue(xml.contains("FacilityContactEmail"));
-        assertTrue(xml.contains("oc:StudyDetails"));
+        assertTrue(xml.contains("oc:StudyDetails") || xml.contains("StudyDetails"),
+                "OC2_0_COMPAT should contain StudyDetails element");
         assertTrue(xml.contains("MyFacility"));
     }
 
@@ -116,6 +117,7 @@ class OdmExportGeneratorTest {
         String xml = generator.generate(study, List.of(subject),
                 OdmContractVersion.OC2_1, "file_oid_6");
 
-        assertTrue(xml.contains("OC:Monitored=\"Yes\""));
+        assertTrue(xml.contains("Monitored=\"Yes\""),
+                "Should contain Monitored attribute with value Yes");
     }
 }

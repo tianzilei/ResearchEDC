@@ -36,7 +36,7 @@ class OdmExportExecutionServiceTest {
     }
 
     @Test
-    void execute_odmXmlJob_transitionsToCompleted() {
+    void execute_odmXmlJob_transitionsToCompleted() throws Exception {
         ExportJob job = createJob(ExportFormat.ODM_XML, ExportJobStatus.PENDING);
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
@@ -95,7 +95,7 @@ class OdmExportExecutionServiceTest {
     }
 
     @Test
-    void execute_defaultContractVersion_isOc21() {
+    void execute_defaultContractVersion_isOc21() throws Exception {
         ExportJob job = createJob(ExportFormat.ODM_XML, ExportJobStatus.PENDING);
         job.setOdmContractVersion(OdmContractVersion.OC2_1);
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));

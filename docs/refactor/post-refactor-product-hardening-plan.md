@@ -1,8 +1,44 @@
 # Post-Refactor Product Hardening Plan
 
 **Created:** 2026-06-24
-**Status:** Proposed
-**Purpose:** define the next execution plan now that legacy-removal and ODM email-contract versioning are complete.
+**Status:** ✅ Completed on 2026-06-24; historical record, now superseded
+**Superseded by:** `docs/refactor/post-hardening-stabilization-plan.md`
+**Purpose:** historical execution plan for the first post-refactor hardening phase.
+
+## Completion Note
+
+This plan has been executed in substance.
+
+Delivered outcomes:
+
+- ODM export execution pipeline added
+- ODM contract versioning connected to export execution
+- export artifact writing and download endpoint added
+- frontend lint errors reduced to zero
+- frontend warnings reduced to zero
+
+Representative delivery commits:
+
+- `b3e2e5dbc feat: ODM export execution pipeline + frontend lint zero-error + warning reduction`
+- `5e798b38f refactor(frontend): eliminate no-explicit-any warnings (48→0, 15 warnings remain)`
+- `b893a01d3 refactor(frontend): eliminate all lint warnings (76→0)`
+
+## Why This Document Is Historical
+
+Its original baseline is now outdated:
+
+- the export module no longer stops at job metadata management
+- frontend lint no longer has `11` errors / `76` warnings
+
+A fresh verification pass after these deliveries exposed a new stabilization concern:
+
+- backend compile/test verification is currently red because `app/` still relies on dependencies that are no longer arriving transitively after `shared/` became resource-only
+
+That follow-up work is tracked in:
+
+- `docs/refactor/post-hardening-stabilization-plan.md`
+
+The remainder of this document is preserved as the original pre-delivery execution baseline and is no longer current state.
 
 ## Summary
 

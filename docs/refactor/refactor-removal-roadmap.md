@@ -1,6 +1,6 @@
 # Refactor And Removal Roadmap
 
-**Updated:** 2026-06-23
+**Updated:** 2026-06-24
 **Purpose:** single source of truth for the remaining legacy refactor/removal work.
 
 ## Current Verified State
@@ -16,6 +16,24 @@
 - Code balance by file count: `0%` shared legacy / `100%` module modern
 
 This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup. With `shared/src/main/java` now at 0 Java files, the strangulation is effectively complete — only resource-only files remain in `shared/`.
+
+## Post-Hardening Stabilization (2026-06-24)
+
+Build stabilization complete. Changes:
+- DBCP1 DataSource → Spring Boot HikariCP auto-config
+- Quartz scheduler infrastructure removed (5 files + config, dead code)
+- Joda-Time → java.time in AuditUserLoginAdapter
+- QueryStore removed (zero consumers)
+- ODM export namespace handling corrected (oc: prefix, xsi:schemaLocation, xmlns declarations)
+- ExportDataProviderAdapter Modulith boundary fixed (allowedDependencies for 5 modules)
+- OdmExportExecutionServiceTest IOException fixed
+
+Verified baseline:
+```bash
+mvn clean compile -DskipTests                          # ✅ BUILD SUCCESS
+mvn test -pl app -am -Dtest=ModulithVerificationTest   # ✅ 1/0/0
+mvn test -pl app -am -Dtest=OdmExportGeneratorTest     # ✅ 6/0/0
+```
 
 ## Document Roles
 
@@ -76,7 +94,7 @@ These are closed and should not be reopened except to fix regressions:
 - `app/control/form/Validator` now uses app-owned form support for locale/bundle/format behavior.
 - `app/module/dataimport/internal/adapter/ImportCrfDataAdapter` now resolves ODM mapping and page-message bundles through module-owned support instead of direct `shared/core` or `shared/i18n` imports.
 - `app/module/crf/internal/adapter/*` no longer imports `shared/exception` or `shared/core/util` compatibility helper types.
-- `app/config/DbConfig` now uses an app-owned DBCP compatibility wrapper, allowing the old `shared/core/ExtendedBasicDataSource` class to be removed.
+- `app/config/DbConfig` and `ExtendedBasicDataSource` have been removed; DataSource is now managed by Spring Boot HikariCP auto-config via `spring.datasource.*` properties. The legacy `QueryStore` (zero consumers) was also removed.
 - Retained `datainfo.properties` loading now lives in app-owned `CoreResourcesConfig`, allowing the final `shared/core` and `shared/exception` Java support classes to be retired.
 - Retained term/admin bundle lookups now use direct `ResourceBundle` access inside the remaining DTO/term beans, allowing the final `shared/i18n` Java helper to be retired.
 - Retired extract post-processing helpers (`Processing*`, `Pdf/Sas/SqlProcessingFunction`, `ScriptRunner`) were removed after zero-caller scans and compile/test verification.

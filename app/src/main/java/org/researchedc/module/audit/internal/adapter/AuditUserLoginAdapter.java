@@ -8,13 +8,14 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.joda.time.DateTime;
 import org.researchedc.module.audit.dto.AuditUserLoginDTO;
 import org.researchedc.module.audit.dto.AuditUserLoginQuery;
 import org.researchedc.module.audit.entity.AuditLoginStatus;
@@ -120,18 +121,18 @@ class AuditUserLoginAdapter implements AuditUserLoginPort {
     private void addDateRangePredicate(CriteriaBuilder cb, Root<AuditUserLoginEntry> root, String value,
                                        String pattern, int plusAmount, List<Predicate> predicates) {
         try {
-            DateFormat format = new SimpleDateFormat(pattern);
-            Date startDate = format.parse(value);
-            DateTime start = new DateTime(startDate.getTime());
-            Date endDate = switch (plusAmount) {
-                case 1 -> start.plusYears(1).toDate();
-                case 2 -> start.plusMonths(1).toDate();
-                case 3 -> start.plusDays(1).toDate();
-                case 4 -> start.plusHours(1).toDate();
-                case 5 -> start.plusMinutes(1).toDate();
-                default -> start.toDate();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+            LocalDateTime startLdt = LocalDateTime.parse(value, formatter);
+            Instant startDate = startLdt.atZone(ZoneId.systemDefault()).toInstant();
+            Instant endDate = switch (plusAmount) {
+                case 1 -> startLdt.plusYears(1).atZone(ZoneId.systemDefault()).toInstant();
+                case 2 -> startLdt.plusMonths(1).atZone(ZoneId.systemDefault()).toInstant();
+                case 3 -> startLdt.plusDays(1).atZone(ZoneId.systemDefault()).toInstant();
+                case 4 -> startLdt.plusHours(1).atZone(ZoneId.systemDefault()).toInstant();
+                case 5 -> startLdt.plusMinutes(1).atZone(ZoneId.systemDefault()).toInstant();
+                default -> startDate;
             };
-            predicates.add(cb.between(root.get("loginAttemptDate"), startDate, endDate));
+            predicates.add(cb.between(root.get("loginAttemptDate"), Date.from(startDate), Date.from(endDate)));
         } catch (Exception ignored) {
         }
     }
