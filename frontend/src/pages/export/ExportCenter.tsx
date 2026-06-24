@@ -24,6 +24,13 @@ interface ExportJob {
   retryCount?: number;
 }
 
+interface CreateExportJob {
+  studyId: number;
+  name: string;
+  exportFormat: string;
+  requestedBy: number;
+}
+
 const statusClasses: Record<string, string> = {
   PENDING: "status-default", RUNNING: "status-info", COMPLETED: "status-success", FAILED: "status-danger", CANCELLED: "status-warning",
 };
@@ -46,7 +53,7 @@ export default function ExportCenter() {
   const [format, setFormat] = useState<string>("ODM_XML");
   const [name, setName] = useState("");
 
-  const createJob = useAppMutation<ExportJob, any>({
+  const createJob = useAppMutation<ExportJob, CreateExportJob>({
     mutationFn: (body) => apiClient.post<ExportJob>(`/api/v1/exports`, body),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["exports", studyId] }); message.success(t("export.created")); setModalOpen(false); },
   });
@@ -82,7 +89,7 @@ export default function ExportCenter() {
     },
     {
       title: t("export.column.actions"), key: "actions",
-      render: (_: any, r: ExportJob) => (
+      render: (_: unknown, r: ExportJob) => (
         <Space>
           {r.status === "COMPLETED" && r.filePath && (
             <Button size="small">{t("export.action.download")}</Button>

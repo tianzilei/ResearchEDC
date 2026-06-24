@@ -104,7 +104,7 @@ export default function UserManagement() {
       title: "用户名", dataIndex: "userName", key: "userName",
       render: (text: string) => <strong>{text}</strong>,
     },
-    { title: "姓名", key: "name", render: (_: any, r: UserDTO) => `${r.firstName} ${r.lastName}` },
+    { title: "姓名", key: "name", render: (_: unknown, r: UserDTO) => `${r.firstName} ${r.lastName}` },
     { title: "电话", dataIndex: "phone", key: "phone", render: (v: string | null) => v ?? "-" },
     {
       title: "状态", dataIndex: "enabled", key: "enabled",
@@ -114,7 +114,7 @@ export default function UserManagement() {
     },
     {
       title: "", key: "actions",
-      render: (_: any, record: UserDTO) => (
+      render: (_: unknown, record: UserDTO) => (
         <Button size="small" onClick={() => viewRoles(record.userName)}>
           角色
         </Button>

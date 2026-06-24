@@ -28,27 +28,27 @@ const ENTITY_CONFIG: Record<string, { label: string; fetchUrl: (id: number) => s
   "rule": { label: "Rule", fetchUrl: (id) => `/api/legacy/rules/${id}`, apiPath: "/api/legacy/rules", backLink: "/app/studies" },
 };
 
-function parseEntityInfo(entity: string, id: number, data: any): EntityInfo | null {
+function parseEntityInfo(entity: string, id: number, data: Record<string, unknown>): EntityInfo | null {
   if (!data) return null;
   switch (entity) {
     case "study": case "site":
-      return { id: data.studyId ?? id, name: data.name, status: data.status };
+      return { id: (data.studyId as number) ?? id, name: data.name as string, status: data.status as string };
     case "subject":
-      return { id, name: data.uniqueIdentifier ?? `Subject #${id}` };
+      return { id, name: (data.uniqueIdentifier as string) ?? `Subject #${id}` };
     case "study-subject":
-      return { id, name: data.label ?? data.subjectUniqueIdentifier ?? `Study Subject #${id}` };
+      return { id, name: (data.label as string) ?? (data.subjectUniqueIdentifier as string) ?? `Study Subject #${id}` };
     case "study-event":
-      return { id, name: data.label ?? `Event #${id}`, status: String(data.statusId ?? "") };
+      return { id, name: (data.label as string) ?? `Event #${id}`, status: typeof data.statusId === "string" || typeof data.statusId === "number" ? String(data.statusId) : undefined };
     case "event-definition":
-      return { id, name: data.name ?? `Definition #${id}`, status: data.statusId != null ? String(data.statusId) : undefined };
+      return { id, name: (data.name as string) ?? `Definition #${id}`, status: typeof data.statusId === "string" || typeof data.statusId === "number" ? String(data.statusId) : undefined };
     case "subject-group-class":
-      return { id, name: data.name ?? `Class #${id}`, status: data.statusId != null ? String(data.statusId) : undefined };
+      return { id, name: (data.name as string) ?? `Class #${id}`, status: typeof data.statusId === "string" || typeof data.statusId === "number" ? String(data.statusId) : undefined };
     case "study-user-role":
-      return { id, name: data.roleName ?? `Role #${id}`, status: data.statusId != null ? String(data.statusId) : undefined };
+      return { id, name: (data.roleName as string) ?? `Role #${id}`, status: typeof data.statusId === "string" || typeof data.statusId === "number" ? String(data.statusId) : undefined };
     case "crf": case "crf-version":
-      return { id, name: data.name ?? `#${id}`, status: data.status };
+      return { id, name: (data.name as string) ?? `#${id}`, status: data.status as string };
     case "rule":
-      return { id, name: data.name ?? `Rule #${id}` };
+      return { id, name: (data.name as string) ?? `Rule #${id}` };
     default:
       return { id, name: `${entity} #${id}` };
   }
@@ -79,7 +79,7 @@ export default function EntityAction() {
     }
 
     apiClient
-      .get<any>(fetchUrl)
+      .get<Record<string, unknown>>(fetchUrl)
       .then((data) => setInfo(parseEntityInfo(entity, entityId, data)))
       .catch(() => setInfo(null))
       .finally(() => setLoading(false));

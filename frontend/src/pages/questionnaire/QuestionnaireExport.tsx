@@ -75,7 +75,7 @@ export default function QuestionnaireExport() {
   const [layout, setLayout] = useState("wide");
   const [includeScores, setIncludeScores] = useState(true);
 
-  const createExport = useAppMutation<ExportJob, any>({
+  const createExport = useAppMutation<ExportJob, Record<string, unknown>>({
     mutationFn: (body) =>
       apiClient.post<ExportJob>("/api/v1/questionnaires/export", body),
     onSuccess: () => {

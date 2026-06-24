@@ -122,7 +122,7 @@ export default function CrfAdmin() {
     },
     {
       title: "", key: "actions",
-      render: (_: any, record: CrfItem) => (
+      render: (_: unknown, record: CrfItem) => (
         <Space>
           <Button size="small" onClick={() => viewVersions(record)}>
             版本

@@ -99,10 +99,10 @@ export default function StudyUserRoleEditor() {
         <Card><Empty description="暂无用户分配至此研究" /></Card>
       ) : (
         <Card styles={{ body: { padding: 0 } }}>
-          <Table dataSource={users} rowKey={(r: any) => r.userName ?? r.userId}
+          <Table dataSource={users} rowKey={(r: UserRole) => r.userName}
             columns={[
               { title: "用户名", dataIndex: "userName", key: "userName" },
-              { title: "姓名", key: "name", render: (_: any, r: any) => `${r.firstName ?? ""} ${r.lastName ?? ""}`.trim() || "-" },
+              { title: "姓名", key: "name", render: (_: unknown, r: UserRole) => `${r.firstName ?? ""} ${r.lastName ?? ""}`.trim() || "-" },
               { title: "角色", dataIndex: "role", key: "role", render: (r: string) => <Tag>{r}</Tag> },
             ]}
             pagination={false}

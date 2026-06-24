@@ -5,7 +5,7 @@ import { useSchemes, useCreateScheme, useActivateScheme, useCloseScheme } from "
 import { useCurrentStudy } from "@/hooks/useStudies";
 import { useNavigate } from "react-router-dom";
 import { SkeletonPage } from "@/components/SkeletonCard";
-import type { SchemeDTO, ArmDTO } from "@/types/randomization";
+import type { SchemeDTO, SchemeSummaryDTO, ArmDTO } from "@/types/randomization";
 
 const { Title } = Typography;
 
@@ -31,7 +31,7 @@ export default function RandomizationDashboard() {
   const handleCreate = async () => {
     try {
       const values = await form.validateFields();
-      const arms: ArmDTO[] = values.arms?.map((a: any, i: number) => ({
+      const arms: ArmDTO[] = values.arms?.map((a: { name: string; displayName?: string; ratio?: number }, i: number) => ({
         name: a.name,
         displayName: a.displayName ?? a.name,
         ratio: a.ratio ?? 1,
@@ -52,8 +52,8 @@ export default function RandomizationDashboard() {
       message.success(t("randomization.created"));
       setModalOpen(false);
       form.resetFields();
-    } catch (e: any) {
-      message.error(e?.message ?? t("randomization.createFailed"));
+    } catch (e: unknown) {
+      message.error(e instanceof Error ? e.message : t("randomization.createFailed"));
     }
   };
 
@@ -71,7 +71,7 @@ export default function RandomizationDashboard() {
 
   const columns = [
     { title: t("randomization.column.name"), dataIndex: "name", key: "name",
-      render: (name: string, record: any) => (
+      render: (name: string, record: SchemeSummaryDTO) => (
         <a onClick={() => navigate(`/app/randomization/schemes/${record.id}`)}>{name}</a>
       ),
     },
@@ -85,7 +85,7 @@ export default function RandomizationDashboard() {
     { title: t("randomization.column.assigned"), dataIndex: "totalAssigned", key: "totalAssigned" },
     {
       title: t("randomization.column.actions"), key: "actions",
-      render: (_: any, record: any) => (
+      render: (_: unknown, record: SchemeSummaryDTO) => (
         <Space>
           {record.status === "DRAFT" && (
             <Button size="small" type="primary" onClick={() => activateScheme.mutate(record.id)}>

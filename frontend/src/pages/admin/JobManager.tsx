@@ -32,7 +32,7 @@ export default function JobManager() {
       fetch("/api/v1/studies").then(r => r.ok ? r.json() : []),
     ]).then(([data, ss]) => {
       setJobs(data);
-      setStudies(Array.isArray(ss) ? ss.map((s: any) => ({ studyId: s.studyId ?? s.id, name: s.name })) : []);
+      setStudies(Array.isArray(ss) ? ss.map((s: Record<string, unknown>) => ({ studyId: (s.studyId ?? s.id) as number, name: s.name as string })) : []);
       setLoading(false);
     }).catch((e: unknown) => { setError(e instanceof Error ? e.message : "Error"); setLoading(false); });
   };
@@ -117,7 +117,7 @@ export default function JobManager() {
     },
     {
       title: "", key: "actions",
-      render: (_: any, record: ExportJob) => (
+      render: (_: unknown, record: ExportJob) => (
         <Space>
           {(record.status === "RUNNING" || record.status === "PENDING") && (
             <Button size="small" danger

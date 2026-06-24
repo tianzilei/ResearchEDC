@@ -117,7 +117,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 - **Data fetching:** TanStack Query 5 via typed `useAppQuery`/`useAppMutation` wrappers
 - **API client:** Fetch-based `ApiClient` class (JSON + FormData support, `credentials: same-origin`, CSRF token injection)
 - **Auth:** Spring Security form login with server-side Session (HttpOnly cookie + CookieCsrfTokenRepository)
-- **Quality:** `pnpm typecheck` (0 errors) | `pnpm lint` (0 errors, 63 warnings) | `pnpm test` (25/25 ✅)
+- **Quality:** `pnpm typecheck` (0 errors) | `pnpm lint` (0 errors, 15 warnings) | `pnpm test` (25/25 ✅)
 
 ## MODULITH MODULES INVENTORY
 

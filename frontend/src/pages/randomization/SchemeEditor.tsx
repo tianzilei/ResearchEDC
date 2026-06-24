@@ -3,6 +3,7 @@ import { Card, Descriptions, Tag, Button, Space, Typography, Table, Divider, mes
 import { useTranslation } from "react-i18next";
 import { useScheme, useActivateScheme, useCloseScheme } from "@/hooks/useRandomization";
 import { SkeletonPage } from "@/components/SkeletonCard";
+import type { StratumOptionDTO } from "@/types/randomization";
 
 const { Title } = Typography;
 
@@ -60,7 +61,7 @@ export default function SchemeEditor() {
       render: (type: string) => <Tag>{type}</Tag>,
     },
     { title: t("scheme.column.options"), dataIndex: "options", key: "options",
-      render: (opts: any[]) => opts?.map((o: any) => o.label).join(", ") ?? "-",
+      render: (opts: StratumOptionDTO[]) => opts?.map((o: StratumOptionDTO) => o.label).join(", ") ?? "-",
     },
   ];
 

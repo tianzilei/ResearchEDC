@@ -37,8 +37,8 @@ export default function UnblindingPage() {
       setAssignmentId(undefined);
       setReason("");
       refetch();
-    } catch (e: any) {
-      message.error(e?.message ?? t("unblinding.failed"));
+    } catch (e: unknown) {
+      message.error(e instanceof Error ? e.message : t("unblinding.failed"));
     }
   };
 
@@ -54,8 +54,8 @@ export default function UnblindingPage() {
       setReviewDecision(null);
       setReviewNotes("");
       refetch();
-    } catch (e: any) {
-      message.error(e?.message ?? "Failed");
+    } catch (e: unknown) {
+      message.error(e instanceof Error ? e.message : "Failed");
     }
   };
 
@@ -82,7 +82,7 @@ export default function UnblindingPage() {
     },
     {
       title: t("unblinding.column.actions"), key: "actions",
-      render: (_: any, record: UnblindingRequestDTO) => (
+      render: (_: unknown, record: UnblindingRequestDTO) => (
         <Space>
           {record.status === "PENDING" && (
             <Button size="small" type="primary" onClick={() => setReviewTarget(record)}>

@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const { Title, Text } = Typography;
 
 export default function LogViewer() {
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<{ name: string; level: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,7 +18,7 @@ export default function LogViewer() {
       const res = await fetch("/actuator/loggers");
       if (res.ok) {
         const data = await res.json();
-        setLogs(Object.entries(data.loggers ?? {}).slice(0, 50).map(([name, config]: [string, any]) => ({
+        setLogs(Object.entries<Record<string, string | null>>(data.loggers ?? {}).slice(0, 50).map(([name, config]) => ({
           name, level: config.configuredLevel ?? config.effectiveLevel ?? "INFO",
         })));
       } else {

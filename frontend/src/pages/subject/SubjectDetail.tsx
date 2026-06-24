@@ -197,7 +197,7 @@ export default function SubjectDetail() {
     },
     {
       title: "", key: "actions",
-      render: (_: any, record: StudyEvent) => (
+      render: (_: unknown, record: StudyEvent) => (
         <Button size="small"
           onClick={() => navigate(`/app/subjects/${id}/events/${record.studyEventId}/crfs`)}>
           CRF

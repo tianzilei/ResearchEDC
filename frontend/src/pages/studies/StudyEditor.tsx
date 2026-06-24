@@ -35,8 +35,8 @@ export default function StudyEditor() {
         if (data) {
           form.setFieldsValue({
             ...data,
-            datePlannedStart: data.datePlannedStart ? (data.datePlannedStart as any) : undefined,
-            datePlannedEnd: data.datePlannedEnd ? (data.datePlannedEnd as any) : undefined,
+            datePlannedStart: data.datePlannedStart ?? undefined,
+            datePlannedEnd: data.datePlannedEnd ?? undefined,
           });
         }
         setLoading(false);

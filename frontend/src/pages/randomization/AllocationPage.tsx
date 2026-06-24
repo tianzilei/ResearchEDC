@@ -59,8 +59,8 @@ export default function AllocationPage() {
       });
       setSubjectId(undefined);
       setStratumValues({});
-    } catch (e: any) {
-      message.error(e?.message ?? t("allocation.failed"));
+    } catch (e: unknown) {
+      message.error(e instanceof Error ? e.message : t("allocation.failed"));
     }
   };
 

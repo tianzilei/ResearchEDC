@@ -15,7 +15,7 @@ import {
   Empty,
 } from "antd";
 
-import type { StudyDetail } from "@/types/study";
+import type { StudyDetail, StudySummaryItem } from "@/types/study";
 
 const { Title, Text } = Typography;
 
@@ -81,7 +81,7 @@ export default function SiteManagement() {
 
   const columns = [
     { title: "名称", dataIndex: "name", key: "name",
-      render: (name: string, record: any) => (
+      render: (name: string, record: StudySummaryItem) => (
         <Link to={`/app/studies/${record.studyId}`}>{name}</Link>
       ),
     },
@@ -89,7 +89,7 @@ export default function SiteManagement() {
     { title: "主要研究者", dataIndex: "principalInvestigator", key: "pi", render: (v: string) => v || "-" },
     { title: "机构", dataIndex: "facilityName", key: "facility", render: (v: string) => v || "-" },
     { title: "位置", key: "location",
-      render: (_: any, record: any) => [record.facilityCity, record.facilityState, record.facilityCountry].filter(Boolean).join(", ") || "-",
+      render: (_: unknown, record: StudySummaryItem) => [record.facilityCity, record.facilityState, record.facilityCountry].filter(Boolean).join(", ") || "-",
     },
     { title: "状态", dataIndex: "status", key: "status",
       render: (s: string) => <span className={`status ${statusClass(s)}`}>{s}</span>,

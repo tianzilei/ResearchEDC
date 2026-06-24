@@ -70,7 +70,7 @@ export default function QuestionnaireVersionEditor() {
   const [editMode, setEditMode] = useState<"builder" | "json">("builder");
   const [form] = Form.useForm();
 
-  const createVersion = useAppMutation<Version, any>({
+  const createVersion = useAppMutation<Version, { version_no: string; language: string; surveyjs_schema: Record<string, unknown> }>({
     mutationFn: (body) =>
       apiClient.post<Version>(
         `/api/v1/questionnaires/templates/${templateId}/versions`,
@@ -86,7 +86,7 @@ export default function QuestionnaireVersionEditor() {
     },
   });
 
-  const updateVersion = useAppMutation<void, { id: string; data: any }>({
+  const updateVersion = useAppMutation<void, { id: string; data: { surveyjs_schema: Record<string, unknown> } }>({
     mutationFn: ({ id, data }) =>
       apiClient.patch(`/api/v1/questionnaires/versions/${id}`, data),
     onSuccess: () => {

@@ -65,7 +65,7 @@ export default function QuestionnaireResponses() {
   const [correctionReason, setCorrectionReason] = useState("");
   const [correctionData, setCorrectionData] = useState("");
 
-  const reviewResponse = useAppMutation<void, { id: string; data: any }>({
+  const reviewResponse = useAppMutation<void, { id: string; data: Record<string, unknown> }>({
     mutationFn: ({ id, data }) =>
       apiClient.post(`/api/v1/questionnaires/responses/${id}/review`, data),
     onSuccess: () => {
@@ -83,7 +83,7 @@ export default function QuestionnaireResponses() {
     },
   });
 
-  const correctResponse = useAppMutation<void, { id: string; data: any }>({
+  const correctResponse = useAppMutation<void, { id: string; data: Record<string, unknown> }>({
     mutationFn: ({ id, data }) =>
       apiClient.post(
         `/api/v1/questionnaires/responses/${id}/correction`,

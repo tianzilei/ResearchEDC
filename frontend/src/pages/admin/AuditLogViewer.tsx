@@ -27,8 +27,8 @@ export default function AuditLogViewer() {
   useState(() => {
     fetch("/api/v1/audit")
       .then(r => r.ok ? r.json() : [])
-      .then((data: any) => {
-        const content = data.content ?? data;
+      .then((data: Record<string, unknown> | unknown[]) => {
+        const content = (data as Record<string, unknown>).content ?? data;
         setLogs(Array.isArray(content) ? content : []);
         setLoading(false);
       })
@@ -46,7 +46,7 @@ export default function AuditLogViewer() {
       title: "类型", dataIndex: "eventType", key: "type", width: 90,
       render: (v: string) => <span className="status status-default">{v}</span>,
     },
-    { title: "实体", key: "entity", render: (_: any, r: AuditLogEntry) =>
+    { title: "实体", key: "entity", render: (_: unknown, r: AuditLogEntry) =>
       `${r.entityType ?? "-"}#${r.entityId ?? ""}` },
     { title: "标签", dataIndex: "entityLabel", key: "label", ellipsis: true },
     { title: "模块", dataIndex: "sourceModule", key: "module", width: 100,

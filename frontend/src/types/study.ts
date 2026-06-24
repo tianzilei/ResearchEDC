@@ -61,4 +61,7 @@ export interface StudySummaryItem {
   status: string;
   principalInvestigator: string;
   site: boolean;
+  facilityCity?: string;
+  facilityState?: string;
+  facilityCountry?: string;
 }

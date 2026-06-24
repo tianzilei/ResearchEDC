@@ -39,8 +39,11 @@ export default function StudyList() {
     setCurrentStudy({
       id: study.studyId,
       name: study.name,
-      uniqueIdentifier: study.uniqueIdentifier ?? "",
-    } as any);
+      identifier: study.uniqueIdentifier ?? "",
+      oid: "",
+      type: study.site ? "site" : "study",
+      status: "available",
+    });
     navigate("/app/subjects");
   };
 
@@ -65,7 +68,7 @@ export default function StudyList() {
     { title: "计划入组", dataIndex: "expectedTotalEnrollment", key: "enrollment", render: (v: number | null) => v ?? "-" },
     {
       title: "", key: "actions",
-      render: (_: any, record: StudySummary) => (
+      render: (_: unknown, record: StudySummary) => (
         <Button size="small" onClick={() => handleSelectStudy(record)}>
           管理受试者
         </Button>

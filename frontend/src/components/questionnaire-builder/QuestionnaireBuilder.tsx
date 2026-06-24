@@ -116,19 +116,19 @@ function toSurveyJS(survey: SurveyDef): Record<string, unknown> {
 }
 
 function fromSurveyJS(json: Record<string, unknown>): SurveyDef {
-  const rawPages = (json.pages as any[]) ?? [];
-  const pages: PageDef[] = rawPages.map((p: any) => ({
-    name: p.name ?? generatePageName(),
-    title: p.title ?? "",
-    elements: (p.elements ?? []).map((el: any) => ({
-      name: el.name ?? generateQuestionName(),
-      type: el.type ?? "text",
-      title: el.title ?? "",
-      isRequired: el.isRequired ?? false,
-      choices: (el.choices ?? []).map((c: any) =>
-        typeof c === "object" ? c : { value: c, text: String(c) },
+  const rawPages = (json.pages as Record<string, unknown>[]) ?? [];
+  const pages: PageDef[] = rawPages.map((p) => ({
+    name: (p.name as string) ?? generatePageName(),
+    title: (p.title as string) ?? "",
+    elements: ((p.elements as Record<string, unknown>[]) ?? []).map((el) => ({
+      name: (el.name as string) ?? generateQuestionName(),
+      type: (el.type as string) ?? "text",
+      title: (el.title as string) ?? "",
+      isRequired: (el.isRequired as boolean) ?? false,
+      choices: ((el.choices as (Record<string, unknown> | string)[]) ?? []).map((c) =>
+        typeof c === "object" ? { value: c.value as string, text: c.text as string } : { value: c, text: c },
       ),
-      visibleIf: el.visibleIf ?? "",
+      visibleIf: typeof el.visibleIf === "string" ? el.visibleIf : "",
     })),
   }));
   return {

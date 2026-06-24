@@ -100,7 +100,7 @@ export default function QuestionnaireAssignments() {
     enabled: !!selectedTemplateId,
   });
 
-  const createAssignment = useAppMutation<Assignment, any>({
+  const createAssignment = useAppMutation<Assignment, { study_id: number; subject_id: string; questionnaire_version_id: string; due_at?: string | null }>({
     mutationFn: (body) =>
       apiClient.post<Assignment>("/api/v1/questionnaires/assignments", body),
     onSuccess: () => {

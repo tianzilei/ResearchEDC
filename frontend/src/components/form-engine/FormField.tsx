@@ -21,7 +21,9 @@ export interface FormItemConfig {
 
 interface FormFieldProps {
   item: FormItemConfig;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Ant Design input components accept diverse value types
   value?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Ant Design input components have heterogeneous onChange signatures
   onChange?: (value: any) => void;
   disabled?: boolean;
   hasError?: boolean;

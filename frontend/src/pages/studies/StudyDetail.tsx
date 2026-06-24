@@ -15,7 +15,7 @@ import {
 } from "antd";
 
 import { SkeletonPage } from "@/components/SkeletonCard";
-import type { StudyDetail as StudyDetailType } from "@/types/study";
+import type { StudyDetail as StudyDetailType, StudySummaryItem } from "@/types/study";
 
 const { Title, Text } = Typography;
 
@@ -98,7 +98,7 @@ export default function StudyDetail() {
   const siteColumns = [
     {
       title: "名称", dataIndex: "name", key: "name",
-      render: (name: string, record: any) => (
+      render: (name: string, record: StudySummaryItem) => (
         <Link to={`/app/studies/${record.studyId}`}>{name}</Link>
       ),
     },
