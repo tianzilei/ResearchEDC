@@ -1,23 +1,23 @@
 # shared/ - Shared Domain Logic & Data Access
 
-**Module:** Legacy compatibility DTO and term beans
-**Files:** 13 Java files
+**Module:** Resource-only shared module (i18n, migrations, properties)
+**Files:** 0 Java files; resource files only
 **Package:** `org.researchedc.*`
 
-> Formerly `legacy-core/`. Consolidated into `shared/` module with `@Repository`/`@Service` annotations
-> and package rename from `org.akaza.openclinica` to `org.researchedc`. This module is the target of
-> the Strangler Fig pattern — new functionality goes into `app/module/` Modulith modules.
-> Recent contraction: app-owned form/data-import support now covers response-set and status validation,
-> so `Validator` and `ImportCrfDataAdapter` no longer import `shared.bean.*` directly for those behaviors.
+> Formerly `legacy-core/`. Consolidated into `shared/` module. All Java code has been retired —
+> DAO SPIs were deleted, domain entities were removed, and all `shared/bean` DTOs have been
+> migrated to module-owned DTOs under `app/module/*/dto/`. The `shared/` module now contains
+> only resource files: i18n property bundles, Liquibase migrations, and ODM/XSD templates.
 
 ## STRUCTURE
 
 ```
 shared/src/main/java/org/researchedc/
-└── bean/         # DTOs and term beans — 13 Java files
+# (empty — 0 Java files remain)
 
 shared/src/main/resources/
 ├── migration/    # Liquibase schema migrations (210 XML files)
+├── i18n/         # Internationalization property bundles (6 languages)
 └── properties/   # ODM/XSD/XSLT/CRF-template compatibility resources (27 top-level files)
 ```
 
@@ -25,9 +25,10 @@ shared/src/main/resources/
 
 | Area | Files | Description |
 |------|-------|-------------|
+| **Java files** | 0 | All Java code retired; module adapters now use module-owned DTOs and repositories |
 | **DAO (SPI)** | 0 | Deleted; compatibility data access now uses module-owned ports/repositories |
 | **Domain Entities** | 0 | Retired; active mappings live in module-owned entities and repositories |
-| **DTO Beans** | 13 | `EntityBean` subclasses — data transfer objects for compatibility paths |
+| **DTO Beans** | 0 | All migrated to module-owned DTOs under `app/module/*/dto/` |
 | **Core/Exception Support** | 0 | Retired; app-owned config loads retained properties |
 | **i18n Java Support** | 0 | Retired; term beans use standard `ResourceBundle` directly |
 | **Liquibase Migrations** | 210 | Versioned schema changes from OpenClinica 3.x through 3.18 |
@@ -36,10 +37,9 @@ shared/src/main/resources/
 
 ## CONVENTIONS
 
-- **Beans:** `*Bean` suffix for DTOs, extend `EntityBean<K>` with audit fields (id, createdDate, ownerId...)
 - **DAOs:** do not add shared DAO SPI files; module implementations live under `app/module/*/internal/adapter/` and module repositories.
 - **Entities:** do not add shared Hibernate entities; use module-owned `@Entity(name = "Module<Name>")` mappings.
-- **DAO access:** Prefer Spring-injected DAO/SPI collaborators in managed beans; keep remaining legacy manual construction isolated behind local adapters/helpers until each path is strangulated.
+- **Beans:** do not add `*Bean` DTOs here; use module-owned DTOs under `app/module/*/dto/`.
 - **Package:** All classes in `org.researchedc.*` (migrated from `org.akaza.openclinica`)
 
 ## TESTING
@@ -56,10 +56,11 @@ test methods awaiting reactivation.
 | Aspect | Status |
 |--------|--------|
 | Package rename | ✅ `org.akaza.openclinica` → `org.researchedc` |
-| Annotations | ✅ `@Repository`/`@Service` applied to all DAOs and services |
 | SPI interfaces | ✅ Deleted; caller migration to module-owned ports complete |
+| Domain entities | ✅ Removed; 0 Java files remain in `shared/domain` |
+| DTO beans | ✅ Removed; all migrated to module-owned DTOs under `app/module/*/dto/` |
 | Liquibase migrations | ✅ 210 XML files, versioned from 3.x through 3.18 |
-| Strangulation target | 🔶 Active — remaining shared DTO/term beans should keep shrinking; primary remaining adapters live under event/study/subject/crf/datacapture compatibility edges. |
+| Strangulation target | ✅ COMPLETE — `shared/src/main/java` contains 0 Java files; resource-only module |
 | DAO deletion | ✅ `DaoProvider`, direct `new XxxDAO(...)` / `new StudyConfigService(...)`, LegacyDaoFactory, EntityDAO infrastructure, and shared DAO SPI files are removed. Phase 3 ledger: 878/878 rows removed; 0 unused, fallback-SQL, legacy-only, or adapter-gap rows remain. |
 
 ## ANTI-PATTERNS

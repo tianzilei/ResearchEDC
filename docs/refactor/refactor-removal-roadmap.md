@@ -11,11 +11,11 @@
 - `web/`: deleted
 - `ws/`: absent
 - JSP surface: `0` files
-- Remaining `shared/` Java surface: `13` files
-- Modulith Java surface: `399` files
-- Code balance by file count: `5%` shared legacy / `95%` module modern
+- Remaining `shared/` Java surface: `0` files
+- Modulith Java surface: `397` files
+- Code balance by file count: `0%` shared legacy / `100%` module modern
 
-This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup.
+This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup. With `shared/src/main/java` now at 0 Java files, the strangulation is effectively complete — only resource-only files remain in `shared/`.
 
 ## Document Roles
 
@@ -34,7 +34,7 @@ This means the workflow-level deletion program is complete. The remaining work i
 
 | Surface | Files | Why It Still Exists |
 |---|---:|---|
-| `shared/bean` | 13 | Legacy DTOs still consumed by module/internal adapters and compatibility workflows |
+| `shared/bean` | 0 | Retired; all DTOs migrated to module-owned DTOs |
 | `shared/domain` | 0 | Retired; active mappings live in module-owned entities/repositories |
 | `shared/core` | 0 | Retired; app-owned config loads retained property resources |
 | `shared/i18n` | 0 | Retired; resource files remain, Java helper removed |
@@ -44,11 +44,7 @@ This means the workflow-level deletion program is complete. The remaining work i
 
 | Caller | Why It Matters |
 |---|---|
-| `app/module/event/internal/adapter/EventCrfDaoAdapter` | Broadest remaining production adapter bridge across `EventCRFBean`, `StudyEventBean`, `StudySubjectBean`, and `CRFVersionBean` |
-| `app/module/event/internal/adapter/StudyEventDaoAdapter` | Still carries dense legacy bean/entity translation logic and shared status/audit semantics |
-| `app/control/form/FormDiscrepancyNotes` | Couples discrepancy workflows to legacy form/bean model |
-| `app/module/*/internal/adapter/*.java` | Module adapters still translate to/from legacy `shared` DTOs at retained compatibility edges |
-| `app/module/datacapture/internal/adapter/ItemDataDaoAdapter` | Still exposes shared item/event CRF compatibility beans across data-capture boundaries |
+| (none) | All `shared/bean` DTOs have been retired; module adapters now use module-owned DTOs |
 
 ## Completed Workstreams
 
@@ -144,6 +140,8 @@ These are closed and should not be reopened except to fix regressions:
 
 **Goal:** reduce `shared.bean.*` from a broad compatibility model to a narrowly bounded adapter bridge.
 
+**Status:** ✅ COMPLETE — all `shared/bean` DTOs retired; module adapters use module-owned DTOs.
+
 **Primary Targets**
 - `app/module/study/internal/adapter/StudyDaoAdapter`
 - `app/module/subject/internal/adapter/StudySubjectDaoAdapter`
@@ -174,9 +172,10 @@ These are closed and should not be reopened except to fix regressions:
 - `ItemGroupDaoAdapter` no longer exposes zero-caller legacy DAO stubs for retired type registration, sorted/permission-filtered lists, OID generation, test-only deletion, or repeating-group helper paths.
 - `StudySubjectDaoAdapter` no longer exposes zero-caller legacy DAO stubs for retired sorted/permission-filtered lists, with-event subject lists, subject-group lookup, or CRF-migration count paths.
 - `ItemFormMetadataDaoAdapter` no longer exposes zero-caller legacy DAO stubs for retired type registration, sorted/permission-filtered lists, hidden-item counts, or item/group metadata fallback lookup paths.
+- All `shared/bean` DTOs have been retired; module adapters now use module-owned DTOs under `app/module/*/dto/`. The `shared/src/main/java` directory contains 0 Java files.
 
 **Exit Gate**
-- No module/internal adapter exposes more legacy DTO types than strictly required by a retained compatibility contract.
+- ✅ No module/internal adapter exposes more legacy DTO types than strictly required by a retained compatibility contract.
 
 ### Workstream 5: Shared Domain Reduction
 
