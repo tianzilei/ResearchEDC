@@ -1,7 +1,7 @@
 # Phase 1 Follow-up: Email Field Removal
 
 **Created:** 2026-06-09
-**Updated:** 2026-06-19
+**Updated:** 2026-06-24
 **Status:** Product-facing request/contact and email-field paths retired on 2026-06-10; compatibility mappings and legacy content residue remain.
 **Scope:** Remove email-dependent user account and study-contact fields after mail delivery and Enterprise surfaces are removed.
 
@@ -77,12 +77,13 @@ Current progress:
 Current progress:
 - Rule import template guidance first marked `EmailAction` as compatibility-only, and the runtime rule XSD now removes that action from the accepted contract.
 - Unreferenced legacy runtime i18n email labels and retired Enterprise wording have been deleted or neutralized in runtime bundles.
-- ODM XSD contracts now annotate `FacilityContactEmail` as compatibility-only legacy surface.
+- ODM XSD contracts now annotate `FacilityContactEmail` as deprecated legacy surface with explicit removal intent and write-neutralization documentation.
 - New 3.18 forward migration retires the historical `dc_send_email_event` table, its legacy Oracle sequence, and the old `rule_action.email_to` / `rule_action.email_subject` storage columns after source scans confirmed no active Java/runtime mappings.
 - Runtime rule XSD no longer defines `EmailAction` or `EmailActionType`; source scans confirmed no active app/shared Java callers or rule import wiring still depend on that legacy action structure.
+- `RetiredEmailSchemaCleanupTest` now locks the ODM XSD deprecation annotation, preventing accidental softening of the compatibility boundary.
 
 Current blockers:
-- ODM/XSD contracts still structurally define `OpenClinica:FacilityContactEmail`.
+- ODM/XSD contracts still structurally define `OpenClinica:FacilityContactEmail` (deprecated, annotated, will be removed in a future version).
 - Historical pre-3.18 Liquibase files still document the original email-era table/columns, but forward migrations now retire the runtime storage surface.
 
 ## In Scope

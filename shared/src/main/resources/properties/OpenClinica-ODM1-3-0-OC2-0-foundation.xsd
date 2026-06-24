@@ -125,9 +125,10 @@
 			<xs:element name="FacilityContactEmail" type="odm:text" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>
-						Compatibility-only legacy contact field. ResearchEDC no longer uses email as an
-						active study-contact workflow requirement; new integrations should leave this
-						element empty or omit it unless an older downstream contract still requires it.
+						DEPRECATED — retained for downstream schema compatibility only. ResearchEDC
+						does not use email as a study-contact workflow requirement. The database column
+						is write-neutralized (forced empty by trigger). New integrations must not
+						rely on this element; it will be removed in a future version.
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>

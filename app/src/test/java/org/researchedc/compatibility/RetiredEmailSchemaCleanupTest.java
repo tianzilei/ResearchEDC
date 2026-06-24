@@ -37,6 +37,20 @@ class RetiredEmailSchemaCleanupTest {
         assertTrue(rulesXsd.contains("NotificationAction"));
     }
 
+    @Test
+    void odmFoundationXsdMarksFacilityContactEmailAsDeprecated() throws IOException {
+        String xsd = loadResource("properties/OpenClinica-ODM1-3-0-OC2-0-foundation.xsd");
+
+        assertTrue(xsd.contains("FacilityContactEmail"),
+                "FacilityContactEmail element must remain for downstream schema compatibility");
+        assertTrue(xsd.contains("DEPRECATED"),
+                "FacilityContactEmail must carry DEPRECATED annotation");
+        assertTrue(xsd.contains("will be removed in a future version"),
+                "FacilityContactEmail must state removal intent");
+        assertTrue(xsd.contains("write-neutralized"),
+                "FacilityContactEmail must document trigger-based neutralization");
+    }
+
     private String loadResource(String resourcePath) throws IOException {
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
             assertNotNull(stream, "Missing resource: " + resourcePath);
