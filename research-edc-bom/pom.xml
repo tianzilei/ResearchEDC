@@ -19,10 +19,10 @@
         <java.version>21</java.version>
 
         <!-- Spring ecosystem -->
-        <spring.version>6.1.5</spring.version>
-        <spring.security.version>6.2.3</spring.security.version>
-        <spring-boot.version>3.2.5</spring-boot.version>
-        <spring-modulith.version>1.1.4</spring-modulith.version>
+        <spring.version>6.2.8</spring.version>
+        <spring.security.version>6.5.1</spring.security.version>
+        <spring-boot.version>3.5.2</spring-boot.version>
+        <spring-modulith.version>1.4.1</spring-modulith.version>
 
         <springdoc-openapi.version>2.5.0</springdoc-openapi.version>
 

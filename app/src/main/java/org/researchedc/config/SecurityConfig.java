@@ -22,6 +22,7 @@ public class SecurityConfig {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
+    @SuppressWarnings("deprecation")
     @Bean
     public AuthenticationManager authenticationManager(
             UserDetailsService userDetailsService,

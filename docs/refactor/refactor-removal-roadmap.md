@@ -1,7 +1,13 @@
 # Refactor And Removal Roadmap
 
 **Updated:** 2026-06-24
-**Purpose:** single source of truth for the remaining legacy refactor/removal work.
+**Status:** ✅ Historical / baseline
+**Purpose:** historical baseline and verification record for the completed refactor/removal program.
+
+> Status note:
+> The refactor/removal program is complete.
+> This document now serves as a baseline/history reference, not the active forward-looking execution plan.
+> The active next-step plan is [`phase-5-platform-upgrade-plan.md`](./phase-5-platform-upgrade-plan.md).
 
 ## Current Verified State
 
@@ -79,7 +85,12 @@ These are closed and should not be reopened except to fix regressions:
 5. Dead code scavenging and dependency cleanup
 6. Phase B schema ownership trigger rollout
 
-## Active Roadmap
+## Historical Workstreams
+
+The sections below record the completed refactor/removal workstreams and the verified baseline they produced.
+They should not be treated as the current forward-looking engineering plan unless a specific regression reopens them.
+
+## Completed Refactor Workstreams
 
 ### Workstream 1: Shared Support Extraction
 
@@ -335,3 +346,25 @@ Add targeted backend/frontend tests whenever a compatibility boundary is narrowe
 ### Known Limitations
 
 - ArchUnit JDK import warnings (non-fatal) — requires Spring Boot major version bump to resolve
+
+## Phase 5: Platform Upgrade ✅
+
+**Plan:** `docs/refactor/phase-5-platform-upgrade-plan.md`
+**Status:** ✅ Complete (2026-06-24)
+
+### Completed
+
+- **5A ✅ Upgrade Path Assessment:** Evaluated three strategies (ArchUnit override, aligned stack, defer). Chose aligned stack upgrade.
+- **5B ✅ Verification Gate Protection:** All gates verified green after upgrade: ModulithVerificationTest 1/0/0, ExportBackend 58/0/0, ImportServiceTest 35/0/0, frontend typecheck 0 errors, lint 0 errors.
+- **5C ✅ ArchUnit/Modulith Warning Reduction:** Stack upgraded to Spring Boot 3.5.2, Spring Modulith 1.4.1 (brings ArchUnit 1.4.1), Spring Framework 6.2.8, Spring Security 6.5.1. `DaoAuthenticationProvider` deprecated call suppressed. Non-fatal JDK import warnings remain but are materially reduced.
+- **5D ✅ Documentation Re-baselining:** Phase 5 marked complete, roadmap updated.
+
+### Version Changes
+
+| Component | Before | After |
+|-----------|--------|-------|
+| Spring Boot | 3.2.5 | 3.5.2 |
+| Spring Modulith | 1.1.4 | 1.4.1 |
+| ArchUnit (transitive) | 1.1.1 | 1.4.1 |
+| Spring Framework | 6.1.5 | 6.2.8 |
+| Spring Security | 6.2.3 | 6.5.1 |
