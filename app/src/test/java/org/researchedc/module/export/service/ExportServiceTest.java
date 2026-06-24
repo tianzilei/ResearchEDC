@@ -221,7 +221,7 @@ class ExportServiceTest {
         completedJob.setFileSize(200L);
 
         when(jobRepository.save(any())).thenReturn(savedJob);
-        when(jobRepository.findById(1L)).thenReturn(Optional.of(savedJob), Optional.of(completedJob));
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(completedJob));
 
         ExportJobDTO result = service.createJob(request);
 

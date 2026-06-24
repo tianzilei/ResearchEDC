@@ -1,267 +1,200 @@
 # Post-Hardening Stabilization Plan
 
 **Created:** 2026-06-24
-**Status:** ✅ Phases 0-1 Complete (2026-06-24); Phase 2 deferred, Phase 3 active
-**Purpose:** define the next stage after post-refactor hardening landed, using the current repository state rather than the earlier planned baseline.
+**Updated:** 2026-06-24
+**Status:** ✅ Phases 0-2 Complete (2026-06-24); Phase 3 active
+**Purpose:** record the stabilization work that followed the first post-refactor hardening wave, then define the next execution plan from the verified repository state.
 **Supersedes:** `docs/refactor/post-refactor-product-hardening-plan.md`
 
 ## Completion Summary (2026-06-24)
 
 ### Phase 0: Build Baseline Restoration ✅
 
-- Deleted 8 dead files: `ExtendedBasicDataSource`, `DbConfig`, `QueryStore`, `SchedulerConfig`, 4 scheduler classes
-- Replaced DBCP1 DataSource with Spring Boot HikariCP auto-config via `spring.datasource.*` in `application.yml`
-- Created minimal `LiquibaseConfig` to preserve conditional Liquibase bean
+- Deleted 8 dead files: `ExtendedBasicDataSource`, `DbConfig`, `QueryStore`, `SchedulerConfig`, and 4 scheduler classes
+- Replaced DBCP1 datasource wiring with Spring Boot HikariCP auto-config via `spring.datasource.*`
+- Created minimal `LiquibaseConfig` to preserve conditional Liquibase bean behavior
 - Replaced Joda-Time with `java.time` in `AuditUserLoginAdapter`
 - Fixed `OdmExportExecutionServiceTest` uncaught `IOException`
-- Fixed `ExportDataProviderAdapter` Modulith boundary: `allowedDependencies` for `study::repository`, `study::entity`, `subject::repository`, `subject::entity`, `event::repository`, `event::entity`, `datacapture::repository`, `datacapture::entity`, `crf::repository`, `crf::entity`
-- **Result:** `mvn compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅
+- Fixed `ExportDataProviderAdapter` Modulith boundary declarations
+- **Result:** `mvn -pl app -am compile -DskipTests` ✅ | `ModulithVerificationTest` 1/0/0 ✅
 
 ### Phase 1: ODM Export Conformance ✅
 
-- Fixed namespace handling: removed `oc:` prefix from `createElementNS` local names
-- Added `XSI_NS` constant and proper `xsi:schemaLocation` via `setAttributeNS`
-- Namespace-aware `oc:Monitored` attribute via `setAttributeNS`
-- Declared `xmlns:xsi` prefix on root element
-- Updated tests to match corrected namespace output
+- Corrected namespace handling in `OdmExportGenerator`
+- Added proper `xsi:schemaLocation` via `setAttributeNS`
+- Declared `xmlns:xsi` explicitly on the ODM root
+- Made `oc:Monitored` namespace-aware
+- Updated generator tests to match the corrected XML output
 - **Result:** `OdmExportGeneratorTest` 6/0/0 ✅
 
-### Phase 2: Export UX Completion (deferred)
+### Phase 2: Java 26 Mockito / Byte Buddy Compatibility ✅
 
-- Pre-existing Mockito/Java 26 incompatibility affects `ExportServiceTest`, `ExportControllerTest`, `OdmExportExecutionServiceTest` (25 test errors, 0 failures)
-- Not caused by stabilization changes; requires Mockito version upgrade or Java 26 compatibility fix
+- Upgraded `mockito-core` from `5.11.0` to `5.23.0`
+- Upgraded `byte-buddy` / `byte-buddy-agent` from `1.14.12` to `1.17.8`
+- Added explicit `mockito-core` and `mockito-junit-jupiter` test dependencies in `app/pom.xml`
+- Configured Maven Surefire to run tests with an explicit Mockito `-javaagent`
+- Removed reliance on runtime self-attach for inline mocking on newer JDKs
+- **Result:** export-targeted tests now pass on Java 26 instead of failing during mock creation
 
-### Phase 3: Documentation Refresh (in progress)
-
-## Why This Plan Exists
-
-The prior hardening plan has effectively been executed:
-
-- ODM export execution pipeline was added
-- frontend lint errors were reduced to zero
-- frontend warnings were reduced to zero
-
-However, a fresh verification pass on the current `master` branch shows that the project is not yet on a fully stable baseline:
-
-- `git status --short` is clean
-- `pnpm -C frontend lint` passes
-- targeted backend verification currently fails during compilation
-
-This plan replaces the earlier "build capability" focus with a narrower and more urgent "stabilize and verify the new baseline" focus.
+### Phase 3: Export Regression And Documentation Follow-up (active)
 
 ## Current Verified State
 
 ### Repository State
 
 - Branch: `master`
-- Working tree: clean
+- Working tree: expected to be clean once the current stabilization edits are committed
 - Recent delivery commits:
-  - `b3e2e5dbc feat: ODM export execution pipeline + frontend lint zero-error + warning reduction`
-  - `5e798b38f refactor(frontend): eliminate no-explicit-any warnings (48→0, 15 warnings remain)`
+  - `1fbf0f774 fix: post-hardening stabilization — build baseline restoration + ODM namespace hardening`
   - `b893a01d3 refactor(frontend): eliminate all lint warnings (76→0)`
+  - `b3e2e5dbc feat: ODM export execution pipeline + frontend lint zero-error + warning reduction`
 
-### Product Hardening State
-
-- Export module now includes:
-  - `OdmExportExecutionService`
-  - `OdmExportGenerator`
-  - `ExportArtifactWriter`
-  - `ExportDataProviderAdapter`
-  - download endpoint at `GET /api/v1/exports/{id}/download`
-- ODM contract versioning remains in place:
-  - `OC2-0` compatibility
-  - `OC2-1` email-free
-- Frontend lint is now green:
-  - `pnpm -C frontend lint` ✅
-
-### Newly Observed Verification Failure
-
-The following backend verification command currently fails:
+### Verified Commands
 
 ```bash
+pnpm -C frontend lint
+mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false
 mvn -pl app -am test -Dtest=ExportServiceTest,OdmExportExecutionServiceTest,OdmExportGeneratorTest,ExportControllerTest -Dsurefire.failIfNoSpecifiedTests=false
 ```
 
-Observed failure mode:
+Expected/verified outcomes after Phase 2:
 
-- compilation fails before tests run
-- missing compile-time dependencies now surface from `app/`
+- frontend lint passes
+- `ModulithVerificationTest` passes
+- export-targeted backend tests pass under Java 26
+- the previous `Mockito cannot mock this class` / `Byte Buddy ... Java 26 (70) is not supported` errors are gone
 
-High-signal missing packages/types:
+## Why This Plan Still Exists
 
-- `org.quartz.*`
-- `org.joda.time.DateTime`
-- `org.apache.commons.dbcp.BasicDataSource`
+The first hardening wave is complete, and the most urgent stabilization blockers are now resolved. What remains is narrower and more product-focused:
 
-Affected areas include:
-
-- `app/src/main/java/org/researchedc/config/scheduler/*`
-- `app/src/main/java/org/researchedc/config/ExtendedBasicDataSource.java`
-- `app/src/main/java/org/researchedc/config/DbConfig.java`
-- `app/src/main/java/org/researchedc/module/audit/internal/adapter/AuditUserLoginAdapter.java`
+1. widen the recovered backend test baseline beyond the export slice,
+2. add schema-backed regression coverage around ODM export,
+3. refresh the docs so they describe the verified baseline rather than the earlier failure state.
 
 ## Working Diagnosis
 
-The likely regression is dependency ownership drift after `shared/pom.xml` was minimized into a resource-only module.
+The earlier stabilization failures were two different problems that happened back-to-back:
 
-`app/` still compiles against types that used to arrive transitively through `research-edc-shared`, but those dependencies are no longer declared where the code that needs them now lives.
+1. build ownership drift after `shared/` became resource-only,
+2. test-toolchain drift on Java 26 because Mockito and Byte Buddy were pinned below the JDK support line and inline mocking still depended on dynamic self-attach.
 
-This is not a legacy-refactor blocker anymore. It is now a build and ownership stabilization task.
+Phase 0 fixed the build baseline. Phase 2 fixed the Java 26 mock-creation failures. The remaining work is now ordinary regression hardening, not legacy-removal recovery.
 
 ## Primary Goal
 
-Restore a trustworthy, fully verifiable baseline for the new post-hardening architecture.
-
-That means:
-
-1. backend compile/test baseline must go green again,
-2. ODM export generation must be hardened against contract-conformance gaps,
-3. docs must reflect the real state after verification, not just the intended state after feature work.
+Lock the new post-hardening baseline into a repeatable verification gate, then harden ODM export behavior around real schema and artifact-level regressions.
 
 ## Workstreams
 
-### Workstream A: Build Baseline Restoration
+### Workstream A: Test Baseline Preservation
 
-**Goal:** restore green backend compile and targeted test execution.
+**Goal:** keep the recovered Java 26 test baseline stable and widen it carefully.
 
-#### A1. Re-home Dependency Ownership
+#### A1. Keep Test Ownership Explicit
 
-Audit compile-time dependencies now directly required by `app/` and declare them explicitly in `app/pom.xml` or shared dependency management as appropriate.
+Preserve these rules:
 
-Immediate candidates:
+- do not rely on `spring-boot-starter-test` transitives alone for Mockito alignment
+- keep Mockito and Byte Buddy versions centrally managed in the parent
+- keep inline-mocking agent setup explicit in Surefire while Java 21+ agent rules continue tightening
 
-- Quartz
-- Joda-Time
-- Commons DBCP 1.x compatibility dependency
+#### A2. Widen Verification Beyond Export
 
-Decision rule:
-
-- if only `app/` sources use the dependency, declare it in `app/pom.xml`
-- if version centralization matters across modules, keep the version in parent/BOM but still declare the module dependency explicitly
-
-#### A2. Re-run Incremental Verification
-
-After dependency restoration:
+Next verification ring:
 
 ```bash
-mvn -pl app -am compile -DskipTests
-mvn -pl app -am test -Dtest=ExportServiceTest,OdmExportExecutionServiceTest,OdmExportGeneratorTest,ExportControllerTest -Dsurefire.failIfNoSpecifiedTests=false
-```
-
-#### A3. Expand To Standard Backend Verification
-
-Once targeted export tests are green:
-
-```bash
+mvn test -pl app -am -Dtest=ImportServiceTest -Dsurefire.failIfNoSpecifiedTests=false
 mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false
 ```
 
-#### A4. Document The Ownership Rule
+Reason:
 
-Record the dependency-ownership lesson:
+- `ImportServiceTest` exercises retained static mocking
+- `ModulithVerificationTest` remains the architectural boundary gate
 
-- resource-only `shared/` must not be treated as a transitive runtime dependency bucket
-- app-owned code must carry its own explicit compile-time dependencies
+#### A3. Decide Whether To Refresh ArchUnit / Modulith Tooling
 
-### Workstream B: ODM Export Contract-Conformance Hardening
+`ModulithVerificationTest` currently passes, but ArchUnit still emits Java 26 classfile warnings during import. That is not a blocker yet, but it is the next likely toolchain hotspot.
 
-**Goal:** move the new ODM export path from "feature present" to "contract-safe and validator-safe".
+Follow-up:
 
-#### B1. Add Schema Validation Tests
+- review Spring Modulith and ArchUnit versions for Java 26 readiness
+- upgrade only if warnings become failures or block broader test execution
 
-Current export generator tests check string content, but they do not prove that the emitted XML is schema-valid.
+### Workstream B: ODM Export Contract Hardening
 
-Add validation tests for both:
+**Goal:** move the ODM export path from “now runnable” to “schema-safe and regression-resistant”.
+
+#### B1. Add XSD-Backed Validation Tests
+
+Add validation coverage for both contract families:
 
 - `OC2_0_COMPAT`
 - `OC2_1`
 
-Test target:
+Target:
 
-- generated XML should validate against the selected XSD family
+- generated XML validates against the selected XSD family, not just string assertions
 
-#### B2. Fix Namespace And Schema-Location Correctness
+#### B2. Preserve Contract-Specific Behavior
 
-Current generator builds XML by hand, so namespace correctness should be treated as suspicious until validated.
+Keep explicit tests for:
 
-Areas to harden:
+- `OC2_1` omits `FacilityContactEmail`
+- `OC2_0_COMPAT` may retain the deprecated compatibility element
+- schema-location and namespace declarations remain correct
 
-- `xsi:schemaLocation` vs plain `SchemaLocation`
-- namespace prefix declaration consistency
-- OpenClinica element/attribute prefix consistency
-- generated element structure for `StudyDetails` / `FacilityInformation`
+#### B3. Add Artifact-Level Regression Coverage
 
-Specific review targets:
-
-- `app/src/main/java/org/researchedc/module/export/service/OdmExportGenerator.java`
-- `app/src/test/java/org/researchedc/module/export/service/OdmExportGeneratorTest.java`
-
-#### B3. Harden Compatibility Behavior
-
-Make compatibility behavior explicit and safe:
-
-- `OC2_1` must omit `FacilityContactEmail`
-- `OC2_0_COMPAT` may retain the element structurally
-- compatibility output should remain inert or empty where product semantics require it
-
-#### B4. Add Artifact-Level Regression Tests
-
-Add tests covering:
+Add tests for:
 
 - generated file written to disk
-- download endpoint returns artifact metadata correctly
-- failed generation persists `FAILED` and a truncated, readable error message
+- download endpoint returns the artifact cleanly
+- failed generation persists `FAILED` with a readable, bounded error message
+
+#### B4. Keep The Export Slice As A Standing Gate
+
+Standing command:
+
+```bash
+mvn -pl app -am test -Dtest=ExportServiceTest,OdmExportExecutionServiceTest,OdmExportGeneratorTest,ExportControllerTest -Dsurefire.failIfNoSpecifiedTests=false
+```
 
 ### Workstream C: Export UX And API Completion
 
-**Goal:** complete the user-facing export loop now that backend generation exists.
+**Goal:** finish the user-facing loop now that backend generation and download paths exist.
 
-#### C1. Surface Export Contract Version In UI
+#### C1. Surface Contract Version In The UI
 
-Review whether the export center/frontend can:
+Review whether the export center can:
 
-- display selected ODM contract version
-- choose compatibility mode explicitly when needed
-- distinguish exported artifact types and statuses cleanly
+- show the selected ODM contract version
+- let operators choose compatibility mode explicitly
+- make artifact type and status easier to understand
 
-#### C2. Improve Download Semantics
+#### C2. Tighten Download Semantics
 
-Review and tighten:
+Review:
 
 - content type
 - filename generation
-- handling for missing or failed artifacts
+- behavior for missing, failed, or incomplete artifacts
 
-#### C3. Clarify Status Model
+#### C3. Clarify Execution Semantics
 
-Review whether current transitions are sufficient:
+Document whether export execution is:
 
-- `PENDING`
-- `RUNNING`
-- `COMPLETED`
-- `FAILED`
-- `CANCELLED`
+- synchronous today, or
+- intended to become background execution later
 
-If execution remains synchronous, document that clearly.
-If background execution is the intended future model, document the gap without introducing new worker complexity yet.
+Do not add worker complexity until the current path is fully regression-covered.
 
-### Workstream D: Documentation And Verification Refresh
+### Workstream D: Documentation Refresh
 
-**Goal:** align docs with the real post-hardening state after verification, not just with completed feature commits.
+**Goal:** update docs to match the verified post-fix baseline.
 
-#### D1. Mark The Prior Hardening Plan Historical
-
-Update:
-
-- `docs/refactor/post-refactor-product-hardening-plan.md`
-
-It should clearly state:
-
-- the planned work is complete
-- the document is now historical
-- the active follow-up is this stabilization plan
-
-#### D2. Refresh Baseline Docs After A-C
+#### D1. Refresh Stabilization References
 
 Update:
 
@@ -269,74 +202,69 @@ Update:
 - `docs/refactor/refactor-removal-roadmap.md`
 - `AGENTS.md`
 
-Refresh only facts confirmed by verification runs.
+What should change:
 
-#### D3. Re-state The Verification Standard
+- Java 26 Mockito / Byte Buddy compatibility is fixed
+- export-targeted tests are runnable again
+- the next-stage plan is export regression hardening, not build repair
 
-The new minimum baseline should be:
+#### D2. Re-state The Minimum Verification Standard
+
+Updated baseline:
 
 ```bash
 git status --short
 pnpm -C frontend lint
 mvn -pl app -am compile -DskipTests
 mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false
+mvn -pl app -am test -Dtest=ExportServiceTest,OdmExportExecutionServiceTest,OdmExportGeneratorTest,ExportControllerTest -Dsurefire.failIfNoSpecifiedTests=false
 ```
-
-Add targeted export tests as a standing gate once they are green.
 
 ## Recommended Delivery Order
 
-### Phase 0: Build Repair
+### Phase 3A: Confirm The Recovered Test Baseline
 
-Fix dependency ownership and restore backend compile/test first.
+Run and keep green:
 
-Why first:
+- `ImportServiceTest`
+- `ModulithVerificationTest`
+- export-targeted test gate
 
-- no later product hardening matters if the backend verification baseline is red
+### Phase 3B: Add ODM Schema Validation
 
-### Phase 1: ODM Export Conformance
+Reason:
 
-Add real schema validation and namespace/structure hardening.
+- export is now executable, so contract correctness is the highest-value next safeguard
 
-Why second:
+### Phase 3C: Close Export Artifact / Download Regressions
 
-- export exists now, so correctness matters more than breadth
+Reason:
 
-### Phase 2: Export UX Completion
+- this finishes the operational loop, not just the generation loop
 
-Complete download/status/version usability and API polish.
+### Phase 3D: Refresh Docs And Baselines
 
-Why third:
+Reason:
 
-- this turns a technically working backend path into an easier-to-operate product flow
-
-### Phase 3: Docs And Gates Refresh
-
-Update historical/active plans and lock the new baseline into documentation and recurring verification.
+- repo documentation should describe the post-fix reality, not the earlier broken state
 
 ## Risks
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Restoring dependencies only through transitive paths again | recurring hidden compile regressions | declare app-owned dependencies explicitly in `app/pom.xml` |
-| ODM XML passes string tests but fails real schema validation | broken downstream integration | add XSD-backed validation tests |
-| Export UX looks complete but failure/download paths are inconsistent | operational confusion | add artifact and endpoint regression tests |
-| Docs continue to describe intended rather than verified state | misleading maintenance baseline | refresh docs only after rerunning validation commands |
+| Mockito alignment drifts again through starter transitives | Java 26 test failures return unexpectedly | keep explicit Mockito deps in `app/pom.xml` and versions in parent |
+| Inline mocking falls back to dynamic self-attach again | fragile behavior on newer JDKs | keep explicit Surefire `-javaagent` setup |
+| ODM XML passes string assertions but fails real schema validation | downstream integration breakage | add XSD-backed validation tests |
+| Docs continue to describe the old failure mode | misleading maintenance baseline | refresh only after rerun verification |
 
 ## Success Criteria
 
-1. `mvn -pl app -am compile -DskipTests` passes again.
-2. Targeted export backend tests run and pass.
-3. ODM export artifacts validate against the selected schema family.
-4. Export download/status behavior is covered by tests and clear in the API/UI.
-5. The old hardening plan is explicitly historical and this stabilization plan is the active next-step document.
+1. Java 26 test execution remains green for the export regression slice.
+2. `ImportServiceTest` and `ModulithVerificationTest` remain green on the same toolchain.
+3. ODM export validates against the selected XSD family.
+4. Artifact creation, failure persistence, and download behavior are regression-covered.
+5. Refactor/stabilization docs describe the verified post-fix baseline.
 
 ## Immediate Next Action
 
-Start with **Phase 0: Build Repair**.
-
-Concrete first step:
-
-1. add explicit `app/` dependencies for Quartz, Joda-Time, and Commons DBCP compatibility where still required,
-2. rerun targeted export verification,
-3. only then proceed to ODM export conformance hardening.
+Start with **Phase 3A: confirm the recovered test baseline**, then move directly into **Phase 3B: ODM schema validation tests**.
