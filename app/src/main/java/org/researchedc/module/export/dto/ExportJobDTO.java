@@ -19,6 +19,8 @@ public class ExportJobDTO {
     private String filePath;
     private Long fileSize;
     private String errorMessage;
+    private String failureCode;
+    private Boolean retryable;
     private String criteriaJson;
     private Integer retryCount;
 
@@ -57,6 +59,12 @@ public class ExportJobDTO {
 
     public String getErrorMessage() { return errorMessage; }
     public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+
+    public String getFailureCode() { return failureCode; }
+    public void setFailureCode(String failureCode) { this.failureCode = failureCode; }
+
+    public Boolean getRetryable() { return retryable; }
+    public void setRetryable(Boolean retryable) { this.retryable = retryable; }
 
     public String getCriteriaJson() { return criteriaJson; }
     public void setCriteriaJson(String criteriaJson) { this.criteriaJson = criteriaJson; }

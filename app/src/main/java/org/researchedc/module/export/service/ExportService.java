@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import org.researchedc.module.export.dto.CreateExportJobRequest;
 import org.researchedc.module.export.dto.ExportJobDTO;
+import org.researchedc.module.export.dto.ExportJobFilter;
 import org.researchedc.module.export.entity.ExportJob;
 import org.researchedc.module.export.enums.ExportFormat;
 import org.researchedc.module.export.enums.ExportJobStatus;
@@ -65,6 +66,19 @@ public class ExportService {
                 .stream().map(this::toDTO).toList();
     }
 
+    public List<ExportJobDTO> listJobs(Integer studyId, ExportJobFilter filter) {
+        List<ExportJob> jobs = jobRepository.findByStudyIdOrderByRequestedDateDesc(studyId);
+        return jobs.stream()
+                .filter(j -> filter.getStatus() == null || j.getStatus() == filter.getStatus())
+                .filter(j -> filter.getExportFormat() == null || j.getExportFormat() == filter.getExportFormat())
+                .filter(j -> filter.getOdmContractVersion() == null || j.getOdmContractVersion() == filter.getOdmContractVersion())
+                .filter(j -> filter.getRequestedBy() == null || j.getRequestedBy() != null && j.getRequestedBy().equals(filter.getRequestedBy()))
+                .filter(j -> filter.getCreatedAfter() == null || j.getRequestedDate() != null && !j.getRequestedDate().isBefore(filter.getCreatedAfter()))
+                .filter(j -> filter.getCreatedBefore() == null || j.getRequestedDate() != null && !j.getRequestedDate().isAfter(filter.getCreatedBefore()))
+                .map(this::toDTO)
+                .toList();
+    }
+
     public ExportJobDTO getJob(Long id) {
         ExportJob job = jobRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Export job not found: " + id));
@@ -85,10 +99,11 @@ public class ExportService {
     public ExportJobDTO retryJob(Long id) {
         ExportJob job = jobRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Export job not found: " + id));
-        if (job.getStatus() == ExportJobStatus.FAILED) {
+        if (job.getStatus() == ExportJobStatus.FAILED && Boolean.TRUE.equals(job.getRetryable())) {
             job.setStatus(ExportJobStatus.PENDING);
             job.setRetryCount(job.getRetryCount() != null ? job.getRetryCount() + 1 : 1);
             job.setErrorMessage(null);
+            job.setFailureCode(null);
             job = jobRepository.save(job);
             log.info("Export job queued for retry: id={}", id);
         }
@@ -114,12 +129,18 @@ public class ExportService {
     }
 
     public void markFailed(Long id, String errorMessage) {
+        markFailed(id, errorMessage, null, true);
+    }
+
+    public void markFailed(Long id, String errorMessage, String failureCode, boolean retryable) {
         jobRepository.findById(id).ifPresent(job -> {
             job.setStatus(ExportJobStatus.FAILED);
             job.setErrorMessage(errorMessage);
+            job.setFailureCode(failureCode);
+            job.setRetryable(retryable);
             job.setCompletedDate(LocalDateTime.now());
             jobRepository.save(job);
-            log.error("Export job failed: id={}, error={}", id, errorMessage);
+            log.error("Export job failed: id={}, error={}, code={}, retryable={}", id, errorMessage, failureCode, retryable);
         });
     }
 
@@ -154,6 +175,8 @@ public class ExportService {
         dto.setFilePath(job.getFilePath());
         dto.setFileSize(job.getFileSize());
         dto.setErrorMessage(job.getErrorMessage());
+        dto.setFailureCode(job.getFailureCode());
+        dto.setRetryable(job.getRetryable());
         dto.setCriteriaJson(job.getCriteriaJson());
         dto.setRetryCount(job.getRetryCount());
         return dto;

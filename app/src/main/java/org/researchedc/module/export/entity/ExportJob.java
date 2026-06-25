@@ -50,6 +50,12 @@ public class ExportJob {
     @Column(name = "error_message", length = 4000)
     private String errorMessage;
 
+    @Column(name = "failure_code", length = 50)
+    private String failureCode;
+
+    @Column(nullable = false)
+    private Boolean retryable = true;
+
     @Column(name = "criteria_json", length = 4000)
     private String criteriaJson;
 
@@ -94,6 +100,12 @@ public class ExportJob {
 
     public String getErrorMessage() { return errorMessage; }
     public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+
+    public String getFailureCode() { return failureCode; }
+    public void setFailureCode(String failureCode) { this.failureCode = failureCode; }
+
+    public Boolean getRetryable() { return retryable; }
+    public void setRetryable(Boolean retryable) { this.retryable = retryable; }
 
     public String getCriteriaJson() { return criteriaJson; }
     public void setCriteriaJson(String criteriaJson) { this.criteriaJson = criteriaJson; }
