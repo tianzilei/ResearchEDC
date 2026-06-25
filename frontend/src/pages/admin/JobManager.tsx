@@ -1,71 +1,83 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Card, Table, Tag, Button, Typography, Space, Modal, Form, Select,
   Spin, message, Empty, Result, Statistic, Row, Col,
 } from "antd";
 
+import { useAppQuery } from "@/hooks/useQuery";
+import { exportApi, type ExportJobDTO } from "@/api/exports";
+import { studyApi } from "@/api/studies";
 
 const { Title, Text } = Typography;
 
-interface ExportJob {
-  id: number;
-  studyId: number;
-  format: string;
-  status: string;
-  dateCreated: string;
-  dateCompleted: string | null;
-}
-
 export default function JobManager() {
-  const [jobs, setJobs] = useState<ExportJob[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [form] = Form.useForm();
-  const [studies, setStudies] = useState<{ studyId: number; name: string }[]>([]);
+  const [selectedStudyId, setSelectedStudyId] = useState<number | undefined>();
 
-  const fetchJobs = () => {
-    setLoading(true);
-    setError(null);
-    Promise.all([
-      fetch("/api/v1/exports?studyId=1").then(r => r.ok ? r.json() : Promise.reject(new Error("API unavailable"))),
-      fetch("/api/v1/studies").then(r => r.ok ? r.json() : []),
-    ]).then(([data, ss]) => {
-      setJobs(data);
-      setStudies(Array.isArray(ss) ? ss.map((s: Record<string, unknown>) => ({ studyId: (s.studyId ?? s.id) as number, name: s.name as string })) : []);
-      setLoading(false);
-    }).catch((e: unknown) => { setError(e instanceof Error ? e.message : "Error"); setLoading(false); });
-  };
+  const { data: studies = [], isLoading: loadingStudies } = useAppQuery({
+    queryKey: ["studies", "list"],
+    queryFn: () => studyApi.list(),
+  });
 
-  useEffect(() => { fetchJobs(); }, []);
+  const activeStudyId = selectedStudyId ?? studies[0]?.studyId;
+
+  const {
+    data: jobs = [],
+    isLoading: loadingJobs,
+    refetch: refetchJobs,
+    error,
+  } = useAppQuery<ExportJobDTO[]>({
+    queryKey: ["exports", "admin", activeStudyId],
+    queryFn: () =>
+      activeStudyId
+        ? exportApi.listJobs(activeStudyId)
+        : Promise.resolve([]),
+    enabled: !!activeStudyId,
+  });
 
   const handleCreate = async () => {
     try {
       const vals = await form.validateFields();
-      const res = await fetch("/api/v1/exports", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ studyId: vals.studyId, format: vals.format }),
+      await exportApi.createJob({
+        studyId: vals.studyId,
+        name: `Admin export ${new Date().toISOString()}`,
+        exportFormat: vals.format,
       });
-      if (!res.ok) { message.error("Failed to create job"); return; }
       message.success("Export job created");
       setCreateOpen(false);
       form.resetFields();
-      fetchJobs();
-    } catch { /* validation */ }
+      setSelectedStudyId(vals.studyId);
+      void refetchJobs();
+    } catch { /* validation or API error */ }
   };
 
   const handleCancel = async (jobId: number) => {
-    const res = await fetch(`/api/v1/exports/${jobId}/cancel`, { method: "POST" });
-    if (res.ok) { message.success("Job cancelled"); fetchJobs(); }
-    else message.error("Failed to cancel job");
+    try {
+      await exportApi.cancelJob(jobId);
+      message.success("Job cancelled");
+      void refetchJobs();
+    } catch {
+      message.error("Failed to cancel job");
+    }
   };
 
   const handleRetry = async (jobId: number) => {
-    const res = await fetch(`/api/v1/exports/${jobId}/retry`, { method: "POST" });
-    if (res.ok) { message.success("Job retrying"); fetchJobs(); }
-    else message.error("Failed to retry job");
+    try {
+      await exportApi.retryJob(jobId);
+      message.success("Job retrying");
+      void refetchJobs();
+    } catch {
+      message.error("Failed to retry job");
+    }
   };
+
+  const loading = loadingStudies || loadingJobs;
+
+  const studyOptions = useMemo(
+    () => studies.map((s) => ({ studyId: s.studyId, name: s.name })),
+    [studies],
+  );
 
   if (loading) return <div style={{ padding: 80, textAlign: "center" }}><Spin size="large" /></div>;
 
@@ -100,7 +112,7 @@ export default function JobManager() {
   const columns = [
     { title: "任务 ID", dataIndex: "id", key: "id", width: 80 },
     {
-      title: "格式", dataIndex: "format", key: "format",
+      title: "格式", dataIndex: "exportFormat", key: "format",
       render: (v: string) => <Tag>{v}</Tag>,
     },
     {
@@ -108,16 +120,16 @@ export default function JobManager() {
       render: (s: string) => <span className={`status ${statusClass(s)}`}>{s}</span>,
     },
     {
-      title: "创建时间", dataIndex: "dateCreated", key: "created",
+      title: "创建时间", dataIndex: "requestedDate", key: "created",
       render: (v: string) => v ? new Date(v).toLocaleString() : "-",
     },
     {
-      title: "完成时间", dataIndex: "dateCompleted", key: "completed",
-      render: (v: string) => v ? new Date(v).toLocaleString() : "-",
+      title: "完成时间", dataIndex: "completedDate", key: "completed",
+      render: (v: string | null) => v ? new Date(v).toLocaleString() : "-",
     },
     {
       title: "", key: "actions",
-      render: (_: unknown, record: ExportJob) => (
+      render: (_: unknown, record: ExportJobDTO) => (
         <Space>
           {(record.status === "RUNNING" || record.status === "PENDING") && (
             <Button size="small" danger
@@ -158,10 +170,17 @@ export default function JobManager() {
             </div>
           </Space>
           <Space>
+            <Select
+              placeholder="选择研究"
+              value={activeStudyId}
+              onChange={setSelectedStudyId}
+              style={{ width: 220 }}
+              options={studyOptions.map((s) => ({ value: s.studyId, label: s.name }))}
+            />
             <Button type="primary" onClick={() => setCreateOpen(true)}>
               新建导出任务
             </Button>
-            <Button onClick={fetchJobs}>刷新</Button>
+            <Button onClick={() => void refetchJobs()}>刷新</Button>
           </Space>
         </div>
       </Card>
@@ -177,16 +196,18 @@ export default function JobManager() {
       <Modal title="创建导出任务" open={createOpen}
         onOk={handleCreate} onCancel={() => { setCreateOpen(false); form.resetFields(); }}>
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="studyId" label="研究" rules={[{ required: true }]}>
-            <Select placeholder="选择研究" showSearch>
-              {studies.map(s => <Select.Option key={s.studyId} value={s.studyId}>{s.name}</Select.Option>)}
-            </Select>
+          <Form.Item name="studyId" label="研究" rules={[{ required: true }]} initialValue={activeStudyId}>
+            <Select
+              placeholder="选择研究"
+              showSearch
+              options={studyOptions.map((s) => ({ value: s.studyId, label: s.name }))}
+            />
           </Form.Item>
           <Form.Item name="format" label="格式" rules={[{ required: true }]}>
             <Select placeholder="选择格式">
               <Select.Option value="CSV">CSV</Select.Option>
-              <Select.Option value="XLSX">Excel (XLSX)</Select.Option>
-              <Select.Option value="ODM">ODM XML</Select.Option>
+              <Select.Option value="EXCEL">Excel</Select.Option>
+              <Select.Option value="ODM_XML">ODM XML</Select.Option>
             </Select>
           </Form.Item>
         </Form>
