@@ -55,11 +55,13 @@ const LAYOUT_OPTIONS = [
   { value: "score" },
 ];
 
-function useExportJobs(studyId: number) {
+function useExportJobs(studyId: number | undefined) {
   return useAppQuery<ExportJob[]>({
     queryKey: ["questionnaire-export-jobs", studyId],
     queryFn: () =>
-      apiClient.get<ExportJob[]>("/api/v1/questionnaires/export"),
+      studyId
+        ? apiClient.get<ExportJob[]>("/api/v1/questionnaires/export")
+        : Promise.resolve([]),
     enabled: true,
   });
 }
@@ -67,7 +69,7 @@ function useExportJobs(studyId: number) {
 export default function QuestionnaireExport() {
   const { t } = useTranslation();
   const { currentStudy } = useCurrentStudy();
-  const studyId = currentStudy?.id ?? 0;
+  const studyId = currentStudy?.id;
   const qc = useQueryClient();
   const { data: jobs, isLoading } = useExportJobs(studyId);
   const [exportOpen, setExportOpen] = useState(false);
@@ -173,14 +175,15 @@ export default function QuestionnaireExport() {
         open={exportOpen}
         onCancel={() => setExportOpen(false)}
         onOk={() =>
-          createExport.mutate({
-            study_id: studyId,
-            questionnaire_codes: [],
-            export_format: exportFormat,
-            layout,
-            include_scores: includeScores,
-            include_raw: true,
-          })
+          studyId &&
+            createExport.mutate({
+              study_id: studyId,
+              questionnaire_codes: [],
+              export_format: exportFormat,
+              layout,
+              include_scores: includeScores,
+              include_raw: true,
+            })
         }
         confirmLoading={createExport.isPending}
       >

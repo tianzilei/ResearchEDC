@@ -15,6 +15,7 @@ import type { ItemGroupDTO } from "@/types/datacapture";
 import { useBatchSaveItems } from "@/hooks/useDataCapture";
 import type { SaveItemDataRequest } from "@/types/datacapture";
 import { deriveRecordStatus } from "@/utils/crfStatus";
+import { useCurrentStudy } from "@/hooks/useStudies";
 
 function itemToFormConfig(item: ItemDTO, groupMap: Map<number, { groupId: number; groupLabel: string }>): FormItemConfig {
   const group = groupMap.get(item.itemId);
@@ -58,6 +59,7 @@ export default function DataEntryPage() {
   const parsedEventCrfId = eventCrfId ? Number(eventCrfId) : undefined;
   const parsedEventId = eventId ? Number(eventId) : undefined;
 
+  const { currentStudy } = useCurrentStudy();
   const { data: eventCrfs, isLoading: loadingCrfs } = useEventCrfs(parsedEventId);
   const { data: itemData, isLoading: loadingData } = useEventCrfData(parsedEventCrfId);
   const { data: notes = [] } = useEventCrfNotes(parsedEventCrfId);
@@ -255,7 +257,7 @@ export default function DataEntryPage() {
     );
   }
 
-  if (!eventCrf || !crfVersion) {
+  if (!eventCrf || !crfVersion || !currentStudy) {
     return (
       <Result
         status="404"
@@ -320,6 +322,7 @@ export default function DataEntryPage() {
           hiddenItemIds={hiddenItemIds}
           itemDnCounts={itemDnCounts}
           isAdminEdit={isAdminEdit}
+          studyId={currentStudy.id}
         />
       </div>
     </div>

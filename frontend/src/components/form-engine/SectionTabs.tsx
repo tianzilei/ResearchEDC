@@ -26,6 +26,7 @@ interface SectionTabsProps {
   hiddenItemIds?: Set<number>;
   itemDnCounts?: Map<number, number>;
   isAdminEdit?: boolean;
+  studyId: number;
 }
 
 export function SectionTabs({
@@ -46,6 +47,7 @@ export function SectionTabs({
   hiddenItemIds,
   itemDnCounts,
   isAdminEdit,
+  studyId,
 }: SectionTabsProps) {
   const { t } = useTranslation();
   const [attachmentFiles, setAttachmentFiles] = useState<{ id: string; fileName: string; size: number }[]>([]);
@@ -118,7 +120,7 @@ export function SectionTabs({
         <div style={{ padding: 16 }}>
           <DiscrepancyNotes
             eventCrfId={parsedEventCrfId}
-            studyId={0}
+            studyId={studyId}
             entityId={parsedEventCrfId}
           />
         </div>

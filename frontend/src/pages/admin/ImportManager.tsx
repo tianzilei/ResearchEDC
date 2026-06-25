@@ -66,18 +66,21 @@ const STATUS_MAP: Record<string, { label: string; className: string }> = {
   FAILED: { label: "失败", className: "status-danger" },
 };
 
-function useImportJobs(studyId: number) {
+function useImportJobs(studyId: number | undefined) {
   return useAppQuery<ImportJob[]>({
     queryKey: ["imports", studyId],
-    queryFn: () => apiClient.get<ImportJob[]>("/api/v1/imports", { studyId }),
-    enabled: studyId > 0,
+    queryFn: () =>
+      studyId
+        ? apiClient.get<ImportJob[]>("/api/v1/imports", { studyId })
+        : Promise.resolve([]),
+    enabled: !!studyId,
     refetchInterval: 3000,
   });
 }
 
 export default function ImportManager() {
   const { currentStudy } = useCurrentStudy();
-  const studyId = currentStudy?.id ?? 0;
+  const studyId = currentStudy?.id;
   const qc = useQueryClient();
 
   const [currentStep, setCurrentStep] = useState(0);

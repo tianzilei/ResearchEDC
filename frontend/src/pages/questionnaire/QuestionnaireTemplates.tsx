@@ -44,13 +44,13 @@ const categoryStatus: Record<string, string> = {
   QUALITY_OF_LIFE: "success",
 };
 
-function useTemplates(studyId: number) {
+function useTemplates(studyId: number | undefined) {
   return useAppQuery<Template[]>({
     queryKey: ["questionnaire-templates", studyId],
     queryFn: () =>
-      apiClient.get<Template[]>("/api/v1/questionnaires/templates", {
-        studyId: studyId > 0 ? studyId : undefined,
-      }),
+      studyId
+        ? apiClient.get<Template[]>("/api/v1/questionnaires/templates", { studyId })
+        : Promise.resolve([]),
     enabled: true,
   });
 }
@@ -59,7 +59,7 @@ export default function QuestionnaireTemplates() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { currentStudy } = useCurrentStudy();
-  const studyId = currentStudy?.id ?? 0;
+  const studyId = currentStudy?.id;
   const qc = useQueryClient();
   const { data: templates, isLoading } = useTemplates(studyId);
   const [modalOpen, setModalOpen] = useState(false);
@@ -155,7 +155,7 @@ export default function QuestionnaireTemplates() {
           onFinish={(values) => {
             createTemplate.mutate({
               ...values,
-              study_id: studyId > 0 ? studyId : null,
+              study_id: studyId ?? null,
             });
           }}
         >

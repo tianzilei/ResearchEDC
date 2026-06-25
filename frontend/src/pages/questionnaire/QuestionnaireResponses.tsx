@@ -45,11 +45,13 @@ const statusClassMap: Record<string, string> = {
   locked: "info",
 };
 
-function useResponses(studyId: number) {
+function useResponses(studyId: number | undefined) {
   return useAppQuery<Response[]>({
     queryKey: ["questionnaire-responses", studyId],
     queryFn: () =>
-      apiClient.get<Response[]>("/api/v1/questionnaires/responses"),
+      studyId
+        ? apiClient.get<Response[]>("/api/v1/questionnaires/responses")
+        : Promise.resolve([]),
     enabled: true,
   });
 }
@@ -57,7 +59,7 @@ function useResponses(studyId: number) {
 export default function QuestionnaireResponses() {
   const { t } = useTranslation();
   const { currentStudy } = useCurrentStudy();
-  const studyId = currentStudy?.id ?? 0;
+  const studyId = currentStudy?.id;
   const qc = useQueryClient();
   const { data: responses, isLoading } = useResponses(studyId);
   const [detailResponse, setDetailResponse] = useState<Response | null>(null);

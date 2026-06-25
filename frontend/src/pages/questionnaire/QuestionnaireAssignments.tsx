@@ -60,13 +60,13 @@ const statusClassMap: Record<string, string> = {
   withdrawn: "danger",
 };
 
-function useAssignments(studyId: number) {
+function useAssignments(studyId: number | undefined) {
   return useAppQuery<Assignment[]>({
     queryKey: ["questionnaire-assignments", studyId],
     queryFn: () =>
-      apiClient.get<Assignment[]>("/api/v1/questionnaires/assignments", {
-        studyId: studyId > 0 ? studyId : undefined,
-      }),
+      studyId
+        ? apiClient.get<Assignment[]>("/api/v1/questionnaires/assignments", { studyId })
+        : Promise.resolve([]),
     enabled: true,
   });
 }
@@ -83,7 +83,7 @@ function useTemplates() {
 export default function QuestionnaireAssignments() {
   const { t } = useTranslation();
   const { currentStudy } = useCurrentStudy();
-  const studyId = currentStudy?.id ?? 0;
+  const studyId = currentStudy?.id;
   const qc = useQueryClient();
   const { data: assignments, isLoading } = useAssignments(studyId);
   const { data: templates } = useTemplates();
@@ -204,6 +204,7 @@ export default function QuestionnaireAssignments() {
           form={form}
           layout="vertical"
           onFinish={(values) => {
+            if (!studyId) return;
             createAssignment.mutate({
               ...values,
               study_id: studyId,

@@ -31,6 +31,12 @@ interface Dataset {
   dateCreated: string;
 }
 
+interface StudyOptionDTO {
+  studyId?: number;
+  id?: number;
+  name: string;
+}
+
 export default function DatasetBuilder() {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -44,10 +50,17 @@ export default function DatasetBuilder() {
     setLoading(true);
     Promise.all([
       apiClient.get<Dataset[]>("/api/v1/datasets").catch(() => []),
-      apiClient.get<{ studyId?: number; id?: number; name: string }[]>("/api/v1/studies").catch(() => []),
+      apiClient.get<StudyOptionDTO[]>("/api/v1/studies").catch(() => []),
     ]).then(([ds, ss]) => {
       setDatasets(ds);
-      setStudies(Array.isArray(ss) ? ss.map((s) => ({ studyId: s.studyId ?? s.id ?? 0, name: s.name })) : []);
+      setStudies(
+        Array.isArray(ss)
+          ? ss.flatMap((s) => {
+              const studyId = s.studyId ?? s.id;
+              return studyId ? [{ studyId, name: s.name }] : [];
+            })
+          : [],
+      );
       setLoading(false);
     }).catch(() => setLoading(false));
   };
