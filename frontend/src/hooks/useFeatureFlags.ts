@@ -1,11 +1,6 @@
 import { useAppQuery, useAppMutation, useQueryClient } from "@/hooks/useQuery";
+import { studyApi, type FeatureFlags } from "@/api/studies";
 import type { Study } from "@/types/study";
-
-type FeatureFlags = Record<string, boolean>;
-
-interface FeatureFlagsResponse {
-  flags: FeatureFlags;
-}
 
 const DEFAULT_FLAGS: FeatureFlags = {};
 
@@ -16,9 +11,7 @@ export function useFeatureFlags(study: Study | null) {
     queryKey: ["feature-flags", studyId],
     queryFn: async () => {
       if (!studyId) return DEFAULT_FLAGS;
-      const response = await fetch(`/api/v1/studies/${studyId}/feature-flags`);
-      if (!response.ok) return DEFAULT_FLAGS;
-      const data: FeatureFlagsResponse = await response.json();
+      const data = await studyApi.getFeatureFlags(studyId);
       return data.flags ?? DEFAULT_FLAGS;
     },
     enabled: !!studyId,
@@ -30,14 +23,7 @@ export function useUpdateFeatureFlags(studyId: number) {
   const queryClient = useQueryClient();
 
   return useAppMutation<void, FeatureFlags>({
-    mutationFn: async (flags) => {
-      const response = await fetch(`/api/v1/studies/${studyId}/feature-flags`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ flags }),
-      });
-      if (!response.ok) throw new Error("Failed to update feature flags");
-    },
+    mutationFn: (flags) => studyApi.updateFeatureFlags(studyId, flags),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["feature-flags", studyId] });
     },

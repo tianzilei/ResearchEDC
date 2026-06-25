@@ -22,6 +22,12 @@ export interface StudyCreateResponse {
   studyId?: number;
 }
 
+export type FeatureFlags = Record<string, boolean>;
+
+export interface FeatureFlagsResponse {
+  flags: FeatureFlags;
+}
+
 export const studyApi = {
   list() {
     return apiClient.get<StudyListItem[]>("/api/v1/studies");
@@ -37,5 +43,13 @@ export const studyApi = {
 
   update(studyId: number, request: StudyUpdateRequest) {
     return apiClient.put<void>(`/api/v1/studies/${studyId}`, request);
+  },
+
+  getFeatureFlags(studyId: number) {
+    return apiClient.get<FeatureFlagsResponse>(`/api/v1/studies/${studyId}/feature-flags`);
+  },
+
+  updateFeatureFlags(studyId: number, flags: FeatureFlags) {
+    return apiClient.put<void>(`/api/v1/studies/${studyId}/feature-flags`, { flags });
   },
 };
