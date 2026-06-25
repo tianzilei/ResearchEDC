@@ -1,6 +1,6 @@
 import { useAppQuery, useAppMutation } from "@/hooks/useQuery";
 import { useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/api/client";
+import { eventApi } from "@/api/events";
 import type { StudyEventDTO, EventDefinitionDTO, EventCrfDTO, ScheduleEventRequest } from "@/types/event";
 
 export function useEventDefinitions(studyId: number | undefined) {
@@ -8,7 +8,7 @@ export function useEventDefinitions(studyId: number | undefined) {
     queryKey: ["event-definitions", studyId],
     queryFn: () =>
       studyId
-        ? apiClient.get<EventDefinitionDTO[]>("/api/v1/events/definitions", { studyId })
+        ? eventApi.listDefinitions(studyId)
         : Promise.resolve([]),
     enabled: !!studyId,
   });
@@ -19,7 +19,7 @@ export function useSubjectEvents(studySubjectId: number | undefined) {
     queryKey: ["subject-events", studySubjectId],
     queryFn: () =>
       studySubjectId
-        ? apiClient.get<StudyEventDTO[]>("/api/v1/events/by-subject", { studySubjectId })
+        ? eventApi.listSubjectEvents(studySubjectId)
         : Promise.resolve([]),
     enabled: !!studySubjectId,
   });
@@ -30,7 +30,7 @@ export function useEventCrfs(eventId: number | undefined) {
     queryKey: ["event-crfs", eventId],
     queryFn: () =>
       eventId
-        ? apiClient.get<EventCrfDTO[]>(`/api/v1/events/${eventId}/crfs`)
+        ? eventApi.listEventCrfs(eventId)
         : Promise.resolve([]),
     enabled: !!eventId,
   });
@@ -40,7 +40,7 @@ export function useScheduleEvent() {
   const queryClient = useQueryClient();
 
   return useAppMutation<void, ScheduleEventRequest>({
-    mutationFn: (data) => apiClient.post("/api/v1/events", data),
+    mutationFn: (data) => eventApi.scheduleEvent(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subject-events"] });
     },
@@ -51,7 +51,7 @@ export function useCompleteEvent() {
   const queryClient = useQueryClient();
 
   return useAppMutation<void, number>({
-    mutationFn: (eventId) => apiClient.post(`/api/v1/events/${eventId}/complete`),
+    mutationFn: (eventId) => eventApi.completeEvent(eventId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subject-events"] });
     },
