@@ -1,10 +1,11 @@
 # Refactor Docs Index
 
-**Updated:** 2026-06-24
+**Updated:** 2026-06-25
 
 This directory contains historical refactor plans plus supporting baseline, ledger, and slice documents.
-Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed, `web/` and `ws/` absent, and `shared/src/main/java` reduced to `0` Java files.
-There is no active legacy-refactor roadmap at this time; new work should get a new focused plan.
+Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed, `web/` and `ws/` absent, `shared/src/main/java` reduced to `0` Java files, platform upgraded to Spring Boot 3.5.2 / Modulith 1.4.1, and dependency drift converged.
+
+**Active plan:** None — all refactor and baseline phases complete. Next work should open as a new focused plan (candidate: export operations polish).
 
 ## Primary Entry Points
 
@@ -20,10 +21,11 @@ There is no active legacy-refactor roadmap at this time; new work should get a n
 | `post-hardening-stabilization-plan.md` | Historical record for the completed stabilization phase | Complete / historical |
 | `phase-4-export-productization-plan.md` | Export productization, broader verification, and Java 26 tooling follow-up | Complete / historical |
 | `phase-5-platform-upgrade-plan.md` | Platform/toolchain upgrade: Spring Boot 3.5.2, Modulith 1.4.1, ArchUnit 1.4.1 | Complete / historical |
+| `phase-6-post-upgrade-baseline-hygiene-plan.md` | Post-upgrade baseline hygiene: dependency convergence, verification, doc re-baselining, product candidate selection | Complete / historical |
 
 ## Historical Phase Documents
 
-These documents remain valuable as slice history, but they are no longer the active master plan:
+These documents remain valuable as slice history, but they are completed or historical — not the current execution plan:
 
 | Document Pattern | Role |
 |---|---|

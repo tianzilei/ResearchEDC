@@ -30,7 +30,7 @@
         <hibernate.version>6.4.4.Final</hibernate.version>
         <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
         <postgresql.version>42.7.3</postgresql.version>
-        <liquibase.version>4.28.0</liquibase.version>
+        <liquibase.version>4.3.5</liquibase.version>
 
         <!-- Serialization -->
         <jackson.version>2.17.0</jackson.version>
@@ -77,12 +77,12 @@
         <openclinica-odm.version>2.2</openclinica-odm.version>
 
 		<!-- Byte code -->
-		<byte-buddy.version>1.14.12</byte-buddy.version>
+		<byte-buddy.version>1.17.8</byte-buddy.version>
 
 
         <!-- Testing -->
         <junit-jupiter.version>5.10.2</junit-jupiter.version>
-        <mockito.version>5.11.0</mockito.version>
+        <mockito.version>5.23.0</mockito.version>
         <testcontainers.version>1.19.8</testcontainers.version>
         <dbunit.version>2.4.9</dbunit.version>
     </properties>
@@ -440,6 +440,11 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
                 <version>${mockito.version}</version>
             </dependency>
             <dependency>
