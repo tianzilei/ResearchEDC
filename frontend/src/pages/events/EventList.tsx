@@ -6,10 +6,12 @@ import {
 import { SkeletonPage } from "@/components/SkeletonCard";
 import {
   useSubjectEvents,
+  useEventDefinitions,
   useScheduleEvent,
   useCompleteEvent,
   useEventCrfs,
 } from "@/hooks/useEvents";
+import { useCurrentStudy } from "@/hooks/useStudies";
 import type { StudyEventDTO, EventCrfDTO } from "@/types/event";
 
 const { Title, Text } = Typography;
@@ -106,15 +108,14 @@ export default function EventList() {
   const navigate = useNavigate();
   const studySubjectId = subjectId ? Number(subjectId) : undefined;
 
+  const { currentStudy } = useCurrentStudy();
   const { data: events = [], isLoading: loadingEvents } =
     useSubjectEvents(studySubjectId);
+  const { data: definitions = [] } = useEventDefinitions(currentStudy?.id);
   const scheduleMutation = useScheduleEvent();
   const completeMutation = useCompleteEvent();
 
   const [scheduleOpen, setScheduleOpen] = useState(false);
-  const [definitions, setDefinitions] = useState<
-    { studyEventDefinitionId: number; name: string }[]
-  >([]);
   const [form] = Form.useForm();
 
   const handleSchedule = useCallback(async () => {
@@ -149,19 +150,7 @@ export default function EventList() {
     [completeMutation],
   );
 
-  /*
-   * TODO: studyId=0 is a placeholder. The real studyId should be derived
-   * from the subject's enrollment context (study_subject.study_id). The
-   * backend appears to return all definitions when studyId=0, but this
-   * should be explicitly retrieved from the subject's study record.
-   */
-  const openSchedule = useCallback(async () => {
-    try {
-      const r = await fetch("/api/v1/events/definitions?studyId=0");
-      if (r.ok) setDefinitions(await r.json());
-    } catch {
-      /* keep existing definitions */
-    }
+  const openSchedule = useCallback(() => {
     setScheduleOpen(true);
   }, []);
 

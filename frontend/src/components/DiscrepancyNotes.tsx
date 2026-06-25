@@ -87,7 +87,7 @@ export default function DiscrepancyNotes({ eventCrfId, studyId, entityId }: Disc
           renderItem={(note) => (
             <List.Item
               actions={
-                note.resolutionStatus === "New" || note.resolutionStatus === null
+                note.resolutionStatusId === 1 || note.resolutionStatusId === null
                   ? [
                       <Button
                         key="resolve"
@@ -105,10 +105,10 @@ export default function DiscrepancyNotes({ eventCrfId, studyId, entityId }: Disc
                 title={
                   <Space>
                     <Text>{note.description}</Text>
-                    <span className={`status ${note.resolutionStatus === "Resolved" ? "status-success" : "status-warning"}`}>
-                      {note.resolutionStatus ?? "New"}
+                    <span className={`status ${note.resolutionStatusId === 5 ? "status-success" : "status-warning"}`}>
+                      {note.resolutionStatusId === 5 ? "Resolved" : "New"}
                     </span>
-                    <Tag>{note.type ?? "Note"}</Tag>
+                    <Tag>{note.discrepancyNoteTypeId ?? "Note"}</Tag>
                   </Space>
                 }
                 description={

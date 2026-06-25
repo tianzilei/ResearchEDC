@@ -7,7 +7,7 @@ export function useRuleSets(studyId: number | undefined) {
     queryKey: ["rule-sets", studyId],
     queryFn: () =>
       studyId
-        ? apiClient.get<RuleSetDTO[]>("/api/legacy/rule-sets", { studyId })
+        ? apiClient.get<RuleSetDTO[]>("/api/v1/rules/rule-sets", { studyId })
         : Promise.resolve([]),
     enabled: !!studyId,
   });
@@ -18,7 +18,7 @@ export function useRuleSet(ruleSetId: number | undefined) {
     queryKey: ["rule-set", ruleSetId],
     queryFn: () =>
       ruleSetId
-        ? apiClient.get<RuleSetDTO>(`/api/legacy/rule-sets/${ruleSetId}`)
+        ? apiClient.get<RuleSetDTO>(`/api/v1/rules/rule-sets/${ruleSetId}`)
         : Promise.reject(new Error("ruleSetId is required")),
     enabled: !!ruleSetId,
   });
@@ -35,7 +35,7 @@ interface RuleDetailDTO {
 export function useRule(ruleId: number) {
   return useAppQuery<RuleDetailDTO>({
     queryKey: ["rule", ruleId],
-    queryFn: () => apiClient.get<RuleDetailDTO>(`/api/legacy/rules/${ruleId}`),
+    queryFn: () => apiClient.get<RuleDetailDTO>(`/api/v1/rules/rules/${ruleId}`),
     enabled: !!ruleId,
   });
 }

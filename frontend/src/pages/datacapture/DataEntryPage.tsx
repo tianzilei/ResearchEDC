@@ -173,7 +173,7 @@ export default function DataEntryPage() {
   const itemDnCounts = useMemo(() => {
     const counts = new Map<number, number>();
     for (const note of notes) {
-      if (note.resolutionStatus === "Resolved") continue;
+      if (note.resolutionStatusId === 5) continue;
       const itemDataId = note.entityId;
       const id = itemData?.find(d => d.itemDataId === itemDataId);
       if (id) {

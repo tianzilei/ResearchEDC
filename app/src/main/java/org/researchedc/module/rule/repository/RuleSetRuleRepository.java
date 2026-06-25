@@ -10,4 +10,6 @@ import java.util.List;
 public interface RuleSetRuleRepository extends JpaRepository<RuleSetRuleEntity, Integer> {
 
     List<RuleSetRuleEntity> findByRuleSetId(Integer ruleSetId);
+
+    void deleteByRuleSetIdAndRuleId(Integer ruleSetId, Integer ruleId);
 }

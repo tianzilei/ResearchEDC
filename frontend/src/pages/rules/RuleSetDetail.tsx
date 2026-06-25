@@ -155,7 +155,7 @@ export default function RuleSetDetail() {
   const handleAddRule = async () => {
     try {
       const vals = await addForm.validateFields();
-      await apiClient.post<void>(`/api/legacy/rule-sets/${parsedRuleSetIdNum}/rules`, { ruleId: vals.ruleId });
+      await apiClient.post<void>(`/api/v1/rules/rule-sets/${parsedRuleSetIdNum}/rules`, { ruleId: vals.ruleId });
       message.success("Rule added");
       setAddOpen(false);
       addForm.resetFields();
@@ -168,7 +168,7 @@ export default function RuleSetDetail() {
       const vals = await createForm.validateFields();
       setCreateLoading(true);
       // Create the rule via API
-      const created: { ruleId: number } = await apiClient.post("/api/legacy/rules", {
+      const created: { ruleId: number } = await apiClient.post("/api/v1/rules/rules", {
         name: vals.name,
         description: vals.description ?? "",
         enabled: vals.enabled ?? true,
@@ -176,7 +176,7 @@ export default function RuleSetDetail() {
         expressionContext: null,
       });
       // Auto-add the new rule to the current rule set
-      await apiClient.post<void>(`/api/legacy/rule-sets/${parsedRuleSetIdNum}/rules`, {
+      await apiClient.post<void>(`/api/v1/rules/rule-sets/${parsedRuleSetIdNum}/rules`, {
         ruleId: created.ruleId,
       });
       message.success("Rule created and added to rule set");
@@ -192,7 +192,7 @@ export default function RuleSetDetail() {
 
   const handleRemoveRule = async (ruleId: number) => {
     try {
-      await apiClient.delete<void>(`/api/legacy/rule-sets/${parsedRuleSetIdNum}/rules/${ruleId}`);
+      await apiClient.delete<void>(`/api/v1/rules/rule-sets/${parsedRuleSetIdNum}/rules/${ruleId}`);
       message.success("Rule removed");
       queryClient.invalidateQueries({ queryKey: ["rule-set", parsedRuleSetId] });
     } catch {

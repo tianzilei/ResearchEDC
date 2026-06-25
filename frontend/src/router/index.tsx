@@ -5,7 +5,7 @@ import MainMenu from "@/pages/MainMenu";
 import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
 import ErrorPage from "@/pages/ErrorPage";
-import LegacyFrame from "@/components/LegacyFrame";
+
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
@@ -114,7 +114,6 @@ const router = createBrowserRouter([
       { path: "actions/:entity/:action/:id", element: <EntityAction /> },
       { path: "audit-log", element: <AuditViewer /> },
       { path: "403", element: <ErrorPage status={403} /> },
-      { path: "legacy/*", element: <LegacyFrame /> },
     ],
   },
   { path: "/login", element: <Login /> },

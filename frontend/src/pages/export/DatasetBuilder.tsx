@@ -26,9 +26,8 @@ interface Dataset {
   name: string;
   description: string;
   studyId: number;
-  studyName: string;
   ownerId: number;
-  status: string;
+  statusId: number;
   dateCreated: string;
 }
 
@@ -44,7 +43,7 @@ export default function DatasetBuilder() {
   const fetchData = () => {
     setLoading(true);
     Promise.all([
-      apiClient.get<Dataset[]>("/api/legacy/datasets").catch(() => []),
+      apiClient.get<Dataset[]>("/api/v1/datasets").catch(() => []),
       apiClient.get<{ studyId?: number; id?: number; name: string }[]>("/api/v1/studies").catch(() => []),
     ]).then(([ds, ss]) => {
       setDatasets(ds);
@@ -58,10 +57,7 @@ export default function DatasetBuilder() {
   const handleCreate = async () => {
     try {
       const vals = await form.validateFields();
-      await apiClient.post<Dataset>("/api/legacy/datasets", undefined, {
-        name: vals.name,
-        studyId: vals.studyId,
-      });
+      await apiClient.post<Dataset>("/api/v1/datasets", { name: vals.name, studyId: vals.studyId });
       message.success(t("dataset.created"));
       setCreateOpen(false);
       form.resetFields();
@@ -78,8 +74,7 @@ export default function DatasetBuilder() {
   const columns = [
     { title: t("dataset.column.name"), dataIndex: "name", key: "name" },
     { title: t("dataset.column.description"), dataIndex: "description", key: "description", render: (v: string) => v || "-" },
-    { title: t("dataset.column.study"), dataIndex: "studyName", key: "study", render: (v: string) => v || "-" },
-    { title: t("dataset.column.status"), dataIndex: "status", key: "status", render: (s: string) => <Tag>{s || "available"}</Tag> },
+    { title: t("dataset.column.status"), dataIndex: "statusId", key: "status", render: (s: number) => <Tag>{s === 1 ? "available" : `status ${s}`}</Tag> },
     { title: t("dataset.column.created"), dataIndex: "dateCreated", key: "created", render: (v: string) => v ? new Date(v).toLocaleDateString() : "-" },
   ];
 

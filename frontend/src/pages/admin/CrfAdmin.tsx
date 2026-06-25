@@ -41,7 +41,7 @@ export default function CrfAdmin() {
   const [versionForm] = Form.useForm();
 
   const fetchCrfs = () => {
-    fetch("/api/legacy/crfs")
+    fetch("/api/v1/crfs/manage")
       .then(r => r.ok ? r.json() : [])
       .then(data => { setCrfs(data); setLoading(false); })
       .catch(() => setLoading(false));
@@ -54,7 +54,7 @@ export default function CrfAdmin() {
     setVersionsOpen(true);
     setVersionLoading(true);
     try {
-      const res = await fetch(`/api/legacy/crfs/${crf.crfId}/versions`);
+      const res = await fetch(`/api/v1/crfs/manage/${crf.crfId}/versions`);
       if (res.ok) setVersions(await res.json());
     } catch { /* ignore */ }
     setVersionLoading(false);
@@ -63,7 +63,7 @@ export default function CrfAdmin() {
   const handleCreateCrf = async () => {
     try {
       const vals = await crfForm.validateFields();
-      const res = await fetch("/api/legacy/crfs", {
+      const res = await fetch("/api/v1/crfs/manage", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(vals),
@@ -80,7 +80,7 @@ export default function CrfAdmin() {
     if (!selectedCrf) return;
     try {
       const vals = await versionForm.validateFields();
-      const res = await fetch(`/api/legacy/crfs/${selectedCrf.crfId}/versions`, {
+      const res = await fetch(`/api/v1/crfs/manage/${selectedCrf.crfId}/versions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(vals),
@@ -94,7 +94,7 @@ export default function CrfAdmin() {
   };
 
   const handleDeleteVersion = async (versionId: number) => {
-    const res = await fetch(`/api/legacy/crfs/versions/${versionId}`, {
+    const res = await fetch(`/api/v1/crfs/manage/versions/${versionId}`, {
       method: "DELETE",
     });
     if (!res.ok) { message.error("删除版本失败"); return; }

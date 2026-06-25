@@ -8,7 +8,7 @@ export function useEventCrfNotes(eventCrfId: number | undefined) {
     queryKey: ["discrepancy-notes", eventCrfId],
     queryFn: () =>
       eventCrfId
-        ? apiClient.get<DiscrepancyNoteDTO[]>("/api/legacy/discrepancy-notes", {
+        ? apiClient.get<DiscrepancyNoteDTO[]>("/api/v1/discrepancy-notes", {
             eventCrfId,
           })
         : Promise.resolve([]),
@@ -20,7 +20,7 @@ export function useCreateNote() {
   const queryClient = useQueryClient();
 
   return useAppMutation<DiscrepancyNoteDTO, CreateDiscrepancyNoteRequest>({
-    mutationFn: (data) => apiClient.post("/api/legacy/discrepancy-notes", data),
+    mutationFn: (data) => apiClient.post("/api/v1/discrepancy-notes", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["discrepancy-notes"] });
     },
@@ -31,7 +31,7 @@ export function useResolveNote() {
   const queryClient = useQueryClient();
 
   return useAppMutation<DiscrepancyNoteDTO, number>({
-    mutationFn: (noteId) => apiClient.patch(`/api/legacy/discrepancy-notes/${noteId}/resolve`),
+    mutationFn: (noteId) => apiClient.patch(`/api/v1/discrepancy-notes/${noteId}/resolve`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["discrepancy-notes"] });
     },

@@ -23,9 +23,9 @@ const ENTITY_CONFIG: Record<string, { label: string; fetchUrl: (id: number) => s
   "event-definition": { label: "Event Definition", fetchUrl: (id) => `/api/v1/events/definitions/${id}`, apiPath: "/api/v1/events/definitions", backLink: "/app/studies" },
   "subject-group-class": { label: "Subject Group Class", fetchUrl: (id) => `/api/v1/subject-groups/classes/${id}`, apiPath: "/api/v1/subject-groups/classes", backLink: "/app/admin" },
   "study-user-role": { label: "Study User Role", fetchUrl: (id) => `/api/v1/identity/roles/${id}`, apiPath: "/api/v1/identity/roles", backLink: "/app/admin" },
-  "crf": { label: "CRF", fetchUrl: (id) => `/api/legacy/crfs/${id}`, apiPath: "/api/legacy/crfs", backLink: "/app/admin/crf-library" },
-  "crf-version": { label: "CRF Version", fetchUrl: (id) => `/api/legacy/crfs/versions/${id}`, apiPath: "/api/legacy/crfs/versions", backLink: "/app/admin/crf-library" },
-  "rule": { label: "Rule", fetchUrl: (id) => `/api/legacy/rules/${id}`, apiPath: "/api/legacy/rules", backLink: "/app/studies" },
+  "crf": { label: "CRF", fetchUrl: (id) => `/api/v1/crfs/manage/${id}`, apiPath: "/api/v1/crfs/manage", backLink: "/app/admin/crf-library" },
+  "crf-version": { label: "CRF Version", fetchUrl: (id) => `/api/v1/crfs/manage/versions/${id}`, apiPath: "/api/v1/crfs/manage/versions", backLink: "/app/admin/crf-library" },
+  "rule": { label: "Rule", fetchUrl: (id) => `/api/v1/rules/${id}`, apiPath: "/api/v1/rules", backLink: "/app/studies" },
 };
 
 function parseEntityInfo(entity: string, id: number, data: Record<string, unknown>): EntityInfo | null {

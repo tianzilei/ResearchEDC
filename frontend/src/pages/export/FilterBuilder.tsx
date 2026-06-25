@@ -10,10 +10,9 @@ import { apiClient } from "@/api/client";
 const { Title, Text } = Typography;
 
 interface FilterItem {
-  id: number;
+  filterId: number;
   name: string;
   description: string;
-  studyId: number;
   ownerId: number;
   dateCreated: string;
 }
@@ -27,7 +26,7 @@ export default function FilterBuilder() {
 
   useEffect(() => {
     setLoading(true);
-    apiClient.get<FilterItem[]>("/api/legacy/filters")
+      apiClient.get<FilterItem[]>("/api/v1/filters")
       .then(data => { setFilters(data); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
@@ -35,11 +34,11 @@ export default function FilterBuilder() {
   const handleCreate = async () => {
     try {
       const vals = await form.validateFields();
-      await apiClient.post<FilterItem>("/api/legacy/filters", vals);
+      await apiClient.post<FilterItem>("/api/v1/filters", vals);
       message.success(t("filter.created"));
       setCreateOpen(false);
       form.resetFields();
-      const data = await apiClient.get<FilterItem[]>("/api/legacy/filters");
+      const data = await apiClient.get<FilterItem[]>("/api/v1/filters");
       setFilters(data);
     } catch {
       message.error(t("filter.createFailed"));
@@ -87,7 +86,7 @@ export default function FilterBuilder() {
         <Card style={{ borderRadius: 6 }}><Empty description={t("filter.empty")} /></Card>
       ) : (
         <Card style={{ borderRadius: 6 }} styles={{ body: { padding: 0 } }}>
-          <Table dataSource={filters} columns={columns} rowKey="id" pagination={false} />
+          <Table dataSource={filters} columns={columns} rowKey="filterId" pagination={false} />
         </Card>
       )}
 

@@ -100,4 +100,21 @@ public class RuleService {
                 .orElseThrow(() -> new NoSuchElementException("Rule not found: " + id));
         ruleRepository.delete(rule);
     }
+
+    @Transactional
+    public void addRuleToRuleSet(Integer ruleSetId, Integer ruleId) {
+        ruleSetRepository.findById(ruleSetId)
+                .orElseThrow(() -> new NoSuchElementException("RuleSet not found: " + ruleSetId));
+        ruleRepository.findById(ruleId)
+                .orElseThrow(() -> new NoSuchElementException("Rule not found: " + ruleId));
+        RuleSetRuleEntity entity = new RuleSetRuleEntity();
+        entity.setRuleSetId(ruleSetId);
+        entity.setRuleId(ruleId);
+        ruleSetRuleRepository.save(entity);
+    }
+
+    @Transactional
+    public void removeRuleFromRuleSet(Integer ruleSetId, Integer ruleId) {
+        ruleSetRuleRepository.deleteByRuleSetIdAndRuleId(ruleSetId, ruleId);
+    }
 }

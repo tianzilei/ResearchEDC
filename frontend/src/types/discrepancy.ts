@@ -2,22 +2,14 @@ export interface DiscrepancyNoteDTO {
   discrepancyNoteId: number;
   description: string;
   detailedNotes: string;
-  type: string | null;
-  resolutionStatus: string | null;
   entityType: string;
-  column: string;
   entityId: number;
   studyId: number;
   ownerId: number;
-  ownerName: string;
-  dateCreated: string;
   parentDnId: number;
-  hasChildren: boolean;
-  eventCRFId: number;
-  subjectName: string;
-  eventName: string;
-  crfName: string;
-  entityName: string;
+  dateCreated: string;
+  resolutionStatusId: number | null;
+  discrepancyNoteTypeId: number | null;
 }
 
 export interface CreateDiscrepancyNoteRequest {
@@ -26,6 +18,6 @@ export interface CreateDiscrepancyNoteRequest {
   entityType: string;
   entityId: number;
   studyId: number;
-  eventCrfId: number;
-  itemDataId: number;
+  eventCrfId?: number;
+  itemDataId?: number;
 }

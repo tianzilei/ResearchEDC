@@ -2,7 +2,7 @@
 
 **Derived from:** OpenClinica v3.x
 **Generated:** 2026-05-25
-**Updated:** 2026-06-24
+**Updated:** 2026-06-25
 **Branch:** master
 
 ## OVERVIEW
@@ -12,7 +12,7 @@ ResearchEDC is an independently maintained research electronic data capture (EDC
 New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, and legacy Java code has been **fully removed** — `shared/src/main/java` contains 0 Java files (no `shared/dao`, `shared/domain`, `shared/bean`, `shared/core`, `shared/exception`, or `shared/i18n` Java support remain). All module adapters now use module-owned DTOs. `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and needed import/validation classes were migrated to `app/`, with later dead leftovers removed. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; ODM contract versioning (OC2-0 compatibility / OC2-1 email-free) completed 2026-06-24.
 
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | `OdmExportGeneratorTest` 21/21 ✅ | **Refactor progress 100.0%** ✅ | **Phase 3 DAO ledger 878/878 removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅** | **ODM contract versioning ✅ (OC2-0 frozen, OC2-1 email-free)** | **All Workstreams 1-6 ✅ COMPLETE** | **Build stabilization ✅ (DBCP→HikariCP, Quartz removed, Joda→java.time, Modulith boundary fixed)**
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | `OdmExportGeneratorTest` 21/21 ✅ | **Refactor progress 100.0%** ✅ | **Phase 3 DAO ledger 878/878 removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅** | **ODM contract versioning ✅ (OC2-0 frozen, OC2-1 email-free)** | **All Workstreams 1-6 ✅ COMPLETE** | **Build stabilization ✅ (DBCP→HikariCP, Quartz removed, Joda→java.time, Modulith boundary fixed)** | **Phase 8: Event context hardening ✅** | **Phase 9: Technical debt burndown ✅ COMPLETE**
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 ✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
@@ -36,8 +36,8 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │       ├── identity/        # 身份权限 (映射 user_account/study_user_role, 11 文件)
 │       ├── dashboard/       # 仪表盘 Bootstrap (用户/研究/站点上下文 + 待办 + 状态, 8 文件)
 │       ├── rule/            # 规则引擎 (JPA 实体 + 仓库, 13 文件)
-│       ├── dataset/         # 数据集管理 (JPA 实体 + 仓库, 7 文件)
-│       ├── filter/          # 过滤器管理 (JPA 实体 + 仓库, 7 文件)
+│       ├── dataset/           # 数据集管理 (JPA 实体 + 仓库 + REST API, 9 文件)
+│       ├── filter/            # 过滤器管理 (JPA 实体 + 仓库 + REST API, 9 文件)
 │       ├── subjectgroup/    # 受试者分组 (JPA 实体 + 仓库, 9 文件)
 │       └── discrepancynote/ # 差异备注管理 (JPA 实体 + 仓库, 7 文件)
 ├── shared/                  # 共享模块 — 0 Java files (resources only: i18n, migrations, properties)
@@ -82,11 +82,11 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | **Security config** | `app/.../config/SecurityConfig.java` | DaoAuthenticationProvider + form login |
 | **Encoding config** | `app/.../config/CoreResourcesConfig.java` | MessageSource UTF-8 + ODM FreeMarker UTF-8 |
 | **Identity module** | `app/.../module/identity/` | 桥接 user_account/study_user_role, REST API |
-| **Rule module** | `app/.../module/rule/` | 规则集/规则/表达式 JPA 实体 (gateway only) |
-| **Dataset module** | `app/.../module/dataset/` | 数据集 JPA 实体 (gateway only) |
-| **Filter module** | `app/.../module/filter/` | 过滤器 JPA 实体 (gateway only) |
-| **SubjectGroup module** | `app/.../module/subjectgroup/` | 分组类/组 JPA 实体 (gateway only) |
-| **DiscrepancyNote module** | `app/.../module/discrepancynote/` | 差异备注 JPA 实体 (gateway only) |
+| **Rule module** | `app/.../module/rule/` | 规则集/规则/表达式 JPA 实体 + REST API |
+| **Dataset module** | `app/.../module/dataset/` | 数据集管理 (JPA 实体 + 仓库 + REST API) |
+| **Filter module** | `app/.../module/filter/` | 过滤器管理 (JPA 实体 + 仓库 + REST API) |
+| **SubjectGroup module** | `app/.../module/subjectgroup/` | 分组类/组 JPA 实体 + REST API |
+| **DiscrepancyNote module** | `app/.../module/discrepancynote/` | 差异备注 JPA 实体 + REST API |
 | **Shared (legacy) logic** | `shared/src/main/java/org/researchedc/` | 0 Java files; resource-only (i18n, migrations, properties) |
 | Legacy DAOs | `shared/.../dao/` | deleted; no shared DAO SPI files remain |
 | Data import ports | `app/.../module/dataimport/service/` | module-owned ports replacing import-time legacy SPI callers |
@@ -126,7 +126,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 |--------|--------|----------|-------|----------|------------|------|---------------|
 | `randomization` | ✅ Complete | 8 | 6 | 3 | 1 | 9 | `/api/v1/randomization` |
 | `export` | ✅ Complete | 1 | 1 | 2 | 1 | 3 | `/api/v1/exports` |
-| `crf` | ✅ Complete | 6 | 6 | 1 | 1 | 4 | `/api/v1/crfs` |
+| `crf` | ✅ Complete | 6 | 6 | 2 | 2 | 6 | `/api/v1/crfs`, `/api/v1/crfs/manage` |
 | `legacy` | ✅ Built | 0 | 0 | 0 | 9 | 15 | `/api/v1/legacy/*` |
 | `audit` | ✅ Extracted | 1 | 1 | 1 | 1 | 1 | `/api/v1/audit` |
 | `study` | ✅ Extracted | 1 | 1 | 1 | 1 | 2 | `/api/v1/studies` |
@@ -135,11 +135,11 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | `event` | ✅ Extracted | 3 | 3 | 1 | 1 | 3 | `/api/v1/events` |
 | `datacapture` | ✅ Extracted | 3 | 3 | 1 | 1 | 3 | `/api/v1/data-capture` |
 | `identity` | ✅ Built | 2 | 2 | 1 | 1 | 2 | `/api/v1/identity` |
-| `rule` | ✅ Built | 4 | 4 | 1 | 0 | 0 | (gateway only) |
-| `dataset` | ✅ Built | 1 | 1 | 1 | 0 | 0 | (gateway only) |
-| `filter` | ✅ Built | 1 | 1 | 1 | 0 | 0 | (gateway only) |
-| `subjectgroup` | ✅ Built | 2 | 2 | 1 | 0 | 0 | (gateway only) |
-| `discrepancynote` | ✅ Built | 1 | 1 | 1 | 0 | 0 | (gateway only) |
+| `rule` | ✅ Complete | 4 | 4 | 1 | 1 | 4 | `/api/v1/rules` |
+| `dataset` | ✅ Complete | 1 | 1 | 1 | 1 | 2 | `/api/v1/datasets` |
+| `filter` | ✅ Complete | 1 | 1 | 1 | 1 | 2 | `/api/v1/filters` |
+| `subjectgroup` | ✅ Complete | 2 | 2 | 1 | 1 | 2 | `/api/v1/subject-groups` |
+| `discrepancynote` | ✅ Complete | 1 | 1 | 1 | 1 | 2 | `/api/v1/discrepancy-notes` |
 | `openrosa` | ✅ Built | 0 | 0 | 5 | 1 | 4 | `/api/v1/openrosa` |
 
 ## TESTING ARCHITECTURE

@@ -8,7 +8,7 @@ export function useGroupClasses(studyId: number | undefined) {
     queryKey: ["group-classes", studyId],
     queryFn: () =>
       studyId
-        ? apiClient.get<SubjectGroupClassDTO[]>("/api/legacy/subject-groups/classes", { studyId })
+        ? apiClient.get<SubjectGroupClassDTO[]>("/api/v1/subject-groups/classes", { studyId })
         : Promise.resolve([]),
     enabled: !!studyId,
   });
@@ -19,7 +19,7 @@ export function useGroupClass(classId: number | undefined) {
     queryKey: ["group-class", classId],
     queryFn: () =>
       classId
-        ? apiClient.get<SubjectGroupClassDTO>(`/api/legacy/subject-groups/classes/${classId}`)
+        ? apiClient.get<SubjectGroupClassDTO>(`/api/v1/subject-groups/classes/${classId}`)
         : Promise.reject(new Error("classId is required")),
     enabled: !!classId,
   });
@@ -30,7 +30,7 @@ export function useClassGroups(classId: number | undefined) {
     queryKey: ["class-groups", classId],
     queryFn: () =>
       classId
-        ? apiClient.get<SubjectGroupDTO[]>(`/api/legacy/subject-groups/classes/${classId}/groups`)
+        ? apiClient.get<SubjectGroupDTO[]>(`/api/v1/subject-groups/classes/${classId}/groups`)
         : Promise.resolve([]),
     enabled: !!classId,
   });
@@ -39,7 +39,7 @@ export function useClassGroups(classId: number | undefined) {
 export function useCreateGroupClass() {
   const queryClient = useQueryClient();
   return useAppMutation<SubjectGroupClassDTO, Partial<SubjectGroupClassDTO>>({
-    mutationFn: (data) => apiClient.post("/api/legacy/subject-groups/classes", data),
+    mutationFn: (data) => apiClient.post("/api/v1/subject-groups/classes", data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["group-classes"] }),
   });
 }
@@ -48,7 +48,7 @@ export function useCreateGroup() {
   const queryClient = useQueryClient();
   return useAppMutation<SubjectGroupDTO, { classId: number; data: Partial<SubjectGroupDTO> }>({
     mutationFn: ({ classId, data }) =>
-      apiClient.post(`/api/legacy/subject-groups/classes/${classId}/groups`, data),
+      apiClient.post(`/api/v1/subject-groups/classes/${classId}/groups`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["group-classes"] });
       queryClient.invalidateQueries({ queryKey: ["class-groups"] });
