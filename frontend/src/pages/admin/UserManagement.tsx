@@ -1,110 +1,88 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card, Table, Button, Typography, Modal, Form, Input, Select, message, Tabs } from "antd";
 import { SkeletonPage } from "@/components/SkeletonCard";
+import { useAppQuery } from "@/hooks/useQuery";
+import { identityApi, type RoleDTO, type UserDTO } from "@/api/identity";
 
 const { Title, Text } = Typography;
 
-interface UserDTO {
-  userId: number;
-  userName: string;
-  firstName: string;
-  lastName: string;
-  phone: string | null;
-  enabled: boolean;
-  activeStudyId: number | null;
-  dateCreated: string;
-}
-
-interface RoleDTO {
-  studyUserRoleId: number;
-  roleName: string;
-  userName: string;
-  studyId: number | null;
-  statusId: number | null;
-}
+const ROLE_OPTIONS = [
+  { value: "admin", label: "管理员" },
+  { value: "coordinator", label: "研究协调员" },
+  { value: "investigator", label: "研究者" },
+  { value: "dataManager", label: "数据管理员" },
+  { value: "dataEntry", label: "数据录入" },
+  { value: "monitor", label: "监查员" },
+  { value: "principalInvestigator", label: "主要研究者" },
+];
 
 export default function UserManagement() {
-  const [users, setUsers] = useState<UserDTO[]>([]);
+  const { data: users = [], isLoading, refetch: refetchUsers } = useAppQuery<UserDTO[]>({
+    queryKey: ["identity", "users"],
+    queryFn: () => identityApi.listUsers(),
+  });
   const [roles, setRoles] = useState<RoleDTO[]>([]);
-  const [loading, setLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
   const [roleOpen, setRoleOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [form] = Form.useForm();
   const [roleForm] = Form.useForm();
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        const r = await fetch("/api/v1/identity/users?query=");
-        if (r.ok) setUsers(await r.json());
-      } catch { /* ignore */ }
-      setLoading(false);
-    };
-    fetchAll();
-  }, []);
-
   const handleCreate = async () => {
     try {
       const vals = await form.validateFields();
-      const res = await fetch("/api/v1/identity/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userName: vals.userName,
-          firstName: vals.firstName,
-          lastName: vals.lastName,
-          phone: vals.phone ?? null,
-          institutionalAffiliation: vals.affiliation ?? null,
-          statusId: 1,
-        }),
+      await identityApi.createUser({
+        userName: vals.userName,
+        firstName: vals.firstName,
+        lastName: vals.lastName,
+        phone: vals.phone ?? null,
+        institutionalAffiliation: vals.affiliation ?? null,
+        statusId: 1,
       });
-      if (!res.ok) { const err = await res.text(); message.error(`创建失败: ${err}`); return; }
       message.success("用户已创建");
       setCreateOpen(false);
       form.resetFields();
-      const r = await fetch("/api/v1/identity/users?query=");
-      if (r.ok) setUsers(await r.json());
-    } catch { /* validation error */ }
+      void refetchUsers();
+    } catch { /* validation or API error */ }
+  };
+
+  const refreshRoles = async (userName: string) => {
+    const userRoles = await identityApi.listRolesByUser(userName);
+    setRoles(userRoles);
   };
 
   const handleAssignRole = async () => {
+    if (!selectedUser) return;
+
     try {
       const vals = await roleForm.validateFields();
-      const res = await fetch("/api/v1/identity/roles/assign", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userName: selectedUser,
-          studyId: vals.studyId ? Number(vals.studyId) : null,
-          roleName: vals.roleName,
-          statusId: 1,
-        }),
+      await identityApi.assignRole({
+        userName: selectedUser,
+        studyId: Number(vals.studyId),
+        roleName: vals.roleName,
+        statusId: 1,
       });
-      if (!res.ok) { message.error("分配角色失败"); return; }
       message.success("角色已分配");
       setRoleOpen(false);
       roleForm.resetFields();
-      const r = await fetch(`/api/v1/identity/roles/by-user?userName=${selectedUser}`);
-      if (r.ok) setRoles(await r.json());
-    } catch { /* validation error */ }
+      await refreshRoles(selectedUser);
+    } catch { /* validation or API error */ }
   };
 
   const viewRoles = async (userName: string) => {
     setSelectedUser(userName);
-    const r = await fetch(`/api/v1/identity/roles/by-user?userName=${userName}`);
-    if (r.ok) setRoles(await r.json());
+    await refreshRoles(userName);
     setRoleOpen(true);
   };
 
-  if (loading) return <SkeletonPage />;
+  if (isLoading) return <SkeletonPage />;
 
   const columns = [
     {
       title: "用户名", dataIndex: "userName", key: "userName",
       render: (text: string) => <strong>{text}</strong>,
     },
-    { title: "姓名", key: "name", render: (_: unknown, r: UserDTO) => `${r.firstName} ${r.lastName}` },
+    { title: "姓名", key: "name", render: (_: unknown, r: UserDTO) => `${r.firstName ?? ""} ${r.lastName ?? ""}`.trim() || "-" },
     { title: "电话", dataIndex: "phone", key: "phone", render: (v: string | null) => v ?? "-" },
     {
       title: "状态", dataIndex: "enabled", key: "enabled",
@@ -171,7 +149,7 @@ export default function UserManagement() {
                   ? <Text style={{ color: "var(--text-secondary)" }}>未分配角色</Text>
                   : <Table dataSource={roles} columns={[
                     { title: "角色", dataIndex: "roleName", key: "role" },
-                    { title: "项目 ID", dataIndex: "studyId", key: "study", render: (v: number | null) => v ?? "全部" },
+                    { title: "项目 ID", dataIndex: "studyId", key: "study", render: (v: number | null) => v ?? "-" },
                     { title: "状态", dataIndex: "statusId", key: "status", render: (v: number) => v === 1 ? <span className="status status-success">正常</span> : <span className="status status-default">未激活</span> },
                   ]} rowKey="studyUserRoleId" pagination={false} size="small" />,
               },
@@ -180,16 +158,9 @@ export default function UserManagement() {
                 children: (
                   <Form form={roleForm} layout="vertical" style={{ marginTop: 16 }}>
                     <Form.Item name="roleName" label="角色" rules={[{ required: true }]}>
-                      <Select placeholder="选择角色">
-                        <Select.Option value="admin">管理员</Select.Option>
-                        <Select.Option value="coordinator">研究协调员</Select.Option>
-                        <Select.Option value="investigator">研究者</Select.Option>
-                        <Select.Option value="data_manager">数据管理员</Select.Option>
-                        <Select.Option value="monitor">监查员</Select.Option>
-                        <Select.Option value="pi">主要研究者</Select.Option>
-                      </Select>
+                      <Select placeholder="选择角色" options={ROLE_OPTIONS} />
                     </Form.Item>
-                    <Form.Item name="studyId" label="项目 ID（留空为全局）">
+                    <Form.Item name="studyId" label="项目 ID" rules={[{ required: true }]}>
                       <Input type="number" placeholder="例如 1" />
                     </Form.Item>
                     <Button type="primary" onClick={handleAssignRole}>分配</Button>
