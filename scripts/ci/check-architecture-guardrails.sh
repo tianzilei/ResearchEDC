@@ -46,7 +46,7 @@ warn_if_matches "frontend studyId=0-style fallbacks remain; prefer enabled guard
 page_raw_fetch="$(find frontend/src/pages frontend/src/components frontend/src/hooks -type f \( -name '*.ts' -o -name '*.tsx' \) -print0 \
   | xargs -0 grep -En '(^|[^A-Za-z0-9_])fetch\(' 2>/dev/null || true)"
 allowed_raw_fetch="$(printf '%s\n' "${page_raw_fetch}" \
-  | grep -Ev 'ImportManager|ExportCenter|api/client|AuthProvider|FormData|attachments|download|Blob' || true)"
+  | grep -Ev 'ImportManager|ExportCenter|LogViewer|api/client|AuthProvider|FormData|attachments|download|Blob|/actuator/loggers' || true)"
 warn_if_matches "page/component/hooks raw fetch remains; prefer apiClient or typed API modules for ordinary JSON APIs" "${allowed_raw_fetch}"
 
 if [ "${failures}" -gt 0 ]; then

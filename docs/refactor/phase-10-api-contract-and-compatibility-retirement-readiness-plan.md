@@ -108,6 +108,7 @@ Allowed raw `fetch` exceptions:
 
 - file download/blob handling
 - FormData upload
+- actuator/diagnostic endpoints such as `/actuator/loggers`
 - low-level `apiClient`
 - auth bootstrap/login/logout until wrapped deliberately
 
@@ -235,13 +236,22 @@ Changed:
 
 Event workflow ordinary JSON calls now go through the typed event API module.
 
-Deferred raw-fetch debt remains in other feature areas:
+Additional raw-fetch reduction completed after the initial Phase 10 pilot:
 
-- admin pages
-- study pages
-- subject pages
-- feature flags hook
-- selected upload/download/auth paths where raw fetch may remain appropriate
+- study pages now use `studyApi`
+- subject pages now use `subjectApi`
+- feature flags now use `studyApi`
+- audit viewer now uses `auditApi`
+- CRF admin now uses `crfManageApi`
+- export job manager now uses `exportApi`
+- identity admin pages now use `identityApi`
+
+Deferred raw-fetch debt is now limited to documented exceptions:
+
+- file download/blob handling
+- FormData upload
+- actuator diagnostics (`/actuator/loggers`)
+- auth bootstrap/login/logout until wrapped deliberately
 
 ### Phase 10D: Legacy Compatibility Retirement Readiness - COMPLETE
 
@@ -277,12 +287,11 @@ The warning behavior is intentional for the first guardrail slice because existi
 |---|---|
 | `pnpm -C frontend typecheck` | 0 errors |
 | `pnpm -C frontend lint` | 0 errors |
-| `bash scripts/ci/check-architecture-guardrails.sh` | pass, 2 warning groups |
+| `bash scripts/ci/check-architecture-guardrails.sh` | pass, 0 warning groups after follow-up raw-fetch cleanup |
 
 ### Deferred Follow-Up
 
 1. Replace `frontend/src/api/generated.ts` with generated OpenAPI types.
 2. Add an `openapi:types` frontend script after choosing/installing the generator.
-3. Continue migrating raw `fetch` feature areas to typed API modules.
-4. Replace `currentStudy?.id ?? 0` style fallbacks with `undefined` plus query `enabled` guards.
-5. Decide whether/when to retire each `module/legacy` controller from the compatibility ledger.
+3. Replace remaining allowed raw `fetch` exceptions only when there is a clear API-layer benefit.
+4. Decide whether/when to retire each `module/legacy` controller from the compatibility ledger.
