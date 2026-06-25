@@ -32,8 +32,8 @@ They should be removed only after an explicit external-compatibility decision.
 | `LegacyStudyController` | `/api/legacy/studies` | `/api/v1/studies` | 0 | `external-compat-retain` | external compatibility decision + remove/update `LegacyGatewayContractTest` coverage |
 | `LegacySubjectController` | `/api/legacy/subjects` | `/api/v1/subjects` | 0 | `external-compat-retain` | external compatibility decision + replacement contract documented |
 | `LegacyCrfManageController` | `/api/legacy/crfs` | `/api/v1/crfs/manage` | 0 | `deprecated` | verify no external admin clients; remove contract tests; delete controller/DTOs |
-| `LegacyDatasetController` | `/api/legacy/datasets` | `/api/v1/datasets` | 0 | `deprecated` | verify no external dataset clients; remove contract tests; delete controller/DTOs |
-| `LegacyFilterController` | `/api/legacy/filters` | `/api/v1/filters` | 0 | `deprecated` | verify no external filter clients; remove contract tests; delete controller/DTOs |
+| `LegacyDatasetController` | `/api/legacy/datasets` | `/api/v1/datasets` | 0 | `retired` | 2026-06-25: deleted, no external callers found |
+| `LegacyFilterController` | `/api/legacy/filters` | `/api/v1/filters` | 0 | `retired` | 2026-06-25: deleted, no external callers found |
 | `LegacySubjectGroupController` | `/api/legacy/subject-groups` | `/api/v1/subject-groups` | 0 | `deprecated` | verify no external subject-group clients; remove contract tests; delete controller/DTOs |
 | `LegacyDiscrepancyNoteController` | `/api/legacy/discrepancy-notes` | `/api/v1/discrepancy-notes` | 0 | `deprecated` | verify no external discrepancy-note clients; remove contract tests; delete controller/DTOs |
 | `LegacyRuleSetController` | `/api/legacy/rule-sets` | `/api/v1/rules/rule-sets` | 0 | `deprecated` | verify no external rule-set clients; remove contract tests; delete controller/DTOs |

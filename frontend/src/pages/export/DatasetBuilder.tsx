@@ -17,19 +17,10 @@ import {
   Empty,
   Breadcrumb,
 } from "antd";
+import { datasetsApi, type Dataset } from "@/api/datasets";
 import { apiClient } from "@/api/client";
 
 const { Title, Text } = Typography;
-
-interface Dataset {
-  datasetId: number;
-  name: string;
-  description: string;
-  studyId: number;
-  ownerId: number;
-  statusId: number;
-  dateCreated: string;
-}
 
 interface StudyOptionDTO {
   studyId?: number;
@@ -49,7 +40,7 @@ export default function DatasetBuilder() {
   const fetchData = () => {
     setLoading(true);
     Promise.all([
-      apiClient.get<Dataset[]>("/api/v1/datasets").catch(() => []),
+      datasetsApi.list().catch(() => []),
       apiClient.get<StudyOptionDTO[]>("/api/v1/studies").catch(() => []),
     ]).then(([ds, ss]) => {
       setDatasets(ds);
@@ -70,7 +61,7 @@ export default function DatasetBuilder() {
   const handleCreate = async () => {
     try {
       const vals = await form.validateFields();
-      await apiClient.post<Dataset>("/api/v1/datasets", { name: vals.name, studyId: vals.studyId });
+      await datasetsApi.create({ name: vals.name, studyId: vals.studyId });
       message.success(t("dataset.created"));
       setCreateOpen(false);
       form.resetFields();

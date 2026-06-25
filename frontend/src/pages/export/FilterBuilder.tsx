@@ -5,17 +5,9 @@ import {
   Card, Table, Button, Typography, Space, Modal, Form, Input,
   Spin, message, Empty, Breadcrumb,
 } from "antd";
-import { apiClient } from "@/api/client";
+import { filtersApi, type FilterItem } from "@/api/datasets";
 
 const { Title, Text } = Typography;
-
-interface FilterItem {
-  filterId: number;
-  name: string;
-  description: string;
-  ownerId: number;
-  dateCreated: string;
-}
 
 export default function FilterBuilder() {
   const { t } = useTranslation();
@@ -26,7 +18,7 @@ export default function FilterBuilder() {
 
   useEffect(() => {
     setLoading(true);
-      apiClient.get<FilterItem[]>("/api/v1/filters")
+    filtersApi.list()
       .then(data => { setFilters(data); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
@@ -34,11 +26,11 @@ export default function FilterBuilder() {
   const handleCreate = async () => {
     try {
       const vals = await form.validateFields();
-      await apiClient.post<FilterItem>("/api/v1/filters", vals);
+      await filtersApi.create(vals);
       message.success(t("filter.created"));
       setCreateOpen(false);
       form.resetFields();
-      const data = await apiClient.get<FilterItem[]>("/api/v1/filters");
+      const data = await filtersApi.list();
       setFilters(data);
     } catch {
       message.error(t("filter.createFailed"));

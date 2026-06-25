@@ -159,7 +159,7 @@ export default function EventList() {
   const columns = [
     {
       title: "Event ID",
-      dataIndex: "id",
+      dataIndex: "studyEventId",
       key: "id",
       width: 80,
     },
@@ -177,14 +177,14 @@ export default function EventList() {
     },
     {
       title: "Start",
-      dataIndex: "dateStarted",
+      dataIndex: "dateStart",
       key: "start",
       render: (d: string) =>
         d ? new Date(d).toLocaleDateString() : "-",
     },
     {
       title: "End",
-      dataIndex: "dateEnded",
+      dataIndex: "dateEnd",
       key: "end",
       render: (d: string) =>
         d ? new Date(d).toLocaleDateString() : "-",
@@ -206,10 +206,10 @@ export default function EventList() {
       render: (_: unknown, record: StudyEventDTO) =>
         record.statusId < 7 ? (
           <Space>
-            <Button size="small" onClick={() => handleComplete(record.id)}>
+            <Button size="small" onClick={() => handleComplete(record.studyEventId)}>
               Complete
             </Button>
-            <Link to={`/app/actions/study-event/remove/${record.id}`}>
+            <Link to={`/app/actions/study-event/remove/${record.studyEventId}`}>
               <Button size="small" danger type="text">
                 Remove
               </Button>
@@ -258,12 +258,12 @@ export default function EventList() {
         <Table
           dataSource={events}
           columns={columns}
-          rowKey="id"
+          rowKey="studyEventId"
           pagination={false}
           locale={{ emptyText: "No scheduled events for this subject" }}
           expandable={{
             expandedRowRender: (record: StudyEventDTO) => (
-              <EventCrfRow eventId={record.id} subjectId={subjectId ?? ""} />
+              <EventCrfRow eventId={record.studyEventId} subjectId={subjectId ?? ""} />
             ),
             rowExpandable: () => true,
           }}

@@ -13,7 +13,7 @@ export interface EventDefinitionDTO {
   description: string;
   ordinal: number;
   category: string;
-  status: string;
+  statusId: number;
 }
 
 export interface CreateEventDefinitionRequest {
@@ -25,16 +25,17 @@ export interface CreateEventDefinitionRequest {
 }
 
 export interface StudyEventDTO {
-  id: number;
-  studyEventDefinitionId: number;
+  studyEventId: number;
   studySubjectId: number;
-  label: string;
-  ordinal: number;
-  dateStarted: string;
-  dateEnded: string | null;
+  studyEventDefinitionId: number;
+  eventDefinitionName: string | null;
+  location: string | null;
+  dateStart: string | null;
+  dateEnd: string | null;
   statusId: number;
-  location: string;
+  subjectEventStatusId: number;
   dateCreated: string;
+  sedOrdinal: number | null;
 }
 
 export interface EventCrfDTO {

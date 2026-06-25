@@ -5,7 +5,7 @@
 This directory contains historical refactor plans plus supporting baseline, ledger, and slice documents.
 Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed, `web/` and `ws/` absent, `shared/src/main/java` reduced to `0` Java files, platform upgraded to Spring Boot 3.5.2 / Modulith 1.4.1, and dependency drift converged.
 
-**Active plan:** None — all refactor, baseline, and product phases complete. Next work should open as a new focused plan.
+**Active plan:** `phase-11-contract-correctness-and-architecture-prep-plan.md` - contract correctness, placeholder cleanup, and architecture-readiness work before larger changes.
 
 ## Primary Entry Points
 
@@ -23,10 +23,14 @@ Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed
 | `phase-5-platform-upgrade-plan.md` | Platform/toolchain upgrade: Spring Boot 3.5.2, Modulith 1.4.1, ArchUnit 1.4.1 | Complete / historical |
 | `phase-6-post-upgrade-baseline-hygiene-plan.md` | Post-upgrade baseline hygiene: dependency convergence, verification, doc re-baselining, product candidate selection | Complete / historical |
 | `phase-7-export-operations-polish-plan.md` | Export operations polish: filtering, failure info, retry, download UX, frontend polish | Complete / historical |
+| `phase-8-event-workflow-context-hardening-plan.md` | Event workflow context hardening and legacy event adapter retirement | Complete / historical |
+| `phase-9-technical-debt-burndown-and-architecture-prep-plan.md` | Technical debt burndown and architecture preparation | Complete / historical |
+| `phase-10-api-contract-and-compatibility-retirement-readiness-plan.md` | API contract readiness, typed API pilot, raw fetch cleanup, and legacy compatibility ledger | Complete / historical |
+| `phase-11-contract-correctness-and-architecture-prep-plan.md` | Contract correctness, placeholder identity cleanup, guardrail tightening, and architecture readiness | Active |
 
 ## Historical Phase Documents
 
-These documents remain valuable as slice history, but they are completed or historical — not the current execution plan:
+These documents remain valuable as slice history, but they are completed or historical - not the current execution plan:
 
 | Document Pattern | Role |
 |---|---|

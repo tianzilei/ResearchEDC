@@ -10,18 +10,9 @@ import { useEventDefinitions, useScheduleEvent } from "@/hooks/useEvents";
 import { useAppQuery } from "@/hooks/useQuery";
 import { subjectApi, type StudySubjectDTO, type SubjectDTO } from "@/api/subjects";
 import { eventApi } from "@/api/events";
+import type { StudyEventDTO } from "@/types/event";
 
 const { Title, Text } = Typography;
-
-interface StudyEvent {
-  studyEventId: number;
-  studySubjectId: number;
-  studyEventDefinitionId: number;
-  location: string | null;
-  dateStart: string | null;
-  dateEnd: string | null;
-  statusId: number;
-}
 
 export default function SubjectDetail() {
   const { id } = useParams<{ id: string }>();
@@ -50,11 +41,11 @@ export default function SubjectDetail() {
     enabled: !!enrollment?.subjectId,
   });
 
-  const { data: events = [], isLoading: loadingEvents, refetch: refetchEvents } = useAppQuery<StudyEvent[]>({
+  const { data: events = [], isLoading: loadingEvents, refetch: refetchEvents } = useAppQuery<StudyEventDTO[]>({
     queryKey: ["subject-events", studySubjectId],
     queryFn: () =>
       studySubjectId
-        ? eventApi.listSubjectEvents(studySubjectId) as Promise<unknown> as Promise<StudyEvent[]>
+        ? eventApi.listSubjectEvents(studySubjectId)
         : Promise.resolve([]),
     enabled: !!studySubjectId,
   });
@@ -179,7 +170,7 @@ export default function SubjectDetail() {
     },
     {
       title: "", key: "actions",
-      render: (_: unknown, record: StudyEvent) => (
+      render: (_: unknown, record: StudyEventDTO) => (
         <Button size="small"
           onClick={() => navigate(`/app/subjects/${id}/events/${record.studyEventId}/crfs`)}>
           CRF

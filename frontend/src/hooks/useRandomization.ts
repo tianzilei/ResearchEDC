@@ -36,7 +36,7 @@ export function useCreateScheme() {
   const qc = useQueryClient();
   return useAppMutation<SchemeDTO, SchemeDTO>({
     mutationFn: (dto) =>
-      apiClient.post<SchemeDTO>(`${BASE}/schemes?userId=0`, dto),
+      apiClient.post<SchemeDTO>(`${BASE}/schemes`, dto),
     onSuccess: (data) => {
       void qc.invalidateQueries({ queryKey: ["randomization", "schemes", data.studyId] });
     },
@@ -47,7 +47,7 @@ export function useUpdateScheme() {
   const qc = useQueryClient();
   return useAppMutation<SchemeDTO, SchemeDTO & { id: number }>({
     mutationFn: (dto) =>
-      apiClient.put<SchemeDTO>(`${BASE}/schemes/${dto.id}?userId=0`, dto),
+      apiClient.put<SchemeDTO>(`${BASE}/schemes/${dto.id}`, dto),
     onSuccess: (data) => {
       void qc.invalidateQueries({ queryKey: ["randomization", "schemes", data.studyId] });
       void qc.invalidateQueries({ queryKey: ["randomization", "scheme", data.id] });
@@ -59,7 +59,7 @@ export function useActivateScheme() {
   const qc = useQueryClient();
   return useAppMutation<undefined, number>({
     mutationFn: (id) =>
-      apiClient.post<undefined>(`${BASE}/schemes/${id}/activate?userId=0`),
+      apiClient.post<undefined>(`${BASE}/schemes/${id}/activate`),
     onSuccess: () => { void qc.invalidateQueries({ queryKey: ["randomization"] }); },
   });
 }
@@ -68,7 +68,7 @@ export function useCloseScheme() {
   const qc = useQueryClient();
   return useAppMutation<undefined, number>({
     mutationFn: (id) =>
-      apiClient.post<undefined>(`${BASE}/schemes/${id}/close?userId=0`),
+      apiClient.post<undefined>(`${BASE}/schemes/${id}/close`),
     onSuccess: () => { void qc.invalidateQueries({ queryKey: ["randomization"] }); },
   });
 }
@@ -79,7 +79,7 @@ export function useRandomize() {
   const qc = useQueryClient();
   return useAppMutation<AssignmentDTO, RandomizeRequest>({
     mutationFn: (req) =>
-      apiClient.post<AssignmentDTO>(`${BASE}/randomize?userId=0`, req),
+      apiClient.post<AssignmentDTO>(`${BASE}/randomize`, req),
     onSuccess: () => { void qc.invalidateQueries({ queryKey: ["randomization"] }); },
   });
 }
@@ -114,7 +114,7 @@ export function useRequestUnblinding() {
   return useAppMutation<UnblindingRequestDTO, { assignmentId: number; reason?: string }>({
     mutationFn: ({ assignmentId, reason }) =>
       apiClient.post<UnblindingRequestDTO>(
-        `${BASE}/unblinding/request?assignmentId=${String(assignmentId)}&requestedBy=0${reason ? `&reason=${encodeURIComponent(reason)}` : ""}`,
+        `${BASE}/unblinding/request?assignmentId=${String(assignmentId)}${reason ? `&reason=${encodeURIComponent(reason)}` : ""}`,
       ),
     onSuccess: () => { void qc.invalidateQueries({ queryKey: ["randomization", "unblinding"] }); },
   });
