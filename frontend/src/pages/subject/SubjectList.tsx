@@ -1,78 +1,51 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, Table, Button, Space, Typography, Modal, Form, Input, Select, DatePicker, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useCurrentStudy } from "@/hooks/useStudies";
 import { SkeletonPage } from "@/components/SkeletonCard";
+import { useAppQuery } from "@/hooks/useQuery";
+import { subjectApi, type StudySubjectDTO } from "@/api/subjects";
 
 const { Title, Text } = Typography;
-
-interface StudySubject {
-  studySubjectId: number;
-  studyId: number;
-  subjectId: number;
-  label: string;
-  secondaryLabel: string | null;
-  ocOid: string | null;
-  enrollmentDate: string | null;
-  dateCreated: string;
-  status?: string;
-}
 
 export default function SubjectList() {
   const navigate = useNavigate();
   const { currentStudy } = useCurrentStudy();
-  const [loading, setLoading] = useState(true);
-  const [subjects, setSubjects] = useState<StudySubject[]>([]);
+  const { data: subjects = [], isLoading, refetch } = useAppQuery<StudySubjectDTO[]>({
+    queryKey: ["subjects", "by-study", currentStudy?.id],
+    queryFn: () =>
+      currentStudy?.id
+        ? subjectApi.listByStudy(currentStudy.id)
+        : Promise.resolve([]),
+    enabled: !!currentStudy?.id,
+  });
   const [createOpen, setCreateOpen] = useState(false);
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    if (!currentStudy?.id) {
-      setSubjects([]);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    fetch(`/api/v1/subjects/by-study?studyId=${currentStudy.id}`)
-      .then(r => r.ok ? r.json() : [])
-      .then(data => { setSubjects(data); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, [currentStudy?.id]);
-
   const handleCreate = async () => {
+    if (!currentStudy?.id) return;
+
     try {
       const vals = await form.validateFields();
-      const subRes = await fetch("/api/v1/subjects", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          uniqueIdentifier: vals.uniqueIdentifier,
-          gender: vals.gender,
-          dateOfBirth: vals.dateOfBirth?.toISOString?.() ?? null,
-        }),
+      const newSubject = await subjectApi.createSubject({
+        uniqueIdentifier: vals.uniqueIdentifier,
+        gender: vals.gender,
+        dateOfBirth: vals.dateOfBirth?.toISOString?.() ?? null,
       });
-      if (!subRes.ok) { message.error("创建受试者失败"); return; }
-      const newSubject = await subRes.json();
 
-      const enrollRes = await fetch("/api/v1/subjects/enroll", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studyId: currentStudy?.id,
-          subjectId: newSubject.subjectId,
-          label: vals.label ?? newSubject.uniqueIdentifier,
-          enrollmentDate: vals.enrollmentDate?.toISOString?.() ?? null,
-          eventDefinitionId: null,
-        }),
+      await subjectApi.enrollSubject({
+        studyId: currentStudy.id,
+        subjectId: newSubject.subjectId,
+        label: vals.label ?? newSubject.uniqueIdentifier,
+        enrollmentDate: vals.enrollmentDate?.toISOString?.() ?? null,
+        eventDefinitionId: null,
       });
-      if (!enrollRes.ok) { message.error("入组失败"); return; }
 
       message.success("受试者已创建并入组");
       setCreateOpen(false);
       form.resetFields();
-      const r = await fetch(`/api/v1/subjects/by-study?studyId=${currentStudy?.id}`);
-      if (r.ok) setSubjects(await r.json());
-    } catch { /* form validation error */ }
+      void refetch();
+    } catch { /* form validation or API error */ }
   };
 
   if (!currentStudy) {
@@ -83,14 +56,14 @@ export default function SubjectList() {
     );
   }
 
-  if (loading) return <SkeletonPage />;
+  if (isLoading) return <SkeletonPage />;
 
   const columns = [
     {
       title: "编号",
       dataIndex: "label",
       key: "label",
-      render: (text: string, record: StudySubject) => (
+      render: (text: string, record: StudySubjectDTO) => (
         <a onClick={() => navigate(`/app/subjects/${record.studySubjectId}`)}>
           {text}
         </a>
@@ -121,7 +94,7 @@ export default function SubjectList() {
           </Text>
         </div>
         <Space>
-          <Button onClick={() => window.location.reload()}>
+          <Button onClick={() => void refetch()}>
             刷新
           </Button>
           <Button type="primary" onClick={() => setCreateOpen(true)}>

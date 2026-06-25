@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Card, Descriptions, Button, Space, Typography, Table,
@@ -7,28 +7,11 @@ import {
 
 import { SkeletonPage } from "@/components/SkeletonCard";
 import { useEventDefinitions, useScheduleEvent } from "@/hooks/useEvents";
+import { useAppQuery } from "@/hooks/useQuery";
+import { subjectApi, type StudySubjectDTO, type SubjectDTO } from "@/api/subjects";
+import { eventApi } from "@/api/events";
 
 const { Title, Text } = Typography;
-
-interface StudySubjectDetail {
-  studySubjectId: number;
-  studyId: number;
-  subjectId: number;
-  label: string;
-  secondaryLabel: string | null;
-  ocOid: string | null;
-  enrollmentDate: string | null;
-  dateCreated: string;
-  dateUpdated: string | null;
-}
-
-interface SubjectDetail {
-  subjectId: number;
-  uniqueIdentifier: string;
-  dateOfBirth: string | null;
-  gender: string | null;
-  dateCreated: string;
-}
 
 interface StudyEvent {
   studyEventId: number;
@@ -43,10 +26,38 @@ interface StudyEvent {
 export default function SubjectDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [enrollment, setEnrollment] = useState<StudySubjectDetail | null>(null);
-  const [subject, setSubject] = useState<SubjectDetail | null>(null);
-  const [events, setEvents] = useState<StudyEvent[]>([]);
+  const studySubjectId = id ? Number(id) : undefined;
+
+  const {
+    data: enrollment,
+    isLoading: loadingEnrollment,
+    refetch: refetchEnrollment,
+  } = useAppQuery<StudySubjectDTO | null>({
+    queryKey: ["subjects", "enrollment", studySubjectId],
+    queryFn: () =>
+      studySubjectId
+        ? subjectApi.getEnrollment(studySubjectId)
+        : Promise.resolve(null),
+    enabled: !!studySubjectId,
+  });
+
+  const { data: subject, refetch: refetchSubject } = useAppQuery<SubjectDTO | null>({
+    queryKey: ["subjects", "detail", enrollment?.subjectId],
+    queryFn: () =>
+      enrollment?.subjectId
+        ? subjectApi.getSubject(enrollment.subjectId)
+        : Promise.resolve(null),
+    enabled: !!enrollment?.subjectId,
+  });
+
+  const { data: events = [], isLoading: loadingEvents, refetch: refetchEvents } = useAppQuery<StudyEvent[]>({
+    queryKey: ["subject-events", studySubjectId],
+    queryFn: () =>
+      studySubjectId
+        ? eventApi.listSubjectEvents(studySubjectId) as Promise<unknown> as Promise<StudyEvent[]>
+        : Promise.resolve([]),
+    enabled: !!studySubjectId,
+  });
 
   const [signOpen, setSignOpen] = useState(false);
   const [signLoading, setSignLoading] = useState(false);
@@ -62,41 +73,22 @@ export default function SubjectDetail() {
   const { data: eventDefs = [] } = useEventDefinitions(enrollment?.studyId);
   const scheduleEvent = useScheduleEvent();
 
-  const fetchData = useCallback(() => {
-    if (!id) return;
-    Promise.all([
-      fetch(`/api/v1/subjects/enrollment/${id}`).then(r => r.ok ? r.json() : null),
-      fetch(`/api/v1/events/by-subject?studySubjectId=${id}`).then(r => r.ok ? r.json() : []),
-    ]).then(([enrollData, eventsData]) => {
-      setEnrollment(enrollData);
-      setEvents(eventsData);
-      if (enrollData?.subjectId) {
-        fetch(`/api/v1/subjects/${enrollData.subjectId}`)
-          .then(r => r.ok ? r.json() : null)
-          .then(setSubject);
-      }
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  }, [id]);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
+  const refetchData = useCallback(() => {
+    void refetchEnrollment();
+    void refetchSubject();
+    void refetchEvents();
+  }, [refetchEnrollment, refetchEvents, refetchSubject]);
 
   const handleSign = async () => {
+    if (!studySubjectId) return;
+
     try {
       const vals = await signForm.validateFields();
       setSignLoading(true);
-      const res = await fetch(`/api/v1/subjects/${id}/sign`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(vals),
-      });
-      if (res.ok) {
-        message.success("受试者已签名");
-        setSignOpen(false);
-        signForm.resetFields();
-      } else {
-        message.error("签名失败，请稍后重试");
-      }
+      await subjectApi.signStudySubject(studySubjectId, vals);
+      message.success("受试者已签名");
+      setSignOpen(false);
+      signForm.resetFields();
     } catch {
       message.error("签名失败，请稍后重试");
     } finally {
@@ -105,29 +97,25 @@ export default function SubjectDetail() {
   };
 
   const handleUpdate = async () => {
+    if (!enrollment?.subjectId) return;
+
     try {
       const vals = await updateForm.validateFields();
-      const res = await fetch(`/api/v1/subjects/${enrollment?.subjectId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(vals),
-      });
-      if (res.ok) {
-        message.success("Subject updated");
-        setUpdateOpen(false);
-        updateForm.resetFields();
-        fetchData();
-      } else {
-        message.error("Failed to update subject");
-      }
+      await subjectApi.updateSubject(enrollment.subjectId, vals);
+      message.success("Subject updated");
+      setUpdateOpen(false);
+      updateForm.resetFields();
+      refetchData();
     } catch { void 0; }
   };
 
   const handleCreateEvent = async () => {
+    if (!studySubjectId) return;
+
     try {
       const vals = await eventCreateForm.validateFields();
       await scheduleEvent.mutateAsync({
-        studySubjectId: Number(id),
+        studySubjectId,
         studyEventDefinitionId: vals.eventDefinitionId,
         location: vals.location ?? "",
         ordinal: 0,
@@ -137,29 +125,23 @@ export default function SubjectDetail() {
       message.success("访视创建成功");
       setEventCreateOpen(false);
       eventCreateForm.resetFields();
-      fetchData();
+      void refetchEvents();
     } catch {
       message.error("访视创建失败");
     }
   };
 
   const handleReassign = async () => {
+    if (!studySubjectId) return;
+
     try {
       const vals = await reassignForm.validateFields();
       setReassigning(true);
-      const res = await fetch(`/api/v1/subjects/${id}/reassign`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ studyId: vals.newStudyId }),
-      });
-      if (res.ok) {
-        message.success("受试者已重新分配");
-        setReassignOpen(false);
-        reassignForm.resetFields();
-        fetchData();
-      } else {
-        message.error("重新分配失败");
-      }
+      await subjectApi.reassignStudySubject(studySubjectId, { studyId: vals.newStudyId });
+      message.success("受试者已重新分配");
+      setReassignOpen(false);
+      reassignForm.resetFields();
+      refetchData();
     } catch {
       message.error("重新分配失败");
     } finally {
@@ -167,7 +149,7 @@ export default function SubjectDetail() {
     }
   };
 
-  if (loading) return <SkeletonPage />;
+  if (loadingEnrollment || loadingEvents) return <SkeletonPage />;
   if (!enrollment) {
     return (
       <Result
@@ -211,7 +193,6 @@ export default function SubjectDetail() {
       <Card style={{ marginBottom: 16, borderRadius: "var(--radius-lg)" }} styles={{ body: { padding: "16px 24px" } }}>
         <Space style={{ width: "100%", justifyContent: "space-between" }} align="center">
           <Space>
-
             <div>
               <Title level={4} style={{ margin: 0 }}>{enrollment.label}</Title>
               <Text type="secondary">{subject?.uniqueIdentifier ?? `受试者 #${enrollment.subjectId}`}</Text>
