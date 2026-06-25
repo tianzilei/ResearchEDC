@@ -12,7 +12,7 @@ const { Title } = Typography;
 export default function RandomizationDashboard() {
   const { t } = useTranslation();
   const { currentStudy } = useCurrentStudy();
-  const studyId = currentStudy?.id ?? 0;
+  const studyId = currentStudy?.id;
   const { data: schemes, isLoading } = useSchemes(studyId);
   const createScheme = useCreateScheme();
   const activateScheme = useActivateScheme();
@@ -29,6 +29,8 @@ export default function RandomizationDashboard() {
   };
 
   const handleCreate = async () => {
+    if (!studyId) return;
+
     try {
       const values = await form.validateFields();
       const arms: ArmDTO[] = values.arms?.map((a: { name: string; displayName?: string; ratio?: number }, i: number) => ({

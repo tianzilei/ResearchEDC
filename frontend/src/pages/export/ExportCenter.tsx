@@ -57,9 +57,10 @@ interface ExportFilters {
   odmContractVersion?: string;
 }
 
-function useExportJobs(studyId: number, filters?: ExportFilters) {
+function useExportJobs(studyId: number | undefined, filters?: ExportFilters) {
   const params = useMemo(() => {
-    const p: Record<string, string | number> = { studyId };
+    const p: Record<string, string | number> = {};
+    if (studyId) p.studyId = studyId;
     if (filters?.status) p.status = filters.status;
     if (filters?.exportFormat) p.exportFormat = filters.exportFormat;
     if (filters?.odmContractVersion) p.odmContractVersion = filters.odmContractVersion;
@@ -68,8 +69,11 @@ function useExportJobs(studyId: number, filters?: ExportFilters) {
 
   return useAppQuery<ExportJob[]>({
     queryKey: ["exports", studyId, params],
-    queryFn: () => apiClient.get<ExportJob[]>(`/api/v1/exports`, params),
-    enabled: studyId > 0,
+    queryFn: () =>
+      studyId
+        ? apiClient.get<ExportJob[]>(`/api/v1/exports`, params)
+        : Promise.resolve([]),
+    enabled: !!studyId,
   });
 }
 
@@ -77,7 +81,7 @@ export default function ExportCenter() {
   const { t } = useTranslation();
   const { currentStudy } = useCurrentStudy();
   const { user } = useAuth();
-  const studyId = currentStudy?.id ?? 0;
+  const studyId = currentStudy?.id;
   const qc = useQueryClient();
   const [filters, setFilters] = useState<ExportFilters>({});
   const { data: jobs, isLoading } = useExportJobs(studyId, filters);
@@ -266,7 +270,7 @@ export default function ExportCenter() {
       <Modal title={t("export.modal.title")} open={modalOpen}
         onCancel={() => { setModalOpen(false); resetModal(); }}
         onOk={() => createJob.mutate({
-          studyId,
+          studyId: currentStudy.id,
           name,
           exportFormat: format,
           odmContractVersion: format === "ODM_XML" ? contractVersion : undefined,

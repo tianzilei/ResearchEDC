@@ -13,11 +13,14 @@ const BASE = "/api/v1/randomization";
 
 // === Schemes ===
 
-export function useSchemes(studyId: number) {
+export function useSchemes(studyId: number | undefined) {
   return useAppQuery<SchemeSummaryDTO[]>({
     queryKey: ["randomization", "schemes", studyId],
-    queryFn: () => apiClient.get<SchemeSummaryDTO[]>(`${BASE}/schemes`, { studyId }),
-    enabled: studyId > 0,
+    queryFn: () =>
+      studyId
+        ? apiClient.get<SchemeSummaryDTO[]>(`${BASE}/schemes`, { studyId })
+        : Promise.resolve([]),
+    enabled: !!studyId,
   });
 }
 
