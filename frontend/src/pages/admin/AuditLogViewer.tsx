@@ -1,41 +1,23 @@
 import { useState } from "react";
 import { Card, Table, Tag, Space, Typography, Select } from "antd";
 import { SkeletonPage } from "@/components/SkeletonCard";
+import { useAppQuery } from "@/hooks/useQuery";
+import { auditApi, type AuditLogEntry } from "@/api/audit";
 
 const { Title, Text } = Typography;
 
-interface AuditLogEntry {
-  id: number;
-  studyId: number | null;
-  eventType: string;
-  entityType: string | null;
-  entityId: number | null;
-  entityLabel: string | null;
-  oldValue: string | null;
-  newValue: string | null;
-  performedBy: number | null;
-  performedDate: string;
-  details: string | null;
-  sourceModule: string | null;
-}
-
 export default function AuditLogViewer() {
-  const [logs, setLogs] = useState<AuditLogEntry[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filterModule, setFilterModule] = useState<string>("");
-
-  useState(() => {
-    fetch("/api/v1/audit")
-      .then(r => r.ok ? r.json() : [])
-      .then((data: Record<string, unknown> | unknown[]) => {
-        const content = (data as Record<string, unknown>).content ?? data;
-        setLogs(Array.isArray(content) ? content : []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+  const { data: logs = [], isLoading } = useAppQuery<AuditLogEntry[]>({
+    queryKey: ["audit", "logs"],
+    queryFn: async () => {
+      const data = await auditApi.listLogs();
+      const content = Array.isArray(data) ? data : data.content;
+      return Array.isArray(content) ? content : [];
+    },
   });
 
-  if (loading) return <SkeletonPage />;
+  if (isLoading) return <SkeletonPage />;
 
   const modules = [...new Set(logs.map(l => l.sourceModule).filter(Boolean))];
   const filtered = filterModule ? logs.filter(l => l.sourceModule === filterModule) : logs;
@@ -50,7 +32,7 @@ export default function AuditLogViewer() {
       `${r.entityType ?? "-"}#${r.entityId ?? ""}` },
     { title: "标签", dataIndex: "entityLabel", key: "label", ellipsis: true },
     { title: "模块", dataIndex: "sourceModule", key: "module", width: 100,
-      render: (v: string) => <Tag>{v ?? "-"}</Tag> },
+      render: (v: string | null) => <Tag>{v ?? "-"}</Tag> },
     { title: "用户", dataIndex: "performedBy", key: "user", width: 70 },
     {
       title: "日期", dataIndex: "performedDate", key: "date", width: 170,
@@ -68,7 +50,8 @@ export default function AuditLogViewer() {
         </div>
         <Space>
           <Select
-            allowClear placeholder="按模块筛选"
+            allowClear
+            placeholder="按模块筛选"
             value={filterModule || undefined}
             onChange={(v) => setFilterModule(v ?? "")}
             style={{ width: 180 }}
