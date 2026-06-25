@@ -44,7 +44,7 @@ study_zero_placeholders="$(find frontend/src -type f \( -name '*.ts' -o -name '*
 warn_if_matches "frontend studyId=0-style fallbacks remain; prefer enabled guards with undefined study ids" "${study_zero_placeholders}"
 
 page_raw_fetch="$(find frontend/src/pages frontend/src/components frontend/src/hooks -type f \( -name '*.ts' -o -name '*.tsx' \) -print0 \
-  | xargs -0 grep -n 'fetch(' 2>/dev/null || true)"
+  | xargs -0 grep -En '(^|[^A-Za-z0-9_])fetch\(' 2>/dev/null || true)"
 allowed_raw_fetch="$(printf '%s\n' "${page_raw_fetch}" \
   | grep -Ev 'ImportManager|ExportCenter|api/client|AuthProvider|FormData|attachments|download|Blob' || true)"
 warn_if_matches "page/component/hooks raw fetch remains; prefer apiClient or typed API modules for ordinary JSON APIs" "${allowed_raw_fetch}"

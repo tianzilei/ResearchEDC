@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   Breadcrumb,
@@ -16,56 +16,49 @@ import {
 } from "antd";
 
 import type { StudyDetail, StudySummaryItem } from "@/types/study";
+import { studyApi } from "@/api/studies";
+import { useAppQuery } from "@/hooks/useQuery";
 
 const { Title, Text } = Typography;
 
 export default function SiteManagement() {
   const { id } = useParams<{ id: string }>();
-  const [study, setStudy] = useState<StudyDetail | null>(null);
-  const [loading, setLoading] = useState(true);
+  const parsedId = id ? Number(id) : undefined;
+  const { data: study, isLoading, refetch } = useAppQuery<StudyDetail | null>({
+    queryKey: ["studies", "detail", parsedId],
+    queryFn: () =>
+      parsedId
+        ? studyApi.getDetail(parsedId)
+        : Promise.resolve(null),
+    enabled: !!parsedId,
+  });
   const [createOpen, setCreateOpen] = useState(false);
   const [form] = Form.useForm();
 
-  const fetchStudy = () => {
-    if (!id) return;
-    fetch(`/api/v1/studies/${id}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => { setStudy(data); setLoading(false); })
-      .catch(() => setLoading(false));
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { fetchStudy(); }, [id]);
-
   const handleCreateSite = async () => {
-    if (!id) return;
+    if (!parsedId) return;
     try {
       const vals = await form.validateFields();
-      const res = await fetch("/api/v1/studies", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: vals.name,
-          uniqueIdentifier: vals.uniqueIdentifier,
-          principalInvestigator: vals.principalInvestigator,
-          facilityName: vals.facilityName,
-          facilityCity: vals.facilityCity,
-          facilityState: vals.facilityState,
-          facilityCountry: vals.facilityCountry,
-          typeId: 2,
-          parentStudyId: Number(id),
-          statusId: 1,
-        }),
+      await studyApi.create({
+        name: vals.name,
+        uniqueIdentifier: vals.uniqueIdentifier,
+        principalInvestigator: vals.principalInvestigator,
+        facilityName: vals.facilityName,
+        facilityCity: vals.facilityCity,
+        facilityState: vals.facilityState,
+        facilityCountry: vals.facilityCountry,
+        typeId: 2,
+        parentStudyId: parsedId,
+        statusId: 1,
       });
-      if (!res.ok) { message.error("Failed to create site"); return; }
       message.success("Site created");
       setCreateOpen(false);
       form.resetFields();
-      fetchStudy();
+      void refetch();
     } catch { void 0; }
   };
 
-  if (loading) {
+  if (isLoading) {
     return <div style={{ display: "flex", justifyContent: "center", padding: 80 }}><Spin size="large" /></div>;
   }
 

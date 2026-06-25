@@ -1,5 +1,6 @@
 import { apiClient } from "@/api/client";
 import type {
+  CreateEventDefinitionRequest,
   EventCrfDTO,
   EventDefinitionDTO,
   ScheduleEventRequest,
@@ -9,6 +10,10 @@ import type {
 export const eventApi = {
   listDefinitions(studyId: number) {
     return apiClient.get<EventDefinitionDTO[]>("/api/v1/events/definitions", { studyId });
+  },
+
+  createDefinition(request: CreateEventDefinitionRequest) {
+    return apiClient.post<EventDefinitionDTO>("/api/v1/events/definitions", request);
   },
 
   listSubjectEvents(studySubjectId: number) {

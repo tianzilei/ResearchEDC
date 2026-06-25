@@ -16,6 +16,14 @@ export interface EventDefinitionDTO {
   status: string;
 }
 
+export interface CreateEventDefinitionRequest {
+  studyId: number;
+  name: string;
+  description?: string;
+  ordinal?: number;
+  category?: string;
+}
+
 export interface StudyEventDTO {
   id: number;
   studyEventDefinitionId: number;

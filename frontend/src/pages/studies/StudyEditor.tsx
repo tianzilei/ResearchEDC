@@ -15,6 +15,8 @@ import {
 } from "antd";
 
 import type { StudyDetail } from "@/types/study";
+import { studyApi } from "@/api/studies";
+import { useAppQuery } from "@/hooks/useQuery";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -23,45 +25,39 @@ export default function StudyEditor() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const parsedId = id ? Number(id) : undefined;
+  const { data, isLoading } = useAppQuery<StudyDetail | null>({
+    queryKey: ["studies", "detail", parsedId],
+    queryFn: () =>
+      parsedId
+        ? studyApi.getDetail(parsedId)
+        : Promise.resolve(null),
+    enabled: !!parsedId,
+  });
 
   useEffect(() => {
-    if (!id) return;
-    setLoading(true);
-    fetch(`/api/v1/studies/${id}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data: StudyDetail | null) => {
-        if (data) {
-          form.setFieldsValue({
-            ...data,
-            datePlannedStart: data.datePlannedStart ?? undefined,
-            datePlannedEnd: data.datePlannedEnd ?? undefined,
-          });
-        }
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [id, form]);
+    if (!data) return;
+    form.setFieldsValue({
+      ...data,
+      datePlannedStart: data.datePlannedStart ?? undefined,
+      datePlannedEnd: data.datePlannedEnd ?? undefined,
+    });
+  }, [data, form]);
 
   const handleSave = async () => {
-    if (!id) return;
+    if (!parsedId) return;
     try {
       const values = await form.validateFields();
       setSaving(true);
-      const res = await fetch(`/api/v1/studies/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      if (!res.ok) { message.error("Failed to update study"); return; }
+      await studyApi.update(parsedId, values);
       message.success("Study updated");
       navigate(`/app/studies/${id}`);
     } catch { void 0; }
     finally { setSaving(false); }
   };
 
-  if (loading) {
+  if (isLoading) {
     return <div style={{ display: "flex", justifyContent: "center", padding: 80 }}><Spin size="large" /></div>;
   }
 

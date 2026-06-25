@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   Breadcrumb,
@@ -15,27 +14,24 @@ import {
 } from "antd";
 
 import { SkeletonPage } from "@/components/SkeletonCard";
-import type { StudyDetail as StudyDetailType, StudySummaryItem } from "@/types/study";
+import type { StudySummaryItem } from "@/types/study";
+import { useAppQuery } from "@/hooks/useQuery";
+import { studyApi } from "@/api/studies";
 
 const { Title, Text } = Typography;
 
 export default function StudyDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [study, setStudy] = useState<StudyDetailType | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!id) return;
-    setLoading(true);
-    fetch(`/api/v1/studies/${id}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        setStudy(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [id]);
+  const parsedId = id ? Number(id) : undefined;
+  const { data: study, isLoading } = useAppQuery({
+    queryKey: ["studies", "detail", parsedId],
+    queryFn: () =>
+      parsedId
+        ? studyApi.getDetail(parsedId)
+        : Promise.resolve(null),
+    enabled: !!parsedId,
+  });
 
   const statusLabel = (status: string) => {
     const map: Record<string, { label: string; cls: string }> = {
@@ -48,7 +44,7 @@ export default function StudyDetail() {
     return map[status?.toLowerCase()] ?? { label: status, cls: "status-default" };
   };
 
-  if (loading) return <SkeletonPage />;
+  if (isLoading) return <SkeletonPage />;
   if (!study) {
     return (
       <Result

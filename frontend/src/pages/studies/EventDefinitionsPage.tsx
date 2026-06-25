@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   Breadcrumb,
@@ -18,51 +18,47 @@ import {
 } from "antd";
 
 import type { EventDefinitionDTO } from "@/types/event";
+import { eventApi } from "@/api/events";
+import { studyApi } from "@/api/studies";
+import { useAppQuery } from "@/hooks/useQuery";
 
 const { Title, Text } = Typography;
 
 export default function EventDefinitionsPage() {
   const { id } = useParams<{ id: string }>();
-  const [definitions, setDefinitions] = useState<EventDefinitionDTO[]>([]);
-  const [studyName, setStudyName] = useState("");
-  const [loading, setLoading] = useState(true);
+  const studyId = id ? Number(id) : undefined;
+  const { data: study, isLoading: loadingStudy } = useAppQuery({
+    queryKey: ["studies", "detail", studyId],
+    queryFn: () =>
+      studyId
+        ? studyApi.getDetail(studyId)
+        : Promise.resolve(null),
+    enabled: !!studyId,
+  });
+  const { data: definitions = [], isLoading: loadingDefinitions, refetch } = useAppQuery<EventDefinitionDTO[]>({
+    queryKey: ["event-definitions", studyId],
+    queryFn: () =>
+      studyId
+        ? eventApi.listDefinitions(studyId)
+        : Promise.resolve([]),
+    enabled: !!studyId,
+  });
   const [createOpen, setCreateOpen] = useState(false);
   const [form] = Form.useForm();
 
-  const fetchData = () => {
-    if (!id) return;
-    setLoading(true);
-    Promise.all([
-      fetch(`/api/v1/studies/${id}`).then(r => r.ok ? r.json() : null),
-      fetch(`/api/v1/events/definitions?studyId=${id}`).then(r => r.ok ? r.json() : []),
-    ]).then(([study, defs]) => {
-      if (study) setStudyName(study.name);
-      setDefinitions(defs);
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { fetchData(); }, [id]);
-
   const handleCreate = async () => {
-    if (!id) return;
+    if (!studyId) return;
     try {
       const vals = await form.validateFields();
-      const res = await fetch("/api/v1/events/definitions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...vals, studyId: Number(id) }),
-      });
-      if (!res.ok) { message.error("Failed to create event definition"); return; }
+      await eventApi.createDefinition({ ...vals, studyId });
       message.success("Event definition created");
       setCreateOpen(false);
       form.resetFields();
-      fetchData();
+      void refetch();
     } catch { void 0; }
   };
 
-  if (loading) {
+  if (loadingStudy || loadingDefinitions) {
     return <div style={{ display: "flex", justifyContent: "center", padding: 80 }}><Spin size="large" /></div>;
   }
 
@@ -84,7 +80,7 @@ export default function EventDefinitionsPage() {
       <Breadcrumb
         items={[
           { title: <Link to="/app/studies">研究</Link> },
-          { title: <Link to={`/app/studies/${id}`}>{studyName || `#${id}`}</Link> },
+          { title: <Link to={`/app/studies/${id}`}>{study?.name ?? `#${id}`}</Link> },
           { title: "事件定义" },
         ]}
         style={{ marginBottom: 16 }}

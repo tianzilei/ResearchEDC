@@ -3,39 +3,21 @@ import { Card, Table, Button, Space, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useCurrentStudy } from "@/hooks/useStudies";
 import { SkeletonPage } from "@/components/SkeletonCard";
+import { useAppQuery } from "@/hooks/useQuery";
+import { studyApi, type StudyListItem } from "@/api/studies";
 
 const { Title, Text } = Typography;
-
-interface StudySummary {
-  studyId: number;
-  name: string;
-  uniqueIdentifier: string | null;
-  phase: string | null;
-  principalInvestigator: string | null;
-  sponsor: string | null;
-  dateCreated: string;
-  expectedTotalEnrollment: number | null;
-  site: boolean;
-  parentStudyId: number | null;
-}
 
 export default function StudyList() {
   const navigate = useNavigate();
   const { setCurrentStudy } = useCurrentStudy();
-  const [studies, setStudies] = useState<StudySummary[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: studies = [], isLoading } = useAppQuery<StudyListItem[]>({
+    queryKey: ["studies", "list"],
+    queryFn: () => studyApi.list(),
+  });
   const [activeTab, setActiveTab] = useState<"studies" | "sites">("studies");
 
-  useState(() => {
-    Promise.all([
-      fetch("/api/v1/studies").then(r => r.ok ? r.json() : []),
-    ]).then(([data]) => {
-      setStudies(data);
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  });
-
-  const handleSelectStudy = (study: StudySummary) => {
+  const handleSelectStudy = (study: StudyListItem) => {
     setCurrentStudy({
       id: study.studyId,
       name: study.name,
@@ -47,7 +29,7 @@ export default function StudyList() {
     navigate("/app/subjects");
   };
 
-  if (loading) return <SkeletonPage />;
+  if (isLoading) return <SkeletonPage />;
 
   const parentStudies = studies.filter(s => !s.site);
   const allSites = studies.filter(s => s.site);
@@ -55,7 +37,7 @@ export default function StudyList() {
   const columns = [
     {
       title: "名称", dataIndex: "name", key: "name",
-      render: (text: string, record: StudySummary) => (
+      render: (text: string, record: StudyListItem) => (
         <a onClick={() => handleSelectStudy(record)}>
           {text}
         </a>
@@ -68,7 +50,7 @@ export default function StudyList() {
     { title: "计划入组", dataIndex: "expectedTotalEnrollment", key: "enrollment", render: (v: number | null) => v ?? "-" },
     {
       title: "", key: "actions",
-      render: (_: unknown, record: StudySummary) => (
+      render: (_: unknown, record: StudyListItem) => (
         <Button size="small" onClick={() => handleSelectStudy(record)}>
           管理受试者
         </Button>

@@ -17,6 +17,7 @@ import {
 import type { Dayjs } from "dayjs";
 
 import { useNavigate } from "react-router-dom";
+import { studyApi } from "@/api/studies";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -577,19 +578,7 @@ export default function StudyWizard() {
         Object.entries(payload).filter(([, v]) => v !== undefined && v !== ""),
       );
 
-      const res = await fetch("/api/v1/studies", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(clean),
-      });
-
-      if (!res.ok) {
-        const errText = await res.text().catch(() => "创建研究失败");
-        message.error(errText || "创建研究失败");
-        return;
-      }
-
-      const data = (await res.json()) as { id?: number; studyId?: number };
+      const data = await studyApi.create(clean);
       const id = data.id ?? data.studyId;
       setCreatedId(id ?? null);
       setSubmitted(true);
