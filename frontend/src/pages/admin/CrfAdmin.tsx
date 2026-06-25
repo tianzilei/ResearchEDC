@@ -1,108 +1,79 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Card, Table, Button, Typography, Space, Modal, List,
   Form, Input, message, Spin, Empty, Popconfirm,
 } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useAppQuery } from "@/hooks/useQuery";
+import { crfManageApi, type CrfManageItem, type CrfVersionManageItem } from "@/api/crfManage";
 
 const { Title, Text } = Typography;
 
-interface CrfItem {
-  crfId: number;
-  name: string;
-  description: string;
-  ocOid: string;
-  status: string;
-  dateCreated: string;
-}
-
-interface CrfVersionItem {
-  crfVersionId: number;
-  crfId: number;
-  name: string;
-  description: string;
-  revisionNotes: string;
-  status: string;
-  dateCreated: string;
+function statusLabel(statusId: number | null | undefined) {
+  return statusId === 1 ? "available" : `status ${statusId ?? "unknown"}`;
 }
 
 export default function CrfAdmin() {
   const navigate = useNavigate();
-  const [crfs, setCrfs] = useState<CrfItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedCrf, setSelectedCrf] = useState<CrfItem | null>(null);
-  const [versions, setVersions] = useState<CrfVersionItem[]>([]);
+  const { data: crfs = [], isLoading, refetch: refetchCrfs } = useAppQuery<CrfManageItem[]>({
+    queryKey: ["crfs", "manage"],
+    queryFn: () => crfManageApi.listCrfs(),
+  });
+  const [selectedCrf, setSelectedCrf] = useState<CrfManageItem | null>(null);
+  const { data: versions = [], isLoading: versionLoading, refetch: refetchVersions } = useAppQuery<CrfVersionManageItem[]>({
+    queryKey: ["crfs", "manage", selectedCrf?.crfId, "versions"],
+    queryFn: () =>
+      selectedCrf
+        ? crfManageApi.listVersions(selectedCrf.crfId)
+        : Promise.resolve([]),
+    enabled: !!selectedCrf,
+  });
   const [versionsOpen, setVersionsOpen] = useState(false);
-  const [versionLoading, setVersionLoading] = useState(false);
 
   const [createCrfOpen, setCreateCrfOpen] = useState(false);
   const [createVersionOpen, setCreateVersionOpen] = useState(false);
   const [crfForm] = Form.useForm();
   const [versionForm] = Form.useForm();
 
-  const fetchCrfs = () => {
-    fetch("/api/v1/crfs/manage")
-      .then(r => r.ok ? r.json() : [])
-      .then(data => { setCrfs(data); setLoading(false); })
-      .catch(() => setLoading(false));
-  };
-
-  useEffect(() => { fetchCrfs(); }, []);
-
-  const viewVersions = async (crf: CrfItem) => {
+  const viewVersions = (crf: CrfManageItem) => {
     setSelectedCrf(crf);
     setVersionsOpen(true);
-    setVersionLoading(true);
-    try {
-      const res = await fetch(`/api/v1/crfs/manage/${crf.crfId}/versions`);
-      if (res.ok) setVersions(await res.json());
-    } catch { /* ignore */ }
-    setVersionLoading(false);
   };
 
   const handleCreateCrf = async () => {
     try {
       const vals = await crfForm.validateFields();
-      const res = await fetch("/api/v1/crfs/manage", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(vals),
-      });
-      if (!res.ok) { message.error("创建 CRF 失败"); return; }
+      await crfManageApi.createCrf(vals);
       message.success("CRF 已创建");
       setCreateCrfOpen(false);
       crfForm.resetFields();
-      fetchCrfs();
-    } catch { /* validation failed */ }
+      void refetchCrfs();
+    } catch { /* validation or API error */ }
   };
 
   const handleCreateVersion = async () => {
     if (!selectedCrf) return;
     try {
       const vals = await versionForm.validateFields();
-      const res = await fetch(`/api/v1/crfs/manage/${selectedCrf.crfId}/versions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(vals),
-      });
-      if (!res.ok) { message.error("创建版本失败"); return; }
+      await crfManageApi.createVersion(selectedCrf.crfId, vals);
       message.success("版本已创建");
       setCreateVersionOpen(false);
       versionForm.resetFields();
-      viewVersions(selectedCrf);
-    } catch { /* validation failed */ }
+      void refetchVersions();
+    } catch { /* validation or API error */ }
   };
 
   const handleDeleteVersion = async (versionId: number) => {
-    const res = await fetch(`/api/v1/crfs/manage/versions/${versionId}`, {
-      method: "DELETE",
-    });
-    if (!res.ok) { message.error("删除版本失败"); return; }
-    message.success("版本已删除");
-    if (selectedCrf) viewVersions(selectedCrf);
+    try {
+      await crfManageApi.deleteVersion(versionId);
+      message.success("版本已删除");
+      void refetchVersions();
+    } catch {
+      message.error("删除版本失败");
+    }
   };
 
-  if (loading) {
+  if (isLoading) {
     return <div style={{ padding: 80, textAlign: "center" }}><Spin size="large" /></div>;
   }
 
@@ -111,18 +82,18 @@ export default function CrfAdmin() {
       title: "名称", dataIndex: "name", key: "name",
       render: (text: string) => <>{text}</>,
     },
-    { title: "OID", dataIndex: "ocOid", key: "ocOid", render: (v: string) => v || "-" },
+    { title: "OID", dataIndex: "ocOid", key: "ocOid", render: (v: string | null) => v ?? "-" },
     {
-      title: "状态", dataIndex: "status", key: "status",
-      render: (v: string) => <span className={v === "available" ? "status status-success" : "status status-default"}>{v ?? "unknown"}</span>,
+      title: "状态", dataIndex: "statusId", key: "status",
+      render: (v: number | null) => <span className={v === 1 ? "status status-success" : "status status-default"}>{statusLabel(v)}</span>,
     },
     {
       title: "创建时间", dataIndex: "dateCreated", key: "created",
-      render: (d: string) => d ? new Date(d).toLocaleDateString() : "-",
+      render: (d: string | null) => d ? new Date(d).toLocaleDateString() : "-",
     },
     {
       title: "", key: "actions",
-      render: (_: unknown, record: CrfItem) => (
+      render: (_: unknown, record: CrfManageItem) => (
         <Space>
           <Button size="small" onClick={() => viewVersions(record)}>
             版本
@@ -183,7 +154,7 @@ export default function CrfAdmin() {
         </Space>
         {versionLoading ? <div style={{ textAlign: "center", padding: 24 }}><Spin /></div> : (
             versions.length === 0 ? <Empty description="暂无版本" /> : (
-            <List dataSource={versions} renderItem={(v: CrfVersionItem) => (
+            <List dataSource={versions} renderItem={(v: CrfVersionManageItem) => (
               <List.Item
                 actions={[
                   <Button size="small"
@@ -196,8 +167,8 @@ export default function CrfAdmin() {
                 ]}
               >
                 <List.Item.Meta
-                  title={<Space>{v.name} <span className="status status-default">{v.status ?? "unknown"}</span></Space>}
-                  description={v.description || v.revisionNotes || "无描述"}
+                  title={<Space>{v.name} <span className="status status-default">{statusLabel(v.statusId)}</span></Space>}
+                  description={v.description ?? v.revisionNotes ?? "无描述"}
                 />
               </List.Item>
             )} />
