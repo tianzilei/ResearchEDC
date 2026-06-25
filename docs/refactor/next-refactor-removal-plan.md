@@ -1,8 +1,9 @@
 # Next Refactor And Removal Plan
 
-**Updated:** 2026-06-23
-**Status:** retained as a short continuity snapshot. The active master plan is now
-[`refactor-removal-roadmap.md`](./refactor-removal-roadmap.md).
+**Updated:** 2026-06-24
+**Status:** historical continuity snapshot. This file is superseded by
+[`refactor-removal-roadmap.md`](./refactor-removal-roadmap.md) for the completed refactor baseline and
+[`phase-5-platform-upgrade-plan.md`](./phase-5-platform-upgrade-plan.md) for the completed platform upgrade.
 
 ## Snapshot
 
@@ -11,18 +12,12 @@
 - `shared/dao`: `0` files
 - `web/`: deleted
 - `ws/`: absent
-- remaining `shared/`: `13` Java files, all under `shared/bean`
+- remaining `shared/`: `0` Java files
 - shared support/domain/DAO Java packages: `0` files
-- code balance by file count: `5%` shared legacy / `95%` module modern
+- code balance by file count: `0%` shared legacy / `100%` module modern
 
-## Active Next Step
+## Current Posture
 
-The next stage is no longer workflow deletion. It is compatibility strangulation inside `app/` and `shared/`, especially:
+There is no active legacy-refactor next step. Workflow deletion, DAO SPI deletion, shared Java retirement, export productization, and the Phase 5 platform upgrade are complete.
 
-1. DTO/term bean contraction at retained compatibility edges
-2. data-import compatibility model migration
-3. form validation/discrepancy compatibility isolation
-4. module adapter DTO contraction
-5. guard shared support/domain/DAO packages against reintroduction
-
-See [`refactor-removal-roadmap.md`](./refactor-removal-roadmap.md) for sequencing, exit gates, and verification.
+Open new work as a focused plan only when there is a concrete post-upgrade target, such as dependency convergence, verification hardening, or product feature delivery.

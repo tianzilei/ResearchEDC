@@ -1,9 +1,9 @@
 # Remove Legacy Code Plan
 
 **Last updated:** 2026-06-23
-**Document role:** historical baseline and completed-phase evidence. The active roadmap now lives in
+**Document role:** historical baseline and completed-phase evidence. The completed roadmap lives in
 [`refactor-removal-roadmap.md`](./refactor-removal-roadmap.md).
-**Status:** Legacy workflow inventory is **closed**. Tracked workflow progress is **100.0%** (963/963 artifacts removed or closed; 0 active artifacts remain). **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 3 DAO SPI deletion COMPLETE** (`shared/dao` is empty; 0 DAO SPI Java files remain). Shared Java is now reduced to **13 DTO/term bean files**; shared DAO, domain, core, i18n Java support, and exception packages are retired. `Validator` and `ImportCrfDataAdapter` now use app-owned response-set/status validation support instead of direct shared DTO validation helpers. **Phase 5 EXHAUSTED.** Remaining compatibility hardening now lives in app/module code and DTO contraction, not legacy workflow inventory artifacts. Phase 3 ledger status: 0/878 methods module-backed, 878/878 removed (100.0%), 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 0 unused (0.0%).
+**Status:** Legacy workflow inventory is **closed**. Tracked workflow progress is **100.0%** (963/963 artifacts removed or closed; 0 active artifacts remain). **Phase 1 web/ module DELETED** (102 Java files deleted or migrated to app/, entire web/ directory removed). **Phase 3 DAO SPI deletion COMPLETE** (`shared/dao` is empty; 0 DAO SPI Java files remain). Shared Java is now reduced to **0 Java files**; shared bean, DAO, domain, core, i18n Java support, and exception packages are retired. `Validator` and `ImportCrfDataAdapter` now use app-owned response-set/status validation support instead of direct shared DTO validation helpers. **Phase 5 EXHAUSTED.** Remaining compatibility hardening is no longer tracked as legacy workflow inventory work. Phase 3 ledger status: 0/878 methods module-backed, 878/878 removed (100.0%), 0 fallback-SQL, 0 legacy-only, 0 adapter-gap, 0 unused (0.0%).
 
 ## Current Baseline
 

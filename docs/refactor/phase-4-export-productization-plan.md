@@ -2,7 +2,7 @@
 
 **Created:** 2026-06-24
 **Updated:** 2026-06-24
-**Status:** In Progress — 4A ✅, 4B ✅, 4C documented (deferred), 4D ✅
+**Status:** Complete / historical (2026-06-24)
 **Purpose:** define the next execution phase after post-hardening stabilization completed, with focus on export productization, broader verification, and remaining Java 26 tooling follow-up.
 **Predecessor:** `docs/refactor/post-hardening-stabilization-plan.md`
 
@@ -140,7 +140,7 @@ Keep these guardrails in place:
 
 ### Phase 4D: Documentation Promotion
 
-**Goal:** make the completed stabilization phase historical and establish Phase 4 as the active next-step document.
+**Goal:** make the completed stabilization phase historical and establish Phase 4 as the export-productization record.
 
 #### 4D.1 Historicalize Stabilization
 
@@ -188,12 +188,12 @@ Refresh references once the active plan has started landing.
 
 ## Success Criteria
 
-1. there is a single active Phase 4 plan document
+1. there is a single completed Phase 4 plan document
 2. stabilization is clearly marked historical/completed
 3. export UX follow-up is defined in concrete terms
 4. a standard daily verification gate is documented
 5. ArchUnit / Modulith Java 26 warning follow-up is explicitly tracked
 
-## Immediate Next Action
+## Current Posture
 
-Phase 4A-4D are complete. Remaining work: ArchUnit/Modulith version upgrade (deferred until Spring Boot 3.5.x upgrade is feasible).
+Phase 4A-4D are complete. The deferred ArchUnit/Modulith version upgrade was completed in Phase 5.

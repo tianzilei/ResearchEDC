@@ -7,7 +7,7 @@
 > Status note:
 > The refactor/removal program is complete.
 > This document now serves as a baseline/history reference, not the active forward-looking execution plan.
-> The active next-step plan is [`phase-5-platform-upgrade-plan.md`](./phase-5-platform-upgrade-plan.md).
+> Phase 5 platform upgrade is also complete; open new work as a focused plan only when there is a concrete post-upgrade target.
 
 ## Current Verified State
 
@@ -21,7 +21,7 @@
 - Modulith Java surface: `397` files
 - Code balance by file count: `0%` shared legacy / `100%` module modern
 
-This means the workflow-level deletion program is complete. The remaining work is **compatibility strangulation inside `app/` and `shared/`**, not more `web/` or DAO SPI cleanup. With `shared/src/main/java` now at 0 Java files, the strangulation is effectively complete — only resource-only files remain in `shared/`.
+This means the workflow-level deletion program is complete. Compatibility strangulation inside `app/` and `shared/` is also complete for the tracked scope: `shared/src/main/java` is at 0 Java files and only resource-only files remain in `shared/`.
 
 ## Post-Hardening Stabilization (2026-06-24)
 
@@ -50,11 +50,11 @@ mvn -pl app -am test -Dtest=ExportServiceTest,OdmExportExecutionServiceTest,OdmE
 | Document | Role |
 |---|---|
 | `README.md` | Directory index and maintenance rules |
-| `refactor-removal-roadmap.md` | Active roadmap |
+| `refactor-removal-roadmap.md` | Historical refactor/removal baseline |
 | `remove-legacy-code-plan.md` | Baseline and completed-phase evidence |
 | `legacy-workflow-inventory.{md,csv}` | Generated proof that workflow inventory is closed |
 | `phase-3-dao-replacement-ledger.{md,csv}` | Generated proof that DAO SPI deletion is complete |
-| `phase-1-email-field-removal-plan.md` | Active focused follow-up slice |
+| `phase-1-email-field-removal-plan.md` | Historical compatibility email/contact cleanup slice |
 
 ## Remaining Legacy Surface
 
@@ -296,7 +296,7 @@ They should not be treated as the current forward-looking engineering plan unles
 1. New compatibility code must use module-owned ports, repositories, and app/module-local support types.
 2. Do not add new code to `shared/` unless it is a temporary extraction waypoint with a documented removal reason.
 3. Keep `legacy-workflow-inventory.{md,csv}` and `phase-3-dao-replacement-ledger.{md,csv}` as evidence, not planning surfaces.
-4. Prefer one active roadmap and small focused follow-up plans over multiple competing master plans.
+4. Prefer one focused plan for any newly opened work; keep completed roadmap files historical.
 
 ## Verification
 
@@ -321,7 +321,7 @@ Add targeted backend/frontend tests whenever a compatibility boundary is narrowe
 ## Phase 4: Export Productization
 
 **Plan:** `docs/refactor/phase-4-export-productization-plan.md`
-**Status:** Active — Phase 4A ✅, 4B ✅, 4C documented, 4D in progress
+**Status:** Complete / historical (2026-06-24)
 
 ### Completed
 
@@ -338,14 +338,13 @@ Add targeted backend/frontend tests whenever a compatibility boundary is narrowe
   - `scripts/ci/daily-gauntlet.sh` created with 6 checks: git status, frontend lint, frontend typecheck, modulith verification, import tests, export backend tests
   - Follows existing `scripts/ci/` conventions
 
-- **4C ⚠️ Java 26 Toolchain Hardening:**
-  - ArchUnit 1.1.1 (via Modulith 1.1.4) emits `Unsupported class file major version 70` warnings for JDK classes — non-fatal, test passes
-  - Upgrade to Modulith 1.4.1/ArchUnit 1.4.1 requires Spring Boot 3.2.5 → 3.5.x — tracked as deferred follow-up
-  - Explicit Mockito/Surefire toolchain ownership preserved
+- **4C Java 26 Toolchain Hardening:**
+  - ArchUnit / Modulith warning debt was documented during Phase 4 and resolved as the Phase 5 platform-upgrade target.
+  - Explicit Mockito/Surefire toolchain ownership preserved.
 
 ### Known Limitations
 
-- ArchUnit JDK import warnings (non-fatal) — requires Spring Boot major version bump to resolve
+- None active in this roadmap. Phase 5 completed the aligned Spring Boot / Modulith / ArchUnit upgrade.
 
 ## Phase 5: Platform Upgrade ✅
 

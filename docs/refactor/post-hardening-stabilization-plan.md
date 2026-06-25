@@ -303,6 +303,6 @@ Reason:
 4. Artifact creation, failure persistence, and download behavior are regression-covered.
 5. Refactor/stabilization docs describe the verified post-fix baseline.
 
-## Immediate Next Action
+## Historical Next Action
 
 Start with **Phase 3A: confirm the recovered test baseline**, then move directly into **Phase 3B: ODM schema validation tests**.

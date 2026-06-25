@@ -96,7 +96,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | i18n strings | `shared/.../i18n/*.properties` | 6 种语言 |
 | Legacy DAO XML | retired | Old `shared/src/main/resources/properties/*_dao.xml` maps are removed; active SQL lives in module repositories/adapters or `queries/<db>/**/*.properties` |
 | Bare deploy | `deploy.sh` | single host deployment entry point |
-| Legacy removal roadmap | `docs/refactor/refactor-removal-roadmap.md` | Current source of truth for remaining refactor/removal work |
+| Legacy removal roadmap | `docs/refactor/refactor-removal-roadmap.md` | Historical source of truth for completed refactor/removal work |
 | SPA fallback config | `app/.../config/WebMvcConfig.java` | `/app/**` -> React index.html |
 
 ## CONVENTIONS
@@ -257,7 +257,7 @@ python -m pytest app/tests/ -v
 - **StudyGroupClassRepository** enhanced with 4 native SQL queries (`findByStudyOrChildStudy`, `findByStudyOrChildStudyAndStatus`).
 - **PostgreSQL validation:** completed on disposable databases. `shared/src/main/resources/migration/master.xml` applied cleanly, `scripts/ci/check-phase-b-postgres.sh` verifies the 54 Phase B sync functions/triggers plus retired-email neutralization triggers, representative bidirectional insert/update/delete sync for `study`, `filter`, and `discrepancy_note`, and repeated update convergence without recursion loops.
 - **Discrepancy-note migration fix:** legacy `discrepancy_note` has no `entity_id`; Phase B copy/sync now stores `NULL AS entity_id` module-side and omits that column when writing back to legacy.
-- **Remaining Phase B work:** none. Workflow-level deletion is complete; the next work is compatibility strangulation inside `app/` and `shared/`, tracked in `docs/refactor/refactor-removal-roadmap.md`.
+- **Remaining Phase B work:** none. Workflow-level deletion and tracked compatibility strangulation are complete; `docs/refactor/refactor-removal-roadmap.md` is now historical baseline.
 - **Verification:** `bash scripts/ci/check-phase-b-migrations.sh` ✅ | full Liquibase PostgreSQL update ✅ | `scripts/ci/check-phase-b-postgres.sh` ✅ | commit `0963eec2c`
 
 ## SUBMODULE REFERENCES
@@ -266,6 +266,6 @@ python -m pytest app/tests/ -v
 - [app/AGENTS.md](./app/AGENTS.md) — Spring Boot entry point, config, and Modulith modules
 - [frontend/AGENTS.md](./frontend/AGENTS.md) — React 19 SPA (TypeScript, Vite, Ant Design)
 - [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) — Python FastAPI microservice
-- [Refactor And Removal Roadmap](./docs/refactor/refactor-removal-roadmap.md) — Active master plan for remaining legacy reduction
+- [Refactor And Removal Roadmap](./docs/refactor/refactor-removal-roadmap.md) — Historical baseline for completed legacy reduction
 - [Remove Legacy Code Plan](./docs/refactor/remove-legacy-code-plan.md) — Historical baseline and completed-phase evidence
-- [Next Refactor And Removal Plan](./docs/refactor/next-refactor-removal-plan.md) — Short continuity snapshot retained alongside the active roadmap
+- [Next Refactor And Removal Plan](./docs/refactor/next-refactor-removal-plan.md) — Historical continuity snapshot retained alongside the baseline

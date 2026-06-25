@@ -323,7 +323,7 @@ After hard blockers are gone:
 - top-level project docs reflect current capabilities and counts
 - verification commands pass for the delivered slices
 
-## Immediate Next Action
+## Historical Next Action
 
 Start with **Phase 1: Export Execution Minimum Slice**.
 
