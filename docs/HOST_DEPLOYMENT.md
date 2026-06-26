@@ -1,6 +1,7 @@
 # ResearchEDC Bare Deploy Guide
 
-Bare deploy is the only supported deploy method in this repository. It runs services directly on the host without Docker.
+Bare deploy is the only supported deploy method in this repository. It runs the
+services directly on the host without Docker.
 
 ## 前置要求
 
@@ -31,7 +32,7 @@ bash deploy.sh start
 
 | 服务 | 端口 | 说明 |
 |------|------|------|
-| App | 8080 | Spring Boot 内嵌 Tomcat (React SPA + Legacy JSP + REST/OpenRosa APIs) |
+| App | 8080 | Spring Boot embedded Tomcat (React SPA + REST/OpenRosa APIs) |
 | Questionnaire | 8000 | Python FastAPI |
 
 ## 管理命令

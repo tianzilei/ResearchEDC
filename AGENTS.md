@@ -96,6 +96,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | Legacy DAO XML | retired | Old `shared/src/main/resources/properties/*_dao.xml` maps are removed; active SQL lives in module repositories/adapters or `queries/<db>/**/*.properties` |
 | Bare deploy | `deploy.sh` | single host deployment entry point |
 | Legacy removal roadmap | `docs/refactor/refactor-removal-roadmap.md` | Historical source of truth for completed refactor/removal work |
+| Refactor summary | `docs/refactor/final-refactor-summary.md` | Short summary of the completed refactor/removal program |
 | Post-refactor convergence plans | `docs/edc-convergence/` | Next prepared product audit and EDC usability convergence workstream |
 | SPA fallback config | `app/.../config/WebMvcConfig.java` | `/app/**` -> React index.html |
 
@@ -267,6 +268,7 @@ python -m pytest app/tests/ -v
 - [frontend/AGENTS.md](./frontend/AGENTS.md) — React 19 SPA (TypeScript, Vite, Ant Design)
 - [questionnaire-service/AGENTS.md](./questionnaire-service/AGENTS.md) — Python FastAPI microservice
 - [Refactor And Removal Roadmap](./docs/refactor/refactor-removal-roadmap.md) — Historical baseline for completed legacy reduction
+- [Final Refactor Summary](./docs/refactor/final-refactor-summary.md) — Concise summary of the completed refactor/removal program
 - [Remove Legacy Code Plan](./docs/refactor/remove-legacy-code-plan.md) — Historical baseline and completed-phase evidence
 - [Next Refactor And Removal Plan](./docs/refactor/next-refactor-removal-plan.md) — Historical continuity snapshot retained alongside the baseline
 - [EDC Convergence Docs](./docs/edc-convergence/README.md) — Prepared next-phase product audit and usability convergence entry point

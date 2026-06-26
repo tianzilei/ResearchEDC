@@ -13,6 +13,13 @@
 - Added `docs/edc-convergence/README.md`, `docs/edc-convergence/phase-0-full-product-audit-plan.md`, and `docs/edc-convergence/phase-1-edc-usability-convergence-plan.md` as the prepared post-refactor audit and usability-convergence entry point.
 - Synchronized convergence references in `AGENTS.md` and the convergence docs so the next workstream starts from the audit plan rather than reopening refactor cleanup.
 
+## 2026-06-27 - Simplify repository docs and refactor entry points
+
+- Rewrote `README.md` into a shorter current-state overview with a lean architecture summary, updated verification commands, and direct links to the next active planning area.
+- Added `docs/refactor/final-refactor-summary.md` as the short-form outcome document for the completed refactor/removal effort, keeping the larger phase documents as archive/reference material.
+- Simplified `docs/refactor/README.md` so it clearly acts as an archive index instead of another long-form status narrative.
+- Updated `docs/SETUP.md`, `docs/HOST_DEPLOYMENT.md`, and `AGENTS.md` references to the post-refactor baseline and current verification flow.
+
 ## 2026-06-24 - Remove retired Status dropdown caches
 
 - Removed no-caller JSP-era dropdown/list arrays and the redundant status-id map from `Status`.

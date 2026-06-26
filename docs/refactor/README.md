@@ -1,20 +1,20 @@
 # Refactor Docs Index
 
-**Updated:** 2026-06-26
+**Updated:** 2026-06-27
 
-This directory contains historical refactor plans plus supporting baseline, ledger, and slice documents.
-Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed, `web/` and `ws/` absent, `shared/src/main/java` reduced to `0` Java files, platform upgraded to Spring Boot 3.5.2 / Modulith 1.4.1, and dependency drift converged.
+This directory is now an archive of the completed refactor/removal program.
 
-**Refactor closure:** `phase-18-post-cleanup-verification-baseline-plan.md` completed the final post-cleanup verification baseline on 2026-06-26. The refactor/removal program is now closed and historical.
+If you only need the outcome, start with `final-refactor-summary.md` instead of
+reading the whole phase history.
 
-**Next planning directory:** `docs/edc-convergence/` - prepared for the first
-post-refactor product-convergence phases once we explicitly start the audit and
-convergence workstream.
+The refactor/removal program is closed and historical. Active planning has
+moved to `docs/edc-convergence/`.
 
 ## Primary Entry Points
 
 | Document | Role | Status |
 |---|---|---|
+| `final-refactor-summary.md` | Concise summary of the completed refactor/removal work and the retained archive map | Primary summary |
 | `refactor-removal-roadmap.md` | Historical baseline and verification record for completed legacy refactor/removal work | Baseline / reference |
 | `remove-legacy-code-plan.md` | Historical baseline, completed phases, and deletion evidence | Baseline / reference |
 | `legacy-workflow-inventory.{md,csv}` | Generated inventory showing the workflow-level legacy surface | Generated evidence |
@@ -40,9 +40,10 @@ convergence workstream.
 | `phase-18-post-cleanup-verification-baseline-plan.md` | Post-cleanup verification baseline: close Phase 17, run verification, and avoid RC/tag/release work | Complete / historical |
 | `post-cleanup-hardening-and-backlog-plan.md` | Forward plan for Phase 19+ hardening and product backlog sequencing after Phase 18 | Draft / reference |
 
-## Historical Phase Documents
+## Archive Guidance
 
-These documents remain valuable as slice history, but they are completed or historical - not the current execution plan:
+These documents remain valuable as evidence, but they are archive material, not
+the current execution plan:
 
 | Document Pattern | Role |
 |---|---|
