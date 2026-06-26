@@ -1,7 +1,7 @@
 # Phase 18 Post-Cleanup Verification Baseline Plan
 
 **Created:** 2026-06-26
-**Status:** Active
+**Status:** Complete / historical
 **Predecessor:** `docs/refactor/phase-17-worktree-cleanup-plan.md`
 **Release posture:** no RC tag, no release artifact, no push/publish action
 
@@ -100,17 +100,38 @@ Exit gate:
 
 ## Verification Record
 
-To be filled during Phase 18 execution.
+Completed on 2026-06-26. Verification was run after confirming that the only
+observed worktree deltas were documentation changes for the Phase 18 closure and
+the prepared `docs/edc-convergence/` follow-up plans. The verification commands
+did not introduce additional tracked source churn.
 
 | Check | Result | Notes |
 |---|---|---|
-| `git status --short --branch` | Pending | Must be clean before verification |
-| Modulith verification | Pending |  |
-| ODM export tests | Pending |  |
-| frontend typecheck | Pending |  |
-| frontend lint | Pending |  |
-| frontend tests | Pending |  |
-| questionnaire pytest | Pending |  |
+| `git status --short --branch` | Observed | `master...origin/master [ahead 2]`; `docs/refactor/README.md` modified and `docs/edc-convergence/` untracked as documentation-only Phase 18 / next-workstream changes |
+| local commits ahead of `origin/master` | Pass | `HEAD` remained 2 commits ahead of `origin/master`; no publication action taken |
+| repository-local Git identity | Pass | `Zilei Tian <tianzilei@live.com>` |
+| Modulith verification | Pass | `mvn test -pl app -am -Dtest=ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` -> 1/0/0 |
+| ODM export tests | Pass | `mvn test -pl app -am -Dtest=OdmExportGeneratorTest,ExportArtifactWriterTest -Dsurefire.failIfNoSpecifiedTests=false` -> 26/0/0 |
+| frontend typecheck | Pass | `pnpm -C frontend typecheck` |
+| frontend lint | Pass | `pnpm -C frontend lint` |
+| frontend tests | Pass | `pnpm -C frontend test --run` -> 25/25 |
+| questionnaire pytest | Pass | `uv run python -m pytest app/tests/ -v` -> 40/40 |
+
+Frontend verification initially hit sandboxed network/dependency-metadata
+resolution limits, and questionnaire verification initially hit sandboxed `uv`
+cache access. Both were rerun with explicit approval and completed
+successfully.
+
+## Handoff Decision
+
+Chosen path: keep local commits unpublished and treat the next workstream as a
+separate activation decision.
+
+Recommended next step:
+
+1. keep the refactor/removal program closed
+2. start `docs/edc-convergence/phase-0-full-product-audit-plan.md` when we are
+   ready to begin post-refactor product convergence
 
 ## Risks
 
@@ -124,7 +145,7 @@ To be filled during Phase 18 execution.
 ## Success Criteria
 
 1. Phase 17 is complete/historical.
-2. Phase 18 is active in the refactor docs index.
-3. verification results are recorded.
-4. no RC/tag/release action occurs.
-5. the next phase is either Phase 19 hardening or an explicitly approved publication/release action.
+2. Phase 18 verification results are recorded and the plan is now historical.
+3. no RC/tag/release action occurred.
+4. the next workstream is an explicit convergence-phase activation, not an
+   implicit refactor reopening.

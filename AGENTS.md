@@ -12,7 +12,7 @@ ResearchEDC is an independently maintained research electronic data capture (EDC
 New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, and legacy Java code has been **fully removed** — `shared/src/main/java` contains 0 Java files (no `shared/dao`, `shared/domain`, `shared/bean`, `shared/core`, `shared/exception`, or `shared/i18n` Java support remain). All module adapters now use module-owned DTOs. `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and needed import/validation classes were migrated to `app/`, with later dead leftovers removed. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; ODM contract versioning (OC2-0 compatibility / OC2-1 email-free) completed 2026-06-24.
 
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | `OdmExportGeneratorTest` 21/21 ✅ | **Refactor progress 100.0%** ✅ | **Phase 3 DAO ledger 878/878 removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 40/40 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 435/435** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet retired** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅** | **ODM contract versioning ✅ (OC2-0 frozen, OC2-1 email-free)** | **All Workstreams 1-6 ✅ COMPLETE** | **Build stabilization ✅ (DBCP→HikariCP, Quartz removed, Joda→java.time, Modulith boundary fixed)** | **Phase 8: Event context hardening ✅** | **Phase 9: Technical debt burndown ✅ COMPLETE** | **Phase 11: Contract correctness ✅ COMPLETE** | **Phase 12: OpenAPI + architecture transition ✅ COMPLETE** | **Phase 13: Release stabilization ✅ COMPLETE** | **Phase 14: Release candidate cutover ✅ COMPLETE** | **Phase 15: RC tagging deferred ✅** | **Phase 16: Non-release engineering ✅ COMPLETE** | **Phase 17: Worktree cleanup ✅ COMPLETE** | **Phase 18: Post-cleanup verification baseline ACTIVE**
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | `OdmExportGeneratorTest` 21/21 ✅ | **Refactor progress 100.0%** ✅ | **Phase 3 DAO ledger 878/878 removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 40/40 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 435/435** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet retired** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅** | **ODM contract versioning ✅ (OC2-0 frozen, OC2-1 email-free)** | **All Workstreams 1-6 ✅ COMPLETE** | **Build stabilization ✅ (DBCP→HikariCP, Quartz removed, Joda→java.time, Modulith boundary fixed)** | **Phase 8: Event context hardening ✅** | **Phase 9: Technical debt burndown ✅ COMPLETE** | **Phase 11: Contract correctness ✅ COMPLETE** | **Phase 12: OpenAPI + architecture transition ✅ COMPLETE** | **Phase 13: Release stabilization ✅ COMPLETE** | **Phase 14: Release candidate cutover ✅ COMPLETE** | **Phase 15: RC tagging deferred ✅** | **Phase 16: Non-release engineering ✅ COMPLETE** | **Phase 17: Worktree cleanup ✅ COMPLETE** | **Phase 18: Post-cleanup verification baseline ✅ COMPLETE** | **EDC convergence plans prepared ✅**
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 ✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
@@ -51,7 +51,8 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 ├── deploy.sh                # Single bare host deploy shell
 ├── pom.xml                  # Maven parent
 ├── docs/                    # Documentation
-│   └── refactor/            # Refactoring plans & baseline
+│   ├── refactor/            # Historical refactor/removal plans & closure baseline
+│   └── edc-convergence/     # Next prepared post-refactor product audit / convergence plans
 ├── research-edc-bom/        # Maven BOM version management
 ├── scripts/                 # CI helper scripts
 ├── shared/                  # 共享模块 (AGENTS.md)
@@ -95,6 +96,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | Legacy DAO XML | retired | Old `shared/src/main/resources/properties/*_dao.xml` maps are removed; active SQL lives in module repositories/adapters or `queries/<db>/**/*.properties` |
 | Bare deploy | `deploy.sh` | single host deployment entry point |
 | Legacy removal roadmap | `docs/refactor/refactor-removal-roadmap.md` | Historical source of truth for completed refactor/removal work |
+| Post-refactor convergence plans | `docs/edc-convergence/` | Next prepared product audit and EDC usability convergence workstream |
 | SPA fallback config | `app/.../config/WebMvcConfig.java` | `/app/**` -> React index.html |
 
 ## CONVENTIONS
@@ -267,3 +269,4 @@ python -m pytest app/tests/ -v
 - [Refactor And Removal Roadmap](./docs/refactor/refactor-removal-roadmap.md) — Historical baseline for completed legacy reduction
 - [Remove Legacy Code Plan](./docs/refactor/remove-legacy-code-plan.md) — Historical baseline and completed-phase evidence
 - [Next Refactor And Removal Plan](./docs/refactor/next-refactor-removal-plan.md) — Historical continuity snapshot retained alongside the baseline
+- [EDC Convergence Docs](./docs/edc-convergence/README.md) — Prepared next-phase product audit and usability convergence entry point

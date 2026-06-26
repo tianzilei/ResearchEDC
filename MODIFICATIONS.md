@@ -6,6 +6,13 @@
 
 ---
 
+## 2026-06-26 - Close refactor Phase 18 and prepare convergence docs
+
+- Recorded the final Phase 18 verification baseline in `docs/refactor/phase-18-post-cleanup-verification-baseline-plan.md`, including current `git status` context, local-ahead state, Git identity, backend/frontend/questionnaire verification results, and the no-publish handoff decision.
+- Updated `docs/refactor/README.md` and root `AGENTS.md` so the refactor/removal program is explicitly closed and historical, with Phase 18 marked complete instead of active.
+- Added `docs/edc-convergence/README.md`, `docs/edc-convergence/phase-0-full-product-audit-plan.md`, and `docs/edc-convergence/phase-1-edc-usability-convergence-plan.md` as the prepared post-refactor audit and usability-convergence entry point.
+- Synchronized convergence references in `AGENTS.md` and the convergence docs so the next workstream starts from the audit plan rather than reopening refactor cleanup.
+
 ## 2026-06-24 - Remove retired Status dropdown caches
 
 - Removed no-caller JSP-era dropdown/list arrays and the redundant status-id map from `Status`.
