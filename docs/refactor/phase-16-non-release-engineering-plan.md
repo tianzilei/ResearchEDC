@@ -1,7 +1,7 @@
 # Phase 16 Non-Release Engineering Plan
 
 **Created:** 2026-06-26
-**Status:** Active
+**Status:** Complete
 **Predecessor:** `docs/refactor/phase-15-rc-tagging-and-handoff-plan.md`
 **Basis:** User decision on 2026-06-26 to defer RC tagging/release, Phase 15 gate evidence, and current dirty-worktree review
 
@@ -162,7 +162,7 @@ Exit gate:
 
 ## Success Criteria
 
-1. Phase 16 is the active non-release engineering plan.
+1. Phase 16 was the active non-release engineering plan and is now complete.
 2. Phase 15 is clearly deferred/complete with no RC tag created.
 3. dirty-worktree categories are known before new functional commits.
 4. randomization generated-type pilot is scoped and verified.
@@ -210,7 +210,7 @@ Post-RC backlog (non-blocking):
 
 ## Success Criteria
 
-1. ✅ Phase 16 is the active non-release engineering plan.
+1. ✅ Phase 16 was the active non-release engineering plan and is now complete.
 2. ✅ Phase 15 is complete; no RC tag created.
 3. ✅ Dirty-worktree categories known (line-ending churn + pre-existing refactoring churn).
 4. ✅ Randomization generated-type pilot complete: spec + generated.ts + frontend checks pass.
