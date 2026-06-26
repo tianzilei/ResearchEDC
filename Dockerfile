@@ -19,8 +19,6 @@ RUN mvn install:install-file \
 COPY pom.xml ./
 COPY research-edc-bom/ research-edc-bom/
 COPY shared/ shared/
-COPY web/ web/
-COPY ws/ ws/
 COPY app/ app/
 RUN rm -rf app/src/main/resources/static/
 COPY --from=frontend /build/frontend/dist/ app/src/main/resources/static/

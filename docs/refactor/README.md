@@ -5,7 +5,7 @@
 This directory contains historical refactor plans plus supporting baseline, ledger, and slice documents.
 Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed, `web/` and `ws/` absent, `shared/src/main/java` reduced to `0` Java files, platform upgraded to Spring Boot 3.5.2 / Modulith 1.4.1, and dependency drift converged.
 
-**Active plan:** `phase-13-release-stabilization-and-readiness-plan.md` - full-suite stabilization, Java 21 toolchain reproducibility, generated-contract workflow, legacy-removal aftercare, and release candidate readiness.
+**Active plan:** `phase-14-release-candidate-cutover-plan.md` - release-candidate gate consolidation, deploy/runtime cutover review, generated-contract expansion policy, dirty-worktree classification, and tag-readiness evidence.
 
 ## Primary Entry Points
 
@@ -28,7 +28,8 @@ Current source snapshot: workflow inventory closed, DAO SPI ledger fully removed
 | `phase-10-api-contract-and-compatibility-retirement-readiness-plan.md` | API contract readiness, typed API pilot, raw fetch cleanup, and legacy compatibility ledger | Complete / historical |
 | `phase-11-contract-correctness-and-architecture-prep-plan.md` | Contract correctness, placeholder identity cleanup, guardrail tightening, and architecture readiness | Complete / historical |
 | `phase-12-openapi-and-architecture-transition-plan.md` | OpenAPI type generation, LegacyCrfAdapter replacement planning, compatibility retirement, and bounded architecture transition | Complete / historical |
-| `phase-13-release-stabilization-and-readiness-plan.md` | Full-suite stabilization, Java 21 toolchain reproducibility, generated-contract workflow, legacy-removal aftercare, and release candidate readiness | Active |
+| `phase-13-release-stabilization-and-readiness-plan.md` | Full-suite stabilization, Java 21 toolchain reproducibility, generated-contract workflow, legacy-removal aftercare, and release candidate readiness | Complete / historical |
+| `phase-14-release-candidate-cutover-plan.md` | Release-candidate gate consolidation, deploy/runtime cutover review, generated-contract expansion policy, dirty-worktree classification, and tag-readiness evidence | Complete |
 
 ## Historical Phase Documents
 
