@@ -132,6 +132,198 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/randomization/schemes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listSchemes"];
+        put?: never;
+        post: operations["createScheme"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/randomization/schemes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getScheme"];
+        put: operations["updateScheme"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/randomization/schemes/{id}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["activateScheme"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/randomization/schemes/{id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["closeScheme"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/randomization/randomize": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["randomize"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/randomization/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listAssignments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/randomization/assignments/{schemeId}/subject/{studySubjectId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAssignment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/randomization/unblinding/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["requestUnblinding"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/randomization/unblinding/{requestId}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["reviewUnblinding"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/randomization/unblinding/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listUnblindingRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/randomization/unblinding/pending": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listPendingRequests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/randomization/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAuditLogs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -198,6 +390,129 @@ export interface components {
         CreateFilterRequest: {
             name: string;
             description?: string;
+        };
+        /** @enum {string} */
+        RandomizationAlgorithm: "SIMPLE" | "BLOCK" | "STRATIFIED_BLOCK";
+        /** @enum {string} */
+        SchemeStatus: "DRAFT" | "ACTIVE" | "PAUSED" | "CLOSED";
+        /** @enum {string} */
+        StratumType: "ENUM" | "INTERVAL";
+        /** @enum {string} */
+        AssignmentStatus: "ACTIVE" | "UNBLINDED" | "REVOKED";
+        /** @enum {string} */
+        UnblindingStatus: "PENDING" | "APPROVED" | "REJECTED";
+        /** @enum {string} */
+        AuditAction: "SCHEME_CREATED" | "SCHEME_UPDATED" | "SCHEME_ACTIVATED" | "SCHEME_CLOSED" | "SUBJECT_RANDOMIZED" | "UNBLINDING_REQUESTED" | "UNBLINDING_APPROVED" | "UNBLINDING_REJECTED";
+        ArmDTO: {
+            /** Format: int64 */
+            id?: number | null;
+            name: string;
+            displayName?: string | null;
+            ratio: number;
+            orderNumber: number;
+        };
+        StratumOptionDTO: {
+            /** Format: int64 */
+            id?: number | null;
+            label: string;
+            value: string;
+            orderNumber?: number | null;
+        };
+        StratumDTO: {
+            /** Format: int64 */
+            id?: number | null;
+            name: string;
+            stratumType: components["schemas"]["StratumType"];
+            orderNumber: number;
+            options: components["schemas"]["StratumOptionDTO"][];
+        };
+        SchemeDTO: {
+            /** Format: int64 */
+            id?: number | null;
+            studyId: number;
+            name: string;
+            algorithm: components["schemas"]["RandomizationAlgorithm"];
+            status?: components["schemas"]["SchemeStatus"];
+            /** Format: int64 */
+            seed?: number | null;
+            minBlockSize?: number | null;
+            maxBlockSize?: number | null;
+            arms: components["schemas"]["ArmDTO"][];
+            stratifications: components["schemas"]["StratumDTO"][];
+            /** Format: int64 */
+            totalAssigned: number;
+            /** Format: int64 */
+            totalArms: number;
+        };
+        SchemeSummaryDTO: {
+            /** Format: int64 */
+            id: number;
+            studyId: number;
+            name: string;
+            algorithm: components["schemas"]["RandomizationAlgorithm"];
+            status: components["schemas"]["SchemeStatus"];
+            /** Format: int64 */
+            totalAssigned: number;
+            totalArms: number;
+        };
+        RandomizeRequest: {
+            /** Format: int64 */
+            schemeId: number;
+            studySubjectId: number;
+            assignedBy?: number | null;
+            stratumValues?: {
+                [key: string]: string;
+            };
+        };
+        AssignmentDTO: {
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            schemeId: number;
+            studySubjectId: number;
+            subjectKey?: string | null;
+            /** Format: int64 */
+            armId: number;
+            armName: string;
+            stratumPath?: string | null;
+            status: components["schemas"]["AssignmentStatus"];
+            /** Format: date-time */
+            assignedDate?: string | null;
+            assignedBy?: number | null;
+        };
+        UnblindingRequestDTO: {
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            assignmentId: number;
+            armName?: string | null;
+            subjectKey?: string | null;
+            requestedBy: number;
+            /** Format: date-time */
+            requestedDate?: string | null;
+            reason?: string | null;
+            status: components["schemas"]["UnblindingStatus"];
+            reviewedBy?: number | null;
+            /** Format: date-time */
+            reviewedDate?: string | null;
+            reviewNotes?: string | null;
+        };
+        AuditLogDTO: {
+            /** Format: int64 */
+            id: number;
+            /** Format: int64 */
+            schemeId?: number | null;
+            studyId?: number | null;
+            action: components["schemas"]["AuditAction"];
+            entityType?: string | null;
+            /** Format: int64 */
+            entityId?: number | null;
+            oldValue?: string | null;
+            newValue?: string | null;
+            performedBy?: number | null;
+            /** Format: date-time */
+            performedDate: string;
+            details?: string | null;
         };
     };
     responses: never;
@@ -454,6 +769,322 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FilterDTO"];
+                };
+            };
+        };
+    };
+    listSchemes: {
+        parameters: {
+            query: {
+                studyId: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of randomization schemes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SchemeSummaryDTO"][];
+                };
+            };
+        };
+    };
+    createScheme: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SchemeDTO"];
+            };
+        };
+        responses: {
+            /** @description Created scheme */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SchemeDTO"];
+                };
+            };
+        };
+    };
+    getScheme: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scheme details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SchemeDTO"];
+                };
+            };
+        };
+    };
+    updateScheme: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SchemeDTO"];
+            };
+        };
+        responses: {
+            /** @description Updated scheme */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SchemeDTO"];
+                };
+            };
+        };
+    };
+    activateScheme: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scheme activated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    closeScheme: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Scheme closed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    randomize: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RandomizeRequest"];
+            };
+        };
+        responses: {
+            /** @description Assignment created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignmentDTO"];
+                };
+            };
+        };
+    };
+    listAssignments: {
+        parameters: {
+            query: {
+                schemeId: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of assignments */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignmentDTO"][];
+                };
+            };
+        };
+    };
+    getAssignment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                schemeId: number;
+                studySubjectId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Assignment details */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssignmentDTO"];
+                };
+            };
+        };
+    };
+    requestUnblinding: {
+        parameters: {
+            query: {
+                assignmentId: number;
+                reason?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Unblinding request created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnblindingRequestDTO"];
+                };
+            };
+        };
+    };
+    reviewUnblinding: {
+        parameters: {
+            query: {
+                decision: components["schemas"]["UnblindingStatus"];
+                reviewNotes?: string;
+            };
+            header?: never;
+            path: {
+                requestId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Reviewed unblinding request */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnblindingRequestDTO"];
+                };
+            };
+        };
+    };
+    listUnblindingRequests: {
+        parameters: {
+            query: {
+                schemeId: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of unblinding requests */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnblindingRequestDTO"][];
+                };
+            };
+        };
+    };
+    listPendingRequests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of pending unblinding requests */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnblindingRequestDTO"][];
+                };
+            };
+        };
+    };
+    getAuditLogs: {
+        parameters: {
+            query?: {
+                schemeId?: number;
+                studyId?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of audit logs */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditLogDTO"][];
                 };
             };
         };

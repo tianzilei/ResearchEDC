@@ -156,6 +156,200 @@
           }
         }
       }
+    },
+    "/api/v1/randomization/schemes": {
+      "get": {
+        "operationId": "listSchemes",
+        "parameters": [
+          { "name": "studyId", "in": "query", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of randomization schemes",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/SchemeSummaryDTO" } } } }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createScheme",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SchemeDTO" } } }
+        },
+        "responses": {
+          "201": {
+            "description": "Created scheme",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SchemeDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/randomization/schemes/{id}": {
+      "get": {
+        "operationId": "getScheme",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scheme details",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SchemeDTO" } } }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateScheme",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SchemeDTO" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated scheme",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SchemeDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/randomization/schemes/{id}/activate": {
+      "post": {
+        "operationId": "activateScheme",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" } }
+        ],
+        "responses": {
+          "200": { "description": "Scheme activated" }
+        }
+      }
+    },
+    "/api/v1/randomization/schemes/{id}/close": {
+      "post": {
+        "operationId": "closeScheme",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" } }
+        ],
+        "responses": {
+          "200": { "description": "Scheme closed" }
+        }
+      }
+    },
+    "/api/v1/randomization/randomize": {
+      "post": {
+        "operationId": "randomize",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RandomizeRequest" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "Assignment created",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AssignmentDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/randomization/assignments": {
+      "get": {
+        "operationId": "listAssignments",
+        "parameters": [
+          { "name": "schemeId", "in": "query", "required": true, "schema": { "type": "integer", "format": "int64" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of assignments",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/AssignmentDTO" } } } }
+          }
+        }
+      }
+    },
+    "/api/v1/randomization/assignments/{schemeId}/subject/{studySubjectId}": {
+      "get": {
+        "operationId": "getAssignment",
+        "parameters": [
+          { "name": "schemeId", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" } },
+          { "name": "studySubjectId", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Assignment details",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AssignmentDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/randomization/unblinding/request": {
+      "post": {
+        "operationId": "requestUnblinding",
+        "parameters": [
+          { "name": "assignmentId", "in": "query", "required": true, "schema": { "type": "integer", "format": "int64" } },
+          { "name": "reason", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "201": {
+            "description": "Unblinding request created",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UnblindingRequestDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/randomization/unblinding/{requestId}/review": {
+      "post": {
+        "operationId": "reviewUnblinding",
+        "parameters": [
+          { "name": "requestId", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" } },
+          { "name": "decision", "in": "query", "required": true, "schema": { "$ref": "#/components/schemas/UnblindingStatus" } },
+          { "name": "reviewNotes", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reviewed unblinding request",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UnblindingRequestDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/randomization/unblinding/requests": {
+      "get": {
+        "operationId": "listUnblindingRequests",
+        "parameters": [
+          { "name": "schemeId", "in": "query", "required": true, "schema": { "type": "integer", "format": "int64" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of unblinding requests",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/UnblindingRequestDTO" } } } }
+          }
+        }
+      }
+    },
+    "/api/v1/randomization/unblinding/pending": {
+      "get": {
+        "operationId": "listPendingRequests",
+        "responses": {
+          "200": {
+            "description": "List of pending unblinding requests",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/UnblindingRequestDTO" } } } }
+          }
+        }
+      }
+    },
+    "/api/v1/randomization/audit": {
+      "get": {
+        "operationId": "getAuditLogs",
+        "parameters": [
+          { "name": "schemeId", "in": "query", "required": false, "schema": { "type": "integer", "format": "int64" } },
+          { "name": "studyId", "in": "query", "required": false, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of audit logs",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/AuditLogDTO" } } } }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -246,6 +440,153 @@
           "description": { "type": "string" }
         },
         "required": ["name"]
+      },
+      "RandomizationAlgorithm": {
+        "type": "string",
+        "enum": ["SIMPLE", "BLOCK", "STRATIFIED_BLOCK"]
+      },
+      "SchemeStatus": {
+        "type": "string",
+        "enum": ["DRAFT", "ACTIVE", "PAUSED", "CLOSED"]
+      },
+      "StratumType": {
+        "type": "string",
+        "enum": ["ENUM", "INTERVAL"]
+      },
+      "AssignmentStatus": {
+        "type": "string",
+        "enum": ["ACTIVE", "UNBLINDED", "REVOKED"]
+      },
+      "UnblindingStatus": {
+        "type": "string",
+        "enum": ["PENDING", "APPROVED", "REJECTED"]
+      },
+      "AuditAction": {
+        "type": "string",
+        "enum": ["SCHEME_CREATED", "SCHEME_UPDATED", "SCHEME_ACTIVATED", "SCHEME_CLOSED", "SUBJECT_RANDOMIZED", "UNBLINDING_REQUESTED", "UNBLINDING_APPROVED", "UNBLINDING_REJECTED"]
+      },
+      "ArmDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64", "nullable": true },
+          "name": { "type": "string" },
+          "displayName": { "type": "string", "nullable": true },
+          "ratio": { "type": "integer" },
+          "orderNumber": { "type": "integer" }
+        },
+        "required": ["name", "ratio", "orderNumber"]
+      },
+      "StratumOptionDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64", "nullable": true },
+          "label": { "type": "string" },
+          "value": { "type": "string" },
+          "orderNumber": { "type": "integer", "nullable": true }
+        },
+        "required": ["label", "value"]
+      },
+      "StratumDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64", "nullable": true },
+          "name": { "type": "string" },
+          "stratumType": { "$ref": "#/components/schemas/StratumType" },
+          "orderNumber": { "type": "integer" },
+          "options": { "type": "array", "items": { "$ref": "#/components/schemas/StratumOptionDTO" } }
+        },
+        "required": ["name", "stratumType", "orderNumber", "options"]
+      },
+      "SchemeDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64", "nullable": true },
+          "studyId": { "type": "integer" },
+          "name": { "type": "string" },
+          "algorithm": { "$ref": "#/components/schemas/RandomizationAlgorithm" },
+          "status": { "$ref": "#/components/schemas/SchemeStatus" },
+          "seed": { "type": "integer", "format": "int64", "nullable": true },
+          "minBlockSize": { "type": "integer", "nullable": true },
+          "maxBlockSize": { "type": "integer", "nullable": true },
+          "arms": { "type": "array", "items": { "$ref": "#/components/schemas/ArmDTO" } },
+          "stratifications": { "type": "array", "items": { "$ref": "#/components/schemas/StratumDTO" } },
+          "totalAssigned": { "type": "integer", "format": "int64" },
+          "totalArms": { "type": "integer", "format": "int64" }
+        },
+        "required": ["studyId", "name", "algorithm", "arms", "stratifications", "totalAssigned", "totalArms"]
+      },
+      "SchemeSummaryDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "studyId": { "type": "integer" },
+          "name": { "type": "string" },
+          "algorithm": { "$ref": "#/components/schemas/RandomizationAlgorithm" },
+          "status": { "$ref": "#/components/schemas/SchemeStatus" },
+          "totalAssigned": { "type": "integer", "format": "int64" },
+          "totalArms": { "type": "integer" }
+        },
+        "required": ["id", "studyId", "name", "algorithm", "status", "totalAssigned", "totalArms"]
+      },
+      "RandomizeRequest": {
+        "type": "object",
+        "properties": {
+          "schemeId": { "type": "integer", "format": "int64" },
+          "studySubjectId": { "type": "integer" },
+          "assignedBy": { "type": "integer", "nullable": true },
+          "stratumValues": { "type": "object", "additionalProperties": { "type": "string" } }
+        },
+        "required": ["schemeId", "studySubjectId"]
+      },
+      "AssignmentDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "schemeId": { "type": "integer", "format": "int64" },
+          "studySubjectId": { "type": "integer" },
+          "subjectKey": { "type": "string", "nullable": true },
+          "armId": { "type": "integer", "format": "int64" },
+          "armName": { "type": "string" },
+          "stratumPath": { "type": "string", "nullable": true },
+          "status": { "$ref": "#/components/schemas/AssignmentStatus" },
+          "assignedDate": { "type": "string", "format": "date-time", "nullable": true },
+          "assignedBy": { "type": "integer", "nullable": true }
+        },
+        "required": ["id", "schemeId", "studySubjectId", "armId", "armName", "status"]
+      },
+      "UnblindingRequestDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "assignmentId": { "type": "integer", "format": "int64" },
+          "armName": { "type": "string", "nullable": true },
+          "subjectKey": { "type": "string", "nullable": true },
+          "requestedBy": { "type": "integer" },
+          "requestedDate": { "type": "string", "format": "date-time", "nullable": true },
+          "reason": { "type": "string", "nullable": true },
+          "status": { "$ref": "#/components/schemas/UnblindingStatus" },
+          "reviewedBy": { "type": "integer", "nullable": true },
+          "reviewedDate": { "type": "string", "format": "date-time", "nullable": true },
+          "reviewNotes": { "type": "string", "nullable": true }
+        },
+        "required": ["id", "assignmentId", "requestedBy", "status"]
+      },
+      "AuditLogDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "schemeId": { "type": "integer", "format": "int64", "nullable": true },
+          "studyId": { "type": "integer", "nullable": true },
+          "action": { "$ref": "#/components/schemas/AuditAction" },
+          "entityType": { "type": "string", "nullable": true },
+          "entityId": { "type": "integer", "format": "int64", "nullable": true },
+          "oldValue": { "type": "string", "nullable": true },
+          "newValue": { "type": "string", "nullable": true },
+          "performedBy": { "type": "integer", "nullable": true },
+          "performedDate": { "type": "string", "format": "date-time" },
+          "details": { "type": "string", "nullable": true }
+        },
+        "required": ["id", "action", "performedDate"]
       }
     }
   }
