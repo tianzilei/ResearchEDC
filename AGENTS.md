@@ -2,7 +2,7 @@
 
 **Derived from:** OpenClinica v3.x
 **Generated:** 2026-05-25
-**Updated:** 2026-06-25
+**Updated:** 2026-06-26
 **Branch:** master
 
 ## OVERVIEW
@@ -12,7 +12,7 @@ ResearchEDC is an independently maintained research electronic data capture (EDC
 New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend modular monolith with Spring Modulith at `org.researchedc.module.*`. `legacy-core/` has been consolidated into `shared/`, and legacy Java code has been **fully removed** — `shared/src/main/java` contains 0 Java files (no `shared/dao`, `shared/domain`, `shared/bean`, `shared/core`, `shared/exception`, or `shared/i18n` Java support remain). All module adapters now use module-owned DTOs. `web/` has been **completely removed** — its 93 dead servlet/view/helper files were deleted and needed import/validation classes were migrated to `app/`, with later dead leftovers removed. The legacy `ws/` SOAP module is absent from the current tree. Enterprise UI/functionality and active mail-delivery code paths were retired on 2026-06-09; ODM contract versioning (OC2-0 compatibility / OC2-1 email-free) completed 2026-06-24.
 
 
-**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | `OdmExportGeneratorTest` 21/21 ✅ | **Refactor progress 100.0%** ✅ | **Phase 3 DAO ledger 878/878 removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 39/39 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 432/432** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet 注册** ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅** | **ODM contract versioning ✅ (OC2-0 frozen, OC2-1 email-free)** | **All Workstreams 1-6 ✅ COMPLETE** | **Build stabilization ✅ (DBCP→HikariCP, Quartz removed, Joda→java.time, Modulith boundary fixed)** | **Phase 8: Event context hardening ✅** | **Phase 9: Technical debt burndown ✅ COMPLETE** | **Phase 11: Contract correctness ✅ COMPLETE**
+**当前状态:** `mvn clean compile` ✅ | `ModulithVerificationTest` 1/0/0 ✅ | `OdmExportGeneratorTest` 21/21 ✅ | **Refactor progress 100.0%** ✅ | **Phase 3 DAO ledger 878/878 removed (100%)** ✅ | Frontend Vitest 25/25 ✅ | **Questionnaire Service** `pytest` 40/40 ✅ | Bare Deploy ✅ | E2E SPA ✅ | **Java module tests 435/435** ✅ | **中文/符号支持** ✅ | **导入/导出优化** ✅ | **Legacy Servlet retired ✅ | **ResearchEDC Rename** ✅ | **项目清理** ✅ | **Phase C: SPI widening 24/24** ✅ | **legacy-core → shared 合并** ✅ | **Phase B: Schema ownership ✅ COMPLETE (12 triggers, 27 entities remapped, 24 adapters)** | **Phase II: @SuppressWarnings 消除 ✅ COMPLETE (168→72, -96, 57%, 27 non-deferred all genuine, 45 deferred TableFactory)** | **web/ module DELETED ✅** | **Phase 3 legacy-only: 0 remaining ✅** | **LegacyDaoFactory ELIMINATED ✅** | **EntityDAO infrastructure DELETED ✅** | **Dead code cleanup: -515 files, -46,662 lines ✅** | **ODM contract versioning ✅ (OC2-0 frozen, OC2-1 email-free)** | **All Workstreams 1-6 ✅ COMPLETE** | **Build stabilization ✅ (DBCP→HikariCP, Quartz removed, Joda→java.time, Modulith boundary fixed)** | **Phase 8: Event context hardening ✅** | **Phase 9: Technical debt burndown ✅ COMPLETE** | **Phase 11: Contract correctness ✅ COMPLETE** | **Phase 12: OpenAPI + architecture transition ✅ COMPLETE** | **Phase 13: Release stabilization ACTIVE**
 
 ✅ **Frontend TypeScript 状态:** `pnpm typecheck` — 0 errors
 ✅ **中文编码:** 全栈 UTF-8，Legacy JSP i18n 修复，ODM 导出修复，SPA `lang="zh-CN"`
@@ -26,8 +26,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 │   └── module/              # Spring Modulith modules (17 modules, 397 Java files)
 │       ├── randomization/   # 随机化系统 (算法 + API, 37 文件)
 │       ├── export/          # 导出中心 (异步任务, 9 文件)
-│       ├── crf/             # CRF 元数据 (含 LegacyCrfAdapter, 21 文件)
-│       ├── legacy/          # 遗留网关 (底层 DAO REST 封装, compatibility only)
+│       ├── crf/             # CRF 元数据 (module-owned repositories, adapter retired)
 │       ├── audit/           # 审计日志 (事件驱动 + 独立表 + 只读审计查询实体, 48 文件)
 │       ├── study/           # 研究管理 (映射 study 表, 19 文件)
 │       ├── subject/         # 受试者管理 (映射 subject/study_subject, 19 文件)
@@ -71,8 +70,7 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | **Randomization module** | `app/.../module/randomization/` | 3 种算法, 8 实体, REST API |
 | **Export module** | `app/.../module/export/` | 异步任务状态机, REST API, ODM contract versioning (OC2-0/OC2-1) |
 | **Dashboard module** | `app/.../module/dashboard/` | 引导 (用户/研究/站点上下文 + 模块列表), 待办, 状态, 最近活动 |
-| **CRF module** | `app/.../module/crf/` | CRF 列表/版本/预览, LegacyCrfAdapter |
-| **Legacy Gateway** | `app/.../module/legacy/` | `/api/legacy/*` DAO REST 封装 + 导入上传端点 |
+| **CRF module** | `app/.../module/crf/` | CRF 列表/版本/预览, module-owned repositories |
 | **Audit module** | `app/.../module/audit/` | 独立 audit_log 表, 事件驱动, REST API |
 | **Study module** | `app/.../module/study/` | 桥接 study 表, REST API |
 | **Subject module** | `app/.../module/subject/` | 桥接 subject/study_subject, REST API |
@@ -127,7 +125,6 @@ New React 19 SPA frontend at `frontend/`, built to `frontend/dist/`. Backend mod
 | `randomization` | ✅ Complete | 8 | 6 | 3 | 1 | 9 | `/api/v1/randomization` |
 | `export` | ✅ Complete | 1 | 1 | 2 | 1 | 3 | `/api/v1/exports` |
 | `crf` | ✅ Complete | 6 | 6 | 2 | 2 | 6 | `/api/v1/crfs`, `/api/v1/crfs/manage` |
-| `legacy` | ✅ Built | 0 | 0 | 0 | 9 | 15 | `/api/v1/legacy/*` |
 | `audit` | ✅ Extracted | 1 | 1 | 1 | 1 | 1 | `/api/v1/audit` |
 | `study` | ✅ Extracted | 1 | 1 | 1 | 1 | 2 | `/api/v1/studies` |
 | `subject` | ✅ Extracted | 2 | 2 | 1 | 1 | 2 | `/api/v1/subjects` |
@@ -154,14 +151,15 @@ Tests live in `app/src/test` (20 files):
 | **Modulith Verification** | JUnit 5 + `ApplicationModules` | ❌ | Module boundary verification (1 test) |
 
 **Test run prerequisites:**
-- `JAVA_HOME` must point to JDK 21
-- PostgreSQL must be running on localhost:5432 for `mvn test` (DAO/Service integration tests)
+- `JAVA_HOME` should point to JDK 21, and `javac` 21 must be on `PATH`
+- local verification can pin Oracle JDK with `env JAVA_HOME=/usr/lib/jvm/jdk-21.0.11-oracle-x64 PATH=/usr/lib/jvm/jdk-21.0.11-oracle-x64/bin:$PATH <command>`
+- PostgreSQL is only needed for DB-backed integration checks; current app unit/modulith suite passes without it
 
 ### E2E Testing
 - **Playwright MCP**: Browser automation for SPA login/dashboard/navigation verification
 - **API Testing**: 11 Modulith REST endpoint families verified via curl
 - **Chinese Encoding**: Full-stack UTF-8 verified — API input/output, DB storage, SPA rendering, pg_dump
-- **Import/Export**: REST API (`/api/v1/exports`), file upload (`/api/legacy/import/upload`), PostgreSQL dump verified
+- **Import/Export**: REST API (`/api/v1/exports`, `/api/v1/imports/upload`), PostgreSQL dump verified
 
 ## ANTI-PATTERNS (THIS PROJECT)
 
@@ -239,7 +237,7 @@ python -m pytest app/tests/ -v
   - ✅ **ArchivedDatasetFileDAO → ArchivedDatasetFileDao** — `58278d68b`; 8 consumer files converted
 - **Refactor progress snapshot (2026-06-23):** active workflow inventory is 963/963 closed (**100.0%**), Phase 3 DAO method ledger is 878/878 removed (**100%**), DAO method blockers are 0/878 unused rows (**0%**), shared/ reduced from 793 to 0 Java files (**100%**), DAO-surface deletion is 186/186 files (**100.0%**), LegacyDaoFactory eliminated, EntityDAO infrastructure deleted, shared domain/support/bean Java retired, and dead code cleanup complete.
 - **Phase 3 ledger status (2026-06-19):** `docs/refactor/phase-3-dao-replacement-ledger.{md,csv}` tracks 878 SPI methods: 0 `module-backed`, 0 `fallback-sql`, 0 `legacy-only`, 0 `adapter-gap`, 0 `unused`, and 878 `removed`.
-- **Remaining work:** no active legacy workflow inventory artifacts remain. All 6 refactor workstreams are COMPLETE. The `shared/` module is resource-only (0 Java files), all `shared/bean` DTOs are retired, and no `app/` code imports `shared.*` Java packages. ODM contract versioning (OC2-0 frozen / OC2-1 email-free) is implemented with `OdmContractVersion` enum, `OdmSchemaResourceResolver`, and guardrail tests. The legacy REST gateway (`/api/v1/legacy/*`) is retained as the active SPA API bridge.
+- **Remaining work:** no active legacy workflow inventory artifacts remain. All 6 refactor workstreams are COMPLETE. The `shared/` module is resource-only (0 Java files), all `shared/bean` DTOs are retired, and no `app/` code imports `shared.*` Java packages. ODM contract versioning (OC2-0 frozen / OC2-1 email-free) is implemented with `OdmContractVersion` enum, `OdmSchemaResourceResolver`, and guardrail tests. The legacy REST gateway (`/api/v1/legacy/*`) has been removed; SPA traffic uses module-native `/api/v1/*` endpoints.
 - **Gauntlet commands:**
   - `bash scripts/ci/daily-gauntlet.sh` (consolidated daily gate: git status, frontend lint, frontend typecheck, modulith verification, import tests, export backend tests)
   - `git status --short`

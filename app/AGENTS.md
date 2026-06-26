@@ -1,7 +1,7 @@
 # app/ - Spring Boot Modular Monolith Entry Point
 
 **Module:** Application entry point, configuration, and Modulith modules  
-**Files:** 436 Java files total, including 397 under `module/`; 17 Modulith modules
+**Files:** Spring Boot app sources under `app/src/main/java`; 17 Modulith modules
 
 > Entry point: `OpenClinicaApplication.java` — Spring Boot WAR packaging.  
 > Config classes in `org.researchedc.config.*` handle Hibernate, security (Spring Security form login + CSRF), scheduling, and OpenAPI.
@@ -18,7 +18,7 @@ app/src/main/java/org/researchedc/
 │   └── ... (DbConfig, SchedulerConfig, OpenApiConfig, etc.)
 └── module/                       # 17 Spring Modulith modules
     ├── audit/                    # Audit logging (event-driven, independent table)
-    ├── crf/                      # CRF metadata (includes LegacyCrfAdapter)
+    ├── crf/                      # CRF metadata (module-owned repositories)
     ├── dashboard/                # Dashboard bootstrap, tasks, status, recent activity
     ├── datacapture/              # Data collection (item_data / response_set)
     ├── dataset/                  # Dataset management (gateway only)
@@ -27,7 +27,6 @@ app/src/main/java/org/researchedc/
     ├── export/                   # Export center (async task state machine)
     ├── filter/                   # Filter management (gateway only)
     ├── identity/                 # User account / study_user_role
-    ├── legacy/                   # Legacy DAO REST gateway
     ├── openrosa/                 # OpenRosa REST/XML compatibility API
     ├── randomization/            # 3 randomization algorithms, REST API
     ├── rule/                     # Rule engine (gateway only)
@@ -60,13 +59,12 @@ app/src/main/java/org/researchedc/
 
 - **ModulithVerificationTest** — Validates no circular module dependencies (no DB needed)
 - **Module tests** — 54 Java test files under `app/src/test`, covering service, controller, adapter, and boundary behavior
-- **LegacyGatewayContractTest** — Contract test for `/api/v1/legacy/*` endpoints
 - **TestDataFactory** — Shared test data builder in `testutil/`
 
 ## ANTI-PATTERNS
 
 - **NEVER** `@Autowired` beans from another module — use `ApplicationEvents`
 - **NEVER** import `shared.dao.*` / `shared.bean.*` / `shared.domain.*` in module public classes
-- **NEVER** bypass `LegacyGateway` to call legacy DAOs from module controllers
+- **NEVER** call legacy DAO-style access from module controllers; keep any compatibility access behind service ports or `internal/adapter/` classes
 - **ALWAYS** put legacy access in `internal/adapter/` classes
 - **DO NOT** add new code to `shared/` — add new functionality as a module here

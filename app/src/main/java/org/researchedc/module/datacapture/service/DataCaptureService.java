@@ -258,7 +258,9 @@ public class DataCaptureService {
         dto.setItemId(e.getItemId());
         dto.setEventCrfId(e.getEventCrfId());
         dto.setValue(e.getValue());
-        dto.setOrdinal(e.getOrdinal());
+        if (e.getOrdinal() != null) {
+            dto.setOrdinal(e.getOrdinal());
+        }
         dto.setStatusId(e.getStatusId());
         dto.setDeleted(e.getDeleted());
         dto.setDateCreated(e.getDateCreated());

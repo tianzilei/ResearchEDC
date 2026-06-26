@@ -1,7 +1,7 @@
 # Phase 13 Release Stabilization And Readiness Plan
 
 **Created:** 2026-06-26
-**Status:** Active
+**Status:** Complete
 **Predecessor:** `docs/refactor/phase-12-openapi-and-architecture-transition-plan.md`
 **Basis:** Phase 12 completion log, current verification status, and dirty-worktree review on 2026-06-26
 
@@ -21,11 +21,11 @@ Current local status:
 
 - branch: `master`, ahead of `origin/master`
 - worktree: dirty with broad pre-existing changes
-- new Phase 12 artifacts are still untracked in this workspace
+- Phase 12 artifacts were committed before Phase 13 execution; Phase 13 stabilization changes are tracked separately
 - default `java` is OpenJDK 21 without `javac` on `PATH`; Oracle JDK 21 provides the compiler
 - focused backend gate passes: `ModulithVerificationTest`, `OdmExportGeneratorTest`, `ExportArtifactWriterTest`
 - frontend gate passes: typecheck, lint, and 25 Vitest tests
-- full backend test baseline still needs cleanup because Phase 12 recorded 4 `DataCaptureServiceTest` errors
+- full backend test baseline passes after fixing nullable `ItemDataEntity.ordinal` mapping in `DataCaptureService`
 
 ## Phase 13 Goal
 
@@ -64,7 +64,7 @@ Execution:
 
 Exit gate:
 
-- `mvn test -pl app -am` passes, or a short failure ledger exists with exact test names, root cause, and owner
+- `bash scripts/ci/backend-build.sh` passes, or a short failure ledger exists with exact test names, root cause, and owner
 - `ModulithVerificationTest` still passes
 - no test is disabled without a linked explanation in the plan or test comment
 
@@ -178,12 +178,32 @@ Exit gate:
 5. active docs no longer describe removed legacy controllers as present.
 6. backend package, frontend build, and questionnaire-service checks are either passing or explicitly blocked with evidence.
 
+## Completion Log
+
+Completed on 2026-06-26.
+
+- Phase 13A full backend cleanup: fixed `DataCaptureService` DTO mapping so a null persisted ordinal preserves the `ItemDataDTO` default of `1`; `DataCaptureServiceTest` passes 18/18 and `mvn test -pl app -am` passes 435/435 with Oracle JDK 21 pinned.
+- Phase 13B toolchain reproducibility: `scripts/ci/backend-build.sh` now fails fast when `java`/`javac` are missing or `javac` is not Java 21, and its Modulith verification step uses `-pl app -am` so reactor-local `shared` is available after clean builds.
+- Phase 13C generated contract workflow: `pnpm -C frontend generate-api-types`, `pnpm -C frontend typecheck`, `pnpm -C frontend lint`, and `pnpm -C frontend test --run` all pass.
+- Phase 13D legacy removal aftercare: active `AGENTS.md` and `app/AGENTS.md` no longer describe `LegacyCrfAdapter`, `module/legacy`, `LegacyGatewayContractTest`, or `/api/v1/legacy/*` as current runtime surfaces; historical records are preserved.
+- Phase 13E release packaging: `mvn clean package -DskipTests` passes with Oracle JDK 21 pinned and produces `app/target/ResearchEDC.war`; `pnpm -C frontend build` passes; questionnaire service tests pass via `uv run python -m pytest app/tests/ -v` with 40/40 tests.
+
+## Release Candidate Checklist
+
+- Backend full suite: PASS, 435 tests, 0 failures/errors.
+- Backend CI script: PASS, JDK 21 preflight + compile + Modulith verification + module tests.
+- Backend package: PASS, `ResearchEDC.war` built.
+- Frontend generated types: PASS.
+- Frontend typecheck/lint/test/build: PASS.
+- Questionnaire service tests: PASS, 40 tests.
+- Active docs: PASS, current status references updated for Phase 12/13 and legacy gateway removal.
+
 ## Immediate Next Action
 
-Run the full backend suite with Oracle JDK 21 pinned:
+Phase 13 is complete. For the next release-candidate confirmation run the consolidated backend script with Oracle JDK 21 pinned:
 
 ```bash
-env JAVA_HOME=/usr/lib/jvm/jdk-21.0.11-oracle-x64 PATH=/usr/lib/jvm/jdk-21.0.11-oracle-x64/bin:$PATH mvn test -pl app -am
+env JAVA_HOME=/usr/lib/jvm/jdk-21.0.11-oracle-x64 PATH=/usr/lib/jvm/jdk-21.0.11-oracle-x64/bin:$PATH bash scripts/ci/backend-build.sh
 ```
 
-If failures remain, create a short Phase 13A failure ledger with exact test names before changing production code.
+If failures reappear, create a short release-candidate failure ledger with exact test names before changing production code.
