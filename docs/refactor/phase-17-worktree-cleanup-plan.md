@@ -1,13 +1,24 @@
 # Phase 17 Worktree Cleanup Plan
 
 **Created:** 2026-06-26
-**Status:** Active
+**Status:** Complete / historical
 **Predecessor:** `docs/refactor/phase-16-non-release-engineering-plan.md`
 **Basis:** Phase 16 completion commit `44b03730f`, current dirty-worktree review, and user direction to continue workspace cleanup without RC tagging or release
 
 ## Current Status
 
-Phase 16 is complete and committed:
+Phase 17 is complete. The broad dirty worktree was cleaned in scoped commits, repository line endings are governed by root `.gitattributes`, and `master` is clean with local commits ahead of `origin/master`.
+
+Completion evidence:
+
+- plan metadata and cleanup execution plans were tracked
+- deploy/CI, root/build metadata, documentation, shared resources, frontend, questionnaire service, backend app, and migration line endings were normalized in separate commits
+- `.gitattributes` was added to keep repository text files on LF while preserving CRLF for Windows command scripts
+- local-only commits in `origin/master..HEAD` were rewritten to use `Zilei Tian <tianzilei@live.com>` for author and committer metadata
+- repository-local Git identity was set to `Zilei Tian <tianzilei@live.com>`
+- `git status --short --branch` reports a clean worktree with `master` ahead of `origin/master`
+
+Original Phase 17 starting context:
 
 - latest commit: `44b03730f` (`Phase 16: non-release engineering - randomization OpenAPI pilot, staleness workflow`)
 - branch: `master`, ahead of `origin/master` by 21 commits
@@ -248,9 +259,4 @@ The Phase 17 cleanup execution roadmap is tracked in `docs/refactor/worktree-cle
 
 ## Immediate Next Action
 
-Decide whether to execute Wave 1 as a dedicated deploy/CI line-ending-only cleanup commit:
-
-```bash
-git diff --ignore-all-space --exit-code -- deploy/compose/docker-compose.yml deploy/docker/seed-data.sql scripts/ci/check-import-rollback-postgres.sh scripts/ci/check-phase-b-migrations.sh scripts/ci/check-phase-b-postgres.sh scripts/ci/daily-gauntlet.sh scripts/ci/questionnaire-test.sh
-git diff --check -- deploy/compose/docker-compose.yml deploy/docker/seed-data.sql scripts/ci/check-import-rollback-postgres.sh scripts/ci/check-phase-b-migrations.sh scripts/ci/check-phase-b-postgres.sh scripts/ci/daily-gauntlet.sh scripts/ci/questionnaire-test.sh
-```
+Proceed to `phase-18-post-cleanup-verification-baseline-plan.md`: close the Phase 17 metadata loop, run the verification matrix, and keep RC/tag/release work deferred.
