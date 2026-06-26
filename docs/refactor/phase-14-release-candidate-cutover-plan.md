@@ -1,7 +1,7 @@
 # Phase 14 Release Candidate Cutover Plan
 
 **Created:** 2026-06-26
-**Status:** Active
+**Status:** Complete
 **Predecessor:** `docs/refactor/phase-13-release-stabilization-and-readiness-plan.md`
 **Basis:** Phase 13 completion log, commits `2a0b2eb0e` and `aa0552b12`, and the remaining dirty-worktree/release-readiness review on 2026-06-26
 
@@ -174,7 +174,7 @@ Exit gate:
 
 ## Success Criteria
 
-1. Phase 14 is the active refactor/release plan.
+1. Phase 14 was the active refactor/release plan and is now complete.
 2. there is one documented release-candidate gate sequence.
 3. deploy and CI scripts are reviewed against the post-legacy runtime shape.
 4. generated-contract expansion policy is written before broader migration.

@@ -205,6 +205,10 @@ Stop and ask before proceeding if:
 - a cleanup would require reverting user changes
 - line-ending-only churn is mixed with semantic changes in the same file
 
+## Master Cleanup Roadmap
+
+The Phase 17 cleanup execution roadmap is tracked in `docs/refactor/worktree-cleanup-master-plan.md`. It keeps all remaining dirty-file cleanup inside Phase 17 and splits execution into explicit reviewable waves, with protected migration handling deferred to a final decision wave.
+
 ## Recommended Delivery Order
 
 1. Fix plan metadata and track deferred Phase 15 documentation.
