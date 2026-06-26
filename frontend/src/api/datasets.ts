@@ -1,22 +1,8 @@
 import { apiClient } from "@/api/client";
+import type { components } from "@/api/generated";
 
-export interface Dataset {
-  datasetId: number;
-  name: string;
-  description: string;
-  studyId: number;
-  ownerId: number;
-  statusId: number;
-  dateCreated: string;
-}
-
-export interface FilterItem {
-  filterId: number;
-  name: string;
-  description: string;
-  ownerId: number;
-  dateCreated: string;
-}
+export type Dataset = components["schemas"]["DatasetDTO"];
+export type FilterItem = components["schemas"]["FilterDTO"];
 
 export const datasetsApi = {
   list(studyId?: number) {

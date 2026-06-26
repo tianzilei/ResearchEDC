@@ -4,7 +4,7 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "vite.config.d.ts", "vitest.config.ts"] },
+  { ignores: ["dist", "vite.config.d.ts", "vitest.config.ts", "src/api/generated.ts"] },
   {
     extends: [
       ...tseslint.configs.strictTypeChecked,

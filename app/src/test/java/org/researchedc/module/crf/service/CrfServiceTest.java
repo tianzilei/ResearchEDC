@@ -14,11 +14,15 @@ import org.researchedc.app.dto.CrfVersionDTO;
 import org.researchedc.module.crf.dto.ItemDTO;
 import org.researchedc.module.crf.entity.CrfEntity;
 import org.researchedc.module.crf.entity.CrfVersionEntity;
-import org.researchedc.module.crf.internal.adapter.LegacyCrfAdapter;
+import org.researchedc.module.crf.entity.ItemEntity;
+import org.researchedc.module.crf.entity.ItemFormMetadataEntity;
+import org.researchedc.module.crf.entity.SectionEntity;
 import org.researchedc.module.crf.internal.adapter.SCDItemMetadataDaoAdapter;
 import org.researchedc.module.crf.repository.CrfRepository;
 import org.researchedc.module.crf.repository.CrfVersionRepository;
 import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
+import org.researchedc.module.crf.repository.ItemRepository;
+import org.researchedc.module.crf.repository.SectionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,64 +32,111 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class CrfServiceTest {
 
-    @Mock private LegacyCrfAdapter legacyCrfAdapter;
     @Mock private CrfRepository crfRepository;
     @Mock private CrfVersionRepository crfVersionRepository;
-    @Mock private SCDItemMetadataDaoAdapter scdAdapter;
+    @Mock private SectionRepository sectionRepository;
+    @Mock private ItemRepository itemRepository;
     @Mock private ItemFormMetadataRepository itemFormMetadataRepository;
+    @Mock private SCDItemMetadataDaoAdapter scdAdapter;
 
     private CrfService service;
 
     @BeforeEach
     void setUp() {
-        service = new CrfService(legacyCrfAdapter, crfRepository, crfVersionRepository,
-                scdAdapter, itemFormMetadataRepository);
+        service = new CrfService(crfRepository, crfVersionRepository, sectionRepository,
+                itemRepository, itemFormMetadataRepository, scdAdapter);
     }
 
-    // --- listCrfs (delegates to adapter) ---
+    // --- listCrfs ---
 
     @Test
-    void listCrfs_delegatesToAdapter() {
-        CrfSummaryDTO dto = new CrfSummaryDTO();
-        dto.setCrfId(1);
-        dto.setName("Vital Signs");
-        when(legacyCrfAdapter.findAllCrfs()).thenReturn(List.of(dto));
+    void listCrfs_returnsSummariesWithVersionCount() {
+        CrfEntity crf = createCrfEntity(1, "Vital Signs");
+        when(crfRepository.findAll()).thenReturn(List.of(crf));
+        when(crfVersionRepository.findByCrfIdOrderByCrfVersionId(1))
+                .thenReturn(List.of(createCrfVersionEntity(10, 1, "v1"), createCrfVersionEntity(11, 1, "v2")));
 
         List<CrfSummaryDTO> result = service.listCrfs();
 
         assertEquals(1, result.size());
         assertEquals("Vital Signs", result.get(0).getName());
-        verify(legacyCrfAdapter).findAllCrfs();
+        assertEquals(2, result.get(0).getVersionCount());
     }
 
-    // --- getVersion (delegates to adapter) ---
+    @Test
+    void listCrfs_empty_returnsEmpty() {
+        when(crfRepository.findAll()).thenReturn(List.of());
+
+        assertTrue(service.listCrfs().isEmpty());
+    }
+
+    // --- getVersion ---
 
     @Test
-    void getVersion_delegatesToAdapter() {
-        CrfVersionDTO dto = new CrfVersionDTO();
-        dto.setCrfVersionId(1);
-        dto.setName("v1.0");
-        when(legacyCrfAdapter.findVersionById(1)).thenReturn(dto);
+    void getVersion_returnsVersionWithSections() {
+        CrfVersionEntity ver = createCrfVersionEntity(1, 1, "v1.0");
+        when(crfVersionRepository.findById(1)).thenReturn(Optional.of(ver));
+
+        SectionEntity section = new SectionEntity();
+        section.setSectionId(10);
+        section.setLabel("Section A");
+        section.setTitle("Demographics");
+        section.setOrdinal(1);
+        when(sectionRepository.findByCrfVersionIdOrderByOrdinal(1)).thenReturn(List.of(section));
 
         CrfVersionDTO result = service.getVersion(1);
 
         assertEquals(1, result.getCrfVersionId());
         assertEquals("v1.0", result.getName());
+        assertEquals(1, result.getSections().size());
+        assertEquals("Demographics", result.getSections().get(0).getTitle());
     }
 
-    // --- getItemsBySection (delegates to adapter) ---
+    @Test
+    void getVersion_notFound_returnsNull() {
+        when(crfVersionRepository.findById(99)).thenReturn(Optional.empty());
+
+        assertNull(service.getVersion(99));
+    }
+
+    // --- getItemsBySection ---
 
     @Test
-    void getItemsBySection_delegatesToAdapter() {
-        ItemDTO item = new ItemDTO();
-        item.setItemId(1);
-        item.setName("Height");
-        when(legacyCrfAdapter.findItemsBySectionAndVersion(5, 1)).thenReturn(List.of(item));
+    void getItemsBySection_returnsItemsForSection() {
+        ItemFormMetadataEntity meta = new ItemFormMetadataEntity();
+        meta.setItemId(20);
+        meta.setSectionId(10);
+        meta.setOrdinal(1);
+        meta.setDefaultValue("0");
+        meta.setRequired(true);
+        when(itemFormMetadataRepository.findByCrfVersionId(1)).thenReturn(List.of(meta));
 
-        List<ItemDTO> result = service.getItemsBySection(5, 1);
+        ItemEntity item = new ItemEntity();
+        item.setItemId(20);
+        item.setName("Height");
+        item.setDescription("Patient height");
+        item.setUnits("cm");
+        item.setOcOid("item_height");
+        item.setPhiStatus(false);
+        when(itemRepository.findById(20)).thenReturn(Optional.of(item));
+
+        List<ItemDTO> result = service.getItemsBySection(10, 1);
 
         assertEquals(1, result.size());
         assertEquals("Height", result.get(0).getName());
+        assertEquals("cm", result.get(0).getUnits());
+        assertEquals(1, result.get(0).getOrdinal());
+        assertTrue(result.get(0).isRequired());
+    }
+
+    @Test
+    void getItemsBySection_wrongSection_excluded() {
+        ItemFormMetadataEntity meta = new ItemFormMetadataEntity();
+        meta.setItemId(20);
+        meta.setSectionId(99);
+        when(itemFormMetadataRepository.findByCrfVersionId(1)).thenReturn(List.of(meta));
+
+        assertTrue(service.getItemsBySection(10, 1).isEmpty());
     }
 
     // --- getAllCrfEntities ---

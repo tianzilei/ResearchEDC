@@ -1,32 +1,11 @@
 import { apiClient } from "@/api/client";
+import type { components } from "@/api/generated";
 
-export interface ExportJobDTO {
-  id: number;
-  studyId: number;
-  name?: string;
-  exportFormat: string;
-  odmContractVersion?: string;
-  status: string;
-  requestedBy?: number;
-  requestedDate: string;
-  completedDate?: string | null;
-  filePath?: string | null;
-  fileSize?: number | null;
-  errorMessage?: string | null;
-  failureCode?: string | null;
-  retryable?: boolean | null;
-  criteriaJson?: string | null;
-  retryCount?: number | null;
-}
-
-export interface CreateExportJobRequest {
-  studyId: number;
-  name?: string;
-  exportFormat: string;
-  odmContractVersion?: string;
-  requestedBy?: number;
-  criteriaJson?: string;
-}
+export type ExportJobDTO = components["schemas"]["ExportJobDTO"];
+export type CreateExportJobRequest = components["schemas"]["CreateExportJobRequest"];
+export type ExportFormat = components["schemas"]["ExportFormat"];
+export type ExportJobStatus = components["schemas"]["ExportJobStatus"];
+export type OdmContractVersion = components["schemas"]["OdmContractVersion"];
 
 export const exportApi = {
   listJobs(studyId: number) {

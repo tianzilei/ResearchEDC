@@ -1,0 +1,252 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ResearchEDC API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/exports": {
+      "get": {
+        "operationId": "listExportJobs",
+        "parameters": [
+          { "name": "studyId", "in": "query", "required": true, "schema": { "type": "integer" } },
+          { "name": "status", "in": "query", "required": false, "schema": { "$ref": "#/components/schemas/ExportJobStatus" } },
+          { "name": "exportFormat", "in": "query", "required": false, "schema": { "$ref": "#/components/schemas/ExportFormat" } },
+          { "name": "odmContractVersion", "in": "query", "required": false, "schema": { "$ref": "#/components/schemas/OdmContractVersion" } },
+          { "name": "requestedBy", "in": "query", "required": false, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of export jobs",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/ExportJobDTO" } } } }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createExportJob",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateExportJobRequest" } } }
+        },
+        "responses": {
+          "201": {
+            "description": "Created export job",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ExportJobDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/exports/{id}": {
+      "get": {
+        "operationId": "getExportJob",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Export job details",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ExportJobDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/exports/{id}/cancel": {
+      "post": {
+        "operationId": "cancelExportJob",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cancelled export job",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ExportJobDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/exports/{id}/retry": {
+      "post": {
+        "operationId": "retryExportJob",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retried export job",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ExportJobDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/datasets": {
+      "get": {
+        "operationId": "listDatasets",
+        "parameters": [
+          { "name": "studyId", "in": "query", "required": false, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of datasets",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/DatasetDTO" } } } }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createDataset",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateDatasetRequest" } } }
+        },
+        "responses": {
+          "201": {
+            "description": "Created dataset",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DatasetDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/datasets/{id}": {
+      "get": {
+        "operationId": "getDataset",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dataset details",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DatasetDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/filters": {
+      "get": {
+        "operationId": "listFilters",
+        "responses": {
+          "200": {
+            "description": "List of filters",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/FilterDTO" } } } }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createFilter",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateFilterRequest" } } }
+        },
+        "responses": {
+          "201": {
+            "description": "Created filter",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FilterDTO" } } }
+          }
+        }
+      }
+    },
+    "/api/v1/filters/{id}": {
+      "get": {
+        "operationId": "getFilter",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filter details",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/FilterDTO" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ExportFormat": {
+        "type": "string",
+        "enum": ["ODM_XML", "CSV", "SAS_XPORT", "EXCEL"]
+      },
+      "ExportJobStatus": {
+        "type": "string",
+        "enum": ["PENDING", "RUNNING", "COMPLETED", "FAILED", "CANCELLED"]
+      },
+      "OdmContractVersion": {
+        "type": "string",
+        "enum": ["OC2_0_COMPAT", "OC2_1"]
+      },
+      "ExportJobDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "studyId": { "type": "integer" },
+          "name": { "type": "string" },
+          "exportFormat": { "$ref": "#/components/schemas/ExportFormat" },
+          "odmContractVersion": { "$ref": "#/components/schemas/OdmContractVersion" },
+          "status": { "$ref": "#/components/schemas/ExportJobStatus" },
+          "requestedBy": { "type": "integer" },
+          "requestedDate": { "type": "string", "format": "date-time" },
+          "completedDate": { "type": "string", "format": "date-time", "nullable": true },
+          "filePath": { "type": "string", "nullable": true },
+          "fileSize": { "type": "integer", "format": "int64", "nullable": true },
+          "errorMessage": { "type": "string", "nullable": true },
+          "failureCode": { "type": "string", "nullable": true },
+          "retryable": { "type": "boolean", "nullable": true },
+          "criteriaJson": { "type": "string", "nullable": true },
+          "retryCount": { "type": "integer", "nullable": true }
+        },
+        "required": ["id", "studyId", "exportFormat", "status", "requestedDate"]
+      },
+      "CreateExportJobRequest": {
+        "type": "object",
+        "properties": {
+          "studyId": { "type": "integer" },
+          "name": { "type": "string" },
+          "exportFormat": { "$ref": "#/components/schemas/ExportFormat" },
+          "odmContractVersion": { "$ref": "#/components/schemas/OdmContractVersion" },
+          "requestedBy": { "type": "integer" },
+          "criteriaJson": { "type": "string" }
+        },
+        "required": ["studyId", "exportFormat"]
+      },
+      "DatasetDTO": {
+        "type": "object",
+        "properties": {
+          "datasetId": { "type": "integer" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "studyId": { "type": "integer" },
+          "ownerId": { "type": "integer" },
+          "statusId": { "type": "integer" },
+          "dateCreated": { "type": "string", "format": "date-time" }
+        },
+        "required": ["datasetId", "name", "studyId", "ownerId", "statusId", "dateCreated"]
+      },
+      "CreateDatasetRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "studyId": { "type": "integer" }
+        },
+        "required": ["name", "studyId"]
+      },
+      "FilterDTO": {
+        "type": "object",
+        "properties": {
+          "filterId": { "type": "integer" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "ownerId": { "type": "integer" },
+          "dateCreated": { "type": "string", "format": "date-time" }
+        },
+        "required": ["filterId", "name", "ownerId", "dateCreated"]
+      },
+      "CreateFilterRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["name"]
+      }
+    }
+  }
+}

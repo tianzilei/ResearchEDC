@@ -104,9 +104,9 @@ export default function JobManager() {
 
   const stats = {
     total: jobs.length,
-    running: jobs.filter(j => j.status === "RUNNING" || j.status === "in_progress").length,
-    completed: jobs.filter(j => j.status === "COMPLETED" || j.status === "completed").length,
-    failed: jobs.filter(j => j.status === "FAILED" || j.status === "failed").length,
+    running: jobs.filter(j => j.status === "RUNNING").length,
+    completed: jobs.filter(j => j.status === "COMPLETED").length,
+    failed: jobs.filter(j => j.status === "FAILED").length,
   };
 
   const columns = [

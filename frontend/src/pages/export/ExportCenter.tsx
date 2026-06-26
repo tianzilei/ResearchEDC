@@ -1,42 +1,24 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, Table, Tag, Button, Space, Typography, Modal, Select, Input, message, Empty, Tooltip } from "antd";
 import { Alert } from "antd";
 import { DownloadOutlined, ReloadOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { useCurrentStudy } from "@/hooks/useStudies";
-import { useAppQuery, useAppMutation, useQueryClient } from "@/hooks/useQuery";
-import { apiClient } from "@/api/client";
 import { SkeletonPage } from "@/components/SkeletonCard";
 import { useAuth } from "@/providers/AuthProvider";
 import APP_CONFIG from "@/config";
+import {
+  useExportJobs,
+  useCreateExportJob,
+  useCancelExportJob,
+  useRetryExportJob,
+  type ExportJobDTO,
+  type ExportJobStatus,
+  type ExportFormat,
+  type OdmContractVersion,
+} from "@/hooks/useExports";
 
 const { Title } = Typography;
-
-interface ExportJob {
-  id: number;
-  studyId: number;
-  name: string;
-  exportFormat: string;
-  odmContractVersion?: string;
-  status: string;
-  requestedBy: number;
-  requestedDate: string;
-  completedDate?: string;
-  filePath?: string;
-  fileSize?: number;
-  errorMessage?: string;
-  failureCode?: string;
-  retryable?: boolean;
-  retryCount?: number;
-}
-
-interface CreateExportJob {
-  studyId: number;
-  name: string;
-  exportFormat: string;
-  odmContractVersion?: string;
-  requestedBy: number;
-}
 
 const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
   PENDING: { color: "default", label: "PENDING" },
@@ -46,35 +28,15 @@ const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
   CANCELLED: { color: "warning", label: "CANCELLED" },
 };
 
-const CONTRACT_VERSION_OPTIONS = [
+const CONTRACT_VERSION_OPTIONS: { value: OdmContractVersion; label: string }[] = [
   { value: "OC2_1", label: "OC2-1 (Email-free, recommended)" },
   { value: "OC2_0_COMPAT", label: "OC2-0 (Legacy-compatible)" },
 ];
 
 interface ExportFilters {
-  status?: string;
-  exportFormat?: string;
-  odmContractVersion?: string;
-}
-
-function useExportJobs(studyId: number | undefined, filters?: ExportFilters) {
-  const params = useMemo(() => {
-    const p: Record<string, string | number> = {};
-    if (studyId) p.studyId = studyId;
-    if (filters?.status) p.status = filters.status;
-    if (filters?.exportFormat) p.exportFormat = filters.exportFormat;
-    if (filters?.odmContractVersion) p.odmContractVersion = filters.odmContractVersion;
-    return p;
-  }, [studyId, filters?.status, filters?.exportFormat, filters?.odmContractVersion]);
-
-  return useAppQuery<ExportJob[]>({
-    queryKey: ["exports", studyId, params],
-    queryFn: () =>
-      studyId
-        ? apiClient.get<ExportJob[]>(`/api/v1/exports`, params)
-        : Promise.resolve([]),
-    enabled: !!studyId,
-  });
+  status?: ExportJobStatus;
+  exportFormat?: ExportFormat;
+  odmContractVersion?: OdmContractVersion;
 }
 
 export default function ExportCenter() {
@@ -82,28 +44,16 @@ export default function ExportCenter() {
   const { currentStudy } = useCurrentStudy();
   const { user } = useAuth();
   const studyId = currentStudy?.id;
-  const qc = useQueryClient();
   const [filters, setFilters] = useState<ExportFilters>({});
   const { data: jobs, isLoading } = useExportJobs(studyId, filters);
   const [modalOpen, setModalOpen] = useState(false);
-  const [format, setFormat] = useState<string>("ODM_XML");
-  const [contractVersion, setContractVersion] = useState<string>("OC2_1");
+  const [format, setFormat] = useState<ExportFormat>("ODM_XML");
+  const [contractVersion, setContractVersion] = useState<OdmContractVersion>("OC2_1");
   const [name, setName] = useState("");
 
-  const createJob = useAppMutation<ExportJob, CreateExportJob>({
-    mutationFn: (body) => apiClient.post<ExportJob>(`/api/v1/exports`, body),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["exports", studyId] }); message.success(t("export.created")); setModalOpen(false); resetModal(); },
-  });
-
-  const cancelJob = useAppMutation<void, number>({
-    mutationFn: (id) => apiClient.post(`/api/v1/exports/${id}/cancel`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["exports", studyId] }),
-  });
-
-  const retryJob = useAppMutation<void, number>({
-    mutationFn: (id) => apiClient.post(`/api/v1/exports/${id}/retry`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["exports", studyId] }),
-  });
+  const createJob = useCreateExportJob(studyId);
+  const cancelJob = useCancelExportJob(studyId);
+  const retryJob = useRetryExportJob(studyId);
 
   const resetModal = useCallback(() => {
     setName("");
@@ -111,7 +61,7 @@ export default function ExportCenter() {
     setContractVersion("OC2_1");
   }, []);
 
-  const handleDownload = useCallback(async (job: ExportJob) => {
+  const handleDownload = useCallback(async (job: ExportJobDTO) => {
     const url = `${APP_CONFIG.apiBaseUrl}/api/v1/exports/${job.id}/download`;
     try {
       const res = await fetch(url, { credentials: "same-origin" });
@@ -147,7 +97,7 @@ export default function ExportCenter() {
       render: (v: string | undefined) => v ? <Tag color="blue">{v.replace("_", "-")}</Tag> : "-",
     },
     { title: t("export.column.status"), dataIndex: "status", key: "status",
-      render: (s: string, record: ExportJob) => {
+      render: (s: string, record: ExportJobDTO) => {
         const cfg = STATUS_CONFIG[s] ?? { color: "default", label: s };
         return (
           <Tooltip title={record.status === "FAILED" ? record.errorMessage : undefined}>
@@ -163,7 +113,7 @@ export default function ExportCenter() {
       render: (d: string) => d ? new Date(d).toLocaleString() : "-",
     },
     { title: t("export.column.duration"), key: "duration",
-      render: (_: unknown, record: ExportJob) => {
+      render: (_: unknown, record: ExportJobDTO) => {
         if (!record.requestedDate || !record.completedDate) return "-";
         const ms = new Date(record.completedDate).getTime() - new Date(record.requestedDate).getTime();
         if (ms < 1000) return `${ms}ms`;
@@ -175,7 +125,7 @@ export default function ExportCenter() {
     },
     {
       title: t("export.column.actions"), key: "actions",
-      render: (_: unknown, r: ExportJob) => (
+      render: (_: unknown, r: ExportJobDTO) => (
         <Space>
           {r.status === "COMPLETED" && r.filePath && (
             <Tooltip title={t("export.tooltip.download")}>

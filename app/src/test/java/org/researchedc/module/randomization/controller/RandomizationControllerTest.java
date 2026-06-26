@@ -31,10 +31,11 @@ class RandomizationControllerTest {
 
     @Mock private RandomizationService randomizationService;
     @Mock private UnblindingService unblindingService;
+    @Mock private org.researchedc.config.CurrentUserUtils currentUserUtils;
 
     @BeforeEach
     void setUp() {
-        RandomizationController controller = new RandomizationController(randomizationService, unblindingService);
+        RandomizationController controller = new RandomizationController(randomizationService, unblindingService, currentUserUtils);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
