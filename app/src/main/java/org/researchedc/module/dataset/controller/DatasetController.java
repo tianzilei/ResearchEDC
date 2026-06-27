@@ -32,16 +32,18 @@ public class DatasetController {
     @GetMapping
     public ResponseEntity<List<DatasetDTO>> listDatasets(
             @RequestParam(required = false) Integer studyId) {
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
         List<DatasetEntity> entities = studyId != null
-                ? datasetService.listByStudy(studyId)
-                : datasetService.listAll();
+                ? datasetService.listByStudy(studyId, currentUserId)
+                : datasetService.listAll(currentUserId);
         return ResponseEntity.ok(entities.stream().map(this::toDto).toList());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DatasetDTO> getDataset(@PathVariable int id) {
         try {
-            return ResponseEntity.ok(toDto(datasetService.getById(id)));
+            Integer currentUserId = currentUserUtils.getCurrentUserId();
+            return ResponseEntity.ok(toDto(datasetService.getById(id, currentUserId)));
         } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
@@ -51,7 +53,7 @@ public class DatasetController {
     public ResponseEntity<DatasetDTO> createDataset(@RequestBody CreateDatasetRequest request) {
         Integer ownerId = currentUserUtils.getCurrentUserId();
         DatasetEntity entity = datasetService.create(
-                request.getName(), request.getDescription(), request.getStudyId(), ownerId);
+                request.getName(), request.getDescription(), request.getStudyId(), ownerId, ownerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(toDto(entity));
     }
 

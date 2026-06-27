@@ -2,6 +2,7 @@ package org.researchedc.config;
 
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.researchedc.module.identity.entity.RoleEntity;
 import org.researchedc.module.identity.entity.UserAccountEntity;
@@ -42,6 +43,41 @@ public class CurrentStudyAccessService {
             "data specialist"
     );
 
+    private static final Set<String> READ_ROLES = Set.of(
+            "admin",
+            "business_administrator",
+            "study_director",
+            "studydirector",
+            "director",
+            "coordinator",
+            "investigator",
+            "ra",
+            "data_entry",
+            "dataentry",
+            "data specialist",
+            "datamanager",
+            "data_manager",
+            "principalinvestigator",
+            "monitor"
+    );
+
+    private static final Set<String> WRITE_ROLES = Set.of(
+            "admin",
+            "business_administrator",
+            "study_director",
+            "studydirector",
+            "director",
+            "coordinator",
+            "investigator",
+            "ra",
+            "data_entry",
+            "dataentry",
+            "data specialist",
+            "datamanager",
+            "data_manager",
+            "principalinvestigator"
+    );
+
     private final UserAccountRepository userAccountRepository;
     private final RoleRepository roleRepository;
 
@@ -59,6 +95,22 @@ public class CurrentStudyAccessService {
         return canAccessStudy(userId, studyId, IMPORT_ROLES);
     }
 
+    public boolean canReadStudy(Integer userId, Integer studyId) {
+        return canAccessStudy(userId, studyId, READ_ROLES);
+    }
+
+    public boolean canWriteStudy(Integer userId, Integer studyId) {
+        return canAccessStudy(userId, studyId, WRITE_ROLES);
+    }
+
+    public Set<Integer> readableStudyIds(Integer userId) {
+        return accessibleStudyIds(userId, READ_ROLES);
+    }
+
+    public boolean canReadAllStudies(Integer userId) {
+        return isAdministrator(userId);
+    }
+
     private boolean canAccessStudy(Integer userId, Integer studyId, Set<String> roleNames) {
         if (userId == null || studyId == null) {
             return false;
@@ -68,9 +120,32 @@ public class CurrentStudyAccessService {
                 .orElse(false);
     }
 
+    private Set<Integer> accessibleStudyIds(Integer userId, Set<String> roleNames) {
+        if (userId == null) {
+            return Set.of();
+        }
+        return userAccountRepository.findById(userId)
+                .map(user -> roleRepository.findByUserName(user.getUserName()).stream()
+                        .filter(this::isAvailable)
+                        .filter(role -> role.getStudyId() != null)
+                        .filter(role -> roleNames.contains(normalizeRoleName(role.getRoleName())))
+                        .map(RoleEntity::getStudyId)
+                        .collect(Collectors.toUnmodifiableSet()))
+                .orElse(Set.of());
+    }
+
     private boolean isAdministrator(UserAccountEntity user) {
         return Integer.valueOf(SYSADMIN_USER_TYPE_ID).equals(user.getUserTypeId())
                 || Integer.valueOf(TECHADMIN_USER_TYPE_ID).equals(user.getUserTypeId());
+    }
+
+    private boolean isAdministrator(Integer userId) {
+        if (userId == null) {
+            return false;
+        }
+        return userAccountRepository.findById(userId)
+                .map(this::isAdministrator)
+                .orElse(false);
     }
 
     private boolean hasStudyRole(String username, Integer studyId, Set<String> roleNames) {

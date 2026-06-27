@@ -1,6 +1,7 @@
 package org.researchedc.config;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -80,6 +81,51 @@ class CurrentStudyAccessServiceTest {
         assertFalse(service().canImportStudy(7, 11));
     }
 
+    @Test
+    void canReadStudy_allowsMonitorRoleOnSameStudy() {
+        UserAccountEntity user = user("monitor", 2);
+        when(userAccountRepository.findById(7)).thenReturn(Optional.of(user));
+        when(roleRepository.findByUserNameAndStudyId("monitor", 11))
+                .thenReturn(List.of(role("monitor", 1)));
+
+        assertTrue(service().canReadStudy(7, 11));
+    }
+
+    @Test
+    void canWriteStudy_deniesMonitorRoleOnSameStudy() {
+        UserAccountEntity user = user("monitor", 2);
+        when(userAccountRepository.findById(7)).thenReturn(Optional.of(user));
+        when(roleRepository.findByUserNameAndStudyId("monitor", 11))
+                .thenReturn(List.of(role("monitor", 1)));
+
+        assertFalse(service().canWriteStudy(7, 11));
+    }
+
+    @Test
+    void readableStudyIds_returnsAvailableReadableStudies() {
+        UserAccountEntity user = user("reader", 2);
+        when(userAccountRepository.findById(7)).thenReturn(Optional.of(user));
+        when(roleRepository.findByUserName("reader")).thenReturn(List.of(
+                role("monitor", 1, 11),
+                role("data_entry", 1, 12),
+                role("monitor", 5, 13),
+                role("unknown", 1, 14),
+                role("monitor", 1, null)
+        ));
+
+        assertEquals(java.util.Set.of(11, 12), service().readableStudyIds(7));
+    }
+
+    @Test
+    void canReadAllStudies_allowsSysAndTechAdmins() {
+        when(userAccountRepository.findById(7)).thenReturn(Optional.of(user("sysadmin", 1)));
+        when(userAccountRepository.findById(8)).thenReturn(Optional.of(user("techadmin", 3)));
+
+        CurrentStudyAccessService service = service();
+        assertTrue(service.canReadAllStudies(7));
+        assertTrue(service.canReadAllStudies(8));
+    }
+
     private CurrentStudyAccessService service() {
         return new CurrentStudyAccessService(userAccountRepository, roleRepository);
     }
@@ -92,9 +138,14 @@ class CurrentStudyAccessServiceTest {
     }
 
     private static RoleEntity role(String roleName, int statusId) {
+        return role(roleName, statusId, null);
+    }
+
+    private static RoleEntity role(String roleName, int statusId, Integer studyId) {
         RoleEntity role = new RoleEntity();
         role.setRoleName(roleName);
         role.setStatusId(statusId);
+        role.setStudyId(studyId);
         return role;
     }
 }

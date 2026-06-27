@@ -4,6 +4,7 @@ import org.researchedc.module.dataset.entity.DatasetEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -18,6 +19,8 @@ public interface DatasetRepository extends JpaRepository<DatasetEntity, Integer>
     List<DatasetEntity> findByNameAndStudyId(String name, Integer studyId);
 
     List<DatasetEntity> findByStudyIdOrderByName(Integer studyId);
+
+    List<DatasetEntity> findByStudyIdInOrderByStudyIdAscNameAsc(Collection<Integer> studyIds);
 
     List<DatasetEntity> findTop5ByStudyIdOrderByDatasetId(Integer studyId);
 
