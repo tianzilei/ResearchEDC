@@ -238,6 +238,8 @@ This phase is complete when:
 - Verified audit context hardening with `mvn test -pl app -am '-Dtest=EventServiceTest,DataCaptureServiceTest,ModulithVerificationTest' '-Dsurefire.failIfNoSpecifiedTests=false'` (37 tests passed).
 - Slice 4 continued with request correlation: added a highest-precedence servlet filter that accepts a safe `X-Request-ID` or generates one, stores it in MDC as `requestId`, echoes it on responses, and clears MDC after each request. Console and file log patterns now include the request id, with `no-request` for non-request logs.
 - Verified request correlation with `mvn test -pl app -am '-Dtest=RequestCorrelationFilterTest,ModulithVerificationTest' '-Dsurefire.failIfNoSpecifiedTests=false'` (4 tests passed).
+- Slice 4 continued with common API error responses: added a global REST exception handler for common authorization, not-found, and bad-request failures. Responses now use a JSON envelope with timestamp, status, error, message, path, and the current request correlation id so frontend and logs can reference the same failure id.
+- Verified API error responses with `mvn test -pl app -am '-Dtest=ApiExceptionHandlerTest,RequestCorrelationFilterTest,ModulithVerificationTest' '-Dsurefire.failIfNoSpecifiedTests=false'` (7 tests passed).
 
 ## Next Phase
 

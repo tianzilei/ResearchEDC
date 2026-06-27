@@ -58,7 +58,7 @@ as requested by the Phase 0 plan.
 
 | ID | Finding | Evidence | Scope Label | Type Label | Owner | Phase 1 Action |
 |---|---|---|---|---|---|---|
-| P0-M1 | Dashboard/system health is app-internal, while deploy proxy exposes `/actuator/*` assumptions. | `DashboardController` has `/api/v1/dashboard/health`; Caddy config has `/actuator/*`, but actuator endpoint availability was not verified in code. | core-logic | code-quality | runtime/observability | Pick one health/readiness surface and document it. |
+| P0-M1 | Dashboard/system health is app-internal, while deploy proxy exposes `/actuator/*` assumptions. | `DashboardController` has `/api/v1/dashboard/health`; Caddy config has `/actuator/*`, but actuator endpoint availability was not verified in code. | core-logic | code-quality | runtime/observability | Partially fixed in Phase 1 slice 3/4: runtime health surfaces are documented in `docs/HOST_DEPLOYMENT.md`, `deploy-bare.sh health` checks the app/questionnaire/proxy routes, request ids are included in logs and responses, and common API errors now return a JSON envelope with the same request id. Remaining: run the bare-host health path on Linux. |
 | P0-M2 | Audit coverage exists for core mutations but lacks study context on some records. | Event and data capture services call `AuditService.recordAudit`, often with `studyId` set to `null`. | core-logic | business-logic | audit/modules | Partially fixed in Phase 1 slice 4: event and item-data audit records now populate study id where derivable from event definitions, event CRFs, and study subjects. Remaining: review other modules for safely derivable context without inventing ambiguous study links. |
 | P0-M3 | Operator text is mixed English/Chinese in core workflow pages. | Event list, CRF/data entry, and admin pages mix English labels with Chinese UI. | core-logic | code-quality | frontend/UX | Normalize core workflow copy through i18n keys after workflow blockers are fixed. |
 | P0-M4 | Questionnaire test command in historical docs can fail on a clean host. | Direct `python -m pytest` failed because `python` is absent; direct `python3 -m pytest` failed because ambient Python has no `pytest`; project-local `uv run --group dev pytest` passed. | boundary-integration | code-quality | questionnaire-service | Update convergence docs/CI notes to use `uv` for the local gate. |
@@ -93,7 +93,7 @@ as requested by the Phase 0 plan.
 ## Frontend UX Audit
 
 - Core routes are present under `/app/*`.
-- Loading and empty states exist on many pages, but error handling is uneven.
+- Loading and empty states exist on many pages, but error handling is uneven. Backend common authorization, not-found, and bad-request failures now return a JSON error envelope with the request correlation id; frontend rendering of that envelope remains uneven.
 - `ProtectedRoute` returns a blank screen while auth initializes; acceptable for
   a short initial state but should become a visible loading state if auth checks
   are slow.
@@ -160,8 +160,9 @@ as requested by the Phase 0 plan.
 
 1. Started in Phase 1 slice 4: populated study id for event and item-data audit records where derivable.
 2. Added in Phase 1 slice 4: `X-Request-ID` request correlation is propagated to responses and log MDC.
-3. Normalize mixed English/Chinese strings on the core EDC path.
-4. Obsolete package-level pnpm config removed in Phase 1 slice 2.
+3. Added in Phase 1 slice 4: common REST authorization, not-found, and bad-request failures return a JSON envelope containing the request id.
+4. Normalize mixed English/Chinese strings on the core EDC path.
+5. Obsolete package-level pnpm config removed in Phase 1 slice 2.
 
 ## Exit Gate Assessment
 
