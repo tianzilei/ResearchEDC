@@ -6,7 +6,7 @@ import { DownloadOutlined, ReloadOutlined, CloseCircleOutlined } from "@ant-desi
 import { useCurrentStudy } from "@/hooks/useStudies";
 import { SkeletonPage } from "@/components/SkeletonCard";
 import { useAuth } from "@/providers/AuthProvider";
-import APP_CONFIG from "@/config";
+import { apiClient } from "@/api/client";
 import {
   useExportJobs,
   useCreateExportJob,
@@ -62,26 +62,16 @@ export default function ExportCenter() {
   }, []);
 
   const handleDownload = useCallback(async (job: ExportJobDTO) => {
-    const url = `${APP_CONFIG.apiBaseUrl}/api/v1/exports/${job.id}/download`;
     try {
-      const res = await fetch(url, { credentials: "same-origin" });
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        message.error(text || t("export.error.downloadFailed"));
-        return;
-      }
-      const blob = await res.blob();
-      const disposition = res.headers.get("Content-Disposition") ?? "";
-      const filenameRe = /filename="?([^";\n]+)"?/;
-      const match = filenameRe.exec(disposition);
-      const filename = match?.[1] ?? `export_${job.id}.xml`;
+      const result = await apiClient.download(`/api/v1/exports/${job.id}/download`);
       const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
+      link.href = URL.createObjectURL(result.blob);
+      link.download = result.filename ?? `export_${job.id}.xml`;
       link.click();
       URL.revokeObjectURL(link.href);
-    } catch {
-      message.error(t("export.error.downloadFailed"));
+    } catch (err) {
+      const detail = err instanceof Error && err.message ? err.message : t("export.error.downloadFailed");
+      message.error(detail);
     }
   }, [t]);
 

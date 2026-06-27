@@ -23,6 +23,11 @@ interface ApiAuthFailureDetail {
   path: string;
 }
 
+interface DownloadResult {
+  blob: Blob;
+  filename?: string;
+}
+
 function emitAuthFailure(status: 401 | 403, path: string) {
   window.dispatchEvent(new CustomEvent<ApiAuthFailureDetail>(API_AUTH_FAILURE_EVENT, {
     detail: { status, path },
@@ -44,14 +49,32 @@ class ApiClient {
     this.baseUrl = baseUrl.replace(/\/+$/, "");
   }
 
-  private async request<T>(config: RequestConfig): Promise<T> {
-    const url = new URL(`${this.baseUrl}${config.path}`, window.location.origin);
+  private buildUrl(path: string, params?: RequestConfig["params"]) {
+    const url = new URL(`${this.baseUrl}${path}`, window.location.origin);
 
-    if (config.params) {
-      for (const [key, value] of Object.entries(config.params)) {
+    if (params) {
+      for (const [key, value] of Object.entries(params)) {
         if (value !== undefined) url.searchParams.set(key, String(value));
       }
     }
+
+    return url;
+  }
+
+  private async handleErrorResponse(response: Response, path: string): Promise<never> {
+    const errorBody = await response.text().catch(() => "");
+    if (response.status === 401 || response.status === 403) {
+      emitAuthFailure(response.status, path);
+    }
+    const error: ApiError & Error = Object.assign(new Error(errorBody || response.statusText), {
+      status: response.status,
+      message: errorBody || response.statusText,
+    });
+    throw error;
+  }
+
+  private async request<T>(config: RequestConfig): Promise<T> {
+    const url = this.buildUrl(config.path, config.params);
 
     const headers: Record<string, string> = {
       Accept: "application/json",
@@ -75,15 +98,7 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      const errorBody = await response.text().catch(() => "");
-      if (response.status === 401 || response.status === 403) {
-        emitAuthFailure(response.status, config.path);
-      }
-      const error: ApiError & Error = Object.assign(new Error(errorBody || response.statusText), {
-        status: response.status,
-        message: errorBody || response.statusText,
-      });
-      throw error;
+      return this.handleErrorResponse(response, config.path);
     }
 
     if (response.status === 204) return undefined as T;
@@ -95,6 +110,24 @@ class ApiClient {
     return response.json() as Promise<T>;
   }
 
+  async download(path: string, params?: RequestConfig["params"]): Promise<DownloadResult> {
+    const url = this.buildUrl(path, params);
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: { Accept: "*/*" },
+      credentials: "same-origin",
+    });
+
+    if (!response.ok) {
+      return this.handleErrorResponse(response, path);
+    }
+
+    const disposition = response.headers.get("Content-Disposition") ?? "";
+    const filenameRe = /filename="?([^";\n]+)"?/;
+    const match = filenameRe.exec(disposition);
+    return { blob: await response.blob(), filename: match?.[1] };
+  }
+
   get<T>(path: string, params?: RequestConfig["params"]) { return this.request<T>({ method: "GET", path, params }); }
   post<T>(path: string, body?: unknown, params?: RequestConfig["params"]) { return this.request<T>({ method: "POST", path, body, params }); }
   put<T>(path: string, body?: unknown, params?: RequestConfig["params"]) { return this.request<T>({ method: "PUT", path, body, params }); }
@@ -104,4 +137,4 @@ class ApiClient {
 
 export const apiClient = new ApiClient(APP_CONFIG.apiBaseUrl);
 export { API_AUTH_FAILURE_EVENT };
-export type { ApiAuthFailureDetail, ApiError, RequestConfig };
+export type { ApiAuthFailureDetail, ApiError, DownloadResult, RequestConfig };
