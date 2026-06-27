@@ -437,7 +437,6 @@ Business implication:
 
 1. Finish Phase 1 auth predictability: align CSRF, add global 401/403 UX, and define study/role-scope rules.
 2. Harden data capture persistence around item membership, required fields, regex/type validation, and event/CRF completion state.
-3. Fix export artifact missing-file handling before or during the MinIO storage migration.
-4. Execute `phase-1-storage-minio-convergence-plan.md` to remove hidden local filesystem dependencies.
+3. Execute `phase-1-storage-minio-convergence-plan.md` to remove hidden local filesystem dependencies.
 5. Normalize audit study id population for study-scoped mutations.
 6. Decide product policy for physical delete versus status-based removal in study and CRF version management.
