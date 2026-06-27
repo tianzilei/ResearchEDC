@@ -159,7 +159,7 @@ as requested by the Phase 0 plan.
 ### Slice 4: Observability And UX Polish
 
 1. Started in Phase 1 slice 4: populated study id for event and item-data audit records where derivable.
-2. Add minimal request correlation or structured request identifiers.
+2. Added in Phase 1 slice 4: `X-Request-ID` request correlation is propagated to responses and log MDC.
 3. Normalize mixed English/Chinese strings on the core EDC path.
 4. Obsolete package-level pnpm config removed in Phase 1 slice 2.
 

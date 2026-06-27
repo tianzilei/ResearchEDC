@@ -236,6 +236,8 @@ This phase is complete when:
 - Bash validation for `deploy-bare.sh` could not run in the current Windows environment because `bash` is not installed on `PATH`. Static inspection of the changed command dispatch/help block completed; remaining Slice 3 work is to run `bash -n deploy-bare.sh`, `bash deploy-bare.sh help`, and a dry start/status/health path on a Linux host or disposable runtime.
 - Slice 4 started with audit context hardening: event service audit records now derive study id for scheduled/updated/completed/removed/restored study events, event CRF remove/restore, and event definition remove/restore. Data capture item-data create/update audit records now derive study id from event CRF to study subject. Global subject and identity audit records remain intentionally study-null where no single study context is guaranteed.
 - Verified audit context hardening with `mvn test -pl app -am '-Dtest=EventServiceTest,DataCaptureServiceTest,ModulithVerificationTest' '-Dsurefire.failIfNoSpecifiedTests=false'` (37 tests passed).
+- Slice 4 continued with request correlation: added a highest-precedence servlet filter that accepts a safe `X-Request-ID` or generates one, stores it in MDC as `requestId`, echoes it on responses, and clears MDC after each request. Console and file log patterns now include the request id, with `no-request` for non-request logs.
+- Verified request correlation with `mvn test -pl app -am '-Dtest=RequestCorrelationFilterTest,ModulithVerificationTest' '-Dsurefire.failIfNoSpecifiedTests=false'` (4 tests passed).
 
 ## Next Phase
 
