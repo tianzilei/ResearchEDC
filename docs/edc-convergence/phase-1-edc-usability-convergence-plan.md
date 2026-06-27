@@ -229,7 +229,9 @@ This phase is complete when:
 
 - Slice 2 continued with minimum role gates for core EDC surfaces. Added shared backend authority expressions and applied `@PreAuthorize` to study administration, CRF management, subject mutations, event mutations, data-capture read/write endpoints, discrepancy-note read/write endpoints, import jobs, and export jobs/downloads.
 - Added `CoreControllerAuthorizationTest` reflection coverage for 52 secured controller methods so the minimum role contract is explicit and guarded without requiring a database-backed security integration test.
-- Verified the slice with `mvn test -pl app -am '-Dtest=CoreControllerAuthorizationTest,ModulithVerificationTest' '-Dsurefire.failIfNoSpecifiedTests=false'` (53 tests passed). Remaining authorization work is per-study resource scoping and explicit export download ownership/study-scope checks.
+- Verified the slice with `mvn test -pl app -am '-Dtest=CoreControllerAuthorizationTest,ModulithVerificationTest' '-Dsurefire.failIfNoSpecifiedTests=false'` (53 tests passed).
+- Continued Slice 2 with export download study scoping: `ExportController` now passes the current user id into `ExportService.getDownload`, and `ExportService` verifies same-study export permission through `CurrentStudyAccessService` before returning artifacts. Sysadmin/techadmin users bypass per-study role lookup; regular users need an active export-capable role on the export job's study. Monitor-only or inactive roles are denied.
+- Verified export scoping with `mvn test -pl app -am '-Dtest=CurrentStudyAccessServiceTest,ExportServiceTest,ExportControllerTest,CoreControllerAuthorizationTest,ModulithVerificationTest' '-Dsurefire.failIfNoSpecifiedTests=false'` (87 tests passed). Remaining authorization work is extending the same resource-scoping pattern beyond export downloads.
 
 ## Next Phase
 

@@ -3,6 +3,7 @@ package org.researchedc.module.export.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.export.dto.CreateExportJobRequest;
 import org.researchedc.module.export.dto.ExportJobDTO;
 import org.researchedc.module.export.dto.ExportJobFilter;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +28,14 @@ public class ExportService {
 
     private final ExportJobRepository jobRepository;
     private final OdmExportExecutionService odmExecutionService;
+    private final CurrentStudyAccessService currentStudyAccessService;
 
     public ExportService(ExportJobRepository jobRepository,
-                         OdmExportExecutionService odmExecutionService) {
+                         OdmExportExecutionService odmExecutionService,
+                         CurrentStudyAccessService currentStudyAccessService) {
         this.jobRepository = jobRepository;
         this.odmExecutionService = odmExecutionService;
+        this.currentStudyAccessService = currentStudyAccessService;
     }
 
     public ExportJobDTO createJob(CreateExportJobRequest request) {
@@ -153,9 +158,12 @@ public class ExportService {
         }
     }
 
-    public DownloadResult getDownload(Long id) {
+    public DownloadResult getDownload(Long id, Integer currentUserId) {
         ExportJob job = jobRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Export job not found: " + id));
+        if (!currentStudyAccessService.canExportStudy(currentUserId, job.getStudyId())) {
+            throw new AccessDeniedException("You do not have export access to this study");
+        }
         if (job.getStatus() != ExportJobStatus.COMPLETED) {
             throw new IllegalStateException("Export job is not completed: status=" + job.getStatus());
         }

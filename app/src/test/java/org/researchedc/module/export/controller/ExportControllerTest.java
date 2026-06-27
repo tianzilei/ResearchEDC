@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import org.researchedc.config.CurrentUserUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,13 +36,14 @@ class ExportControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Mock private ExportService exportService;
+    @Mock private CurrentUserUtils currentUserUtils;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders
-                .standaloneSetup(new ExportController(exportService))
+                .standaloneSetup(new ExportController(exportService, currentUserUtils))
                 .build();
     }
 
@@ -133,7 +135,8 @@ class ExportControllerTest {
         Resource resource = new ByteArrayResource(xmlBytes);
         ExportService.DownloadResult downloadResult = new ExportService.DownloadResult(
                 resource, "export_10.xml", xmlBytes.length);
-        when(exportService.getDownload(10L)).thenReturn(downloadResult);
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(exportService.getDownload(10L, 42)).thenReturn(downloadResult);
 
         mockMvc.perform(get("/api/v1/exports/10/download"))
                 .andExpect(status().isOk())
@@ -144,7 +147,8 @@ class ExportControllerTest {
 
     @Test
     void downloadExport_notFound_delegatesToService() throws Exception {
-        when(exportService.getDownload(99L))
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(exportService.getDownload(99L, 42))
                 .thenThrow(new java.util.NoSuchElementException("Export job not found: 99"));
 
         try {
@@ -152,12 +156,13 @@ class ExportControllerTest {
         } catch (Exception ignored) {
         }
 
-        verify(exportService).getDownload(99L);
+        verify(exportService).getDownload(99L, 42);
     }
 
     @Test
     void downloadExport_notCompleted_delegatesToService() throws Exception {
-        when(exportService.getDownload(5L))
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(exportService.getDownload(5L, 42))
                 .thenThrow(new IllegalStateException("Export job is not completed: status=PENDING"));
 
         try {
@@ -165,12 +170,13 @@ class ExportControllerTest {
         } catch (Exception ignored) {
         }
 
-        verify(exportService).getDownload(5L);
+        verify(exportService).getDownload(5L, 42);
     }
 
     @Test
     void downloadExport_missingArtifact_returnsNotFoundMessage() throws Exception {
-        when(exportService.getDownload(7L))
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(exportService.getDownload(7L, 42))
                 .thenThrow(new ExportService.ExportArtifactUnavailableException(
                         "Export artifact is missing or unreadable for job 7"));
 
@@ -179,7 +185,7 @@ class ExportControllerTest {
                 .andExpect(MockMvcResultMatchers.content()
                         .string("Export artifact is missing or unreadable for job 7"));
 
-        verify(exportService).getDownload(7L);
+        verify(exportService).getDownload(7L, 42);
     }
 
     private ExportJobDTO job(Long id, ExportJobStatus status) {

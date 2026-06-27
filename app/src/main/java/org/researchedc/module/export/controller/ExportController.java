@@ -2,6 +2,7 @@ package org.researchedc.module.export.controller;
 
 import java.util.List;
 import org.researchedc.config.CoreEdcAuthorityExpressions;
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.export.dto.CreateExportJobRequest;
 import org.researchedc.module.export.dto.ExportJobDTO;
 import org.researchedc.module.export.dto.ExportJobFilter;
@@ -23,9 +24,11 @@ import org.springframework.web.bind.annotation.*;
 public class ExportController {
 
     private final ExportService exportService;
+    private final CurrentUserUtils currentUserUtils;
 
-    public ExportController(ExportService exportService) {
+    public ExportController(ExportService exportService, CurrentUserUtils currentUserUtils) {
         this.exportService = exportService;
+        this.currentUserUtils = currentUserUtils;
     }
 
     @PostMapping
@@ -74,7 +77,8 @@ public class ExportController {
     @GetMapping("/{id}/download")
     @PreAuthorize(CoreEdcAuthorityExpressions.EXPORT_DATA)
     public ResponseEntity<Resource> downloadExport(@PathVariable Long id) {
-        ExportService.DownloadResult result = exportService.getDownload(id);
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        ExportService.DownloadResult result = exportService.getDownload(id, currentUserId);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_XML)
                 .header(HttpHeaders.CONTENT_DISPOSITION,

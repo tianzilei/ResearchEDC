@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import static org.researchedc.testutil.TestDataFactory.*;
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.export.dto.CreateExportJobRequest;
 import org.researchedc.module.export.dto.ExportJobDTO;
 import org.researchedc.module.export.entity.ExportJob;
@@ -27,11 +28,12 @@ class ExportServiceTest {
 
     @Mock private ExportJobRepository jobRepository;
     @Mock private OdmExportExecutionService odmExecutionService;
+    @Mock private CurrentStudyAccessService currentStudyAccessService;
     private ExportService service;
 
     @BeforeEach
     void setUp() {
-        service = new ExportService(jobRepository, odmExecutionService);
+        service = new ExportService(jobRepository, odmExecutionService, currentStudyAccessService);
     }
 
     @Test
@@ -264,10 +266,12 @@ class ExportServiceTest {
         job.setStatus(ExportJobStatus.COMPLETED);
         job.setFilePath(artifact.toString());
         job.setFileSize(500L);
+        job.setStudyId(2);
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(currentStudyAccessService.canExportStudy(42, 2)).thenReturn(true);
 
-        ExportService.DownloadResult result = service.getDownload(1L);
+        ExportService.DownloadResult result = service.getDownload(1L, 42);
 
         assertNotNull(result.resource());
         assertEquals("export_1.xml", result.filename());
@@ -275,14 +279,34 @@ class ExportServiceTest {
     }
 
     @Test
+    void getDownload_withoutStudyExportAccess_throwsAccessDenied(@TempDir Path tempDir) throws Exception {
+        Path artifact = tempDir.resolve("export_1.xml");
+        Files.writeString(artifact, "<ODM/>");
+
+        ExportJob job = new ExportJob();
+        job.setId(1L);
+        job.setStudyId(2);
+        job.setStatus(ExportJobStatus.COMPLETED);
+        job.setFilePath(artifact.toString());
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(currentStudyAccessService.canExportStudy(42, 2)).thenReturn(false);
+
+        assertThrows(org.springframework.security.access.AccessDeniedException.class,
+                () -> service.getDownload(1L, 42));
+    }
+
+    @Test
     void getDownload_notCompleted_throwsException() {
         ExportJob job = new ExportJob();
         job.setId(1L);
         job.setStatus(ExportJobStatus.PENDING);
+        job.setStudyId(2);
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(currentStudyAccessService.canExportStudy(42, 2)).thenReturn(true);
 
-        assertThrows(IllegalStateException.class, () -> service.getDownload(1L));
+        assertThrows(IllegalStateException.class, () -> service.getDownload(1L, 42));
     }
 
     @Test
@@ -291,10 +315,12 @@ class ExportServiceTest {
         job.setId(1L);
         job.setStatus(ExportJobStatus.COMPLETED);
         job.setFilePath(null);
+        job.setStudyId(2);
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(currentStudyAccessService.canExportStudy(42, 2)).thenReturn(true);
 
-        assertThrows(IllegalStateException.class, () -> service.getDownload(1L));
+        assertThrows(IllegalStateException.class, () -> service.getDownload(1L, 42));
     }
 
     @Test
@@ -303,12 +329,14 @@ class ExportServiceTest {
         job.setId(1L);
         job.setStatus(ExportJobStatus.COMPLETED);
         job.setFilePath(tempDir.resolve("missing.xml").toString());
+        job.setStudyId(2);
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(currentStudyAccessService.canExportStudy(42, 2)).thenReturn(true);
 
         ExportService.ExportArtifactUnavailableException ex = assertThrows(
                 ExportService.ExportArtifactUnavailableException.class,
-                () -> service.getDownload(1L));
+                () -> service.getDownload(1L, 42));
         assertTrue(ex.getMessage().contains("job 1"));
     }
 
