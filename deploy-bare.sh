@@ -3,7 +3,7 @@
 # ResearchEDC — Bare Host Deployment
 #
 # Usage: bash deploy-bare.sh <command>
-# Commands: setup, init-db, build, start, stop, restart, status, logs, clean
+# Commands: setup, init-db, build, start, stop, restart, status, health, logs, clean
 # =============================================================================
 set -euo pipefail
 
@@ -655,6 +655,54 @@ cmd_status() {
     echo ""
 }
 
+cmd_health() {
+    echo ""
+    log_info "Checking ResearchEDC runtime health..."
+
+    local app_port="" body=""
+    for p in $(seq "${APP_PORT}" $((APP_PORT + 10))); do
+        body=$(curl -fsS --max-time 5 "http://127.0.0.1:${p}/actuator/health" 2>/dev/null || true)
+        if echo "${body}" | grep -q '"status":"UP"'; then
+            app_port="${p}"
+            break
+        fi
+    done
+
+    if [ -n "${app_port}" ]; then
+        log_ok "App actuator health is UP on http://127.0.0.1:${app_port}/actuator/health"
+    else
+        log_error "App actuator health is not UP on ports ${APP_PORT}-$((APP_PORT + 10))"
+        return 1
+    fi
+
+    local q_code
+    q_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "http://127.0.0.1:${Q_PORT}/health" 2>/dev/null || true)
+    if echo "${q_code}" | grep -q "^200$"; then
+        log_ok "Questionnaire health responded on http://127.0.0.1:${Q_PORT}/health"
+    else
+        log_warn "Questionnaire route did not respond as expected on port ${Q_PORT} (HTTP ${q_code:-000})"
+    fi
+
+    if command -v caddy &>/dev/null && [ -f "${PID_DIR}/caddy.pid" ]; then
+        local app_code api_code q_proxy_code
+        app_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "http://127.0.0.1:${CADDY_PORT}/app/" 2>/dev/null || true)
+        api_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "http://127.0.0.1:${CADDY_PORT}/api/v1/auth/me" 2>/dev/null || true)
+        q_proxy_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "http://127.0.0.1:${CADDY_PORT}/q/health" 2>/dev/null || true)
+
+        echo ""
+        printf "  %-28s %s\n" "/app/ via Caddy" "${app_code:-000}"
+        printf "  %-28s %s\n" "/api/v1/auth/me via Caddy" "${api_code:-000}"
+        printf "  %-28s %s\n" "/q/health via Caddy" "${q_proxy_code:-000}"
+        echo ""
+
+        if ! echo "${api_code}" | grep -qE "^(200|401)$"; then
+            log_warn "API proxy health is unexpected; /api/v1/auth/me should return 200 or 401"
+        fi
+    else
+        log_warn "Caddy is not running; skipped reverse-proxy route checks"
+    fi
+}
+
 cmd_logs() {
     [ -d "${LOG_DIR}" ] && tail -f "${LOG_DIR}"/*.log || log_warn "No logs directory"
 }
@@ -676,6 +724,7 @@ case "${1:-help}" in
     stop)    cmd_stop    ;;
     restart) cmd_restart ;;
     status)  cmd_status  ;;
+    health)  cmd_health  ;;
     logs)    cmd_logs    ;;
     clean)   cmd_clean   ;;
     help|*)
@@ -692,6 +741,7 @@ Commands:
   stop     Stop all services
   restart  Stop then start
   status   Show service status
+  health   Check app readiness and reverse-proxy route responses
   logs     Tail log files
   clean    Remove build artifacts and runtime data
 

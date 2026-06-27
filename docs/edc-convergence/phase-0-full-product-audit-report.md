@@ -153,8 +153,8 @@ as requested by the Phase 0 plan.
 1. Removed in Phase 1 slice 1: dead `web/`/`ws/` references from `deploy-bare.sh`.
 2. Updated in Phase 1 slice 1: README now points to `deploy-bare.sh` and
    `deploy-docker.sh` as the real deploy entry points.
-3. Define the health/readiness URL used by deploy, operators, and reverse proxy.
-4. Re-run a dry build/start/status path on a clean host or disposable runtime.
+3. Started in Phase 1 slice 3: deploy readiness now uses local `/actuator/health`, questionnaire readiness uses `/health`, Caddy route checks use `/app/`, `/api/v1/auth/me`, and `/q/health`, and operator status remains `/api/v1/dashboard/status` plus `/api/v1/dashboard/health`.
+4. Remaining: run `bash -n deploy-bare.sh`, `bash deploy-bare.sh help`, and a dry build/start/status/health path on a clean Linux host or disposable runtime.
 
 ### Slice 4: Observability And UX Polish
 

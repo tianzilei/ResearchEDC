@@ -1,56 +1,97 @@
-# ResearchEDC Bare Deploy Guide
+﻿# ResearchEDC Bare Host Deployment
 
-Bare deploy is the only supported deploy method in this repository. It runs the
-services directly on the host without Docker.
+Bare host deployment is driven by `deploy-bare.sh` from the repository root.
+The Docker path remains available through `deploy-docker.sh`, but the current
+convergence baseline treats bare host as the primary operator path.
 
-## 前置要求
+## Prerequisites
 
-```bash
-sudo apt-get install -y \
-    openjdk-21-jdk maven nodejs npm python3 python3-venv \
-    postgresql postgresql-client netcat-openbsd lsof wget
-npm install -g pnpm
-```
+- Java 21
+- Maven
+- Node.js and `pnpm`
+- Docker for local PostgreSQL and MinIO helpers
+- PostgreSQL client tools
+- Redis
+- Caddy
+- `uv` for the questionnaire service
 
-## 快速开始
+`bash deploy-bare.sh setup` installs the expected Debian/Ubuntu packages and
+creates the questionnaire Python environment.
 
-```bash
-# 1. 检查环境 + 安装依赖
-bash deploy.sh setup
-
-# 2. 创建数据库 (会提示输入 sudo 密码)
-bash deploy.sh init-db
-
-# 3. 构建前端 + 后端
-bash deploy.sh build
-
-# 4. 启动服务
-bash deploy.sh start
-```
-
-## 服务端口
-
-| 服务 | 端口 | 说明 |
-|------|------|------|
-| App | 8080 | Spring Boot embedded Tomcat (React SPA + REST/OpenRosa APIs) |
-| Questionnaire | 8000 | Python FastAPI |
-
-## 管理命令
+## Commands
 
 ```bash
-bash deploy.sh status   # 查看服务状态
-bash deploy.sh logs     # 查看日志
-bash deploy.sh stop     # 停止所有服务
+bash deploy-bare.sh setup
+bash deploy-bare.sh init-db
+bash deploy-bare.sh build
+bash deploy-bare.sh start
+bash deploy-bare.sh status
+bash deploy-bare.sh health
+bash deploy-bare.sh logs
+bash deploy-bare.sh stop
 ```
 
-## sudo 权限处理
+Use `restart` after configuration changes. Use `clean` only when you intend to
+remove local build artifacts and runtime data under the repository workspace.
 
-`init-db` 通过 `sudo -u postgres psql` 操作数据库，运行时会提示输入你的系统密码。这是标准行为，只需输入一次密码即可完成用户和数据库创建。
+## Ports And Routes
 
-## 故障排查
+Default ports:
 
-**端口占用** — `lsof -i :8080`，`kill <PID>`
+| Service | Port | Purpose |
+|---|---:|---|
+| App | 8080 | Spring Boot app, SPA, REST APIs |
+| Questionnaire | 8000 | FastAPI service |
+| Caddy | 80 | External reverse proxy |
+| PostgreSQL | 5432 | Database |
+| MinIO API | 9000 | Object storage |
+| MinIO Console | 9001 | Object storage console |
 
-**PostgreSQL 未运行** — `sudo systemctl start postgresql`
+Caddy routes:
 
-**启动日志** — `tail -f logs/app.log` 或 `tail -f logs/questionnaire.log`
+| Route | Target |
+|---|---|
+| `/app/*` | Spring Boot SPA |
+| `/api/*` | Spring Boot REST APIs |
+| `/q/*` | Questionnaire service |
+| `/actuator/*` | Spring Boot actuator, localhost-only through Caddy |
+
+## Health And Readiness
+
+Use:
+
+```bash
+bash deploy-bare.sh health
+```
+
+The command checks:
+
+- local app readiness at `/actuator/health`
+- local questionnaire readiness at `/health`
+- reverse-proxy responses for `/app/`, `/api/v1/auth/me`, and `/q/health`
+
+Operator-facing system status in the SPA uses authenticated dashboard APIs:
+
+- `/api/v1/dashboard/status`
+- `/api/v1/dashboard/health`
+
+Do not expose `/actuator/*` publicly. It is for local runtime checks and
+restricted admin tooling only.
+
+## Logs And Rollback
+
+Runtime logs are under `logs/`:
+
+```bash
+tail -f logs/app.log
+tail -f logs/questionnaire.log
+tail -f logs/caddy.log
+```
+
+For a failed rollout:
+
+1. Run `bash deploy-bare.sh stop`.
+2. Restore the previous Git revision or artifact.
+3. Run `bash deploy-bare.sh build`.
+4. Run `bash deploy-bare.sh start`.
+5. Confirm `bash deploy-bare.sh health`.
