@@ -240,6 +240,8 @@ This phase is complete when:
 - Verified request correlation with `mvn test -pl app -am '-Dtest=RequestCorrelationFilterTest,ModulithVerificationTest' '-Dsurefire.failIfNoSpecifiedTests=false'` (4 tests passed).
 - Slice 4 continued with common API error responses: added a global REST exception handler for common authorization, not-found, and bad-request failures. Responses now use a JSON envelope with timestamp, status, error, message, path, and the current request correlation id so frontend and logs can reference the same failure id.
 - Verified API error responses with `mvn test -pl app -am '-Dtest=ApiExceptionHandlerTest,RequestCorrelationFilterTest,ModulithVerificationTest' '-Dsurefire.failIfNoSpecifiedTests=false'` (7 tests passed).
+- Slice 4 continued on the frontend error path: `ApiClient` now parses backend JSON error envelopes, keeps text responses readable for download failures, and exposes `requestId`/`path` on `ApiError` so page-level UX can show the same id operators see in logs.
+- Verified frontend error parsing with `pnpm -C frontend test -- --run src/api/client.test.ts` (2 tests passed) and `pnpm -C frontend typecheck` (0 errors). The first Windows pnpm run had to refresh `frontend/node_modules` because existing shims pointed at an older Linux path.
 
 ## Next Phase
 

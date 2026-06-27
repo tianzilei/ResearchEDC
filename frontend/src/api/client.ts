@@ -14,6 +14,8 @@ interface ApiError {
   status: number;
   message: string;
   details?: unknown;
+  requestId?: string;
+  path?: string;
 }
 
 const API_AUTH_FAILURE_EVENT = "researchedc:api-auth-failure";
@@ -32,6 +34,30 @@ function emitApiAuthFailure(status: 401 | 403, path: string) {
   window.dispatchEvent(new CustomEvent<ApiAuthFailureDetail>(API_AUTH_FAILURE_EVENT, {
     detail: { status, path },
   }));
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function stringField(body: unknown, field: string): string | undefined {
+  if (!isRecord(body)) return undefined;
+  const value = body[field];
+  return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+function parseErrorBody(rawBody: string, contentType: string): unknown {
+  if (!rawBody || !contentType.includes("application/json")) return rawBody;
+
+  try {
+    return JSON.parse(rawBody) as unknown;
+  } catch {
+    return rawBody;
+  }
+}
+
+function errorMessage(body: unknown, rawBody: string, statusText: string): string {
+  return stringField(body, "message") ?? (rawBody || statusText);
 }
 
 class ApiClient {
@@ -54,13 +80,19 @@ class ApiClient {
   }
 
   private async handleErrorResponse(response: Response, path: string): Promise<never> {
-    const errorBody = await response.text().catch(() => "");
+    const rawBody = await response.text().catch(() => "");
+    const parsedBody = parseErrorBody(rawBody, response.headers.get("Content-Type") ?? "");
+    const message = errorMessage(parsedBody, rawBody, response.statusText);
+    const requestId = stringField(parsedBody, "requestId") ?? response.headers.get("X-Request-ID") ?? undefined;
     if (response.status === 401 || response.status === 403) {
       emitApiAuthFailure(response.status, path);
     }
-    const error: ApiError & Error = Object.assign(new Error(errorBody || response.statusText), {
+    const error: ApiError & Error = Object.assign(new Error(message), {
       status: response.status,
-      message: errorBody || response.statusText,
+      message,
+      details: parsedBody || undefined,
+      requestId,
+      path: stringField(parsedBody, "path"),
     });
     throw error;
   }
