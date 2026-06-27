@@ -8,6 +8,7 @@ import org.researchedc.module.export.enums.ExportFormat;
 import org.researchedc.module.export.enums.ExportJobStatus;
 import org.researchedc.module.export.enums.OdmContractVersion;
 import org.researchedc.module.export.service.ExportService;
+import org.researchedc.module.export.service.ExportService.ExportArtifactUnavailableException;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -72,5 +73,12 @@ public class ExportController {
                         "attachment; filename=\"" + result.filename() + "\"")
                 .contentLength(result.fileSize())
                 .body(result.resource());
+    }
+
+    @ExceptionHandler(ExportArtifactUnavailableException.class)
+    public ResponseEntity<String> exportArtifactUnavailable(ExportArtifactUnavailableException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(e.getMessage());
     }
 }

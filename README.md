@@ -43,7 +43,7 @@ Current verification baseline:
 | Shared resources | `shared/` | Liquibase migrations, i18n bundles, ODM/XSD/XSLT templates |
 | React SPA | `frontend/` | `/app/*` user interface |
 | Questionnaire service | `questionnaire-service/` | FastAPI service for questionnaire templates, assignments, responses, scoring, and exports |
-| Deployment | `deploy/`, `deploy.sh` | Bare-host deployment scripts and reverse-proxy / observability config |
+| Deployment | `deploy/`, `deploy-bare.sh`, `deploy-docker.sh` | Bare-host and Docker deployment scripts plus reverse-proxy / observability config |
 
 Runtime stack:
 
@@ -101,7 +101,7 @@ Area-specific notes:
 The refactor/removal phase is closed. The next workstream is no longer legacy
 cleanup; it is product audit and convergence:
 
-1. `docs/edc-convergence/phase-0-full-product-audit-plan.md`
+1. `docs/edc-convergence/phase-0-full-product-audit-report.md`
 2. `docs/edc-convergence/phase-1-edc-usability-convergence-plan.md`
 3. `docs/product/researchedc-final-open-source-modular-plan.md`
 

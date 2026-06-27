@@ -1,6 +1,6 @@
 # EDC Convergence Docs Index
 
-**Updated:** 2026-06-26
+**Updated:** 2026-06-27
 
 This directory contains the post-refactor execution plans for converging the current
 ResearchEDC product into a stable, usable EDC baseline before starting the next
@@ -23,14 +23,15 @@ Relationship to existing plan sets:
 
 **Prepared next plans:**
 
-1. `phase-0-full-product-audit-plan.md`
+1. `phase-0-full-product-audit-report.md`
 2. `phase-1-edc-usability-convergence-plan.md`
+3. `phase-1-storage-minio-convergence-plan.md`
 
 Activation sequence:
 
 1. keep `docs/refactor/phase-18-post-cleanup-verification-baseline-plan.md`
    as the closed verification record
-2. start with `phase-0-full-product-audit-plan.md`
+2. use `phase-0-full-product-audit-report.md` as the completed audit baseline
 3. use the audit findings to activate
    `phase-1-edc-usability-convergence-plan.md`
 
@@ -38,8 +39,10 @@ Activation sequence:
 
 | Document | Role | Status |
 |---|---|---|
-| `phase-0-full-product-audit-plan.md` | First post-refactor execution step: complete audit of verification, workflows, security, UX, deploy/runtime, and observability | Prepared / pending activation |
+| `phase-0-full-product-audit-plan.md` | First post-refactor execution step: complete audit of verification, workflows, security, UX, deploy/runtime, and observability | Complete |
+| `phase-0-full-product-audit-report.md` | Completed Phase 0 audit findings, verification results, and ordered Phase 1 entry backlog | Complete |
 | `phase-1-edc-usability-convergence-plan.md` | First post-refactor product phase: stabilize the current EDC workflow, deployment, permissions, and operator usability | Prepared / pending activation |
+| `phase-1-storage-minio-convergence-plan.md` | Storage convergence plan to move uploads, generated artifacts, downloads, and questionnaire exports to MinIO-backed object storage | Prepared / pending activation |
 
 ## Directory Rules
 

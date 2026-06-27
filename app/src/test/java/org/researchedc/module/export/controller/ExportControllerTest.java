@@ -26,6 +26,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ExtendWith(MockitoExtension.class)
@@ -165,6 +166,20 @@ class ExportControllerTest {
         }
 
         verify(exportService).getDownload(5L);
+    }
+
+    @Test
+    void downloadExport_missingArtifact_returnsNotFoundMessage() throws Exception {
+        when(exportService.getDownload(7L))
+                .thenThrow(new ExportService.ExportArtifactUnavailableException(
+                        "Export artifact is missing or unreadable for job 7"));
+
+        mockMvc.perform(get("/api/v1/exports/7/download"))
+                .andExpect(status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content()
+                        .string("Export artifact is missing or unreadable for job 7"));
+
+        verify(exportService).getDownload(7L);
     }
 
     private ExportJobDTO job(Long id, ExportJobStatus status) {

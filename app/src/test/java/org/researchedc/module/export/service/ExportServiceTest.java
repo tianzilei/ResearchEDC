@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import static org.researchedc.testutil.TestDataFactory.*;
@@ -16,6 +18,7 @@ import org.researchedc.module.export.repository.ExportJobRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -252,11 +255,14 @@ class ExportServiceTest {
     }
 
     @Test
-    void getDownload_completedJob_returnsResource() {
+    void getDownload_completedJob_returnsResource(@TempDir Path tempDir) throws Exception {
+        Path artifact = tempDir.resolve("export_1.xml");
+        Files.writeString(artifact, "<ODM/>");
+
         ExportJob job = new ExportJob();
         job.setId(1L);
         job.setStatus(ExportJobStatus.COMPLETED);
-        job.setFilePath("/exports/odm/1/export_1.xml");
+        job.setFilePath(artifact.toString());
         job.setFileSize(500L);
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
@@ -265,7 +271,7 @@ class ExportServiceTest {
 
         assertNotNull(result.resource());
         assertEquals("export_1.xml", result.filename());
-        assertEquals(500L, result.fileSize());
+        assertEquals(Files.size(artifact), result.fileSize());
     }
 
     @Test
@@ -289,6 +295,21 @@ class ExportServiceTest {
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
 
         assertThrows(IllegalStateException.class, () -> service.getDownload(1L));
+    }
+
+    @Test
+    void getDownload_missingArtifact_throwsUnavailableException(@TempDir Path tempDir) {
+        ExportJob job = new ExportJob();
+        job.setId(1L);
+        job.setStatus(ExportJobStatus.COMPLETED);
+        job.setFilePath(tempDir.resolve("missing.xml").toString());
+
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+
+        ExportService.ExportArtifactUnavailableException ex = assertThrows(
+                ExportService.ExportArtifactUnavailableException.class,
+                () -> service.getDownload(1L));
+        assertTrue(ex.getMessage().contains("job 1"));
     }
 
     @Test

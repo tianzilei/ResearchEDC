@@ -147,6 +147,12 @@ public class ExportService {
     public record DownloadResult(Resource resource, String filename, long fileSize) {
     }
 
+    public static class ExportArtifactUnavailableException extends RuntimeException {
+        public ExportArtifactUnavailableException(String message) {
+            super(message);
+        }
+    }
+
     public DownloadResult getDownload(Long id) {
         ExportJob job = jobRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Export job not found: " + id));
@@ -157,8 +163,13 @@ public class ExportService {
             throw new IllegalStateException("Export job has no file path");
         }
         FileSystemResource resource = new FileSystemResource(job.getFilePath());
+        if (!resource.exists() || !resource.isReadable()) {
+            throw new ExportArtifactUnavailableException(
+                    "Export artifact is missing or unreadable for job " + id);
+        }
         String filename = "export_" + job.getId() + ".xml";
-        return new DownloadResult(resource, filename, job.getFileSize() != null ? job.getFileSize() : 0);
+        long fileSize = resource.getFile().length();
+        return new DownloadResult(resource, filename, fileSize);
     }
 
     private ExportJobDTO toDTO(ExportJob job) {

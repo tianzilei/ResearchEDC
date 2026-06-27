@@ -2,6 +2,7 @@ package org.researchedc.module.event.controller;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import org.researchedc.module.event.dto.CreateEventDefinitionRequest;
 import org.researchedc.module.event.dto.EventCrfDTO;
 import org.researchedc.module.event.dto.EventDefinitionDTO;
 import org.researchedc.module.event.dto.ScheduleEventRequest;
@@ -43,6 +44,14 @@ public class EventController {
     @GetMapping("/definitions/{id}")
     public ResponseEntity<EventDefinitionDTO> getEventDefinition(@PathVariable Integer id) {
         return ResponseEntity.ok(eventService.getEventDefinition(id));
+    }
+
+    @PostMapping("/definitions")
+    public ResponseEntity<EventDefinitionDTO> createEventDefinition(
+            @Valid @RequestBody CreateEventDefinitionRequest request) {
+        Integer ownerId = currentUserUtils.getCurrentUserId();
+        EventDefinitionDTO dto = eventService.createEventDefinition(request, ownerId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @DeleteMapping("/definitions/{id}")

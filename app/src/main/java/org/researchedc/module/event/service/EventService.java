@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
+import org.researchedc.module.event.dto.CreateEventDefinitionRequest;
 import org.researchedc.module.event.dto.EventCrfDTO;
 import org.researchedc.module.event.dto.EventDefinitionDTO;
 import org.researchedc.module.event.dto.ScheduleEventRequest;
@@ -21,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class EventService {
+
+    private static final int STATUS_AVAILABLE = 1;
+    private static final int EVENT_STATUS_SCHEDULED = 2;
 
     private final StudyEventRepository studyEventRepository;
     private final StudyEventDefinitionRepository eventDefinitionRepository;
@@ -77,6 +81,38 @@ public class EventService {
     }
 
     @Transactional
+    public EventDefinitionDTO createEventDefinition(CreateEventDefinitionRequest request, Integer ownerId) {
+        if (request.getStudyId() == null) {
+            throw new IllegalArgumentException("studyId is required");
+        }
+        if (request.getName() == null || request.getName().isBlank()) {
+            throw new IllegalArgumentException("name is required");
+        }
+
+        StudyEventDefinitionEntity entity = new StudyEventDefinitionEntity();
+        entity.setStudyId(request.getStudyId());
+        entity.setName(request.getName().trim());
+        entity.setDescription(request.getDescription());
+        entity.setRepeating(request.getRepeating() != null ? request.getRepeating() : false);
+        entity.setType(request.getType());
+        entity.setCategory(request.getCategory());
+        entity.setOcOid(request.getOcOid());
+        entity.setOrdinal(request.getOrdinal());
+        entity.setStatusId(request.getStatusId() != null ? request.getStatusId() : STATUS_AVAILABLE);
+        entity.setDateCreated(LocalDateTime.now());
+        entity.setOwnerId(ownerId);
+
+        StudyEventDefinitionEntity saved = eventDefinitionRepository.save(entity);
+
+        auditService.recordAudit(
+                saved.getStudyId(), AuditEventType.CREATE, "EventDefinition",
+                saved.getStudyEventDefinitionId().longValue(), saved.getName(),
+                null, null, ownerId, "Event definition created", "event");
+
+        return toDefDto(saved);
+    }
+
+    @Transactional
     public StudyEventDTO scheduleEvent(ScheduleEventRequest request, Integer ownerId) {
         if (request.getStudySubjectId() == null) {
             throw new IllegalArgumentException("studySubjectId is required");
@@ -91,8 +127,14 @@ public class EventService {
         entity.setLocation(request.getLocation());
         entity.setDateStart(request.getStartDate());
         entity.setDateEnd(request.getEndDate());
-        entity.setStatusId(request.getStatusId());
-        entity.setSubjectEventStatusId(request.getSubjectEventStatusId());
+        entity.setStatusId(request.getStatusId() != null ? request.getStatusId() : STATUS_AVAILABLE);
+        entity.setSubjectEventStatusId(request.getSubjectEventStatusId() != null
+                ? request.getSubjectEventStatusId() : EVENT_STATUS_SCHEDULED);
+        Integer ordinal = request.getOrdinal() != null && request.getOrdinal() > 0
+                ? request.getOrdinal()
+                : nextSampleOrdinal(request.getStudySubjectId(), request.getStudyEventDefinitionId());
+        entity.setSampleOrdinal(ordinal);
+        entity.setSedOrdinal(ordinal);
         entity.setDateCreated(LocalDateTime.now());
         entity.setOwnerId(ownerId);
 
@@ -104,6 +146,16 @@ public class EventService {
                 null, null, ownerId, "Scheduled for subject " + request.getStudySubjectId(), "event");
 
         return toEventDto(saved);
+    }
+
+    private Integer nextSampleOrdinal(Integer studySubjectId, Integer studyEventDefinitionId) {
+        return studyEventRepository
+                .findTopByStudyEventDefinitionIdAndStudySubjectIdOrderBySampleOrdinalDesc(
+                        studyEventDefinitionId, studySubjectId)
+                .map(StudyEventEntity::getSampleOrdinal)
+                .filter(v -> v != null && v > 0)
+                .map(v -> v + 1)
+                .orElse(1);
     }
 
     @Transactional

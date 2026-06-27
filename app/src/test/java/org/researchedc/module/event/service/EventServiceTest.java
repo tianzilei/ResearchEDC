@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.researchedc.module.audit.service.AuditService;
+import org.researchedc.module.event.dto.CreateEventDefinitionRequest;
 import org.researchedc.module.event.dto.EventDefinitionDTO;
 import org.researchedc.module.event.dto.ScheduleEventRequest;
 import org.researchedc.module.event.dto.StudyEventDTO;
@@ -84,6 +85,33 @@ class EventServiceTest {
         assertEquals("Screening", result.getFirst().getName());
     }
 
+
+    @Test
+    void createEventDefinition_withValidRequest_savesDefaultsAndAudits() {
+        when(eventDefinitionRepository.save(any(StudyEventDefinitionEntity.class)))
+                .thenAnswer(i -> {
+                    StudyEventDefinitionEntity e = i.getArgument(0);
+                    if (e.getStudyEventDefinitionId() == null) e.setStudyEventDefinitionId(10);
+                    return e;
+                });
+
+        CreateEventDefinitionRequest request = new CreateEventDefinitionRequest();
+        request.setStudyId(1);
+        request.setName("  Screening  ");
+        request.setCategory("Screening");
+        request.setOrdinal(1);
+
+        EventDefinitionDTO result = service.createEventDefinition(request, 42);
+
+        assertEquals(10, result.getStudyEventDefinitionId());
+        assertEquals("Screening", result.getName());
+        assertEquals(1, result.getStatusId());
+        verify(eventDefinitionRepository).save(any(StudyEventDefinitionEntity.class));
+        verify(auditService).recordAudit(eq(1), any(), eq("EventDefinition"), eq(10L),
+                eq("Screening"), isNull(), isNull(), eq(42),
+                eq("Event definition created"), eq("event"));
+    }
+
     @Test
     void listSubjectEvents_returnsBySubjectId() {
         when(studyEventRepository.findByStudySubjectIdOrderByDateStart(100))
@@ -149,6 +177,36 @@ class EventServiceTest {
         verify(studyEventRepository).save(any(StudyEventEntity.class));
         verify(auditService).recordAudit(any(), any(), any(), any(), any(),
                 any(), any(), any(), any(), any());
+    }
+
+
+    @Test
+    void scheduleEvent_withoutStatusOrWithPlaceholderOrdinal_appliesDefaultsAndNextOrdinal() {
+        StudyEventEntity previous = createEvent(1, 100, 1);
+        previous.setSampleOrdinal(2);
+        when(studyEventRepository.findTopByStudyEventDefinitionIdAndStudySubjectIdOrderBySampleOrdinalDesc(1, 100))
+                .thenReturn(Optional.of(previous));
+        when(studyEventRepository.save(any(StudyEventEntity.class)))
+                .thenAnswer(i -> {
+                    StudyEventEntity e = i.getArgument(0);
+                    e.setStudyEventId(2);
+                    return e;
+                });
+
+        ScheduleEventRequest request = new ScheduleEventRequest();
+        request.setStudySubjectId(100);
+        request.setStudyEventDefinitionId(1);
+        request.setOrdinal(0);
+        request.setLocation("Clinic B");
+
+        StudyEventDTO result = service.scheduleEvent(request, 42);
+
+        assertEquals(1, result.getStatusId());
+        assertEquals(2, result.getSubjectEventStatusId());
+        assertEquals(3, result.getSedOrdinal());
+        verify(studyEventRepository).save(argThat(e ->
+                Integer.valueOf(3).equals(e.getSampleOrdinal())
+                        && Integer.valueOf(3).equals(e.getSedOrdinal())));
     }
 
     @Test

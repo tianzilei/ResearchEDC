@@ -109,9 +109,8 @@ export default function SubjectDetail() {
         studySubjectId,
         studyEventDefinitionId: vals.eventDefinitionId,
         location: vals.location ?? "",
-        ordinal: 0,
-        startDate: vals.startDate?.format("YYYY-MM-DD"),
-        endDate: vals.endDate?.format("YYYY-MM-DD"),
+        startDate: vals.startDate?.format("YYYY-MM-DDTHH:mm:ss") ?? null,
+        endDate: vals.endDate?.format("YYYY-MM-DDTHH:mm:ss") ?? null,
       });
       message.success("访视创建成功");
       setEventCreateOpen(false);
@@ -170,9 +169,9 @@ export default function SubjectDetail() {
     },
     {
       title: "", key: "actions",
-      render: (_: unknown, record: StudyEventDTO) => (
+      render: () => (
         <Button size="small"
-          onClick={() => navigate(`/app/subjects/${id}/events/${record.studyEventId}/crfs`)}>
+          onClick={() => navigate(`/app/subjects/${id}/events`)}>
           CRF
         </Button>
       ),

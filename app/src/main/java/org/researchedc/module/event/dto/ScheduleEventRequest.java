@@ -9,6 +9,7 @@ public class ScheduleEventRequest {
     private String location;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private Integer ordinal;
     private Integer statusId;
     private Integer subjectEventStatusId;
 
@@ -24,6 +25,8 @@ public class ScheduleEventRequest {
     public void setStartDate(LocalDateTime v) { this.startDate = v; }
     public LocalDateTime getEndDate() { return endDate; }
     public void setEndDate(LocalDateTime v) { this.endDate = v; }
+    public Integer getOrdinal() { return ordinal; }
+    public void setOrdinal(Integer v) { this.ordinal = v; }
     public Integer getStatusId() { return statusId; }
     public void setStatusId(Integer v) { this.statusId = v; }
     public Integer getSubjectEventStatusId() { return subjectEventStatusId; }

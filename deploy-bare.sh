@@ -438,27 +438,9 @@ cmd_build() {
 
     log_info "Generating config..."
     generate_datainfo app/src/main/resources
-    [ ! -f app/src/main/resources/extract.properties ] \
-        && cp web/src/main/resources/extract.properties app/src/main/resources/
 
     log_info "Building backend..."
     mvn clean install -DskipTests -q
-
-    log_info "Copying JSP and web resources to classpath..."
-    mkdir -p app/target/classes/WEB-INF/jsp
-    [ -d web/src/main/webapp/WEB-INF/jsp ] \
-        && cp -r web/src/main/webapp/WEB-INF/jsp/* app/target/classes/WEB-INF/jsp/
-    [ -d web/src/main/webapp/images ] \
-        && mkdir -p app/target/classes/images \
-        && cp -r web/src/main/webapp/images/* app/target/classes/images/
-    [ -d web/src/main/webapp/includes ] \
-        && mkdir -p app/target/classes/includes \
-        && cp -r web/src/main/webapp/includes/* app/target/classes/includes/
-
-    log_info "Copying DAO properties to classpath (for SQLFactory)..."
-    mkdir -p app/target/classes/properties
-    [ -d shared/src/main/resources/properties ] \
-        && cp -r shared/src/main/resources/properties/* app/target/classes/properties/
 
     log_ok "Build complete"
     ls -lh app/target/ResearchEDC*.war 2>/dev/null || log_warn "No WAR in app/target"
@@ -679,8 +661,7 @@ cmd_logs() {
 
 cmd_clean() {
     log_info "Cleaning build artifacts and runtime data..."
-    rm -rf "${PROJECT_DIR}/app/target" "${PROJECT_DIR}/web/target" "${PROJECT_DIR}/ws/target"
-    rm -rf "${PROJECT_DIR}/shared/target" "${PROJECT_DIR}/frontend/dist"
+    rm -rf "${PROJECT_DIR}/app/target" "${PROJECT_DIR}/shared/target" "${PROJECT_DIR}/frontend/dist"
     rm -rf "${PID_DIR}" "${DATA_DIR}" "${LOG_DIR}" "${CONFIG_DIR}"
     rm -rf "${PROJECT_DIR}/questionnaire-service/apps/api/.venv"
     log_ok "Clean complete"

@@ -56,8 +56,8 @@ export interface EventCrfDTO {
 export interface ScheduleEventRequest {
   studySubjectId: number;
   studyEventDefinitionId: number;
-  ordinal: number;
+  ordinal?: number;
   location: string;
-  startDate?: string;
-  endDate?: string;
+  startDate?: string | null;
+  endDate?: string | null;
 }

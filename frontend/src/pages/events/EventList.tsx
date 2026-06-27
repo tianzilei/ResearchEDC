@@ -125,10 +125,9 @@ export default function EventList() {
       await scheduleMutation.mutateAsync({
         studySubjectId,
         studyEventDefinitionId: vals.definitionId,
-        ordinal: 0,
         location: vals.location ?? "",
-        startDate: vals.startDate?.toISOString?.() ?? null,
-        endDate: vals.endDate?.toISOString?.() ?? null,
+        startDate: vals.startDate?.format("YYYY-MM-DDTHH:mm:ss") ?? null,
+        endDate: vals.endDate?.format("YYYY-MM-DDTHH:mm:ss") ?? null,
       });
       message.success("Event scheduled");
       setScheduleOpen(false);

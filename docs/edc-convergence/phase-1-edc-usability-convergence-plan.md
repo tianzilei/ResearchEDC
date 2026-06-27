@@ -1,7 +1,7 @@
 # Phase 1 EDC Usability Convergence Plan
 
 **Created:** 2026-06-26
-**Status:** Prepared / pending activation
+**Status:** Active / in progress
 **Predecessor:** `docs/edc-convergence/phase-0-full-product-audit-plan.md`
 **Successor:** `docs/product/researchedc-final-open-source-modular-plan.md`
 **Release posture:** no RC tag, no publish action, no new module family work until the
@@ -212,6 +212,15 @@ This phase is complete when:
 4. major auth/error-handling surprises are removed
 5. starting `Notification And Task Engine` would no longer be blocked by basic
    product instability
+
+
+## Progress Log
+
+### 2026-06-27
+
+- Activated Phase 1 after Phase 0 completion and rerun.
+- Slice 1 core workflow continuity is already represented in the current worktree: event definition create support, subject detail route repair, event scheduling status/ordinal defaults, CRF route correction, and bare deploy drift cleanup.
+- Slice 2 started with export download hardening: completed jobs now verify artifact existence/readability before returning a download resource, missing/unreadable artifacts return a 404 text response, and targeted export service/controller tests cover the behavior.
 
 ## Next Phase
 
