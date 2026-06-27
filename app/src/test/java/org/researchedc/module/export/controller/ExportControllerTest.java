@@ -61,7 +61,8 @@ class ExportControllerTest {
         response.setExportFormat(ExportFormat.ODM_XML);
         response.setRequestedBy(42);
         response.setCriteriaJson("{\"includeDNs\":true}");
-        when(exportService.createJob(any(CreateExportJobRequest.class))).thenReturn(response);
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(exportService.createJob(any(CreateExportJobRequest.class), any(Integer.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/v1/exports")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -73,7 +74,7 @@ class ExportControllerTest {
                 .andExpect(jsonPath("$.criteriaJson").value("{\"includeDNs\":true}"));
 
         ArgumentCaptor<CreateExportJobRequest> captor = ArgumentCaptor.forClass(CreateExportJobRequest.class);
-        verify(exportService).createJob(captor.capture());
+        verify(exportService).createJob(captor.capture(), org.mockito.Mockito.eq(42));
         org.junit.jupiter.api.Assertions.assertEquals(1, captor.getValue().getStudyId());
         org.junit.jupiter.api.Assertions.assertEquals(ExportFormat.ODM_XML, captor.getValue().getExportFormat());
     }
@@ -82,19 +83,21 @@ class ExportControllerTest {
     void listJobs_returnsStudyJobs() throws Exception {
         ExportJobDTO first = job(1L, ExportJobStatus.PENDING);
         ExportJobDTO second = job(2L, ExportJobStatus.COMPLETED);
-        when(exportService.listJobs(1)).thenReturn(List.of(first, second));
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(exportService.listJobs(1, 42)).thenReturn(List.of(first, second));
 
         mockMvc.perform(get("/api/v1/exports").param("studyId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[1].status").value("COMPLETED"));
 
-        verify(exportService).listJobs(1);
+        verify(exportService).listJobs(1, 42);
     }
 
     @Test
     void getJob_returnsJob() throws Exception {
-        when(exportService.getJob(12L)).thenReturn(job(12L, ExportJobStatus.RUNNING));
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(exportService.getJob(12L, 42)).thenReturn(job(12L, ExportJobStatus.RUNNING));
 
         mockMvc.perform(get("/api/v1/exports/12"))
                 .andExpect(status().isOk())
@@ -104,21 +107,23 @@ class ExportControllerTest {
 
     @Test
     void cancelJob_returnsCancelledJob() throws Exception {
-        when(exportService.cancelJob(13L)).thenReturn(job(13L, ExportJobStatus.CANCELLED));
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(exportService.cancelJob(13L, 42)).thenReturn(job(13L, ExportJobStatus.CANCELLED));
 
         mockMvc.perform(post("/api/v1/exports/13/cancel"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(13))
                 .andExpect(jsonPath("$.status").value("CANCELLED"));
 
-        verify(exportService).cancelJob(13L);
+        verify(exportService).cancelJob(13L, 42);
     }
 
     @Test
     void retryJob_returnsQueuedJob() throws Exception {
         ExportJobDTO response = job(14L, ExportJobStatus.PENDING);
         response.setRetryCount(2);
-        when(exportService.retryJob(14L)).thenReturn(response);
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(exportService.retryJob(14L, 42)).thenReturn(response);
 
         mockMvc.perform(post("/api/v1/exports/14/retry"))
                 .andExpect(status().isOk())
@@ -126,7 +131,7 @@ class ExportControllerTest {
                 .andExpect(jsonPath("$.status").value("PENDING"))
                 .andExpect(jsonPath("$.retryCount").value(2));
 
-        verify(exportService).retryJob(14L);
+        verify(exportService).retryJob(14L, 42);
     }
 
     @Test

@@ -38,14 +38,17 @@ public class ExportService {
         this.currentStudyAccessService = currentStudyAccessService;
     }
 
-    public ExportJobDTO createJob(CreateExportJobRequest request) {
+    public ExportJobDTO createJob(CreateExportJobRequest request, Integer currentUserId) {
+        requireStudyId(request.getStudyId());
+        requireExportAccess(currentUserId, request.getStudyId());
+
         ExportJob job = new ExportJob();
         job.setStudyId(request.getStudyId());
         job.setName(request.getName());
         job.setExportFormat(request.getExportFormat());
         job.setOdmContractVersion(request.getOdmContractVersion() != null
                 ? request.getOdmContractVersion() : OdmContractVersion.OC2_1);
-        job.setRequestedBy(request.getRequestedBy());
+        job.setRequestedBy(currentUserId);
         job.setCriteriaJson(request.getCriteriaJson());
         job.setStatus(ExportJobStatus.PENDING);
         job = jobRepository.save(job);
@@ -66,12 +69,16 @@ public class ExportService {
         return toDTO(job);
     }
 
-    public List<ExportJobDTO> listJobs(Integer studyId) {
+    public List<ExportJobDTO> listJobs(Integer studyId, Integer currentUserId) {
+        requireStudyId(studyId);
+        requireExportAccess(currentUserId, studyId);
         return jobRepository.findByStudyIdOrderByRequestedDateDesc(studyId)
                 .stream().map(this::toDTO).toList();
     }
 
-    public List<ExportJobDTO> listJobs(Integer studyId, ExportJobFilter filter) {
+    public List<ExportJobDTO> listJobs(Integer studyId, ExportJobFilter filter, Integer currentUserId) {
+        requireStudyId(studyId);
+        requireExportAccess(currentUserId, studyId);
         List<ExportJob> jobs = jobRepository.findByStudyIdOrderByRequestedDateDesc(studyId);
         return jobs.stream()
                 .filter(j -> filter.getStatus() == null || j.getStatus() == filter.getStatus())
@@ -84,15 +91,13 @@ public class ExportService {
                 .toList();
     }
 
-    public ExportJobDTO getJob(Long id) {
-        ExportJob job = jobRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Export job not found: " + id));
+    public ExportJobDTO getJob(Long id, Integer currentUserId) {
+        ExportJob job = findJobForUser(id, currentUserId);
         return toDTO(job);
     }
 
-    public ExportJobDTO cancelJob(Long id) {
-        ExportJob job = jobRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Export job not found: " + id));
+    public ExportJobDTO cancelJob(Long id, Integer currentUserId) {
+        ExportJob job = findJobForUser(id, currentUserId);
         if (job.getStatus() == ExportJobStatus.PENDING || job.getStatus() == ExportJobStatus.RUNNING) {
             job.setStatus(ExportJobStatus.CANCELLED);
             job = jobRepository.save(job);
@@ -101,9 +106,8 @@ public class ExportService {
         return toDTO(job);
     }
 
-    public ExportJobDTO retryJob(Long id) {
-        ExportJob job = jobRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Export job not found: " + id));
+    public ExportJobDTO retryJob(Long id, Integer currentUserId) {
+        ExportJob job = findJobForUser(id, currentUserId);
         if (job.getStatus() == ExportJobStatus.FAILED && Boolean.TRUE.equals(job.getRetryable())) {
             job.setStatus(ExportJobStatus.PENDING);
             job.setRetryCount(job.getRetryCount() != null ? job.getRetryCount() + 1 : 1);
@@ -178,6 +182,25 @@ public class ExportService {
         String filename = "export_" + job.getId() + ".xml";
         long fileSize = resource.getFile().length();
         return new DownloadResult(resource, filename, fileSize);
+    }
+
+    private ExportJob findJobForUser(Long id, Integer currentUserId) {
+        ExportJob job = jobRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Export job not found: " + id));
+        requireExportAccess(currentUserId, job.getStudyId());
+        return job;
+    }
+
+    private void requireStudyId(Integer studyId) {
+        if (studyId == null) {
+            throw new IllegalArgumentException("studyId is required");
+        }
+    }
+
+    private void requireExportAccess(Integer currentUserId, Integer studyId) {
+        if (!currentStudyAccessService.canExportStudy(currentUserId, studyId)) {
+            throw new AccessDeniedException("You do not have export access to this study");
+        }
     }
 
     private ExportJobDTO toDTO(ExportJob job) {

@@ -52,14 +52,30 @@ class ExportServiceTest {
         savedJob.setRequestedBy(100);
         savedJob.setStatus(ExportJobStatus.PENDING);
 
+        when(currentStudyAccessService.canExportStudy(100, 1)).thenReturn(true);
         when(jobRepository.save(any())).thenReturn(savedJob);
 
-        ExportJobDTO result = service.createJob(request);
+        ExportJobDTO result = service.createJob(request, 100);
 
         assertEquals("Test Export", result.getName());
         assertEquals(ExportFormat.CSV, result.getExportFormat());
         assertEquals(ExportJobStatus.PENDING, result.getStatus());
+        assertEquals(100, result.getRequestedBy());
         verify(jobRepository).save(any());
+    }
+
+    @Test
+    void createJob_withoutStudyExportAccess_throwsAccessDenied() {
+        CreateExportJobRequest request = new CreateExportJobRequest();
+        request.setStudyId(1);
+        request.setName("Test Export");
+        request.setExportFormat(ExportFormat.CSV);
+
+        when(currentStudyAccessService.canExportStudy(100, 1)).thenReturn(false);
+
+        assertThrows(org.springframework.security.access.AccessDeniedException.class,
+                () -> service.createJob(request, 100));
+        verify(jobRepository, never()).save(any());
     }
 
     @Test
@@ -72,23 +88,35 @@ class ExportServiceTest {
 
         when(jobRepository.findByStudyIdOrderByRequestedDateDesc(1))
                 .thenReturn(List.of(job));
+        when(currentStudyAccessService.canExportStudy(42, 1)).thenReturn(true);
 
-        List<ExportJobDTO> result = service.listJobs(1);
+        List<ExportJobDTO> result = service.listJobs(1, 42);
 
         assertEquals(1, result.size());
         assertEquals("Job 1", result.getFirst().getName());
     }
 
     @Test
+    void listJobs_withoutStudyExportAccess_throwsAccessDenied() {
+        when(currentStudyAccessService.canExportStudy(42, 1)).thenReturn(false);
+
+        assertThrows(org.springframework.security.access.AccessDeniedException.class,
+                () -> service.listJobs(1, 42));
+        verify(jobRepository, never()).findByStudyIdOrderByRequestedDateDesc(anyInt());
+    }
+
+    @Test
     void getJob_whenFound_returnsDTO() {
         ExportJob job = new ExportJob();
         job.setId(1L);
+        job.setStudyId(2);
         job.setName("My Job");
         job.setStatus(ExportJobStatus.RUNNING);
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(currentStudyAccessService.canExportStudy(42, 2)).thenReturn(true);
 
-        ExportJobDTO result = service.getJob(1L);
+        ExportJobDTO result = service.getJob(1L, 42);
 
         assertEquals("My Job", result.getName());
         assertEquals(ExportJobStatus.RUNNING, result.getStatus());
@@ -98,19 +126,21 @@ class ExportServiceTest {
     void getJob_whenNotFound_throwsException() {
         when(jobRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(java.util.NoSuchElementException.class, () -> service.getJob(99L));
+        assertThrows(java.util.NoSuchElementException.class, () -> service.getJob(99L, 42));
     }
 
     @Test
     void cancelJob_whenPending_changesStatus() {
         ExportJob job = new ExportJob();
         job.setId(1L);
+        job.setStudyId(2);
         job.setStatus(ExportJobStatus.PENDING);
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(currentStudyAccessService.canExportStudy(42, 2)).thenReturn(true);
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        ExportJobDTO result = service.cancelJob(1L);
+        ExportJobDTO result = service.cancelJob(1L, 42);
 
         assertEquals(ExportJobStatus.CANCELLED, result.getStatus());
     }
@@ -119,11 +149,13 @@ class ExportServiceTest {
     void cancelJob_whenCompleted_doesNothing() {
         ExportJob job = new ExportJob();
         job.setId(1L);
+        job.setStudyId(2);
         job.setStatus(ExportJobStatus.COMPLETED);
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(currentStudyAccessService.canExportStudy(42, 2)).thenReturn(true);
 
-        ExportJobDTO result = service.cancelJob(1L);
+        ExportJobDTO result = service.cancelJob(1L, 42);
 
         assertEquals(ExportJobStatus.COMPLETED, result.getStatus());
         verify(jobRepository, never()).save(any());
@@ -133,13 +165,15 @@ class ExportServiceTest {
     void retryJob_whenFailed_resetsStatus() {
         ExportJob job = new ExportJob();
         job.setId(1L);
+        job.setStudyId(2);
         job.setStatus(ExportJobStatus.FAILED);
         job.setRetryCount(0);
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(currentStudyAccessService.canExportStudy(42, 2)).thenReturn(true);
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        ExportJobDTO result = service.retryJob(1L);
+        ExportJobDTO result = service.retryJob(1L, 42);
 
         assertEquals(ExportJobStatus.PENDING, result.getStatus());
         assertEquals(1, result.getRetryCount());
@@ -149,11 +183,13 @@ class ExportServiceTest {
     void retryJob_whenCompleted_doesNothing() {
         ExportJob job = new ExportJob();
         job.setId(1L);
+        job.setStudyId(2);
         job.setStatus(ExportJobStatus.COMPLETED);
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
+        when(currentStudyAccessService.canExportStudy(42, 2)).thenReturn(true);
 
-        ExportJobDTO result = service.retryJob(1L);
+        ExportJobDTO result = service.retryJob(1L, 42);
 
         assertEquals(ExportJobStatus.COMPLETED, result.getStatus());
         verify(jobRepository, never()).save(any());
@@ -221,14 +257,16 @@ class ExportServiceTest {
 
         ExportJob completedJob = new ExportJob();
         completedJob.setId(1L);
+        completedJob.setStudyId(1);
         completedJob.setStatus(ExportJobStatus.COMPLETED);
         completedJob.setFilePath("/exports/odm/1/export_1.xml");
         completedJob.setFileSize(200L);
 
+        when(currentStudyAccessService.canExportStudy(100, 1)).thenReturn(true);
         when(jobRepository.save(any())).thenReturn(savedJob);
         when(jobRepository.findById(1L)).thenReturn(Optional.of(completedJob));
 
-        ExportJobDTO result = service.createJob(request);
+        ExportJobDTO result = service.createJob(request, 100);
 
         verify(odmExecutionService).execute(1L);
         assertEquals(ExportJobStatus.COMPLETED, result.getStatus());
@@ -249,9 +287,10 @@ class ExportServiceTest {
         savedJob.setExportFormat(ExportFormat.CSV);
         savedJob.setStatus(ExportJobStatus.PENDING);
 
+        when(currentStudyAccessService.canExportStudy(100, 1)).thenReturn(true);
         when(jobRepository.save(any())).thenReturn(savedJob);
 
-        service.createJob(request);
+        service.createJob(request, 100);
 
         verify(odmExecutionService, never()).execute(anyLong());
     }

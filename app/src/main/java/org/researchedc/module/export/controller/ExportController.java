@@ -34,7 +34,8 @@ public class ExportController {
     @PostMapping
     @PreAuthorize(CoreEdcAuthorityExpressions.EXPORT_DATA)
     public ResponseEntity<ExportJobDTO> createJob(@RequestBody CreateExportJobRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(exportService.createJob(request));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.status(HttpStatus.CREATED).body(exportService.createJob(request, currentUserId));
     }
 
     @GetMapping
@@ -45,33 +46,37 @@ public class ExportController {
             @RequestParam(required = false) ExportFormat exportFormat,
             @RequestParam(required = false) OdmContractVersion odmContractVersion,
             @RequestParam(required = false) Integer requestedBy) {
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
         if (status == null && exportFormat == null && odmContractVersion == null && requestedBy == null) {
-            return ResponseEntity.ok(exportService.listJobs(studyId));
+            return ResponseEntity.ok(exportService.listJobs(studyId, currentUserId));
         }
         ExportJobFilter filter = new ExportJobFilter();
         filter.setStatus(status);
         filter.setExportFormat(exportFormat);
         filter.setOdmContractVersion(odmContractVersion);
         filter.setRequestedBy(requestedBy);
-        return ResponseEntity.ok(exportService.listJobs(studyId, filter));
+        return ResponseEntity.ok(exportService.listJobs(studyId, filter, currentUserId));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize(CoreEdcAuthorityExpressions.EXPORT_DATA)
     public ResponseEntity<ExportJobDTO> getJob(@PathVariable Long id) {
-        return ResponseEntity.ok(exportService.getJob(id));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(exportService.getJob(id, currentUserId));
     }
 
     @PostMapping("/{id}/cancel")
     @PreAuthorize(CoreEdcAuthorityExpressions.EXPORT_DATA)
     public ResponseEntity<ExportJobDTO> cancelJob(@PathVariable Long id) {
-        return ResponseEntity.ok(exportService.cancelJob(id));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(exportService.cancelJob(id, currentUserId));
     }
 
     @PostMapping("/{id}/retry")
     @PreAuthorize(CoreEdcAuthorityExpressions.EXPORT_DATA)
     public ResponseEntity<ExportJobDTO> retryJob(@PathVariable Long id) {
-        return ResponseEntity.ok(exportService.retryJob(id));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(exportService.retryJob(id, currentUserId));
     }
 
     @GetMapping("/{id}/download")
