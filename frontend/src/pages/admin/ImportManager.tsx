@@ -139,18 +139,14 @@ export default function ImportManager() {
     formData.append("importType", selectedType);
     if (studyId) formData.append("studyId", String(studyId));
     try {
-      const res = await fetch("/api/v1/imports/upload", { method: "POST", body: formData });
-      if (res.ok) {
-        const job: ImportJob = await res.json();
-        setUploadedJob(job);
-        qc.invalidateQueries({ queryKey: ["imports", studyId] });
-        message.success("文件上传成功，导入任务已创建");
-        setCurrentStep(2);
-      } else {
-        setUploadError("文件上传失败，请重试");
-      }
-    } catch {
-      setUploadError("网络错误，请检查连接后重试");
+      const job = await apiClient.post<ImportJob>("/api/v1/imports/upload", formData);
+      setUploadedJob(job);
+      qc.invalidateQueries({ queryKey: ["imports", studyId] });
+      message.success("文件上传成功，导入任务已创建");
+      setCurrentStep(2);
+    } catch (err) {
+      const detail = err instanceof Error && err.message ? err.message : "网络错误，请检查连接后重试";
+      setUploadError(detail);
     } finally {
       setUploading(false);
     }

@@ -222,7 +222,7 @@ This phase is complete when:
 - Slice 1 core workflow continuity is already represented in the current worktree: event definition create support, subject detail route repair, event scheduling status/ordinal defaults, CRF route correction, and bare deploy drift cleanup.
 - Slice 2 started with export download hardening: completed jobs now verify artifact existence/readability before returning a download resource, missing/unreadable artifacts return a 404 text response, and targeted export service/controller tests cover the behavior.
 - Slice 2 also removed obsolete package-level pnpm config after confirming `frontend/pnpm-workspace.yaml` already contains the supported `allowBuilds` setting; frontend typecheck/lint now run without the pnpm 11 warning.
-- Slice 2 added the first global frontend auth-failure path: `ApiClient` emits 401/403 events, `AuthProvider` clears local session and redirects to `/login` for 401, and redirects to `/app/403` for 403. Data-capture attachment list/upload now use `ApiClient`; other direct `fetch` call sites remain a follow-up.
+- Slice 2 added the first global frontend auth-failure path: `ApiClient` emits 401/403 events, `AuthProvider` clears local session and redirects to `/login` for 401, and redirects to `/app/403` for 403. Data-capture attachment list/upload and import upload now use `ApiClient`; other direct `fetch` call sites remain a follow-up.
 
 ## Next Phase
 
