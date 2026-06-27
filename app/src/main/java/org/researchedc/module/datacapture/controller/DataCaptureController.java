@@ -6,6 +6,7 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
+import org.researchedc.config.CoreEdcAuthorityExpressions;
 import org.researchedc.module.datacapture.dto.AttachmentDTO;
 import org.researchedc.module.datacapture.dto.BatchSaveItemsRequest;
 import org.researchedc.module.datacapture.dto.ItemDataDTO;
@@ -17,6 +18,7 @@ import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.datacapture.service.DataCaptureService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +41,7 @@ public class DataCaptureController {
     }
 
     @GetMapping("/items")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<List<ItemDataDTO>> getItemData(
             @RequestParam Integer eventCrfId) {
         return ResponseEntity.ok(dataCaptureService.getItemDataByEventCrf(eventCrfId));
@@ -63,6 +66,7 @@ public class DataCaptureController {
     }
 
     @PostMapping("/items")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<ItemDataDTO> saveItemData(
             @Valid @RequestBody SaveItemDataRequest request) {
         Integer userId = currentUserUtils.getCurrentUserId();
@@ -71,6 +75,7 @@ public class DataCaptureController {
     }
 
     @PostMapping("/items/batch")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<List<ItemDataDTO>> batchSaveItems(
             @Valid @RequestBody BatchSaveItemsRequest request) {
         Integer userId = currentUserUtils.getCurrentUserId();
@@ -79,12 +84,14 @@ public class DataCaptureController {
     }
 
     @GetMapping("/{eventCrfId}/rules")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<RuleEvalResponse> evaluateRules(
             @PathVariable int eventCrfId) {
         return ResponseEntity.ok(dataCaptureService.evaluateRules(eventCrfId));
     }
 
     @GetMapping("/events/{eventCrfId}/attachments/{attachmentId}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public void downloadAttachmentByEventCrf(@PathVariable int eventCrfId,
                                               @PathVariable String attachmentId,
                                               HttpServletResponse response) {
@@ -93,6 +100,7 @@ public class DataCaptureController {
     }
 
     @GetMapping("/events/{eventCrfId}/attachments")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<List<AttachmentDTO>> listAttachmentsByEventCrf(
             @PathVariable int eventCrfId) {
         Integer userId = currentUserUtils.getCurrentUserId();
@@ -100,6 +108,7 @@ public class DataCaptureController {
     }
 
     @PostMapping("/events/{eventCrfId}/attachments")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<Void> uploadAttachment(
             @PathVariable int eventCrfId,
             @RequestParam("file") MultipartFile file) {

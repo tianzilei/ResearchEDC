@@ -2,6 +2,7 @@ package org.researchedc.module.study.controller;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import org.researchedc.config.CoreEdcAuthorityExpressions;
 import org.researchedc.module.study.dto.CreateStudyRequest;
 import org.researchedc.module.study.dto.FeatureFlagsDTO;
 import org.researchedc.module.study.dto.StudyDetailDTO;
@@ -11,6 +12,7 @@ import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.study.service.StudyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -56,6 +58,7 @@ public class StudyController {
     }
 
     @PostMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<StudyDetailDTO> createStudy(
             @Valid @RequestBody CreateStudyRequest request) {
         Integer ownerId = currentUserUtils.getCurrentUserId();
@@ -64,6 +67,7 @@ public class StudyController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<StudyDetailDTO> updateStudy(
             @PathVariable Integer id,
             @Valid @RequestBody UpdateStudyRequest request) {
@@ -73,6 +77,7 @@ public class StudyController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<Void> deleteStudy(@PathVariable Integer id) {
         Integer userId = currentUserUtils.getCurrentUserId();
         studyService.deleteStudy(id, userId);
@@ -80,6 +85,7 @@ public class StudyController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<Void> updateStudyStatus(
             @PathVariable Integer id,
             @RequestParam Integer statusId) {
@@ -103,6 +109,7 @@ public class StudyController {
     }
 
     @PutMapping("/{id}/feature-flags")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<Void> updateFeatureFlags(
             @PathVariable Integer id,
             @RequestBody FeatureFlagsDTO featureFlags) {

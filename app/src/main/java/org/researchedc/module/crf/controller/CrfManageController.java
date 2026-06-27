@@ -2,6 +2,7 @@ package org.researchedc.module.crf.controller;
 
 import java.util.List;
 
+import org.researchedc.config.CoreEdcAuthorityExpressions;
 import org.researchedc.module.crf.dto.CreateCrfRequest;
 import org.researchedc.module.crf.dto.CreateCrfVersionRequest;
 import org.researchedc.module.crf.dto.CrfManageDTO;
@@ -12,6 +13,7 @@ import org.researchedc.module.crf.service.CrfService;
 import org.researchedc.config.CurrentUserUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,6 +51,7 @@ public class CrfManageController {
     }
 
     @PostMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<CrfManageDTO> createCrf(@RequestBody CreateCrfRequest request) {
         Integer ownerId = currentUserUtils.getCurrentUserId();
         CrfEntity entity = crfService.createCrf(request.getName(), request.getDescription(), ownerId);
@@ -56,6 +59,7 @@ public class CrfManageController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<CrfManageDTO> updateCrf(
             @PathVariable int id, @RequestBody CreateCrfRequest request) {
         try {
@@ -81,6 +85,7 @@ public class CrfManageController {
     }
 
     @PostMapping("/{crfId}/versions")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<CrfVersionManageDTO> createVersion(
             @PathVariable int crfId, @RequestBody CreateCrfVersionRequest request) {
         Integer ownerId = currentUserUtils.getCurrentUserId();
@@ -91,6 +96,7 @@ public class CrfManageController {
     }
 
     @DeleteMapping("/versions/{versionId}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<Void> deleteVersion(@PathVariable int versionId) {
         try {
             crfService.deleteVersion(versionId);

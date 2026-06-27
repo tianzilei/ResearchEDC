@@ -2,6 +2,7 @@ package org.researchedc.module.discrepancynote.controller;
 
 import java.util.List;
 
+import org.researchedc.config.CoreEdcAuthorityExpressions;
 import org.researchedc.module.discrepancynote.dto.CreateDiscrepancyNoteRequest;
 import org.researchedc.module.discrepancynote.dto.DiscrepancyNoteDTO;
 import org.researchedc.module.discrepancynote.entity.DiscrepancyNoteEntity;
@@ -9,6 +10,7 @@ import org.researchedc.module.discrepancynote.service.DiscrepancyNoteService;
 import org.researchedc.config.CurrentUserUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +33,7 @@ public class DiscrepancyNoteController {
     }
 
     @GetMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<List<DiscrepancyNoteDTO>> listNotes(
             @RequestParam(required = false) Integer eventCrfId,
             @RequestParam(required = false) Integer studyId) {
@@ -46,6 +49,7 @@ public class DiscrepancyNoteController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<DiscrepancyNoteDTO> getNote(@PathVariable int id) {
         try {
             return ResponseEntity.ok(toDto(discrepancyNoteService.getById(id)));
@@ -55,6 +59,7 @@ public class DiscrepancyNoteController {
     }
 
     @PostMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<DiscrepancyNoteDTO> createNote(@RequestBody CreateDiscrepancyNoteRequest request) {
         Integer ownerId = currentUserUtils.getCurrentUserId();
         DiscrepancyNoteEntity entity = discrepancyNoteService.create(
@@ -66,6 +71,7 @@ public class DiscrepancyNoteController {
     }
 
     @PatchMapping("/{id}/resolve")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<DiscrepancyNoteDTO> resolveNote(@PathVariable int id) {
         try {
             return ResponseEntity.ok(toDto(discrepancyNoteService.resolveNote(id)));

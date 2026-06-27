@@ -2,6 +2,7 @@ package org.researchedc.module.dataimport.controller;
 
 import java.util.List;
 
+import org.researchedc.config.CoreEdcAuthorityExpressions;
 import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.dataimport.dto.CreateImportJobRequest;
 import org.researchedc.module.dataimport.dto.ImportJobDTO;
@@ -10,6 +11,7 @@ import org.researchedc.module.dataimport.dto.ImportResultDTO;
 import org.researchedc.module.dataimport.service.ImportService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,11 +28,13 @@ public class ImportController {
     }
 
     @PostMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<ImportJobDTO> createJob(@RequestBody CreateImportJobRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(importService.createJob(request));
     }
 
     @PostMapping("/upload")
+    @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<ImportJobDTO> uploadFile(
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "importType", defaultValue = "CRF_DATA") String importType,
@@ -42,16 +46,19 @@ public class ImportController {
     }
 
     @GetMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<List<ImportJobDTO>> listJobs(@RequestParam Integer studyId) {
         return ResponseEntity.ok(importService.listJobs(studyId));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<ImportJobDTO> getJob(@PathVariable Long id) {
         return ResponseEntity.ok(importService.getJob(id));
     }
 
     @PostMapping("/{id}/validate")
+    @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<ImportPreviewDTO> validate(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(importService.validate(id));
@@ -63,11 +70,13 @@ public class ImportController {
     }
 
     @GetMapping("/{id}/preview")
+    @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<ImportPreviewDTO> preview(@PathVariable Long id) {
         return ResponseEntity.ok(importService.getPreview(id));
     }
 
     @PostMapping("/{id}/commit")
+    @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<ImportResultDTO> commit(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(importService.commit(id));

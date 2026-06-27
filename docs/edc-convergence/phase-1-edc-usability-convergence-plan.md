@@ -225,6 +225,12 @@ This phase is complete when:
 - Slice 2 added the first global frontend auth-failure path: `ApiClient` emits 401/403 events, `AuthProvider` clears local session and redirects to `/login` for 401, and redirects to `/app/403` for 403. Data-capture attachment list/upload, import upload, and export download now use `ApiClient`; LogViewer actuator fetch emits the same auth-failure event on 401/403. Remaining direct `fetch` usage is auth bootstrap/login/logout and client internals.
 - Slice 2 aligned the current CSRF contract by removing obsolete frontend XSRF token/header injection while backend CSRF remains disabled; restoring CSRF later requires a token-bootstrap design rather than a silent frontend-only assumption.
 
+### 2026-06-28
+
+- Slice 2 continued with minimum role gates for core EDC surfaces. Added shared backend authority expressions and applied `@PreAuthorize` to study administration, CRF management, subject mutations, event mutations, data-capture read/write endpoints, discrepancy-note read/write endpoints, import jobs, and export jobs/downloads.
+- Added `CoreControllerAuthorizationTest` reflection coverage for 52 secured controller methods so the minimum role contract is explicit and guarded without requiring a database-backed security integration test.
+- Verified the slice with `mvn test -pl app -am '-Dtest=CoreControllerAuthorizationTest,ModulithVerificationTest' '-Dsurefire.failIfNoSpecifiedTests=false'` (53 tests passed). Remaining authorization work is per-study resource scoping and explicit export download ownership/study-scope checks.
+
 ## Next Phase
 
 After this phase completes, activate the first new-module backlog derived from:

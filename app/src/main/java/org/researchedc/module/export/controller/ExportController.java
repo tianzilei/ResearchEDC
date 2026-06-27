@@ -1,6 +1,7 @@
 package org.researchedc.module.export.controller;
 
 import java.util.List;
+import org.researchedc.config.CoreEdcAuthorityExpressions;
 import org.researchedc.module.export.dto.CreateExportJobRequest;
 import org.researchedc.module.export.dto.ExportJobDTO;
 import org.researchedc.module.export.dto.ExportJobFilter;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,11 +29,13 @@ public class ExportController {
     }
 
     @PostMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.EXPORT_DATA)
     public ResponseEntity<ExportJobDTO> createJob(@RequestBody CreateExportJobRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(exportService.createJob(request));
     }
 
     @GetMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.EXPORT_DATA)
     public ResponseEntity<List<ExportJobDTO>> listJobs(
             @RequestParam Integer studyId,
             @RequestParam(required = false) ExportJobStatus status,
@@ -50,21 +54,25 @@ public class ExportController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.EXPORT_DATA)
     public ResponseEntity<ExportJobDTO> getJob(@PathVariable Long id) {
         return ResponseEntity.ok(exportService.getJob(id));
     }
 
     @PostMapping("/{id}/cancel")
+    @PreAuthorize(CoreEdcAuthorityExpressions.EXPORT_DATA)
     public ResponseEntity<ExportJobDTO> cancelJob(@PathVariable Long id) {
         return ResponseEntity.ok(exportService.cancelJob(id));
     }
 
     @PostMapping("/{id}/retry")
+    @PreAuthorize(CoreEdcAuthorityExpressions.EXPORT_DATA)
     public ResponseEntity<ExportJobDTO> retryJob(@PathVariable Long id) {
         return ResponseEntity.ok(exportService.retryJob(id));
     }
 
     @GetMapping("/{id}/download")
+    @PreAuthorize(CoreEdcAuthorityExpressions.EXPORT_DATA)
     public ResponseEntity<Resource> downloadExport(@PathVariable Long id) {
         ExportService.DownloadResult result = exportService.getDownload(id);
         return ResponseEntity.ok()

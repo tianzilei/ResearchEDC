@@ -2,6 +2,7 @@ package org.researchedc.module.event.controller;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import org.researchedc.config.CoreEdcAuthorityExpressions;
 import org.researchedc.module.event.dto.CreateEventDefinitionRequest;
 import org.researchedc.module.event.dto.EventCrfDTO;
 import org.researchedc.module.event.dto.EventDefinitionDTO;
@@ -12,6 +13,7 @@ import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.event.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -47,6 +49,7 @@ public class EventController {
     }
 
     @PostMapping("/definitions")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<EventDefinitionDTO> createEventDefinition(
             @Valid @RequestBody CreateEventDefinitionRequest request) {
         Integer ownerId = currentUserUtils.getCurrentUserId();
@@ -55,6 +58,7 @@ public class EventController {
     }
 
     @DeleteMapping("/definitions/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<Void> removeEventDefinition(@PathVariable Integer id) {
         Integer userId = currentUserUtils.getCurrentUserId();
         eventService.removeEventDefinition(id, userId);
@@ -62,6 +66,7 @@ public class EventController {
     }
 
     @PatchMapping("/definitions/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<Void> restoreEventDefinition(@PathVariable Integer id) {
         Integer userId = currentUserUtils.getCurrentUserId();
         eventService.restoreEventDefinition(id, userId);
@@ -90,6 +95,7 @@ public class EventController {
     }
 
     @PostMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<StudyEventDTO> scheduleEvent(
             @Valid @RequestBody ScheduleEventRequest request) {
         Integer ownerId = currentUserUtils.getCurrentUserId();
@@ -98,6 +104,7 @@ public class EventController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<StudyEventDTO> updateEvent(
             @PathVariable Integer id,
             @Valid @RequestBody UpdateEventRequest request) {
@@ -107,6 +114,7 @@ public class EventController {
     }
 
     @PostMapping("/{id}/complete")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<Void> completeEvent(@PathVariable Integer id) {
         Integer userId = currentUserUtils.getCurrentUserId();
         eventService.completeEvent(id, userId);
@@ -114,6 +122,7 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<Void> removeStudyEvent(@PathVariable Integer id) {
         Integer userId = currentUserUtils.getCurrentUserId();
         eventService.removeStudyEvent(id, userId);
@@ -121,6 +130,7 @@ public class EventController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<Void> restoreStudyEvent(@PathVariable Integer id) {
         Integer userId = currentUserUtils.getCurrentUserId();
         eventService.restoreStudyEvent(id, userId);
@@ -128,6 +138,7 @@ public class EventController {
     }
 
     @DeleteMapping("/crfs/{crfId}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<Void> removeEventCrfById(@PathVariable Integer crfId) {
         Integer userId = currentUserUtils.getCurrentUserId();
         eventService.removeEventCrf(crfId, userId);
@@ -135,6 +146,7 @@ public class EventController {
     }
 
     @PatchMapping("/crfs/{crfId}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<Void> restoreEventCrfById(@PathVariable Integer crfId) {
         Integer userId = currentUserUtils.getCurrentUserId();
         eventService.restoreEventCrf(crfId, userId);
@@ -142,6 +154,7 @@ public class EventController {
     }
 
     @DeleteMapping("/{eventId}/crfs/{crfId}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<Void> removeEventCrf(@PathVariable Integer eventId,
                                                 @PathVariable Integer crfId) {
         Integer userId = currentUserUtils.getCurrentUserId();
