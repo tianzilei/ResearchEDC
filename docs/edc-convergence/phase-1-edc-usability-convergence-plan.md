@@ -223,6 +223,7 @@ This phase is complete when:
 - Slice 2 started with export download hardening: completed jobs now verify artifact existence/readability before returning a download resource, missing/unreadable artifacts return a 404 text response, and targeted export service/controller tests cover the behavior.
 - Slice 2 also removed obsolete package-level pnpm config after confirming `frontend/pnpm-workspace.yaml` already contains the supported `allowBuilds` setting; frontend typecheck/lint now run without the pnpm 11 warning.
 - Slice 2 added the first global frontend auth-failure path: `ApiClient` emits 401/403 events, `AuthProvider` clears local session and redirects to `/login` for 401, and redirects to `/app/403` for 403. Data-capture attachment list/upload, import upload, and export download now use `ApiClient`; LogViewer actuator fetch emits the same auth-failure event on 401/403. Remaining direct `fetch` usage is auth bootstrap/login/logout and client internals.
+- Slice 2 aligned the current CSRF contract by removing obsolete frontend XSRF token/header injection while backend CSRF remains disabled; restoring CSRF later requires a token-bootstrap design rather than a silent frontend-only assumption.
 
 ## Next Phase
 

@@ -34,14 +34,6 @@ function emitApiAuthFailure(status: 401 | 403, path: string) {
   }));
 }
 
-function getCsrfToken(): string | null {
-  for (const cookie of document.cookie.split(";")) {
-    const [name, value] = cookie.trim().split("=");
-    if (name === "XSRF-TOKEN") return value ?? null;
-  }
-  return null;
-}
-
 class ApiClient {
   private baseUrl: string;
 
@@ -83,11 +75,6 @@ class ApiClient {
 
     if (config.body !== undefined && !(config.body instanceof FormData)) {
       headers["Content-Type"] = "application/json";
-    }
-
-    if (config.method === "POST" || config.method === "PUT" || config.method === "PATCH" || config.method === "DELETE") {
-      const csrfToken = getCsrfToken();
-      if (csrfToken) headers["X-XSRF-TOKEN"] = csrfToken;
     }
 
     const response = await fetch(url.toString(), {

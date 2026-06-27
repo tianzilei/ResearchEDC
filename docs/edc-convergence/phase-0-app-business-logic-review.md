@@ -60,7 +60,7 @@ Business implication:
 
 - the app currently relies on coarse session authentication for most module APIs.
 - study-scope and role-scope authorization is not consistently enforced at method level.
-- frontend CSRF token handling remains stricter than the backend contract.
+- frontend no longer injects XSRF headers; it now matches the current backend contract where CSRF is disabled.
 
 ## Study And Site Management
 
@@ -425,7 +425,7 @@ Business implication:
 | ID | Risk | Current Evidence | Recommended Phase |
 |---|---|---|---|
 | BL-1 | Authorization is mostly session-level, not role/study-scope complete. | `SecurityConfig` authenticates `/api/**`; only selected audit endpoints use `@PreAuthorize`. | Phase 1 auth slice |
-| BL-2 | CSRF contract remains inconsistent. | Backend disables CSRF while frontend still sends XSRF headers. | Phase 1 auth slice |
+| BL-2 | CSRF contract was inconsistent. | Fixed in Phase 1 slice 2 for the current contract: backend CSRF remains disabled and frontend XSRF header injection was removed. | Complete |
 | BL-3 | Study context is missing in several audit records. | event and data capture services often record `studyId=null`. | Phase 1 audit slice |
 | BL-4 | Data capture save is permissive. | item save does not enforce item membership, required fields, regex, type validation, or CRF completion state. | Phase 1 data capture hardening |
 | BL-5 | Local business file storage remains active. | import, export, and attachments all use filesystem paths. | Storage MinIO convergence |
@@ -435,7 +435,7 @@ Business implication:
 
 ## Recommended Next Work
 
-1. Finish Phase 1 auth predictability: align CSRF, add global 401/403 UX, and define study/role-scope rules.
+1. Finish Phase 1 auth predictability: define study/role-scope rules; current CSRF contract and global ApiClient 401/403 handling are aligned.
 2. Harden data capture persistence around item membership, required fields, regex/type validation, and event/CRF completion state.
 3. Execute `phase-1-storage-minio-convergence-plan.md` to remove hidden local filesystem dependencies.
 5. Normalize audit study id population for study-scoped mutations.

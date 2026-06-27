@@ -43,14 +43,6 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-function getCsrfToken(): string | null {
-  for (const cookie of document.cookie.split(";")) {
-    const [name, value] = cookie.trim().split("=");
-    if (name === "XSRF-TOKEN") return value ?? null;
-  }
-  return null;
-}
-
 async function fetchCurrentUser(): Promise<UserInfo | null> {
   try {
     const res = await fetch("/api/v1/auth/me", {
@@ -128,11 +120,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = useCallback(async () => {
     try {
-      const csrfToken = getCsrfToken();
       await fetch("/api/v1/auth/logout", {
         method: "POST",
         credentials: "same-origin",
-        headers: csrfToken ? { "X-XSRF-TOKEN": csrfToken } : {},
       });
     } catch {
       // Continue with local state cleanup even if server logout fails

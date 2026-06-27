@@ -49,7 +49,7 @@ as requested by the Phase 0 plan.
 | ID | Finding | Evidence | Scope Label | Type Label | Owner | Phase 1 Action |
 |---|---|---|---|---|---|---|
 | P0-H1 | CRF list links CRF ids into a route that fetches CRF version ids. | `CrfList` navigates to `/app/crfs/${r.crfId}`; `CrfPreview` reads `versionId` and fetches `/api/v1/crfs/versions/${vId}`. | core-logic | business-logic | frontend/CRF | Fixed in Phase 1 slice 1: CRF list now opens the CRF version manager. |
-| P0-H2 | API security disables CSRF while frontend still injects XSRF headers. | `SecurityConfig` ends with `.csrf(csrf -> csrf.disable())`; frontend `ApiClient` and `AuthProvider` read `XSRF-TOKEN` and send `X-XSRF-TOKEN`. | core-logic | business-logic | security/frontend | Decide the session/CSRF contract and make backend/frontend behavior consistent. |
+| P0-H2 | API security disables CSRF while frontend still injects XSRF headers. | `SecurityConfig` intentionally keeps `.csrf(csrf -> csrf.disable())`; frontend previously read `XSRF-TOKEN` and sent `X-XSRF-TOKEN` anyway. | core-logic | business-logic | security/frontend | Fixed in Phase 1 slice 2 for the current contract: removed frontend XSRF token injection so SPA behavior matches the backend session API. Future CSRF enablement should be a separate token-bootstrap design. |
 | P0-H3 | Method-level authorization is sparse across module controllers. | Security requires authentication for `/api/**`, but only selected audit endpoints show `@PreAuthorize`; many mutating core endpoints rely on session presence and service-level checks are uneven. | core-logic | business-logic | security/modules | Define minimum role/study-scope rules for study, subject, event, data capture, discrepancy, and export endpoints. |
 | P0-H4 | Frontend has no global 401/403 handling for API client calls. | `ApiClient` threw raw `ApiError`; router has `/app/403`, but request failures were handled ad hoc by pages. `ProtectedRoute` returns `null` while auth initializes. | core-logic | business-logic | frontend/security | Partially fixed in Phase 1 slice 2: `ApiClient` emits auth-failure events, `AuthProvider` clears local session and redirects on 401, and redirects to `/app/403` on 403. Data-capture attachment list/upload, import upload, and export download now use `ApiClient`; LogViewer actuator fetch now emits the same auth-failure event on 401/403. Remaining direct `fetch` usage is limited to auth bootstrap/login/logout and low-level client internals. |
 | P0-H5 | Export download does not verify artifact existence before returning metadata. | `ExportService.getDownload` wrapped `job.getFilePath()` in `FileSystemResource` without checking artifact readability. | core-logic | business-logic | export module | Fixed in Phase 1 slice 2: download now verifies artifact existence/readability and maps missing/unreadable artifacts to a 404 text response consumed by the existing frontend download error path. |
@@ -68,7 +68,7 @@ as requested by the Phase 0 plan.
 
 | Workflow | Status | Notes |
 |---|---|---|
-| Login/session bootstrap | Partially working | Auth provider checks `/api/v1/auth/me`, login posts JSON to `/api/v1/auth/login`, and protected routes gate `/app/*`. CSRF contract is inconsistent because backend disables CSRF while frontend sends XSRF headers. |
+| Login/session bootstrap | Partially working | Auth provider checks `/api/v1/auth/me`, login posts JSON to `/api/v1/auth/login`, and protected routes gate `/app/*`. Current contract is session-backed with backend CSRF disabled and no frontend XSRF header injection. |
 | Study management | Partially working | Study list/detail/create surfaces exist. Event definition creation from study detail is blocked by the missing POST endpoint. |
 | Subject enrollment and lookup | Partially working | Subject list/detail APIs exist and detail page loads enrollment, subject, and events. The visible CRF action on detail page goes to a dead route. |
 | Visit/event workflow | Blocked for setup | Event list and scheduling surfaces exist, but definition creation is blocked and scheduled event defaults/ordinals are unsafe. |
@@ -82,8 +82,7 @@ as requested by the Phase 0 plan.
 
 - API session gating is present for `/api/**`; `/api/v1/auth/login`,
   `/api/v1/auth/me`, and `/api/v1/openrosa/**` are public.
-- CSRF is disabled in backend security, but frontend code is written as if
-  `CookieCsrfTokenRepository` is active.
+- CSRF is disabled in backend security, and frontend XSRF header injection was removed in Phase 1 slice 2 to match that current contract.
 - Method-level authorization is present on selected audit endpoints, but not
   consistently on core mutating study/subject/event/export endpoints.
 - Attachment data access has explicit `canViewEventCrfData` checks and path
@@ -144,7 +143,7 @@ as requested by the Phase 0 plan.
 
 ### Slice 2: Auth And Error Predictability
 
-1. Decide whether CSRF is intentionally disabled or should be restored.
+1. Current CSRF contract aligned in Phase 1 slice 2: backend remains disabled and frontend no longer sends XSRF headers. Future CSRF restoration requires a token-bootstrap design.
 2. ApiClient 401/403 handling added in Phase 1 slice 2; data-capture attachment list/upload, import upload, export download, and LogViewer actuator auth failures are covered. Remaining direct fetch is auth bootstrap/login/logout and client internals.
 3. Add minimum role/study-scope authorization rules for core mutating endpoints.
 4. Missing artifact behavior fixed in Phase 1 slice 2; remaining: verify export download permissions explicitly.
