@@ -1,6 +1,7 @@
 package org.researchedc.module.dataimport.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.researchedc.config.CoreEdcAuthorityExpressions;
 import org.researchedc.config.CurrentUserUtils;
@@ -11,6 +12,7 @@ import org.researchedc.module.dataimport.dto.ImportResultDTO;
 import org.researchedc.module.dataimport.service.ImportService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +32,8 @@ public class ImportController {
     @PostMapping
     @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<ImportJobDTO> createJob(@RequestBody CreateImportJobRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(importService.createJob(request));
+        Integer userId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.status(HttpStatus.CREATED).body(importService.createJob(request, userId));
     }
 
     @PostMapping("/upload")
@@ -48,20 +51,25 @@ public class ImportController {
     @GetMapping
     @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<List<ImportJobDTO>> listJobs(@RequestParam Integer studyId) {
-        return ResponseEntity.ok(importService.listJobs(studyId));
+        Integer userId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(importService.listJobs(studyId, userId));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<ImportJobDTO> getJob(@PathVariable Long id) {
-        return ResponseEntity.ok(importService.getJob(id));
+        Integer userId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(importService.getJob(id, userId));
     }
 
     @PostMapping("/{id}/validate")
     @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<ImportPreviewDTO> validate(@PathVariable Long id) {
+        Integer userId = currentUserUtils.getCurrentUserId();
         try {
-            return ResponseEntity.ok(importService.validate(id));
+            return ResponseEntity.ok(importService.validate(id, userId));
+        } catch (AccessDeniedException | NoSuchElementException | IllegalArgumentException | IllegalStateException e) {
+            throw e;
         } catch (Exception e) {
             importService.markFailed(id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -72,14 +80,18 @@ public class ImportController {
     @GetMapping("/{id}/preview")
     @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<ImportPreviewDTO> preview(@PathVariable Long id) {
-        return ResponseEntity.ok(importService.getPreview(id));
+        Integer userId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(importService.getPreview(id, userId));
     }
 
     @PostMapping("/{id}/commit")
     @PreAuthorize(CoreEdcAuthorityExpressions.IMPORT_DATA)
     public ResponseEntity<ImportResultDTO> commit(@PathVariable Long id) {
+        Integer userId = currentUserUtils.getCurrentUserId();
         try {
-            return ResponseEntity.ok(importService.commit(id));
+            return ResponseEntity.ok(importService.commit(id, userId));
+        } catch (AccessDeniedException | NoSuchElementException | IllegalArgumentException | IllegalStateException e) {
+            throw e;
         } catch (Exception e) {
             importService.markFailed(id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

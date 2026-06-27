@@ -22,6 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.dataimport.dto.CreateImportJobRequest;
 import org.researchedc.module.dataimport.event.ImportCommittedEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -44,6 +45,7 @@ class ImportServiceTest {
     @Mock private ImportJobRepository jobRepository;
     @Mock private ImportCrfDataAdapter importAdapter;
     @Mock private MultipartFile multipartFile;
+    @Mock private CurrentStudyAccessService currentStudyAccessService;
 
     private ImportService service;
     private MockedStatic<Files> filesMock;
@@ -96,13 +98,28 @@ class ImportServiceTest {
 
         when(jobRepository.save(any())).thenReturn(savedJob);
 
-        ImportJobDTO result = service.createJob(request);
+        ImportJobDTO result = service.createJob(request, 100);
 
         assertEquals("Test Import", result.getName());
         assertEquals(ImportType.CRF_DATA, result.getImportType());
         assertEquals(ImportJobStatus.STAGED, result.getStatus());
         assertEquals("data.xml", result.getFileName());
         verify(jobRepository).save(any());
+    }
+
+    @Test
+    void createJob_withoutStudyImportAccess_throwsAccessDenied() {
+        service = new ImportService(jobRepository, importAdapter, currentStudyAccessService);
+        CreateImportJobRequest request = new CreateImportJobRequest();
+        request.setStudyId(1);
+        request.setName("Test Import");
+        request.setImportType(ImportType.CRF_DATA);
+
+        when(currentStudyAccessService.canImportStudy(100, 1)).thenReturn(false);
+
+        assertThrows(org.springframework.security.access.AccessDeniedException.class,
+                () -> service.createJob(request, 100));
+        verify(jobRepository, never()).save(any());
     }
 
     @Test
@@ -113,7 +130,7 @@ class ImportServiceTest {
         when(jobRepository.findByStudyIdOrderByRequestedDateDesc(1))
                 .thenReturn(List.of(job1, job2));
 
-        List<ImportJobDTO> result = service.listJobs(1);
+        List<ImportJobDTO> result = service.listJobs(1, 42);
 
         assertEquals(2, result.size());
         assertEquals("Job 1", result.get(0).getName());
@@ -125,9 +142,19 @@ class ImportServiceTest {
         when(jobRepository.findByStudyIdOrderByRequestedDateDesc(1))
                 .thenReturn(List.of());
 
-        List<ImportJobDTO> result = service.listJobs(1);
+        List<ImportJobDTO> result = service.listJobs(1, 42);
 
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void listJobs_withoutStudyImportAccess_throwsAccessDenied() {
+        service = new ImportService(jobRepository, importAdapter, currentStudyAccessService);
+        when(currentStudyAccessService.canImportStudy(42, 1)).thenReturn(false);
+
+        assertThrows(org.springframework.security.access.AccessDeniedException.class,
+                () -> service.listJobs(1, 42));
+        verify(jobRepository, never()).findByStudyIdOrderByRequestedDateDesc(anyInt());
     }
 
     @Test
@@ -136,7 +163,7 @@ class ImportServiceTest {
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
 
-        ImportJobDTO result = service.getJob(1L);
+        ImportJobDTO result = service.getJob(1L, 42);
 
         assertEquals("My Job", result.getName());
         assertEquals(ImportJobStatus.VALIDATING, result.getStatus());
@@ -147,7 +174,7 @@ class ImportServiceTest {
     void getJob_whenNotFound_throwsException() {
         when(jobRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> service.getJob(99L));
+        assertThrows(NoSuchElementException.class, () -> service.getJob(99L, 42));
     }
 
     @Test
@@ -250,7 +277,7 @@ class ImportServiceTest {
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        ImportPreviewDTO result = service.validate(1L);
+        ImportPreviewDTO result = service.validate(1L, 42);
 
         assertEquals("validated", result.getStatus());
         assertEquals(1, result.getEventCrfs());
@@ -273,7 +300,7 @@ class ImportServiceTest {
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        ImportPreviewDTO result = service.validate(1L);
+        ImportPreviewDTO result = service.validate(1L, 42);
 
         assertEquals("invalid", result.getStatus());
         assertTrue(result.getErrors().contains("Metadata mismatch"));
@@ -294,7 +321,7 @@ class ImportServiceTest {
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        ImportPreviewDTO result = service.validate(1L);
+        ImportPreviewDTO result = service.validate(1L, 42);
 
         assertEquals("blocked", result.getStatus());
         assertTrue(result.getErrors().contains("event_crf_status"));
@@ -315,7 +342,7 @@ class ImportServiceTest {
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        ImportPreviewDTO result = service.validate(1L);
+        ImportPreviewDTO result = service.validate(1L, 42);
 
         assertEquals("invalid", result.getStatus());
         assertTrue(result.getErrors().get(0).contains("No event CRFs"));
@@ -338,7 +365,7 @@ class ImportServiceTest {
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        ImportPreviewDTO result = service.validate(1L);
+        ImportPreviewDTO result = service.validate(1L, 42);
 
         assertEquals("invalid", result.getStatus());
         assertEquals(2, result.getEditCheckErrors());
@@ -361,7 +388,7 @@ class ImportServiceTest {
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        ImportPreviewDTO result = service.validate(1L);
+        ImportPreviewDTO result = service.validate(1L, 42);
 
         assertEquals("invalid", result.getStatus());
         assertEquals(2, result.getEventCrfs());
@@ -379,7 +406,7 @@ class ImportServiceTest {
     void validate_whenJobNotFound_throwsException() {
         when(jobRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> service.validate(99L));
+        assertThrows(NoSuchElementException.class, () -> service.validate(99L, 42));
     }
 
     @Test
@@ -392,7 +419,7 @@ class ImportServiceTest {
                 .thenAnswer(i -> i.getArgument(0))
                 .thenThrow(new RuntimeException("DB error during markValidated"));
 
-        assertThrows(RuntimeException.class, () -> service.validate(1L));
+        assertThrows(RuntimeException.class, () -> service.validate(1L, 42));
 
         verify(jobRepository, atLeast(2)).save(any());
     }
@@ -404,7 +431,7 @@ class ImportServiceTest {
         job.setSummaryJson("{\"status\":\"validated\",\"eventCrfs\":2,\"totalItems\":7,\"editCheckErrors\":1,\"errors\":[],\"warnings\":[\"1 edit-check error(s) were found.\"]}");
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
 
-        ImportPreviewDTO result = service.getPreview(1L);
+        ImportPreviewDTO result = service.getPreview(1L, 42);
 
         assertEquals("validated", result.getStatus());
         assertEquals(2, result.getEventCrfs());
@@ -425,7 +452,7 @@ class ImportServiceTest {
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        ImportResultDTO result = service.commit(1L);
+        ImportResultDTO result = service.commit(1L, 42);
 
         assertEquals("committed", result.getStatus());
         assertEquals(3, result.getEventCrfs());
@@ -446,7 +473,7 @@ class ImportServiceTest {
         job.setSummaryJson("{\"status\":\"invalid\",\"eventCrfs\":0,\"totalItems\":0,\"editCheckErrors\":0,\"errors\":[\"Metadata mismatch\"],\"warnings\":[]}");
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
 
-        assertThrows(IllegalStateException.class, () -> service.commit(1L));
+        assertThrows(IllegalStateException.class, () -> service.commit(1L, 42));
 
         verify(importAdapter, never()).parseOdm(any(Path.class));
         verify(jobRepository, never()).save(argThat(j -> j.getStatus() == ImportJobStatus.COMMITTING));
@@ -458,7 +485,7 @@ class ImportServiceTest {
         job.setSummaryJson("{\"status\":\"validated\",\"eventCrfs\":1,\"totalItems\":5,\"editCheckErrors\":2,\"errors\":[],\"warnings\":[]}");
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
 
-        assertThrows(IllegalStateException.class, () -> service.commit(1L));
+        assertThrows(IllegalStateException.class, () -> service.commit(1L, 42));
 
         verify(importAdapter, never()).parseOdm(any(Path.class));
         verify(jobRepository, never()).save(argThat(j -> j.getStatus() == ImportJobStatus.COMMITTING));
@@ -468,7 +495,7 @@ class ImportServiceTest {
     @Test
     void commit_publishesImportCommittedEventWhenPublisherProvided() {
         ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-        service = new ImportService(jobRepository, importAdapter, eventPublisher);
+        service = new ImportService(jobRepository, importAdapter, null, eventPublisher);
         ImportJob job = createJob(1L, "Audited Import", ImportType.CRF_DATA, ImportJobStatus.VALIDATED);
         job.setSummaryJson(committablePreviewJson());
         ParsedOdm odm = mockOdm();
@@ -478,7 +505,7 @@ class ImportServiceTest {
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        ImportResultDTO result = service.commit(1L);
+        ImportResultDTO result = service.commit(1L, 42);
 
         assertEquals("committed", result.getStatus());
         verify(eventPublisher).publishEvent((Object) argThat(event -> {
@@ -496,7 +523,7 @@ class ImportServiceTest {
     void commit_whenJobNotFound_throwsException() {
         when(jobRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> service.commit(99L));
+        assertThrows(NoSuchElementException.class, () -> service.commit(99L, 42));
     }
 
     @Test
@@ -509,7 +536,7 @@ class ImportServiceTest {
                 .thenAnswer(i -> i.getArgument(0))
                 .thenThrow(new RuntimeException("DB error during markCompleted"));
 
-        assertThrows(RuntimeException.class, () -> service.commit(1L));
+        assertThrows(RuntimeException.class, () -> service.commit(1L, 42));
 
         verify(jobRepository, atLeast(2)).save(any());
     }
@@ -616,10 +643,10 @@ class ImportServiceTest {
         when(importAdapter.commitImport(any(), anyInt(), any()))
                 .thenReturn(new CommitResult(1, 5));
 
-        ImportPreviewDTO validated = service.validate(1L);
+        ImportPreviewDTO validated = service.validate(1L, 42);
         assertEquals("validated", validated.getStatus());
 
-        ImportResultDTO completed = service.commit(1L);
+        ImportResultDTO completed = service.commit(1L, 42);
         assertEquals("committed", completed.getStatus());
         assertEquals(ImportJobStatus.COMPLETED, job.getStatus());
         assertNotNull(job.getCompletedDate());
@@ -636,7 +663,7 @@ class ImportServiceTest {
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
         when(jobRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        ImportPreviewDTO result = service.validate(1L);
+        ImportPreviewDTO result = service.validate(1L, 42);
         assertEquals("invalid", result.getStatus());
         assertTrue(result.getErrors().contains("Error"));
         verify(importAdapter, never()).validateEventCrfs(any(), anyInt(), any(Locale.class));
@@ -652,7 +679,7 @@ class ImportServiceTest {
                 .thenAnswer(i -> i.getArgument(0))
                 .thenThrow(new RuntimeException("Commit error"));
 
-        assertThrows(RuntimeException.class, () -> service.commit(1L));
+        assertThrows(RuntimeException.class, () -> service.commit(1L, 42));
 
         verify(jobRepository, atLeast(2)).save(any());
     }

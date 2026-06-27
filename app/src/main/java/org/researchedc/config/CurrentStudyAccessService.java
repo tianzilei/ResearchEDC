@@ -30,6 +30,18 @@ public class CurrentStudyAccessService {
             "data specialist"
     );
 
+    private static final Set<String> IMPORT_ROLES = Set.of(
+            "admin",
+            "business_administrator",
+            "study_director",
+            "studydirector",
+            "director",
+            "coordinator",
+            "datamanager",
+            "data_manager",
+            "data specialist"
+    );
+
     private final UserAccountRepository userAccountRepository;
     private final RoleRepository roleRepository;
 
@@ -40,11 +52,19 @@ public class CurrentStudyAccessService {
     }
 
     public boolean canExportStudy(Integer userId, Integer studyId) {
+        return canAccessStudy(userId, studyId, EXPORT_ROLES);
+    }
+
+    public boolean canImportStudy(Integer userId, Integer studyId) {
+        return canAccessStudy(userId, studyId, IMPORT_ROLES);
+    }
+
+    private boolean canAccessStudy(Integer userId, Integer studyId, Set<String> roleNames) {
         if (userId == null || studyId == null) {
             return false;
         }
         return userAccountRepository.findById(userId)
-                .map(user -> isAdministrator(user) || hasExportRole(user.getUserName(), studyId))
+                .map(user -> isAdministrator(user) || hasStudyRole(user.getUserName(), studyId, roleNames))
                 .orElse(false);
     }
 
@@ -53,12 +73,12 @@ public class CurrentStudyAccessService {
                 || Integer.valueOf(TECHADMIN_USER_TYPE_ID).equals(user.getUserTypeId());
     }
 
-    private boolean hasExportRole(String username, Integer studyId) {
+    private boolean hasStudyRole(String username, Integer studyId, Set<String> roleNames) {
         return roleRepository.findByUserNameAndStudyId(username, studyId).stream()
                 .filter(this::isAvailable)
                 .map(RoleEntity::getRoleName)
                 .map(this::normalizeRoleName)
-                .anyMatch(EXPORT_ROLES::contains);
+                .anyMatch(roleNames::contains);
     }
 
     private boolean isAvailable(RoleEntity role) {

@@ -60,6 +60,26 @@ class CurrentStudyAccessServiceTest {
         assertFalse(service().canExportStudy(7, 11));
     }
 
+    @Test
+    void canImportStudy_allowsAvailableImportRoleOnSameStudy() {
+        UserAccountEntity user = user("datamanager", 2);
+        when(userAccountRepository.findById(7)).thenReturn(Optional.of(user));
+        when(roleRepository.findByUserNameAndStudyId("datamanager", 11))
+                .thenReturn(List.of(role("datamanager", 1)));
+
+        assertTrue(service().canImportStudy(7, 11));
+    }
+
+    @Test
+    void canImportStudy_deniesMonitorRoleOnSameStudy() {
+        UserAccountEntity user = user("monitor", 2);
+        when(userAccountRepository.findById(7)).thenReturn(Optional.of(user));
+        when(roleRepository.findByUserNameAndStudyId("monitor", 11))
+                .thenReturn(List.of(role("monitor", 1)));
+
+        assertFalse(service().canImportStudy(7, 11));
+    }
+
     private CurrentStudyAccessService service() {
         return new CurrentStudyAccessService(userAccountRepository, roleRepository);
     }

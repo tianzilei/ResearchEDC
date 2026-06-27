@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.dataimport.dto.CreateImportJobRequest;
 import org.researchedc.module.dataimport.dto.ImportJobDTO;
 import org.researchedc.module.dataimport.dto.ImportPreviewDTO;
@@ -26,7 +27,9 @@ import org.researchedc.module.dataimport.event.ImportCommittedEvent;
 import org.researchedc.module.dataimport.repository.ImportJobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -44,27 +47,39 @@ public class ImportService {
 
     private final ImportJobRepository jobRepository;
     private final ImportCrfDataAdapter importAdapter;
+    private final CurrentStudyAccessService currentStudyAccessService;
     private final ApplicationEventPublisher eventPublisher;
 
     public ImportService(ImportJobRepository jobRepository, ImportCrfDataAdapter importAdapter) {
-        this(jobRepository, importAdapter, null);
+        this(jobRepository, importAdapter, null, null);
     }
 
     public ImportService(ImportJobRepository jobRepository, ImportCrfDataAdapter importAdapter,
+                         CurrentStudyAccessService currentStudyAccessService) {
+        this(jobRepository, importAdapter, currentStudyAccessService, null);
+    }
+
+    @Autowired
+    public ImportService(ImportJobRepository jobRepository, ImportCrfDataAdapter importAdapter,
+                         CurrentStudyAccessService currentStudyAccessService,
                          ApplicationEventPublisher eventPublisher) {
         this.jobRepository = jobRepository;
         this.importAdapter = importAdapter;
+        this.currentStudyAccessService = currentStudyAccessService;
         this.eventPublisher = eventPublisher;
     }
 
-    public ImportJobDTO createJob(CreateImportJobRequest request) {
+    public ImportJobDTO createJob(CreateImportJobRequest request, Integer currentUserId) {
+        requireStudyId(request.getStudyId());
+        requireImportAccess(currentUserId, request.getStudyId());
+
         ImportJob job = new ImportJob();
         job.setStudyId(request.getStudyId());
         job.setName(request.getName());
         job.setImportType(request.getImportType());
         job.setFileName(request.getFileName());
         job.setStoredFilePath(request.getStoredFilePath());
-        job.setRequestedBy(request.getRequestedBy());
+        job.setRequestedBy(currentUserId);
         job.setStatus(ImportJobStatus.STAGED);
         job = jobRepository.save(job);
 
@@ -84,6 +99,9 @@ public class ImportService {
      */
     public ImportJobDTO uploadFile(MultipartFile file, String importTypeStr,
                                    Integer studyId, String name, Integer userId) {
+        requireStudyId(studyId);
+        requireImportAccess(userId, studyId);
+
         try {
             Files.createDirectories(UPLOAD_DIR);
         } catch (IOException e) {
@@ -119,14 +137,15 @@ public class ImportService {
         return toDTO(job);
     }
 
-    public List<ImportJobDTO> listJobs(Integer studyId) {
+    public List<ImportJobDTO> listJobs(Integer studyId, Integer currentUserId) {
+        requireStudyId(studyId);
+        requireImportAccess(currentUserId, studyId);
         return jobRepository.findByStudyIdOrderByRequestedDateDesc(studyId)
                 .stream().map(this::toDTO).toList();
     }
 
-    public ImportJobDTO getJob(Long id) {
-        ImportJob job = jobRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Import job not found: " + id));
+    public ImportJobDTO getJob(Long id, Integer currentUserId) {
+        ImportJob job = findJobForUser(id, currentUserId);
         return toDTO(job);
     }
 
@@ -175,9 +194,8 @@ public class ImportService {
         });
     }
 
-    public ImportPreviewDTO validate(Long id) {
-        ImportJob job = jobRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Import job not found: " + id));
+    public ImportPreviewDTO validate(Long id, Integer currentUserId) {
+        ImportJob job = findJobForUser(id, currentUserId);
         markValidating(id);
         try {
             Path filePath = Path.of(job.getStoredFilePath());
@@ -223,18 +241,16 @@ public class ImportService {
         }
     }
 
-    public ImportPreviewDTO getPreview(Long id) {
-        ImportJob job = jobRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Import job not found: " + id));
+    public ImportPreviewDTO getPreview(Long id, Integer currentUserId) {
+        ImportJob job = findJobForUser(id, currentUserId);
         if (job.getSummaryJson() == null || job.getSummaryJson().isBlank()) {
             return ImportPreviewDTO.failed("No validation preview is available for this import job.");
         }
         return parsePreview(job.getSummaryJson());
     }
 
-    public ImportResultDTO commit(Long id) {
-        ImportJob job = jobRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Import job not found: " + id));
+    public ImportResultDTO commit(Long id, Integer currentUserId) {
+        ImportJob job = findJobForUser(id, currentUserId);
         assertCommitEligible(job);
         markCommitting(id);
         try {
@@ -267,6 +283,28 @@ public class ImportService {
         if (preview == null || !"validated".equals(preview.getStatus())
                 || !preview.getErrors().isEmpty() || preview.getEditCheckErrors() > 0) {
             throw new IllegalStateException("Import job validation preview is not committable");
+        }
+    }
+
+    private ImportJob findJobForUser(Long id, Integer currentUserId) {
+        ImportJob job = jobRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Import job not found: " + id));
+        requireImportAccess(currentUserId, job.getStudyId());
+        return job;
+    }
+
+    private void requireStudyId(Integer studyId) {
+        if (studyId == null) {
+            throw new IllegalArgumentException("studyId is required");
+        }
+    }
+
+    private void requireImportAccess(Integer currentUserId, Integer studyId) {
+        if (currentStudyAccessService == null) {
+            return;
+        }
+        if (!currentStudyAccessService.canImportStudy(currentUserId, studyId)) {
+            throw new AccessDeniedException("You do not have import access to this study");
         }
     }
 

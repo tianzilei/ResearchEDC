@@ -62,7 +62,8 @@ class ImportControllerTest {
 
         ImportJobDTO response = job(10L, ImportJobStatus.STAGED);
         response.setName("CRF data import");
-        when(importService.createJob(any(CreateImportJobRequest.class))).thenReturn(response);
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(importService.createJob(any(CreateImportJobRequest.class), eq(42))).thenReturn(response);
 
         mockMvc.perform(post("/api/v1/imports")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -73,7 +74,7 @@ class ImportControllerTest {
                 .andExpect(jsonPath("$.name").value("CRF data import"));
 
         ArgumentCaptor<CreateImportJobRequest> captor = ArgumentCaptor.forClass(CreateImportJobRequest.class);
-        verify(importService).createJob(captor.capture());
+        verify(importService).createJob(captor.capture(), eq(42));
         org.junit.jupiter.api.Assertions.assertEquals(1, captor.getValue().getStudyId());
         org.junit.jupiter.api.Assertions.assertEquals(ImportType.CRF_DATA, captor.getValue().getImportType());
     }
@@ -103,7 +104,8 @@ class ImportControllerTest {
     void listJobs_returnsStudyJobs() throws Exception {
         ImportJobDTO first = job(1L, ImportJobStatus.STAGED);
         ImportJobDTO second = job(2L, ImportJobStatus.COMPLETED);
-        when(importService.listJobs(1)).thenReturn(List.of(first, second));
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(importService.listJobs(1, 42)).thenReturn(List.of(first, second));
 
         mockMvc.perform(get("/api/v1/imports").param("studyId", "1"))
                 .andExpect(status().isOk())
@@ -113,7 +115,8 @@ class ImportControllerTest {
 
     @Test
     void getJob_returnsJob() throws Exception {
-        when(importService.getJob(12L)).thenReturn(job(12L, ImportJobStatus.VALIDATED));
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(importService.getJob(12L, 42)).thenReturn(job(12L, ImportJobStatus.VALIDATED));
 
         mockMvc.perform(get("/api/v1/imports/12"))
                 .andExpect(status().isOk())
@@ -124,7 +127,8 @@ class ImportControllerTest {
     @Test
     void validate_returnsPreview() throws Exception {
         ImportPreviewDTO preview = ImportPreviewDTO.valid(2, 7, 1);
-        when(importService.validate(13L)).thenReturn(preview);
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(importService.validate(13L, 42)).thenReturn(preview);
 
         mockMvc.perform(post("/api/v1/imports/13/validate"))
                 .andExpect(status().isOk())
@@ -133,12 +137,13 @@ class ImportControllerTest {
                 .andExpect(jsonPath("$.totalItems").value(7))
                 .andExpect(jsonPath("$.editCheckErrors").value(1));
 
-        verify(importService).validate(13L);
+        verify(importService).validate(13L, 42);
     }
 
     @Test
     void validate_whenServiceFails_marksFailedAndReturnsFailedJob() throws Exception {
-        doThrow(new RuntimeException("Validation failed")).when(importService).validate(14L);
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        doThrow(new RuntimeException("Validation failed")).when(importService).validate(14L, 42);
 
         mockMvc.perform(post("/api/v1/imports/14/validate"))
                 .andExpect(status().isInternalServerError())
@@ -150,7 +155,8 @@ class ImportControllerTest {
 
     @Test
     void commit_returnsCommitResult() throws Exception {
-        when(importService.commit(15L)).thenReturn(ImportResultDTO.committed(2, 9));
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(importService.commit(15L, 42)).thenReturn(ImportResultDTO.committed(2, 9));
 
         mockMvc.perform(post("/api/v1/imports/15/commit"))
                 .andExpect(status().isOk())
@@ -158,13 +164,14 @@ class ImportControllerTest {
                 .andExpect(jsonPath("$.eventCrfs").value(2))
                 .andExpect(jsonPath("$.items").value(9));
 
-        verify(importService).commit(15L);
+        verify(importService).commit(15L, 42);
     }
 
 
     @Test
     void preview_returnsStoredPreview() throws Exception {
-        when(importService.getPreview(16L)).thenReturn(ImportPreviewDTO.valid(1, 4, 0));
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
+        when(importService.getPreview(16L, 42)).thenReturn(ImportPreviewDTO.valid(1, 4, 0));
 
         mockMvc.perform(get("/api/v1/imports/16/preview"))
                 .andExpect(status().isOk())
