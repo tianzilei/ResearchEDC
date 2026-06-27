@@ -37,11 +37,12 @@ public class DiscrepancyNoteController {
     public ResponseEntity<List<DiscrepancyNoteDTO>> listNotes(
             @RequestParam(required = false) Integer eventCrfId,
             @RequestParam(required = false) Integer studyId) {
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
         List<DiscrepancyNoteEntity> entities;
         if (eventCrfId != null) {
-            entities = discrepancyNoteService.listByStudy(eventCrfId);
+            entities = discrepancyNoteService.listByEventCrf(eventCrfId, currentUserId);
         } else if (studyId != null) {
-            entities = discrepancyNoteService.listByStudy(studyId);
+            entities = discrepancyNoteService.listByStudy(studyId, currentUserId);
         } else {
             entities = List.of();
         }
@@ -52,7 +53,8 @@ public class DiscrepancyNoteController {
     @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<DiscrepancyNoteDTO> getNote(@PathVariable int id) {
         try {
-            return ResponseEntity.ok(toDto(discrepancyNoteService.getById(id)));
+            Integer currentUserId = currentUserUtils.getCurrentUserId();
+            return ResponseEntity.ok(toDto(discrepancyNoteService.getById(id, currentUserId)));
         } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
@@ -66,7 +68,7 @@ public class DiscrepancyNoteController {
                 request.getDescription(), 1, 1,
                 request.getDetailedNotes(), ownerId, null,
                 request.getEntityType(), request.getEntityId(),
-                request.getStudyId(), null);
+                request.getStudyId(), null, ownerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(toDto(entity));
     }
 
@@ -74,7 +76,8 @@ public class DiscrepancyNoteController {
     @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<DiscrepancyNoteDTO> resolveNote(@PathVariable int id) {
         try {
-            return ResponseEntity.ok(toDto(discrepancyNoteService.resolveNote(id)));
+            Integer currentUserId = currentUserUtils.getCurrentUserId();
+            return ResponseEntity.ok(toDto(discrepancyNoteService.resolveNote(id, currentUserId)));
         } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
