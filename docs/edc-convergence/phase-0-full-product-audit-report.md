@@ -59,7 +59,7 @@ as requested by the Phase 0 plan.
 | ID | Finding | Evidence | Scope Label | Type Label | Owner | Phase 1 Action |
 |---|---|---|---|---|---|---|
 | P0-M1 | Dashboard/system health is app-internal, while deploy proxy exposes `/actuator/*` assumptions. | `DashboardController` has `/api/v1/dashboard/health`; Caddy config has `/actuator/*`, but actuator endpoint availability was not verified in code. | core-logic | code-quality | runtime/observability | Pick one health/readiness surface and document it. |
-| P0-M2 | Audit coverage exists for core mutations but lacks study context on some records. | Event and data capture services call `AuditService.recordAudit`, often with `studyId` set to `null`. | core-logic | business-logic | audit/modules | Populate study id for study-scoped mutations where derivable. |
+| P0-M2 | Audit coverage exists for core mutations but lacks study context on some records. | Event and data capture services call `AuditService.recordAudit`, often with `studyId` set to `null`. | core-logic | business-logic | audit/modules | Partially fixed in Phase 1 slice 4: event and item-data audit records now populate study id where derivable from event definitions, event CRFs, and study subjects. Remaining: review other modules for safely derivable context without inventing ambiguous study links. |
 | P0-M3 | Operator text is mixed English/Chinese in core workflow pages. | Event list, CRF/data entry, and admin pages mix English labels with Chinese UI. | core-logic | code-quality | frontend/UX | Normalize core workflow copy through i18n keys after workflow blockers are fixed. |
 | P0-M4 | Questionnaire test command in historical docs can fail on a clean host. | Direct `python -m pytest` failed because `python` is absent; direct `python3 -m pytest` failed because ambient Python has no `pytest`; project-local `uv run --group dev pytest` passed. | boundary-integration | code-quality | questionnaire-service | Update convergence docs/CI notes to use `uv` for the local gate. |
 | P0-M5 | `pnpm` warns that the package-level `pnpm.onlyBuiltDependencies` field is ignored by pnpm 11. | Typecheck/lint/test printed the warning while `frontend/pnpm-workspace.yaml` already had the supported `allowBuilds` setting. | core-logic | code-quality | frontend/tooling | Fixed in Phase 1 slice 2: removed obsolete `package.json` pnpm block; `pnpm -C frontend typecheck` and `pnpm -C frontend lint` run without the warning. |
@@ -158,7 +158,7 @@ as requested by the Phase 0 plan.
 
 ### Slice 4: Observability And UX Polish
 
-1. Populate study id on audit records where derivable.
+1. Started in Phase 1 slice 4: populated study id for event and item-data audit records where derivable.
 2. Add minimal request correlation or structured request identifiers.
 3. Normalize mixed English/Chinese strings on the core EDC path.
 4. Obsolete package-level pnpm config removed in Phase 1 slice 2.

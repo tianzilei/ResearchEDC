@@ -155,6 +155,8 @@ class EventServiceTest {
 
     @Test
     void scheduleEvent_withValidRequest_savesAndReturns() {
+        when(eventDefinitionRepository.findById(1))
+                .thenReturn(Optional.of(createDef(1, 11, "Screening")));
         when(studyEventRepository.save(any(StudyEventEntity.class)))
                 .thenAnswer(i -> {
                     StudyEventEntity e = i.getArgument(0);
@@ -175,7 +177,7 @@ class EventServiceTest {
         assertEquals(1, result.getStudyEventId());
         assertEquals("Clinic A", result.getLocation());
         verify(studyEventRepository).save(any(StudyEventEntity.class));
-        verify(auditService).recordAudit(any(), any(), any(), any(), any(),
+        verify(auditService).recordAudit(eq(11), any(), any(), any(), any(),
                 any(), any(), any(), any(), any());
     }
 
@@ -231,6 +233,8 @@ class EventServiceTest {
     void updateEvent_updatesFieldsAndReturns() {
         StudyEventEntity existing = createEvent(1, 100, 1);
         existing.setDateCreated(LocalDateTime.now().minusDays(1));
+        when(eventDefinitionRepository.findById(1))
+                .thenReturn(Optional.of(createDef(1, 11, "Screening")));
         when(studyEventRepository.findById(1)).thenReturn(Optional.of(existing));
         when(studyEventRepository.save(any(StudyEventEntity.class)))
                 .thenAnswer(i -> i.getArgument(0));
@@ -243,6 +247,8 @@ class EventServiceTest {
 
         assertEquals("Updated Location", result.getLocation());
         assertEquals(2, result.getStatusId());
+        verify(auditService).recordAudit(eq(11), any(), eq("StudyEvent"), eq(1L), eq("Event #1"),
+                isNull(), isNull(), eq(99), eq("Event updated"), eq("event"));
     }
 
     @Test
@@ -257,12 +263,16 @@ class EventServiceTest {
     void completeEvent_setsStatusAndSaves() {
         StudyEventEntity existing = createEvent(1, 100, 1);
         when(studyEventRepository.findById(1)).thenReturn(Optional.of(existing));
+        when(eventDefinitionRepository.findById(1))
+                .thenReturn(Optional.of(createDef(1, 11, "Screening")));
 
         service.completeEvent(1, 42);
 
         assertEquals(7, existing.getStatusId());
         assertEquals(7, existing.getSubjectEventStatusId());
         verify(studyEventRepository).save(existing);
+        verify(auditService).recordAudit(eq(11), any(), eq("StudyEvent"), eq(1L), eq("Event #1"),
+                isNull(), isNull(), eq(42), eq("Event completed (status=7)"), eq("event"));
     }
 
     @Test
@@ -276,6 +286,8 @@ class EventServiceTest {
     void removeStudyEvent_setsRemovedStatusAndAudits() {
         StudyEventEntity existing = createEvent(1, 100, 1);
         when(studyEventRepository.findById(1)).thenReturn(Optional.of(existing));
+        when(eventDefinitionRepository.findById(1))
+                .thenReturn(Optional.of(createDef(1, 11, "Screening")));
 
         service.removeStudyEvent(1, 42);
 
@@ -283,7 +295,7 @@ class EventServiceTest {
         assertNotNull(existing.getDateUpdated());
         assertEquals(42, existing.getUpdateId());
         verify(studyEventRepository).save(existing);
-        verify(auditService).recordAudit(isNull(), any(), eq("StudyEvent"), eq(1L), eq("Event #1"),
+        verify(auditService).recordAudit(eq(11), any(), eq("StudyEvent"), eq(1L), eq("Event #1"),
                 isNull(), isNull(), eq(42), eq("Event removed (status=5)"), eq("event"));
     }
 
@@ -292,6 +304,8 @@ class EventServiceTest {
         StudyEventEntity existing = createEvent(1, 100, 1);
         existing.setStatusId(5);
         when(studyEventRepository.findById(1)).thenReturn(Optional.of(existing));
+        when(eventDefinitionRepository.findById(1))
+                .thenReturn(Optional.of(createDef(1, 11, "Screening")));
 
         service.restoreStudyEvent(1, 42);
 
@@ -299,7 +313,7 @@ class EventServiceTest {
         assertNotNull(existing.getDateUpdated());
         assertEquals(42, existing.getUpdateId());
         verify(studyEventRepository).save(existing);
-        verify(auditService).recordAudit(isNull(), any(), eq("StudyEvent"), eq(1L), eq("Event #1"),
+        verify(auditService).recordAudit(eq(11), any(), eq("StudyEvent"), eq(1L), eq("Event #1"),
                 isNull(), isNull(), eq(42), eq("Event restored (status=1)"), eq("event"));
     }
 
@@ -307,6 +321,9 @@ class EventServiceTest {
     void removeEventCrf_setsRemovedStatusAndAudits() {
         EventCrfEntity existing = createCrf(2, 1, 5);
         when(eventCrfRepository.findById(2)).thenReturn(Optional.of(existing));
+        when(studyEventRepository.findById(1)).thenReturn(Optional.of(createEvent(1, 100, 1)));
+        when(eventDefinitionRepository.findById(1))
+                .thenReturn(Optional.of(createDef(1, 11, "Screening")));
 
         service.removeEventCrf(2, 42);
 
@@ -314,7 +331,7 @@ class EventServiceTest {
         assertNotNull(existing.getDateUpdated());
         assertEquals(42, existing.getUpdateId());
         verify(eventCrfRepository).save(existing);
-        verify(auditService).recordAudit(isNull(), any(), eq("EventCrf"), eq(2L), eq("EventCrf #2"),
+        verify(auditService).recordAudit(eq(11), any(), eq("EventCrf"), eq(2L), eq("EventCrf #2"),
                 isNull(), isNull(), eq(42), eq("Event CRF removed (status=5)"), eq("event"));
     }
 
@@ -323,6 +340,9 @@ class EventServiceTest {
         EventCrfEntity existing = createCrf(2, 1, 5);
         existing.setStatusId(5);
         when(eventCrfRepository.findById(2)).thenReturn(Optional.of(existing));
+        when(studyEventRepository.findById(1)).thenReturn(Optional.of(createEvent(1, 100, 1)));
+        when(eventDefinitionRepository.findById(1))
+                .thenReturn(Optional.of(createDef(1, 11, "Screening")));
 
         service.restoreEventCrf(2, 42);
 
@@ -330,7 +350,7 @@ class EventServiceTest {
         assertNotNull(existing.getDateUpdated());
         assertEquals(42, existing.getUpdateId());
         verify(eventCrfRepository).save(existing);
-        verify(auditService).recordAudit(isNull(), any(), eq("EventCrf"), eq(2L), eq("EventCrf #2"),
+        verify(auditService).recordAudit(eq(11), any(), eq("EventCrf"), eq(2L), eq("EventCrf #2"),
                 isNull(), isNull(), eq(42), eq("Event CRF restored (status=1)"), eq("event"));
     }
 }

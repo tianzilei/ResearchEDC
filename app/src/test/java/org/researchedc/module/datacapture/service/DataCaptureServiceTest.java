@@ -30,6 +30,8 @@ import org.researchedc.module.datacapture.repository.ItemGroupRepository;
 import org.researchedc.module.datacapture.repository.ResponseSetRepository;
 import org.researchedc.module.event.repository.EventCrfRepository;
 import org.researchedc.module.event.repository.StudyEventRepository;
+import org.researchedc.module.event.entity.EventCrfEntity;
+import org.researchedc.module.subject.entity.StudySubjectEntity;
 import org.researchedc.module.subject.repository.StudySubjectRepository;
 import org.researchedc.module.crf.repository.CrfVersionRepository;
 import org.researchedc.module.rule.repository.RuleSetRepository;
@@ -111,6 +113,20 @@ class DataCaptureServiceTest {
         return e;
     }
 
+    private static EventCrfEntity createEventCrf(Integer id, Integer studySubjectId) {
+        EventCrfEntity e = new EventCrfEntity();
+        e.setEventCrfId(id);
+        e.setStudySubjectId(studySubjectId);
+        return e;
+    }
+
+    private static StudySubjectEntity createStudySubject(Integer id, Integer studyId) {
+        StudySubjectEntity e = new StudySubjectEntity();
+        e.setStudySubjectId(id);
+        e.setStudyId(studyId);
+        return e;
+    }
+
     @Test
     void getItemDataByEventCrf_returnsData() {
         when(itemDataRepository.findByEventCrfIdOrderByItemId(100))
@@ -164,6 +180,8 @@ class DataCaptureServiceTest {
     void saveItemData_whenNew_createsAndReturns() {
         when(itemDataRepository.findByEventCrfIdAndItemId(100, 10))
                 .thenReturn(List.of());
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        when(studySubjectRepository.findById(200)).thenReturn(Optional.of(createStudySubject(200, 11)));
         when(itemDataRepository.save(any(ItemDataEntity.class)))
                 .thenAnswer(i -> {
                     ItemDataEntity e = i.getArgument(0);
@@ -181,7 +199,7 @@ class DataCaptureServiceTest {
         assertEquals("Yes", result.getValue());
         assertEquals(1, result.getStatusId());
         verify(itemDataRepository).save(any(ItemDataEntity.class));
-        verify(auditService).recordAudit(any(), any(), any(), any(), any(),
+        verify(auditService).recordAudit(eq(11), any(), any(), any(), any(),
                 any(), any(), any(), any(), any());
     }
 
@@ -190,6 +208,8 @@ class DataCaptureServiceTest {
         ItemDataEntity existing = createItemData(1, 100, 10, "Old");
         when(itemDataRepository.findByEventCrfIdAndItemId(100, 10))
                 .thenReturn(List.of(existing));
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        when(studySubjectRepository.findById(200)).thenReturn(Optional.of(createStudySubject(200, 11)));
         when(itemDataRepository.save(any(ItemDataEntity.class)))
                 .thenAnswer(i -> i.getArgument(0));
 
@@ -201,7 +221,7 @@ class DataCaptureServiceTest {
         ItemDataDTO result = service.saveItemData(request, 42);
 
         assertEquals("Updated", result.getValue());
-        verify(auditService).recordAudit(any(), eq(org.researchedc.module.audit.enums.AuditEventType.UPDATE),
+        verify(auditService).recordAudit(eq(11), eq(org.researchedc.module.audit.enums.AuditEventType.UPDATE),
                 any(), any(), any(), any(), eq("Updated"), any(), any(), any());
     }
 

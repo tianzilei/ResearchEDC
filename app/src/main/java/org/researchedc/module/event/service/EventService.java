@@ -141,7 +141,7 @@ public class EventService {
         StudyEventEntity saved = studyEventRepository.save(entity);
 
         auditService.recordAudit(
-                null, AuditEventType.CREATE, "StudyEvent",
+                resolveStudyId(saved), AuditEventType.CREATE, "StudyEvent",
                 saved.getStudyEventId().longValue(), "Event #" + saved.getStudyEventId(),
                 null, null, ownerId, "Scheduled for subject " + request.getStudySubjectId(), "event");
 
@@ -177,7 +177,7 @@ public class EventService {
         StudyEventEntity saved = studyEventRepository.save(entity);
 
         auditService.recordAudit(
-                null, AuditEventType.UPDATE, "StudyEvent",
+                resolveStudyId(saved), AuditEventType.UPDATE, "StudyEvent",
                 saved.getStudyEventId().longValue(), "Event #" + saved.getStudyEventId(),
                 null, null, updaterId, "Event updated", "event");
 
@@ -198,7 +198,7 @@ public class EventService {
         studyEventRepository.save(entity);
 
         auditService.recordAudit(
-                null, AuditEventType.UPDATE, "StudyEvent",
+                resolveStudyId(entity), AuditEventType.UPDATE, "StudyEvent",
                 entity.getStudyEventId().longValue(), "Event #" + entity.getStudyEventId(),
                 null, null, userId, "Event completed (status=7)", "event");
     }
@@ -216,7 +216,7 @@ public class EventService {
         studyEventRepository.save(entity);
 
         auditService.recordAudit(
-                null, AuditEventType.DELETE, "StudyEvent",
+                resolveStudyId(entity), AuditEventType.DELETE, "StudyEvent",
                 entity.getStudyEventId().longValue(), "Event #" + entity.getStudyEventId(),
                 null, null, userId, "Event removed (status=5)", "event");
     }
@@ -234,7 +234,7 @@ public class EventService {
         studyEventRepository.save(entity);
 
         auditService.recordAudit(
-                null, AuditEventType.UPDATE, "StudyEvent",
+                resolveStudyId(entity), AuditEventType.UPDATE, "StudyEvent",
                 entity.getStudyEventId().longValue(), "Event #" + entity.getStudyEventId(),
                 null, null, userId, "Event restored (status=1)", "event");
     }
@@ -252,7 +252,7 @@ public class EventService {
         eventCrfRepository.save(entity);
 
         auditService.recordAudit(
-                null, AuditEventType.DELETE, "EventCrf",
+                resolveStudyId(entity), AuditEventType.DELETE, "EventCrf",
                 entity.getEventCrfId().longValue(), "EventCrf #" + entity.getEventCrfId(),
                 null, null, userId, "Event CRF removed (status=5)", "event");
     }
@@ -270,7 +270,7 @@ public class EventService {
         eventCrfRepository.save(entity);
 
         auditService.recordAudit(
-                null, AuditEventType.UPDATE, "EventCrf",
+                resolveStudyId(entity), AuditEventType.UPDATE, "EventCrf",
                 entity.getEventCrfId().longValue(), "EventCrf #" + entity.getEventCrfId(),
                 null, null, userId, "Event CRF restored (status=1)", "event");
     }
@@ -295,7 +295,7 @@ public class EventService {
         eventDefinitionRepository.save(entity);
 
         auditService.recordAudit(
-                null, AuditEventType.DELETE, "EventDefinition",
+                entity.getStudyId(), AuditEventType.DELETE, "EventDefinition",
                 entity.getStudyEventDefinitionId().longValue(), entity.getName(),
                 null, null, userId, "Definition removed (status=5)", "event");
     }
@@ -313,9 +313,27 @@ public class EventService {
         eventDefinitionRepository.save(entity);
 
         auditService.recordAudit(
-                null, AuditEventType.UPDATE, "EventDefinition",
+                entity.getStudyId(), AuditEventType.UPDATE, "EventDefinition",
                 entity.getStudyEventDefinitionId().longValue(), entity.getName(),
                 null, null, userId, "Definition restored (status=1)", "event");
+    }
+
+    private Integer resolveStudyId(StudyEventEntity event) {
+        if (event == null || event.getStudyEventDefinitionId() == null) {
+            return null;
+        }
+        return eventDefinitionRepository.findById(event.getStudyEventDefinitionId())
+                .map(StudyEventDefinitionEntity::getStudyId)
+                .orElse(null);
+    }
+
+    private Integer resolveStudyId(EventCrfEntity eventCrf) {
+        if (eventCrf == null || eventCrf.getStudyEventId() == null) {
+            return null;
+        }
+        return studyEventRepository.findById(eventCrf.getStudyEventId())
+                .map(this::resolveStudyId)
+                .orElse(null);
     }
 
     private StudyEventDTO toEventDto(StudyEventEntity e) {

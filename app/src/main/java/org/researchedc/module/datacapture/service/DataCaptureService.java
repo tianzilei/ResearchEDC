@@ -177,7 +177,8 @@ public class DataCaptureService {
         ItemDataEntity saved = itemDataRepository.save(entity);
 
         auditService.recordAudit(
-                null, isUpdate ? AuditEventType.UPDATE : AuditEventType.CREATE, "ItemData",
+                resolveStudyId(saved.getEventCrfId()),
+                isUpdate ? AuditEventType.UPDATE : AuditEventType.CREATE, "ItemData",
                 saved.getItemDataId().longValue(), "Item #" + saved.getItemId(),
                 null, saved.getValue(), userId, null, "datacapture");
 
@@ -250,6 +251,16 @@ public class DataCaptureService {
         response.setRuleSetCount(ruleSets.size());
         response.setRules(rules);
         return response;
+    }
+
+    private Integer resolveStudyId(Integer eventCrfId) {
+        if (eventCrfId == null) {
+            return null;
+        }
+        return eventCrfRepository.findById(eventCrfId)
+                .flatMap(eventCrf -> studySubjectRepository.findById(eventCrf.getStudySubjectId()))
+                .map(StudySubjectEntity::getStudyId)
+                .orElse(null);
     }
 
     private ItemDataDTO toItemDataDto(ItemDataEntity e) {
