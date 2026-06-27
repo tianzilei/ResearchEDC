@@ -7,6 +7,7 @@ import { useCurrentStudy } from "@/hooks/useStudies";
 import { SkeletonPage } from "@/components/SkeletonCard";
 import { useAuth } from "@/providers/AuthProvider";
 import { apiClient } from "@/api/client";
+import { formatApiError } from "@/api/errors";
 import {
   useExportJobs,
   useCreateExportJob,
@@ -70,8 +71,7 @@ export default function ExportCenter() {
       link.click();
       URL.revokeObjectURL(link.href);
     } catch (err) {
-      const detail = err instanceof Error && err.message ? err.message : t("export.error.downloadFailed");
-      message.error(detail);
+      message.error(formatApiError(err, t("export.error.downloadFailed")));
     }
   }, [t]);
 

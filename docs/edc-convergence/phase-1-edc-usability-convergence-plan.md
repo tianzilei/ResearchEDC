@@ -244,6 +244,8 @@ This phase is complete when:
 - Verified API error responses with `mvn test -pl app -am '-Dtest=ApiExceptionHandlerTest,RequestCorrelationFilterTest,ModulithVerificationTest' '-Dsurefire.failIfNoSpecifiedTests=false'` (7 tests passed).
 - Slice 4 continued on the frontend error path: `ApiClient` now parses backend JSON error envelopes, keeps text responses readable for download failures, and exposes `requestId`/`path` on `ApiError` so page-level UX can show the same id operators see in logs.
 - Verified frontend error parsing with `pnpm -C frontend test -- --run src/api/client.test.ts` (2 tests passed) and `pnpm -C frontend typecheck` (0 errors). The first Windows pnpm run had to refresh `frontend/node_modules` because existing shims pointed at an older Linux path.
+- Slice 4 continued with visible frontend request-id feedback: added a shared API error formatter and applied it to export download, admin export job create/cancel/retry, and import upload/validate/commit errors so structured backend `requestId` values appear in operator-facing error text.
+- Verified frontend request-id formatting with `pnpm -C frontend test -- --run src/api/client.test.ts src/api/errors.test.ts` (4 tests passed) and `pnpm -C frontend typecheck` (0 errors). The first sandboxed Vitest run produced pnpm temp-file unlink errors on Windows; rerunning in CI mode outside the sandbox passed.
 
 ## Next Phase
 

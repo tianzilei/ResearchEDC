@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useCurrentStudy } from "@/hooks/useStudies";
 import { useAppQuery, useAppMutation, useQueryClient } from "@/hooks/useQuery";
 import { apiClient } from "@/api/client";
+import { formatApiError } from "@/api/errors";
 import { SkeletonPage } from "@/components/SkeletonCard";
 
 const { Title, Text } = Typography;
@@ -105,7 +106,7 @@ export default function ImportManager() {
         message.error("验证失败");
       }
     },
-    onError: () => message.error("验证失败"),
+    onError: (err) => message.error(formatApiError(err, "验证失败")),
   });
 
   const commitJob = useAppMutation<ImportResult, number>({
@@ -114,7 +115,7 @@ export default function ImportManager() {
       qc.invalidateQueries({ queryKey: ["imports", studyId] });
       message.success("导入提交成功");
     },
-    onError: () => message.error("提交失败"),
+    onError: (err) => message.error(formatApiError(err, "提交失败")),
   });
 
   const currentImportType = IMPORT_TYPES.find(t => t.key === selectedType);
@@ -145,8 +146,7 @@ export default function ImportManager() {
       message.success("文件上传成功，导入任务已创建");
       setCurrentStep(2);
     } catch (err) {
-      const detail = err instanceof Error && err.message ? err.message : "网络错误，请检查连接后重试";
-      setUploadError(detail);
+      setUploadError(formatApiError(err, "网络错误，请检查连接后重试"));
     } finally {
       setUploading(false);
     }

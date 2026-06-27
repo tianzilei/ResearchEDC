@@ -5,6 +5,7 @@ import {
 } from "antd";
 
 import { useAppQuery } from "@/hooks/useQuery";
+import { formatApiError, isApiError } from "@/api/errors";
 import { exportApi, type ExportJobDTO } from "@/api/exports";
 import { studyApi } from "@/api/studies";
 
@@ -49,7 +50,11 @@ export default function JobManager() {
       form.resetFields();
       setSelectedStudyId(vals.studyId);
       void refetchJobs();
-    } catch { /* validation or API error */ }
+    } catch (err) {
+      if (isApiError(err)) {
+        message.error(formatApiError(err, "Failed to create export job"));
+      }
+    }
   };
 
   const handleCancel = async (jobId: number) => {
@@ -57,8 +62,8 @@ export default function JobManager() {
       await exportApi.cancelJob(jobId);
       message.success("Job cancelled");
       void refetchJobs();
-    } catch {
-      message.error("Failed to cancel job");
+    } catch (err) {
+      message.error(formatApiError(err, "Failed to cancel job"));
     }
   };
 
@@ -67,8 +72,8 @@ export default function JobManager() {
       await exportApi.retryJob(jobId);
       message.success("Job retrying");
       void refetchJobs();
-    } catch {
-      message.error("Failed to retry job");
+    } catch (err) {
+      message.error(formatApiError(err, "Failed to retry job"));
     }
   };
 
