@@ -6,6 +6,7 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
+import { API_AUTH_FAILURE_EVENT, type ApiAuthFailureDetail } from "@/api/client";
 
 export interface UserInfo {
   userId: number;
@@ -120,6 +121,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
+  const clearLocalSession = useCallback(() => {
+    setUser(null);
+    setLoginError(null);
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       const csrfToken = getCsrfToken();
@@ -131,9 +137,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch {
       // Continue with local state cleanup even if server logout fails
     }
-    setUser(null);
-    setLoginError(null);
-  }, []);
+    clearLocalSession();
+  }, [clearLocalSession]);
+
+  useEffect(() => {
+    const handleAuthFailure = (event: Event) => {
+      const detail = (event as CustomEvent<ApiAuthFailureDetail>).detail;
+      if (!detail) return;
+
+      if (detail.status === 401) {
+        clearLocalSession();
+        if (!window.location.pathname.startsWith("/login")) {
+          window.location.assign("/login");
+        }
+        return;
+      }
+
+      if (detail.status === 403 && window.location.pathname !== "/app/403") {
+        window.location.assign("/app/403");
+      }
+    };
+
+    window.addEventListener(API_AUTH_FAILURE_EVENT, handleAuthFailure);
+    return () => window.removeEventListener(API_AUTH_FAILURE_EVENT, handleAuthFailure);
+  }, [clearLocalSession]);
 
   return (
     <AuthContext.Provider

@@ -16,6 +16,19 @@ interface ApiError {
   details?: unknown;
 }
 
+const API_AUTH_FAILURE_EVENT = "researchedc:api-auth-failure";
+
+interface ApiAuthFailureDetail {
+  status: 401 | 403;
+  path: string;
+}
+
+function emitAuthFailure(status: 401 | 403, path: string) {
+  window.dispatchEvent(new CustomEvent<ApiAuthFailureDetail>(API_AUTH_FAILURE_EVENT, {
+    detail: { status, path },
+  }));
+}
+
 function getCsrfToken(): string | null {
   for (const cookie of document.cookie.split(";")) {
     const [name, value] = cookie.trim().split("=");
@@ -63,6 +76,9 @@ class ApiClient {
 
     if (!response.ok) {
       const errorBody = await response.text().catch(() => "");
+      if (response.status === 401 || response.status === 403) {
+        emitAuthFailure(response.status, config.path);
+      }
       const error: ApiError & Error = Object.assign(new Error(errorBody || response.statusText), {
         status: response.status,
         message: errorBody || response.statusText,
@@ -82,4 +98,5 @@ class ApiClient {
 }
 
 export const apiClient = new ApiClient(APP_CONFIG.apiBaseUrl);
-export type { ApiError, RequestConfig };
+export { API_AUTH_FAILURE_EVENT };
+export type { ApiAuthFailureDetail, ApiError, RequestConfig };
