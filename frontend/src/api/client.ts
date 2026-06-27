@@ -87,6 +87,11 @@ class ApiClient {
     }
 
     if (response.status === 204) return undefined as T;
+
+    const contentType = response.headers.get("Content-Type") ?? "";
+    if (!contentType.includes("application/json")) {
+      return undefined as T;
+    }
     return response.json() as Promise<T>;
   }
 

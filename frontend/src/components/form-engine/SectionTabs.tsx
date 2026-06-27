@@ -1,12 +1,19 @@
 import { Button, Card, Empty, List, Space, Spin, Tabs, Tag, Typography } from "antd";
 import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { apiClient } from "@/api/client";
 import { DataEntryForm } from "@/components/form-engine/DataEntryForm";
 import type { FormItemConfig } from "@/components/form-engine/FormField";
 import type { FormStatusConfig } from "@/components/form-engine/FormStatus";
 import DiscrepancyNotes from "@/components/DiscrepancyNotes";
 import { useEventCrfRules } from "@/hooks/useCrf";
 import { useTranslation } from "react-i18next";
+
+interface AttachmentFile {
+  id: string;
+  fileName: string;
+  size: number;
+}
 
 interface SectionTabsProps {
   sections: { sectionId?: number; title?: string; label?: string }[];
@@ -50,37 +57,44 @@ export function SectionTabs({
   studyId,
 }: SectionTabsProps) {
   const { t } = useTranslation();
-  const [attachmentFiles, setAttachmentFiles] = useState<{ id: string; fileName: string; size: number }[]>([]);
+  const [attachmentFiles, setAttachmentFiles] = useState<AttachmentFile[]>([]);
   const [loadingAttachments, setLoadingAttachments] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: ruleData, isLoading: loadingRules } = useEventCrfRules(parsedEventCrfId);
 
-  const refreshAttachments = () => {
-    if (parsedEventCrfId) {
-      setLoadingAttachments(true);
-      fetch(`/api/v1/data-capture/events/${parsedEventCrfId}/attachments`)
-        .then((r) => r.json())
-        .then(setAttachmentFiles)
-        .catch(() => setAttachmentFiles([]))
-        .finally(() => setLoadingAttachments(false));
+  const refreshAttachments = useCallback(async () => {
+    if (!parsedEventCrfId) {
+      setAttachmentFiles([]);
+      return;
     }
-  };
+
+    setLoadingAttachments(true);
+    try {
+      const files = await apiClient.get<AttachmentFile[]>(
+        `/api/v1/data-capture/events/${parsedEventCrfId}/attachments`,
+      );
+      setAttachmentFiles(files ?? []);
+    } catch {
+      setAttachmentFiles([]);
+    } finally {
+      setLoadingAttachments(false);
+    }
+  }, [parsedEventCrfId]);
 
   useEffect(() => {
-    refreshAttachments();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parsedEventCrfId]);
+    void refreshAttachments();
+  }, [refreshAttachments]);
 
   const handleUploadOk = async (file: File) => {
     if (!parsedEventCrfId) return;
     const formData = new FormData();
     formData.append("file", file);
     try {
-      await fetch(`/api/v1/data-capture/events/${parsedEventCrfId}/attachments`, {
-        method: "POST",
-        body: formData,
-      });
-      refreshAttachments();
+      await apiClient.post<void>(
+        `/api/v1/data-capture/events/${parsedEventCrfId}/attachments`,
+        formData,
+      );
+      await refreshAttachments();
     } catch {}
   };
 

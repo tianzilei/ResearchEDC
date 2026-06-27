@@ -51,7 +51,7 @@ as requested by the Phase 0 plan.
 | P0-H1 | CRF list links CRF ids into a route that fetches CRF version ids. | `CrfList` navigates to `/app/crfs/${r.crfId}`; `CrfPreview` reads `versionId` and fetches `/api/v1/crfs/versions/${vId}`. | core-logic | business-logic | frontend/CRF | Fixed in Phase 1 slice 1: CRF list now opens the CRF version manager. |
 | P0-H2 | API security disables CSRF while frontend still injects XSRF headers. | `SecurityConfig` ends with `.csrf(csrf -> csrf.disable())`; frontend `ApiClient` and `AuthProvider` read `XSRF-TOKEN` and send `X-XSRF-TOKEN`. | core-logic | business-logic | security/frontend | Decide the session/CSRF contract and make backend/frontend behavior consistent. |
 | P0-H3 | Method-level authorization is sparse across module controllers. | Security requires authentication for `/api/**`, but only selected audit endpoints show `@PreAuthorize`; many mutating core endpoints rely on session presence and service-level checks are uneven. | core-logic | business-logic | security/modules | Define minimum role/study-scope rules for study, subject, event, data capture, discrepancy, and export endpoints. |
-| P0-H4 | Frontend has no global 401/403 handling for API client calls. | `ApiClient` threw raw `ApiError`; router has `/app/403`, but request failures were handled ad hoc by pages. `ProtectedRoute` returns `null` while auth initializes. | core-logic | business-logic | frontend/security | Partially fixed in Phase 1 slice 2: `ApiClient` emits auth-failure events, `AuthProvider` clears local session and redirects on 401, and redirects to `/app/403` on 403. Remaining: direct `fetch` call sites should be migrated or wrapped. |
+| P0-H4 | Frontend has no global 401/403 handling for API client calls. | `ApiClient` threw raw `ApiError`; router has `/app/403`, but request failures were handled ad hoc by pages. `ProtectedRoute` returns `null` while auth initializes. | core-logic | business-logic | frontend/security | Partially fixed in Phase 1 slice 2: `ApiClient` emits auth-failure events, `AuthProvider` clears local session and redirects on 401, and redirects to `/app/403` on 403. Data-capture attachment list/upload now use `ApiClient`. Remaining: other direct `fetch` call sites should be migrated or wrapped. |
 | P0-H5 | Export download does not verify artifact existence before returning metadata. | `ExportService.getDownload` wrapped `job.getFilePath()` in `FileSystemResource` without checking artifact readability. | core-logic | business-logic | export module | Fixed in Phase 1 slice 2: download now verifies artifact existence/readability and maps missing/unreadable artifacts to a 404 text response consumed by the existing frontend download error path. |
 
 ### Medium Friction
@@ -145,7 +145,7 @@ as requested by the Phase 0 plan.
 ### Slice 2: Auth And Error Predictability
 
 1. Decide whether CSRF is intentionally disabled or should be restored.
-2. ApiClient 401/403 handling added in Phase 1 slice 2; remaining: direct fetch call sites.
+2. ApiClient 401/403 handling added in Phase 1 slice 2; data-capture attachment list/upload migrated; remaining: other direct fetch call sites.
 3. Add minimum role/study-scope authorization rules for core mutating endpoints.
 4. Missing artifact behavior fixed in Phase 1 slice 2; remaining: verify export download permissions explicitly.
 
