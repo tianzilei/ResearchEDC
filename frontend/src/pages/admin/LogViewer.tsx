@@ -3,6 +3,7 @@ import {
   Card, Typography, Table, Space, Button, Breadcrumb, Empty, Result,
 } from "antd";
 import { Link } from "react-router-dom";
+import { emitApiAuthFailure } from "@/api/client";
 
 const { Title, Text } = Typography;
 
@@ -15,7 +16,11 @@ export default function LogViewer() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/actuator/loggers");
+      const res = await fetch("/actuator/loggers", { credentials: "same-origin" });
+      if (res.status === 401 || res.status === 403) {
+        emitApiAuthFailure(res.status, "/actuator/loggers");
+        return;
+      }
       if (res.ok) {
         const data = await res.json();
         setLogs(Object.entries<Record<string, string | null>>(data.loggers ?? {}).slice(0, 50).map(([name, config]) => ({
@@ -26,8 +31,9 @@ export default function LogViewer() {
       }
     } catch {
       setError("Actuator endpoint not available");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

@@ -28,7 +28,7 @@ interface DownloadResult {
   filename?: string;
 }
 
-function emitAuthFailure(status: 401 | 403, path: string) {
+function emitApiAuthFailure(status: 401 | 403, path: string) {
   window.dispatchEvent(new CustomEvent<ApiAuthFailureDetail>(API_AUTH_FAILURE_EVENT, {
     detail: { status, path },
   }));
@@ -64,7 +64,7 @@ class ApiClient {
   private async handleErrorResponse(response: Response, path: string): Promise<never> {
     const errorBody = await response.text().catch(() => "");
     if (response.status === 401 || response.status === 403) {
-      emitAuthFailure(response.status, path);
+      emitApiAuthFailure(response.status, path);
     }
     const error: ApiError & Error = Object.assign(new Error(errorBody || response.statusText), {
       status: response.status,
@@ -136,5 +136,5 @@ class ApiClient {
 }
 
 export const apiClient = new ApiClient(APP_CONFIG.apiBaseUrl);
-export { API_AUTH_FAILURE_EVENT };
+export { API_AUTH_FAILURE_EVENT, emitApiAuthFailure };
 export type { ApiAuthFailureDetail, ApiError, DownloadResult, RequestConfig };
