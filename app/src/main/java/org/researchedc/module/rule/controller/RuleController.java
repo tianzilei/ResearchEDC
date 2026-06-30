@@ -2,6 +2,7 @@ package org.researchedc.module.rule.controller;
 
 import java.util.List;
 
+import org.researchedc.config.CoreEdcAuthorityExpressions;
 import org.researchedc.module.rule.dto.AddRuleToRuleSetRequest;
 import org.researchedc.module.rule.dto.CreateRuleRequest;
 import org.researchedc.module.rule.dto.RuleDetailDTO;
@@ -14,6 +15,7 @@ import org.researchedc.module.rule.service.RuleService;
 import org.researchedc.config.CurrentUserUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,37 +38,46 @@ public class RuleController {
     }
 
     @GetMapping("/rule-sets")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<List<RuleSetDTO>> listRuleSets(@RequestParam(required = false) Integer studyId) {
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
         List<RuleSetEntity> entities = studyId != null
-                ? ruleService.listRuleSetsByStudy(studyId)
-                : ruleService.listAllRuleSets();
+                ? ruleService.listRuleSetsByStudy(studyId, currentUserId)
+                : ruleService.listAllRuleSets(currentUserId);
         return ResponseEntity.ok(entities.stream().map(this::toRuleSetDto).toList());
     }
 
     @GetMapping("/rule-sets/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<RuleSetDTO> getRuleSet(@PathVariable int id) {
         try {
-            return ResponseEntity.ok(toRuleSetDto(ruleService.getRuleSet(id)));
+            Integer currentUserId = currentUserUtils.getCurrentUserId();
+            return ResponseEntity.ok(toRuleSetDto(ruleService.getRuleSet(id, currentUserId)));
         } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping("/rule-sets/{id}/rules")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<Void> addRuleToRuleSet(
             @PathVariable int id, @RequestBody AddRuleToRuleSetRequest request) {
-        ruleService.addRuleToRuleSet(id, request.getRuleId());
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        ruleService.addRuleToRuleSet(id, request.getRuleId(), currentUserId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/rule-sets/{id}/rules/{ruleId}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<Void> removeRuleFromRuleSet(
             @PathVariable int id, @PathVariable int ruleId) {
-        ruleService.removeRuleFromRuleSet(id, ruleId);
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        ruleService.removeRuleFromRuleSet(id, ruleId, currentUserId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<RuleDetailDTO> getRule(@PathVariable int id) {
         try {
             return ResponseEntity.ok(toRuleDetailDto(ruleService.getRule(id)));
@@ -76,6 +87,7 @@ public class RuleController {
     }
 
     @PostMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<RuleDetailDTO> createRule(@RequestBody CreateRuleRequest request) {
         Integer ownerId = currentUserUtils.getCurrentUserId();
         RuleEntity entity = ruleService.createRule(
@@ -85,6 +97,7 @@ public class RuleController {
     }
 
     @PostMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<RuleDetailDTO> updateRule(
             @PathVariable int id, @RequestBody CreateRuleRequest request) {
         try {
@@ -99,6 +112,7 @@ public class RuleController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<Void> deleteRule(@PathVariable int id) {
         try {
             ruleService.deleteRule(id);

@@ -261,6 +261,9 @@ This phase is complete when:
 - Started the Phase 1 data-capture hardening slice for BL-4. Item save now rejects writes when the item is not part of the EventCRF's CRF version, when the EventCRF is locked/removed/signed/frozen, when required values are blank, when configured regex validation fails, and when integer/real/date/partial-date/string type constraints fail.
 - Verified data-capture hardening with `mvn test -pl app -am -Dtest=DataCaptureServiceTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (25 tests passed: `DataCaptureServiceTest` 24, `ModulithVerificationTest` 1).
 - Remaining data-capture convergence work is response-set membership and broader edit-check/discrepancy lifecycle integration; those are separate from the scalar metadata validation now enforced on item save.
+- Continued Slice 2 per-study scoping for study-bound rule sets. Rule-set list/get now filter or require readable studies, and rule-set membership add/remove requires write access to the rule set's study. `RuleController` now has method-level read/write gates, and `CoreControllerAuthorizationTest` covers the eight rule endpoints.
+- Verified rule-set scoping with `mvn test -pl app -am -Dtest=RuleServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (85 tests passed).
+- Reviewed response-set membership enforcement for data capture and deferred it from the service-only slice: `module_item_form_metadata` currently does not carry `response_set_id`, so correct enforcement requires a schema/sync-trigger update before the module JPA path can validate controlled vocabularies without falling back to legacy tables.
 
 ## Next Phase
 

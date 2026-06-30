@@ -251,7 +251,9 @@ Current business constraints:
   scalar item data type validation, and non-writable EventCRF statuses before
   item save.
 - item save does not yet enforce response-set membership or full edit-check /
-  discrepancy lifecycle behavior.
+  discrepancy lifecycle behavior; response-set membership requires restoring
+  `response_set_id` to module item-form metadata before the JPA save path can
+  validate controlled vocabularies without legacy-table fallback.
 - rule lookup is metadata retrieval, not rule execution.
 - attachments use local filesystem storage and directory scanning, which is targeted by the MinIO storage convergence plan.
 
@@ -430,7 +432,7 @@ Business implication:
 | BL-1 | Authorization is mostly session-level, not role/study-scope complete. | `SecurityConfig` authenticates `/api/**`; only selected audit endpoints use `@PreAuthorize`. | Phase 1 auth slice |
 | BL-2 | CSRF contract was inconsistent. | Fixed in Phase 1 slice 2 for the current contract: backend CSRF remains disabled and frontend XSRF header injection was removed. | Complete |
 | BL-3 | Study context is missing in several audit records. | event and data capture services often record `studyId=null`. | Phase 1 audit slice |
-| BL-4 | Data capture save was permissive. | Phase 1 now enforces item membership, required fields, regex, scalar type validation, and non-writable EventCRF statuses. Remaining: response-set membership and broader edit-check/discrepancy lifecycle integration. | Phase 1 data capture hardening |
+| BL-4 | Data capture save was permissive. | Phase 1 now enforces item membership, required fields, regex, scalar type validation, and non-writable EventCRF statuses. Remaining: response-set membership after module metadata carries `response_set_id`, plus broader edit-check/discrepancy lifecycle integration. | Phase 1 data capture hardening |
 | BL-5 | Local business file storage remains active. | import, export, and attachments all use filesystem paths. | Storage MinIO convergence |
 | BL-6 | Export download did not validate artifact existence/readability. | Fixed in Phase 1 slice 2: `ExportService.getDownload` checks existence/readability and missing artifacts return 404 text. | Complete |
 | BL-7 | Some destructive operations are physical deletes. | study delete and CRF version delete call repository delete. | Product policy decision |
@@ -439,7 +441,7 @@ Business implication:
 ## Recommended Next Work
 
 1. Finish Phase 1 auth predictability: define study/role-scope rules; current CSRF contract and global ApiClient 401/403 handling are aligned.
-2. Finish data-capture convergence around response-set membership and broader edit-check/discrepancy lifecycle integration.
+2. Finish data-capture convergence around module-owned response-set metadata, response-set membership, and broader edit-check/discrepancy lifecycle integration.
 3. Execute `phase-1-storage-minio-convergence-plan.md` to remove hidden local filesystem dependencies.
 5. Normalize audit study id population for study-scoped mutations.
 6. Decide product policy for physical delete versus status-based removal in study and CRF version management.

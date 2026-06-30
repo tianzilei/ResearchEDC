@@ -7,11 +7,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface RuleSetRepository extends JpaRepository<RuleSetEntity, Integer> {
 
     List<RuleSetEntity> findByStudyIdOrderByRuleSetId(Integer studyId);
+
+    List<RuleSetEntity> findByStudyIdInOrderByStudyIdAscRuleSetIdAsc(Set<Integer> studyIds);
 
     List<RuleSetEntity> findByCrfIdAndStudyId(Integer crfId, Integer studyId);
 

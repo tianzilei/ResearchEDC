@@ -2,7 +2,9 @@ package org.researchedc.module.rule.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.rule.entity.RuleEntity;
 import org.researchedc.module.rule.entity.RuleExpressionEntity;
 import org.researchedc.module.rule.entity.RuleSetEntity;
@@ -11,6 +13,7 @@ import org.researchedc.module.rule.repository.RuleExpressionRepository;
 import org.researchedc.module.rule.repository.RuleRepository;
 import org.researchedc.module.rule.repository.RuleSetRepository;
 import org.researchedc.module.rule.repository.RuleSetRuleRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,28 +25,41 @@ public class RuleService {
     private final RuleSetRuleRepository ruleSetRuleRepository;
     private final RuleRepository ruleRepository;
     private final RuleExpressionRepository ruleExpressionRepository;
+    private final CurrentStudyAccessService currentStudyAccessService;
 
     public RuleService(RuleSetRepository ruleSetRepository,
                        RuleSetRuleRepository ruleSetRuleRepository,
                        RuleRepository ruleRepository,
-                       RuleExpressionRepository ruleExpressionRepository) {
+                       RuleExpressionRepository ruleExpressionRepository,
+                       CurrentStudyAccessService currentStudyAccessService) {
         this.ruleSetRepository = ruleSetRepository;
         this.ruleSetRuleRepository = ruleSetRuleRepository;
         this.ruleRepository = ruleRepository;
         this.ruleExpressionRepository = ruleExpressionRepository;
+        this.currentStudyAccessService = currentStudyAccessService;
     }
 
-    public List<RuleSetEntity> listAllRuleSets() {
-        return ruleSetRepository.findAll();
+    public List<RuleSetEntity> listAllRuleSets(Integer currentUserId) {
+        if (currentStudyAccessService.canReadAllStudies(currentUserId)) {
+            return ruleSetRepository.findAll();
+        }
+        Set<Integer> studyIds = currentStudyAccessService.readableStudyIds(currentUserId);
+        if (studyIds.isEmpty()) {
+            return List.of();
+        }
+        return ruleSetRepository.findByStudyIdInOrderByStudyIdAscRuleSetIdAsc(studyIds);
     }
 
-    public List<RuleSetEntity> listRuleSetsByStudy(Integer studyId) {
+    public List<RuleSetEntity> listRuleSetsByStudy(Integer studyId, Integer currentUserId) {
+        requireReadAccess(currentUserId, studyId);
         return ruleSetRepository.findByStudyIdOrderByRuleSetId(studyId);
     }
 
-    public RuleSetEntity getRuleSet(Integer ruleSetId) {
-        return ruleSetRepository.findById(ruleSetId)
+    public RuleSetEntity getRuleSet(Integer ruleSetId, Integer currentUserId) {
+        RuleSetEntity ruleSet = ruleSetRepository.findById(ruleSetId)
                 .orElseThrow(() -> new NoSuchElementException("RuleSet not found: " + ruleSetId));
+        requireReadAccess(currentUserId, ruleSet.getStudyId());
+        return ruleSet;
     }
 
     public List<RuleSetRuleEntity> listRuleSetRules(Integer ruleSetId) {
@@ -102,9 +118,10 @@ public class RuleService {
     }
 
     @Transactional
-    public void addRuleToRuleSet(Integer ruleSetId, Integer ruleId) {
-        ruleSetRepository.findById(ruleSetId)
+    public void addRuleToRuleSet(Integer ruleSetId, Integer ruleId, Integer currentUserId) {
+        RuleSetEntity ruleSet = ruleSetRepository.findById(ruleSetId)
                 .orElseThrow(() -> new NoSuchElementException("RuleSet not found: " + ruleSetId));
+        requireWriteAccess(currentUserId, ruleSet.getStudyId());
         ruleRepository.findById(ruleId)
                 .orElseThrow(() -> new NoSuchElementException("Rule not found: " + ruleId));
         RuleSetRuleEntity entity = new RuleSetRuleEntity();
@@ -114,7 +131,22 @@ public class RuleService {
     }
 
     @Transactional
-    public void removeRuleFromRuleSet(Integer ruleSetId, Integer ruleId) {
+    public void removeRuleFromRuleSet(Integer ruleSetId, Integer ruleId, Integer currentUserId) {
+        RuleSetEntity ruleSet = ruleSetRepository.findById(ruleSetId)
+                .orElseThrow(() -> new NoSuchElementException("RuleSet not found: " + ruleSetId));
+        requireWriteAccess(currentUserId, ruleSet.getStudyId());
         ruleSetRuleRepository.deleteByRuleSetIdAndRuleId(ruleSetId, ruleId);
+    }
+
+    private void requireReadAccess(Integer currentUserId, Integer studyId) {
+        if (!currentStudyAccessService.canReadStudy(currentUserId, studyId)) {
+            throw new AccessDeniedException("You do not have read access to this study");
+        }
+    }
+
+    private void requireWriteAccess(Integer currentUserId, Integer studyId) {
+        if (!currentStudyAccessService.canWriteStudy(currentUserId, studyId)) {
+            throw new AccessDeniedException("You do not have write access to this study");
+        }
     }
 }

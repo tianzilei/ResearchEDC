@@ -16,6 +16,7 @@ import org.researchedc.module.dataimport.controller.ImportController;
 import org.researchedc.module.discrepancynote.controller.DiscrepancyNoteController;
 import org.researchedc.module.event.controller.EventController;
 import org.researchedc.module.export.controller.ExportController;
+import org.researchedc.module.rule.controller.RuleController;
 import org.researchedc.module.study.controller.StudyController;
 import org.researchedc.module.subject.controller.SubjectController;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -121,6 +122,26 @@ class CoreControllerAuthorizationTest {
                         CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
                         org.researchedc.module.discrepancynote.dto.CreateDiscrepancyNoteRequest.class),
                 secured(DiscrepancyNoteController.class, "resolveNote",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA, int.class),
+
+                secured(RuleController.class, "listRuleSets",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(RuleController.class, "getRuleSet",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, int.class),
+                secured(RuleController.class, "addRuleToRuleSet",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        int.class, org.researchedc.module.rule.dto.AddRuleToRuleSetRequest.class),
+                secured(RuleController.class, "removeRuleFromRuleSet",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA, int.class, int.class),
+                secured(RuleController.class, "getRule",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, int.class),
+                secured(RuleController.class, "createRule",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.rule.dto.CreateRuleRequest.class),
+                secured(RuleController.class, "updateRule",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        int.class, org.researchedc.module.rule.dto.CreateRuleRequest.class),
+                secured(RuleController.class, "deleteRule",
                         CoreEdcAuthorityExpressions.WRITE_EDC_DATA, int.class),
 
                 secured(ExportController.class, "createJob",
