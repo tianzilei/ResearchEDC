@@ -3,6 +3,7 @@ package org.researchedc.module.randomization.service;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.randomization.algorithms.BlockRandomization;
 import org.researchedc.module.randomization.algorithms.SimpleRandomization;
 import org.researchedc.module.randomization.algorithms.StratifiedBlockRandomization;
@@ -12,6 +13,7 @@ import org.researchedc.module.randomization.enums.*;
 import org.researchedc.module.randomization.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ public class RandomizationService {
     private final RandomizationAssignmentRepository assignmentRepository;
     private final RandomizationBlockRepository blockRepository;
     private final RandomizationAuditLogRepository auditLogRepository;
+    private final CurrentStudyAccessService currentStudyAccessService;
     private final Map<RandomizationAlgorithm, RandomizationAlgorithmStrategy> strategies;
 
     public RandomizationService(
@@ -34,6 +37,7 @@ public class RandomizationService {
             RandomizationAssignmentRepository assignmentRepository,
             RandomizationBlockRepository blockRepository,
             RandomizationAuditLogRepository auditLogRepository,
+            CurrentStudyAccessService currentStudyAccessService,
             SimpleRandomization simpleStrategy,
             BlockRandomization blockStrategy,
             StratifiedBlockRandomization stratifiedBlockStrategy) {
@@ -43,6 +47,7 @@ public class RandomizationService {
         this.assignmentRepository = assignmentRepository;
         this.blockRepository = blockRepository;
         this.auditLogRepository = auditLogRepository;
+        this.currentStudyAccessService = currentStudyAccessService;
 
         this.strategies = new HashMap<>();
         this.strategies.put(RandomizationAlgorithm.SIMPLE, simpleStrategy);
@@ -52,19 +57,22 @@ public class RandomizationService {
 
     // === Scheme Management ===
 
-    public List<SchemeSummaryDTO> listSchemes(Integer studyId) {
+    public List<SchemeSummaryDTO> listSchemes(Integer studyId, Integer currentUserId) {
+        requireReadAccess(currentUserId, studyId);
         return schemeRepository.findByStudyIdOrderByCreatedDateDesc(studyId)
                 .stream().map(this::toSummary).toList();
     }
 
-    public SchemeDTO getScheme(Long id) {
+    public SchemeDTO getScheme(Long id, Integer currentUserId) {
         RandomizationScheme scheme = schemeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Scheme not found: " + id));
+        requireReadAccess(currentUserId, scheme.getStudyId());
         return toFullDTO(scheme);
     }
 
     public SchemeDTO createScheme(SchemeDTO dto, Integer userId) {
         validateSchemeDefinition(dto);
+        requireWriteAccess(userId, dto.getStudyId());
 
         RandomizationScheme scheme = new RandomizationScheme();
         scheme.setStatus(SchemeStatus.DRAFT);
@@ -84,6 +92,10 @@ public class RandomizationService {
 
         RandomizationScheme scheme = schemeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Scheme not found: " + id));
+        requireWriteAccess(userId, scheme.getStudyId());
+        if (!Objects.equals(scheme.getStudyId(), dto.getStudyId())) {
+            requireWriteAccess(userId, dto.getStudyId());
+        }
 
         if (scheme.getStatus() != SchemeStatus.DRAFT) {
             throw new IllegalStateException("Only DRAFT schemes can be modified");
@@ -103,6 +115,7 @@ public class RandomizationService {
     public void activateScheme(Long id, Integer userId) {
         RandomizationScheme scheme = schemeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Scheme not found: " + id));
+        requireWriteAccess(userId, scheme.getStudyId());
         if (scheme.getStatus() != SchemeStatus.DRAFT) {
             throw new IllegalStateException("Only DRAFT schemes can be activated");
         }
@@ -120,6 +133,7 @@ public class RandomizationService {
     public void closeScheme(Long id, Integer userId) {
         RandomizationScheme scheme = schemeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Scheme not found: " + id));
+        requireWriteAccess(userId, scheme.getStudyId());
         SchemeStatus oldStatus = scheme.getStatus();
         if (oldStatus == SchemeStatus.CLOSED) {
             return;
@@ -139,6 +153,7 @@ public class RandomizationService {
 
         RandomizationScheme scheme = schemeRepository.findById(request.getSchemeId())
                 .orElseThrow(() -> new NoSuchElementException("Scheme not found: " + request.getSchemeId()));
+        requireWriteAccess(userId, scheme.getStudyId());
 
         if (scheme.getStatus() != SchemeStatus.ACTIVE) {
             throw new IllegalStateException("Scheme is not ACTIVE (current: " + scheme.getStatus() + ")");
@@ -177,7 +192,7 @@ public class RandomizationService {
         assignment.setArm(selectedArm);
         assignment.setStratumPath(stratumPath);
         assignment.setStatus(AssignmentStatus.ACTIVE);
-        assignment.setAssignedBy(request.getAssignedBy() != null ? request.getAssignedBy() : userId);
+        assignment.setAssignedBy(userId);
         assignment = assignmentRepository.save(assignment);
 
         logAudit(scheme.getId(), scheme.getStudyId(), AuditAction.SUBJECT_ASSIGNED,
@@ -191,16 +206,20 @@ public class RandomizationService {
         return toAssignmentDTO(assignment, selectedArm.getName(), null);
     }
 
-    public AssignmentDTO getAssignment(Long schemeId, Integer studySubjectId) {
+    public AssignmentDTO getAssignment(Long schemeId, Integer studySubjectId, Integer currentUserId) {
         RandomizationAssignment assignment = assignmentRepository
                 .findBySchemeIdAndStudySubjectId(schemeId, studySubjectId)
                 .orElseThrow(() -> new NoSuchElementException(
                         "No assignment found for scheme " + schemeId + " subject " + studySubjectId));
+        requireReadAccess(currentUserId, assignment.getScheme().getStudyId());
 
         return toAssignmentDTO(assignment, assignment.getArm().getName(), null);
     }
 
-    public List<AssignmentDTO> listAssignments(Long schemeId) {
+    public List<AssignmentDTO> listAssignments(Long schemeId, Integer currentUserId) {
+        RandomizationScheme scheme = schemeRepository.findById(schemeId)
+                .orElseThrow(() -> new NoSuchElementException("Scheme not found: " + schemeId));
+        requireReadAccess(currentUserId, scheme.getStudyId());
         return assignmentRepository.findBySchemeIdAndStatusOrderByAssignedDateDesc(
                         schemeId, AssignmentStatus.ACTIVE)
                 .stream().map(a -> toAssignmentDTO(a, a.getArm().getName(), null))
@@ -209,12 +228,16 @@ public class RandomizationService {
 
     // === Audit ===
 
-    public List<AuditLogDTO> getAuditLogs(Long schemeId) {
+    public List<AuditLogDTO> getAuditLogs(Long schemeId, Integer currentUserId) {
+        RandomizationScheme scheme = schemeRepository.findById(schemeId)
+                .orElseThrow(() -> new NoSuchElementException("Scheme not found: " + schemeId));
+        requireReadAccess(currentUserId, scheme.getStudyId());
         return auditLogRepository.findBySchemeIdOrderByPerformedDateDesc(schemeId)
                 .stream().map(this::toAuditDTO).toList();
     }
 
-    public List<AuditLogDTO> getStudyAuditLogs(Integer studyId) {
+    public List<AuditLogDTO> getStudyAuditLogs(Integer studyId, Integer currentUserId) {
+        requireReadAccess(currentUserId, studyId);
         return auditLogRepository.findByStudyIdOrderByPerformedDateDesc(studyId)
                 .stream().map(this::toAuditDTO).toList();
     }
@@ -353,6 +376,18 @@ public class RandomizationService {
         audit.setPerformedBy(userId);
         audit.setDetails(action.name() + " | " + (newValue != null ? newValue : ""));
         auditLogRepository.save(audit);
+    }
+
+    private void requireReadAccess(Integer currentUserId, Integer studyId) {
+        if (!currentStudyAccessService.canReadStudy(currentUserId, studyId)) {
+            throw new AccessDeniedException("You do not have read access to this study");
+        }
+    }
+
+    private void requireWriteAccess(Integer currentUserId, Integer studyId) {
+        if (!currentStudyAccessService.canWriteStudy(currentUserId, studyId)) {
+            throw new AccessDeniedException("You do not have write access to this study");
+        }
     }
 
     private SchemeSummaryDTO toSummary(RandomizationScheme s) {

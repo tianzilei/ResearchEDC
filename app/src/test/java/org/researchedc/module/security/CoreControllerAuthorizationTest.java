@@ -16,6 +16,7 @@ import org.researchedc.module.dataimport.controller.ImportController;
 import org.researchedc.module.discrepancynote.controller.DiscrepancyNoteController;
 import org.researchedc.module.event.controller.EventController;
 import org.researchedc.module.export.controller.ExportController;
+import org.researchedc.module.randomization.controller.RandomizationController;
 import org.researchedc.module.rule.controller.RuleController;
 import org.researchedc.module.study.controller.StudyController;
 import org.researchedc.module.subject.controller.SubjectController;
@@ -163,6 +164,41 @@ class CoreControllerAuthorizationTest {
                 secured(SubjectGroupController.class, "updateGroup",
                         CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
                         int.class, org.researchedc.module.subjectgroup.dto.CreateGroupRequest.class),
+
+                secured(RandomizationController.class, "listSchemes",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(RandomizationController.class, "getScheme",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Long.class),
+                secured(RandomizationController.class, "listAssignments",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Long.class),
+                secured(RandomizationController.class, "getAssignment",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Long.class, Integer.class),
+                secured(RandomizationController.class, "listUnblindingRequests",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Long.class),
+                secured(RandomizationController.class, "listPendingRequests",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA),
+                secured(RandomizationController.class, "getAuditLogs",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Long.class, Integer.class),
+                secured(RandomizationController.class, "createScheme",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.randomization.dto.SchemeDTO.class, Integer.class),
+                secured(RandomizationController.class, "updateScheme",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        Long.class, org.researchedc.module.randomization.dto.SchemeDTO.class, Integer.class),
+                secured(RandomizationController.class, "activateScheme",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA, Long.class, Integer.class),
+                secured(RandomizationController.class, "closeScheme",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA, Long.class, Integer.class),
+                secured(RandomizationController.class, "randomize",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.randomization.dto.RandomizeRequest.class, Integer.class),
+                secured(RandomizationController.class, "requestUnblinding",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        Long.class, Integer.class, String.class),
+                secured(RandomizationController.class, "reviewUnblinding",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        Long.class, org.researchedc.module.randomization.enums.UnblindingStatus.class,
+                        Integer.class, String.class),
 
                 secured(ExportController.class, "createJob",
                         CoreEdcAuthorityExpressions.EXPORT_DATA,

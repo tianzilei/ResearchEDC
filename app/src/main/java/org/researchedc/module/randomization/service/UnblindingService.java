@@ -3,6 +3,7 @@ package org.researchedc.module.randomization.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.randomization.dto.UnblindingRequestDTO;
 import org.researchedc.module.randomization.entity.RandomizationAssignment;
 import org.researchedc.module.randomization.entity.RandomizationAuditLog;
@@ -14,6 +15,7 @@ import org.researchedc.module.randomization.repository.RandomizationAuditLogRepo
 import org.researchedc.module.randomization.repository.UnblindingRequestRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,19 +28,23 @@ public class UnblindingService {
     private final UnblindingRequestRepository requestRepository;
     private final RandomizationAssignmentRepository assignmentRepository;
     private final RandomizationAuditLogRepository auditLogRepository;
+    private final CurrentStudyAccessService currentStudyAccessService;
 
     public UnblindingService(
             UnblindingRequestRepository requestRepository,
             RandomizationAssignmentRepository assignmentRepository,
-            RandomizationAuditLogRepository auditLogRepository) {
+            RandomizationAuditLogRepository auditLogRepository,
+            CurrentStudyAccessService currentStudyAccessService) {
         this.requestRepository = requestRepository;
         this.assignmentRepository = assignmentRepository;
         this.auditLogRepository = auditLogRepository;
+        this.currentStudyAccessService = currentStudyAccessService;
     }
 
     public UnblindingRequestDTO requestUnblinding(Long assignmentId, Integer requestedBy, String reason) {
         RandomizationAssignment assignment = assignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new NoSuchElementException("Assignment not found: " + assignmentId));
+        requireWriteAccess(requestedBy, assignment.getScheme().getStudyId());
 
         UnblindingRequest request = new UnblindingRequest();
         request.setAssignment(assignment);
@@ -50,6 +56,7 @@ public class UnblindingService {
         // Audit
         RandomizationAuditLog audit = new RandomizationAuditLog();
         audit.setSchemeId(assignment.getScheme().getId());
+        audit.setStudyId(assignment.getScheme().getStudyId());
         audit.setAction(AuditAction.UNBLINDING_REQUESTED);
         audit.setEntityType("UnblindingRequest");
         audit.setEntityId(request.getId());
@@ -66,6 +73,7 @@ public class UnblindingService {
                                                   Integer reviewedBy, String reviewNotes) {
         UnblindingRequest request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new NoSuchElementException("Request not found: " + requestId));
+        requireWriteAccess(reviewedBy, request.getAssignment().getScheme().getStudyId());
 
         if (request.getStatus() != UnblindingStatus.PENDING) {
             throw new IllegalStateException("Request already " + request.getStatus());
@@ -87,6 +95,7 @@ public class UnblindingService {
         // Audit
         RandomizationAuditLog audit = new RandomizationAuditLog();
         audit.setSchemeId(request.getAssignment().getScheme().getId());
+        audit.setStudyId(request.getAssignment().getScheme().getStudyId());
         audit.setAction(decision == UnblindingStatus.APPROVED
                 ? AuditAction.UNBLINDING_APPROVED : AuditAction.UNBLINDING_REJECTED);
         audit.setEntityType("UnblindingRequest");
@@ -100,14 +109,28 @@ public class UnblindingService {
         return toDTO(request, request.getAssignment());
     }
 
-    public List<UnblindingRequestDTO> listRequests(Long schemeId) {
+    public List<UnblindingRequestDTO> listRequests(Long schemeId, Integer currentUserId) {
         return requestRepository.findByAssignmentSchemeIdOrderByRequestedDateDesc(schemeId)
-                .stream().map(r -> toDTO(r, r.getAssignment())).toList();
+                .stream()
+                .filter(r -> currentStudyAccessService.canReadStudy(
+                        currentUserId, r.getAssignment().getScheme().getStudyId()))
+                .map(r -> toDTO(r, r.getAssignment()))
+                .toList();
     }
 
-    public List<UnblindingRequestDTO> listPendingRequests() {
+    public List<UnblindingRequestDTO> listPendingRequests(Integer currentUserId) {
         return requestRepository.findByStatusOrderByRequestedDateAsc(UnblindingStatus.PENDING)
-                .stream().map(r -> toDTO(r, r.getAssignment())).toList();
+                .stream()
+                .filter(r -> currentStudyAccessService.canReadStudy(
+                        currentUserId, r.getAssignment().getScheme().getStudyId()))
+                .map(r -> toDTO(r, r.getAssignment()))
+                .toList();
+    }
+
+    private void requireWriteAccess(Integer currentUserId, Integer studyId) {
+        if (!currentStudyAccessService.canWriteStudy(currentUserId, studyId)) {
+            throw new AccessDeniedException("You do not have write access to this study");
+        }
     }
 
     private UnblindingRequestDTO toDTO(UnblindingRequest r, RandomizationAssignment a) {

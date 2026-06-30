@@ -2,6 +2,7 @@ package org.researchedc.module.randomization.controller;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -41,12 +42,13 @@ class RandomizationControllerTest {
 
     @Test
     void listSchemes_returns200() throws Exception {
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
         SchemeSummaryDTO scheme = new SchemeSummaryDTO();
         scheme.setId(1L);
         scheme.setName("Test Scheme");
         scheme.setStatus(SchemeStatus.DRAFT);
 
-        when(randomizationService.listSchemes(1)).thenReturn(List.of(scheme));
+        when(randomizationService.listSchemes(1, 42)).thenReturn(List.of(scheme));
 
         mockMvc.perform(get("/api/v1/randomization/schemes")
                         .param("studyId", "1"))
@@ -57,13 +59,14 @@ class RandomizationControllerTest {
 
     @Test
     void getScheme_returns200() throws Exception {
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
         SchemeDTO scheme = new SchemeDTO();
         scheme.setId(1L);
         scheme.setName("My Scheme");
         scheme.setAlgorithm(RandomizationAlgorithm.SIMPLE);
         scheme.setStatus(SchemeStatus.ACTIVE);
 
-        when(randomizationService.getScheme(1L)).thenReturn(scheme);
+        when(randomizationService.getScheme(1L, 42)).thenReturn(scheme);
 
         mockMvc.perform(get("/api/v1/randomization/schemes/1"))
                 .andExpect(status().isOk())
@@ -73,6 +76,7 @@ class RandomizationControllerTest {
 
     @Test
     void createScheme_returns201() throws Exception {
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
         SchemeDTO input = new SchemeDTO();
         input.setStudyId(1);
         input.setName("New Scheme");
@@ -85,7 +89,7 @@ class RandomizationControllerTest {
         output.setAlgorithm(RandomizationAlgorithm.SIMPLE);
         output.setStatus(SchemeStatus.DRAFT);
 
-        when(randomizationService.createScheme(any(), eq(0))).thenReturn(output);
+        when(randomizationService.createScheme(any(), eq(42))).thenReturn(output);
 
         mockMvc.perform(post("/api/v1/randomization/schemes")
                         .param("userId", "0")
@@ -94,31 +98,37 @@ class RandomizationControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("New Scheme"))
                 .andExpect(jsonPath("$.status").value("DRAFT"));
+        verify(randomizationService).createScheme(any(), eq(42));
     }
 
     @Test
     void activateScheme_returns200() throws Exception {
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
         mockMvc.perform(post("/api/v1/randomization/schemes/1/activate")
                         .param("userId", "100"))
                 .andExpect(status().isOk());
+        verify(randomizationService).activateScheme(1L, 42);
     }
 
     @Test
     void closeScheme_returns200() throws Exception {
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
         mockMvc.perform(post("/api/v1/randomization/schemes/1/close")
                         .param("userId", "100"))
                 .andExpect(status().isOk());
+        verify(randomizationService).closeScheme(1L, 42);
     }
 
     @Test
     void listAssignments_returns200() throws Exception {
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
         AssignmentDTO assignment = new AssignmentDTO();
         assignment.setId(100L);
         assignment.setSchemeId(1L);
         assignment.setArmName("Treatment");
         assignment.setStatus(AssignmentStatus.ACTIVE);
 
-        when(randomizationService.listAssignments(1L)).thenReturn(List.of(assignment));
+        when(randomizationService.listAssignments(1L, 42)).thenReturn(List.of(assignment));
 
         mockMvc.perform(get("/api/v1/randomization/assignments")
                         .param("schemeId", "1"))
@@ -128,6 +138,7 @@ class RandomizationControllerTest {
 
     @Test
     void randomize_returns200() throws Exception {
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
         RandomizeRequest request = new RandomizeRequest();
         request.setSchemeId(1L);
         request.setStudySubjectId(10);
@@ -139,7 +150,7 @@ class RandomizationControllerTest {
         result.setArmName("Treatment");
         result.setStatus(org.researchedc.module.randomization.enums.AssignmentStatus.ACTIVE);
 
-        when(randomizationService.randomize(any(), eq(0))).thenReturn(result);
+        when(randomizationService.randomize(any(), eq(42))).thenReturn(result);
 
         mockMvc.perform(post("/api/v1/randomization/randomize")
                         .param("userId", "0")
@@ -147,16 +158,18 @@ class RandomizationControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.armName").value("Treatment"));
+        verify(randomizationService).randomize(any(), eq(42));
     }
 
     @Test
     void getAuditLogs_byScheme_returns200() throws Exception {
+        when(currentUserUtils.getCurrentUserId()).thenReturn(42);
         AuditLogDTO log = new AuditLogDTO();
         log.setId(1L);
         log.setSchemeId(1L);
         log.setAction(AuditAction.SCHEME_CREATED);
 
-        when(randomizationService.getAuditLogs(1L)).thenReturn(List.of(log));
+        when(randomizationService.getAuditLogs(1L, 42)).thenReturn(List.of(log));
 
         mockMvc.perform(get("/api/v1/randomization/audit")
                         .param("schemeId", "1"))
