@@ -36,12 +36,14 @@ public class CrfManageController {
     }
 
     @GetMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<List<CrfManageDTO>> listCrfs() {
         return ResponseEntity.ok(crfService.getAllCrfEntities()
                 .stream().map(this::toCrfDto).toList());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<CrfManageDTO> getCrf(@PathVariable int id) {
         try {
             return ResponseEntity.ok(toCrfDto(crfService.getCrfEntity(id)));
@@ -70,12 +72,14 @@ public class CrfManageController {
     }
 
     @GetMapping("/{id}/versions")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<List<CrfVersionManageDTO>> listVersions(@PathVariable int id) {
         return ResponseEntity.ok(crfService.listVersionEntities(id)
                 .stream().map(this::toVersionDto).toList());
     }
 
     @GetMapping("/versions/{versionId}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.ADMINISTER_STUDIES)
     public ResponseEntity<CrfVersionManageDTO> getVersion(@PathVariable int versionId) {
         try {
             return ResponseEntity.ok(toVersionDto(crfService.getCrfVersionEntity(versionId)));

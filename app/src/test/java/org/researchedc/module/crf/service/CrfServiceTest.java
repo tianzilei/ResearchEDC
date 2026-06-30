@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.crf.dto.CrfSummaryDTO;
 import org.researchedc.app.dto.CrfVersionDTO;
 import org.researchedc.module.crf.dto.ItemDTO;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 
 @ExtendWith(MockitoExtension.class)
 class CrfServiceTest {
@@ -38,13 +40,14 @@ class CrfServiceTest {
     @Mock private ItemRepository itemRepository;
     @Mock private ItemFormMetadataRepository itemFormMetadataRepository;
     @Mock private SCDItemMetadataDaoAdapter scdAdapter;
+    @Mock private CurrentStudyAccessService currentStudyAccessService;
 
     private CrfService service;
 
     @BeforeEach
     void setUp() {
         service = new CrfService(crfRepository, crfVersionRepository, sectionRepository,
-                itemRepository, itemFormMetadataRepository, scdAdapter);
+                itemRepository, itemFormMetadataRepository, scdAdapter, currentStudyAccessService);
     }
 
     // --- listCrfs ---
@@ -52,11 +55,13 @@ class CrfServiceTest {
     @Test
     void listCrfs_returnsSummariesWithVersionCount() {
         CrfEntity crf = createCrfEntity(1, "Vital Signs");
+        crf.setSourceStudyId(10);
         when(crfRepository.findAll()).thenReturn(List.of(crf));
+        when(currentStudyAccessService.canReadStudy(42, 10)).thenReturn(true);
         when(crfVersionRepository.findByCrfIdOrderByCrfVersionId(1))
                 .thenReturn(List.of(createCrfVersionEntity(10, 1, "v1"), createCrfVersionEntity(11, 1, "v2")));
 
-        List<CrfSummaryDTO> result = service.listCrfs();
+        List<CrfSummaryDTO> result = service.listCrfs(42);
 
         assertEquals(1, result.size());
         assertEquals("Vital Signs", result.get(0).getName());
@@ -67,7 +72,24 @@ class CrfServiceTest {
     void listCrfs_empty_returnsEmpty() {
         when(crfRepository.findAll()).thenReturn(List.of());
 
-        assertTrue(service.listCrfs().isEmpty());
+        assertTrue(service.listCrfs(42).isEmpty());
+    }
+
+    @Test
+    void listCrfs_filtersUnreadableStudyCrfs() {
+        CrfEntity readable = createCrfEntity(1, "Readable");
+        readable.setSourceStudyId(10);
+        CrfEntity hidden = createCrfEntity(2, "Hidden");
+        hidden.setSourceStudyId(20);
+        CrfEntity global = createCrfEntity(3, "Global");
+        when(crfRepository.findAll()).thenReturn(List.of(readable, hidden, global));
+        when(currentStudyAccessService.canReadStudy(42, 10)).thenReturn(true);
+        when(currentStudyAccessService.canReadStudy(42, 20)).thenReturn(false);
+        when(crfVersionRepository.findByCrfIdOrderByCrfVersionId(anyInt())).thenReturn(List.of());
+
+        List<CrfSummaryDTO> result = service.listCrfs(42);
+
+        assertEquals(List.of("Readable", "Global"), result.stream().map(CrfSummaryDTO::getName).toList());
     }
 
     // --- getVersion ---
@@ -75,7 +97,11 @@ class CrfServiceTest {
     @Test
     void getVersion_returnsVersionWithSections() {
         CrfVersionEntity ver = createCrfVersionEntity(1, 1, "v1.0");
+        CrfEntity crf = createCrfEntity(1, "Vital Signs");
+        crf.setSourceStudyId(10);
         when(crfVersionRepository.findById(1)).thenReturn(Optional.of(ver));
+        when(crfRepository.findById(1)).thenReturn(Optional.of(crf));
+        when(currentStudyAccessService.canReadStudy(42, 10)).thenReturn(true);
 
         SectionEntity section = new SectionEntity();
         section.setSectionId(10);
@@ -84,7 +110,7 @@ class CrfServiceTest {
         section.setOrdinal(1);
         when(sectionRepository.findByCrfVersionIdOrderByOrdinal(1)).thenReturn(List.of(section));
 
-        CrfVersionDTO result = service.getVersion(1);
+        CrfVersionDTO result = service.getVersion(1, 42);
 
         assertEquals(1, result.getCrfVersionId());
         assertEquals("v1.0", result.getName());
@@ -96,13 +122,33 @@ class CrfServiceTest {
     void getVersion_notFound_returnsNull() {
         when(crfVersionRepository.findById(99)).thenReturn(Optional.empty());
 
-        assertNull(service.getVersion(99));
+        assertNull(service.getVersion(99, 42));
+    }
+
+    @Test
+    void getVersion_whenAccessDenied_throws() {
+        CrfVersionEntity ver = createCrfVersionEntity(1, 1, "v1.0");
+        CrfEntity crf = createCrfEntity(1, "Vital Signs");
+        crf.setSourceStudyId(10);
+        when(crfVersionRepository.findById(1)).thenReturn(Optional.of(ver));
+        when(crfRepository.findById(1)).thenReturn(Optional.of(crf));
+        when(currentStudyAccessService.canReadStudy(42, 10)).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class, () -> service.getVersion(1, 42));
+        verifyNoInteractions(sectionRepository);
     }
 
     // --- getItemsBySection ---
 
     @Test
     void getItemsBySection_returnsItemsForSection() {
+        CrfVersionEntity ver = createCrfVersionEntity(1, 1, "v1.0");
+        CrfEntity crf = createCrfEntity(1, "Vital Signs");
+        crf.setSourceStudyId(10);
+        when(crfVersionRepository.findById(1)).thenReturn(Optional.of(ver));
+        when(crfRepository.findById(1)).thenReturn(Optional.of(crf));
+        when(currentStudyAccessService.canReadStudy(42, 10)).thenReturn(true);
+
         ItemFormMetadataEntity meta = new ItemFormMetadataEntity();
         meta.setItemId(20);
         meta.setSectionId(10);
@@ -120,7 +166,7 @@ class CrfServiceTest {
         item.setPhiStatus(false);
         when(itemRepository.findById(20)).thenReturn(Optional.of(item));
 
-        List<ItemDTO> result = service.getItemsBySection(10, 1);
+        List<ItemDTO> result = service.getItemsBySection(10, 1, 42);
 
         assertEquals(1, result.size());
         assertEquals("Height", result.get(0).getName());
@@ -131,12 +177,70 @@ class CrfServiceTest {
 
     @Test
     void getItemsBySection_wrongSection_excluded() {
+        CrfVersionEntity ver = createCrfVersionEntity(1, 1, "v1.0");
+        CrfEntity crf = createCrfEntity(1, "Vital Signs");
+        crf.setSourceStudyId(10);
+        when(crfVersionRepository.findById(1)).thenReturn(Optional.of(ver));
+        when(crfRepository.findById(1)).thenReturn(Optional.of(crf));
+        when(currentStudyAccessService.canReadStudy(42, 10)).thenReturn(true);
+
         ItemFormMetadataEntity meta = new ItemFormMetadataEntity();
         meta.setItemId(20);
         meta.setSectionId(99);
         when(itemFormMetadataRepository.findByCrfVersionId(1)).thenReturn(List.of(meta));
 
-        assertTrue(service.getItemsBySection(10, 1).isEmpty());
+        assertTrue(service.getItemsBySection(10, 1, 42).isEmpty());
+    }
+
+    @Test
+    void getItemsBySection_whenAccessDenied_throwsAndDoesNotReadItems() {
+        CrfVersionEntity ver = createCrfVersionEntity(1, 1, "v1.0");
+        CrfEntity crf = createCrfEntity(1, "Vital Signs");
+        crf.setSourceStudyId(10);
+        when(crfVersionRepository.findById(1)).thenReturn(Optional.of(ver));
+        when(crfRepository.findById(1)).thenReturn(Optional.of(crf));
+        when(currentStudyAccessService.canReadStudy(42, 10)).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class, () -> service.getItemsBySection(10, 1, 42));
+        verifyNoInteractions(itemFormMetadataRepository);
+    }
+
+    @Test
+    void getScdRulesBySection_whenAccessAllowed_returnsRules() {
+        SectionEntity section = new SectionEntity();
+        section.setSectionId(10);
+        section.setCrfVersionId(1);
+        CrfVersionEntity ver = createCrfVersionEntity(1, 1, "v1.0");
+        CrfEntity crf = createCrfEntity(1, "Vital Signs");
+        crf.setSourceStudyId(10);
+        when(sectionRepository.findById(10)).thenReturn(Optional.of(section));
+        when(crfVersionRepository.findById(1)).thenReturn(Optional.of(ver));
+        when(crfRepository.findById(1)).thenReturn(Optional.of(crf));
+        when(currentStudyAccessService.canReadStudy(42, 10)).thenReturn(true);
+        when(scdAdapter.findRulesBySectionId(10)).thenReturn(List.of(
+                new SCDItemMetadataDaoAdapter.ScdRule(100, 200, "CONTROL", "1", "Show target")));
+
+        List<java.util.Map<String, Object>> result = service.getScdRulesBySection(10, 42);
+
+        assertEquals(1, result.size());
+        assertEquals("CONTROL", result.getFirst().get("controlItemName"));
+    }
+
+    @Test
+    void getScdRulesBySection_whenAccessDenied_throwsAndDoesNotQueryRules() {
+        SectionEntity section = new SectionEntity();
+        section.setSectionId(10);
+        section.setCrfVersionId(1);
+        CrfVersionEntity ver = createCrfVersionEntity(1, 1, "v1.0");
+        CrfEntity crf = createCrfEntity(1, "Vital Signs");
+        crf.setSourceStudyId(10);
+        when(sectionRepository.findById(10)).thenReturn(Optional.of(section));
+        when(crfVersionRepository.findById(1)).thenReturn(Optional.of(ver));
+        when(crfRepository.findById(1)).thenReturn(Optional.of(crf));
+        when(currentStudyAccessService.canReadStudy(42, 10)).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class, () -> service.getScdRulesBySection(10, 42));
+        verifyNoInteractions(scdAdapter);
     }
 
     // --- getAllCrfEntities ---
@@ -198,11 +302,15 @@ class CrfServiceTest {
 
     @Test
     void listVersionEntities_returnsVersionsForCrf() {
+        CrfEntity crf = createCrfEntity(1, "Vital Signs");
+        crf.setSourceStudyId(10);
         CrfVersionEntity v1 = createCrfVersionEntity(1, 1, "v1.0");
         CrfVersionEntity v2 = createCrfVersionEntity(2, 1, "v2.0");
+        when(crfRepository.findById(1)).thenReturn(Optional.of(crf));
+        when(currentStudyAccessService.canReadStudy(42, 10)).thenReturn(true);
         when(crfVersionRepository.findByCrfIdOrderByCrfVersionId(1)).thenReturn(List.of(v1, v2));
 
-        List<CrfVersionEntity> result = service.listVersionEntities(1);
+        List<CrfVersionEntity> result = service.listVersionEntities(1, 42);
 
         assertEquals(2, result.size());
         assertEquals("v1.0", result.get(0).getName());
@@ -211,9 +319,24 @@ class CrfServiceTest {
 
     @Test
     void listVersionEntities_noVersions_returnsEmpty() {
+        CrfEntity crf = createCrfEntity(999, "Vital Signs");
+        crf.setSourceStudyId(10);
+        when(crfRepository.findById(999)).thenReturn(Optional.of(crf));
+        when(currentStudyAccessService.canReadStudy(42, 10)).thenReturn(true);
         when(crfVersionRepository.findByCrfIdOrderByCrfVersionId(999)).thenReturn(List.of());
 
-        assertTrue(service.listVersionEntities(999).isEmpty());
+        assertTrue(service.listVersionEntities(999, 42).isEmpty());
+    }
+
+    @Test
+    void listVersionEntities_whenAccessDenied_throwsAndDoesNotQueryVersions() {
+        CrfEntity crf = createCrfEntity(1, "Vital Signs");
+        crf.setSourceStudyId(10);
+        when(crfRepository.findById(1)).thenReturn(Optional.of(crf));
+        when(currentStudyAccessService.canReadStudy(42, 10)).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class, () -> service.listVersionEntities(1, 42));
+        verify(crfVersionRepository, never()).findByCrfIdOrderByCrfVersionId(anyInt());
     }
 
     // --- createCrf ---

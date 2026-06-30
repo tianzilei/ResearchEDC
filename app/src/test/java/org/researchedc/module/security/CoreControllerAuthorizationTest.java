@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.researchedc.config.CoreEdcAuthorityExpressions;
+import org.researchedc.module.crf.controller.CrfController;
 import org.researchedc.module.crf.controller.CrfManageController;
 import org.researchedc.module.datacapture.controller.DataCaptureController;
 import org.researchedc.module.dataimport.controller.ImportController;
@@ -236,6 +237,33 @@ class CoreControllerAuthorizationTest {
                 secured(ImportController.class, "commit",
                         CoreEdcAuthorityExpressions.IMPORT_DATA, Long.class),
 
+                secured(CrfController.class, "listCrfs",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA),
+                secured(CrfController.class, "getVersion",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, int.class),
+                secured(CrfController.class, "getItemsBySection",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, int.class, int.class),
+                secured(CrfController.class, "getScdRules",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, int.class),
+                secured(CrfController.class, "listVersions",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(CrfController.class, "createCrf",
+                        CoreEdcAuthorityExpressions.ADMINISTER_STUDIES, java.util.Map.class),
+                secured(CrfController.class, "createVersion",
+                        CoreEdcAuthorityExpressions.ADMINISTER_STUDIES, Integer.class, java.util.Map.class),
+                secured(CrfController.class, "updateVersionStatus",
+                        CoreEdcAuthorityExpressions.ADMINISTER_STUDIES, Integer.class, java.util.Map.class),
+                secured(CrfController.class, "deleteVersion",
+                        CoreEdcAuthorityExpressions.ADMINISTER_STUDIES, Integer.class),
+
+                secured(CrfManageController.class, "listCrfs",
+                        CoreEdcAuthorityExpressions.ADMINISTER_STUDIES),
+                secured(CrfManageController.class, "getCrf",
+                        CoreEdcAuthorityExpressions.ADMINISTER_STUDIES, int.class),
+                secured(CrfManageController.class, "listVersions",
+                        CoreEdcAuthorityExpressions.ADMINISTER_STUDIES, int.class),
+                secured(CrfManageController.class, "getVersion",
+                        CoreEdcAuthorityExpressions.ADMINISTER_STUDIES, int.class),
                 secured(CrfManageController.class, "createCrf",
                         CoreEdcAuthorityExpressions.ADMINISTER_STUDIES,
                         org.researchedc.module.crf.dto.CreateCrfRequest.class),

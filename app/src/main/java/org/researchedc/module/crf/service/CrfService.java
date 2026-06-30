@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.crf.dto.CrfSummaryDTO;
 import org.researchedc.app.dto.CrfVersionDTO;
 import org.researchedc.module.crf.dto.ItemDTO;
@@ -23,6 +24,7 @@ import org.researchedc.module.crf.repository.CrfVersionRepository;
 import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
 import org.researchedc.module.crf.repository.ItemRepository;
 import org.researchedc.module.crf.repository.SectionRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,24 +38,30 @@ public class CrfService {
     private final ItemRepository itemRepository;
     private final ItemFormMetadataRepository itemFormMetadataRepository;
     private final SCDItemMetadataDaoAdapter scdAdapter;
+    private final CurrentStudyAccessService currentStudyAccessService;
 
     public CrfService(CrfRepository crfRepository,
                       CrfVersionRepository crfVersionRepository,
                       SectionRepository sectionRepository,
                       ItemRepository itemRepository,
                       ItemFormMetadataRepository itemFormMetadataRepository,
-                      SCDItemMetadataDaoAdapter scdAdapter) {
+                      SCDItemMetadataDaoAdapter scdAdapter,
+                      CurrentStudyAccessService currentStudyAccessService) {
         this.crfRepository = crfRepository;
         this.crfVersionRepository = crfVersionRepository;
         this.sectionRepository = sectionRepository;
         this.itemRepository = itemRepository;
         this.itemFormMetadataRepository = itemFormMetadataRepository;
         this.scdAdapter = scdAdapter;
+        this.currentStudyAccessService = currentStudyAccessService;
     }
 
-    public List<CrfSummaryDTO> listCrfs() {
+    public List<CrfSummaryDTO> listCrfs(Integer currentUserId) {
         List<CrfSummaryDTO> result = new ArrayList<>();
         for (CrfEntity crf : crfRepository.findAll()) {
+            if (!canReadCrf(currentUserId, crf)) {
+                continue;
+            }
             CrfSummaryDTO dto = new CrfSummaryDTO();
             dto.setCrfId(crf.getCrfId());
             dto.setName(crf.getName());
@@ -66,11 +74,12 @@ public class CrfService {
         return result;
     }
 
-    public CrfVersionDTO getVersion(int crfVersionId) {
+    public CrfVersionDTO getVersion(int crfVersionId, Integer currentUserId) {
         CrfVersionEntity version = crfVersionRepository.findById(crfVersionId).orElse(null);
         if (version == null) {
             return null;
         }
+        requireReadAccess(currentUserId, version);
 
         CrfVersionDTO dto = new CrfVersionDTO();
         dto.setCrfVersionId(version.getCrfVersionId());
@@ -84,7 +93,8 @@ public class CrfService {
         return dto;
     }
 
-    public List<ItemDTO> getItemsBySection(int sectionId, int crfVersionId) {
+    public List<ItemDTO> getItemsBySection(int sectionId, int crfVersionId, Integer currentUserId) {
+        requireReadAccess(currentUserId, crfVersionId);
         List<ItemDTO> result = new ArrayList<>();
         for (ItemFormMetadataEntity meta : itemFormMetadataRepository.findByCrfVersionId(crfVersionId)) {
             if (meta.getSectionId() == null || meta.getSectionId() != sectionId) {
@@ -112,7 +122,10 @@ public class CrfService {
         return result;
     }
 
-    public List<Map<String, Object>> getScdRulesBySection(int sectionId) {
+    public List<Map<String, Object>> getScdRulesBySection(int sectionId, Integer currentUserId) {
+        SectionEntity section = sectionRepository.findById(sectionId)
+                .orElseThrow(() -> new NoSuchElementException("Section not found: " + sectionId));
+        requireReadAccess(currentUserId, section.getCrfVersionId());
         List<ScdRule> scdBeans = scdAdapter.findRulesBySectionId(sectionId);
         List<Map<String, Object>> rules = new ArrayList<>();
         for (ScdRule scd : scdBeans) {
@@ -148,6 +161,13 @@ public class CrfService {
     }
 
     public List<CrfVersionEntity> listVersionEntities(Integer crfId) {
+        return crfVersionRepository.findByCrfIdOrderByCrfVersionId(crfId);
+    }
+
+    public List<CrfVersionEntity> listVersionEntities(Integer crfId, Integer currentUserId) {
+        CrfEntity crf = crfRepository.findById(crfId)
+                .orElseThrow(() -> new NoSuchElementException("CRF not found: " + crfId));
+        requireReadAccess(currentUserId, crf);
         return crfVersionRepository.findByCrfIdOrderByCrfVersionId(crfId);
     }
 
@@ -215,5 +235,32 @@ public class CrfService {
             sectionDTOs.add(sd);
         }
         return sectionDTOs;
+    }
+
+    private void requireReadAccess(Integer currentUserId, CrfVersionEntity version) {
+        CrfEntity crf = crfRepository.findById(version.getCrfId())
+                .orElseThrow(() -> new NoSuchElementException("CRF not found: " + version.getCrfId()));
+        requireReadAccess(currentUserId, crf);
+    }
+
+    private void requireReadAccess(Integer currentUserId, Integer crfVersionId) {
+        CrfVersionEntity version = crfVersionRepository.findById(crfVersionId)
+                .orElseThrow(() -> new NoSuchElementException("CRF version not found: " + crfVersionId));
+        requireReadAccess(currentUserId, version);
+    }
+
+    private void requireReadAccess(Integer currentUserId, CrfEntity crf) {
+        Integer studyId = crf.getSourceStudyId();
+        if (studyId == null) {
+            return;
+        }
+        if (!currentStudyAccessService.canReadStudy(currentUserId, studyId)) {
+            throw new AccessDeniedException("You do not have read access to this study");
+        }
+    }
+
+    private boolean canReadCrf(Integer currentUserId, CrfEntity crf) {
+        Integer studyId = crf.getSourceStudyId();
+        return studyId == null || currentStudyAccessService.canReadStudy(currentUserId, studyId);
     }
 }
