@@ -197,7 +197,7 @@ pnpm test --run
 
 # === Questionnaire Service ===
 cd questionnaire-service/apps/api
-python -m pytest app/tests/ -v
+uv run --group dev pytest app/tests/ -v
 ```
 
 ## NOTES

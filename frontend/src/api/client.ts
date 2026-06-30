@@ -87,10 +87,11 @@ class ApiClient {
     if (response.status === 401 || response.status === 403) {
       emitApiAuthFailure(response.status, path);
     }
+    const details = parsedBody === "" || parsedBody === null ? undefined : parsedBody;
     const error: ApiError & Error = Object.assign(new Error(message), {
       status: response.status,
       message,
-      details: parsedBody || undefined,
+      details,
       requestId,
       path: stringField(parsedBody, "path"),
     });

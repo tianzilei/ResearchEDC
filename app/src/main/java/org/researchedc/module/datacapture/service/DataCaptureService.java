@@ -4,13 +4,22 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import org.researchedc.app.dto.Status;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
+import org.researchedc.module.crf.entity.ItemEntity;
+import org.researchedc.module.crf.entity.ItemFormMetadataEntity;
+import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
+import org.researchedc.module.crf.repository.ItemRepository;
 import org.researchedc.module.datacapture.dto.AttachmentDTO;
 import org.researchedc.module.datacapture.dto.BatchSaveItemsRequest;
 import org.researchedc.module.crf.entity.CrfVersionEntity;
@@ -56,6 +65,18 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class DataCaptureService {
 
+    private static final int ITEM_DATA_TYPE_STRING = 5;
+    private static final int ITEM_DATA_TYPE_INTEGER = 6;
+    private static final int ITEM_DATA_TYPE_REAL = 7;
+    private static final int ITEM_DATA_TYPE_DATE = 9;
+    private static final int ITEM_DATA_TYPE_PARTIAL_DATE = 10;
+    private static final String FULL_DATE_FORMAT = "yyyy-MM-dd";
+    private static final String PARTIAL_DATE_YEAR_MONTH_FORMAT = "yyyy-MM";
+    private static final String PARTIAL_DATE_YEAR_FORMAT = "yyyy";
+    private static final Pattern FULL_DATE_PATTERN = Pattern.compile("\\d{4}-\\d{1,2}-\\d{1,2}");
+    private static final Pattern PARTIAL_DATE_YEAR_MONTH_PATTERN = Pattern.compile("\\d{4}-\\d{1,2}");
+    private static final Pattern PARTIAL_DATE_YEAR_PATTERN = Pattern.compile("\\d{4}");
+
     private final ItemDataRepository itemDataRepository;
     private final ResponseSetRepository responseSetRepository;
     private final ItemGroupRepository itemGroupRepository;
@@ -66,6 +87,8 @@ public class DataCaptureService {
     private final StudyEventRepository studyEventRepository;
     private final StudySubjectRepository studySubjectRepository;
     private final CrfVersionRepository crfVersionRepository;
+    private final ItemRepository itemRepository;
+    private final ItemFormMetadataRepository itemFormMetadataRepository;
     private final RuleSetRepository ruleSetRepository;
     private final RuleSetRuleRepository ruleSetRuleRepository;
     private final RuleRepository ruleRepository;
@@ -81,6 +104,8 @@ public class DataCaptureService {
                                 StudyEventRepository studyEventRepository,
                                 StudySubjectRepository studySubjectRepository,
                                 CrfVersionRepository crfVersionRepository,
+                                ItemRepository itemRepository,
+                                ItemFormMetadataRepository itemFormMetadataRepository,
                                 RuleSetRepository ruleSetRepository,
                                 RuleSetRuleRepository ruleSetRuleRepository,
                                 RuleRepository ruleRepository,
@@ -95,6 +120,8 @@ public class DataCaptureService {
         this.studyEventRepository = studyEventRepository;
         this.studySubjectRepository = studySubjectRepository;
         this.crfVersionRepository = crfVersionRepository;
+        this.itemRepository = itemRepository;
+        this.itemFormMetadataRepository = itemFormMetadataRepository;
         this.ruleSetRepository = ruleSetRepository;
         this.ruleSetRuleRepository = ruleSetRuleRepository;
         this.ruleRepository = ruleRepository;
@@ -141,6 +168,8 @@ public class DataCaptureService {
 
     @Transactional
     public ItemDataDTO saveItemData(SaveItemDataRequest request, Integer userId) {
+        validateItemSave(request);
+
         List<ItemDataEntity> existing;
         if (request.getOrdinal() != null) {
             existing = itemDataRepository.findByItemIdAndEventCrfIdAndOrdinal(
@@ -183,6 +212,151 @@ public class DataCaptureService {
                 null, saved.getValue(), userId, null, "datacapture");
 
         return toItemDataDto(saved);
+    }
+
+    private void validateItemSave(SaveItemDataRequest request) {
+        EventCrfEntity eventCrf = requireWritableEventCrf(request.getEventCrfId());
+        Integer crfVersionId = eventCrf.getCrfVersionId();
+        ItemFormMetadataEntity metadata = requireItemMetadata(request.getItemId(), crfVersionId);
+        validateRequiredValue(request, metadata);
+        validateRegexp(request, metadata);
+        validateItemDataType(request);
+    }
+
+    private EventCrfEntity requireWritableEventCrf(Integer eventCrfId) {
+        EventCrfEntity eventCrf = eventCrfRepository.findById(eventCrfId)
+                .orElseThrow(() -> new java.util.NoSuchElementException(
+                        "EventCRF not found: " + eventCrfId));
+        Integer statusId = eventCrf.getStatusId();
+        if (statusId != null
+                && (statusId == Status.DELETED.getId()
+                || statusId == Status.LOCKED.getId()
+                || statusId == Status.AUTO_DELETED.getId()
+                || statusId == Status.SIGNED.getId()
+                || statusId == Status.FROZEN.getId())) {
+            throw new IllegalStateException("EventCRF is not writable: " + eventCrfId);
+        }
+        Integer crfVersionId = eventCrf.getCrfVersionId();
+        if (crfVersionId == null) {
+            throw new IllegalArgumentException("EventCRF has no CRF version: " + eventCrfId);
+        }
+        return eventCrf;
+    }
+
+    private ItemFormMetadataEntity requireItemMetadata(Integer itemId, Integer crfVersionId) {
+        boolean itemBelongsToVersion = !itemGroupMetadataRepository
+                .findByItemIdAndCrfVersionId(itemId, crfVersionId)
+                .isEmpty();
+        if (!itemBelongsToVersion) {
+            throw new IllegalArgumentException(
+                    "Item " + itemId + " is not part of CRF version " + crfVersionId);
+        }
+        return itemFormMetadataRepository.findByItemIdAndCrfVersionId(itemId, crfVersionId)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Item " + itemId + " has no form metadata for CRF version " + crfVersionId));
+    }
+
+    private void validateRequiredValue(SaveItemDataRequest request, ItemFormMetadataEntity metadata) {
+        if (Boolean.TRUE.equals(metadata.getRequired()) && isBlank(request.getValue())) {
+            throw new IllegalArgumentException("Item " + request.getItemId() + " is required");
+        }
+    }
+
+    private void validateRegexp(SaveItemDataRequest request, ItemFormMetadataEntity metadata) {
+        if (isBlank(request.getValue()) || isBlank(metadata.getRegexp())) {
+            return;
+        }
+        try {
+            if (!Pattern.compile(metadata.getRegexp()).matcher(request.getValue()).matches()) {
+                String message = !isBlank(metadata.getRegexpErrorMsg())
+                        ? metadata.getRegexpErrorMsg()
+                        : "Item " + request.getItemId() + " does not match required format";
+                throw new IllegalArgumentException(message);
+            }
+        } catch (PatternSyntaxException e) {
+            throw new IllegalStateException(
+                    "Invalid regexp configured for item " + request.getItemId(), e);
+        }
+    }
+
+    private void validateItemDataType(SaveItemDataRequest request) {
+        if (isBlank(request.getValue())) {
+            return;
+        }
+        ItemEntity item = itemRepository.findById(request.getItemId())
+                .orElseThrow(() -> new java.util.NoSuchElementException(
+                        "Item not found: " + request.getItemId()));
+        Integer dataTypeId = item.getItemDataTypeId();
+        if (dataTypeId == null) {
+            return;
+        }
+        String value = request.getValue();
+        switch (dataTypeId) {
+            case ITEM_DATA_TYPE_STRING -> validateStringValue(request.getItemId(), value);
+            case ITEM_DATA_TYPE_INTEGER -> validateIntegerValue(request.getItemId(), value);
+            case ITEM_DATA_TYPE_REAL -> validateRealValue(request.getItemId(), value);
+            case ITEM_DATA_TYPE_DATE -> validateFullDateValue(request.getItemId(), value);
+            case ITEM_DATA_TYPE_PARTIAL_DATE -> validatePartialDateValue(request.getItemId(), value);
+            default -> {
+            }
+        }
+    }
+
+    private void validateStringValue(Integer itemId, String value) {
+        if (value.length() > 3999) {
+            throw new IllegalArgumentException("Item " + itemId + " value exceeds 3999 characters");
+        }
+    }
+
+    private void validateIntegerValue(Integer itemId, String value) {
+        try {
+            Integer.valueOf(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Item " + itemId + " requires an integer value", e);
+        }
+    }
+
+    private void validateRealValue(Integer itemId, String value) {
+        try {
+            Float.valueOf(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Item " + itemId + " requires a real number value", e);
+        }
+    }
+
+    private void validateFullDateValue(Integer itemId, String value) {
+        if (!isExactDate(value, FULL_DATE_FORMAT, FULL_DATE_PATTERN)) {
+            throw new IllegalArgumentException(
+                    "Item " + itemId + " requires a date value in yyyy-MM-dd format");
+        }
+    }
+
+    private void validatePartialDateValue(Integer itemId, String value) {
+        if (!isExactDate(value, FULL_DATE_FORMAT, FULL_DATE_PATTERN)
+                && !isExactDate(value, PARTIAL_DATE_YEAR_MONTH_FORMAT, PARTIAL_DATE_YEAR_MONTH_PATTERN)
+                && !isExactDate(value, PARTIAL_DATE_YEAR_FORMAT, PARTIAL_DATE_YEAR_PATTERN)) {
+            throw new IllegalArgumentException("Item " + itemId + " requires a partial date value");
+        }
+    }
+
+    private boolean isExactDate(String value, String format, Pattern pattern) {
+        if (!pattern.matcher(value).matches()) {
+            return false;
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        dateFormat.setLenient(false);
+        try {
+            dateFormat.parse(value);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 
     @Transactional

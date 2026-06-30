@@ -41,7 +41,7 @@ Activation sequence:
 |---|---|---|
 | `phase-0-full-product-audit-plan.md` | First post-refactor execution step: complete audit of verification, workflows, security, UX, deploy/runtime, and observability | Complete |
 | `phase-0-full-product-audit-report.md` | Completed Phase 0 audit findings, verification results, and ordered Phase 1 entry backlog | Complete |
-| `phase-1-edc-usability-convergence-plan.md` | First post-refactor product phase: stabilize the current EDC workflow, deployment, permissions, and operator usability | Prepared / pending activation |
+| `phase-1-edc-usability-convergence-plan.md` | First post-refactor product phase: stabilize the current EDC workflow, deployment, permissions, and operator usability | Active / in progress |
 | `phase-1-storage-minio-convergence-plan.md` | Storage convergence plan to move uploads, generated artifacts, downloads, and questionnaire exports to MinIO-backed object storage | Prepared / pending activation |
 
 ## Directory Rules

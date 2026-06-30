@@ -345,29 +345,24 @@ cmd_setup() {
         log_ok "uv already installed — skipping setup"
     fi
 
-    if [ "${uv_was_installed}" = "false" ]; then
-        if ! command -v python3 &>/dev/null; then
-            log_warn "python3 not found, installing via uv..."
-            uv python install 3.12
-            export PATH="$HOME/.local/bin:$PATH"
-            log_ok "Python installed"
-        fi
+    if ! command -v python3 &>/dev/null; then
+        log_warn "python3 not found, installing via uv..."
+        uv python install 3.12
+        export PATH="$HOME/.local/bin:$PATH"
+        log_ok "Python installed"
+    fi
 
-        log_info "Setting up questionnaire-service venv..."
-        cd "${PROJECT_DIR}/questionnaire-service/apps/api"
-        rm -rf .venv
-        mkdir -p ~/.config/uv
-        cat > ~/.config/uv/uv.toml << 'UVCONF'
+    log_info "Setting up questionnaire-service venv..."
+    cd "${PROJECT_DIR}/questionnaire-service/apps/api"
+    rm -rf .venv
+    mkdir -p ~/.config/uv
+    cat > ~/.config/uv/uv.toml << 'UVCONF'
 [[index]]
 url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/"
 default = true
 UVCONF
-        uv venv .venv
-        source .venv/bin/activate
-        uv pip install -r pyproject.toml
-        deactivate
-        cd "${PROJECT_DIR}"
-    fi
+    uv sync --frozen --group dev
+    cd "${PROJECT_DIR}"
 
     log_ok "Setup complete"
 }

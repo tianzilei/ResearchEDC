@@ -75,7 +75,7 @@ pnpm -C frontend test --run
 
 # Questionnaire service
 cd questionnaire-service/apps/api
-uv run python -m pytest app/tests/ -v
+uv run --group dev pytest app/tests/ -v
 ```
 
 ## Documentation

@@ -15,6 +15,10 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.researchedc.module.audit.service.AuditService;
+import org.researchedc.module.crf.entity.ItemEntity;
+import org.researchedc.module.crf.entity.ItemFormMetadataEntity;
+import org.researchedc.module.crf.repository.ItemFormMetadataRepository;
+import org.researchedc.module.crf.repository.ItemRepository;
 import org.researchedc.module.datacapture.dto.BatchSaveItemsRequest;
 import org.researchedc.module.datacapture.dto.ItemDataDTO;
 import org.researchedc.module.datacapture.dto.ItemGroupDTO;
@@ -23,6 +27,7 @@ import org.researchedc.module.datacapture.dto.SaveItemDataRequest;
 import org.researchedc.module.datacapture.entity.ItemDataEntity;
 import org.researchedc.module.datacapture.internal.adapter.AttachmentStorageAdapter;
 import org.researchedc.module.datacapture.entity.ItemGroupEntity;
+import org.researchedc.module.datacapture.entity.ItemGroupMetadataEntity;
 import org.researchedc.module.datacapture.entity.ResponseSetEntity;
 import org.researchedc.module.datacapture.repository.ItemDataRepository;
 import org.researchedc.module.datacapture.repository.ItemGroupMetadataRepository;
@@ -61,6 +66,8 @@ class DataCaptureServiceTest {
     @Mock private StudyEventRepository studyEventRepository;
     @Mock private StudySubjectRepository studySubjectRepository;
     @Mock private CrfVersionRepository crfVersionRepository;
+    @Mock private ItemRepository itemRepository;
+    @Mock private ItemFormMetadataRepository itemFormMetadataRepository;
     @Mock private RuleSetRepository ruleSetRepository;
     @Mock private RuleSetRuleRepository ruleSetRuleRepository;
     @Mock private RuleRepository ruleRepository;
@@ -77,7 +84,8 @@ class DataCaptureServiceTest {
                 responseSetRepository, itemGroupRepository, itemGroupMetadataRepository, auditService,
                 attachmentStorageAdapter,
                 eventCrfRepository, studyEventRepository, studySubjectRepository,
-                crfVersionRepository, ruleSetRepository, ruleSetRuleRepository,
+                crfVersionRepository, itemRepository, itemFormMetadataRepository,
+                ruleSetRepository, ruleSetRuleRepository,
                 ruleRepository, ruleExpressionRepository);
     }
 
@@ -117,6 +125,13 @@ class DataCaptureServiceTest {
         EventCrfEntity e = new EventCrfEntity();
         e.setEventCrfId(id);
         e.setStudySubjectId(studySubjectId);
+        e.setCrfVersionId(300);
+        return e;
+    }
+
+    private static EventCrfEntity createEventCrf(Integer id, Integer studySubjectId, Integer statusId) {
+        EventCrfEntity e = createEventCrf(id, studySubjectId);
+        e.setStatusId(statusId);
         return e;
     }
 
@@ -125,6 +140,37 @@ class DataCaptureServiceTest {
         e.setStudySubjectId(id);
         e.setStudyId(studyId);
         return e;
+    }
+
+    private static ItemGroupMetadataEntity createItemGroupMetadata(Integer itemId, Integer crfVersionId) {
+        ItemGroupMetadataEntity e = new ItemGroupMetadataEntity();
+        e.setItemGroupMetadataId(1);
+        e.setItemId(itemId);
+        e.setCrfVersionId(crfVersionId);
+        return e;
+    }
+
+    private static ItemFormMetadataEntity createItemFormMetadata(Integer itemId, Integer crfVersionId) {
+        ItemFormMetadataEntity e = new ItemFormMetadataEntity();
+        e.setItemFormMetadataId(1);
+        e.setItemId(itemId);
+        e.setCrfVersionId(crfVersionId);
+        return e;
+    }
+
+    private static ItemEntity createItem(Integer itemId, Integer dataTypeId) {
+        ItemEntity e = new ItemEntity();
+        e.setItemId(itemId);
+        e.setItemDataTypeId(dataTypeId);
+        return e;
+    }
+
+    private void mockWritableItem(Integer itemId, Integer dataTypeId) {
+        when(itemGroupMetadataRepository.findByItemIdAndCrfVersionId(itemId, 300))
+                .thenReturn(List.of(createItemGroupMetadata(itemId, 300)));
+        when(itemFormMetadataRepository.findByItemIdAndCrfVersionId(itemId, 300))
+                .thenReturn(List.of(createItemFormMetadata(itemId, 300)));
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(createItem(itemId, dataTypeId)));
     }
 
     @Test
@@ -178,9 +224,10 @@ class DataCaptureServiceTest {
 
     @Test
     void saveItemData_whenNew_createsAndReturns() {
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        mockWritableItem(10, 5);
         when(itemDataRepository.findByEventCrfIdAndItemId(100, 10))
                 .thenReturn(List.of());
-        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
         when(studySubjectRepository.findById(200)).thenReturn(Optional.of(createStudySubject(200, 11)));
         when(itemDataRepository.save(any(ItemDataEntity.class)))
                 .thenAnswer(i -> {
@@ -206,9 +253,10 @@ class DataCaptureServiceTest {
     @Test
     void saveItemData_whenExisting_updatesAndReturns() {
         ItemDataEntity existing = createItemData(1, 100, 10, "Old");
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        mockWritableItem(10, 5);
         when(itemDataRepository.findByEventCrfIdAndItemId(100, 10))
                 .thenReturn(List.of(existing));
-        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
         when(studySubjectRepository.findById(200)).thenReturn(Optional.of(createStudySubject(200, 11)));
         when(itemDataRepository.save(any(ItemDataEntity.class)))
                 .thenAnswer(i -> i.getArgument(0));
@@ -226,7 +274,116 @@ class DataCaptureServiceTest {
     }
 
     @Test
+    void saveItemData_whenItemNotInEventCrfVersion_rejectsSave() {
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        when(itemGroupMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of());
+
+        SaveItemDataRequest request = new SaveItemDataRequest();
+        request.setEventCrfId(100);
+        request.setItemId(10);
+        request.setValue("Unexpected");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> service.saveItemData(request, 42));
+        verify(itemDataRepository, never()).save(any());
+    }
+
+    @Test
+    void saveItemData_whenEventCrfLocked_rejectsSave() {
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200, 6)));
+
+        SaveItemDataRequest request = new SaveItemDataRequest();
+        request.setEventCrfId(100);
+        request.setItemId(10);
+        request.setValue("Unexpected");
+
+        assertThrows(IllegalStateException.class,
+                () -> service.saveItemData(request, 42));
+        verify(itemDataRepository, never()).save(any());
+    }
+
+    @Test
+    void saveItemData_whenRequiredItemBlank_rejectsSave() {
+        ItemFormMetadataEntity metadata = createItemFormMetadata(10, 300);
+        metadata.setRequired(true);
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        when(itemGroupMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of(createItemGroupMetadata(10, 300)));
+        when(itemFormMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of(metadata));
+
+        SaveItemDataRequest request = new SaveItemDataRequest();
+        request.setEventCrfId(100);
+        request.setItemId(10);
+        request.setValue(" ");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> service.saveItemData(request, 42));
+        verify(itemDataRepository, never()).save(any());
+    }
+
+    @Test
+    void saveItemData_whenRegexpDoesNotMatch_rejectsSave() {
+        ItemFormMetadataEntity metadata = createItemFormMetadata(10, 300);
+        metadata.setRegexp("[A-Z]{3}");
+        metadata.setRegexpErrorMsg("Use three uppercase letters");
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        when(itemGroupMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of(createItemGroupMetadata(10, 300)));
+        when(itemFormMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of(metadata));
+
+        SaveItemDataRequest request = new SaveItemDataRequest();
+        request.setEventCrfId(100);
+        request.setItemId(10);
+        request.setValue("abc");
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.saveItemData(request, 42));
+        assertEquals("Use three uppercase letters", ex.getMessage());
+        verify(itemDataRepository, never()).save(any());
+    }
+
+    @Test
+    void saveItemData_whenIntegerItemReceivesText_rejectsSave() {
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        mockWritableItem(10, 6);
+
+        SaveItemDataRequest request = new SaveItemDataRequest();
+        request.setEventCrfId(100);
+        request.setItemId(10);
+        request.setValue("ten");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> service.saveItemData(request, 42));
+        verify(itemDataRepository, never()).save(any());
+    }
+
+    @Test
+    void saveItemData_whenDateItemReceivesInvalidDate_rejectsSave() {
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        mockWritableItem(10, 9);
+
+        SaveItemDataRequest request = new SaveItemDataRequest();
+        request.setEventCrfId(100);
+        request.setItemId(10);
+        request.setValue("2026-02-31");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> service.saveItemData(request, 42));
+        verify(itemDataRepository, never()).save(any());
+    }
+
+    @Test
     void batchSaveItems_savesAllItems() {
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        when(itemGroupMetadataRepository.findByItemIdAndCrfVersionId(anyInt(), eq(300)))
+                .thenAnswer(invocation -> List.of(createItemGroupMetadata(invocation.getArgument(0), 300)));
+        when(itemFormMetadataRepository.findByItemIdAndCrfVersionId(anyInt(), eq(300)))
+                .thenAnswer(invocation -> List.of(createItemFormMetadata(invocation.getArgument(0), 300)));
+        when(itemRepository.findById(anyInt()))
+                .thenAnswer(invocation -> Optional.of(createItem(invocation.getArgument(0), 5)));
         when(itemDataRepository.findByEventCrfIdAndItemId(anyInt(), anyInt()))
                 .thenReturn(List.of());
         when(itemDataRepository.save(any(ItemDataEntity.class)))

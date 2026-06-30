@@ -253,6 +253,15 @@ This phase is complete when:
 - Slice 4 continued with visible frontend request-id feedback: added a shared API error formatter and applied it to export download, admin export job create/cancel/retry, and import upload/validate/commit errors so structured backend `requestId` values appear in operator-facing error text.
 - Verified frontend request-id formatting with `pnpm -C frontend test -- --run src/api/client.test.ts src/api/errors.test.ts` (4 tests passed) and `pnpm -C frontend typecheck` (0 errors). The first sandboxed Vitest run produced pnpm temp-file unlink errors on Windows; rerunning in CI mode outside the sandbox passed.
 
+### 2026-06-30
+
+- Continued Slice 3 runtime readiness on Linux: `bash -n deploy-bare.sh` and `bash deploy-bare.sh help` pass. `deploy-bare.sh setup` now always creates/syncs the questionnaire-service `.venv` from the uv lockfile even when `uv` was already installed, so a clean host does not skip the Python service environment.
+- Aligned root verification docs with the actual questionnaire local gate: `AGENTS.md` and `README.md` now use `uv run --group dev pytest app/tests/ -v`.
+- Continued Slice 4 frontend error parsing cleanup: `ApiClient` now preserves falsy structured error payloads other than `null`/empty string instead of dropping them through `parsedBody || undefined`.
+- Started the Phase 1 data-capture hardening slice for BL-4. Item save now rejects writes when the item is not part of the EventCRF's CRF version, when the EventCRF is locked/removed/signed/frozen, when required values are blank, when configured regex validation fails, and when integer/real/date/partial-date/string type constraints fail.
+- Verified data-capture hardening with `mvn test -pl app -am -Dtest=DataCaptureServiceTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (25 tests passed: `DataCaptureServiceTest` 24, `ModulithVerificationTest` 1).
+- Remaining data-capture convergence work is response-set membership and broader edit-check/discrepancy lifecycle integration; those are separate from the scalar metadata validation now enforced on item save.
+
 ## Next Phase
 
 After this phase completes, activate the first new-module backlog derived from:
