@@ -19,6 +19,7 @@ import org.researchedc.module.export.controller.ExportController;
 import org.researchedc.module.rule.controller.RuleController;
 import org.researchedc.module.study.controller.StudyController;
 import org.researchedc.module.subject.controller.SubjectController;
+import org.researchedc.module.subjectgroup.controller.SubjectGroupController;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -143,6 +144,25 @@ class CoreControllerAuthorizationTest {
                         int.class, org.researchedc.module.rule.dto.CreateRuleRequest.class),
                 secured(RuleController.class, "deleteRule",
                         CoreEdcAuthorityExpressions.WRITE_EDC_DATA, int.class),
+
+                secured(SubjectGroupController.class, "listClasses",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, int.class),
+                secured(SubjectGroupController.class, "getClass",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, int.class),
+                secured(SubjectGroupController.class, "listGroups",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, int.class),
+                secured(SubjectGroupController.class, "createClass",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.subjectgroup.dto.CreateGroupClassRequest.class),
+                secured(SubjectGroupController.class, "updateClass",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        int.class, org.researchedc.module.subjectgroup.dto.CreateGroupClassRequest.class),
+                secured(SubjectGroupController.class, "createGroup",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        int.class, org.researchedc.module.subjectgroup.dto.CreateGroupRequest.class),
+                secured(SubjectGroupController.class, "updateGroup",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        int.class, org.researchedc.module.subjectgroup.dto.CreateGroupRequest.class),
 
                 secured(ExportController.class, "createJob",
                         CoreEdcAuthorityExpressions.EXPORT_DATA,

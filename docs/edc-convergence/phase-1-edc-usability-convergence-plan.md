@@ -264,6 +264,8 @@ This phase is complete when:
 - Continued Slice 2 per-study scoping for study-bound rule sets. Rule-set list/get now filter or require readable studies, and rule-set membership add/remove requires write access to the rule set's study. `RuleController` now has method-level read/write gates, and `CoreControllerAuthorizationTest` covers the eight rule endpoints.
 - Verified rule-set scoping with `mvn test -pl app -am -Dtest=RuleServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (85 tests passed).
 - Reviewed response-set membership enforcement for data capture and deferred it from the service-only slice: `module_item_form_metadata` currently does not carry `response_set_id`, so correct enforcement requires a schema/sync-trigger update before the module JPA path can validate controlled vocabularies without falling back to legacy tables.
+- Continued Slice 2 per-study scoping for subject groups. Class list/get and group list now require readable study access; class create/update and group create/update require write access through the owning study group class. `SubjectGroupController` now has method-level read/write gates, and `CoreControllerAuthorizationTest` covers the seven exposed subject-group endpoints.
+- Verified subject-group scoping with `mvn test -pl app -am -Dtest=SubjectGroupServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (89 tests passed).
 
 ## Next Phase
 
