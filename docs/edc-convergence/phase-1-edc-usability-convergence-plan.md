@@ -270,6 +270,8 @@ This phase is complete when:
 - Verified randomization scoping with `mvn test -pl app -am -Dtest=RandomizationServiceTest,UnblindingServiceTest,RandomizationControllerTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (114 tests passed).
 - Continued Slice 2 per-study scoping for CRFs. CRF read endpoints now declare read role gates and filter or deny study-bound CRFs through `source_study_id`; CRF version, item metadata, and SCD-rule reads resolve through the owning CRF before returning metadata. Legacy public CRF write endpoints now require study administration and use the authenticated session user instead of request-body `ownerId`; CRF manage read endpoints now require study administration.
 - Verified CRF scoping with `mvn test -pl app -am -Dtest=CrfServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (123 tests passed).
+- Continued Slice 2 scoping for filters. Because `module_filter` has no study ownership column, filter list/get now use explicit read gates and restrict non-admin users to filters they own; create uses the authenticated session user as owner and requires write data authority.
+- Verified filter scoping with `mvn test -pl app -am -Dtest=FilterServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (111 tests passed).
 
 ## Next Phase
 

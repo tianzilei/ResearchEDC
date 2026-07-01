@@ -13,27 +13,31 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.filter.entity.FilterEntity;
 import org.researchedc.module.filter.repository.FilterRepository;
+import org.springframework.security.access.AccessDeniedException;
 
 @ExtendWith(MockitoExtension.class)
 class FilterServiceTest {
 
     @Mock private FilterRepository filterRepository;
+    @Mock private CurrentStudyAccessService currentStudyAccessService;
     private FilterService service;
 
     @BeforeEach
     void setUp() {
-        service = new FilterService(filterRepository);
+        service = new FilterService(filterRepository, currentStudyAccessService);
     }
 
     @Test
-    void listAll_whenFiltersExist_returnsAll() {
+    void listAll_whenAdmin_returnsAll() {
         FilterEntity f1 = filter(1, "Active", "active filter", 100);
         FilterEntity f2 = filter(2, "Closed", "closed filter", 100);
+        when(currentStudyAccessService.canReadAllStudies(42)).thenReturn(true);
         when(filterRepository.findAll()).thenReturn(List.of(f1, f2));
 
-        List<FilterEntity> result = service.listAll();
+        List<FilterEntity> result = service.listAll(42);
 
         assertEquals(2, result.size());
         assertEquals("Active", result.get(0).getName());
@@ -41,23 +45,49 @@ class FilterServiceTest {
     }
 
     @Test
-    void listAll_whenEmpty_returnsEmptyList() {
-        when(filterRepository.findAll()).thenReturn(List.of());
+    void listAll_whenNonAdmin_returnsOwnedFilters() {
+        FilterEntity f1 = filter(1, "Active", "active filter", 42);
+        when(currentStudyAccessService.canReadAllStudies(42)).thenReturn(false);
+        when(filterRepository.findByOwnerIdOrderByNameAsc(42)).thenReturn(List.of(f1));
 
-        List<FilterEntity> result = service.listAll();
+        List<FilterEntity> result = service.listAll(42);
+
+        assertEquals(1, result.size());
+        assertEquals(42, result.get(0).getOwnerId());
+        verify(filterRepository, never()).findAll();
+    }
+
+    @Test
+    void listAll_whenNonAdminHasNoFilters_returnsEmptyList() {
+        when(currentStudyAccessService.canReadAllStudies(42)).thenReturn(false);
+        when(filterRepository.findByOwnerIdOrderByNameAsc(42)).thenReturn(List.of());
+
+        List<FilterEntity> result = service.listAll(42);
 
         assertTrue(result.isEmpty());
     }
 
     @Test
-    void getById_whenFound_returnsEntity() {
+    void getById_whenAdmin_returnsEntity() {
         FilterEntity f = filter(1, "MyFilter", "desc", 100);
         when(filterRepository.findById(1)).thenReturn(Optional.of(f));
+        when(currentStudyAccessService.canReadAllStudies(42)).thenReturn(true);
 
-        FilterEntity result = service.getById(1);
+        FilterEntity result = service.getById(1, 42);
 
         assertEquals(1, result.getFilterId());
         assertEquals("MyFilter", result.getName());
+    }
+
+    @Test
+    void getById_whenOwner_returnsEntity() {
+        FilterEntity f = filter(1, "MyFilter", "desc", 42);
+        when(filterRepository.findById(1)).thenReturn(Optional.of(f));
+        when(currentStudyAccessService.canReadAllStudies(42)).thenReturn(false);
+
+        FilterEntity result = service.getById(1, 42);
+
+        assertEquals(1, result.getFilterId());
     }
 
     @Test
@@ -65,8 +95,17 @@ class FilterServiceTest {
         when(filterRepository.findById(999)).thenReturn(Optional.empty());
 
         NoSuchElementException ex = assertThrows(NoSuchElementException.class,
-                () -> service.getById(999));
+                () -> service.getById(999, 42));
         assertTrue(ex.getMessage().contains("999"));
+    }
+
+    @Test
+    void getById_whenNonOwner_throwsAccessDenied() {
+        FilterEntity f = filter(1, "MyFilter", "desc", 100);
+        when(filterRepository.findById(1)).thenReturn(Optional.of(f));
+        when(currentStudyAccessService.canReadAllStudies(42)).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class, () -> service.getById(1, 42));
     }
 
     @Test
@@ -100,9 +139,10 @@ class FilterServiceTest {
     void update_whenFound_savesUpdatedFields() {
         FilterEntity existing = filter(1, "Old", "old desc", 100);
         when(filterRepository.findById(1)).thenReturn(Optional.of(existing));
+        when(currentStudyAccessService.canReadAllStudies(42)).thenReturn(true);
         when(filterRepository.save(any(FilterEntity.class))).thenAnswer(i -> i.getArgument(0));
 
-        FilterEntity result = service.update(1, "Updated", "Updated desc");
+        FilterEntity result = service.update(1, "Updated", "Updated desc", 42);
 
         assertEquals("Updated", result.getName());
         assertEquals("Updated desc", result.getDescription());
@@ -112,11 +152,12 @@ class FilterServiceTest {
 
     @Test
     void update_whenDescriptionNull_defaultsToEmpty() {
-        FilterEntity existing = filter(1, "Old", "old desc", 100);
+        FilterEntity existing = filter(1, "Old", "old desc", 42);
         when(filterRepository.findById(1)).thenReturn(Optional.of(existing));
+        when(currentStudyAccessService.canReadAllStudies(42)).thenReturn(false);
         when(filterRepository.save(any(FilterEntity.class))).thenAnswer(i -> i.getArgument(0));
 
-        FilterEntity result = service.update(1, "Updated", null);
+        FilterEntity result = service.update(1, "Updated", null, 42);
 
         assertEquals("", result.getDescription());
     }
@@ -126,7 +167,18 @@ class FilterServiceTest {
         when(filterRepository.findById(999)).thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class,
-                () -> service.update(999, "name", "desc"));
+                () -> service.update(999, "name", "desc", 42));
+    }
+
+    @Test
+    void update_whenNonOwner_throwsAccessDeniedAndDoesNotSave() {
+        FilterEntity existing = filter(1, "Old", "old desc", 100);
+        when(filterRepository.findById(1)).thenReturn(Optional.of(existing));
+        when(currentStudyAccessService.canReadAllStudies(42)).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class,
+                () -> service.update(1, "Updated", "desc", 42));
+        verify(filterRepository, never()).save(any());
     }
 
     private static FilterEntity filter(Integer id, String name, String description,

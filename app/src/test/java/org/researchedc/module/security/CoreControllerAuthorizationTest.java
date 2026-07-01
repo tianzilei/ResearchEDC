@@ -17,6 +17,7 @@ import org.researchedc.module.dataimport.controller.ImportController;
 import org.researchedc.module.discrepancynote.controller.DiscrepancyNoteController;
 import org.researchedc.module.event.controller.EventController;
 import org.researchedc.module.export.controller.ExportController;
+import org.researchedc.module.filter.controller.FilterController;
 import org.researchedc.module.randomization.controller.RandomizationController;
 import org.researchedc.module.rule.controller.RuleController;
 import org.researchedc.module.study.controller.StudyController;
@@ -236,6 +237,14 @@ class CoreControllerAuthorizationTest {
                         CoreEdcAuthorityExpressions.IMPORT_DATA, Long.class),
                 secured(ImportController.class, "commit",
                         CoreEdcAuthorityExpressions.IMPORT_DATA, Long.class),
+
+                secured(FilterController.class, "listFilters",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA),
+                secured(FilterController.class, "getFilter",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, int.class),
+                secured(FilterController.class, "createFilter",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.filter.dto.CreateFilterRequest.class),
 
                 secured(CrfController.class, "listCrfs",
                         CoreEdcAuthorityExpressions.READ_EDC_DATA),

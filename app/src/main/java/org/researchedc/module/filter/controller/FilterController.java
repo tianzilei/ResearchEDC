@@ -2,13 +2,15 @@ package org.researchedc.module.filter.controller;
 
 import java.util.List;
 
+import org.researchedc.config.CoreEdcAuthorityExpressions;
+import org.researchedc.config.CurrentUserUtils;
 import org.researchedc.module.filter.dto.CreateFilterRequest;
 import org.researchedc.module.filter.dto.FilterDTO;
 import org.researchedc.module.filter.entity.FilterEntity;
 import org.researchedc.module.filter.service.FilterService;
-import org.researchedc.config.CurrentUserUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,20 +31,25 @@ public class FilterController {
     }
 
     @GetMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<List<FilterDTO>> listFilters() {
-        return ResponseEntity.ok(filterService.listAll().stream().map(this::toDto).toList());
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(filterService.listAll(currentUserId).stream().map(this::toDto).toList());
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<FilterDTO> getFilter(@PathVariable int id) {
         try {
-            return ResponseEntity.ok(toDto(filterService.getById(id)));
+            Integer currentUserId = currentUserUtils.getCurrentUserId();
+            return ResponseEntity.ok(toDto(filterService.getById(id, currentUserId)));
         } catch (java.util.NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<FilterDTO> createFilter(@RequestBody CreateFilterRequest request) {
         Integer ownerId = currentUserUtils.getCurrentUserId();
         FilterEntity entity = filterService.create(request.getName(), request.getDescription(), ownerId);

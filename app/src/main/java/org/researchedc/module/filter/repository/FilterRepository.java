@@ -10,4 +10,6 @@ import java.util.List;
 public interface FilterRepository extends JpaRepository<FilterEntity, Integer> {
 
     List<FilterEntity> findByStatusId(Integer statusId);
+
+    List<FilterEntity> findByOwnerIdOrderByNameAsc(Integer ownerId);
 }
