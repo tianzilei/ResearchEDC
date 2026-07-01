@@ -223,9 +223,6 @@ export default function ExportCenter() {
           <label>{t("export.modal.format")}</label>
           <Select value={format} onChange={setFormat} style={{ width: "100%" }}>
             <Select.Option value="ODM_XML">{t("export.modal.formats.odm")}</Select.Option>
-            <Select.Option value="CSV">{t("export.modal.formats.csv")}</Select.Option>
-            <Select.Option value="EXCEL">{t("export.modal.formats.excel")}</Select.Option>
-            <Select.Option value="SAS_XPORT">{t("export.modal.formats.sas")}</Select.Option>
           </Select>
           {format === "ODM_XML" && (
             <>

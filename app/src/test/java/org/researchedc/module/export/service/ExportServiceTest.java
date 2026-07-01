@@ -41,14 +41,14 @@ class ExportServiceTest {
         CreateExportJobRequest request = new CreateExportJobRequest();
         request.setStudyId(1);
         request.setName("Test Export");
-        request.setExportFormat(ExportFormat.CSV);
+        request.setExportFormat(ExportFormat.ODM_XML);
         request.setRequestedBy(100);
 
         ExportJob savedJob = new ExportJob();
         savedJob.setId(1L);
         savedJob.setStudyId(1);
         savedJob.setName("Test Export");
-        savedJob.setExportFormat(ExportFormat.CSV);
+        savedJob.setExportFormat(ExportFormat.ODM_XML);
         savedJob.setRequestedBy(100);
         savedJob.setStatus(ExportJobStatus.PENDING);
 
@@ -58,7 +58,7 @@ class ExportServiceTest {
         ExportJobDTO result = service.createJob(request, 100);
 
         assertEquals("Test Export", result.getName());
-        assertEquals(ExportFormat.CSV, result.getExportFormat());
+        assertEquals(ExportFormat.ODM_XML, result.getExportFormat());
         assertEquals(ExportJobStatus.PENDING, result.getStatus());
         assertEquals(100, result.getRequestedBy());
         verify(jobRepository).save(any());
@@ -69,7 +69,7 @@ class ExportServiceTest {
         CreateExportJobRequest request = new CreateExportJobRequest();
         request.setStudyId(1);
         request.setName("Test Export");
-        request.setExportFormat(ExportFormat.CSV);
+        request.setExportFormat(ExportFormat.ODM_XML);
 
         when(currentStudyAccessService.canExportStudy(100, 1)).thenReturn(false);
 
@@ -273,25 +273,17 @@ class ExportServiceTest {
     }
 
     @Test
-    void createJob_csv_doesNotTriggerExecution() {
+    void createJob_unsupportedFormat_throwsAndDoesNotSave() {
         CreateExportJobRequest request = new CreateExportJobRequest();
         request.setStudyId(1);
         request.setName("CSV Export");
         request.setExportFormat(ExportFormat.CSV);
         request.setRequestedBy(100);
 
-        ExportJob savedJob = new ExportJob();
-        savedJob.setId(1L);
-        savedJob.setStudyId(1);
-        savedJob.setName("CSV Export");
-        savedJob.setExportFormat(ExportFormat.CSV);
-        savedJob.setStatus(ExportJobStatus.PENDING);
-
-        when(currentStudyAccessService.canExportStudy(100, 1)).thenReturn(true);
-        when(jobRepository.save(any())).thenReturn(savedJob);
-
-        service.createJob(request, 100);
-
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.createJob(request, 100));
+        assertTrue(ex.getMessage().contains("CSV"));
+        verify(jobRepository, never()).save(any());
         verify(odmExecutionService, never()).execute(anyLong());
     }
 

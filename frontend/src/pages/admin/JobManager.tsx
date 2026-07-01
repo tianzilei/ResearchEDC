@@ -210,8 +210,6 @@ export default function JobManager() {
           </Form.Item>
           <Form.Item name="format" label="格式" rules={[{ required: true }]}>
             <Select placeholder="选择格式">
-              <Select.Option value="CSV">CSV</Select.Option>
-              <Select.Option value="EXCEL">Excel</Select.Option>
               <Select.Option value="ODM_XML">ODM XML</Select.Option>
             </Select>
           </Form.Item>

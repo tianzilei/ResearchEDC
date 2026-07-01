@@ -65,7 +65,7 @@
   "dashboard.studyOverview": "研究概览",
   "dashboard.quickActions": "快捷操作",
   "dashboard.actions.dataExport": "数据导出",
-  "dashboard.actions.dataExportDesc": "以 ODM XML、CSV 或 Excel 格式导出研究数据",
+  "dashboard.actions.dataExportDesc": "以 ODM XML 格式导出研究数据",
   "dashboard.actions.randomization": "随机化",
   "dashboard.actions.randomizationDesc": "管理随机化方案和受试者分配",
   "dashboard.actions.crfLibrary": "CRF 库",

@@ -274,6 +274,8 @@ This phase is complete when:
 - Verified filter scoping with `mvn test -pl app -am -Dtest=FilterServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (111 tests passed).
 - Continued the Phase 1 data-capture hardening slice by restoring `response_set_id` to module-owned item form metadata and enforcing controlled response-set membership on item save. Single-choice and multi-choice saves now reject values outside the configured module response set before persistence.
 - Verified response-set membership with `xmllint --noout shared/src/main/resources/migration/3.18/2026-07-01-module-ifm-response-set-id.xml shared/src/main/resources/migration/3.18/release.xml` and `mvn test -pl app -am -Dtest=DataCaptureServiceTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (29 tests passed).
+- Continued export convergence for BL-8. Non-ODM app export formats now fail fast before job persistence instead of creating permanently pending jobs, and SPA export create controls only offer ODM XML until CSV/Excel/SAS have real execution paths.
+- Verified export format contract with `mvn test -pl app -am -Dtest=ExportServiceTest,ExportControllerTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (33 tests passed) and `corepack pnpm@11.1.2 -C frontend typecheck` (0 errors). Plain `pnpm -C frontend typecheck` failed locally because the active shim was pnpm 11.3.0 while the frontend package pins pnpm 11.1.2.
 
 ## Next Phase
 

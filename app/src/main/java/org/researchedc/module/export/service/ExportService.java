@@ -40,6 +40,7 @@ public class ExportService {
 
     public ExportJobDTO createJob(CreateExportJobRequest request, Integer currentUserId) {
         requireStudyId(request.getStudyId());
+        requireSupportedFormat(request.getExportFormat());
         requireExportAccess(currentUserId, request.getStudyId());
 
         ExportJob job = new ExportJob();
@@ -194,6 +195,16 @@ public class ExportService {
     private void requireStudyId(Integer studyId) {
         if (studyId == null) {
             throw new IllegalArgumentException("studyId is required");
+        }
+    }
+
+    private void requireSupportedFormat(ExportFormat exportFormat) {
+        if (exportFormat == null) {
+            throw new IllegalArgumentException("exportFormat is required");
+        }
+        if (exportFormat != ExportFormat.ODM_XML) {
+            throw new IllegalArgumentException(
+                    "Export format " + exportFormat + " is not supported yet");
         }
     }
 

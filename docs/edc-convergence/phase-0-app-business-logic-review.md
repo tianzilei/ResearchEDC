@@ -436,7 +436,7 @@ Business implication:
 | BL-5 | Local business file storage remains active. | import, export, and attachments all use filesystem paths. | Storage MinIO convergence |
 | BL-6 | Export download did not validate artifact existence/readability. | Fixed in Phase 1 slice 2: `ExportService.getDownload` checks existence/readability and missing artifacts return 404 text. | Complete |
 | BL-7 | Some destructive operations are physical deletes. | study delete and CRF version delete call repository delete. | Product policy decision |
-| BL-8 | Non-ODM export formats have no execution path. | `ExportService.createJob` executes only `ODM_XML`; other formats remain pending. | Export productization |
+| BL-8 | Non-ODM export formats have no execution path. | Phase 1 now rejects non-ODM export job creation before persistence and the SPA create surfaces only offer ODM XML. CSV/Excel/SAS remain future export productization work. | Export productization |
 
 ## Recommended Next Work
 

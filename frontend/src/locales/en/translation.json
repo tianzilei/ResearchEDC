@@ -65,7 +65,7 @@
   "dashboard.studyOverview": "Study Overview",
   "dashboard.quickActions": "Quick Actions",
   "dashboard.actions.dataExport": "Data Export",
-  "dashboard.actions.dataExportDesc": "Export study data in ODM XML, CSV, or Excel format",
+  "dashboard.actions.dataExportDesc": "Export study data in ODM XML format",
   "dashboard.actions.randomization": "Randomization",
   "dashboard.actions.randomizationDesc": "Manage randomization schemes and subject allocation",
   "dashboard.actions.crfLibrary": "CRF Library",
