@@ -90,4 +90,6 @@
     <include file="migration/3.18/2026-06-21-retire-email-storage.xml"/>
     <!-- Export module: ODM contract version column for schema version selection -->
     <include file="migration/3.18/2026-06-24-odm-contract-version.xml"/>
+    <!-- Data capture convergence: module-owned response-set metadata for item save validation -->
+    <include file="migration/3.18/2026-07-01-module-ifm-response-set-id.xml"/>
 </databaseChangeLog>

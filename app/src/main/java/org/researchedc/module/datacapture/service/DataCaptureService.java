@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.researchedc.app.dto.Status;
@@ -70,6 +72,10 @@ public class DataCaptureService {
     private static final int ITEM_DATA_TYPE_REAL = 7;
     private static final int ITEM_DATA_TYPE_DATE = 9;
     private static final int ITEM_DATA_TYPE_PARTIAL_DATE = 10;
+    private static final int RESPONSE_TYPE_CHECKBOX = 3;
+    private static final int RESPONSE_TYPE_RADIO = 5;
+    private static final int RESPONSE_TYPE_SELECT = 6;
+    private static final int RESPONSE_TYPE_SELECT_MULTI = 7;
     private static final String FULL_DATE_FORMAT = "yyyy-MM-dd";
     private static final String PARTIAL_DATE_YEAR_MONTH_FORMAT = "yyyy-MM";
     private static final String PARTIAL_DATE_YEAR_FORMAT = "yyyy";
@@ -220,6 +226,7 @@ public class DataCaptureService {
         ItemFormMetadataEntity metadata = requireItemMetadata(request.getItemId(), crfVersionId);
         validateRequiredValue(request, metadata);
         validateRegexp(request, metadata);
+        validateResponseSetMembership(request, metadata);
         validateItemDataType(request);
     }
 
@@ -279,6 +286,67 @@ public class DataCaptureService {
             throw new IllegalStateException(
                     "Invalid regexp configured for item " + request.getItemId(), e);
         }
+    }
+
+    private void validateResponseSetMembership(SaveItemDataRequest request, ItemFormMetadataEntity metadata) {
+        if (isBlank(request.getValue()) || metadata.getResponseSetId() == null) {
+            return;
+        }
+        ResponseSetEntity responseSet = responseSetRepository.findById(metadata.getResponseSetId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Response set not found for item " + request.getItemId()
+                                + ": " + metadata.getResponseSetId()));
+        Integer responseTypeId = responseSet.getResponseTypeId();
+        if (responseTypeId == null || !isControlledResponseType(responseTypeId)) {
+            return;
+        }
+
+        Set<String> allowedValues = parseResponseSetValues(responseSet.getOptionsValues());
+        List<String> submittedValues = isMultiValueResponseType(responseTypeId)
+                ? parseSubmittedMultiValues(request.getValue())
+                : List.of(request.getValue().trim());
+
+        boolean allValuesAllowed = submittedValues.stream()
+                .filter(value -> !value.isBlank())
+                .allMatch(allowedValues::contains);
+        if (!allValuesAllowed) {
+            throw new IllegalArgumentException(
+                    "Item " + request.getItemId() + " value is not in the configured response set");
+        }
+    }
+
+    private boolean isControlledResponseType(Integer responseTypeId) {
+        return responseTypeId == RESPONSE_TYPE_CHECKBOX
+                || responseTypeId == RESPONSE_TYPE_RADIO
+                || responseTypeId == RESPONSE_TYPE_SELECT
+                || responseTypeId == RESPONSE_TYPE_SELECT_MULTI;
+    }
+
+    private boolean isMultiValueResponseType(Integer responseTypeId) {
+        return responseTypeId == RESPONSE_TYPE_CHECKBOX || responseTypeId == RESPONSE_TYPE_SELECT_MULTI;
+    }
+
+    private Set<String> parseResponseSetValues(String optionsValues) {
+        if (optionsValues == null) {
+            return Set.of();
+        }
+        Set<String> values = new HashSet<>();
+        for (String value : optionsValues.split("\\\\n|\\n|,")) {
+            if (value != null && !value.isBlank()) {
+                values.add(value.trim());
+            }
+        }
+        return values;
+    }
+
+    private List<String> parseSubmittedMultiValues(String value) {
+        List<String> values = new ArrayList<>();
+        for (String part : value.split("\\\\n|\\n|,")) {
+            if (part != null && !part.isBlank()) {
+                values.add(part.trim());
+            }
+        }
+        return values;
     }
 
     private void validateItemDataType(SaveItemDataRequest request) {

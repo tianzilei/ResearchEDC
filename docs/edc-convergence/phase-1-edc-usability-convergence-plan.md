@@ -272,6 +272,8 @@ This phase is complete when:
 - Verified CRF scoping with `mvn test -pl app -am -Dtest=CrfServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (123 tests passed).
 - Continued Slice 2 scoping for filters. Because `module_filter` has no study ownership column, filter list/get now use explicit read gates and restrict non-admin users to filters they own; create uses the authenticated session user as owner and requires write data authority.
 - Verified filter scoping with `mvn test -pl app -am -Dtest=FilterServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (111 tests passed).
+- Continued the Phase 1 data-capture hardening slice by restoring `response_set_id` to module-owned item form metadata and enforcing controlled response-set membership on item save. Single-choice and multi-choice saves now reject values outside the configured module response set before persistence.
+- Verified response-set membership with `xmllint --noout shared/src/main/resources/migration/3.18/2026-07-01-module-ifm-response-set-id.xml shared/src/main/resources/migration/3.18/release.xml` and `mvn test -pl app -am -Dtest=DataCaptureServiceTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (29 tests passed).
 
 ## Next Phase
 

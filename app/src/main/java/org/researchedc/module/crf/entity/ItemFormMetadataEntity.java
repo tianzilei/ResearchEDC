@@ -36,6 +36,9 @@ public class ItemFormMetadataEntity {
     @Column(name = "regexp_error_msg")
     private String regexpErrorMsg;
 
+    @Column(name = "response_set_id")
+    private Integer responseSetId;
+
     @Column(name = "response_layout")
     private String responseLayout;
 
@@ -63,6 +66,8 @@ public class ItemFormMetadataEntity {
     public void setRegexp(String v) { this.regexp = v; }
     public String getRegexpErrorMsg() { return regexpErrorMsg; }
     public void setRegexpErrorMsg(String v) { this.regexpErrorMsg = v; }
+    public Integer getResponseSetId() { return responseSetId; }
+    public void setResponseSetId(Integer v) { this.responseSetId = v; }
     public String getResponseLayout() { return responseLayout; }
     public void setResponseLayout(String v) { this.responseLayout = v; }
     public String getWidthDecimal() { return widthDecimal; }

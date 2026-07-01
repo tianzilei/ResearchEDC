@@ -113,6 +113,13 @@ class DataCaptureServiceTest {
         return e;
     }
 
+    private static ResponseSetEntity createResponseSet(Integer id, Integer responseTypeId,
+                                                        String label, String text, String values) {
+        ResponseSetEntity e = createResponseSet(id, label, text, values);
+        e.setResponseTypeId(responseTypeId);
+        return e;
+    }
+
     private static ItemGroupEntity createItemGroup(Integer id, Integer crfId, String name) {
         ItemGroupEntity e = new ItemGroupEntity();
         e.setItemGroupId(id);
@@ -155,6 +162,13 @@ class DataCaptureServiceTest {
         e.setItemFormMetadataId(1);
         e.setItemId(itemId);
         e.setCrfVersionId(crfVersionId);
+        return e;
+    }
+
+    private static ItemFormMetadataEntity createItemFormMetadata(Integer itemId, Integer crfVersionId,
+                                                                 Integer responseSetId) {
+        ItemFormMetadataEntity e = createItemFormMetadata(itemId, crfVersionId);
+        e.setResponseSetId(responseSetId);
         return e;
     }
 
@@ -371,6 +385,107 @@ class DataCaptureServiceTest {
         request.setValue("2026-02-31");
 
         assertThrows(IllegalArgumentException.class,
+                () -> service.saveItemData(request, 42));
+        verify(itemDataRepository, never()).save(any());
+    }
+
+    @Test
+    void saveItemData_whenSingleChoiceValueInResponseSet_saves() {
+        ItemFormMetadataEntity metadata = createItemFormMetadata(10, 300, 50);
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        when(itemGroupMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of(createItemGroupMetadata(10, 300)));
+        when(itemFormMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of(metadata));
+        when(responseSetRepository.findById(50))
+                .thenReturn(Optional.of(createResponseSet(50, 6, "Yes/No", "Yes\nNo", "1\n2")));
+        when(itemRepository.findById(10)).thenReturn(Optional.of(createItem(10, 5)));
+        when(itemDataRepository.findByEventCrfIdAndItemId(100, 10)).thenReturn(List.of());
+        when(studySubjectRepository.findById(200)).thenReturn(Optional.of(createStudySubject(200, 11)));
+        when(itemDataRepository.save(any(ItemDataEntity.class))).thenAnswer(i -> {
+            ItemDataEntity e = i.getArgument(0);
+            e.setItemDataId(1);
+            return e;
+        });
+
+        SaveItemDataRequest request = new SaveItemDataRequest();
+        request.setEventCrfId(100);
+        request.setItemId(10);
+        request.setValue("2");
+
+        ItemDataDTO result = service.saveItemData(request, 42);
+
+        assertEquals("2", result.getValue());
+        verify(itemDataRepository).save(any(ItemDataEntity.class));
+    }
+
+    @Test
+    void saveItemData_whenSingleChoiceValueOutsideResponseSet_rejectsSave() {
+        ItemFormMetadataEntity metadata = createItemFormMetadata(10, 300, 50);
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        when(itemGroupMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of(createItemGroupMetadata(10, 300)));
+        when(itemFormMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of(metadata));
+        when(responseSetRepository.findById(50))
+                .thenReturn(Optional.of(createResponseSet(50, 6, "Yes/No", "Yes\nNo", "1\n2")));
+
+        SaveItemDataRequest request = new SaveItemDataRequest();
+        request.setEventCrfId(100);
+        request.setItemId(10);
+        request.setValue("3");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> service.saveItemData(request, 42));
+        verify(itemDataRepository, never()).save(any());
+    }
+
+    @Test
+    void saveItemData_whenMultiChoiceValuesInResponseSet_saves() {
+        ItemFormMetadataEntity metadata = createItemFormMetadata(10, 300, 50);
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        when(itemGroupMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of(createItemGroupMetadata(10, 300)));
+        when(itemFormMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of(metadata));
+        when(responseSetRepository.findById(50))
+                .thenReturn(Optional.of(createResponseSet(50, 7, "Symptoms", "A\nB\nC", "1\n2\n3")));
+        when(itemRepository.findById(10)).thenReturn(Optional.of(createItem(10, 5)));
+        when(itemDataRepository.findByEventCrfIdAndItemId(100, 10)).thenReturn(List.of());
+        when(studySubjectRepository.findById(200)).thenReturn(Optional.of(createStudySubject(200, 11)));
+        when(itemDataRepository.save(any(ItemDataEntity.class))).thenAnswer(i -> {
+            ItemDataEntity e = i.getArgument(0);
+            e.setItemDataId(1);
+            return e;
+        });
+
+        SaveItemDataRequest request = new SaveItemDataRequest();
+        request.setEventCrfId(100);
+        request.setItemId(10);
+        request.setValue("1,3");
+
+        ItemDataDTO result = service.saveItemData(request, 42);
+
+        assertEquals("1,3", result.getValue());
+        verify(itemDataRepository).save(any(ItemDataEntity.class));
+    }
+
+    @Test
+    void saveItemData_whenResponseSetMissing_rejectsSave() {
+        ItemFormMetadataEntity metadata = createItemFormMetadata(10, 300, 50);
+        when(eventCrfRepository.findById(100)).thenReturn(Optional.of(createEventCrf(100, 200)));
+        when(itemGroupMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of(createItemGroupMetadata(10, 300)));
+        when(itemFormMetadataRepository.findByItemIdAndCrfVersionId(10, 300))
+                .thenReturn(List.of(metadata));
+        when(responseSetRepository.findById(50)).thenReturn(Optional.empty());
+
+        SaveItemDataRequest request = new SaveItemDataRequest();
+        request.setEventCrfId(100);
+        request.setItemId(10);
+        request.setValue("1");
+
+        assertThrows(IllegalStateException.class,
                 () -> service.saveItemData(request, 42));
         verify(itemDataRepository, never()).save(any());
     }
