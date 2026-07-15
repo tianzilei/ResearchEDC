@@ -2,6 +2,7 @@ package org.researchedc.module.subject.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.event.dto.ScheduleEventRequest;
@@ -14,6 +15,7 @@ import org.researchedc.module.subject.entity.StudySubjectEntity;
 import org.researchedc.module.subject.entity.SubjectEntity;
 import org.researchedc.module.subject.repository.StudySubjectRepository;
 import org.researchedc.module.subject.repository.SubjectRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,32 +29,41 @@ public class SubjectService {
     private final StudySubjectRepository studySubjectRepository;
     private final EventService eventService;
     private final AuditService auditService;
+    private final CurrentStudyAccessService currentStudyAccessService;
 
     public SubjectService(SubjectRepository subjectRepository,
                           StudySubjectRepository studySubjectRepository,
                           EventService eventService,
-                          AuditService auditService) {
+                          AuditService auditService,
+                          CurrentStudyAccessService currentStudyAccessService) {
         this.subjectRepository = subjectRepository;
         this.studySubjectRepository = studySubjectRepository;
         this.eventService = eventService;
         this.auditService = auditService;
+        this.currentStudyAccessService = currentStudyAccessService;
     }
 
-    public List<SubjectDTO> searchSubjects(String query) {
-        return subjectRepository.findByUniqueIdentifierContainingIgnoreCase(query).stream().map(this::toSubjectDto).toList();
+    public List<SubjectDTO> searchSubjects(String query, Integer currentUserId) {
+        return subjectRepository.findByUniqueIdentifierContainingIgnoreCase(query).stream()
+                .filter(subject -> canReadSubject(subject.getSubjectId(), currentUserId))
+                .map(this::toSubjectDto)
+                .toList();
     }
 
-    public SubjectDTO getSubject(Integer subjectId) {
+    public SubjectDTO getSubject(Integer subjectId, Integer currentUserId) {
         SubjectEntity entity = subjectRepository.findById(subjectId).orElseThrow(() -> new java.util.NoSuchElementException("Subject not found: " + subjectId));
+        requireReadSubject(entity.getSubjectId(), currentUserId);
         return toSubjectDto(entity);
     }
 
-    public List<StudySubjectDTO> listStudySubjects(Integer studyId) {
+    public List<StudySubjectDTO> listStudySubjects(Integer studyId, Integer currentUserId) {
+        requireReadAccess(currentUserId, studyId);
         return studySubjectRepository.findByStudyIdOrderByLabel(studyId).stream().map(this::toStudySubjectDto).toList();
     }
 
-    public StudySubjectDTO getStudySubject(Integer studySubjectId) {
+    public StudySubjectDTO getStudySubject(Integer studySubjectId, Integer currentUserId) {
         StudySubjectEntity entity = studySubjectRepository.findById(studySubjectId).orElseThrow(() -> new java.util.NoSuchElementException("StudySubject not found: " + studySubjectId));
+        requireReadAccess(currentUserId, entity.getStudyId());
         return toStudySubjectDto(entity);
     }
 
@@ -77,6 +88,7 @@ public class SubjectService {
     public StudySubjectDTO enrollSubject(EnrollSubjectRequest request, Integer ownerId) {
         if (request.getStudyId() == null) throw new IllegalArgumentException("Study ID is required");
         if (request.getSubjectId() == null) throw new IllegalArgumentException("Subject ID is required");
+        requireWriteAccess(ownerId, request.getStudyId());
         if (!subjectRepository.existsById(request.getSubjectId())) throw new java.util.NoSuchElementException("Subject not found: " + request.getSubjectId());
         StudySubjectEntity entity = new StudySubjectEntity();
         entity.setStudyId(request.getStudyId());
@@ -109,6 +121,8 @@ public class SubjectService {
         if (newStudyId == null) throw new IllegalArgumentException("newStudyId is required");
         StudySubjectEntity entity = studySubjectRepository.findById(studySubjectId).orElseThrow(() -> new java.util.NoSuchElementException("StudySubject not found: " + studySubjectId));
         Integer oldStudyId = entity.getStudyId();
+        requireWriteAccess(updaterId, oldStudyId);
+        requireWriteAccess(updaterId, newStudyId);
         entity.setStudyId(newStudyId);
         entity.setDateUpdated(LocalDateTime.now());
         entity.setUpdateId(updaterId);
@@ -120,6 +134,7 @@ public class SubjectService {
     public void signStudySubject(Integer studySubjectId, String reason, Integer updaterId) {
         StudySubjectEntity entity = studySubjectRepository.findById(studySubjectId)
                 .orElseThrow(() -> new java.util.NoSuchElementException("StudySubject not found: " + studySubjectId));
+        requireWriteAccess(updaterId, entity.getStudyId());
         entity.setDateUpdated(LocalDateTime.now());
         entity.setUpdateId(updaterId);
         studySubjectRepository.save(entity);
@@ -159,6 +174,7 @@ public class SubjectService {
     public void removeStudySubject(Integer id, Integer userId) {
         StudySubjectEntity studySubject = studySubjectRepository.findById(id)
                 .orElseThrow(() -> new java.util.NoSuchElementException("StudySubject not found: " + id));
+        requireWriteAccess(userId, studySubject.getStudyId());
         studySubject.setStatusId(STATUS_REMOVED);
         studySubject.setDateUpdated(LocalDateTime.now());
         studySubject.setUpdateId(userId);
@@ -172,6 +188,7 @@ public class SubjectService {
     public void restoreStudySubject(Integer id, Integer userId) {
         StudySubjectEntity studySubject = studySubjectRepository.findById(id)
                 .orElseThrow(() -> new java.util.NoSuchElementException("StudySubject not found: " + id));
+        requireWriteAccess(userId, studySubject.getStudyId());
         studySubject.setStatusId(STATUS_AVAILABLE);
         studySubject.setDateUpdated(LocalDateTime.now());
         studySubject.setUpdateId(userId);
@@ -204,5 +221,34 @@ public class SubjectService {
         dto.setDateCreated(e.getDateCreated());
         dto.setDateUpdated(e.getDateUpdated());
         return dto;
+    }
+
+    private void requireReadSubject(Integer subjectId, Integer currentUserId) {
+        if (!canReadSubject(subjectId, currentUserId)) {
+            throw new AccessDeniedException("You do not have read access to this subject");
+        }
+    }
+
+    private boolean canReadSubject(Integer subjectId, Integer currentUserId) {
+        if (subjectId == null || currentUserId == null) {
+            return false;
+        }
+        if (currentStudyAccessService.canReadAllStudies(currentUserId)) {
+            return true;
+        }
+        return studySubjectRepository.findBySubjectId(subjectId).stream()
+                .anyMatch(enrollment -> currentStudyAccessService.canReadStudy(currentUserId, enrollment.getStudyId()));
+    }
+
+    private void requireReadAccess(Integer currentUserId, Integer studyId) {
+        if (!currentStudyAccessService.canReadStudy(currentUserId, studyId)) {
+            throw new AccessDeniedException("You do not have read access to this study");
+        }
+    }
+
+    private void requireWriteAccess(Integer currentUserId, Integer studyId) {
+        if (!currentStudyAccessService.canWriteStudy(currentUserId, studyId)) {
+            throw new AccessDeniedException("You do not have write access to this study");
+        }
     }
 }

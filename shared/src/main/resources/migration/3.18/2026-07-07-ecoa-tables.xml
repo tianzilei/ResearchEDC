@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="codex" id="2026-07-07-ecoa-schedule">
+        <createTable tableName="ecoa_schedule">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="study_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_subject_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_event_id" type="INTEGER"/>
+            <column name="questionnaire_version_id" type="VARCHAR(80)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(160)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(1000)"/>
+            <column name="due_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="window_opens_at" type="TIMESTAMP"/>
+            <column name="window_closes_at" type="TIMESTAMP"/>
+            <column name="created_by" type="INTEGER"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="ecoa_schedule" indexName="idx_ecoa_schedule_study_due">
+            <column name="study_id"/>
+            <column name="due_at"/>
+        </createIndex>
+        <createIndex tableName="ecoa_schedule" indexName="idx_ecoa_schedule_subject">
+            <column name="study_subject_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="codex" id="2026-07-07-ecoa-assignment">
+        <createTable tableName="ecoa_assignment">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="schedule_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_subject_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="participant_account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="participant_token_id" type="BIGINT"/>
+            <column name="task_instance_id" type="BIGINT"/>
+            <column name="questionnaire_assignment_id" type="VARCHAR(80)"/>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="due_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="window_opens_at" type="TIMESTAMP"/>
+            <column name="window_closes_at" type="TIMESTAMP"/>
+            <column name="entry_url" type="VARCHAR(500)"/>
+            <column name="completed_at" type="TIMESTAMP"/>
+            <column name="score_summary" type="VARCHAR(1000)"/>
+            <column name="created_by" type="INTEGER"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="TIMESTAMP"/>
+        </createTable>
+        <createIndex tableName="ecoa_assignment" indexName="idx_ecoa_assignment_schedule">
+            <column name="schedule_id"/>
+        </createIndex>
+        <createIndex tableName="ecoa_assignment" indexName="idx_ecoa_assignment_study_status_due">
+            <column name="study_id"/>
+            <column name="status"/>
+            <column name="due_at"/>
+        </createIndex>
+        <createIndex tableName="ecoa_assignment" indexName="idx_ecoa_assignment_participant_status">
+            <column name="participant_account_id"/>
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

@@ -75,7 +75,7 @@ Business behavior:
 - generated study OID defaults to `S_` plus a sanitized uppercase unique identifier, or `S_STUDY`.
 - `featureFlags` defaults to `{}` on create.
 - update study fields by partial request.
-- delete study physically through repository delete.
+- delete study by marking it `Status.DELETED`.
 - update status by setting `statusId`.
 - expose and update study feature flags.
 
@@ -86,7 +86,8 @@ Audit behavior:
 Current business constraints:
 
 - only study name is explicitly required during create.
-- delete is not a soft-delete in `StudyService`; it calls repository delete.
+- delete is status-based in `StudyService`; it persists `Status.DELETED`
+  instead of repository deletion.
 - role/study authorization is not enforced in `StudyService`; it depends on API/session layer and callers.
 
 ## Identity, Roles, And Authentication
@@ -210,14 +211,14 @@ Business behavior:
 - fetch simple conditional display metadata for a section.
 - create and update CRFs.
 - create CRF versions with default `statusId=1`.
-- delete CRF versions by repository delete.
+- delete CRF versions by marking them `Status.DELETED`.
 - update CRF version status.
 
 Current business constraints:
 
 - CRF create/update/version operations do not currently write audit records in `CrfService`.
 - item data type is currently returned as `"text"` in the DTO mapping.
-- deleting a CRF version is physical deletion.
+- deleting a CRF version is status-based removal.
 - CRF metadata management does not enforce lifecycle constraints such as "cannot delete version with captured data" at service level.
 
 ## Data Capture Workflow
@@ -248,12 +249,10 @@ Audit behavior:
 Current business constraints:
 
 - Phase 1 now validates CRF item membership, required fields, regex validation,
-  scalar item data type validation, and non-writable EventCRF statuses before
-  item save.
-- item save does not yet enforce response-set membership or full edit-check /
-  discrepancy lifecycle behavior; response-set membership requires restoring
-  `response_set_id` to module item-form metadata before the JPA save path can
-  validate controlled vocabularies without legacy-table fallback.
+  scalar item data type validation, non-writable EventCRF statuses, and
+  response-set membership before item save.
+- item save does not yet perform full edit-check / discrepancy lifecycle
+  behavior; that remains future productization work.
 - rule lookup is metadata retrieval, not rule execution.
 - attachments use local filesystem storage and directory scanning, which is targeted by the MinIO storage convergence plan.
 
@@ -429,19 +428,19 @@ Business implication:
 
 | ID | Risk | Current Evidence | Recommended Phase |
 |---|---|---|---|
-| BL-1 | Authorization is mostly session-level, not role/study-scope complete. | `SecurityConfig` authenticates `/api/**`; only selected audit endpoints use `@PreAuthorize`. | Phase 1 auth slice |
+| BL-1 | Authorization was mostly session-level, not role/study-scope complete. | Fixed in Phase 1: method-level gates and service-level study scoping now cover the exposed core EDC REST surfaces, including subject/event reads and mutations, datasets, import/export, discrepancy notes, CRF paths, rules, subject groups, filters, and randomization. | Complete |
 | BL-2 | CSRF contract was inconsistent. | Fixed in Phase 1 slice 2 for the current contract: backend CSRF remains disabled and frontend XSRF header injection was removed. | Complete |
 | BL-3 | Study context is missing in several audit records. | event and data capture services often record `studyId=null`. | Phase 1 audit slice |
-| BL-4 | Data capture save was permissive. | Phase 1 now enforces item membership, required fields, regex, scalar type validation, and non-writable EventCRF statuses. Remaining: response-set membership after module metadata carries `response_set_id`, plus broader edit-check/discrepancy lifecycle integration. | Phase 1 data capture hardening |
+| BL-4 | Data capture save was permissive. | Phase 1 now enforces item membership, required fields, regex, scalar type validation, non-writable EventCRF statuses, and response-set membership. Broader edit-check/discrepancy lifecycle integration remains future productization. | Complete for Phase 1 |
 | BL-5 | Local business file storage remains active. | import, export, and attachments all use filesystem paths. | Storage MinIO convergence |
 | BL-6 | Export download did not validate artifact existence/readability. | Fixed in Phase 1 slice 2: `ExportService.getDownload` checks existence/readability and missing artifacts return 404 text. | Complete |
-| BL-7 | Some destructive operations are physical deletes. | study delete and CRF version delete call repository delete. | Product policy decision |
+| BL-7 | Some destructive operations were physical deletes. | Fixed in Phase 1: study delete and CRF-version delete now persist `Status.DELETED` instead of physically deleting rows. | Complete |
 | BL-8 | Non-ODM export formats have no execution path. | Phase 1 now rejects non-ODM export job creation before persistence and the SPA create surfaces only offer ODM XML. CSV/Excel/SAS remain future export productization work. | Export productization |
 
 ## Recommended Next Work
 
-1. Finish Phase 1 auth predictability: define study/role-scope rules; current CSRF contract and global ApiClient 401/403 handling are aligned.
-2. Finish data-capture convergence around module-owned response-set metadata, response-set membership, and broader edit-check/discrepancy lifecycle integration.
+1. Move post-Phase 1 work into bounded productization slices; auth predictability, current CSRF contract alignment, and global ApiClient 401/403 handling are no longer Phase 1 blockers.
+2. Continue data-capture productization around broader edit-check/discrepancy lifecycle integration.
 3. Execute `phase-1-storage-minio-convergence-plan.md` to remove hidden local filesystem dependencies.
-5. Normalize audit study id population for study-scoped mutations.
-6. Decide product policy for physical delete versus status-based removal in study and CRF version management.
+5. Continue audit study id population only where study context is safely derivable.
+6. Run a live bare-host health smoke after intentionally starting the local app, questionnaire, and proxy services.

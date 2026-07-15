@@ -6,9 +6,11 @@ import org.researchedc.module.dataset.dto.CreateDatasetRequest;
 import org.researchedc.module.dataset.dto.DatasetDTO;
 import org.researchedc.module.dataset.entity.DatasetEntity;
 import org.researchedc.module.dataset.service.DatasetService;
+import org.researchedc.config.CoreEdcAuthorityExpressions;
 import org.researchedc.config.CurrentUserUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +32,7 @@ public class DatasetController {
     }
 
     @GetMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<List<DatasetDTO>> listDatasets(
             @RequestParam(required = false) Integer studyId) {
         Integer currentUserId = currentUserUtils.getCurrentUserId();
@@ -40,6 +43,7 @@ public class DatasetController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<DatasetDTO> getDataset(@PathVariable int id) {
         try {
             Integer currentUserId = currentUserUtils.getCurrentUserId();
@@ -50,6 +54,7 @@ public class DatasetController {
     }
 
     @PostMapping
+    @PreAuthorize(CoreEdcAuthorityExpressions.WRITE_EDC_DATA)
     public ResponseEntity<DatasetDTO> createDataset(@RequestBody CreateDatasetRequest request) {
         Integer ownerId = currentUserUtils.getCurrentUserId();
         DatasetEntity entity = datasetService.create(

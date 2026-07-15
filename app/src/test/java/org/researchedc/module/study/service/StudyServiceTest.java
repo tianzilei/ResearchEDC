@@ -175,13 +175,21 @@ class StudyServiceTest {
     }
 
     @Test
-    void deleteStudy_deletesExisting() {
+    void deleteStudy_marksExistingStudyRemoved() {
         StudyEntity existing = createStudy(1, "To Delete");
+        existing.setStatusId(1);
         when(studyRepository.findById(1)).thenReturn(Optional.of(existing));
+        when(studyRepository.save(any(StudyEntity.class)))
+                .thenAnswer(i -> i.getArgument(0));
 
         service.deleteStudy(1, 42);
 
-        verify(studyRepository).delete(existing);
+        assertEquals(5, existing.getStatusId());
+        assertEquals(1, existing.getOldStatusId());
+        assertEquals(42, existing.getUpdateId());
+        assertNotNull(existing.getDateUpdated());
+        verify(studyRepository).save(existing);
+        verify(studyRepository, never()).delete(any());
     }
 
     @Test

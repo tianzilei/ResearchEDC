@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.event.dto.CreateEventDefinitionRequest;
 import org.researchedc.module.event.dto.EventDefinitionDTO;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 
 @ExtendWith(MockitoExtension.class)
 class EventServiceTest {
@@ -35,13 +37,14 @@ class EventServiceTest {
     @Mock private StudyEventDefinitionRepository eventDefinitionRepository;
     @Mock private EventCrfRepository eventCrfRepository;
     @Mock private AuditService auditService;
+    @Mock private CurrentStudyAccessService currentStudyAccessService;
 
     private EventService service;
 
     @BeforeEach
     void setUp() {
         service = new EventService(studyEventRepository,
-                eventDefinitionRepository, eventCrfRepository, auditService);
+                eventDefinitionRepository, eventCrfRepository, auditService, currentStudyAccessService);
     }
 
     private static StudyEventDefinitionEntity createDef(Integer id, Integer studyId, String name) {
@@ -78,8 +81,9 @@ class EventServiceTest {
     void listEventDefinitions_returnsByStudyId() {
         when(eventDefinitionRepository.findByStudyIdOrderByName(1))
                 .thenReturn(List.of(createDef(1, 1, "Screening")));
+        when(currentStudyAccessService.canReadStudy(42, 1)).thenReturn(true);
 
-        List<EventDefinitionDTO> result = service.listEventDefinitions(1);
+        List<EventDefinitionDTO> result = service.listEventDefinitions(1, 42);
 
         assertEquals(1, result.size());
         assertEquals("Screening", result.getFirst().getName());
@@ -94,6 +98,7 @@ class EventServiceTest {
                     if (e.getStudyEventDefinitionId() == null) e.setStudyEventDefinitionId(10);
                     return e;
                 });
+        when(currentStudyAccessService.canWriteStudy(42, 1)).thenReturn(true);
 
         CreateEventDefinitionRequest request = new CreateEventDefinitionRequest();
         request.setStudyId(1);
@@ -116,8 +121,11 @@ class EventServiceTest {
     void listSubjectEvents_returnsBySubjectId() {
         when(studyEventRepository.findByStudySubjectIdOrderByDateStart(100))
                 .thenReturn(List.of(createEvent(1, 100, 1)));
+        when(eventDefinitionRepository.findById(1))
+                .thenReturn(Optional.of(createDef(1, 11, "Screening")));
+        when(currentStudyAccessService.canReadStudy(42, 11)).thenReturn(true);
 
-        List<StudyEventDTO> result = service.listSubjectEvents(100);
+        List<StudyEventDTO> result = service.listSubjectEvents(100, 42);
 
         assertEquals(1, result.size());
         assertEquals(1, result.getFirst().getStudyEventDefinitionId());
@@ -127,8 +135,11 @@ class EventServiceTest {
     void getStudyEvent_whenFound_returnsDto() {
         when(studyEventRepository.findById(1)).thenReturn(
                 Optional.of(createEvent(1, 100, 1)));
+        when(eventDefinitionRepository.findById(1))
+                .thenReturn(Optional.of(createDef(1, 11, "Screening")));
+        when(currentStudyAccessService.canReadStudy(42, 11)).thenReturn(true);
 
-        StudyEventDTO result = service.getStudyEvent(1);
+        StudyEventDTO result = service.getStudyEvent(1, 42);
 
         assertEquals(1, result.getStudyEventId());
         assertEquals(100, result.getStudySubjectId());
@@ -139,15 +150,29 @@ class EventServiceTest {
         when(studyEventRepository.findById(99)).thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class,
-                () -> service.getStudyEvent(99));
+                () -> service.getStudyEvent(99, 42));
+    }
+
+    @Test
+    void getStudyEvent_whenAccessDenied_throwsException() {
+        when(studyEventRepository.findById(1)).thenReturn(Optional.of(createEvent(1, 100, 1)));
+        when(eventDefinitionRepository.findById(1))
+                .thenReturn(Optional.of(createDef(1, 11, "Screening")));
+        when(currentStudyAccessService.canReadStudy(42, 11)).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class, () -> service.getStudyEvent(1, 42));
     }
 
     @Test
     void listEventCrfs_returnsByStudyEventId() {
         when(eventCrfRepository.findByStudyEventId(1))
                 .thenReturn(List.of(createCrf(1, 1, 5)));
+        when(studyEventRepository.findById(1)).thenReturn(Optional.of(createEvent(1, 100, 1)));
+        when(eventDefinitionRepository.findById(1))
+                .thenReturn(Optional.of(createDef(1, 11, "Screening")));
+        when(currentStudyAccessService.canReadStudy(42, 11)).thenReturn(true);
 
-        List<EventCrfDTO> result = service.listEventCrfs(1);
+        List<EventCrfDTO> result = service.listEventCrfs(1, 42);
 
         assertEquals(1, result.size());
         assertEquals(5, result.getFirst().getCrfVersionId());
@@ -157,6 +182,7 @@ class EventServiceTest {
     void scheduleEvent_withValidRequest_savesAndReturns() {
         when(eventDefinitionRepository.findById(1))
                 .thenReturn(Optional.of(createDef(1, 11, "Screening")));
+        when(currentStudyAccessService.canWriteStudy(42, 11)).thenReturn(true);
         when(studyEventRepository.save(any(StudyEventEntity.class)))
                 .thenAnswer(i -> {
                     StudyEventEntity e = i.getArgument(0);
@@ -186,6 +212,9 @@ class EventServiceTest {
     void scheduleEvent_withoutStatusOrWithPlaceholderOrdinal_appliesDefaultsAndNextOrdinal() {
         StudyEventEntity previous = createEvent(1, 100, 1);
         previous.setSampleOrdinal(2);
+        when(eventDefinitionRepository.findById(1))
+                .thenReturn(Optional.of(createDef(1, 11, "Screening")));
+        when(currentStudyAccessService.canWriteStudy(42, 11)).thenReturn(true);
         when(studyEventRepository.findTopByStudyEventDefinitionIdAndStudySubjectIdOrderBySampleOrdinalDesc(1, 100))
                 .thenReturn(Optional.of(previous));
         when(studyEventRepository.save(any(StudyEventEntity.class)))
@@ -235,6 +264,7 @@ class EventServiceTest {
         existing.setDateCreated(LocalDateTime.now().minusDays(1));
         when(eventDefinitionRepository.findById(1))
                 .thenReturn(Optional.of(createDef(1, 11, "Screening")));
+        when(currentStudyAccessService.canWriteStudy(99, 11)).thenReturn(true);
         when(studyEventRepository.findById(1)).thenReturn(Optional.of(existing));
         when(studyEventRepository.save(any(StudyEventEntity.class)))
                 .thenAnswer(i -> i.getArgument(0));
@@ -265,6 +295,7 @@ class EventServiceTest {
         when(studyEventRepository.findById(1)).thenReturn(Optional.of(existing));
         when(eventDefinitionRepository.findById(1))
                 .thenReturn(Optional.of(createDef(1, 11, "Screening")));
+        when(currentStudyAccessService.canWriteStudy(42, 11)).thenReturn(true);
 
         service.completeEvent(1, 42);
 
@@ -288,6 +319,7 @@ class EventServiceTest {
         when(studyEventRepository.findById(1)).thenReturn(Optional.of(existing));
         when(eventDefinitionRepository.findById(1))
                 .thenReturn(Optional.of(createDef(1, 11, "Screening")));
+        when(currentStudyAccessService.canWriteStudy(42, 11)).thenReturn(true);
 
         service.removeStudyEvent(1, 42);
 
@@ -306,6 +338,7 @@ class EventServiceTest {
         when(studyEventRepository.findById(1)).thenReturn(Optional.of(existing));
         when(eventDefinitionRepository.findById(1))
                 .thenReturn(Optional.of(createDef(1, 11, "Screening")));
+        when(currentStudyAccessService.canWriteStudy(42, 11)).thenReturn(true);
 
         service.restoreStudyEvent(1, 42);
 
@@ -324,6 +357,7 @@ class EventServiceTest {
         when(studyEventRepository.findById(1)).thenReturn(Optional.of(createEvent(1, 100, 1)));
         when(eventDefinitionRepository.findById(1))
                 .thenReturn(Optional.of(createDef(1, 11, "Screening")));
+        when(currentStudyAccessService.canWriteStudy(42, 11)).thenReturn(true);
 
         service.removeEventCrf(2, 42);
 
@@ -343,6 +377,7 @@ class EventServiceTest {
         when(studyEventRepository.findById(1)).thenReturn(Optional.of(createEvent(1, 100, 1)));
         when(eventDefinitionRepository.findById(1))
                 .thenReturn(Optional.of(createDef(1, 11, "Screening")));
+        when(currentStudyAccessService.canWriteStudy(42, 11)).thenReturn(true);
 
         service.restoreEventCrf(2, 42);
 

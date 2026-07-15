@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="codex" id="2026-07-15-fhir-connector">
+        <createTable tableName="module_fhir_connector">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="study_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="base_url" type="VARCHAR(500)"/>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="INTEGER"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="module_fhir_connector" indexName="idx_fhir_connector_study">
+            <column name="study_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="codex" id="2026-07-15-fhir-import-record">
+        <createTable tableName="module_fhir_import_record">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="connector_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="resource_type" type="VARCHAR(60)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="external_id" type="VARCHAR(160)"/>
+            <column name="mapped_subject_identifier" type="VARCHAR(80)"/>
+            <column name="mapped_gender" type="VARCHAR(20)"/>
+            <column name="status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payload_json" type="CLOB"/>
+            <column name="review_notes" type="VARCHAR(2000)"/>
+            <column name="created_by" type="INTEGER"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="TIMESTAMP"/>
+        </createTable>
+        <createIndex tableName="module_fhir_import_record" indexName="idx_fhir_record_study_status">
+            <column name="study_id"/>
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

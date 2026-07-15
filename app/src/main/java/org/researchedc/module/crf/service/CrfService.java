@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.researchedc.config.CurrentStudyAccessService;
+import org.researchedc.app.dto.Status;
 import org.researchedc.module.crf.dto.CrfSummaryDTO;
 import org.researchedc.app.dto.CrfVersionDTO;
 import org.researchedc.module.crf.dto.ItemDTO;
@@ -208,10 +209,11 @@ public class CrfService {
 
     @Transactional
     public void deleteVersion(Integer crfVersionId) {
-        if (!crfVersionRepository.existsById(crfVersionId)) {
-            throw new NoSuchElementException("CRF version not found: " + crfVersionId);
-        }
-        crfVersionRepository.deleteById(crfVersionId);
+        CrfVersionEntity entity = crfVersionRepository.findById(crfVersionId)
+                .orElseThrow(() -> new NoSuchElementException("CRF version not found: " + crfVersionId));
+        entity.setStatusId(Status.DELETED.getId());
+        entity.setDateUpdated(LocalDateTime.now());
+        crfVersionRepository.save(entity);
     }
 
     @Transactional

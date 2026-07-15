@@ -1,6 +1,6 @@
 # EDC Convergence Docs Index
 
-**Updated:** 2026-06-27
+**Updated:** 2026-07-07
 
 This directory contains the post-refactor execution plans for converging the current
 ResearchEDC product into a stable, usable EDC baseline before starting the next
@@ -41,8 +41,19 @@ Activation sequence:
 |---|---|---|
 | `phase-0-full-product-audit-plan.md` | First post-refactor execution step: complete audit of verification, workflows, security, UX, deploy/runtime, and observability | Complete |
 | `phase-0-full-product-audit-report.md` | Completed Phase 0 audit findings, verification results, and ordered Phase 1 entry backlog | Complete |
-| `phase-1-edc-usability-convergence-plan.md` | First post-refactor product phase: stabilize the current EDC workflow, deployment, permissions, and operator usability | Active / in progress |
+| `phase-1-edc-usability-convergence-plan.md` | First post-refactor product phase: stabilize the current EDC workflow, deployment, permissions, and operator usability | Complete |
 | `phase-1-storage-minio-convergence-plan.md` | Storage convergence plan to move uploads, generated artifacts, downloads, and questionnaire exports to MinIO-backed object storage | Prepared / pending activation |
+
+## Expansion Roadmap Status
+
+The Phase 1 EDC usability convergence exit gate is closed. The product roadmap
+successor has started under `docs/product/researchedc-final-open-source-modular-plan.md`;
+Module 1, `Notification And Task Engine`, Module 2, `Participant Identity And
+Access`, Module 3, `eCOA/ePRO Productization`, Module 4, `eConsent`, Module 5,
+`Participant Portal / Task Inbox`, Module 6, `Recruit / Prescreen`, Module 7,
+`Analytics Control Plane`, Module 8, `SDV / Remote Monitoring`, Module 9,
+`FHIR / EHR Connector`, and Module 10, `Study Build Toolkit`, are implemented
+as of 2026-07-15.
 
 ## Directory Rules
 

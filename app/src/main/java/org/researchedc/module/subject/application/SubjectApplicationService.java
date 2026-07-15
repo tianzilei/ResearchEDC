@@ -33,20 +33,20 @@ public class SubjectApplicationService {
         this.auditService = auditService;
     }
 
-    public List<SubjectDTO> searchSubjects(String query) {
-        return subjectService.searchSubjects(query);
+    public List<SubjectDTO> searchSubjects(String query, Integer currentUserId) {
+        return subjectService.searchSubjects(query, currentUserId);
     }
 
-    public SubjectDTO getSubject(Integer subjectId) {
-        return subjectService.getSubject(subjectId);
+    public SubjectDTO getSubject(Integer subjectId, Integer currentUserId) {
+        return subjectService.getSubject(subjectId, currentUserId);
     }
 
-    public List<StudySubjectDTO> listStudySubjects(Integer studyId) {
-        return subjectService.listStudySubjects(studyId);
+    public List<StudySubjectDTO> listStudySubjects(Integer studyId, Integer currentUserId) {
+        return subjectService.listStudySubjects(studyId, currentUserId);
     }
 
-    public StudySubjectDTO getStudySubject(Integer studySubjectId) {
-        return subjectService.getStudySubject(studySubjectId);
+    public StudySubjectDTO getStudySubject(Integer studySubjectId, Integer currentUserId) {
+        return subjectService.getStudySubject(studySubjectId, currentUserId);
     }
 
     @Transactional

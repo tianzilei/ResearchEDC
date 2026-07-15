@@ -38,14 +38,18 @@ public class EventController {
     }
 
     @GetMapping("/definitions")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<List<EventDefinitionDTO>> listDefinitions(
             @RequestParam Integer studyId) {
-        return ResponseEntity.ok(eventService.listEventDefinitions(studyId));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(eventService.listEventDefinitions(studyId, currentUserId));
     }
 
     @GetMapping("/definitions/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<EventDefinitionDTO> getEventDefinition(@PathVariable Integer id) {
-        return ResponseEntity.ok(eventService.getEventDefinition(id));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(eventService.getEventDefinition(id, currentUserId));
     }
 
     @PostMapping("/definitions")
@@ -74,24 +78,32 @@ public class EventController {
     }
 
     @GetMapping("/by-subject")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<List<StudyEventDTO>> listSubjectEvents(
             @RequestParam Integer studySubjectId) {
-        return ResponseEntity.ok(eventService.listSubjectEvents(studySubjectId));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(eventService.listSubjectEvents(studySubjectId, currentUserId));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<StudyEventDTO> getStudyEvent(@PathVariable Integer id) {
-        return ResponseEntity.ok(eventService.getStudyEvent(id));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(eventService.getStudyEvent(id, currentUserId));
     }
 
     @GetMapping("/{id}/crfs")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<List<EventCrfDTO>> listEventCrfs(@PathVariable Integer id) {
-        return ResponseEntity.ok(eventService.listEventCrfs(id));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(eventService.listEventCrfs(id, currentUserId));
     }
 
     @GetMapping("/crfs/{crfId}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<EventCrfDTO> getEventCrf(@PathVariable Integer crfId) {
-        return ResponseEntity.ok(eventService.getEventCrf(crfId));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(eventService.getEventCrf(crfId, currentUserId));
     }
 
     @PostMapping

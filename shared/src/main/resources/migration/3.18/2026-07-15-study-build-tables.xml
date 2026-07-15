@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="codex" id="2026-07-15-study-template">
+        <createTable tableName="module_study_template">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(160)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(1000)"/>
+            <column name="category" type="VARCHAR(80)"/>
+            <column name="protocol_type" type="VARCHAR(30)"/>
+            <column name="phase" type="VARCHAR(30)"/>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="INTEGER"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="defaults_json" type="CLOB"/>
+        </createTable>
+        <createIndex tableName="module_study_template" indexName="idx_study_template_active_name">
+            <column name="active"/>
+            <column name="name"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

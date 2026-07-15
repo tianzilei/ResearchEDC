@@ -453,17 +453,23 @@ class CrfServiceTest {
     // --- deleteVersion ---
 
     @Test
-    void deleteVersion_deletesExisting() {
-        when(crfVersionRepository.existsById(1)).thenReturn(true);
+    void deleteVersion_marksExistingRemoved() {
+        CrfVersionEntity existing = createCrfVersionEntity(1, 1, "v1");
+        when(crfVersionRepository.findById(1)).thenReturn(Optional.of(existing));
+        when(crfVersionRepository.save(any(CrfVersionEntity.class)))
+                .thenAnswer(i -> i.getArgument(0));
 
         service.deleteVersion(1);
 
-        verify(crfVersionRepository).deleteById(1);
+        assertEquals(5, existing.getStatusId());
+        assertNotNull(existing.getDateUpdated());
+        verify(crfVersionRepository).save(existing);
+        verify(crfVersionRepository, never()).deleteById(anyInt());
     }
 
     @Test
     void deleteVersion_whenNotFound_throwsException() {
-        when(crfVersionRepository.existsById(99)).thenReturn(false);
+        when(crfVersionRepository.findById(99)).thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class, () -> service.deleteVersion(99));
     }

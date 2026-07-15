@@ -92,4 +92,20 @@
     <include file="migration/3.18/2026-06-24-odm-contract-version.xml"/>
     <!-- Data capture convergence: module-owned response-set metadata for item save validation -->
     <include file="migration/3.18/2026-07-01-module-ifm-response-set-id.xml"/>
+    <!-- Platform foundation: notification and task engine -->
+    <include file="migration/3.18/2026-07-07-task-engine-tables.xml"/>
+    <!-- Participant foundation: participant identity and access -->
+    <include file="migration/3.18/2026-07-07-participant-access-tables.xml"/>
+    <!-- eCOA/ePRO productization: schedules, assignments, adherence -->
+    <include file="migration/3.18/2026-07-07-ecoa-tables.xml"/>
+    <!-- eConsent: templates, versions, signatures, signed artifacts -->
+    <include file="migration/3.18/2026-07-07-econsent-tables.xml"/>
+    <!-- Recruit/prescreen: candidate intake and conversion workflow -->
+    <include file="migration/3.18/2026-07-15-recruit-tables.xml"/>
+    <!-- SDV/remote monitoring: event CRF source data verification workflow -->
+    <include file="migration/3.18/2026-07-15-sdv-tables.xml"/>
+    <!-- FHIR/EHR connector: connector configuration and import review records -->
+    <include file="migration/3.18/2026-07-15-fhir-tables.xml"/>
+    <!-- Study build toolkit: reusable study templates and guided setup -->
+    <include file="migration/3.18/2026-07-15-study-build-tables.xml"/>
 </databaseChangeLog>

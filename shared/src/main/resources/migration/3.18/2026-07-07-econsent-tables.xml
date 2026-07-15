@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="codex" id="2026-07-07-consent-template">
+        <createTable tableName="consent_template">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="study_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(80)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(160)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(1000)"/>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="INTEGER"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="consent_template" indexName="idx_consent_template_study_code">
+            <column name="study_id"/>
+            <column name="code"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="codex" id="2026-07-07-consent-version">
+        <createTable tableName="consent_version">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="template_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version_label" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="body_text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="published_date" type="TIMESTAMP"/>
+            <column name="created_by" type="INTEGER"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="consent_version" indexName="idx_consent_version_template">
+            <column name="template_id"/>
+        </createIndex>
+        <createIndex tableName="consent_version" indexName="idx_consent_version_study_status">
+            <column name="study_id"/>
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="codex" id="2026-07-07-consent-assignment">
+        <createTable tableName="consent_assignment">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="study_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_subject_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="consent_version_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="participant_account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="participant_token_id" type="BIGINT"/>
+            <column name="task_instance_id" type="BIGINT"/>
+            <column name="status" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="due_at" type="TIMESTAMP"/>
+            <column name="entry_url" type="VARCHAR(500)"/>
+            <column name="participant_name" type="VARCHAR(160)"/>
+            <column name="participant_signature" type="VARCHAR(240)"/>
+            <column name="participant_signed_at" type="TIMESTAMP"/>
+            <column name="participant_evidence" type="VARCHAR(1000)"/>
+            <column name="countersigned_by" type="INTEGER"/>
+            <column name="countersignature" type="VARCHAR(240)"/>
+            <column name="countersigned_at" type="TIMESTAMP"/>
+            <column name="artifact_name" type="VARCHAR(180)"/>
+            <column name="artifact_text" type="TEXT"/>
+            <column name="created_by" type="INTEGER"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="TIMESTAMP"/>
+        </createTable>
+        <createIndex tableName="consent_assignment" indexName="idx_consent_assignment_study_status">
+            <column name="study_id"/>
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="consent_assignment" indexName="idx_consent_assignment_participant_status">
+            <column name="participant_account_id"/>
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="consent_assignment" indexName="idx_consent_assignment_subject_version">
+            <column name="study_subject_id"/>
+            <column name="consent_version_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

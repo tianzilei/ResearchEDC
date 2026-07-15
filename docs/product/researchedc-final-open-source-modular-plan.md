@@ -1,7 +1,7 @@
 # ResearchEDC Final R&D Plan
 
 **Created:** 2026-06-26  
-**Status:** Final engineering baseline  
+**Status:** Module 10 complete
 **Planning horizon:** 12 months (`2026-07` to `2027-06`)  
 **Document role:** single retained R&D planning document
 
@@ -218,6 +218,8 @@ This section defines the engineering expectations for each planned module.
 
 ## 9. Module 1: Notification And Task Engine
 
+**Status:** Complete as of 2026-07-07
+
 ### 9.1 Goal
 
 Create a reusable platform service for scheduled work, reminders, and due-state tracking.
@@ -259,12 +261,42 @@ Create a reusable platform service for scheduled work, reminders, and due-state 
 
 ### 9.7 Verification
 
+Completed implementation:
+
+- `task` Spring Modulith module with template and task-instance persistence
+- task lifecycle states: `PENDING`, `DUE`, `OVERDUE`, `COMPLETED`,
+  `CANCELLED`, and `EXPIRED`
+- REST API under `/api/v1/tasks` for template listing/creation, task
+  listing/creation, detail lookup, complete, cancel, overdue transition, and
+  reminder dispatch
+- service-level study read/write scoping through the current study access
+  service
+- audit hooks for template creation, task creation, completion, cancellation,
+  and reminder dispatch
+- reminder dispatch abstraction with a no-op provider, intentionally avoiding
+  any retired mail-delivery path
+- Liquibase schema for `task_template` and `task_instance`
+- minimal SPA task inbox at `/app/tasks`, with study/mine filters, create,
+  complete, cancel, and localized English/Chinese copy
+
+Verification:
+
+- `mvn test -pl app -am -Dtest=TaskServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+  passed: 131 tests
+- `corepack pnpm@11.1.2 -C frontend typecheck` passed
+
+Remaining work moves to the next roadmap module or later task-engine expansion:
+real reminder providers, scheduler wiring, and downstream automatic task
+generation from participant-facing modules.
+
 - unit tests for state transitions
 - service tests for due/expire/complete logic
 - controller tests for list and update endpoints
 - frontend tests for task list rendering
 
 ## 10. Module 2: Participant Identity And Access
+
+**Status:** Complete as of 2026-07-07
 
 ### 10.1 Goal
 
@@ -311,6 +343,35 @@ Create a reusable participant-facing access layer for future participant modules
 - permission tests
 - controller tests for bootstrap/entry
 - negative-path tests for expired and invalid links
+
+Completed implementation:
+
+- `participantaccess` Spring Modulith module with participant accounts linked to
+  `module_study_subject`
+- participant access-token persistence with hashed token storage, expiry,
+  revocation, use tracking, and status lifecycle
+- token issuance returns the raw token only once and stores only the hash
+- public bootstrap endpoint under `/api/v1/participant-access/public/bootstrap`
+  for participant entry validation
+- secured operator endpoints under `/api/v1/participant-access` for account
+  creation/listing, token issuance/listing, revocation, and expiry sweep
+- service-level study read/write scoping through the current study access
+  service
+- audit hooks for account creation, token issuance, token use, token revocation,
+  and token expiry
+- Liquibase schema for `participant_account` and `participant_access_token`
+- minimal SPA operator page at `/app/participants/access`
+- participant entry route at `/participant/access/:token`
+
+Verification:
+
+- `mvn test -pl app -am -Dtest=ParticipantAccessServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+  passed: 134 tests
+- `corepack pnpm@11.1.2 -C frontend typecheck` passed
+
+Remaining work moves to downstream participant modules: real participant portal
+session state, eCOA/ePRO task consumption, eConsent flows, and optional
+participant account credentials.
 
 ## 11. Module 3: eCOA / ePRO Productization
 
@@ -368,6 +429,42 @@ Turn the current questionnaire capability into a scheduled, participant-facing w
 - frontend tests for participant and operator flows
 - metrics/adherence query tests
 
+Completed implementation:
+
+- `ecoa` Spring Modulith module with schedule and assignment persistence
+- study-scoped schedule creation tied to `studyId`, `studySubjectId`, optional
+  `studyEventId`, questionnaire version ID, due date, and optional due window
+- schedule creation resolves or creates a participant account, issues a
+  participant access token, creates an eCOA assignment, and creates a linked task
+  engine task with `ECOA_ASSIGNMENT` target type
+- operator REST endpoints under `/api/v1/ecoa` for schedules, assignments,
+  adherence summaries, completion recording, cancellation, and overdue expiry
+- participant REST endpoints under `/api/v1/ecoa/public/**` scoped by the raw
+  participant access token for listing and completing active eCOA assignments
+- public security permit rules for participant bootstrap and eCOA participant
+  assignment endpoints
+- adherence summary counters for total, pending, in-progress, completed,
+  overdue, and completion rate
+- Liquibase schema for `ecoa_schedule` and `ecoa_assignment`
+- SPA operator dashboard at `/app/questionnaires/ecoa` with schedule creation,
+  one-time participant-link display, adherence metrics, schedule visibility,
+  overdue/status indicators, and operator complete/cancel actions
+- participant entry page now displays active eCOA assignments for the shared
+  access token and supports participant completion through the same token
+
+Verification:
+
+- `mvn test -pl app -am -Dtest=EcoaServiceTest,ParticipantAccessServiceTest,TaskServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+  passed: 160 tests
+- `corepack pnpm@11.1.2 -C frontend typecheck` passed
+- `corepack pnpm@11.1.2 -C frontend test --run` passed: 29 tests
+- `xmllint --noout shared/src/main/resources/migration/3.18/2026-07-07-ecoa-tables.xml shared/src/main/resources/migration/3.18/release.xml`
+  passed
+
+Remaining work moves to later hardening: direct questionnaire-service callback
+or webhook ingestion for scored payloads, richer participant questionnaire fill
+embedding, and reminder dispatch beyond the task/reminder foundation.
+
 ## 12. Module 4: eConsent
 
 ### 12.1 Goal
@@ -419,7 +516,50 @@ Build a complete consent workflow with versioning, signing, countersigning, and 
 - signature workflow tests
 - frontend tests for review/sign/status paths
 
+Completed implementation:
+
+- `econsent` Spring Modulith module with consent templates, versions, and
+  assignments
+- consent version lifecycle with draft and published states
+- participant assignment workflow that resolves or creates a participant
+  account, issues a participant access token, and creates a linked task engine
+  task with `CONSENT_ASSIGNMENT` target type
+- participant-token-scoped public endpoints under `/api/v1/econsent/public/**`
+  for listing active consent tasks and submitting participant signatures
+- operator endpoints under `/api/v1/econsent` for templates, versions,
+  publishing, assignment, countersignature, assignment status, and artifact
+  retrieval
+- signature evidence capture for participant name, participant signature,
+  browser evidence, signature timestamp, countersignature, countersigner, and
+  countersign timestamp
+- signed artifact generation as a retrievable UTF-8 text artifact stored with
+  the consent assignment
+- audit hooks for template creation, version creation/publish, assignment,
+  participant signature, and countersignature/artifact generation
+- Liquibase schema for `consent_template`, `consent_version`, and
+  `consent_assignment`
+- SPA operator page at `/app/questionnaires/econsent` with template/version
+  management, publish, assignment, participant link display, status view,
+  countersignature, and artifact view
+- participant entry page now displays active consent tasks and supports
+  participant review/sign through the shared access token
+
+Verification:
+
+- `mvn test -pl app -am -Dtest=EconsentServiceTest,ParticipantAccessServiceTest,TaskServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+  passed: 171 tests
+- `corepack pnpm@11.1.2 -C frontend typecheck` passed
+- `corepack pnpm@11.1.2 -C frontend test --run` passed: 29 tests
+- `xmllint --noout shared/src/main/resources/migration/3.18/2026-07-07-econsent-tables.xml shared/src/main/resources/migration/3.18/release.xml`
+  passed
+
+Remaining work moves to later hardening: PDF rendering/storage integration,
+formal re-consent queue automation, richer identity-proofing evidence, and
+artifact export bundling.
+
 ## 13. Module 5: Participant Portal / Task Inbox
+
+**Status:** Complete as of 2026-07-15
 
 ### 13.1 Goal
 
@@ -460,11 +600,39 @@ Provide one coherent participant-facing shell for tasks and statuses.
 
 ### 13.7 Verification
 
+Completed implementation:
+
+- `participantportal` Spring Modulith module with a public token-scoped
+  bootstrap API under `/api/v1/participant-portal/public/bootstrap`
+- aggregated participant summary DTO for total, actionable, questionnaire,
+  consent, and overdue task counts
+- module-aware task DTOs that group eCOA/ePRO assignments and eConsent
+  assignments into one due-date ordered participant task list
+- service composition through the shared participant access token contract and
+  existing eCOA/eConsent public action endpoints
+- public security permit rule for the participant portal bootstrap endpoint
+- SPA participant entry page at `/participant/access/:token` now renders a
+  unified participant portal shell with summary cards, a single task inbox,
+  consent body preview/signing, and questionnaire completion actions
+- localized English/Chinese copy for the participant portal task inbox
+
+Verification:
+
+- `mvn test -pl app -am -Dtest=ParticipantPortalServiceTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+  passed: 3 tests
+- `corepack pnpm@11.1.2 -C frontend typecheck` passed
+
 - bootstrap aggregation tests
 - frontend navigation tests
 - mobile rendering regression checks
 
+Remaining work moves to later participant hardening: richer participant session
+state, deeper questionnaire-service fill embedding, formal accessibility/mobile
+visual regression checks, and participant account credentials.
+
 ## 14. Module 6: Recruit / Prescreen
+
+**Status:** Complete as of 2026-07-15
 
 ### 14.1 Goal
 
@@ -505,11 +673,45 @@ Create an early-stage candidate intake and conversion workflow.
 
 ### 14.7 Verification
 
+Completed implementation:
+
+- `recruit` Spring Modulith module with candidate and prescreen-result
+  persistence
+- secured REST API under `/api/v1/recruit` for candidate list/create/detail,
+  prescreen recording, rejection, and conversion
+- candidate lifecycle states: `NEW`, `PRESCREENED`, `ELIGIBLE`,
+  `INELIGIBLE`, `CONVERTED`, and `REJECTED`
+- prescreen decisions: `ELIGIBLE`, `INELIGIBLE`, and `NEEDS_REVIEW`, with score
+  and criteria/review notes
+- conversion service that turns an eligible candidate into the existing
+  subject/enrollment workflow through the subject module service contract
+- audit hooks for candidate creation, prescreen decision, rejection, and
+  conversion
+- Liquibase schema for `module_recruit_candidate` and
+  `module_prescreen_result`
+- SPA recruit queue at `/app/recruit` with candidate creation, status filter,
+  prescreen, rejection, and conversion actions
+- localized English/Chinese recruit queue copy
+
+Verification:
+
+- `mvn test -pl app -am -Dtest=RecruitServiceTest,ParticipantPortalServiceTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+  passed: 9 tests
+- `corepack pnpm@11.1.2 -C frontend typecheck` passed
+- `xmllint --noout shared/src/main/resources/migration/3.18/2026-07-15-recruit-tables.xml shared/src/main/resources/migration/3.18/release.xml`
+  passed
+
 - conversion tests
 - public form tests
 - queue filtering tests
 
+Remaining work moves to later recruit hardening: public prescreen form hosting,
+rule/checklist-driven eligibility scoring, duplicate candidate detection, and
+candidate communication hooks.
+
 ## 15. Module 7: Analytics Control Plane
+
+**Status:** Complete as of 2026-07-15
 
 ### 15.1 Goal
 
@@ -551,11 +753,37 @@ Provide in-product operational visibility across participant and site workflows.
 
 ### 15.7 Verification
 
+Completed implementation:
+
+- `analytics` Spring Modulith module with a study-scoped read API under
+  `/api/v1/analytics/dashboard`
+- permission-aware dashboard aggregation through the current study access
+  service
+- enrollment metrics for total enrolled, active subjects, and subjects created
+  in the last 30 days
+- participant-work metrics from eCOA adherence and recruit candidate state
+- operations metrics from the existing dashboard task summary
+- SPA analytics dashboard at `/app/analytics` with grouped metric cards for
+  enrollment, participant work, and operations
+- localized English/Chinese analytics navigation and metric copy
+
+Verification:
+
+- `mvn test -pl app -am -Dtest=AnalyticsServiceTest,RecruitServiceTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+  passed: 9 tests
+- `corepack pnpm@11.1.2 -C frontend typecheck` passed
+
 - aggregate calculation tests
 - dashboard API tests
 - frontend visualization tests
 
+Remaining work moves to later analytics hardening: persistent analytics event
+capture, trend windows, site-level drilldowns, charting, and performance-focused
+read models for large studies.
+
 ## 16. Module 8: SDV / Remote Monitoring
+
+**Status:** Complete as of 2026-07-15
 
 ### 16.1 Goal
 
@@ -596,9 +824,37 @@ Create a monitor-facing verification workflow.
 
 ### 16.7 Verification
 
+Completed implementation:
+
+- `sdv` Spring Modulith module with event-CRF SDV review persistence
+- secured REST API under `/api/v1/sdv` for study-scoped review queues,
+  event-CRF review creation, and SDV status updates
+- SDV lifecycle states: `PENDING`, `VERIFIED`, and `REQUIRES_CHANGES`
+- event-CRF compatibility update that writes `sdv_status`, `sdv_update_id`, and
+  `date_updated` when reviews are completed
+- service-level study scoping through event CRF -> study subject -> study
+  resolution
+- audit hooks for SDV queue creation and status updates
+- Liquibase schema for `module_sdv_review`
+- SPA SDV queue at `/app/sdv` with status filter, manual event-CRF queueing,
+  review notes, and verify/requires-changes actions
+- localized English/Chinese SDV navigation and workflow copy
+
+Verification:
+
+- `mvn test -pl app -am -Dtest=SdvServiceTest,AnalyticsServiceTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+  passed: 7 tests
+- `corepack pnpm@11.1.2 -C frontend typecheck` passed
+- `xmllint --noout shared/src/main/resources/migration/3.18/2026-07-15-sdv-tables.xml shared/src/main/resources/migration/3.18/release.xml`
+  passed
+
 - SDV state transition tests
 - queue/filter tests
 - frontend review workflow tests
+
+Remaining work moves to later SDV hardening: field/item-level SDV flags,
+monitor worklists generated automatically from completed CRFs, discrepancy
+linkage, and richer remote review workspace.
 
 ## 17. Module 9: FHIR / EHR Connector
 
@@ -643,9 +899,28 @@ Build the first narrow interoperability module with safe provenance and reconcil
 
 ### 17.7 Verification
 
-- mapping tests
-- import pipeline tests
-- reconciliation flow tests
+Implemented on 2026-07-15:
+
+- backend `fhir` Modulith module with connector configuration, FHIR `Patient`
+  JSON ingestion, mapping to external ID / subject identifier / gender fields,
+  import status tracking, reconciliation, and audit records
+- Liquibase table migration for `module_fhir_connector` and
+  `module_fhir_import_record`
+- SPA FHIR dashboard at `/app/fhir` with connector creation, Patient JSON
+  submission, status filtering, and reconciliation workflow
+- localized English/Chinese navigation and workflow copy
+
+Verification:
+
+- `mvn test -pl app -am -Dtest=FhirServiceTest,SdvServiceTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+  passed: 10 tests
+- `corepack pnpm@11.1.2 -C frontend typecheck` passed
+- `xmllint --noout shared/src/main/resources/migration/3.18/2026-07-15-fhir-tables.xml shared/src/main/resources/migration/3.18/release.xml`
+  passed
+
+Remaining work moves to later interoperability hardening: Encounter and
+Observation ingestion, subject/event/data capture reconciliation, connector
+retry semantics, richer provenance display, and external system authentication.
 
 ## 18. Module 10: Study Build Toolkit
 
@@ -686,8 +961,27 @@ Reduce configuration friction for repeated study setup.
 
 ### 18.7 Verification
 
-- template application tests
-- wizard regression tests
+Implemented on 2026-07-15:
+
+- backend `studybuild` Modulith module with reusable study templates,
+  JSON-backed defaults, template listing/creation, and application through the
+  existing `StudyService.createStudy` contract
+- Liquibase table migration for `module_study_template`
+- SPA Study Build Toolkit at `/app/study-build` with template listing,
+  defaults preview, template creation, and create-study-from-template workflow
+- localized English/Chinese navigation and workflow copy
+
+Verification:
+
+- `mvn test -pl app -am -Dtest=StudyBuildServiceTest,FhirServiceTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false`
+  passed: 10 tests
+- `corepack pnpm@11.1.2 -C frontend typecheck` passed
+- `xmllint --noout shared/src/main/resources/migration/3.18/2026-07-15-study-build-tables.xml shared/src/main/resources/migration/3.18/release.xml`
+  passed
+
+Remaining work moves to later study-startup hardening: versioned template
+application rules, CRF/rule/randomization defaults, amendment assistance, and
+wizard regression coverage.
 
 ## 19. 12-Month R&D Roadmap
 

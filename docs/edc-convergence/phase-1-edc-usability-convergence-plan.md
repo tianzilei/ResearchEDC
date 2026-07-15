@@ -1,7 +1,7 @@
 # Phase 1 EDC Usability Convergence Plan
 
 **Created:** 2026-06-26
-**Status:** Active / in progress
+**Status:** Complete
 **Predecessor:** `docs/edc-convergence/phase-0-full-product-audit-plan.md`
 **Successor:** `docs/product/researchedc-final-open-source-modular-plan.md`
 **Release posture:** no RC tag, no publish action, no new module family work until the
@@ -213,6 +213,53 @@ This phase is complete when:
 5. starting `Notification And Task Engine` would no longer be blocked by basic
    product instability
 
+## Completion Snapshot
+
+Phase 1 closed on 2026-07-07. The current baseline has a coherent operator path
+across study, subject, event, CRF/data-capture, discrepancy, and export
+surfaces; the major authorization, destructive-delete, data-capture validation,
+export, and runtime-readiness gaps identified by Phase 0 have been resolved or
+bounded as future product work.
+
+Closed outcomes:
+
+1. core workflow continuity repaired for event definition creation, subject to
+   event/CRF navigation, event scheduling defaults, CRF routing, and export
+   artifact handling
+2. module endpoint role gates and service-level study scoping applied across
+   the exposed core EDC surfaces, including subject, event, dataset,
+   discrepancy, import, export, CRF, rules, subject groups, filters, and
+   randomization
+3. study and CRF-version delete paths now use status-based removal instead of
+   physical repository deletion
+4. data-capture writes now validate CRF item membership, writable EventCRF
+   state, required values, regex/scalar type constraints, and response-set
+   membership
+5. common REST errors include request correlation ids, and the frontend API
+   client preserves and displays structured error details in the repaired
+   operator paths
+6. the event workflow UI text is routed through i18n keys
+7. bare-host deployment checks are documented and script-level validation passes
+   on Linux; `deploy-bare.sh health` correctly reports unavailable health when
+   the local services are stopped
+
+Verification evidence:
+
+| Area | Command | Result |
+|---|---|---|
+| Backend app tests | `mvn test -pl app -am -Dsurefire.failIfNoSpecifiedTests=false` | PASS, 638 tests |
+| Focused auth/scoping tests | `mvn test -pl app -am -Dtest=SubjectServiceTest,EventServiceTest,DatasetServiceTest,CoreControllerAuthorizationTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` | PASS, 166 tests |
+| Study/CRF delete policy tests | `mvn test -pl app -am -Dtest=StudyServiceTest,CrfServiceTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` | PASS, 43 tests |
+| Frontend typecheck | `corepack pnpm@11.1.2 -C frontend typecheck` | PASS |
+| Frontend tests | `corepack pnpm@11.1.2 -C frontend test --run` | PASS, 29 tests |
+| Questionnaire service | `UV_CACHE_DIR=/tmp/researchedc-uv-cache UV_PROJECT_ENVIRONMENT=/tmp/researchedc-q-uv-venv uv run --group dev pytest app/tests/ -v` | PASS, 40 tests |
+| Liquibase XML | `xmllint --noout shared/src/main/resources/migration/3.18/2026-07-01-module-ifm-response-set-id.xml shared/src/main/resources/migration/3.18/release.xml` | PASS |
+| Bare deploy static checks | `bash -n deploy-bare.sh`; `bash deploy-bare.sh help`; `bash deploy-bare.sh status` | PASS; status showed services stopped |
+
+Non-blocking follow-up work is intentionally outside Phase 1: storage/MinIO
+convergence, richer edit-check/discrepancy lifecycle productization, live
+bare-host smoke after services are intentionally started, and new module R&D.
+
 
 ## Progress Log
 
@@ -276,6 +323,28 @@ This phase is complete when:
 - Verified response-set membership with `xmllint --noout shared/src/main/resources/migration/3.18/2026-07-01-module-ifm-response-set-id.xml shared/src/main/resources/migration/3.18/release.xml` and `mvn test -pl app -am -Dtest=DataCaptureServiceTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (29 tests passed).
 - Continued export convergence for BL-8. Non-ODM app export formats now fail fast before job persistence instead of creating permanently pending jobs, and SPA export create controls only offer ODM XML until CSV/Excel/SAS have real execution paths.
 - Verified export format contract with `mvn test -pl app -am -Dtest=ExportServiceTest,ExportControllerTest,ModulithVerificationTest -Dsurefire.failIfNoSpecifiedTests=false` (33 tests passed) and `corepack pnpm@11.1.2 -C frontend typecheck` (0 errors). Plain `pnpm -C frontend typecheck` failed locally because the active shim was pnpm 11.3.0 while the frontend package pins pnpm 11.1.2.
+
+### 2026-07-07
+
+- Closed the remaining Phase 1 authorization holes for the exposed subject,
+  event, and dataset surfaces. Subject and event read endpoints now have
+  method-level gates and service-level study access checks, dataset endpoints
+  retain explicit controller gates, and application-service wrappers no longer
+  expose unauthenticated read overloads.
+- Changed destructive study and CRF-version removal to status-based deletion:
+  study delete and CRF-version delete now persist `Status.DELETED` instead of
+  physically deleting rows through repositories.
+- Localized the event workflow page through `react-i18next` keys in the English
+  and Chinese locale bundles.
+- Extended controller authorization reflection coverage to 110 secured methods
+  and added targeted service tests for the new study-scoping and delete-policy
+  behavior.
+- Verified Phase 1 closure with the full app test suite (638 tests), frontend
+  typecheck and Vitest (29 tests), questionnaire-service pytest (40 tests),
+  Liquibase XML validation, and bare deploy static/status checks. A live
+  `deploy-bare.sh health` pass remains dependent on intentionally running the
+  local services; with services stopped it reports the expected unavailable
+  actuator/proxy health.
 
 ## Next Phase
 

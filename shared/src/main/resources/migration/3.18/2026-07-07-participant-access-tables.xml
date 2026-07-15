@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="codex" id="2026-07-07-participant-account">
+        <createTable tableName="participant_account">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="study_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_subject_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subject_id" type="INTEGER"/>
+            <column name="display_label" type="VARCHAR(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="preferred_locale" type="VARCHAR(20)"/>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="INTEGER"/>
+            <column name="created_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="TIMESTAMP"/>
+        </createTable>
+        <createIndex tableName="participant_account" indexName="idx_participant_account_study">
+            <column name="study_id"/>
+        </createIndex>
+        <createIndex tableName="participant_account" indexName="idx_participant_account_study_subject" unique="true">
+            <column name="study_subject_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="codex" id="2026-07-07-participant-access-token">
+        <createTable tableName="participant_access_token">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="participant_account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="study_subject_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token_hash" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="scope" type="VARCHAR(60)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="issued_by" type="INTEGER"/>
+            <column name="issued_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expires_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_used_at" type="TIMESTAMP"/>
+            <column name="revoked_by" type="INTEGER"/>
+            <column name="revoked_date" type="TIMESTAMP"/>
+            <column name="revocation_reason" type="VARCHAR(500)"/>
+        </createTable>
+        <createIndex tableName="participant_access_token" indexName="idx_participant_token_hash" unique="true">
+            <column name="token_hash"/>
+        </createIndex>
+        <createIndex tableName="participant_access_token" indexName="idx_participant_token_account">
+            <column name="participant_account_id"/>
+        </createIndex>
+        <createIndex tableName="participant_access_token" indexName="idx_participant_token_status_expiry">
+            <column name="status"/>
+            <column name="expires_at"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

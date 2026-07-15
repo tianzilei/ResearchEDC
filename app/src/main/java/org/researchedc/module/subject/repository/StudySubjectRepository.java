@@ -32,4 +32,6 @@ public interface StudySubjectRepository extends JpaRepository<StudySubjectEntity
     long countByStudyId(Integer studyId);
 
     long countByStudyIdAndStatusId(Integer studyId, Integer statusId);
+
+    long countByStudyIdAndDateCreatedAfter(Integer studyId, java.time.LocalDateTime dateCreated);
 }

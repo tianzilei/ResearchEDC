@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.event.service.EventService;
 import org.researchedc.module.subject.dto.CreateSubjectRequest;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 
 @ExtendWith(MockitoExtension.class)
 class SubjectServiceTest {
@@ -33,13 +35,14 @@ class SubjectServiceTest {
     @Mock private StudySubjectRepository studySubjectRepository;
     @Mock private EventService eventService;
     @Mock private AuditService auditService;
+    @Mock private CurrentStudyAccessService currentStudyAccessService;
 
     private SubjectService service;
 
     @BeforeEach
     void setUp() {
         service = new SubjectService(subjectRepository, studySubjectRepository,
-                eventService, auditService);
+                eventService, auditService, currentStudyAccessService);
     }
 
     @Test
@@ -47,8 +50,9 @@ class SubjectServiceTest {
         SubjectEntity s = createSubject(1, "SUBJ-001");
         when(subjectRepository.findByUniqueIdentifierContainingIgnoreCase("001"))
                 .thenReturn(List.of(s));
+        when(currentStudyAccessService.canReadAllStudies(42)).thenReturn(true);
 
-        List<SubjectDTO> result = service.searchSubjects("001");
+        List<SubjectDTO> result = service.searchSubjects("001", 42);
 
         assertEquals(1, result.size());
         assertEquals("SUBJ-001", result.getFirst().getUniqueIdentifier());
@@ -59,7 +63,7 @@ class SubjectServiceTest {
         when(subjectRepository.findByUniqueIdentifierContainingIgnoreCase("ZZZ"))
                 .thenReturn(List.of());
 
-        List<SubjectDTO> result = service.searchSubjects("ZZZ");
+        List<SubjectDTO> result = service.searchSubjects("ZZZ", 42);
 
         assertTrue(result.isEmpty());
     }
@@ -68,8 +72,9 @@ class SubjectServiceTest {
     void getSubject_whenFound_returnsDto() {
         SubjectEntity s = createSubject(1, "SUBJ-001");
         when(subjectRepository.findById(1)).thenReturn(Optional.of(s));
+        when(currentStudyAccessService.canReadAllStudies(42)).thenReturn(true);
 
-        SubjectDTO result = service.getSubject(1);
+        SubjectDTO result = service.getSubject(1, 42);
 
         assertEquals(1, result.getSubjectId());
         assertEquals("SUBJ-001", result.getUniqueIdentifier());
@@ -79,16 +84,17 @@ class SubjectServiceTest {
     void getSubject_whenNotFound_throwsException() {
         when(subjectRepository.findById(99)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> service.getSubject(99));
+        assertThrows(NoSuchElementException.class, () -> service.getSubject(99, 42));
     }
 
     @Test
     void listStudySubjects_returnsByStudyId() {
         StudySubjectEntity ss = createStudySubject(1, 5, 1, "SUBJ-001");
+        when(currentStudyAccessService.canReadStudy(42, 5)).thenReturn(true);
         when(studySubjectRepository.findByStudyIdOrderByLabel(5))
                 .thenReturn(List.of(ss));
 
-        List<StudySubjectDTO> result = service.listStudySubjects(5);
+        List<StudySubjectDTO> result = service.listStudySubjects(5, 42);
 
         assertEquals(1, result.size());
         assertEquals("SUBJ-001", result.getFirst().getLabel());
@@ -98,8 +104,9 @@ class SubjectServiceTest {
     void getStudySubject_whenFound_returnsDto() {
         StudySubjectEntity ss = createStudySubject(1, 5, 1, "SUBJ-001");
         when(studySubjectRepository.findById(1)).thenReturn(Optional.of(ss));
+        when(currentStudyAccessService.canReadStudy(42, 5)).thenReturn(true);
 
-        StudySubjectDTO result = service.getStudySubject(1);
+        StudySubjectDTO result = service.getStudySubject(1, 42);
 
         assertEquals(1, result.getStudySubjectId());
         assertEquals("SUBJ-001", result.getLabel());
@@ -110,7 +117,16 @@ class SubjectServiceTest {
         when(studySubjectRepository.findById(99)).thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class,
-                () -> service.getStudySubject(99));
+                () -> service.getStudySubject(99, 42));
+    }
+
+    @Test
+    void getStudySubject_whenAccessDenied_throwsException() {
+        StudySubjectEntity ss = createStudySubject(1, 5, 1, "SUBJ-001");
+        when(studySubjectRepository.findById(1)).thenReturn(Optional.of(ss));
+        when(currentStudyAccessService.canReadStudy(42, 5)).thenReturn(false);
+
+        assertThrows(AccessDeniedException.class, () -> service.getStudySubject(1, 42));
     }
 
     @Test
@@ -155,6 +171,7 @@ class SubjectServiceTest {
     @Test
     void enrollSubject_withValidRequest_savesAndReturns() {
         when(subjectRepository.existsById(1)).thenReturn(true);
+        when(currentStudyAccessService.canWriteStudy(42, 5)).thenReturn(true);
         when(studySubjectRepository.save(any(StudySubjectEntity.class)))
                 .thenAnswer(i -> {
                     StudySubjectEntity e = i.getArgument(0);
@@ -196,6 +213,7 @@ class SubjectServiceTest {
     @Test
     void enrollSubject_withNonExistentSubject_throwsException() {
         when(subjectRepository.existsById(99)).thenReturn(false);
+        when(currentStudyAccessService.canWriteStudy(42, 5)).thenReturn(true);
 
         EnrollSubjectRequest request = new EnrollSubjectRequest();
         request.setStudyId(5);
@@ -208,6 +226,7 @@ class SubjectServiceTest {
     @Test
     void enrollSubject_withEventDefinition_schedulesEvent() {
         when(subjectRepository.existsById(1)).thenReturn(true);
+        when(currentStudyAccessService.canWriteStudy(42, 5)).thenReturn(true);
         when(studySubjectRepository.save(any(StudySubjectEntity.class)))
                 .thenAnswer(i -> {
                     StudySubjectEntity e = i.getArgument(0);
@@ -261,6 +280,7 @@ class SubjectServiceTest {
     void removeStudySubject_setsRemovedStatusAndAudits() {
         StudySubjectEntity studySubject = createStudySubject(7, 5, 1, "SS-001");
         when(studySubjectRepository.findById(7)).thenReturn(Optional.of(studySubject));
+        when(currentStudyAccessService.canWriteStudy(42, 5)).thenReturn(true);
 
         service.removeStudySubject(7, 42);
 
@@ -277,6 +297,7 @@ class SubjectServiceTest {
         StudySubjectEntity studySubject = createStudySubject(7, 5, 1, "SS-001");
         studySubject.setStatusId(5);
         when(studySubjectRepository.findById(7)).thenReturn(Optional.of(studySubject));
+        when(currentStudyAccessService.canWriteStudy(42, 5)).thenReturn(true);
 
         service.restoreStudySubject(7, 42);
 

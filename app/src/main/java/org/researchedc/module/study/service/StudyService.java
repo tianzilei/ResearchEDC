@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.researchedc.app.dto.Status;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.study.dto.CreateStudyRequest;
@@ -111,12 +112,18 @@ public class StudyService {
             .orElseThrow(() -> new NoSuchElementException(
                 "Study not found: " + studyId));
         String name = entity.getName();
-        studyRepository.delete(entity);
+        Integer oldStatus = entity.getStatusId();
+        entity.setOldStatusId(oldStatus);
+        entity.setStatusId(Status.DELETED.getId());
+        entity.setDateUpdated(LocalDateTime.now());
+        entity.setUpdateId(userId);
+        studyRepository.save(entity);
 
         auditService.recordAudit(
                 entity.getStudyId(), AuditEventType.DELETE, "Study",
                 studyId.longValue(), name,
-                null, null, userId, null, "study");
+                String.valueOf(oldStatus), String.valueOf(Status.DELETED.getId()),
+                userId, "Study removed", "study");
     }
 
     @Transactional

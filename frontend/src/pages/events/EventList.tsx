@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Card, Table, Button, Space, Typography, Modal, Form, Input, Select, DatePicker, message, List, Spin,
 } from "antd";
@@ -43,6 +44,7 @@ function EventCrfRow({
   eventId: number;
   subjectId: string;
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: crfs = [], isLoading } = useEventCrfs(eventId);
 
@@ -53,7 +55,7 @@ function EventCrfRow({
   if (crfs.length === 0) {
     return (
       <Text type="secondary" style={{ display: "block", padding: "12px 16px" }}>
-        No CRFs assigned to this event
+        {t("events.noCrfs")}
       </Text>
     );
   }
@@ -76,7 +78,7 @@ function EventCrfRow({
                 )
               }
             >
-              Enter Data
+              {t("events.enterData")}
             </Button>,
           ]}
         >
@@ -87,14 +89,14 @@ function EventCrfRow({
                 <span
                   className={`status ${STATUS_CLASS_MAP[crf.statusId] ?? "status-default"}`}
                 >
-                  {STATUS_LABELS[crf.statusId] ?? `Status ${crf.statusId}`}
+                  {STATUS_LABELS[crf.statusId] ?? t("events.statusWithId", { id: crf.statusId })}
                 </span>
               </Space>
             }
             description={
               crf.dateInterviewed
-                ? `Interviewed: ${new Date(crf.dateInterviewed).toLocaleDateString()}`
-                : "Not yet started"
+                ? t("events.interviewed", { date: new Date(crf.dateInterviewed).toLocaleDateString() })
+                : t("events.notStarted")
             }
           />
         </List.Item>
@@ -104,6 +106,7 @@ function EventCrfRow({
 }
 
 export default function EventList() {
+  const { t } = useTranslation();
   const { subjectId } = useParams<{ subjectId: string }>();
   const navigate = useNavigate();
   const studySubjectId = subjectId ? Number(subjectId) : undefined;
@@ -129,7 +132,7 @@ export default function EventList() {
         startDate: vals.startDate?.format("YYYY-MM-DDTHH:mm:ss") ?? null,
         endDate: vals.endDate?.format("YYYY-MM-DDTHH:mm:ss") ?? null,
       });
-      message.success("Event scheduled");
+      message.success(t("events.scheduled"));
       setScheduleOpen(false);
       form.resetFields();
     } catch {
@@ -141,7 +144,7 @@ export default function EventList() {
     async (eventId: number) => {
       try {
         await completeMutation.mutateAsync(eventId);
-        message.success("Event completed");
+        message.success(t("events.completed"));
       } catch {
         /* handled by TanStack Query */
       }
@@ -157,45 +160,45 @@ export default function EventList() {
 
   const columns = [
     {
-      title: "Event ID",
+      title: t("events.column.id"),
       dataIndex: "studyEventId",
       key: "id",
       width: 80,
     },
     {
-      title: "Definition",
+      title: t("events.column.definition"),
       dataIndex: "studyEventDefinitionId",
       key: "def",
-      render: (v: number) => `Def #${v}`,
+      render: (v: number) => t("events.definitionWithId", { id: v }),
     },
     {
-      title: "Location",
+      title: t("events.column.location"),
       dataIndex: "location",
       key: "location",
       render: (v: string) => v || "-",
     },
     {
-      title: "Start",
+      title: t("events.column.start"),
       dataIndex: "dateStart",
       key: "start",
       render: (d: string) =>
         d ? new Date(d).toLocaleDateString() : "-",
     },
     {
-      title: "End",
+      title: t("events.column.end"),
       dataIndex: "dateEnd",
       key: "end",
       render: (d: string) =>
         d ? new Date(d).toLocaleDateString() : "-",
     },
     {
-      title: "Status",
+      title: t("events.column.status"),
       key: "status",
       render: (_: unknown, record: StudyEventDTO) => (
         <span
           className={`status ${STATUS_CLASS_MAP[record.statusId] ?? "status-default"}`}
         >
-          {STATUS_LABELS[record.statusId] ?? `Status ${record.statusId}`}
+          {STATUS_LABELS[record.statusId] ?? t("events.statusWithId", { id: record.statusId })}
         </span>
       ),
     },
@@ -206,11 +209,11 @@ export default function EventList() {
         record.statusId < 7 ? (
           <Space>
             <Button size="small" onClick={() => handleComplete(record.studyEventId)}>
-              Complete
+              {t("events.complete")}
             </Button>
             <Link to={`/app/actions/study-event/remove/${record.studyEventId}`}>
               <Button size="small" danger type="text">
-                Remove
+                {t("events.remove")}
               </Button>
             </Link>
           </Space>
@@ -229,20 +232,19 @@ export default function EventList() {
         }}
       >
         <Space>
-          <Button onClick={() => navigate(-1)}>返回</Button>
+          <Button onClick={() => navigate(-1)}>{t("entry.back")}</Button>
           <div>
             <Title level={3} style={{ margin: 0 }}>
-              访视事件
+              {t("events.title")}
             </Title>
             <Text type="secondary">
-              Subject #{subjectId} &middot; {events.length} event
-              {events.length !== 1 ? "s" : ""}
+              {t("events.subjectSummary", { subjectId, count: events.length })}
             </Text>
           </div>
         </Space>
         <Space>
           <Button type="primary" onClick={openSchedule}>
-            Schedule Event
+            {t("events.schedule")}
           </Button>
         </Space>
       </div>
@@ -259,7 +261,7 @@ export default function EventList() {
           columns={columns}
           rowKey="studyEventId"
           pagination={false}
-          locale={{ emptyText: "No scheduled events for this subject" }}
+          locale={{ emptyText: t("events.empty") }}
           expandable={{
             expandedRowRender: (record: StudyEventDTO) => (
               <EventCrfRow eventId={record.studyEventId} subjectId={subjectId ?? ""} />
@@ -270,25 +272,25 @@ export default function EventList() {
       </Card>
 
       <Modal
-        title="Schedule Event"
+        title={t("events.schedule")}
         open={scheduleOpen}
         onOk={handleSchedule}
         onCancel={() => {
           setScheduleOpen(false);
           form.resetFields();
         }}
-        okText="Schedule"
+        okText={t("events.schedule")}
         confirmLoading={scheduleMutation.isPending}
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item
             name="definitionId"
-            label="Event Definition"
-            rules={[{ required: true }]}
+            label={t("events.form.definition")}
+            rules={[{ required: true, message: t("events.form.definitionRequired") }]}
           >
             <Select
               showSearch
-              placeholder="Select event type"
+              placeholder={t("events.form.definitionPlaceholder")}
               optionFilterProp="label"
             >
               {definitions.map((d) => (
@@ -302,13 +304,13 @@ export default function EventList() {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item name="location" label="Location">
-            <Input placeholder="e.g. Clinic A" />
+          <Form.Item name="location" label={t("events.column.location")}>
+            <Input placeholder={t("events.form.locationPlaceholder")} />
           </Form.Item>
-          <Form.Item name="startDate" label="Start Date">
+          <Form.Item name="startDate" label={t("events.column.start")}>
             <DatePicker style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="endDate" label="End Date">
+          <Form.Item name="endDate" label={t("events.column.end")}>
             <DatePicker style={{ width: "100%" }} />
           </Form.Item>
         </Form>

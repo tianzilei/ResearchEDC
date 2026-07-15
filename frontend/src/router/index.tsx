@@ -27,6 +27,7 @@ const CrfAdmin = lazy(() => import("@/pages/admin/CrfAdmin"));
 const SubjectDetail = lazy(() => import("@/pages/subject/SubjectDetail"));
 const StudyList = lazy(() => import("@/pages/studies/StudyList"));
 const StudyWizard = lazy(() => import("@/pages/studies/StudyWizard"));
+const StudyBuildDashboard = lazy(() => import("@/pages/study-build/StudyBuildDashboard"));
 const EventList = lazy(() => import("@/pages/events/EventList"));
 const DataEntryPage = lazy(() => import("@/pages/datacapture/DataEntryPage"));
 const RulesListPage = lazy(() => import("@/pages/rules/RulesListPage"));
@@ -47,10 +48,19 @@ const DatasetBuilder = lazy(() => import("@/pages/export/DatasetBuilder"));
 const FilterBuilder = lazy(() => import("@/pages/export/FilterBuilder"));
 const Profile = lazy(() => import("@/pages/Profile"));
 const ChangeStudy = lazy(() => import("@/pages/ChangeStudy"));
+const TaskInbox = lazy(() => import("@/pages/tasks/TaskInbox"));
+const ParticipantAccessPage = lazy(() => import("@/pages/participants/ParticipantAccessPage"));
+const ParticipantEntry = lazy(() => import("@/pages/participants/ParticipantEntry"));
+const RecruitDashboard = lazy(() => import("@/pages/recruit/RecruitDashboard"));
+const AnalyticsDashboard = lazy(() => import("@/pages/analytics/AnalyticsDashboard"));
+const SdvDashboard = lazy(() => import("@/pages/sdv/SdvDashboard"));
+const FhirDashboard = lazy(() => import("@/pages/fhir/FhirDashboard"));
 
 const QuestionnaireTemplates = lazy(() => import("@/pages/questionnaire/QuestionnaireTemplates"));
 const QuestionnaireVersionEditor = lazy(() => import("@/pages/questionnaire/QuestionnaireVersionEditor"));
 const QuestionnaireAssignments = lazy(() => import("@/pages/questionnaire/QuestionnaireAssignments"));
+const EcoaDashboard = lazy(() => import("@/pages/questionnaire/EcoaDashboard"));
+const EconsentPage = lazy(() => import("@/pages/questionnaire/EconsentPage"));
 const QuestionnaireResponses = lazy(() => import("@/pages/questionnaire/QuestionnaireResponses"));
 const QuestionnaireExport = lazy(() => import("@/pages/questionnaire/QuestionnaireExport"));
 const QuestionnaireFill = lazy(() => import("@/pages/questionnaire/QuestionnaireFill"));
@@ -73,6 +83,12 @@ const router = createBrowserRouter([
       { path: "randomization/schemes/:id/unblind", element: <UnblindingPage /> },
       { path: "randomization/schemes/:id/audit", element: <AuditViewer /> },
       { path: "data-export", element: <ExportCenter /> },
+      { path: "tasks", element: <TaskInbox /> },
+      { path: "participants/access", element: <ParticipantAccessPage /> },
+      { path: "recruit", element: <RecruitDashboard /> },
+      { path: "analytics", element: <AnalyticsDashboard /> },
+      { path: "sdv", element: <SdvDashboard /> },
+      { path: "fhir", element: <FhirDashboard /> },
       { path: "data-export/datasets", element: <DatasetBuilder /> },
       { path: "data-export/filters", element: <FilterBuilder /> },
       { path: "crfs", element: <CrfList /> },
@@ -81,10 +97,13 @@ const router = createBrowserRouter([
       { path: "questionnaires/templates", element: <QuestionnaireTemplates /> },
       { path: "questionnaires/templates/:templateId/versions", element: <QuestionnaireVersionEditor /> },
       { path: "questionnaires/assignments", element: <QuestionnaireAssignments /> },
+      { path: "questionnaires/ecoa", element: <EcoaDashboard /> },
+      { path: "questionnaires/econsent", element: <EconsentPage /> },
       { path: "questionnaires/responses", element: <QuestionnaireResponses /> },
       { path: "questionnaires/my-tasks", element: <QuestionnaireMyTasks /> },
       { path: "questionnaires/export", element: <QuestionnaireExport /> },
       { path: "studies", element: <StudyList /> },
+      { path: "study-build", element: <StudyBuildDashboard /> },
       { path: "studies/create", element: <StudyWizard /> },
       { path: "studies/:id", element: <StudyDetail /> },
       { path: "studies/:id/edit", element: <StudyEditor /> },
@@ -119,6 +138,7 @@ const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/app/login", element: <Login /> },
   { path: "/q/fill/:token", element: <QuestionnaireFill /> },
+  { path: "/participant/access/:token", element: <ParticipantEntry /> },
   { path: "/error", element: <ErrorPage status={500} /> },
   { path: "/", element: <MainMenu /> },
   { path: "*", element: <NotFound /> },

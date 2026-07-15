@@ -2,6 +2,7 @@ package org.researchedc.module.event.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.researchedc.config.CurrentStudyAccessService;
 import org.researchedc.module.audit.enums.AuditEventType;
 import org.researchedc.module.audit.service.AuditService;
 import org.researchedc.module.event.dto.CreateEventDefinitionRequest;
@@ -16,6 +17,7 @@ import org.researchedc.module.event.entity.StudyEventEntity;
 import org.researchedc.module.event.repository.EventCrfRepository;
 import org.researchedc.module.event.repository.StudyEventDefinitionRepository;
 import org.researchedc.module.event.repository.StudyEventRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,49 +32,60 @@ public class EventService {
     private final StudyEventDefinitionRepository eventDefinitionRepository;
     private final EventCrfRepository eventCrfRepository;
     private final AuditService auditService;
+    private final CurrentStudyAccessService currentStudyAccessService;
 
     public EventService(StudyEventRepository studyEventRepository,
                         StudyEventDefinitionRepository eventDefinitionRepository,
                         EventCrfRepository eventCrfRepository,
-                        AuditService auditService) {
+                        AuditService auditService,
+                        CurrentStudyAccessService currentStudyAccessService) {
         this.studyEventRepository = studyEventRepository;
         this.eventDefinitionRepository = eventDefinitionRepository;
         this.eventCrfRepository = eventCrfRepository;
         this.auditService = auditService;
+        this.currentStudyAccessService = currentStudyAccessService;
     }
 
-    public List<EventDefinitionDTO> listEventDefinitions(Integer studyId) {
+    public List<EventDefinitionDTO> listEventDefinitions(Integer studyId, Integer currentUserId) {
+        requireReadAccess(currentUserId, studyId);
         return eventDefinitionRepository.findByStudyIdOrderByName(studyId)
             .stream()
             .map(this::toDefDto)
             .toList();
     }
 
-    public List<StudyEventDTO> listSubjectEvents(Integer studySubjectId) {
+    public List<StudyEventDTO> listSubjectEvents(Integer studySubjectId, Integer currentUserId) {
         return studyEventRepository.findByStudySubjectIdOrderByDateStart(studySubjectId)
             .stream()
+            .filter(event -> canReadStudy(currentUserId, resolveStudyId(event)))
             .map(this::toEventDto)
             .toList();
     }
 
-    public StudyEventDTO getStudyEvent(Integer studyEventId) {
+    public StudyEventDTO getStudyEvent(Integer studyEventId, Integer currentUserId) {
         StudyEventEntity entity = studyEventRepository.findById(studyEventId)
             .orElseThrow(() -> new java.util.NoSuchElementException(
                 "StudyEvent not found: " + studyEventId));
+        requireReadAccess(currentUserId, resolveStudyId(entity));
         return toEventDto(entity);
     }
 
-    public List<EventCrfDTO> listEventCrfs(Integer studyEventId) {
+    public List<EventCrfDTO> listEventCrfs(Integer studyEventId, Integer currentUserId) {
+        StudyEventEntity event = studyEventRepository.findById(studyEventId)
+            .orElseThrow(() -> new java.util.NoSuchElementException(
+                "StudyEvent not found: " + studyEventId));
+        requireReadAccess(currentUserId, resolveStudyId(event));
         return eventCrfRepository.findByStudyEventId(studyEventId)
             .stream()
             .map(this::toCrfDto)
             .toList();
     }
 
-    public EventCrfDTO getEventCrf(Integer crfId) {
+    public EventCrfDTO getEventCrf(Integer crfId, Integer currentUserId) {
         EventCrfEntity entity = eventCrfRepository.findById(crfId)
             .orElseThrow(() -> new java.util.NoSuchElementException(
                 "EventCrf not found: " + crfId));
+        requireReadAccess(currentUserId, resolveStudyId(entity));
         return toCrfDto(entity);
     }
 
@@ -88,6 +101,7 @@ public class EventService {
         if (request.getName() == null || request.getName().isBlank()) {
             throw new IllegalArgumentException("name is required");
         }
+        requireWriteAccess(ownerId, request.getStudyId());
 
         StudyEventDefinitionEntity entity = new StudyEventDefinitionEntity();
         entity.setStudyId(request.getStudyId());
@@ -122,6 +136,10 @@ public class EventService {
         }
 
         StudyEventEntity entity = new StudyEventEntity();
+        Integer studyId = eventDefinitionRepository.findById(request.getStudyEventDefinitionId())
+                .map(StudyEventDefinitionEntity::getStudyId)
+                .orElse(null);
+        requireWriteAccess(ownerId, studyId);
         entity.setStudySubjectId(request.getStudySubjectId());
         entity.setStudyEventDefinitionId(request.getStudyEventDefinitionId());
         entity.setLocation(request.getLocation());
@@ -163,9 +181,16 @@ public class EventService {
         StudyEventEntity entity = studyEventRepository.findById(eventId)
             .orElseThrow(() -> new java.util.NoSuchElementException(
                 "StudyEvent not found: " + eventId));
+        requireWriteAccess(updaterId, resolveStudyId(entity));
 
         if (request.getStudySubjectId() != null) entity.setStudySubjectId(request.getStudySubjectId());
-        if (request.getStudyEventDefinitionId() != null) entity.setStudyEventDefinitionId(request.getStudyEventDefinitionId());
+        if (request.getStudyEventDefinitionId() != null) {
+            Integer newStudyId = eventDefinitionRepository.findById(request.getStudyEventDefinitionId())
+                    .map(StudyEventDefinitionEntity::getStudyId)
+                    .orElse(null);
+            requireWriteAccess(updaterId, newStudyId);
+            entity.setStudyEventDefinitionId(request.getStudyEventDefinitionId());
+        }
         if (request.getLocation() != null) entity.setLocation(request.getLocation());
         if (request.getStartDate() != null) entity.setDateStart(request.getStartDate());
         if (request.getEndDate() != null) entity.setDateEnd(request.getEndDate());
@@ -189,6 +214,7 @@ public class EventService {
         StudyEventEntity entity = studyEventRepository.findById(eventId)
             .orElseThrow(() -> new java.util.NoSuchElementException(
                 "StudyEvent not found: " + eventId));
+        requireWriteAccess(userId, resolveStudyId(entity));
 
         entity.setStatusId(7);
         entity.setSubjectEventStatusId(7);
@@ -208,6 +234,7 @@ public class EventService {
         StudyEventEntity entity = studyEventRepository.findById(eventId)
             .orElseThrow(() -> new java.util.NoSuchElementException(
                 "StudyEvent not found: " + eventId));
+        requireWriteAccess(userId, resolveStudyId(entity));
 
         entity.setStatusId(5);
         entity.setDateUpdated(LocalDateTime.now());
@@ -226,6 +253,7 @@ public class EventService {
         StudyEventEntity entity = studyEventRepository.findById(eventId)
             .orElseThrow(() -> new java.util.NoSuchElementException(
                 "StudyEvent not found: " + eventId));
+        requireWriteAccess(userId, resolveStudyId(entity));
 
         entity.setStatusId(1);
         entity.setDateUpdated(LocalDateTime.now());
@@ -244,6 +272,7 @@ public class EventService {
         EventCrfEntity entity = eventCrfRepository.findById(crfId)
             .orElseThrow(() -> new java.util.NoSuchElementException(
                 "EventCrf not found: " + crfId));
+        requireWriteAccess(userId, resolveStudyId(entity));
 
         entity.setStatusId(5);
         entity.setDateUpdated(LocalDateTime.now());
@@ -262,6 +291,7 @@ public class EventService {
         EventCrfEntity entity = eventCrfRepository.findById(crfId)
             .orElseThrow(() -> new java.util.NoSuchElementException(
                 "EventCrf not found: " + crfId));
+        requireWriteAccess(userId, resolveStudyId(entity));
 
         entity.setStatusId(1);
         entity.setDateUpdated(LocalDateTime.now());
@@ -275,10 +305,11 @@ public class EventService {
                 null, null, userId, "Event CRF restored (status=1)", "event");
     }
 
-    public EventDefinitionDTO getEventDefinition(Integer id) {
+    public EventDefinitionDTO getEventDefinition(Integer id, Integer currentUserId) {
         StudyEventDefinitionEntity entity = eventDefinitionRepository.findById(id)
             .orElseThrow(() -> new java.util.NoSuchElementException(
                 "EventDefinition not found: " + id));
+        requireReadAccess(currentUserId, entity.getStudyId());
         return toDefDto(entity);
     }
 
@@ -287,6 +318,7 @@ public class EventService {
         StudyEventDefinitionEntity entity = eventDefinitionRepository.findById(id)
             .orElseThrow(() -> new java.util.NoSuchElementException(
                 "EventDefinition not found: " + id));
+        requireWriteAccess(userId, entity.getStudyId());
 
         entity.setStatusId(5);
         entity.setDateUpdated(LocalDateTime.now());
@@ -305,6 +337,7 @@ public class EventService {
         StudyEventDefinitionEntity entity = eventDefinitionRepository.findById(id)
             .orElseThrow(() -> new java.util.NoSuchElementException(
                 "EventDefinition not found: " + id));
+        requireWriteAccess(userId, entity.getStudyId());
 
         entity.setStatusId(1);
         entity.setDateUpdated(LocalDateTime.now());
@@ -382,5 +415,21 @@ public class EventService {
         dto.setSdvStatus(e.getSdvStatus());
         dto.setDateCreated(e.getDateCreated());
         return dto;
+    }
+
+    private boolean canReadStudy(Integer currentUserId, Integer studyId) {
+        return currentStudyAccessService.canReadStudy(currentUserId, studyId);
+    }
+
+    private void requireReadAccess(Integer currentUserId, Integer studyId) {
+        if (!canReadStudy(currentUserId, studyId)) {
+            throw new AccessDeniedException("You do not have read access to this study");
+        }
+    }
+
+    private void requireWriteAccess(Integer currentUserId, Integer studyId) {
+        if (!currentStudyAccessService.canWriteStudy(currentUserId, studyId)) {
+            throw new AccessDeniedException("You do not have write access to this study");
+        }
     }
 }

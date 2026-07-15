@@ -38,23 +38,31 @@ public class SubjectController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<List<SubjectDTO>> searchSubjects(@RequestParam String query) {
-        return ResponseEntity.ok(subjectService.searchSubjects(query));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(subjectService.searchSubjects(query, currentUserId));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<SubjectDTO> getSubject(@PathVariable Integer id) {
-        return ResponseEntity.ok(subjectService.getSubject(id));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(subjectService.getSubject(id, currentUserId));
     }
 
     @GetMapping("/by-study")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<List<StudySubjectDTO>> listStudySubjects(@RequestParam Integer studyId) {
-        return ResponseEntity.ok(subjectService.listStudySubjects(studyId));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(subjectService.listStudySubjects(studyId, currentUserId));
     }
 
     @GetMapping("/enrollment/{id}")
+    @PreAuthorize(CoreEdcAuthorityExpressions.READ_EDC_DATA)
     public ResponseEntity<StudySubjectDTO> getStudySubject(@PathVariable Integer id) {
-        return ResponseEntity.ok(subjectService.getStudySubject(id));
+        Integer currentUserId = currentUserUtils.getCurrentUserId();
+        return ResponseEntity.ok(subjectService.getStudySubject(id, currentUserId));
     }
 
     @PostMapping

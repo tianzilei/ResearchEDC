@@ -26,6 +26,9 @@ function useMenuItems(): MenuProps["items"] {
   if (has("study:view")) {
     items.push({ key: "/app/studies", label: t("layout.studies") });
   }
+  if (has("study:build")) {
+    items.push({ key: "/app/study-build", label: t("layout.studyBuild") });
+  }
   if (has("subject:view")) {
     items.push({ key: "/app/subjects", label: t("layout.subjects") });
   }
@@ -39,6 +42,8 @@ function useMenuItems(): MenuProps["items"] {
       children: [
         { key: "/app/questionnaires/templates", label: t("layout.templates") },
         { key: "/app/questionnaires/assignments", label: t("layout.assignments") },
+        { key: "/app/questionnaires/ecoa", label: t("layout.ecoa") },
+        { key: "/app/questionnaires/econsent", label: t("layout.econsent") },
         { key: "/app/questionnaires/responses", label: t("layout.responses") },
         { key: "/app/questionnaires/export", label: t("layout.export") },
       ],
@@ -46,6 +51,24 @@ function useMenuItems(): MenuProps["items"] {
   }
   if (has("data:export")) {
     items.push({ key: "/app/data-export", label: t("layout.dataExport") });
+  }
+  if (has("task:view")) {
+    items.push({ key: "/app/tasks", label: t("layout.tasks") });
+  }
+  if (has("participant:access")) {
+    items.push({ key: "/app/participants/access", label: t("layout.participantAccess") });
+  }
+  if (has("recruit:view")) {
+    items.push({ key: "/app/recruit", label: t("layout.recruit") });
+  }
+  if (has("analytics:view")) {
+    items.push({ key: "/app/analytics", label: t("layout.analytics") });
+  }
+  if (has("sdv:view")) {
+    items.push({ key: "/app/sdv", label: t("layout.sdv") });
+  }
+  if (has("fhir:view")) {
+    items.push({ key: "/app/fhir", label: t("layout.fhir") });
   }
   if (has("randomization:view")) {
     items.push({ key: "/app/randomization", label: t("layout.randomization") });
@@ -74,7 +97,14 @@ export default function AppLayout() {
 
   const selectedKey = (() => {
     const path = location.pathname;
+    if (path.startsWith("/app/study-build")) return "/app/study-build";
     if (path.startsWith("/app/randomization")) return "/app/randomization";
+    if (path.startsWith("/app/tasks")) return "/app/tasks";
+    if (path.startsWith("/app/participants/access")) return "/app/participants/access";
+    if (path.startsWith("/app/recruit")) return "/app/recruit";
+    if (path.startsWith("/app/analytics")) return "/app/analytics";
+    if (path.startsWith("/app/sdv")) return "/app/sdv";
+    if (path.startsWith("/app/fhir")) return "/app/fhir";
     if (path.startsWith("/app/questionnaires")) return "/app/questionnaires/templates";
     return (menuItems?.filter((item) => item && typeof item === "object" && "key" in item) as { key: string }[])?.find(
       (item) => item.key !== "/app/dashboard" && path.startsWith(item.key),

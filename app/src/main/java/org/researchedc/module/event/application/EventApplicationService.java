@@ -42,20 +42,20 @@ public class EventApplicationService {
         this.auditService = auditService;
     }
 
-    public List<EventDefinitionDTO> listEventDefinitions(Integer studyId) {
-        return eventService.listEventDefinitions(studyId);
+    public List<EventDefinitionDTO> listEventDefinitions(Integer studyId, Integer currentUserId) {
+        return eventService.listEventDefinitions(studyId, currentUserId);
     }
 
-    public List<StudyEventDTO> listSubjectEvents(Integer studySubjectId) {
-        return eventService.listSubjectEvents(studySubjectId);
+    public List<StudyEventDTO> listSubjectEvents(Integer studySubjectId, Integer currentUserId) {
+        return eventService.listSubjectEvents(studySubjectId, currentUserId);
     }
 
-    public StudyEventDTO getStudyEvent(Integer studyEventId) {
-        return eventService.getStudyEvent(studyEventId);
+    public StudyEventDTO getStudyEvent(Integer studyEventId, Integer currentUserId) {
+        return eventService.getStudyEvent(studyEventId, currentUserId);
     }
 
-    public List<EventCrfDTO> listEventCrfs(Integer studyEventId) {
-        return eventService.listEventCrfs(studyEventId);
+    public List<EventCrfDTO> listEventCrfs(Integer studyEventId, Integer currentUserId) {
+        return eventService.listEventCrfs(studyEventId, currentUserId);
     }
 
     @Transactional

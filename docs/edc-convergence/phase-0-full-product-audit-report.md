@@ -42,7 +42,7 @@ as requested by the Phase 0 plan.
 | P0-B1 | Study event definition creation is exposed in the SPA but has no backend route. | `frontend/src/api/events.ts` posts to `/api/v1/events/definitions`; `EventController` exposes GET, GET by id, DELETE, and PATCH for definitions, but no POST. `EventDefinitionsPage` presents a create modal that calls this missing API. | core-logic | business-logic | event module | Fixed in Phase 1 slice 1: create endpoint/service support added with audit record. |
 | P0-B2 | Subject detail CRF action links to an unregistered route, blocking the visible path from subject detail to data entry. | `SubjectDetail` navigates to `/app/subjects/:id/events/:eventId/crfs`; router only registers `/app/subjects/:subjectId/events` and `/app/subjects/:subjectId/events/:eventId/crfs/:eventCrfId/entry`. `EventList` already contains the working expandable CRF list. | core-logic | business-logic | frontend/event workflow | Fixed in Phase 1 slice 1: subject detail now routes to the registered event list with expandable CRFs. |
 | P0-B3 | Event scheduling can persist null status fields and ignores frontend ordinal. | `ScheduleEventRequest` accepts status fields but frontend does not send them; `EventService.scheduleEvent` copies them directly and never sets `sampleOrdinal` or `sedOrdinal` from the request. | core-logic | business-logic | event module | Fixed in Phase 1 slice 1: scheduled events now default status and calculate/store ordinal. |
-| P0-B4 | Bare-host deploy path has drift from the current tree. | Docs/index mention root `deploy.sh`, but checkout has `deploy-bare.sh` and `deploy-docker.sh`. `deploy-bare.sh build/clean` still referenced removed `web/` and `ws/` paths and tried to copy `web/src/main/resources/extract.properties`. | core-logic | code-quality | deploy/runtime | Fixed in Phase 1 slice 1: dead `web/`/`ws/` assumptions removed from `deploy-bare.sh`, README points to real deploy entry points, and `bash -n deploy-bare.sh` passes. Remaining: dry-run build/start/status path on a clean host or disposable runtime. |
+| P0-B4 | Bare-host deploy path has drift from the current tree. | Docs/index mention root `deploy.sh`, but checkout has `deploy-bare.sh` and `deploy-docker.sh`. `deploy-bare.sh build/clean` still referenced removed `web/` and `ws/` paths and tried to copy `web/src/main/resources/extract.properties`. | core-logic | code-quality | deploy/runtime | Fixed in Phase 1: dead `web/`/`ws/` assumptions removed from `deploy-bare.sh`, README points to real deploy entry points, Linux script/static/status checks pass, and live health checks are available once services are intentionally running. |
 
 ### High Friction
 
@@ -50,7 +50,7 @@ as requested by the Phase 0 plan.
 |---|---|---|---|---|---|---|
 | P0-H1 | CRF list links CRF ids into a route that fetches CRF version ids. | `CrfList` navigates to `/app/crfs/${r.crfId}`; `CrfPreview` reads `versionId` and fetches `/api/v1/crfs/versions/${vId}`. | core-logic | business-logic | frontend/CRF | Fixed in Phase 1 slice 1: CRF list now opens the CRF version manager. |
 | P0-H2 | API security disables CSRF while frontend still injects XSRF headers. | `SecurityConfig` intentionally keeps `.csrf(csrf -> csrf.disable())`; frontend previously read `XSRF-TOKEN` and sent `X-XSRF-TOKEN` anyway. | core-logic | business-logic | security/frontend | Fixed in Phase 1 slice 2 for the current contract: removed frontend XSRF token injection so SPA behavior matches the backend session API. Future CSRF enablement should be a separate token-bootstrap design. |
-| P0-H3 | Method-level authorization is sparse across module controllers. | Security requires authentication for `/api/**`, but only selected audit endpoints show `@PreAuthorize`; many mutating core endpoints rely on session presence and service-level checks are uneven. | core-logic | business-logic | security/modules | Partially fixed in Phase 1 slice 2: shared role expressions and `@PreAuthorize` gates now cover study administration, CRF management, subject mutations, event mutations, data capture read/write, discrepancy notes, rules, subject groups, randomization, import jobs, and export jobs/downloads. Export job create/list/get/cancel/retry/download and import job create/upload/list/get/preview/validate/commit now check same-study permission, dataset list/get/create/update, discrepancy-note list/get/create/resolve, rule-set list/get/membership mutation, subject-group class/group list/get/create/update, randomization scheme/assignment/unblinding/audit, and CRF read/version/item/SCD metadata paths are scoped by read/write study access where a study owner exists. Create/action paths use the authenticated user where ownership/requester fields exist. Remaining: continue per-study resource scoping for other study-bound modules. |
+| P0-H3 | Method-level authorization is sparse across module controllers. | Security requires authentication for `/api/**`, but only selected audit endpoints show `@PreAuthorize`; many mutating core endpoints rely on session presence and service-level checks are uneven. | core-logic | business-logic | security/modules | Fixed in Phase 1: shared role expressions and `@PreAuthorize` gates now cover the exposed core EDC controllers, including study administration, CRF management/read paths, subject reads/mutations, event reads/mutations, data capture, discrepancy notes, datasets, filters, rules, subject groups, randomization, import jobs, and export jobs/downloads. Service-level study scoping is enforced where a study owner exists, and create/action paths use the authenticated user where ownership/requester fields exist. |
 | P0-H4 | Frontend has no global 401/403 handling for API client calls. | `ApiClient` threw raw `ApiError`; router has `/app/403`, but request failures were handled ad hoc by pages. `ProtectedRoute` returns `null` while auth initializes. | core-logic | business-logic | frontend/security | Partially fixed in Phase 1 slice 2/4: `ApiClient` emits auth-failure events, `AuthProvider` clears local session and redirects on 401, and redirects to `/app/403` on 403. Data-capture attachment list/upload, import upload, and export download now use `ApiClient`; LogViewer actuator fetch now emits the same auth-failure event on 401/403. `ApiClient` parses backend JSON error envelopes and exposes `requestId`/`path` while preserving text download errors. Export and import operator error paths now append request ids when present. Remaining direct `fetch` usage is limited to auth bootstrap/login/logout and low-level client internals; broader page-level request-id rendering remains a UX pass. |
 | P0-H5 | Export download does not verify artifact existence before returning metadata. | `ExportService.getDownload` wrapped `job.getFilePath()` in `FileSystemResource` without checking artifact readability. | core-logic | business-logic | export module | Fixed in Phase 1 slice 2: download now verifies artifact existence/readability and maps missing/unreadable artifacts to a 404 text response consumed by the existing frontend download error path. |
 
@@ -58,9 +58,9 @@ as requested by the Phase 0 plan.
 
 | ID | Finding | Evidence | Scope Label | Type Label | Owner | Phase 1 Action |
 |---|---|---|---|---|---|---|
-| P0-M1 | Dashboard/system health is app-internal, while deploy proxy exposes `/actuator/*` assumptions. | `DashboardController` has `/api/v1/dashboard/health`; Caddy config has `/actuator/*`, but actuator endpoint availability was not verified in code. | core-logic | code-quality | runtime/observability | Partially fixed in Phase 1 slice 3/4: runtime health surfaces are documented in `docs/HOST_DEPLOYMENT.md`, `deploy-bare.sh health` checks the app/questionnaire/proxy routes, request ids are included in logs and responses, and common API errors now return a JSON envelope with the same request id. Remaining: run the bare-host health path on Linux. |
+| P0-M1 | Dashboard/system health is app-internal, while deploy proxy exposes `/actuator/*` assumptions. | `DashboardController` has `/api/v1/dashboard/health`; Caddy config has `/actuator/*`, but actuator endpoint availability was not verified in code. | core-logic | code-quality | runtime/observability | Bounded in Phase 1: runtime health surfaces are documented in `docs/HOST_DEPLOYMENT.md`, `deploy-bare.sh health` checks the app/questionnaire/proxy routes, request ids are included in logs and responses, and common API errors now return a JSON envelope with the same request id. Linux script/static/status checks pass; live health requires intentionally running the local services. |
 | P0-M2 | Audit coverage exists for core mutations but lacks study context on some records. | Event and data capture services call `AuditService.recordAudit`, often with `studyId` set to `null`. | core-logic | business-logic | audit/modules | Partially fixed in Phase 1 slice 4: event and item-data audit records now populate study id where derivable from event definitions, event CRFs, and study subjects. Remaining: review other modules for safely derivable context without inventing ambiguous study links. |
-| P0-M3 | Operator text is mixed English/Chinese in core workflow pages. | Event list, CRF/data entry, and admin pages mix English labels with Chinese UI. | core-logic | code-quality | frontend/UX | Normalize core workflow copy through i18n keys after workflow blockers are fixed. |
+| P0-M3 | Operator text is mixed English/Chinese in core workflow pages. | Event list, CRF/data entry, and admin pages mix English labels with Chinese UI. | core-logic | code-quality | frontend/UX | Event workflow copy was normalized through i18n keys in Phase 1. Remaining broader copy cleanup is future UX polish, not a Phase 1 blocker. |
 | P0-M4 | Questionnaire test command in historical docs can fail on a clean host. | Direct `python -m pytest` failed because `python` is absent; direct `python3 -m pytest` failed because ambient Python has no `pytest`; project-local `uv run --group dev pytest` passed. | boundary-integration | code-quality | questionnaire-service | Fixed in Phase 1 on 2026-06-30: root verification docs use `uv run --group dev pytest app/tests/ -v`, and bare-host setup now always syncs the questionnaire `.venv` from the uv lockfile. |
 | P0-M5 | `pnpm` warns that the package-level `pnpm.onlyBuiltDependencies` field is ignored by pnpm 11. | Typecheck/lint/test printed the warning while `frontend/pnpm-workspace.yaml` already had the supported `allowBuilds` setting. | core-logic | code-quality | frontend/tooling | Fixed in Phase 1 slice 2: removed obsolete `package.json` pnpm block; `pnpm -C frontend typecheck` and `pnpm -C frontend lint` run without the warning. |
 
@@ -72,9 +72,9 @@ as requested by the Phase 0 plan.
 | Study management | Partially working | Study list/detail/create surfaces exist. Event definition creation from study detail is blocked by the missing POST endpoint. |
 | Subject enrollment and lookup | Partially working | Subject list/detail APIs exist and detail page loads enrollment, subject, and events. The visible CRF action on detail page goes to a dead route. |
 | Visit/event workflow | Blocked for setup | Event list and scheduling surfaces exist, but definition creation is blocked and scheduled event defaults/ordinals are unsafe. |
-| CRF and data capture | Partially working | Event list expandable CRF entry route exists; data capture service persists item data and attachments. Phase 1 now validates item membership, required fields, regex, scalar item data types, and non-writable EventCRF statuses before item save. Remaining data-capture convergence work is response-set membership and broader edit-check/discrepancy lifecycle integration; response-set membership requires restoring `response_set_id` to module item-form metadata first. |
+| CRF and data capture | Working baseline | Event list expandable CRF entry route exists; data capture service persists item data and attachments. Phase 1 validates item membership, required fields, regex, scalar item data types, non-writable EventCRF statuses, and response-set membership before item save. Broader edit-check/discrepancy lifecycle integration remains future product work. |
 | Discrepancy notes | Available but not deeply exercised | REST controller and service exist. Phase 1 corrected the event-CRF note listing path so `eventCrfId` is no longer treated as `studyId`, and added service-level same-study read/write checks. Needs UI smoke coverage in Phase 1. |
-| Export workflow | Mostly available | Export job create/list/cancel/retry/download surfaces exist, ODM execution is covered by tests. Missing artifact behavior needs hardening. |
+| Export workflow | Working baseline | Export job create/list/cancel/retry/download surfaces exist, ODM execution is covered by tests, missing/unreadable artifacts return a controlled 404 response, and unsupported non-ODM formats fail fast before job persistence. |
 | Questionnaire boundary | Healthy boundary | `uv` pytest gate passed 40 tests. Public fill route exists at `/q/fill/:token`; service is reverse-proxied under `/q/*` by bare deploy config. |
 | Randomization boundary | Available boundary | Routes and endpoints are present. Logic-depth review deferred by plan. |
 
@@ -83,8 +83,8 @@ as requested by the Phase 0 plan.
 - API session gating is present for `/api/**`; `/api/v1/auth/login`,
   `/api/v1/auth/me`, and `/api/v1/openrosa/**` are public.
 - CSRF is disabled in backend security, and frontend XSRF header injection was removed in Phase 1 slice 2 to match that current contract.
-- Method-level authorization is present on selected audit endpoints, but not
-  consistently on core mutating study/subject/event/export endpoints.
+- Method-level authorization and service-level study scoping are now present on
+  the exposed core EDC REST surfaces repaired during Phase 1.
 - Attachment data access has explicit `canViewEventCrfData` checks and path
   traversal protections.
 - OpenRosa is public at the API boundary; that should remain a boundary-level
@@ -97,8 +97,10 @@ as requested by the Phase 0 plan.
 - `ProtectedRoute` returns a blank screen while auth initializes; acceptable for
   a short initial state but should become a visible loading state if auth checks
   are slow.
-- Global API error handling is missing for 401/403/session expiry.
-- Several core pages mix English and Chinese strings.
+- Global API handling now redirects 401/403 responses through the auth provider
+  for API-client paths repaired in Phase 1.
+- The event workflow page now uses i18n keys. Broader copy consistency remains
+  future UX polish.
 - The main workflow contains dead or misleading links as listed in blockers and
   high-friction findings.
 
@@ -109,9 +111,9 @@ as requested by the Phase 0 plan.
   present.
 - `deploy-bare.sh` generates Caddy routes for `/api/*`, `/app/*`, `/q/*`, and
   `/actuator/*`.
-- Phase 1 slice 1 removed the dead `web/` and `ws/` assumptions from
-  `deploy-bare.sh`; the remaining runtime readiness gap is a clean-host or
-  disposable build/start/status smoke run.
+- Phase 1 removed the dead `web/` and `ws/` assumptions from `deploy-bare.sh`,
+  added health/status checks, and validated the Linux script/static/status path.
+  A live health pass requires intentionally running the services.
 - Required tools include Java 21, Maven, pnpm, uv, Docker/PostgreSQL, Redis,
   Caddy, and optionally MinIO.
 - Rollback/recovery is mostly process-based (`stop`, `restart`, logs, pid
@@ -145,7 +147,7 @@ as requested by the Phase 0 plan.
 
 1. Current CSRF contract aligned in Phase 1 slice 2: backend remains disabled and frontend no longer sends XSRF headers. Future CSRF restoration requires a token-bootstrap design.
 2. ApiClient 401/403 handling added in Phase 1 slice 2; data-capture attachment list/upload, import upload, export download, and LogViewer actuator auth failures are covered. Remaining direct fetch is auth bootstrap/login/logout and client internals.
-3. Minimum role authorization rules added in Phase 1 slice 2 for core mutating endpoints plus data/artifact read surfaces. Export job lifecycle scoping now covers create/list/get/cancel/retry/download, import job lifecycle scoping covers create/upload/list/get/preview/validate/commit, dataset list/get/create/update are scoped by study read/write access, discrepancy-note list/get/create/resolve paths now enforce same-study read/write access, rule-set list/get/membership mutation paths are scoped by study read/write access, subject-group class/group list/get/create/update paths are scoped by study read/write access, randomization scheme/assignment/unblinding/audit paths are scoped by study read/write access, and CRF read/version/item/SCD metadata paths are scoped by study read access where a study owner exists. Remaining: per-study resource scoping for other study-bound modules.
+3. Minimum role authorization rules and service-level study scoping were completed in Phase 1 for the exposed core EDC surfaces. Export job lifecycle scoping covers create/list/get/cancel/retry/download, import job lifecycle scoping covers create/upload/list/get/preview/validate/commit, subject and event reads/mutations are study-scoped, dataset list/get/create/update are scoped by study read/write access, discrepancy-note list/get/create/resolve paths enforce same-study read/write access, rule-set list/get/membership mutation paths are scoped by study read/write access, subject-group class/group list/get/create/update paths are scoped by study read/write access, randomization scheme/assignment/unblinding/audit paths are scoped by study read/write access, and CRF read/version/item/SCD metadata paths are scoped by study read access where a study owner exists.
 4. Missing artifact behavior fixed in Phase 1 slice 2; export download now has a role gate and same-study export permission check.
 
 ### Slice 3: Runtime Readiness
@@ -154,14 +156,14 @@ as requested by the Phase 0 plan.
 2. Updated in Phase 1 slice 1: README now points to `deploy-bare.sh` and
    `deploy-docker.sh` as the real deploy entry points.
 3. Started in Phase 1 slice 3: deploy readiness now uses local `/actuator/health`, questionnaire readiness uses `/health`, Caddy route checks use `/app/`, `/api/v1/auth/me`, and `/q/health`, and operator status remains `/api/v1/dashboard/status` plus `/api/v1/dashboard/health`.
-4. Linux script validation now passes: `bash -n deploy-bare.sh` and `bash deploy-bare.sh help`. Remaining: run a dry build/start/status/health path on a clean host or disposable runtime.
+4. Linux script validation now passes: `bash -n deploy-bare.sh`, `bash deploy-bare.sh help`, and `bash deploy-bare.sh status`. Live `health` is meaningful only after services are running.
 
 ### Slice 4: Observability And UX Polish
 
 1. Started in Phase 1 slice 4: populated study id for event and item-data audit records where derivable.
 2. Added in Phase 1 slice 4: `X-Request-ID` request correlation is propagated to responses and log MDC.
 3. Added in Phase 1 slice 4: common REST authorization, not-found, and bad-request failures return a JSON envelope containing the request id.
-4. Normalize mixed English/Chinese strings on the core EDC path.
+4. Event workflow text is normalized through i18n keys; broader mixed-copy cleanup is future UX polish.
 5. Obsolete package-level pnpm config removed in Phase 1 slice 2.
 
 ## Exit Gate Assessment

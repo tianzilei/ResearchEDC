@@ -14,15 +14,20 @@ import org.researchedc.module.crf.controller.CrfController;
 import org.researchedc.module.crf.controller.CrfManageController;
 import org.researchedc.module.datacapture.controller.DataCaptureController;
 import org.researchedc.module.dataimport.controller.ImportController;
+import org.researchedc.module.dataset.controller.DatasetController;
 import org.researchedc.module.discrepancynote.controller.DiscrepancyNoteController;
+import org.researchedc.module.ecoa.controller.EcoaController;
+import org.researchedc.module.econsent.controller.EconsentController;
 import org.researchedc.module.event.controller.EventController;
 import org.researchedc.module.export.controller.ExportController;
 import org.researchedc.module.filter.controller.FilterController;
+import org.researchedc.module.participantaccess.controller.ParticipantAccessController;
 import org.researchedc.module.randomization.controller.RandomizationController;
 import org.researchedc.module.rule.controller.RuleController;
 import org.researchedc.module.study.controller.StudyController;
 import org.researchedc.module.subject.controller.SubjectController;
 import org.researchedc.module.subjectgroup.controller.SubjectGroupController;
+import org.researchedc.module.task.controller.TaskController;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,6 +61,14 @@ class CoreControllerAuthorizationTest {
                 secured(SubjectController.class, "createSubject",
                         CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
                         org.researchedc.module.subject.dto.CreateSubjectRequest.class),
+                secured(SubjectController.class, "searchSubjects",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, String.class),
+                secured(SubjectController.class, "getSubject",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(SubjectController.class, "listStudySubjects",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(SubjectController.class, "getStudySubject",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
                 secured(SubjectController.class, "enrollSubject",
                         CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
                         org.researchedc.module.subject.dto.EnrollSubjectRequest.class),
@@ -77,6 +90,10 @@ class CoreControllerAuthorizationTest {
                 secured(EventController.class, "createEventDefinition",
                         CoreEdcAuthorityExpressions.ADMINISTER_STUDIES,
                         org.researchedc.module.event.dto.CreateEventDefinitionRequest.class),
+                secured(EventController.class, "listDefinitions",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(EventController.class, "getEventDefinition",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
                 secured(EventController.class, "removeEventDefinition",
                         CoreEdcAuthorityExpressions.ADMINISTER_STUDIES, Integer.class),
                 secured(EventController.class, "restoreEventDefinition",
@@ -84,6 +101,14 @@ class CoreControllerAuthorizationTest {
                 secured(EventController.class, "scheduleEvent",
                         CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
                         org.researchedc.module.event.dto.ScheduleEventRequest.class),
+                secured(EventController.class, "listSubjectEvents",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(EventController.class, "getStudyEvent",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(EventController.class, "listEventCrfs",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(EventController.class, "getEventCrf",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
                 secured(EventController.class, "updateEvent",
                         CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
                         Integer.class, org.researchedc.module.event.dto.UpdateEventRequest.class),
@@ -238,6 +263,14 @@ class CoreControllerAuthorizationTest {
                 secured(ImportController.class, "commit",
                         CoreEdcAuthorityExpressions.IMPORT_DATA, Long.class),
 
+                secured(DatasetController.class, "listDatasets",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(DatasetController.class, "getDataset",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, int.class),
+                secured(DatasetController.class, "createDataset",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.dataset.dto.CreateDatasetRequest.class),
+
                 secured(FilterController.class, "listFilters",
                         CoreEdcAuthorityExpressions.READ_EDC_DATA),
                 secured(FilterController.class, "getFilter",
@@ -283,7 +316,86 @@ class CoreControllerAuthorizationTest {
                         CoreEdcAuthorityExpressions.ADMINISTER_STUDIES,
                         int.class, org.researchedc.module.crf.dto.CreateCrfVersionRequest.class),
                 secured(CrfManageController.class, "deleteVersion",
-                        CoreEdcAuthorityExpressions.ADMINISTER_STUDIES, int.class)
+                        CoreEdcAuthorityExpressions.ADMINISTER_STUDIES, int.class),
+
+                secured(TaskController.class, "listTemplates",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(TaskController.class, "createTemplate",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.task.dto.CreateTaskTemplateRequest.class),
+                secured(TaskController.class, "listTasks",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA,
+                        Integer.class, org.researchedc.module.task.enums.TaskStatus.class, boolean.class),
+                secured(TaskController.class, "getTask",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Long.class),
+                secured(TaskController.class, "createTask",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.task.dto.CreateTaskRequest.class),
+                secured(TaskController.class, "completeTask",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA, Long.class),
+                secured(TaskController.class, "cancelTask",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA, Long.class),
+                secured(TaskController.class, "expireOverdueTasks",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA),
+                secured(TaskController.class, "dispatchReminder",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA, Long.class),
+
+                secured(ParticipantAccessController.class, "listAccounts",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(ParticipantAccessController.class, "createAccount",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.participantaccess.dto.CreateParticipantAccountRequest.class),
+                secured(ParticipantAccessController.class, "listTokens",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Long.class),
+                secured(ParticipantAccessController.class, "issueToken",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.participantaccess.dto.IssueParticipantTokenRequest.class),
+                secured(ParticipantAccessController.class, "revokeToken",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        Long.class,
+                        org.researchedc.module.participantaccess.dto.RevokeParticipantTokenRequest.class),
+                secured(ParticipantAccessController.class, "expireTokens",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA),
+
+                secured(EcoaController.class, "listSchedules",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(EcoaController.class, "createSchedule",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.ecoa.dto.CreateEcoaScheduleRequest.class),
+                secured(EcoaController.class, "listAssignments",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(EcoaController.class, "adherence",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(EcoaController.class, "recordCompletion",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        Long.class, org.researchedc.module.ecoa.dto.RecordEcoaCompletionRequest.class),
+                secured(EcoaController.class, "cancelAssignment",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA, Long.class),
+                secured(EcoaController.class, "expireOverdueAssignments",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA),
+
+                secured(EconsentController.class, "listTemplates",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(EconsentController.class, "createTemplate",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.econsent.dto.CreateConsentTemplateRequest.class),
+                secured(EconsentController.class, "listVersions",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Long.class),
+                secured(EconsentController.class, "createVersion",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        Long.class, org.researchedc.module.econsent.dto.CreateConsentVersionRequest.class),
+                secured(EconsentController.class, "publishVersion",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA, Long.class),
+                secured(EconsentController.class, "listAssignments",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Integer.class),
+                secured(EconsentController.class, "assignConsent",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        org.researchedc.module.econsent.dto.AssignConsentRequest.class),
+                secured(EconsentController.class, "countersign",
+                        CoreEdcAuthorityExpressions.WRITE_EDC_DATA,
+                        Long.class, org.researchedc.module.econsent.dto.CountersignConsentRequest.class),
+                secured(EconsentController.class, "artifact",
+                        CoreEdcAuthorityExpressions.READ_EDC_DATA, Long.class)
         );
     }
 

@@ -41,6 +41,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/login").permitAll()
                 .requestMatchers("/api/v1/auth/me").permitAll()
                 .requestMatchers("/api/v1/openrosa/**").permitAll()
+                .requestMatchers("/api/v1/participant-access/public/**").permitAll()
+                .requestMatchers("/api/v1/participant-portal/public/**").permitAll()
+                .requestMatchers("/api/v1/ecoa/public/**").permitAll()
+                .requestMatchers("/api/v1/econsent/public/**").permitAll()
                 .anyRequest().authenticated()
             )
             .logout(logout -> logout
